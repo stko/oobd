@@ -1,0 +1,8 @@
+The interface structure
+
+OOBD might have many different hardware realisations (Designs), but always a common software core. To handle them all in one repository, they are seperated into different Design- Folders (Dxx). To make it simple, these designs just get a different number.
+
+These designs contains both the hardware description files (Schematics, PCB, etc) and also the software abstraction layers, which connects the abstract functions to the real hardware and do also all the low level data handling like e.g.  the CAN -Bus
+
+
+The core functions are all hardware independend and so not bounded to the design folders. They are also splitted into the protocol- specific protocol handlers (proto), the runtime system (os) and the client-interface (oobd), which handles the data exchange with the connected client.
