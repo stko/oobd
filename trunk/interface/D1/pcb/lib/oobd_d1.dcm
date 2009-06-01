@@ -1,0 +1,15 @@
+EESchema-DOCLIB  Version 2.0  Date: 1/6/2009-15:50:23
+#
+$CMP BS170
+F transistors/mos/*.*
+$ENDCMP
+#
+$CMP BS250
+F transistors/mos/*.*
+$ENDCMP
+#
+$CMP MOSFET_P
+F transistors/mos/*.*
+$ENDCMP
+#
+#End Doc Library
