@@ -2,7 +2,7 @@ update=05.06.2009 16:30:20
 last_client=kicad
 [eeschema]
 version=1
-LibDir=C:\\Programme\\KiCad\\share\\library
+LibDir=
 NetFmt=1
 HPGLSpd=20
 HPGLDm=15
