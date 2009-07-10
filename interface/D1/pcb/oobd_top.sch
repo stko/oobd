@@ -1,18 +1,68 @@
-EESchema Schematic File Version 2  date 02.07.2009 20:28:51
+EESchema Schematic File Version 2  date 10.07.2009 23:28:11
 LIBS:power,xilinx,valves,ttl_ieee,transistors,texas,SymbolsSimilarEN60617+oldDIN617,special,siliconi,regul,ramtron,pspice,philips,pca82c250,opto,oobd_d1,motorola,microcontrollers,microchip1,microchip,memory,lm339,linear,interface,intel,graphic,gennum,elec-unifil,dsp,display,digital-audio,cypress,contrib,conn,cmos_ieee,cmos4000,brooktre,audio,atmel,analog_switches,adc-dac,74xx,device,.\oobd_top.cache
 EELAYER 24  0
 EELAYER END
 $Descr A4 11700 8267
-Sheet 1 4
-Title ""
+Sheet 1 6
+Title "D1 OBD Interface"
 Date "5 jun 2009"
-Rev ""
-Comp ""
-Comment1 ""
+Rev "3"
+Comp "www.oobd.org"
+Comment1 "Overview"
 Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+Kmarq B 3950 4400 "Warnung: Blattlabel GND ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 4750 4400 "Warnung: Blattlabel GND ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 3950 4100 "Warnung: Blattlabel CANSEL_2 ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 4750 4100 "Warnung: Blattlabel CANSEL_2 ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 3950 3800 "Warnung: Blattlabel CAN_RXD ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 4750 3800 "Warnung: Blattlabel CAN_RXD ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 4750 3500 "Warnung: Blattlabel VPWM_IN ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 3950 3500 "Warnung: Blattlabel VPWM_IN ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 4750 3200 "Warnung: Blattlabel PWM_IN ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 3950 3200 "Warnung: Blattlabel PWM_IN ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 4750 2900 "Warnung: Blattlabel PWM+_OUT ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 3950 2900 "Warnung: Blattlabel PWM+_OUT ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 3950 2600 "Warnung: Blattlabel K_OUT ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 4750 2600 "Warnung: Blattlabel K_OUT ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 7450 3800 "Warnung: Blattlabel TXD0 ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 8500 3800 "Warnung: Blattlabel TXD0 ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 8500 3650 "Warnung: Blattlabel NC ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 7450 3650 "Warnung: Blattlabel NC ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 7450 3350 "Warnung: Blattlabel NC ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 8500 3350 "Warnung: Blattlabel NC ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 8500 3050 "Warnung: Blattlabel NC ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 7450 3050 "Warnung: Blattlabel NC ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 7450 2750 "Warnung: Blattlabel RXD1 ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 8500 2750 "Warnung: Blattlabel RXD1 ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 7450 2450 "Warnung: Blattlabel TXD1 ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 8500 2450 "Warnung: Blattlabel TXD1 ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 8500 2600 "Warnung: Blattlabel GND ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 7450 2600 "Warnung: Blattlabel GND ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 7450 2900 "Warnung: Blattlabel +5V ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 8500 2900 "Warnung: Blattlabel +5V ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 8500 3200 "Warnung: Blattlabel NC ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 7450 3200 "Warnung: Blattlabel NC ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 7450 3500 "Warnung: Blattlabel RXD0 ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 8500 3500 "Warnung: Blattlabel RXD0 ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 4750 2450 "Warnung: Blattlabel KL_IN ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 3950 2450 "Warnung: Blattlabel KL_IN ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 4750 2750 "Warnung: Blattlabel L_OUT ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 3950 2750 "Warnung: Blattlabel L_OU ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 3950 3050 "Warnung: Blattlabel PWM-_OUT ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 4750 3050 "Warnung: Blattlabel PWM-_OUT ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 4750 3350 "Warnung: Blattlabel VPWM_OUT ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 3950 3350 "Warnung: Blattlabel VPWM_OUT ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 3950 3650 "Warnung: Blattlabel CAN_TXD ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 4750 3650 "Warnung: Blattlabel CAN_TXD ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 4750 3950 "Warnung: Blattlabel CANSEL_1 ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 3950 3950 "Warnung: Blattlabel CANSEL_1 ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 3950 4250 "Warnung: Blattlabel +5V ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 4750 4250 "Warnung: Blattlabel +5V ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 3950 4550 "Warnung: Blattlabel 12V ist nicht mit dem HLabel verbunden" F=1
+Kmarq B 4750 4550 "Warnung: Blattlabel 12V ist nicht mit dem HLabel verbunden" F=1
 Wire Wire Line
 	3950 4550 4750 4550
 Wire Wire Line
@@ -108,8 +158,8 @@ F5 "+5V" I L 8500 2900 60
 F6 "NC" U L 8500 3050 60 
 F7 "NC" U L 8500 3200 60 
 F8 "NC" U L 8500 3350 60 
-F9 "RXD0" O L 8500 3500 60 
-F10 "NC" U L 8500 3650 60 
+F9 "NC" U L 8500 3650 60 
+F10 "RXD0" O L 8500 3500 60 
 F11 "TXD0" I L 8500 3800 60 
 $EndSheet
 $Sheet
