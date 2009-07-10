@@ -1,18 +1,40 @@
-EESchema Schematic File Version 2  date 02.07.2009 20:32:06
+EESchema Schematic File Version 2  date 10.07.2009 23:28:11
 LIBS:power,xilinx,valves,ttl_ieee,transistors,texas,SymbolsSimilarEN60617+oldDIN617,special,siliconi,regul,ramtron,pspice,philips,pca82c250,opto,oobd_d1,motorola,microcontrollers,microchip1,microchip,memory,lm339,linear,interface,intel,graphic,gennum,elec-unifil,dsp,display,digital-audio,cypress,contrib,conn,cmos_ieee,cmos4000,brooktre,audio,atmel,analog_switches,adc-dac,74xx,device,.\oobd_top.cache
 EELAYER 24  0
 EELAYER END
 $Descr A4 11700 8267
-Sheet 3 4
-Title ""
+Sheet 3 6
+Title "D1 OBD Interface"
 Date ""
-Rev ""
-Comp ""
+Rev "3"
+Comp "www.oobd.org"
 Comment1 ""
 Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+Kmarq B 5500 2900 "Warnung: Pin passive verbunden mit Pin unspc (Netz 106)" F=1
+Kmarq B 8850 3100 "Warnung: Pin power_in wird nicht angesteuert (Netz 104)" F=1
+Kmarq B 1000 2300 "Warnung: Pin passive ist nicht verbunden" F=1
+Kmarq B 1000 2400 "Warnung: Pin passive ist nicht verbunden" F=1
+Kmarq B 1000 2500 "Warnung: Pin passive ist nicht verbunden" F=1
+Kmarq B 1800 2300 "Warnung: Pin passive ist nicht verbunden" F=1
+Kmarq B 1800 2400 "Warnung: Pin passive ist nicht verbunden" F=1
+Kmarq B 5100 4100 "Warnung: Pin BiDi ist nicht verbunden" F=1
+Kmarq B 5100 4000 "Warnung: Pin output ist nicht verbunden" F=1
+Kmarq B 5100 3900 "Warnung: Pin BiDi ist nicht verbunden" F=1
+Kmarq B 2900 4100 "Warnung: Pin output ist nicht verbunden" F=1
+Kmarq B 2900 3400 "Warnung: Pin input ist nicht verbunden" F=1
+Kmarq B 2900 3300 "Warnung: Pin input ist nicht verbunden" F=1
+Kmarq B 2900 3000 "Warnung: Pin BiDi ist nicht verbunden" F=1
+Kmarq B 2900 2900 "Warnung: Pin BiDi ist nicht verbunden" F=1
+Kmarq B 2900 2800 "Warnung: Pin BiDi ist nicht verbunden" F=1
+Kmarq B 2900 2700 "Warnung: Pin BiDi ist nicht verbunden" F=1
+Kmarq B 2900 2600 "Warnung: Pin BiDi ist nicht verbunden" F=1
+Kmarq B 2900 2500 "Warnung: Pin BiDi ist nicht verbunden" F=1
+Kmarq B 2900 3600 "Warnung: Pin BiDi verbunden mit Pin power_out (Netz 39)" F=1
+Kmarq B 3800 4900 "Warnung: Pin power_in verbunden mit Pin unspc (Netz 28)" F=1
+Kmarq B 9750 2650 "Fehler: Pin power_out verbunden mit Pin power_out (Netz 28)" F=2
 Wire Wire Line
 	8850 3100 8850 2850
 Wire Wire Line
@@ -237,10 +259,10 @@ F 1 "10n" V 9300 2700 50  0000 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L GNDA #PWR?
+L GNDA #PWR021
 U 1 1 4A4BB521
 P 8850 3100
-F 0 "#PWR?" H 8850 3100 40  0001 C CNN
+F 0 "#PWR021" H 8850 3100 40  0001 C CNN
 F 1 "GNDA" H 8850 3030 40  0000 C CNN
 	1    8850 3100
 	1    0    0    -1  
@@ -255,10 +277,10 @@ F 1 "LED" H 2100 3500 50  0000 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L R R?
+L R R310
 U 1 1 4A4BB285
 P 2450 3850
-F 0 "R?" V 2530 3850 50  0000 C CNN
+F 0 "R310" V 2530 3850 50  0000 C CNN
 F 1 "220" V 2450 3850 50  0000 C CNN
 	1    2450 3850
 	0    1    1    0   
@@ -268,37 +290,37 @@ RESET
 Text GLabel 6800 2900 2    60   Output ~ 0
 RESET
 $Comp
-L GND #PWR?
+L GND #PWR022
 U 1 1 4A4BB107
 P 5950 2400
-F 0 "#PWR?" H 5950 2400 30  0001 C CNN
+F 0 "#PWR022" H 5950 2400 30  0001 C CNN
 F 1 "GND" H 5950 2330 30  0001 C CNN
 	1    5950 2400
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR?
+L GND #PWR023
 U 1 1 4A4BB0F1
 P 9150 2200
-F 0 "#PWR?" H 9150 2200 30  0001 C CNN
+F 0 "#PWR023" H 9150 2200 30  0001 C CNN
 F 1 "GND" H 9150 2130 30  0001 C CNN
 	1    9150 2200
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR?
+L +5V #PWR024
 U 1 1 4A4BB094
 P 2400 3300
-F 0 "#PWR?" H 2400 3390 20  0001 C CNN
+F 0 "#PWR024" H 2400 3390 20  0001 C CNN
 F 1 "+5V" H 2400 3390 30  0000 C CNN
 	1    2400 3300
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR?
+L GND #PWR025
 U 1 1 4A4BB060
 P 1750 1800
-F 0 "#PWR?" H 1750 1800 30  0001 C CNN
+F 0 "#PWR025" H 1750 1800 30  0001 C CNN
 F 1 "GND" H 1750 1730 30  0001 C CNN
 	1    1750 1800
 	1    0    0    -1  
@@ -331,19 +353,19 @@ F 1 "33n" V 5650 2150 50  0000 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L R R308
+L R R311
 U 1 1 4A4BAF1D
 P 9500 1900
-F 0 "R308" V 9580 1900 50  0000 C CNN
+F 0 "R311" V 9580 1900 50  0000 C CNN
 F 1 "10k" V 9500 1900 50  0000 C CNN
 	1    9500 1900
 	0    -1   -1   0   
 $EndComp
 $Comp
-L R R309
+L R R312
 U 1 1 4A4BAF0E
 P 9900 2250
-F 0 "R309" V 9980 2250 50  0000 C CNN
+F 0 "R312" V 9980 2250 50  0000 C CNN
 F 1 "4k7" V 9900 2250 50  0000 C CNN
 	1    9900 2250
 	-1   0    0    1   
@@ -367,82 +389,82 @@ F 1 "27" V 6450 2700 50  0000 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L R 308
+L R R308
 U 1 1 4A4BAEB9
 P 5750 2900
-F 0 "308" V 5830 2900 50  0000 C CNN
+F 0 "R308" V 5830 2900 50  0000 C CNN
 F 1 "1k5" V 5750 2900 50  0000 C CNN
 	1    5750 2900
 	0    1    1    0   
 $EndComp
 $Comp
-L GND #PWR?
+L GND #PWR026
 U 1 1 4A4BADEC
 P 6050 3650
-F 0 "#PWR?" H 6050 3650 30  0001 C CNN
+F 0 "#PWR026" H 6050 3650 30  0001 C CNN
 F 1 "GND" H 6050 3580 30  0001 C CNN
 	1    6050 3650
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR?
+L GND #PWR027
 U 1 1 4A4BADE2
 P 5250 5000
-F 0 "#PWR?" H 5250 5000 30  0001 C CNN
+F 0 "#PWR027" H 5250 5000 30  0001 C CNN
 F 1 "GND" H 5250 4930 30  0001 C CNN
 	1    5250 5000
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR?
+L GND #PWR028
 U 1 1 4A4BADC3
 P 4200 5000
-F 0 "#PWR?" H 4200 5000 30  0001 C CNN
+F 0 "#PWR028" H 4200 5000 30  0001 C CNN
 F 1 "GND" H 4200 4930 30  0001 C CNN
 	1    4200 5000
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR?
+L GND #PWR029
 U 1 1 4A4BADBE
 P 4000 5000
-F 0 "#PWR?" H 4000 5000 30  0001 C CNN
+F 0 "#PWR029" H 4000 5000 30  0001 C CNN
 F 1 "GND" H 4000 4930 30  0001 C CNN
 	1    4000 5000
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR?
+L GND #PWR030
 U 1 1 4A4BADB7
 P 3800 5000
-F 0 "#PWR?" H 3800 5000 30  0001 C CNN
+F 0 "#PWR030" H 3800 5000 30  0001 C CNN
 F 1 "GND" H 3800 4930 30  0001 C CNN
 	1    3800 5000
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR?
+L GND #PWR031
 U 1 1 4A4BADA5
 P 5000 1350
-F 0 "#PWR?" H 5000 1350 30  0001 C CNN
+F 0 "#PWR031" H 5000 1350 30  0001 C CNN
 F 1 "GND" H 5000 1280 30  0001 C CNN
 	1    5000 1350
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR?
+L GND #PWR032
 U 1 1 4A4BAD99
 P 5550 1350
-F 0 "#PWR?" H 5550 1350 30  0001 C CNN
+F 0 "#PWR032" H 5550 1350 30  0001 C CNN
 F 1 "GND" H 5550 1280 30  0001 C CNN
 	1    5550 1350
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR?
+L +5V #PWR033
 U 1 1 4A4BAD8D
 P 1100 800
-F 0 "#PWR?" H 1100 890 20  0001 C CNN
+F 0 "#PWR033" H 1100 890 20  0001 C CNN
 F 1 "+5V" H 1100 890 30  0000 C CNN
 	1    1100 800 
 	1    0    0    -1  
@@ -461,7 +483,7 @@ L CRYSTAL X301
 U 1 1 4A4BA168
 P 5600 3600
 F 0 "X301" H 5600 3750 60  0000 C CNN
-F 1 "CRYSTAL" H 5600 3450 60  0000 C CNN
+F 1 "6MHz" H 5600 3450 60  0000 C CNN
 	1    5600 3600
 	0    1    1    0   
 $EndComp
@@ -470,7 +492,7 @@ L C C309
 U 1 1 4A4BA135
 P 5950 3950
 F 0 "C309" V 6050 4100 50  0000 C CNN
-F 1 "C" V 6050 3800 50  0000 C CNN
+F 1 "22p" V 6050 3800 50  0000 C CNN
 	1    5950 3950
 	0    1    1    0   
 $EndComp
@@ -479,7 +501,7 @@ L C C308
 U 1 1 4A4BA12C
 P 5950 3250
 F 0 "C308" V 6050 3400 50  0000 C CNN
-F 1 "C" V 6050 3100 50  0000 C CNN
+F 1 "22p" V 6050 3100 50  0000 C CNN
 	1    5950 3250
 	0    1    1    0   
 $EndComp
@@ -502,46 +524,46 @@ F 1 "100n" V 4800 1100 50  0000 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L GND #PWR?
+L GND #PWR034
 U 1 1 4A4BA0B6
 P 750 2750
-F 0 "#PWR?" H 750 2750 30  0001 C CNN
+F 0 "#PWR034" H 750 2750 30  0001 C CNN
 F 1 "GND" H 750 2680 30  0001 C CNN
 	1    750  2750
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR?
+L +5V #PWR035
 U 1 1 4A4BA033
 P 650 2550
-F 0 "#PWR?" H 650 2640 20  0001 C CNN
+F 0 "#PWR035" H 650 2640 20  0001 C CNN
 F 1 "+5V" H 650 2640 30  0000 C CNN
 	1    650  2550
 	1    0    0    -1  
 $EndComp
 $Comp
-L CONN_5X2 P301
+L CONN_5X2 J301
 U 1 1 4A4B9F50
 P 1400 2500
-F 0 "P301" H 1400 2800 60  0000 C CNN
+F 0 "J301" H 1400 2800 60  0000 C CNN
 F 1 "CONN_5X2" V 1400 2500 50  0000 C CNN
 	1    1400 2500
 	-1   0    0    1   
 $EndComp
 $Comp
-L USB_1 J?
+L USB_1 J302
 U 1 1 4A4B9F14
 P 10100 3050
-F 0 "J?" H 9950 3450 60  0000 C CNN
+F 0 "J302" H 9950 3450 60  0000 C CNN
 F 1 "USB_1" H 10075 2450 60  0001 C CNN
 	1    10100 3050
 	0    1    1    0   
 $EndComp
 $Comp
-L FT232BM I301
+L FT232BM U301
 U 1 1 4A4B9EC5
 P 4000 3300
-F 0 "I301" H 4500 4700 60  0000 C CNN
+F 0 "U301" H 4500 4700 60  0000 C CNN
 F 1 "FT232BM" H 4600 1900 60  0000 C CNN
 	1    4000 3300
 	1    0    0    -1  
