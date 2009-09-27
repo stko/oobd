@@ -1,0 +1,2 @@
+To use LWUIT (The Lightweight User Interface Toolkit, which is needed for the MIDP- Interface), download the actual package from the download link on http://java.sun.com/developer/technicalArticles/javame/lwuit_intro/ and extract the content of the LWUIT_x_x_x- folder from inside the achive into here, but not the root folder in the achive itself to avoid trouble with the version number in the folder name.
+
