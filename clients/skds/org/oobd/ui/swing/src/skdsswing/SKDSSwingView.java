@@ -14,12 +14,13 @@ import java.awt.event.ActionListener;
 import javax.swing.Timer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JFrame;
-
+import org.oobd.base.IFui;
 /**
  * The application's main frame.
  */
-public class SKDSSwingView extends FrameView {
+public class SKDSSwingView extends FrameView implements IFui{
 
     public SKDSSwingView(SingleFrameApplication app) {
         super(app);
@@ -79,6 +80,11 @@ public class SKDSSwingView extends FrameView {
                 }
             }
         });
+    }
+
+
+    public void sm(String msg){
+        JOptionPane.showMessageDialog(null, msg);
     }
 
     @Action
