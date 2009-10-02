@@ -16,8 +16,11 @@ public class SKDSSwingApp extends SingleFrameApplication {
      * At startup create and show the main frame of the application.
      */
     @Override protected void startup() {
-        show(new SKDSSwingView(this));
-    }
+        SKDSSwingView thisUserInterface=new SKDSSwingView(this);
+        System.out.print("1");
+        show(thisUserInterface);
+         core thiscore=new core(thisUserInterface);
+   }
 
     /**
      * This method is to initialize the specified window by injecting resources.

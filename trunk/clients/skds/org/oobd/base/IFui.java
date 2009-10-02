@@ -3,12 +3,14 @@
  * and open the template in the editor.
  */
 
-package org.oobd.base.core;
+package org.oobd.base;
 
 /**
  *
  * @author steffen
  */
-public class core {
+public interface IFui {
+
+    public void sm(String msg);
 
 }

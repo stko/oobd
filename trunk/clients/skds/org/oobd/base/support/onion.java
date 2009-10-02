@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.oobd.base.core.onion;
+package org.oobd.base.support;
 
 /**
  *
