@@ -6,7 +6,7 @@ package skdsswing;
 
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
-import org.oobd.base.core;
+import org.oobd.base.Core;
 /**
  * The main class of the application.
  */
@@ -17,9 +17,8 @@ public class SKDSSwingApp extends SingleFrameApplication {
      */
     @Override protected void startup() {
         SKDSSwingView thisUserInterface=new SKDSSwingView(this);
-        System.out.print("1");
         show(thisUserInterface);
-         core thiscore=new core(thisUserInterface);
+         Core thiscore=new Core(thisUserInterface);
    }
 
     /**
