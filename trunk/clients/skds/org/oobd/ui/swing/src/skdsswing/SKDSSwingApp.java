@@ -18,7 +18,7 @@ public class SKDSSwingApp extends SingleFrameApplication {
     @Override protected void startup() {
         SKDSSwingView thisUserInterface=new SKDSSwingView(this);
         show(thisUserInterface);
-         Core thiscore=new Core(thisUserInterface);
+         Core thiscore=new Core(thisUserInterface, new SwingSystem());
    }
 
     /**
