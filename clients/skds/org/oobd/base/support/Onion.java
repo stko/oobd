@@ -4,7 +4,6 @@
  */
 package org.oobd.base.support;
 
-import java.util.Hashtable;
 import org.json.JSONObject;
 import org.json.JSONException;
 
