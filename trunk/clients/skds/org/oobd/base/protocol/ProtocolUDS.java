@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.oobd.base.bus;
+package org.oobd.base.protocol;
 
 import org.oobd.base.Core;
 
@@ -11,9 +11,9 @@ import org.oobd.base.Core;
  *
  * @author steffen
  */
-public class BusEcho extends OobdBus{
-    public BusEcho(){
-        System.out.println("Ich bin BusEcho...");
+public class ProtocolUDS extends OobdProtocol{
+    public ProtocolUDS(){
+        System.out.println("Ich bin der ProtocolUDS...");
 
     }
     @Override

@@ -3,7 +3,8 @@
  * and open the template in the editor.
  */
 
-package org.oobd.base.bus;
+package org.oobd.base.connector;
+
 
 import org.oobd.base.Core;
 
@@ -11,9 +12,9 @@ import org.oobd.base.Core;
  *
  * @author steffen
  */
-public class BusEcho extends OobdBus{
-    public BusEcho(){
-        System.out.println("Ich bin BusEcho...");
+public class ConnectorLocal extends OobdConnector{
+    public ConnectorLocal(){
+        System.out.println("Ich bin der ConnectorLocal...");
 
     }
     @Override
