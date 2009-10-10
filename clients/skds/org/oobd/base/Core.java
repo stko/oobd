@@ -12,6 +12,8 @@ import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Iterator;
 import org.oobd.base.bus.OobdBus;
+import org.oobd.base.connector.OobdConnector;
+import org.oobd.base.protocol.OobdProtocol;
 
 /**
  * The interface for nearly all interaction between the generic oobd maschine and the different environments
@@ -21,12 +23,16 @@ public class Core {
 
     IFui userInterface;
     IFsystem systemInterface;
-    HashMap<String, OobdBus> busses;
+    HashMap<String, OobdBus> busses; //stores all available busses
+    HashMap<String, OobdConnector> connectors; //stores all available busses
+    HashMap<String, OobdProtocol> protocols; //stores all available prorocols
 
     public Core(IFui myUserInterface, IFsystem mySystemInterface) {
         userInterface = myUserInterface;
         systemInterface = mySystemInterface;
         busses = new HashMap<String, OobdBus>();
+        connectors = new HashMap<String, OobdConnector>();
+        protocols = new HashMap<String, OobdProtocol>();
         //userInterface.sm("Moin");
         Onion testOnion = Onion.generate(null);
         testOnion.setValue("test", "moin");
@@ -43,15 +49,56 @@ public class Core {
         System.out.println(testOnion2.toString());
         systemInterface.register(this); //Anounce itself at the Systeminterface
         systemInterface.loadConnectors();
+        // ----------- load Busses -------------------------------
         try {
             HashMap<String, Class<?>> classObjects = loadOobdClasses("/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/org/oobd/ui/swing/build/classes/org/oobd/base/bus", "org.oobd.base.bus.", Class.forName("org.oobd.base.bus.OobdBus"));
             for (Iterator iter = classObjects.keySet().iterator(); iter.hasNext();) {
                 String element = (String) iter.next();
                 Class<?> value = (Class<?>) classObjects.get(element);
                 try {
-                    OobdBus thisBus = (OobdBus) value.newInstance();
-                    thisBus.registerCore(this);
-                    busses.put(element, thisBus);
+                    OobdBus thisClass = (OobdBus) value.newInstance();
+                    thisClass.registerCore(this);
+                    busses.put(element, thisClass);
+
+                } catch (InstantiationException ex) {
+                    // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
+                    System.out.println(ex.getMessage());
+                } catch (IllegalAccessException e) {
+                }
+
+            }
+        } catch (ClassNotFoundException e) {
+        }
+        // ----------- load Connectors -------------------------------
+        try {
+            HashMap<String, Class<?>> classObjects = loadOobdClasses("/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/org/oobd/ui/swing/build/classes/org/oobd/base/connector", "org.oobd.base.connector.", Class.forName("org.oobd.base.connector.OobdConnector"));
+            for (Iterator iter = classObjects.keySet().iterator(); iter.hasNext();) {
+                String element = (String) iter.next();
+                Class<?> value = (Class<?>) classObjects.get(element);
+                try {
+                    OobdConnector thisClass = (OobdConnector) value.newInstance();
+                    thisClass.registerCore(this);
+                    connectors.put(element, thisClass);
+
+                } catch (InstantiationException ex) {
+                    // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
+                    System.out.println(ex.getMessage());
+                } catch (IllegalAccessException e) {
+                }
+
+            }
+        } catch (ClassNotFoundException e) {
+        }
+        // ----------- load Protocols -------------------------------
+        try {
+            HashMap<String, Class<?>> classObjects = loadOobdClasses("/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/org/oobd/ui/swing/build/classes/org/oobd/base/protocol", "org.oobd.base.protocol.", Class.forName("org.oobd.base.protocol.OobdProtocol"));
+            for (Iterator iter = classObjects.keySet().iterator(); iter.hasNext();) {
+                String element = (String) iter.next();
+                Class<?> value = (Class<?>) classObjects.get(element);
+                try {
+                    OobdProtocol thisClass = (OobdProtocol) value.newInstance();
+                    thisClass.registerCore(this);
+                    protocols.put(element, thisClass);
 
                 } catch (InstantiationException ex) {
                     // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
@@ -68,6 +115,7 @@ public class Core {
         userInterface.sm(msg);
     }
 
+  
     /**
      * loads different dynamic classes via an URLClassLoader.
      * Aa an URLClassloader is generic and can handle URLs, file systems and also jar files,

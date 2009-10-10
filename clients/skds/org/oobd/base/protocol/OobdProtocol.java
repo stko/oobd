@@ -3,15 +3,15 @@
  * and open the template in the editor.
  */
 
-package org.oobd.base.bus;
+package org.oobd.base.protocol;
+
 
 import org.oobd.base.*;
 
 /**
- * generic abstract for the implementation of busses
+ * generic abstract for the implementation of protocols
  * @author steffen
  */
-public abstract class OobdBus extends OobdPlugin{
-
+public abstract class OobdProtocol extends OobdPlugin{
 
 }
