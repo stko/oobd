@@ -44,7 +44,7 @@ public class Core {
         systemInterface.register(this); //Anounce itself at the Systeminterface
          systemInterface.loadConnectors();
          try{
-             HashMap<String,Object> busses=loadOobdClasses("/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/org/oobd/ui/swing/build/classes/org/oobd/base/support", Class.forName( "org.oobd.base.support.Onion"));
+             HashMap<String,Object> busses=loadOobdClasses("/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/org/oobd/ui/swing/build/classes/org/oobd/base/support", "org.oobd.base.support.",Class.forName( "org.oobd.base.support.Onion"));
          }catch(ClassNotFoundException e){
 
          }
@@ -63,7 +63,7 @@ public class Core {
      * @param classtype
      * @return
      */
-    public HashMap loadOobdClasses(String path, Class classType){
+    public HashMap loadOobdClasses(String path, String classPrefix,Class classType){
  // abgekuckt unter http://de.wikibooks.org/wiki/Java_Standard:_Class
         HashMap<String,Object> myInstances = new HashMap<String,Object>() ;
  /*
@@ -112,7 +112,7 @@ public class Core {
 
           try {
              // Die Klasse laden
-             Class<?> source = loader.loadClass( name[0] );
+             Class<?> source = loader.loadClass( classPrefix+name[0] );
 
              // Prüfen, ob die geladene Klasse das Interface implementiert
              // bzw. ob sie das Interface beerbt
