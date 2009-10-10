@@ -5,11 +5,13 @@
 
 package org.oobd.base.bus;
 
+import org.oobd.base.*;
+
 /**
  *
  * @author steffen
  */
-public abstract class OobdBus {
+public abstract class OobdBus extends OobdPlugin{
 
 
 }
