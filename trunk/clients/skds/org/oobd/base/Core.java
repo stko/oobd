@@ -44,7 +44,7 @@ public class Core {
         systemInterface.register(this); //Anounce itself at the Systeminterface
          systemInterface.loadConnectors();
          try{
-             HashMap<String,Object> busses=loadOobdClasses("/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/org/oobd/ui/swing/build/classes/org/oobd/base/support", "org.oobd.base.support.",Class.forName( "org.oobd.base.support.Onion"));
+             HashMap<String,Object> busses=loadOobdClasses("/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/org/oobd/ui/swing/build/classes/org/oobd/base/bus", "org.oobd.base.bus.",Class.forName( "org.oobd.base.bus.OobdBus"));
          }catch(ClassNotFoundException e){
 
          }
