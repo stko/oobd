@@ -9,6 +9,6 @@ package org.oobd.base.scriptengine;
  *
  * @author steffen
  */
-public class Lua {
+public class ScriptengineLua {
 
 }
