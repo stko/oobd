@@ -14,6 +14,7 @@ import java.util.Iterator;
 import org.oobd.base.bus.OobdBus;
 import org.oobd.base.connector.OobdConnector;
 import org.oobd.base.protocol.OobdProtocol;
+import org.oobd.base.scriptengine.OobdScriptengine;
 
 /**
  * The interface for nearly all interaction between the generic oobd maschine and the different environments
@@ -25,7 +26,8 @@ public class Core {
     IFsystem systemInterface;
     HashMap<String, OobdBus> busses; //stores all available busses
     HashMap<String, OobdConnector> connectors; //stores all available busses
-    HashMap<String, OobdProtocol> protocols; //stores all available prorocols
+    HashMap<String, OobdProtocol> protocols; //stores all available protocols
+    HashMap<String, Class<?>> scriptengines; //stores all available scriptengines
 
     public Core(IFui myUserInterface, IFsystem mySystemInterface) {
         userInterface = myUserInterface;
@@ -33,6 +35,7 @@ public class Core {
         busses = new HashMap<String, OobdBus>();
         connectors = new HashMap<String, OobdConnector>();
         protocols = new HashMap<String, OobdProtocol>();
+        scriptengines = new HashMap<String, Class<?>>();
         //userInterface.sm("Moin");
         Onion testOnion = Onion.generate(null);
         testOnion.setValue("test", "moin");
@@ -109,13 +112,33 @@ public class Core {
             }
         } catch (ClassNotFoundException e) {
         }
+        // ----------- load Scriptengines AS CLASSES, NOT AS INSTANCES!-------------------------------
+        try {
+            scriptengines = loadOobdClasses("/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/org/oobd/ui/swing/build/classes/org/oobd/base/scriptengine", "org.oobd.base.scriptengine.", Class.forName("org.oobd.base.scriptengine.OobdScriptengine"));
+            for (Iterator iter = scriptengines.keySet().iterator(); iter.hasNext();) {
+                String element = (String) iter.next();
+                Class<?> value = scriptengines.get(element);
+                scriptengines.put(element, value);
+                // now I need to be a little bit tricky to involve the static class method of an untypized class
+                try {
+                    Class[] parameterTypes = new Class[]{};
+                    java.lang.reflect.Method method = value.getMethod("publicName", new Class[]{}); //no parameters
+                     Object instance = null;
+                    String result = (String) method.invoke(instance, new Object[]{}); // no parameters
+                   if (!result.isEmpty()){
+                       announceScriptEngine(element, result);
+                   }
+                } catch (Exception e) {
+                }
+            }
+        } catch (ClassNotFoundException e) {
+        }
     }
 
     public void register(String msg) {
         userInterface.sm(msg);
     }
 
-  
     /**
      * loads different dynamic classes via an URLClassLoader.
      * Aa an URLClassloader is generic and can handle URLs, file systems and also jar files,
@@ -144,7 +167,8 @@ public class Core {
             } catch (java.net.MalformedURLException ex) {
                 System.out.println(ex.getMessage());
             }
-            // Einen URLClassLoader für das Verzeichnis instanzieren
+// Einen URLClassLoader für das Verzeichnis instanzieren
+
             URLClassLoader loader = new URLClassLoader(new java.net.URL[]{sourceURL}, Thread.currentThread().getContextClassLoader());
             // Für jeden File im Verzeichnis...
             for (int i = 0; i <
@@ -165,17 +189,26 @@ public class Core {
                             // save unitialized class object in hashmap
                             myInstances.put(name[0], source);
                         }
+
                     } catch (ClassNotFoundException ex) {
                         // Wird geworfen, wenn die Klasse nicht gefunden wurde
                         System.out.println(ex.getMessage());
                     }
+
                 }
             }
         }
         // returns Hasmap filled with classes found
         return myInstances;
+    }
 
-
+    /**
+     * tells the UserInterface about the existence of a scriptengine, e.g. to add this to a selection menu
+     * @param id the key of the scriptengines hash array where the loaded instances are been stored
+     * @param visibleName
+     */
+    void announceScriptEngine(String id, String visibleName) {
+        userInterface.announceScriptengine(id, visibleName);
     }
 }
 

@@ -1,7 +1,6 @@
 /*
  * SKDSSwingView.java
  */
-
 package skdsswing;
 
 import org.jdesktop.application.Action;
@@ -17,10 +16,11 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JFrame;
 import org.oobd.base.IFui;
+
 /**
  * The application's main frame.
  */
-public class SKDSSwingView extends FrameView implements IFui{
+public class SKDSSwingView extends FrameView implements IFui {
 
     public SKDSSwingView(SingleFrameApplication app) {
         super(app);
@@ -31,6 +31,7 @@ public class SKDSSwingView extends FrameView implements IFui{
         ResourceMap resourceMap = getResourceMap();
         int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
         messageTimer = new Timer(messageTimeout, new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 statusMessageLabel.setText("");
             }
@@ -41,6 +42,7 @@ public class SKDSSwingView extends FrameView implements IFui{
             busyIcons[i] = resourceMap.getIcon("StatusBar.busyIcons[" + i + "]");
         }
         busyIconTimer = new Timer(busyAnimationRate, new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 busyIconIndex = (busyIconIndex + 1) % busyIcons.length;
                 statusAnimationLabel.setIcon(busyIcons[busyIconIndex]);
@@ -53,6 +55,7 @@ public class SKDSSwingView extends FrameView implements IFui{
         // connecting action tasks to status bar via TaskMonitor
         TaskMonitor taskMonitor = new TaskMonitor(getApplication().getContext());
         taskMonitor.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 String propertyName = evt.getPropertyName();
                 if ("started".equals(propertyName)) {
@@ -69,11 +72,11 @@ public class SKDSSwingView extends FrameView implements IFui{
                     progressBar.setVisible(false);
                     progressBar.setValue(0);
                 } else if ("message".equals(propertyName)) {
-                    String text = (String)(evt.getNewValue());
+                    String text = (String) (evt.getNewValue());
                     statusMessageLabel.setText((text == null) ? "" : text);
                     messageTimer.restart();
                 } else if ("progress".equals(propertyName)) {
-                    int value = (Integer)(evt.getNewValue());
+                    int value = (Integer) (evt.getNewValue());
                     progressBar.setVisible(true);
                     progressBar.setIndeterminate(false);
                     progressBar.setValue(value);
@@ -82,9 +85,19 @@ public class SKDSSwingView extends FrameView implements IFui{
         });
     }
 
-
-    public void sm(String msg){
+    public void sm(String msg) {
         JOptionPane.showMessageDialog(null, msg);
+    }
+
+    public void announceScriptengine(String id, String visibleName) {
+        System.out.println("Interface announcement: Scriptengine-ID: " + id + " visibleName:" + visibleName);
+        javax.swing.JMenuItem menuItem;
+        menuItem = new javax.swing.JMenuItem(visibleName);
+        menuItem.getAccessibleContext().setAccessibleDescription(
+                "This doesn't really do anything");
+        openMenu.add(menuItem);
+
+
     }
 
     @Action
@@ -107,8 +120,10 @@ public class SKDSSwingView extends FrameView implements IFui{
     private void initComponents() {
 
         mainPanel = new javax.swing.JPanel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
+        openMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
@@ -120,15 +135,19 @@ public class SKDSSwingView extends FrameView implements IFui{
 
         mainPanel.setName("mainPanel"); // NOI18N
 
+        jTabbedPane1.setName("jTabbedPane1"); // NOI18N
+
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 252, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
+                .addContainerGap(52, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         menuBar.setName("menuBar"); // NOI18N
@@ -136,6 +155,10 @@ public class SKDSSwingView extends FrameView implements IFui{
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(skdsswing.SKDSSwingApp.class).getContext().getResourceMap(SKDSSwingView.class);
         fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
         fileMenu.setName("fileMenu"); // NOI18N
+
+        openMenu.setText(resourceMap.getString("openMenu.text")); // NOI18N
+        openMenu.setName("openMenu"); // NOI18N
+        fileMenu.add(openMenu);
 
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(skdsswing.SKDSSwingApp.class).getContext().getActionMap(SKDSSwingView.class, this);
         exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
@@ -172,7 +195,7 @@ public class SKDSSwingView extends FrameView implements IFui{
             .addGroup(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusMessageLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 226, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 216, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel)
@@ -194,21 +217,20 @@ public class SKDSSwingView extends FrameView implements IFui{
         setMenuBar(menuBar);
         setStatusBar(statusPanel);
     }// </editor-fold>//GEN-END:initComponents
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenu openMenu;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
     // End of variables declaration//GEN-END:variables
-
     private final Timer messageTimer;
     private final Timer busyIconTimer;
     private final Icon idleIcon;
     private final Icon[] busyIcons = new Icon[15];
     private int busyIconIndex = 0;
-
     private JDialog aboutBox;
 }
