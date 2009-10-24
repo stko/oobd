@@ -6,8 +6,7 @@
             <name>SKDS-Swing</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <source-roots>
-                <root id="src.dir"/>
-                <root id="src.skds.dir"/>
+                <root id="src.dir" name="src"/>
             </source-roots>
             <test-roots>
                 <root id="test.src.dir"/>
