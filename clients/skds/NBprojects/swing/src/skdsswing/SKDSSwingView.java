@@ -20,7 +20,7 @@ import org.oobd.base.IFui;
 /**
  * The application's main frame.
  */
-public class SKDSSwingView extends FrameView implements IFui {
+public class SKDSSwingView extends FrameView implements ActionListener, IFui {
 
     public SKDSSwingView(SingleFrameApplication app) {
         super(app);
@@ -95,10 +95,20 @@ public class SKDSSwingView extends FrameView implements IFui {
         menuItem = new javax.swing.JMenuItem(visibleName);
         menuItem.getAccessibleContext().setAccessibleDescription(
                 "This doesn't really do anything");
+        menuItem.addActionListener(this);
+        menuItem.setActionCommand(id);
         openMenu.add(menuItem);
 
 
     }
+
+    @Action
+    public void actionPerformed(ActionEvent e) {
+        //...Get information from the action event...
+        //...Display it in the text area...
+        System.out.println("Attempt to create ScriptEngine "+e.getActionCommand());
+    }
+
 
     @Action
     public void showAboutBox() {
@@ -120,7 +130,13 @@ public class SKDSSwingView extends FrameView implements IFui {
     private void initComponents() {
 
         mainPanel = new javax.swing.JPanel();
+        mainToolBar = new javax.swing.JToolBar();
+        mainSplitPanel = new javax.swing.JSplitPane();
+        scriptEnginePanel = new javax.swing.JPanel();
+        scriptEngineToolbar = new javax.swing.JToolBar();
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        VisualizerPanel = new javax.swing.JPanel();
+        visualizerToolBar = new javax.swing.JToolBar();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         openMenu = new javax.swing.JMenu();
@@ -135,19 +151,68 @@ public class SKDSSwingView extends FrameView implements IFui {
 
         mainPanel.setName("mainPanel"); // NOI18N
 
+        mainToolBar.setRollover(true);
+        mainToolBar.setName("mainToolBar"); // NOI18N
+
+        mainSplitPanel.setName("mainSplitPanel"); // NOI18N
+
+        scriptEnginePanel.setName("scriptEnginePanel"); // NOI18N
+
+        scriptEngineToolbar.setRollover(true);
+        scriptEngineToolbar.setName("scriptEngineToolBar"); // NOI18N
+
         jTabbedPane1.setName("jTabbedPane1"); // NOI18N
+
+        javax.swing.GroupLayout scriptEnginePanelLayout = new javax.swing.GroupLayout(scriptEnginePanel);
+        scriptEnginePanel.setLayout(scriptEnginePanelLayout);
+        scriptEnginePanelLayout.setHorizontalGroup(
+            scriptEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(scriptEngineToolbar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 787, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 787, Short.MAX_VALUE)
+        );
+        scriptEnginePanelLayout.setVerticalGroup(
+            scriptEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(scriptEnginePanelLayout.createSequentialGroup()
+                .addComponent(scriptEngineToolbar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE))
+        );
+
+        mainSplitPanel.setRightComponent(scriptEnginePanel);
+
+        VisualizerPanel.setName("VisualizerPanel"); // NOI18N
+
+        visualizerToolBar.setRollover(true);
+        visualizerToolBar.setName("visualizerToolBar"); // NOI18N
+
+        javax.swing.GroupLayout VisualizerPanelLayout = new javax.swing.GroupLayout(VisualizerPanel);
+        VisualizerPanel.setLayout(VisualizerPanelLayout);
+        VisualizerPanelLayout.setHorizontalGroup(
+            VisualizerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(visualizerToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
+        );
+        VisualizerPanelLayout.setVerticalGroup(
+            VisualizerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(VisualizerPanelLayout.createSequentialGroup()
+                .addComponent(visualizerToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(452, Short.MAX_VALUE))
+        );
+
+        mainSplitPanel.setLeftComponent(VisualizerPanel);
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(mainToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 874, Short.MAX_VALUE)
+            .addComponent(mainSplitPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 874, Short.MAX_VALUE)
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainPanelLayout.createSequentialGroup()
-                .addContainerGap(52, Short.MAX_VALUE)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addComponent(mainToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(mainSplitPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE))
         );
 
         menuBar.setName("menuBar"); // NOI18N
@@ -191,11 +256,11 @@ public class SKDSSwingView extends FrameView implements IFui {
         statusPanel.setLayout(statusPanelLayout);
         statusPanelLayout.setHorizontalGroup(
             statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(statusPanelSeparator, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(statusPanelSeparator, javax.swing.GroupLayout.DEFAULT_SIZE, 874, Short.MAX_VALUE)
             .addGroup(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusMessageLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 216, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 690, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel)
@@ -218,14 +283,20 @@ public class SKDSSwingView extends FrameView implements IFui {
         setStatusBar(statusPanel);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel VisualizerPanel;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel mainPanel;
+    private javax.swing.JSplitPane mainSplitPanel;
+    private javax.swing.JToolBar mainToolBar;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu openMenu;
     private javax.swing.JProgressBar progressBar;
+    private javax.swing.JPanel scriptEnginePanel;
+    private javax.swing.JToolBar scriptEngineToolbar;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
+    private javax.swing.JToolBar visualizerToolBar;
     // End of variables declaration//GEN-END:variables
     private final Timer messageTimer;
     private final Timer busyIconTimer;
