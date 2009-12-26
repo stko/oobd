@@ -15,12 +15,17 @@ import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
+import org.oobd.base.Core;
 import org.oobd.base.IFui;
+
 
 /**
  * The application's main frame.
  */
 public class SKDSSwingView extends FrameView implements ActionListener, IFui {
+
+    Core oobdCore;
 
     public SKDSSwingView(SingleFrameApplication app) {
         super(app);
@@ -89,6 +94,10 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui {
         JOptionPane.showMessageDialog(null, msg);
     }
 
+    public void registerOobdCore(Core core) {
+        oobdCore = core;
+    }
+
     public void announceScriptengine(String id, String visibleName) {
         System.out.println("Interface announcement: Scriptengine-ID: " + id + " visibleName:" + visibleName);
         javax.swing.JMenuItem menuItem;
@@ -101,12 +110,24 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui {
 
 
     }
+    /**
+     * create ScriptEngine, when the user select the "Start.." menu item
+     * @todo the event needs to checked if it really comes from a "Start.." menu entry
+     * @todo tabs needs a "close" button as described on http://java.sun.com/docs/books/tutorial/uiswing/examples/components/index.html#TabComponentsDemo
+     *
+     */
 
     @Action
     public void actionPerformed(ActionEvent e) {
         //...Get information from the action event...
         //...Display it in the text area...
         System.out.println("Attempt to create ScriptEngine "+e.getActionCommand());
+        String seID= oobdCore.createScriptEngine(e.getActionCommand()); //first get the unique name for the new scriptEngine Canvas
+        JTabbedPane newjTabPane = new JTabbedPane(); //create a inner JTabbedPane as container for the later coming scriptengine pages
+        newjTabPane.setName(seID); // set the name of that canvas that it can be found again later
+        mainSeTabbedPane.addTab(seID, newjTabPane); // and put this canvas inside the pane which belongs to that particular scriptengine
+        // and now, after initalisation of the UI, let the games begin...
+        oobdCore.startScriptEngine(seID);
     }
 
 
@@ -134,7 +155,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui {
         mainSplitPanel = new javax.swing.JSplitPane();
         scriptEnginePanel = new javax.swing.JPanel();
         scriptEngineToolbar = new javax.swing.JToolBar();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        mainSeTabbedPane = new javax.swing.JTabbedPane();
         VisualizerPanel = new javax.swing.JPanel();
         visualizerToolBar = new javax.swing.JToolBar();
         menuBar = new javax.swing.JMenuBar();
@@ -161,21 +182,21 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui {
         scriptEngineToolbar.setRollover(true);
         scriptEngineToolbar.setName("scriptEngineToolBar"); // NOI18N
 
-        jTabbedPane1.setName("jTabbedPane1"); // NOI18N
+        mainSeTabbedPane.setName("mainSeTabbedPane"); // NOI18N
 
         javax.swing.GroupLayout scriptEnginePanelLayout = new javax.swing.GroupLayout(scriptEnginePanel);
         scriptEnginePanel.setLayout(scriptEnginePanelLayout);
         scriptEnginePanelLayout.setHorizontalGroup(
             scriptEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(scriptEngineToolbar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 787, Short.MAX_VALUE)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 787, Short.MAX_VALUE)
+            .addComponent(mainSeTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 787, Short.MAX_VALUE)
         );
         scriptEnginePanelLayout.setVerticalGroup(
             scriptEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(scriptEnginePanelLayout.createSequentialGroup()
                 .addComponent(scriptEngineToolbar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE))
+                .addComponent(mainSeTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE))
         );
 
         mainSplitPanel.setRightComponent(scriptEnginePanel);
@@ -284,8 +305,8 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui {
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel VisualizerPanel;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel mainPanel;
+    private javax.swing.JTabbedPane mainSeTabbedPane;
     private javax.swing.JSplitPane mainSplitPanel;
     private javax.swing.JToolBar mainToolBar;
     private javax.swing.JMenuBar menuBar;

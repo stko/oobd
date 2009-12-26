@@ -12,14 +12,14 @@ import org.oobd.base.Core;
  * The main class of the application.
  */
 public class SKDSSwingApp extends SingleFrameApplication {
-
+    Core oobdCore;
     /**
      * At startup create and show the main frame of the application.
      */
     @Override protected void startup() {
         SKDSSwingView thisUserInterface=new SKDSSwingView(this);
         show(thisUserInterface);
-         Core thiscore=new Core(thisUserInterface, new SwingSystem());
+         oobdCore=new Core(thisUserInterface, new SwingSystem());
    }
 
     /**

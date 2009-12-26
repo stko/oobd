@@ -14,11 +14,8 @@ public class SwingSystem implements IFsystem{
 
     Core core;
 
-   public void register(Core thisCore){
+   public void registerOobdCore(Core thisCore){
        core=thisCore;
        core.register("Moin vom System");
-   }
-   public void loadConnectors(){
-
    }
 }
