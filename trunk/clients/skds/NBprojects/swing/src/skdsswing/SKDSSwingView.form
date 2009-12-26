@@ -54,7 +54,7 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="scriptEngineToolbar" alignment="1" pref="787" max="32767" attributes="0"/>
-                      <Component id="jTabbedPane1" alignment="1" pref="787" max="32767" attributes="0"/>
+                      <Component id="mainSeTabbedPane" alignment="1" pref="787" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
@@ -62,7 +62,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="scriptEngineToolbar" min="-2" pref="25" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jTabbedPane1" pref="446" max="32767" attributes="0"/>
+                          <Component id="mainSeTabbedPane" pref="446" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -76,9 +76,9 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
                 </Container>
-                <Container class="javax.swing.JTabbedPane" name="jTabbedPane1">
+                <Container class="javax.swing.JTabbedPane" name="mainSeTabbedPane">
                   <Properties>
-                    <Property name="name" type="java.lang.String" value="jTabbedPane1" noResource="true"/>
+                    <Property name="name" type="java.lang.String" value="mainSeTabbedPane" noResource="true"/>
                   </Properties>
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
