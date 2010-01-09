@@ -4,27 +4,27 @@
  */
 package org.oobd.base.connector;
 
-import org.oobd.base.Core;
+import org.oobd.base.*;
 
 /**
  *
  * @author steffen
  */
-public class ConnectorLocal extends OobdConnector {
+public class ConnectorLocal extends OobdConnector implements Constants {
 
     public ConnectorLocal() {
-        System.out.println("Ich bin der ConnectorLocal...");
+        Debug.msg("connectorlocal",DEBUG_BORING,"Ich bin der ConnectorLocal...");
 
     }
 
     @Override
     public void registerCore(Core thisCore) {
         super.registerCore(thisCore);
-        System.out.println("Core registered...");
+        Debug.msg("connectorlocal",DEBUG_BORING,"Core registered...");
     }
 
     @Override
-    public String getPublicName() {
+    public String getScriptEngineName() {
         return "c:Local";
     }
 }

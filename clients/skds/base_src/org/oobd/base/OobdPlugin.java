@@ -16,5 +16,5 @@ public abstract class OobdPlugin {
     public void registerCore(Core thisCore){
         core=thisCore;
     }
-    abstract public String getPublicName();
+    abstract public String getScriptEngineName();
 }

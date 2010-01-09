@@ -4,23 +4,31 @@
  */
 package org.oobd.base.scriptengine;
 
+import org.oobd.base.*;
+
+
 /**
  *
  * @author steffen
  */
 public class ScriptengineLua extends OobdScriptengine {
 
-    public ScriptengineLua() {
-        System.out.println("Ich bin der ScriptengineLua...");
+    public ScriptengineLua(String ID, Core myCore) {
+        super(ID, myCore);
+        Debug.msg("scriptenginelua",DEBUG_BORING,"Ich bin der ScriptengineLua...");
 
     }
 
     @Override
-    public String getPublicName() {
+    public String getScriptEngineName() {
         return "se:Lua";
     }
 
     public static String publicName() {
-        return "se:Terminal";
+        return "Script";
+    }
+
+    public void start(){
+        
     }
 }
