@@ -4,27 +4,27 @@
  */
 package org.oobd.base.bus;
 
-import org.oobd.base.Core;
+import org.oobd.base.*;
 
 /**
  *
  * @author steffen
  */
-public class BusEcho extends OobdBus {
+public class BusEcho extends OobdBus implements Constants{
 
     public BusEcho() {
-        System.out.println("Ich bin BusEcho...");
+        Debug.msg("busecho",DEBUG_BORING,"Ich bin BusEcho...");
 
     }
 
     @Override
     public void registerCore(Core thisCore) {
         super.registerCore(thisCore);
-        System.out.println("Core registered...");
+        Debug.msg("busecho",DEBUG_BORING,"Core registered...");
     }
 
     @Override
-    public String getPublicName() {
+    public String getScriptEngineName() {
         return "b:Echo";
     }
 }

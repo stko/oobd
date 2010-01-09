@@ -20,7 +20,7 @@ import org.oobd.base.scriptengine.OobdScriptengine;
  * The interface for nearly all interaction between the generic oobd maschine and the different environments
  * @author steffen
  */
-public class Core {
+public class Core implements Constants {
 
     IFui userInterface;
     IFsystem systemInterface;
@@ -28,6 +28,7 @@ public class Core {
     HashMap<String, OobdConnector> connectors; //stores all available busses
     HashMap<String, OobdProtocol> protocols; //stores all available protocols
     HashMap<String, Class<?>> scriptengines; //stores all available scriptengines
+    HashMap<String, OobdScriptengine> activeEngines; //stores all active scriptengines
 
     public Core(IFui myUserInterface, IFsystem mySystemInterface) {
         userInterface = myUserInterface;
@@ -36,6 +37,8 @@ public class Core {
         connectors = new HashMap<String, OobdConnector>();
         protocols = new HashMap<String, OobdProtocol>();
         scriptengines = new HashMap<String, Class<?>>();
+        activeEngines = new HashMap<String, OobdScriptengine>();
+
         //userInterface.sm("Moin");
         Onion testOnion = Onion.generate(null);
         testOnion.setValue("test", "moin");
@@ -48,10 +51,10 @@ public class Core {
             testOnion2 = new Onion(testOnion.toString());
         } catch (org.json.JSONException e) {
         }
-        System.out.println(testOnion.toString());
-        System.out.println(testOnion2.toString());
-        systemInterface.register(this); //Anounce itself at the Systeminterface
-        systemInterface.loadConnectors();
+        Debug.msg("core",DEBUG_BORING,testOnion.toString());
+        Debug.msg("core",DEBUG_BORING,testOnion2.toString());
+        systemInterface.registerOobdCore(this); //Anounce itself at the Systeminterface
+        userInterface.registerOobdCore(this); //Anounce itself at the Userinterface
         // ----------- load Busses -------------------------------
         try {
             HashMap<String, Class<?>> classObjects = loadOobdClasses("/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/org/oobd/ui/swing/build/classes/org/oobd/base/bus", "org.oobd.base.bus.", Class.forName("org.oobd.base.bus.OobdBus"));
@@ -65,7 +68,7 @@ public class Core {
 
                 } catch (InstantiationException ex) {
                     // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
-                    System.out.println(ex.getMessage());
+                    Debug.msg("core",DEBUG_ERROR,ex.getMessage());
                 } catch (IllegalAccessException e) {
                 }
 
@@ -85,7 +88,7 @@ public class Core {
 
                 } catch (InstantiationException ex) {
                     // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
-                    System.out.println(ex.getMessage());
+                    Debug.msg("core",DEBUG_ERROR,ex.getMessage());
                 } catch (IllegalAccessException e) {
                 }
 
@@ -105,7 +108,7 @@ public class Core {
 
                 } catch (InstantiationException ex) {
                     // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
-                    System.out.println(ex.getMessage());
+                    Debug.msg("core",DEBUG_ERROR,ex.getMessage());
                 } catch (IllegalAccessException e) {
                 }
 
@@ -123,11 +126,11 @@ public class Core {
                 try {
                     Class[] parameterTypes = new Class[]{};
                     java.lang.reflect.Method method = value.getMethod("publicName", new Class[]{}); //no parameters
-                     Object instance = null;
+                    Object instance = null;
                     String result = (String) method.invoke(instance, new Object[]{}); // no parameters
-                   if (!result.isEmpty()){
-                       announceScriptEngine(element, result);
-                   }
+                    if (!result.isEmpty()) {
+                        announceScriptEngine(element, result);
+                    }
                 } catch (Exception e) {
                 }
             }
@@ -137,6 +140,49 @@ public class Core {
 
     public void register(String msg) {
         userInterface.sm(msg);
+    }
+
+    /**
+     * create ScriptEngine identified by its public Name. Returns a unique ID which is used from now on for all communication between the core and the UI
+     * @param id public name of scriptengine to be created
+     * @param classtype
+     * @return unique id of this class, made out of its public name and counter. Needed to link UI canvas to this object
+     *
+     */
+    public String createScriptEngine(String id) {
+        Debug.msg("core",DEBUG_INFO,"Core should create scriptengine: " + id);
+        Integer i = 1;
+        while (activeEngines.containsKey(id + "." + i.toString())) {
+            i++;
+        }
+        String seID = id + "." + i.toString();
+        OobdScriptengine o = null;
+        Class[] argsClass = new Class[2]; // first we set up an pseudo - args - array for the scriptengine- constructor
+        argsClass[0] = seID.getClass(); // and fill it with the info, that the argument for the constructor will be first a String
+        argsClass[1] = this.getClass(); // and fill it with the info, that the argument for the constructor will be first a String
+        Class classRef = scriptengines.get(id); // then we get the class of the wanted scriptengine
+        try {
+            Constructor con = classRef.getConstructor(argsClass); // and let Java find the correct constructor with one string as parameter
+            Object[] args = {seID, this}; //we will an args-array with our String parameter
+            o = (OobdScriptengine) con.newInstance(args); // and finally create the object from the scriptengine class with its unique id as parameter
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        activeEngines.put(seID, o);
+        return seID;
+    }
+
+    /**
+     * create ScriptEngine identified by its public Name. Returns a unique ID which is used from now on for all communication between the core and the UI
+     * @param id public name of scriptengine to be created
+     * @param classtype
+     * @return unique id of this class, made out of its public name and counter. Needed to link UI canvas to this object
+     *
+     */
+    public void startScriptEngine(String id) {
+        Debug.msg("core",DEBUG_BORING,"Start scriptengine: " + id);
+        OobdScriptengine o = activeEngines.get(id);
+        o.start();
     }
 
     /**
@@ -157,7 +203,6 @@ public class Core {
         // abgekuckt unter http://de.wikibooks.org/wiki/Java_Standard:_Class
         HashMap<String, Class<?>> myInstances = new HashMap<String, Class<?>>();
         File directory = new File(path);
-        System.out.println(directory.exists());
         if (directory.exists()) {
             File[] files = directory.listFiles();
             URL sourceURL = null;
@@ -165,7 +210,7 @@ public class Core {
                 // Den Pfad des Verzeichnisses auslesen
                 sourceURL = directory.toURI().toURL();
             } catch (java.net.MalformedURLException ex) {
-                System.out.println(ex.getMessage());
+                Debug.msg("core",DEBUG_WARNING,ex.getMessage());
             }
 // Einen URLClassLoader für das Verzeichnis instanzieren
 
@@ -192,7 +237,7 @@ public class Core {
 
                     } catch (ClassNotFoundException ex) {
                         // Wird geworfen, wenn die Klasse nicht gefunden wurde
-                        System.out.println(ex.getMessage());
+                        Debug.msg("core",DEBUG_ERROR,ex.getMessage());
                     }
 
                 }
@@ -209,6 +254,50 @@ public class Core {
      */
     void announceScriptEngine(String id, String visibleName) {
         userInterface.announceScriptengine(id, visibleName);
+    }
+
+    /**
+     * main entry point for all actions required by the different components. 
+     * Can be called either with a onion or with an json-String containing the onion data
+     * @param json string representing the onion data
+     */
+    public void actionRequest(String jsonString) {
+        try {
+               Debug.msg("core",DEBUG_BORING,"required Action:" +jsonString);
+             actionRequest(new Onion(jsonString));
+        } catch (org.json.JSONException e) {
+               Debug.msg("core",DEBUG_ERROR, "could not convert JSONstring \"" +jsonString+"\" into Onion");
+        }
+    }
+
+
+    /**
+     * main entry point for all actions required by the different components. 
+     * Can be called either with a onion or with an json-String containing the onion data
+     * @param json string representing the onion data
+     */
+    public void actionRequest(Onion myOnion) {
+        try {
+            Debug.msg("core",DEBUG_BORING,"type is:" +myOnion.getString("type"));
+            if (doCompare(myOnion.getString("type"), ACTION)) {
+                Debug.msg("Core",DEBUG_INFO,"action requested");
+            }
+
+        } catch (org.json.JSONException e) {
+        }
+    }
+
+
+    /**
+     * doCompare is just a developing help function to have a single point where all necessary if x equaly y tests
+     * are been made to change this maybe later against something which is quicker as a time consuming string comparison
+     * Can be called either with a onion or with an json-String containing the onion data
+     * @param String 1
+     * @param String 2
+     * @return true, if Strings are equal
+     */
+    boolean doCompare(String s1, String s2) {
+        return s1.matches(s2);
     }
 }
 

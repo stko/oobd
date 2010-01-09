@@ -19,6 +19,12 @@ public interface IFui {
     public void sm(String msg);
 
     /**
+     * register the core object to the UserInterface for calls of core methods
+     * @param Core the core object
+     */
+    public void registerOobdCore(Core  core);
+
+    /**
       * tells the UserInterface about the existence of a scriptengine, e.g. to add this to a selection menu
      * @param id the key of the scriptengines hash array where the loaded instances are been stored
      * @param visibleName

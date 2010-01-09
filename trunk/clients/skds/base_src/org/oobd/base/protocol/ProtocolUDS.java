@@ -4,26 +4,26 @@
  */
 package org.oobd.base.protocol;
 
-import org.oobd.base.Core;
+import org.oobd.base.*;
 
 /**
  *
  * @author steffen
  */
-public class ProtocolUDS extends OobdProtocol {
+public class ProtocolUDS extends OobdProtocol implements Constants{
 
     public ProtocolUDS() {
-        System.out.println("Ich bin der ProtocolUDS...");
+        Debug.msg("protocoluds",DEBUG_BORING,"Ich bin der ProtocolUDS...");
 
     }
 
     @Override
     public void registerCore(Core thisCore) {
         super.registerCore(thisCore);
-        System.out.println("Core registered...");
+        Debug.msg("protocoluds",DEBUG_BORING,"Core registered...");
     }
 
-    @Override public String getPublicName(){
+    @Override public String getScriptEngineName(){
         return "p:UDS";
     }
 }

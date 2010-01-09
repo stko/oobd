@@ -8,11 +8,10 @@ package org.oobd.base;
 import org.oobd.base.Core;
 
 /**
- * This interface defines the interface between the core and the enviroment for IOs and other system related stuff
+ * This interface defines the interface from the UI to the oobd core
  * @author steffen
  */
 public interface IFsystem {
 
-    public void register(Core core);
-    public void loadConnectors();
+    public void registerOobdCore(Core core);
 }

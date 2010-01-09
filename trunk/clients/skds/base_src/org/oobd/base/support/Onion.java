@@ -23,7 +23,7 @@ public class Onion extends JSONObject {
     //JSONObject content;
 
     /**
-     * Help class to ease internal data handling
+     * Help class to ease internal data handling, used as function return data including key and onion, to which this key belongs to
      */
     class OnionData {
 
