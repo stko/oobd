@@ -40,7 +40,7 @@ public class Core implements Constants {
         activeEngines = new HashMap<String, OobdScriptengine>();
 
         //userInterface.sm("Moin");
-        Onion testOnion = Onion.generate(null);
+        Onion testOnion = Onion.generate();
         testOnion.setValue("test", "moin");
         testOnion.setValue("test2", "moin2");
         testOnion.setValue("path/test3", "moin3");
@@ -55,9 +55,23 @@ public class Core implements Constants {
         Debug.msg("core",DEBUG_BORING,testOnion2.toString());
         systemInterface.registerOobdCore(this); //Anounce itself at the Systeminterface
         userInterface.registerOobdCore(this); //Anounce itself at the Userinterface
+
+
+             File dir1 = new File (".");
+     File dir2 = new File ("..");
+     try {
+       System.out.println ("Current dir : " + dir1.getCanonicalPath());
+       System.out.println ("Parent  dir : " + dir2.getCanonicalPath());
+       }
+     catch(Exception e) {
+       e.printStackTrace();
+       }
+
+
+
         // ----------- load Busses -------------------------------
         try {
-            HashMap<String, Class<?>> classObjects = loadOobdClasses("/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/org/oobd/ui/swing/build/classes/org/oobd/base/bus", "org.oobd.base.bus.", Class.forName("org.oobd.base.bus.OobdBus"));
+            HashMap<String, Class<?>> classObjects = loadOobdClasses("../../org/oobd/ui/swing/build/classes/org/oobd/base/bus", "org.oobd.base.bus.", Class.forName("org.oobd.base.bus.OobdBus"));
             for (Iterator iter = classObjects.keySet().iterator(); iter.hasNext();) {
                 String element = (String) iter.next();
                 Class<?> value = (Class<?>) classObjects.get(element);
@@ -77,7 +91,7 @@ public class Core implements Constants {
         }
         // ----------- load Connectors -------------------------------
         try {
-            HashMap<String, Class<?>> classObjects = loadOobdClasses("/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/org/oobd/ui/swing/build/classes/org/oobd/base/connector", "org.oobd.base.connector.", Class.forName("org.oobd.base.connector.OobdConnector"));
+            HashMap<String, Class<?>> classObjects = loadOobdClasses("../../org/oobd/ui/swing/build/classes/org/oobd/base/connector", "org.oobd.base.connector.", Class.forName("org.oobd.base.connector.OobdConnector"));
             for (Iterator iter = classObjects.keySet().iterator(); iter.hasNext();) {
                 String element = (String) iter.next();
                 Class<?> value = (Class<?>) classObjects.get(element);
@@ -97,7 +111,7 @@ public class Core implements Constants {
         }
         // ----------- load Protocols -------------------------------
         try {
-            HashMap<String, Class<?>> classObjects = loadOobdClasses("/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/org/oobd/ui/swing/build/classes/org/oobd/base/protocol", "org.oobd.base.protocol.", Class.forName("org.oobd.base.protocol.OobdProtocol"));
+            HashMap<String, Class<?>> classObjects = loadOobdClasses("../../org/oobd/ui/swing/build/classes/org/oobd/base/protocol", "org.oobd.base.protocol.", Class.forName("org.oobd.base.protocol.OobdProtocol"));
             for (Iterator iter = classObjects.keySet().iterator(); iter.hasNext();) {
                 String element = (String) iter.next();
                 Class<?> value = (Class<?>) classObjects.get(element);
@@ -117,7 +131,7 @@ public class Core implements Constants {
         }
         // ----------- load Scriptengines AS CLASSES, NOT AS INSTANCES!-------------------------------
         try {
-            scriptengines = loadOobdClasses("/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/org/oobd/ui/swing/build/classes/org/oobd/base/scriptengine", "org.oobd.base.scriptengine.", Class.forName("org.oobd.base.scriptengine.OobdScriptengine"));
+            scriptengines = loadOobdClasses("../../org/oobd/ui/swing/build/classes/org/oobd/base/scriptengine", "org.oobd.base.scriptengine.", Class.forName("org.oobd.base.scriptengine.OobdScriptengine"));
             for (Iterator iter = scriptengines.keySet().iterator(); iter.hasNext();) {
                 String element = (String) iter.next();
                 Class<?> value = scriptengines.get(element);
