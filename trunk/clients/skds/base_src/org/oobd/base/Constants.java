@@ -20,5 +20,5 @@ public interface Constants {
     public static final Integer DEBUG_WARNING = 2;
     public static final Integer DEBUG_ERROR = 3;
     public static final Integer DEBUG_FATAL = 4;
-    public static final Integer DEBUG_DEFAULTLEVEL = DEBUG_INFO;
+    public static final Integer DEBUG_DEFAULTLEVEL = DEBUG_BORING;
 }

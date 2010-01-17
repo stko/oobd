@@ -7,19 +7,19 @@ package org.oobd.base.support;
 
 import org.oobd.base.CoreException;
 
+
 /**
- *OnionNoEntryException is thrown when a requested object is not found in the onion
- *
+ * OnionNoEntryException is thrown when a requested object is not the requested type
  * @author steffen
  */
-public class OnionNoEntryException extends CoreException {
-  public OnionNoEntryException()
+public class OnionWrongTypeException extends CoreException{
+  public OnionWrongTypeException()
   {
 
   }
-  public OnionNoEntryException(String s)
+  public OnionWrongTypeException(String s)
   {
     super(s);
   }
-}
 
+}

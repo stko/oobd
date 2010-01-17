@@ -8,19 +8,14 @@ import org.json.JSONObject;
 import org.json.JSONException;
 
 /**
- * Onion provides the carrier of the different data arrays which have to be carried through the process
+ * Onion provides the transport medium of the different data arrays which have to be carried through the process
+ *
+ * It is made internally as a set of nested hash arrays, but from outside it's acessed by a key/value pair, where the key is simular
+ * to a folder path, where a folder may contains other folders, means other onions
  * @author steffen
  */
 //public class Onion extends Hashtable<String, Object> {
 public class Onion extends JSONObject {
-
-    /**
-     * parent: points to the parent onion
-     * content: contains the data of this actual level
-     */
-    Onion parent;
-    //Hashtable<String, Object> content;
-    //JSONObject content;
 
     /**
      * Help class to ease internal data handling, used as function return data including key and onion, to which this key belongs to
@@ -40,22 +35,21 @@ public class Onion extends JSONObject {
             key = thisKey;
         }
     }
+
     /**
-     * @bug parent is used in Onion, but not supplied by superclass JSONObject, so it either needs to be deleted or made functional
-     * @param parentOnion
+     * Default Constructor
      */
-    public Onion(Onion parentOnion) {
-        //content = new JSONObject();
-        parent = parentOnion;
+    public Onion() {
+        super();
     }
+
     /**
      * Constructor to generate Onion from JSON- String
      * @param jsonString
      * @throws JSONException
      */
-    public Onion (String jsonString) throws JSONException{
+    public Onion(String jsonString) throws JSONException {
         super(jsonString);
-        parent=null;
     }
 
     /**
@@ -64,8 +58,8 @@ public class Onion extends JSONObject {
      * @return a new onion
      * @todo does a onion- pool needs to be implemented?
      */
-    static public Onion generate(Onion parentOnion) {
-        return new Onion(parentOnion);
+    static public Onion generate() {
+        return new Onion();
     }
 
     /**
@@ -80,22 +74,24 @@ public class Onion extends JSONObject {
     }
 
     /**
-     * returns the onion at the given path
-     * @param path /path/to/onion
-     * @return onion or null
+     * returns the object at the given path
+     * @param path /path/to/object
+     * @return object or null
      * @todo not yet implemented
+     * @throws OnionNoEntryException
      */
-    public Onion getOnion(String path) {
+    public Onion getOnionObject(String path) throws OnionNoEntryException {
         return null;
     }
 
     /**
-     * returns the value at the given path
+     * returns the string value at the given path
      * @param path /path/to/value
-     * @return onion or
+     * @return string
      * @todo not yet implemented
+     * @throws OnionWrongTypeException
      */
-    public String getValue(String path) {
+    public String getOnionString(String path) {
         return null;
     }
 
@@ -107,7 +103,6 @@ public class Onion extends JSONObject {
      * @param value
      * @return onion which contains generated key:value
      */
-
     public Onion setValue(String path, String value) {
         OnionData od = createPath(path);
         if (od != null) {
@@ -133,36 +128,22 @@ public class Onion extends JSONObject {
             return new OnionData(this, path);
         }
         Onion actOnion = this;
-        String[] head = path.split("/", 2);
-        // does the path start with a leading /? Then move up to root onion
-        if (head[0].matches("")) {
-            while (actOnion.parent != null) {
-                actOnion = actOnion.parent;
-            }
-            head[0] = ".";
-        }
-        while (!head[0].matches("") && !head[1].matches("")) {//as long there's still a path and a key in the string
-            if (head[0].matches("..")) { // up one level?
-                if (actOnion.parent != null) {
-                    actOnion = actOnion.parent;
-                } else {
-                    return null; //there's no parent, so path is invalid...
-                }
-            } else {
-                if (head[0].matches(".")) { // actual level?
-                    // no action
-                } else {
-                    try {
-                        if (!actOnion.has(head[0]) || (actOnion.get(head[0]) instanceof String)) { //if there's not already a value for that key
-                            Onion newOnion = new Onion(actOnion);
-                            // DestroyOnionPath(actOnion.put(head[0], newOnion)); //adds the new element and destroy the previous one, if any
-                            actOnion.put(head[0], newOnion); //adds the new element
+        String lastpart = "";
+        String[] head = path.split("/", 2); // split the path into the leading part and the rest
+        while (!head[1].matches("") || !head[0].matches("")) {//as long there's still something in the path
+            if (!head[0].matches("")) { // no leading part? That must be a typo then, let's just jump to the next
+                lastpart = head[0];
+                try {
+                    if (!actOnion.has(lastpart) || !(actOnion.get(lastpart) instanceof Onion)) { //if that key does not exist or is just a base type
+                        if (!head[1].matches("")) {// do we have to create another sub onion?
+                            Onion newOnion = new Onion();
+                            actOnion.put(lastpart, newOnion); //adds the new element
                             actOnion = newOnion;
-                        }else{
-                            actOnion=(Onion)actOnion.get(head[0]);
                         }
-                    } catch (JSONException e) {
+                    } else {
+                        actOnion = (Onion) actOnion.get(lastpart);
                     }
+                } catch (JSONException e) {
                 }
             }
             if (head[1].contains("/")) {
@@ -172,8 +153,8 @@ public class Onion extends JSONObject {
                 head[1] = ""; // stop condition for surrounding while- loop
             }
         }
-        if (!head[0].matches("")) {
-            return new OnionData(actOnion, head[0]);
+        if (!lastpart.matches("")) {
+            return new OnionData(actOnion, lastpart);
         } else {
             return null; //there's no actual key value, so path is invalid...
         }
