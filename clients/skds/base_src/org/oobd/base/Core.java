@@ -4,6 +4,8 @@
  */
 package org.oobd.base;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.oobd.base.support.Onion;
 import java.lang.reflect.*;
 import java.io.File;
@@ -15,6 +17,7 @@ import org.oobd.base.bus.OobdBus;
 import org.oobd.base.connector.OobdConnector;
 import org.oobd.base.protocol.OobdProtocol;
 import org.oobd.base.scriptengine.OobdScriptengine;
+import org.oobd.base.support.OnionNoEntryException;
 
 /**
  * The interface for nearly all interaction between the generic oobd maschine and the different environments
@@ -46,26 +49,34 @@ public class Core implements Constants {
         testOnion.setValue("path/test3", "moin3");
         testOnion.setValue("path/test4", "moin4");
         testOnion.setValue("path/path2/test5", "moin5");
+
+        try {
+            Debug.msg("core", DEBUG_BORING, testOnion.getOnionObject("test").toString());
+            Debug.msg("core", DEBUG_BORING, testOnion.getOnionObject("test2").toString());
+            Debug.msg("core", DEBUG_BORING, testOnion.getOnionObject("path/test3").toString());
+            Debug.msg("core", DEBUG_BORING, testOnion.getOnionObject("path/path2/test5").toString());
+        } catch (OnionNoEntryException ex) {
+            Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
+        }
         Onion testOnion2 = null;
         try {
             testOnion2 = new Onion(testOnion.toString());
         } catch (org.json.JSONException e) {
         }
-        Debug.msg("core",DEBUG_BORING,testOnion.toString());
-        Debug.msg("core",DEBUG_BORING,testOnion2.toString());
+        Debug.msg("core", DEBUG_BORING, testOnion.toString());
+        Debug.msg("core", DEBUG_BORING, testOnion2.toString());
         systemInterface.registerOobdCore(this); //Anounce itself at the Systeminterface
         userInterface.registerOobdCore(this); //Anounce itself at the Userinterface
 
 
-             File dir1 = new File (".");
-     File dir2 = new File ("..");
-     try {
-       System.out.println ("Current dir : " + dir1.getCanonicalPath());
-       System.out.println ("Parent  dir : " + dir2.getCanonicalPath());
-       }
-     catch(Exception e) {
-       e.printStackTrace();
-       }
+        File dir1 = new File(".");
+        File dir2 = new File("..");
+        try {
+            System.out.println("Current dir : " + dir1.getCanonicalPath());
+            System.out.println("Parent  dir : " + dir2.getCanonicalPath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
 
@@ -82,7 +93,7 @@ public class Core implements Constants {
 
                 } catch (InstantiationException ex) {
                     // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
-                    Debug.msg("core",DEBUG_ERROR,ex.getMessage());
+                    Debug.msg("core", DEBUG_ERROR, ex.getMessage());
                 } catch (IllegalAccessException e) {
                 }
 
@@ -102,7 +113,7 @@ public class Core implements Constants {
 
                 } catch (InstantiationException ex) {
                     // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
-                    Debug.msg("core",DEBUG_ERROR,ex.getMessage());
+                    Debug.msg("core", DEBUG_ERROR, ex.getMessage());
                 } catch (IllegalAccessException e) {
                 }
 
@@ -122,7 +133,7 @@ public class Core implements Constants {
 
                 } catch (InstantiationException ex) {
                     // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
-                    Debug.msg("core",DEBUG_ERROR,ex.getMessage());
+                    Debug.msg("core", DEBUG_ERROR, ex.getMessage());
                 } catch (IllegalAccessException e) {
                 }
 
@@ -164,7 +175,7 @@ public class Core implements Constants {
      *
      */
     public String createScriptEngine(String id) {
-        Debug.msg("core",DEBUG_INFO,"Core should create scriptengine: " + id);
+        Debug.msg("core", DEBUG_INFO, "Core should create scriptengine: " + id);
         Integer i = 1;
         while (activeEngines.containsKey(id + "." + i.toString())) {
             i++;
@@ -194,7 +205,7 @@ public class Core implements Constants {
      *
      */
     public void startScriptEngine(String id) {
-        Debug.msg("core",DEBUG_BORING,"Start scriptengine: " + id);
+        Debug.msg("core", DEBUG_BORING, "Start scriptengine: " + id);
         OobdScriptengine o = activeEngines.get(id);
         o.start();
     }
@@ -224,7 +235,7 @@ public class Core implements Constants {
                 // Den Pfad des Verzeichnisses auslesen
                 sourceURL = directory.toURI().toURL();
             } catch (java.net.MalformedURLException ex) {
-                Debug.msg("core",DEBUG_WARNING,ex.getMessage());
+                Debug.msg("core", DEBUG_WARNING, ex.getMessage());
             }
 // Einen URLClassLoader für das Verzeichnis instanzieren
 
@@ -251,7 +262,7 @@ public class Core implements Constants {
 
                     } catch (ClassNotFoundException ex) {
                         // Wird geworfen, wenn die Klasse nicht gefunden wurde
-                        Debug.msg("core",DEBUG_ERROR,ex.getMessage());
+                        Debug.msg("core", DEBUG_ERROR, ex.getMessage());
                     }
 
                 }
@@ -277,13 +288,12 @@ public class Core implements Constants {
      */
     public void actionRequest(String jsonString) {
         try {
-               Debug.msg("core",DEBUG_BORING,"required Action:" +jsonString);
-             actionRequest(new Onion(jsonString));
+            Debug.msg("core", DEBUG_BORING, "required Action:" + jsonString);
+            actionRequest(new Onion(jsonString));
         } catch (org.json.JSONException e) {
-               Debug.msg("core",DEBUG_ERROR, "could not convert JSONstring \"" +jsonString+"\" into Onion");
+            Debug.msg("core", DEBUG_ERROR, "could not convert JSONstring \"" + jsonString + "\" into Onion");
         }
     }
-
 
     /**
      * main entry point for all actions required by the different components. 
@@ -292,15 +302,14 @@ public class Core implements Constants {
      */
     public void actionRequest(Onion myOnion) {
         try {
-            Debug.msg("core",DEBUG_BORING,"type is:" +myOnion.getString("type"));
+            Debug.msg("core", DEBUG_BORING, "type is:" + myOnion.getString("type"));
             if (doCompare(myOnion.getString("type"), ACTION)) {
-                Debug.msg("Core",DEBUG_INFO,"action requested");
+                Debug.msg("Core", DEBUG_INFO, "action requested");
             }
 
         } catch (org.json.JSONException e) {
         }
     }
-
 
     /**
      * doCompare is just a developing help function to have a single point where all necessary if x equaly y tests

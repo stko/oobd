@@ -80,8 +80,28 @@ public class Onion extends JSONObject {
      * @todo not yet implemented
      * @throws OnionNoEntryException
      */
-    public Onion getOnionObject(String path) throws OnionNoEntryException {
-        return null;
+    public Object getOnionObject(String path) throws OnionNoEntryException {
+        Onion actOnion = this;
+        String[] parts = path.split("/"); // split the path into the leading part and the rest
+        int i = 0;
+        while (i < parts.length - 1) { // the last entry in parts is the key for the last sub onion, so we have to handle that seperately in the end
+
+            try {
+                if (!actOnion.has(parts[i]) || !(actOnion.get(parts[i]) instanceof Onion)) { //if that key does not exist or is not a sub onion
+                    throw new OnionNoEntryException();
+                } else {
+                    actOnion = (Onion) actOnion.get(parts[i]);
+                }
+            } catch (JSONException e) {
+                throw new OnionNoEntryException();
+            }
+            i++;
+        }
+        try {
+            return actOnion.get(parts[i]);
+        } catch (JSONException e) {
+            throw new OnionNoEntryException();
+        }
     }
 
     /**
@@ -91,7 +111,8 @@ public class Onion extends JSONObject {
      * @todo not yet implemented
      * @throws OnionWrongTypeException
      */
-    public String getOnionString(String path) {
+    public String getOnionString(
+            String path) {
         return null;
     }
 
@@ -103,7 +124,8 @@ public class Onion extends JSONObject {
      * @param value
      * @return onion which contains generated key:value
      */
-    public Onion setValue(String path, String value) {
+    public Onion setValue(
+            String path, String value) {
         OnionData od = createPath(path);
         if (od != null) {
             try {
@@ -111,10 +133,12 @@ public class Onion extends JSONObject {
             } catch (JSONException e) {
                 return null;
             }
+
             return od.onion;
         } else {
             return null;
         }
+
     }
 
     /**
@@ -127,6 +151,7 @@ public class Onion extends JSONObject {
         if (!path.contains("/")) { // in case there no path at all, just a key value, return this
             return new OnionData(this, path);
         }
+
         Onion actOnion = this;
         String lastpart = "";
         String[] head = path.split("/", 2); // split the path into the leading part and the rest
@@ -138,11 +163,14 @@ public class Onion extends JSONObject {
                         if (!head[1].matches("")) {// do we have to create another sub onion?
                             Onion newOnion = new Onion();
                             actOnion.put(lastpart, newOnion); //adds the new element
-                            actOnion = newOnion;
+                            actOnion =
+                                    newOnion;
                         }
+
                     } else {
                         actOnion = (Onion) actOnion.get(lastpart);
                     }
+
                 } catch (JSONException e) {
                 }
             }
@@ -152,12 +180,14 @@ public class Onion extends JSONObject {
                 head[0] = head[1];
                 head[1] = ""; // stop condition for surrounding while- loop
             }
+
         }
         if (!lastpart.matches("")) {
             return new OnionData(actOnion, lastpart);
         } else {
             return null; //there's no actual key value, so path is invalid...
         }
+
     }
 
     /**
@@ -171,6 +201,7 @@ public class Onion extends JSONObject {
                 while (((Onion) value).keys().hasNext()) {
                     DestroyOnionPath(((Onion) value).keys().next());
                 }
+
                 this.push(((Onion) value));
                 // ((Onion) value).clear();
             }
