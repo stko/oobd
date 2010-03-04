@@ -79,13 +79,36 @@ namespace OpenDiagX
                 textBox.Text += "\r\nName:" + nav.Name.ToString();
                 textBox.Text += "\r\nNode Type: " + nav.NodeType.ToString()+"\r\n";
                 //textBox.Text += "\r\nNode Value: " + nav.Value.ToString();
-
+                
+                // Security Bytes
                 XPathNodeIterator iterator = nav.Select("/MDX/ECU_DATA/SECURITY_DATA/FIXED_BYTES/FIXED_BYTE");
                 while (iterator.MoveNext())
                 {
                     textBox.Text += (iterator.Current.Value.ToString().Substring(2,2));
                 }
+                //Module Address
+                textBox.Text += "\r\n" + getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS");
+                //Module Short Name
+                textBox.Text += "\r\n" + getpath(nav, "ADMINISTRATION/SHORTNAME");
+                //Module Name
+                textBox.Text += "\r\n" + getpath(nav, "ADMINISTRATION/ECU_NAME");
+                //SSDS Part Number
+                textBox.Text += "\r\n" + getpath(nav, "ADMINISTRATION/SSDS_INFORMATION/SSDS_PART_NUMBER");
 
+                // es fehlt: "PROTOCOL/APPLICATION_LAYER/SECURITY_LEVELS_SUPPORTED/SECURITY_LEVEL"
+                // es fehlt: "ECU_DATA/DATA_IDENTIFIERS/DID...."
+                // Security Bytes
+                iterator = nav.Select("/MDX/ECU_DATA/DATA_IDENTIFIERS/DID");
+                while (iterator.MoveNext())
+                {
+                    XPathNodeIterator iterator2 = iterator.Current.Select("SUB_FIELD");
+                    while (iterator2.MoveNext())
+                    {
+                        textBox.Text += (iterator2.Current.Value.ToString().Substring(2, 2));
+                    }
+                }
+ 
+            
             }
 
 
@@ -97,6 +120,12 @@ namespace OpenDiagX
             //textBox.Text += memrdr.ReadToEnd();
 
 
+        }
+        private String getpath(XPathNavigator nav, String path)
+        {
+            XPathNodeIterator iterator = (XPathNodeIterator)nav.Evaluate(path+"/text()");
+            iterator.MoveNext();
+            return iterator.Current.Value.ToString();
         }
 
         private void fileNameTextBox_TextChanged(object sender, EventArgs e)
