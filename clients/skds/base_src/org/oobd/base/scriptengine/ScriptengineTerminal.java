@@ -13,7 +13,7 @@ import org.oobd.base.*;
  * generic abstract for the implementation of protocols
  * @author steffen
  */
-public class ScriptengineTerminal extends OobdScriptengine implements Constants {
+public class ScriptengineTerminal extends OobdScriptengine implements OOBDConstants {
 
     public ScriptengineTerminal(String ID, Core myCore) {
         super(ID, myCore);
@@ -32,8 +32,10 @@ public class ScriptengineTerminal extends OobdScriptengine implements Constants 
 
     public void start(){
         Debug.msg("scriptengineterminal",DEBUG_BORING,"positiver Actiontest...");
-        core.actionRequest("{\"type\":\"action\"}");
+        core.actionRequest("{\"type\":\""+CM_VISUALIZE+"\"}");
         Debug.msg("scriptengineterminal",DEBUG_BORING,"negativer Actiontest...");
         core.actionRequest("{\"type\":\"noaction\"}");
+        core.actionRequest("{\"type\":\""+CM_CANVAS+"\",\"owner\":\""+this.id+"\",\"name\":\""+"Canvastest"+"\"}");
+        core.actionRequest("{\"type\":\""+CM_CANVAS+"\",\"owner\":\""+this.id+"\",\"name\":\""+"Canvastest_2"+"\"}");
     }
 }

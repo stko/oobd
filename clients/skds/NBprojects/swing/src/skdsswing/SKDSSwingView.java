@@ -8,6 +8,8 @@ import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
 import org.jdesktop.application.FrameView;
 import org.jdesktop.application.TaskMonitor;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
@@ -15,15 +17,16 @@ import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JButton;
 import javax.swing.JTabbedPane;
 import org.oobd.base.Core;
 import org.oobd.base.IFui;
 
-
 /**
  * The application's main frame.
  */
-public class SKDSSwingView extends FrameView implements ActionListener, IFui {
+public class SKDSSwingView extends FrameView implements ActionListener, IFui, org.oobd.base.OOBDConstants {
 
     Core oobdCore;
 
@@ -110,26 +113,75 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui {
 
 
     }
+
+    /**
+     * Returns the class (not the instance!) to visulize the requested visualizer type
+     * @param visualizerType
+     * @param theme optional to request a design different from standard
+     * @return
+     */
+    public Class getVisualizerClass(String visualizerType, String theme) {
+        return SwingVizTable.class;
+
+    }
+
+    public void addCanvas(String seID, String name) {
+        delCanvas(seID, name);
+        JTabbedPane basejTabPane = (JTabbedPane) oobdCore.getAssign(seID, org.oobd.base.OOBDConstants.CL_PANE);
+
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setName(name);
+        //JTabbedPane pane = new JTabbedPane();
+        //pane.add(panel);
+        basejTabPane.add(panel);
+        GridBagConstraints c = new GridBagConstraints();
+
+        /**
+         * For each component to be added to this container:
+         * ...Create the component...
+         * ...Set instance variables in the GridBagConstraints instance...
+         */
+        JButton button = new JButton("Button 1");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        panel.add(button, c);
+
+        button = new JButton("Button 2");
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 1;
+        panel.add(button, c);
+    }
+
+    public void delCanvas(String seID, String Name) {
+        if (oobdCore.getAssign(seID, org.oobd.base.OOBDConstants.CL_PANE + ":" + Name) != null) {
+            // delete the canvas..
+            //delCanvas(seID, Name)
+        }
+
+    }
+
     /**
      * create ScriptEngine, when the user select the "Start.." menu item
      * @todo the event needs to checked if it really comes from a "Start.." menu entry
      * @todo tabs needs a "close" button as described on http://java.sun.com/docs/books/tutorial/uiswing/examples/components/index.html#TabComponentsDemo
      *
      */
-
     @Action
     public void actionPerformed(ActionEvent e) {
         //...Get information from the action event...
         //...Display it in the text area...
-        System.out.println("Attempt to create ScriptEngine "+e.getActionCommand());
-        String seID= oobdCore.createScriptEngine(e.getActionCommand()); //first get the unique name for the new scriptEngine Canvas
+        System.out.println("Attempt to create ScriptEngine " + e.getActionCommand());
+        String seID = oobdCore.createScriptEngine(e.getActionCommand()); //first get the unique name for the new scriptEngine Canvas
         JTabbedPane newjTabPane = new JTabbedPane(); //create a inner JTabbedPane as container for the later coming scriptengine pages
         newjTabPane.setName(seID); // set the name of that canvas that it can be found again later
         mainSeTabbedPane.addTab(seID, newjTabPane); // and put this canvas inside the pane which belongs to that particular scriptengine
         // and now, after initalisation of the UI, let the games begin...
+        oobdCore.setAssign(seID, org.oobd.base.OOBDConstants.CL_PANE, newjTabPane); //store the related drawing pane, the TabPane for that scriptengine
         oobdCore.startScriptEngine(seID);
     }
-
 
     @Action
     public void showAboutBox() {

@@ -10,7 +10,7 @@ import org.oobd.base.*;
  *
  * @author steffen
  */
-public class BusEcho extends OobdBus implements Constants{
+public class BusEcho extends OobdBus implements OOBDConstants{
 
     public BusEcho() {
         Debug.msg("busecho",DEBUG_BORING,"Ich bin BusEcho...");
