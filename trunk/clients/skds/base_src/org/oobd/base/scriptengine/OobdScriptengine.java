@@ -10,7 +10,7 @@ import org.oobd.base.*;
  * generic abstract for the implementation of scriptengines
  * @author steffen
  */
-abstract public class OobdScriptengine extends OobdPlugin implements Constants {
+abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstants {
 
     String id;
     Core core;

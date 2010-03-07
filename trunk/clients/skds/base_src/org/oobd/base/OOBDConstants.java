@@ -8,11 +8,15 @@ package org.oobd.base;
  *
  * @author steffen
  */
-public interface Constants {
-    public static final String ACTION = "action";
+public interface OOBDConstants {
+    // Type of the different onion  messages, which are send through the system (the so called Core- messages)
+    public static final String CM_VISUALIZE = "VISUALIZE";
+    public static final String CM_CANVAS = "CANVAS";
 
 
-
+    // IDs used for internal core list handling
+    public static final String CL_PANE = "pane";
+    public static final String CL_CANVAS = "canvas";
 
     // constants for the debug message handling
     public static final Integer DEBUG_BORING = 0;

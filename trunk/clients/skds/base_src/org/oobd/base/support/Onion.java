@@ -4,6 +4,8 @@
  */
 package org.oobd.base.support;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.json.JSONObject;
 import org.json.JSONException;
 
@@ -111,9 +113,31 @@ public class Onion extends JSONObject {
      * @todo not yet implemented
      * @throws OnionWrongTypeException
      */
-    public String getOnionString(
-            String path) {
+    public String getOnionString(String path) {
+        try{
+            Object result=getOnionObject(path);
+            if (!(result instanceof String)){
+                return null;
+            }
+            return (String) result;
+        }
+        catch (OnionNoEntryException e){
         return null;
+    }
+    }
+
+    /**
+     * checks, if the onion has the specified type "type"
+     * @param type name of requested type
+     * @return boolean
+     */
+    public boolean isType(
+            String type) {
+        try {
+            return type.matches(this.getString("type"));
+        } catch (JSONException ex) {
+            return false;
+        }
     }
 
     /**

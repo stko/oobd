@@ -9,7 +9,7 @@ import java.util.HashMap;
  *
  * @author steffen
  */
-public class Debug implements Constants {
+public class Debug implements OOBDConstants {
 
     public static HashMap<String, Integer> debugLevels;
 

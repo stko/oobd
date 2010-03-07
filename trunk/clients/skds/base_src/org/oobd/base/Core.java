@@ -23,7 +23,7 @@ import org.oobd.base.support.OnionNoEntryException;
  * The interface for nearly all interaction between the generic oobd maschine and the different environments
  * @author steffen
  */
-public class Core implements Constants {
+public class Core implements OOBDConstants {
 
     IFui userInterface;
     IFsystem systemInterface;
@@ -32,6 +32,7 @@ public class Core implements Constants {
     HashMap<String, OobdProtocol> protocols; //stores all available protocols
     HashMap<String, Class<?>> scriptengines; //stores all available scriptengines
     HashMap<String, OobdScriptengine> activeEngines; //stores all active scriptengines
+    HashMap<String, Object> assignments; //stores all active assignments
 
     public Core(IFui myUserInterface, IFsystem mySystemInterface) {
         userInterface = myUserInterface;
@@ -41,6 +42,7 @@ public class Core implements Constants {
         protocols = new HashMap<String, OobdProtocol>();
         scriptengines = new HashMap<String, Class<?>>();
         activeEngines = new HashMap<String, OobdScriptengine>();
+        assignments = new HashMap<String, Object>();
 
         //userInterface.sm("Moin");
         Onion testOnion = Onion.generate();
@@ -303,8 +305,15 @@ public class Core implements Constants {
     public void actionRequest(Onion myOnion) {
         try {
             Debug.msg("core", DEBUG_BORING, "type is:" + myOnion.getString("type"));
-            if (doCompare(myOnion.getString("type"), ACTION)) {
-                Debug.msg("Core", DEBUG_INFO, "action requested");
+            if (myOnion.isType(CM_VISUALIZE)) {
+                Debug.msg("Core", DEBUG_INFO, "visualitation requested");
+                //userInterface.visualize();
+            }
+            if (myOnion.isType(CM_CANVAS)) {
+                Debug.msg("Core", DEBUG_INFO, "Canvas requested");
+                String dummy=myOnion.getOnionString("owner");
+                
+                userInterface.addCanvas(myOnion.getOnionString("owner"), myOnion.getOnionString("name"));
             }
 
         } catch (org.json.JSONException e) {
@@ -312,15 +321,29 @@ public class Core implements Constants {
     }
 
     /**
-     * doCompare is just a developing help function to have a single point where all necessary if x equaly y tests
-     * are been made to change this maybe later against something which is quicker as a time consuming string comparison
+     * generic hashtable to store several relational data assignments during runtine
      * Can be called either with a onion or with an json-String containing the onion data
-     * @param String 1
-     * @param String 2
-     * @return true, if Strings are equal
+     * @param id string identifier
+     * @param subclass string sub identifier
+     * @param data object reference to store
      */
-    boolean doCompare(String s1, String s2) {
-        return s1.matches(s2);
+    public void setAssign(String id, String subclass, Object data) {
+        assignments.put(id+":"+subclass, data);
+    }
+    /**
+     * get entry from assigment
+     * @param id string identifier
+     * @param subclass string sub identifier
+      */
+    public Object getAssign(String id, String subclass) {
+        return assignments.get(id+":"+subclass);
+    }
+    /**
+     * remove entry from assignment table
+     * @param id string identifier
+     * @param subclass string sub identifier
+     */
+    public void removeAssign(String id, String subclass) {
+        assignments.remove(id+":"+subclass);
     }
 }
-

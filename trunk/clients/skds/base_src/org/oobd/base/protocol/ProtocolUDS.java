@@ -10,7 +10,7 @@ import org.oobd.base.*;
  *
  * @author steffen
  */
-public class ProtocolUDS extends OobdProtocol implements Constants{
+public class ProtocolUDS extends OobdProtocol implements OOBDConstants{
 
     public ProtocolUDS() {
         Debug.msg("protocoluds",DEBUG_BORING,"Ich bin der ProtocolUDS...");

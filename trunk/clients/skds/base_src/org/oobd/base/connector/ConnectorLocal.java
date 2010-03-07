@@ -10,7 +10,7 @@ import org.oobd.base.*;
  *
  * @author steffen
  */
-public class ConnectorLocal extends OobdConnector implements Constants {
+public class ConnectorLocal extends OobdConnector implements OOBDConstants {
 
     public ConnectorLocal() {
         Debug.msg("connectorlocal",DEBUG_BORING,"Ich bin der ConnectorLocal...");
