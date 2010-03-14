@@ -32,10 +32,23 @@ public class ScriptengineTerminal extends OobdScriptengine implements OOBDConsta
 
     public void start(){
         Debug.msg("scriptengineterminal",DEBUG_BORING,"positiver Actiontest...");
-        core.actionRequest("{\"type\":\""+CM_VISUALIZE+"\"}");
         Debug.msg("scriptengineterminal",DEBUG_BORING,"negativer Actiontest...");
         core.actionRequest("{\"type\":\"noaction\"}");
-        core.actionRequest("{\"type\":\""+CM_CANVAS+"\",\"owner\":\""+this.id+"\",\"name\":\""+"Canvastest"+"\"}");
-        core.actionRequest("{\"type\":\""+CM_CANVAS+"\",\"owner\":\""+this.id+"\",\"name\":\""+"Canvastest_2"+"\"}");
+        core.actionRequest(""+
+                "{'type':'"+CM_CANVAS+"'," +
+                "'owner':'"+this.id+"'," +
+                "'name':'Canvastest_1'}"
+                );
+        core.actionRequest(""+
+                "{'type':'"+CM_CANVAS+"'," +
+                "'owner':'"+this.id+"'," +
+                "'name':'Canvastest_2'}"
+                );
+        core.actionRequest(""+
+                "{'type':'"+CM_VISUALIZE+"'," +
+                "'owner':'"+this.id+"'," +
+                "'canvas':'Canvastest_1'," +
+                "'name':'table_1'}"
+                );
     }
 }

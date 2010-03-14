@@ -8,7 +8,9 @@ import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
 import org.jdesktop.application.FrameView;
 import org.jdesktop.application.TaskMonitor;
+import java.lang.reflect.*;
 import java.awt.GridBagLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,8 +22,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JTabbedPane;
+import javax.swing.JComponent;
 import org.oobd.base.Core;
 import org.oobd.base.IFui;
+import org.oobd.base.support.Onion;
+import org.oobd.base.visualizer.*;
 
 /**
  * The application's main frame.
@@ -125,6 +130,37 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
 
     }
 
+    public void visualize(Onion myOnion) {
+        Visualizer ne = new Visualizer(myOnion);
+        JComponent o;
+        Class<IFvisualizer> visualizerClass = getVisualizerClass(myOnion.getOnionString("type"), myOnion.getOnionString("theme"));
+        Class[] argsClass = new Class[1]; // first we set up an pseudo - args - array for the scriptengine- constructor
+        argsClass[0] = myOnion.getOnionString("name").getClass(); // and fill it with the info, that the argument for the constructor will be first a String
+        try {
+            Method meth = visualizerClass.getMethod("getInstance", argsClass); // and let Java find the correct constructor with one string as parameter
+            Object[] args = {myOnion.getOnionString("owner")+":"+myOnion.getOnionString("name")}; //we will an args-array with our String parameter
+            o = (JComponent) meth.invoke(null, args); // and finally create the object from the scriptengine class with its unique id as parameter
+            ne.setOwner((IFvisualizer) o);
+             o.setSize(100,100);
+
+            if (((IFvisualizer) o).isGroup()) {
+                GridBagConstraints c = new GridBagConstraints();
+                JPanel panel = (JPanel) oobdCore.getAssign(
+                        myOnion.getOnionString("owner"),
+                        org.oobd.base.OOBDConstants.CL_PANE + ":" + myOnion.getOnionString("canvas"));
+                c.fill = GridBagConstraints.BOTH;
+                c.gridx = 0;
+                c.gridy = 0;
+                panel.add(o, c);
+            }
+            ((IFvisualizer) o).initValue(ne, myOnion);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public void addCanvas(String seID, String name) {
         delCanvas(seID, name);
         JTabbedPane basejTabPane = (JTabbedPane) oobdCore.getAssign(seID, org.oobd.base.OOBDConstants.CL_PANE);
@@ -134,6 +170,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         //JTabbedPane pane = new JTabbedPane();
         //pane.add(panel);
         basejTabPane.add(panel);
+        oobdCore.setAssign(seID, org.oobd.base.OOBDConstants.CL_PANE + ":" + name, panel);
         GridBagConstraints c = new GridBagConstraints();
 
         /**
@@ -141,22 +178,21 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
          * ...Create the component...
          * ...Set instance variables in the GridBagConstraints instance...
          */
-        JButton button = new JButton("Button 1");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 0;
-        panel.add(button, c);
-
-        button = new JButton("Button 2");
-
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 1;
-        panel.add(button, c);
+//        JButton button = new JButton("Button 1");
+//        c.fill = GridBagConstraints.HORIZONTAL;
+//        c.gridx = 0;
+//        c.gridy = 0;
+//        panel.add(button, c);
+//        button = new JButton("Button 2");
+//
+//        c.fill = GridBagConstraints.HORIZONTAL;
+//        c.gridx = 0;
+//        c.gridy = 1;
+//        panel.add(button, c);
     }
 
-    public void delCanvas(String seID, String Name) {
-        if (oobdCore.getAssign(seID, org.oobd.base.OOBDConstants.CL_PANE + ":" + Name) != null) {
+    public void delCanvas(String seID, String name) {
+        if (oobdCore.getAssign(seID, org.oobd.base.OOBDConstants.CL_PANE + ":" + name) != null) {
             // delete the canvas..
             //delCanvas(seID, Name)
         }

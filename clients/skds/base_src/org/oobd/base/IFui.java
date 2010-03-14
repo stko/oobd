@@ -4,6 +4,8 @@
  */
 package org.oobd.base;
 
+import org.oobd.base.support.Onion;
+
 /**
  * Interface to allow the oobd core to talk to the graphical interface
  * @author steffen
@@ -39,6 +41,13 @@ public interface IFui  {
      */
     public Class getVisualizerClass(String visualizerType, String theme);
 
+
+    /**
+     * this method is UI- depending and places a visualizer onto an canvas
+     *
+     * @param myOnion
+     */
+                public void visualize(Onion myOnion);
 
     /**
      * Adds a new canvas to the pane of the given ScriptEngine
