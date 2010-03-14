@@ -12,12 +12,14 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
 import org.oobd.base.bus.OobdBus;
 import org.oobd.base.connector.OobdConnector;
 import org.oobd.base.protocol.OobdProtocol;
 import org.oobd.base.scriptengine.OobdScriptengine;
 import org.oobd.base.support.OnionNoEntryException;
+import org.oobd.base.visualizer.Visualizer;
 
 /**
  * The interface for nearly all interaction between the generic oobd maschine and the different environments
@@ -33,8 +35,11 @@ public class Core implements OOBDConstants {
     HashMap<String, Class<?>> scriptengines; //stores all available scriptengines
     HashMap<String, OobdScriptengine> activeEngines; //stores all active scriptengines
     HashMap<String, Object> assignments; //stores all active assignments
+    HashMap<String, ArrayList<Visualizer>> visualizers;
+    static Core thisInstance; //Class variable points to only instance
 
     public Core(IFui myUserInterface, IFsystem mySystemInterface) {
+        thisInstance=this;
         userInterface = myUserInterface;
         systemInterface = mySystemInterface;
         busses = new HashMap<String, OobdBus>();
@@ -43,6 +48,7 @@ public class Core implements OOBDConstants {
         scriptengines = new HashMap<String, Class<?>>();
         activeEngines = new HashMap<String, OobdScriptengine>();
         assignments = new HashMap<String, Object>();
+        visualizers = new HashMap<String, ArrayList<Visualizer>>();
 
         //userInterface.sm("Moin");
         Onion testOnion = Onion.generate();
@@ -165,9 +171,33 @@ public class Core implements OOBDConstants {
         }
     }
 
+    /**
+     * a help routine returns actual Instance of Core class
+     * @return Core
+     */
+    public static Core getSingleInstance(){
+        return thisInstance;
+    }
+
+
     public void register(String msg) {
         userInterface.sm(msg);
     }
+
+    /**
+     * add generated visualizers to global list
+     */
+
+    public void addVisualizer(String owner, Visualizer vis){
+        if (visualizers.containsKey(owner)){
+
+        }else{
+            ArrayList ar=new ArrayList();
+            ar.add(vis);
+            visualizers.put(owner, ar);
+        }
+    }
+
 
     /**
      * create ScriptEngine identified by its public Name. Returns a unique ID which is used from now on for all communication between the core and the UI
@@ -291,7 +321,7 @@ public class Core implements OOBDConstants {
     public void actionRequest(String jsonString) {
         try {
             Debug.msg("core", DEBUG_BORING, "required Action:" + jsonString);
-            actionRequest(new Onion(jsonString));
+            actionRequest(new Onion(jsonString.replace('\'', '"')));
         } catch (org.json.JSONException e) {
             Debug.msg("core", DEBUG_ERROR, "could not convert JSONstring \"" + jsonString + "\" into Onion");
         }
@@ -307,12 +337,12 @@ public class Core implements OOBDConstants {
             Debug.msg("core", DEBUG_BORING, "type is:" + myOnion.getString("type"));
             if (myOnion.isType(CM_VISUALIZE)) {
                 Debug.msg("Core", DEBUG_INFO, "visualitation requested");
-                //userInterface.visualize();
+                userInterface.visualize(myOnion);
             }
             if (myOnion.isType(CM_CANVAS)) {
                 Debug.msg("Core", DEBUG_INFO, "Canvas requested");
-                String dummy=myOnion.getOnionString("owner");
-                
+                String dummy = myOnion.getOnionString("owner");
+
                 userInterface.addCanvas(myOnion.getOnionString("owner"), myOnion.getOnionString("name"));
             }
 
@@ -328,22 +358,24 @@ public class Core implements OOBDConstants {
      * @param data object reference to store
      */
     public void setAssign(String id, String subclass, Object data) {
-        assignments.put(id+":"+subclass, data);
+        assignments.put(id + ":" + subclass, data);
     }
+
     /**
      * get entry from assigment
      * @param id string identifier
      * @param subclass string sub identifier
-      */
+     */
     public Object getAssign(String id, String subclass) {
-        return assignments.get(id+":"+subclass);
+        return assignments.get(id + ":" + subclass);
     }
+
     /**
      * remove entry from assignment table
      * @param id string identifier
      * @param subclass string sub identifier
      */
     public void removeAssign(String id, String subclass) {
-        assignments.remove(id+":"+subclass);
+        assignments.remove(id + ":" + subclass);
     }
 }
