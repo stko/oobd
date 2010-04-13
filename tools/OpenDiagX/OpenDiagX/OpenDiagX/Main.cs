@@ -65,19 +65,19 @@ namespace OpenDiagX
             //Move to root node
             nav.MoveToRoot();
             string name = nav.Name;
-            textBox.Text+= "\r\nRoot node info: ";
-            textBox.Text += "\r\nBase URI" + nav.BaseURI.ToString();
-            textBox.Text += "\r\nName:" + nav.Name.ToString();
-            textBox.Text += "\r\nNode Type: " + nav.NodeType.ToString();
+            textBox.Text+= "Root node info:\r\n ";
+            textBox.Text += "Base URI" + nav.BaseURI.ToString()+"\r\n";
+            textBox.Text += "Name:" + nav.Name.ToString() + "\r\n";
+            textBox.Text += "Node Type: " + nav.NodeType.ToString() + "\r\n";
             //textBox.Text += "\r\nNode Value: " + nav.Value.ToString();
 
             if (nav.HasChildren)
             {
                 nav.MoveToFirstChild();
-                textBox.Text += "\r\nChild node info: ";
-                textBox.Text += "\r\nBase URI" + nav.BaseURI.ToString();
-                textBox.Text += "\r\nName:" + nav.Name.ToString();
-                textBox.Text += "\r\nNode Type: " + nav.NodeType.ToString()+"\r\n";
+                textBox.Text += "Child node info: " + "\r\n";
+                textBox.Text += "Base URI" + nav.BaseURI.ToString() + "\r\n";
+                textBox.Text += "Name:" + nav.Name.ToString() + "\r\n";
+                textBox.Text += "Node Type: " + nav.NodeType.ToString()+"\r\n";
                 //textBox.Text += "\r\nNode Value: " + nav.Value.ToString();
                 
                 // Security Bytes
@@ -87,13 +87,13 @@ namespace OpenDiagX
                     textBox.Text += (iterator.Current.Value.ToString().Substring(2,2));
                 }
                 //Module Address
-                textBox.Text += "\r\n" + getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS");
+                textBox.Text += getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS") + "\r\n";
                 //Module Short Name
-                textBox.Text += "\r\n" + getpath(nav, "ADMINISTRATION/SHORTNAME");
+                textBox.Text += getpath(nav, "ADMINISTRATION/SHORTNAME") + "\r\n";
                 //Module Name
-                textBox.Text += "\r\n" + getpath(nav, "ADMINISTRATION/ECU_NAME");
+                textBox.Text += getpath(nav, "ADMINISTRATION/ECU_NAME") + "\r\n";
                 //SSDS Part Number
-                textBox.Text += "\r\n" + getpath(nav, "ADMINISTRATION/SSDS_INFORMATION/SSDS_PART_NUMBER");
+                textBox.Text += getpath(nav, "ADMINISTRATION/SSDS_INFORMATION/SSDS_PART_NUMBER") + "\r\n";
 
                 // es fehlt: "PROTOCOL/APPLICATION_LAYER/SECURITY_LEVELS_SUPPORTED/SECURITY_LEVEL"
                 // es fehlt: "ECU_DATA/DATA_IDENTIFIERS/DID...."
@@ -101,10 +101,14 @@ namespace OpenDiagX
                 iterator = nav.Select("/MDX/ECU_DATA/DATA_IDENTIFIERS/DID");
                 while (iterator.MoveNext())
                 {
+                    textBox.Text += "Name:" + getpath(iterator.Current, "NAME") + "\r\n";
+                    textBox.Text += "Description:" + getpath(iterator.Current, "DESCRIPTION") + "\r\n";
+                    textBox.Text += "HiPID:" + getpath(iterator.Current, "NUMBER").Substring(2, 2) + "\r\n";
+                    textBox.Text += "LoPID:" + getpath(iterator.Current, "NUMBER").Substring(4, 2) + "\r\n";
                     XPathNodeIterator iterator2 = iterator.Current.Select("SUB_FIELD");
                     while (iterator2.MoveNext())
                     {
-                        textBox.Text += (iterator2.Current.Value.ToString().Substring(2, 2));
+                        //textBox.Text +=  iterator2.Current.Value.ToString() + "\r\n";
                     }
                 }
  
