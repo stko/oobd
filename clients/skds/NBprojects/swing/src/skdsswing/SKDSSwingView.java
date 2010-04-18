@@ -20,7 +20,7 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JComponent;
 import org.oobd.base.Core;
@@ -131,34 +131,37 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
     }
 
     public void visualize(Onion myOnion) {
-        Visualizer ne = new Visualizer(myOnion);
-        JComponent o;
+        Visualizer newVisualizer = new Visualizer(myOnion);
+        JComponent newJComponent;
         Class<IFvisualizer> visualizerClass = getVisualizerClass(myOnion.getOnionString("type"), myOnion.getOnionString("theme"));
-        Class[] argsClass = new Class[1]; // first we set up an pseudo - args - array for the scriptengine- constructor
-        argsClass[0] = myOnion.getOnionString("name").getClass(); // and fill it with the info, that the argument for the constructor will be first a String
+        Class[] argsClass = new Class[2]; // first we set up an pseudo - args - array for the scriptengine- constructor
+        argsClass[0] = String.class; // and fill it with the info, that the argument for the constructor will be first a String
+        argsClass[1] = String.class;
+        ; // and fill it with the info, that the argument for the constructor will be first a String
         try {
-            Method meth = visualizerClass.getMethod("getInstance", argsClass); // and let Java find the correct constructor with one string as parameter
-            Object[] args = {myOnion.getOnionString("owner")+":"+myOnion.getOnionString("name")}; //we will an args-array with our String parameter
-            o = (JComponent) meth.invoke(null, args); // and finally create the object from the scriptengine class with its unique id as parameter
-            ne.setOwner((IFvisualizer) o);
-             o.setSize(100,100);
+            Method classMethod = visualizerClass.getMethod("getInstance", argsClass); // and let Java find the correct constructor with one string as parameter
+            Object[] args = {newVisualizer.getOwnerEngine(), newVisualizer.getName()}; //we will an args-array with our String parameter
+            newJComponent = (JComponent) classMethod.invoke(null, args); // and finally create the object from the scriptengine class with its unique id as parameter
+            newVisualizer.setOwner((IFvisualizer) newJComponent);
 
-            if (((IFvisualizer) o).isGroup()) {
+            if (((IFvisualizer) newJComponent).isGroup()) {
+                JScrollPane scrollpane = new JScrollPane(newJComponent);
+                scrollpane.setPreferredSize(new Dimension(300, 300));
                 GridBagConstraints c = new GridBagConstraints();
                 JPanel panel = (JPanel) oobdCore.getAssign(
-                        myOnion.getOnionString("owner"),
+                        newVisualizer.getOwnerEngine(),
                         org.oobd.base.OOBDConstants.CL_PANE + ":" + myOnion.getOnionString("canvas"));
                 c.fill = GridBagConstraints.BOTH;
                 c.gridx = 0;
                 c.gridy = 0;
-                panel.add(o, c);
+                //panel.add(newJComponent, c);
+                panel.add(scrollpane, c);
             }
-            ((IFvisualizer) o).initValue(ne, myOnion);
+            ((IFvisualizer) newJComponent).initValue(newVisualizer, myOnion);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public void addCanvas(String seID, String name) {

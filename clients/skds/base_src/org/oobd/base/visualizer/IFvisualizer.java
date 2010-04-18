@@ -35,4 +35,11 @@ public interface IFvisualizer {
      */
     public void initValue(Visualizer viz,Onion onion);
 
+    /**
+     * controls the update of the visualisation of this visualizer
+     * @param viz
+     * @param onion
+     */
+    public void update(int level);
+
 }
