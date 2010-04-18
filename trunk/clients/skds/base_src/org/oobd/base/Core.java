@@ -14,6 +14,8 @@ import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import java.util.Collection;
 import org.oobd.base.bus.OobdBus;
 import org.oobd.base.connector.OobdConnector;
 import org.oobd.base.protocol.OobdProtocol;
@@ -25,7 +27,7 @@ import org.oobd.base.visualizer.Visualizer;
  * The interface for nearly all interaction between the generic oobd maschine and the different environments
  * @author steffen
  */
-public class Core implements OOBDConstants {
+public class Core implements OOBDConstants, CoreTickListener {
 
     IFui userInterface;
     IFsystem systemInterface;
@@ -37,9 +39,10 @@ public class Core implements OOBDConstants {
     HashMap<String, Object> assignments; //stores all active assignments
     HashMap<String, ArrayList<Visualizer>> visualizers;
     static Core thisInstance; //Class variable points to only instance
+    CoreTick ticker;
 
     public Core(IFui myUserInterface, IFsystem mySystemInterface) {
-        thisInstance=this;
+        thisInstance = this;
         userInterface = myUserInterface;
         systemInterface = mySystemInterface;
         busses = new HashMap<String, OobdBus>();
@@ -169,16 +172,19 @@ public class Core implements OOBDConstants {
             }
         } catch (ClassNotFoundException e) {
         }
+        // ------------- start the global timer ticker -----------------
+        ticker = new CoreTick();
+        ticker.setCoreTickListener(this);
+        new Thread(ticker).start();
     }
 
     /**
      * a help routine returns actual Instance of Core class
      * @return Core
      */
-    public static Core getSingleInstance(){
+    public static Core getSingleInstance() {
         return thisInstance;
     }
-
 
     public void register(String msg) {
         userInterface.sm(msg);
@@ -187,17 +193,15 @@ public class Core implements OOBDConstants {
     /**
      * add generated visualizers to global list
      */
-
-    public void addVisualizer(String owner, Visualizer vis){
-        if (visualizers.containsKey(owner)){
-
-        }else{
-            ArrayList ar=new ArrayList();
+    public void addVisualizer(String owner, Visualizer vis) {
+        if (visualizers.containsKey(owner)) {
+            ((ArrayList) visualizers.get(owner)).add(vis);
+        } else {
+            ArrayList ar = new ArrayList();
             ar.add(vis);
             visualizers.put(owner, ar);
         }
     }
-
 
     /**
      * create ScriptEngine identified by its public Name. Returns a unique ID which is used from now on for all communication between the core and the UI
@@ -255,8 +259,7 @@ public class Core implements OOBDConstants {
      * @bug what do do that the procedure also support relative filepaths?
      *
      */
-    public HashMap loadOobdClasses(
-            String path, String classPrefix, Class classType) {
+    public HashMap loadOobdClasses(String path, String classPrefix, Class classType) {
         // abgekuckt unter http://de.wikibooks.org/wiki/Java_Standard:_Class
         HashMap<String, Class<?>> myInstances = new HashMap<String, Class<?>>();
         File directory = new File(path);
@@ -327,6 +330,25 @@ public class Core implements OOBDConstants {
         }
     }
 
+    public void handleValue(Onion value) {
+        String owner = value.getOnionString("owner/name");
+        if (owner == null) {
+            Debug.msg("core", DEBUG_WARNING, "onion id does not contain name");
+        } else {
+            Collection c = visualizers.values();
+            //obtain an Iterator for Collection
+            Iterator itr;
+            ArrayList affectedVisualizers = visualizers.get(owner);
+            if (affectedVisualizers != null) {
+                Iterator visItr = affectedVisualizers.iterator();
+                while (visItr.hasNext()) {
+                    Visualizer vis = (Visualizer) visItr.next();
+                    vis.setValue(value);
+                }
+            }
+        }
+    }
+
     /**
      * main entry point for all actions required by the different components. 
      * Can be called either with a onion or with an json-String containing the onion data
@@ -338,6 +360,10 @@ public class Core implements OOBDConstants {
             if (myOnion.isType(CM_VISUALIZE)) {
                 Debug.msg("Core", DEBUG_INFO, "visualitation requested");
                 userInterface.visualize(myOnion);
+            }
+            if (myOnion.isType(CM_VALUE)) {
+                Debug.msg("Core", DEBUG_INFO, "visualitation requested");
+                handleValue(myOnion);
             }
             if (myOnion.isType(CM_CANVAS)) {
                 Debug.msg("Core", DEBUG_INFO, "Canvas requested");
@@ -378,4 +404,80 @@ public class Core implements OOBDConstants {
     public void removeAssign(String id, String subclass) {
         assignments.remove(id + ":" + subclass);
     }
+
+    /** updates all visualizers
+     *
+     */
+    public void updateVisualizers() {
+
+        Collection c = visualizers.values();
+        //obtain an Iterator for Collection
+        Iterator itr;
+
+        //iterate through HashMap values iterator
+        // run through the 3 update states: 0: start 1: update data 2: finish
+        for (int i = 0; i < 3; i++) {
+            itr = c.iterator();
+            while (itr.hasNext()) {
+                ArrayList engineVisualizers = (ArrayList) itr.next();
+                Iterator visItr = engineVisualizers.iterator();
+                while (visItr.hasNext()) {
+                    Visualizer vis = (Visualizer) visItr.next();
+                    vis.doUpdate(i);
+                }
+            }
+        }
+    }
+
+    /** the central timer for the core
+     *
+     */
+    public void coreTick() {
+        ticker.enable(false);
+        System.out.println("Tick..");
+        updateVisualizers();
+        ticker.enable(true);
+    }
+}
+
+class CoreTick implements Runnable {
+
+    boolean keepRunning = true;
+    boolean enableTicks = true;
+    private static final int LONG_TIME = 1000; /* 1 Seconds */
+
+    CoreTickListener l = null; /* Currently only one listener. There could be many*/
+
+
+    public void run() {
+        System.out.println(" End Core tick thread");
+        while (keepRunning) {
+            try {
+                Thread.currentThread().sleep(LONG_TIME);
+                if (enableTicks) {
+                    l.coreTick();
+                }
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+        System.out.println("End Core tick thread");
+    }
+
+    public void cancel() {
+        keepRunning = false;
+    }
+
+    public void enable(boolean allow) {
+        enableTicks = allow;
+    }
+
+    public void setCoreTickListener(CoreTickListener l) {
+        this.l = l;
+    }
+}
+
+interface CoreTickListener {
+
+    public void coreTick();
 }

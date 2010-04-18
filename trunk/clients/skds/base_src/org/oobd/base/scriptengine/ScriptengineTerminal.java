@@ -29,7 +29,9 @@ public class ScriptengineTerminal extends OobdScriptengine implements OOBDConsta
     public static String publicName() {
         return "Terminal";
     }
-
+    /**
+     * @todo: Acion canvas wir der Owner noch als reiner String übergeben, nicht als Sub-Onion
+     */
     public void start(){
         Debug.msg("scriptengineterminal",DEBUG_BORING,"positiver Actiontest...");
         Debug.msg("scriptengineterminal",DEBUG_BORING,"negativer Actiontest...");
@@ -46,9 +48,27 @@ public class ScriptengineTerminal extends OobdScriptengine implements OOBDConsta
                 );
         core.actionRequest(""+
                 "{'type':'"+CM_VISUALIZE+"'," +
-                "'owner':'"+this.id+"'," +
-                "'canvas':'Canvastest_1'," +
+                "'owner':"+
+                "{'name':'"+this.id+"'}," +
+               "'canvas':'Canvastest_1'," +
+                "'tooltip':'erste Worte...'," +
                 "'name':'table_1'}"
+                );
+        core.actionRequest(""+
+                "{'type':'"+CM_VISUALIZE+"'," +
+                "'owner':"+
+                "{'name':'"+this.id+"'}," +
+                "'canvas':'Canvastest_1'," +
+                "'tooltip':'Wort 2'," +
+                "'name':'table_2'}"
+                );
+       core.actionRequest(""+
+                "{'type':'"+CM_VALUE+"'," +
+                "'owner':"+
+                "{'name':'"+this.id+"'}," +
+                "'to':"+
+                "{'name':'table_2'}," +
+                "'ValueString':'uups..'}"
                 );
     }
 }

@@ -89,10 +89,10 @@ public class Onion extends JSONObject {
         while (i < parts.length - 1) { // the last entry in parts is the key for the last sub onion, so we have to handle that seperately in the end
 
             try {
-                if (!actOnion.has(parts[i]) || !(actOnion.get(parts[i]) instanceof Onion)) { //if that key does not exist or is not a sub onion
+                if (!actOnion.has(parts[i]) || !(actOnion.get(parts[i]) instanceof JSONObject)) { //if that key does not exist or is not a sub onion
                     throw new OnionNoEntryException();
                 } else {
-                    actOnion = (Onion) actOnion.get(parts[i]);
+                    actOnion = new Onion(((JSONObject)actOnion.get(parts[i])).toString());
                 }
             } catch (JSONException e) {
                 throw new OnionNoEntryException();
@@ -114,16 +114,38 @@ public class Onion extends JSONObject {
      * @throws OnionWrongTypeException
      */
     public String getOnionString(String path) {
-        try{
-            Object result=getOnionObject(path);
-            if (!(result instanceof String)){
+        try {
+            Object result = getOnionObject(path);
+            if (!(result instanceof String)) {
                 return null;
             }
             return (String) result;
+        } catch (OnionNoEntryException e) {
+            return null;
         }
-        catch (OnionNoEntryException e){
-        return null;
     }
+
+    /**
+     * returns the string value at the given path
+     * @param path /path/to/value
+     * @return string
+     * @todo not yet implemented
+     * @throws OnionWrongTypeException
+     */
+    public Onion getOnion(String path) {
+        try {
+            Object result = getOnionObject(path);
+            if (!(result instanceof JSONObject)) {
+                return null;
+            }
+
+            return new Onion(((JSONObject) result).toString());
+
+        } catch (OnionNoEntryException e) {
+            return null;
+        } catch (JSONException ex) {
+            return null;
+        }
     }
 
     /**
