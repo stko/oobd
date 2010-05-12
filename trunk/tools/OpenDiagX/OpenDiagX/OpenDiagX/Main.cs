@@ -15,6 +15,10 @@ namespace OpenDiagX
 {
     public partial class Main : Form
     {
+        XmlElement bitmapNode;
+        XmlNode root;
+        XmlDocument xmlDoc;
+
         public Main()
         {
             InitializeComponent();
@@ -57,7 +61,7 @@ namespace OpenDiagX
             {
                 myXslTrans.Transform(fileNameTextBox.Text, null, xmlWriter);
             }
-
+            xmlDoc = openFile("test.sxml");
             // Create XPathNavigator object by calling CreateNavigator of XmlDocument
             XPathNavigator nav = xmlDocOut.CreateNavigator();
 
@@ -65,8 +69,19 @@ namespace OpenDiagX
             //Move to root node
             nav.MoveToRoot();
             string name = nav.Name;
-            textBox.Text+= "Root node info:\r\n ";
-            textBox.Text += "Base URI" + nav.BaseURI.ToString()+"\r\n";
+            textBox.Text += "Root node info:\r\n ";
+            textBox.Text += "Base URI" + nav.BaseURI.ToString() + "\r\n";
+            //root.AppendChild(xmlDoc.CreateElement("name").AppendChild(newTextNode("name",nav.Name.ToString())));
+            //root.AppendChild(xmlDoc.CreateElement("name").AppendChild(xmlDoc.CreateTextNode( nav.Name.ToString())));
+            //XmlText newTextNode=xmlDoc.CreateTextNode(nav.Name.ToString());
+            XmlText newTextNode = xmlDoc.CreateTextNode("blabla");
+            XmlElement newElement = xmlDoc.CreateElement("name");
+            newElement.AppendChild(newTextNode);
+            root.AppendChild(newElement);
+            addTextnode(root, "name", "blabla");
+
+            
+
             textBox.Text += "Name:" + nav.Name.ToString() + "\r\n";
             textBox.Text += "Node Type: " + nav.NodeType.ToString() + "\r\n";
             //textBox.Text += "\r\nNode Value: " + nav.Value.ToString();
@@ -77,23 +92,35 @@ namespace OpenDiagX
                 textBox.Text += "Child node info: " + "\r\n";
                 textBox.Text += "Base URI" + nav.BaseURI.ToString() + "\r\n";
                 textBox.Text += "Name:" + nav.Name.ToString() + "\r\n";
-                textBox.Text += "Node Type: " + nav.NodeType.ToString()+"\r\n";
+                textBox.Text += "Node Type: " + nav.NodeType.ToString() + "\r\n";
                 //textBox.Text += "\r\nNode Value: " + nav.Value.ToString();
-                
+
                 // Security Bytes
                 XPathNodeIterator iterator = nav.Select("/MDX/ECU_DATA/SECURITY_DATA/FIXED_BYTES/FIXED_BYTE");
+                String SecCode = "";
                 while (iterator.MoveNext())
                 {
-                    textBox.Text += (iterator.Current.Value.ToString().Substring(2,2));
+                    textBox.Text += (iterator.Current.Value.ToString().Substring(2, 2));
+                    SecCode += (iterator.Current.Value.ToString().Substring(2, 2));
+
+                }
+                if (!SecCode.Equals(""))
+                {
+                    addTextnode(root, "SecCode", SecCode);
                 }
                 //Module Address
                 textBox.Text += getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS") + "\r\n";
+                addTextnode(root, "PhysAdress", getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS"));
+                addTextnode(root, "PhysAdressShort", getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS").Substring(4,2));
                 //Module Short Name
                 textBox.Text += getpath(nav, "ADMINISTRATION/SHORTNAME") + "\r\n";
+                addTextnode(root, "ShortName", getpath(nav, "ADMINISTRATION/SHORTNAME"));
                 //Module Name
                 textBox.Text += getpath(nav, "ADMINISTRATION/ECU_NAME") + "\r\n";
+                addTextnode(root, "Name", getpath(nav, "ADMINISTRATION/ECU_NAME"));
                 //SSDS Part Number
                 textBox.Text += getpath(nav, "ADMINISTRATION/SSDS_INFORMATION/SSDS_PART_NUMBER") + "\r\n";
+                addTextnode(root, "SSDSPartNo", getpath(nav, "ADMINISTRATION/SSDS_INFORMATION/SSDS_PART_NUMBER"));
 
                 // es fehlt: "PROTOCOL/APPLICATION_LAYER/SECURITY_LEVELS_SUPPORTED/SECURITY_LEVEL"
                 // es fehlt: "ECU_DATA/DATA_IDENTIFIERS/DID...."
@@ -101,20 +128,14 @@ namespace OpenDiagX
                 iterator = nav.Select("/MDX/ECU_DATA/DATA_IDENTIFIERS/DID");
                 while (iterator.MoveNext())
                 {
-                    textBox.Text += "Name:" + getpath(iterator.Current, "NAME") + "\r\n";
-                    textBox.Text += "Description:" + getpath(iterator.Current, "DESCRIPTION") + "\r\n";
-                    textBox.Text += "HiPID:" + getpath(iterator.Current, "NUMBER").Substring(2, 2) + "\r\n";
-                    textBox.Text += "LoPID:" + getpath(iterator.Current, "NUMBER").Substring(4, 2) + "\r\n";
-                    XPathNodeIterator iterator2 = iterator.Current.Select("SUB_FIELD");
-                    while (iterator2.MoveNext())
-                    {
-                        //textBox.Text +=  iterator2.Current.Value.ToString() + "\r\n";
-                    }
-                }
- 
-            
-            }
+                    String dataType = getpath(iterator.Current, "DID_TYPE");
+                    if (dataType.Equals("bitmapped")) handleBitmap(iterator);
 
+                }
+
+
+            }
+            closeFile(xmlDoc, "test.sxml");
 
 
             //Perform the actual transformation
@@ -127,7 +148,7 @@ namespace OpenDiagX
         }
         private String getpath(XPathNavigator nav, String path)
         {
-            XPathNodeIterator iterator = (XPathNodeIterator)nav.Evaluate(path+"/text()");
+            XPathNodeIterator iterator = (XPathNodeIterator)nav.Evaluate(path + "/text()");
             iterator.MoveNext();
             return iterator.Current.Value.ToString();
         }
@@ -135,6 +156,112 @@ namespace OpenDiagX
         private void fileNameTextBox_TextChanged(object sender, EventArgs e)
         {
             startButton.Enabled = File.Exists(fileNameTextBox.Text);
+        }
+        private void handleBitmap(XPathNodeIterator iterator)
+        {
+            String HighPid= getpath(iterator.Current, "NUMBER").Substring(2, 2);
+            String LowPid= getpath(iterator.Current, "NUMBER").Substring(4, 2);
+
+            textBox.Text += "HiPID:" + getpath(iterator.Current, "NUMBER").Substring(2, 2) +
+        " LoPID:" + getpath(iterator.Current, "NUMBER").Substring(4, 2) + "\r\n";
+            XPathNodeIterator iterator2 = iterator.Current.Select("SUB_FIELD");
+            while (iterator2.MoveNext())
+            {
+                String Name = getpath(iterator.Current, "NAME") + " - " + getpath(iterator2.Current, "NAME");
+                
+                textBox.Text += "Name:" + getpath(iterator.Current, "NAME") + " - " + getpath(iterator2.Current, "NAME") + "\r\n";
+                String Bit=getpath(iterator2.Current, "LEAST_SIG_BIT");
+                textBox.Text += "Bit:" + getpath(iterator2.Current, "LEAST_SIG_BIT") + "\r\n";
+                XPathNodeIterator iterator3 = iterator2.Current.Select("DATA_DEFINITION");
+                while (iterator3.MoveNext())
+                {
+                    XPathNodeIterator iterator4 = iterator3.Current.Select("ENUMERATED_PARAMETERS");
+                    while (iterator4.MoveNext())
+                    {
+                        String lowText = "";
+                        String highText = "";
+                        XPathNodeIterator iterator5 = iterator4.Current.Select("ENUM_MEMBER");
+                        while (iterator5.MoveNext())
+                        {
+                            if (getpath(iterator5.Current, "ENUM_VALUE").Equals("0x00"))
+                            {
+                                lowText = getpath(iterator5.Current, "DESCRIPTION");
+                            }
+                            if (getpath(iterator5.Current, "ENUM_VALUE").Equals("0x01"))
+                            {
+                                highText = getpath(iterator5.Current, "DESCRIPTION");
+                            }
+                        }
+                        XmlElement thisDIDEntry = addSubNode(root, "BMP");
+                        addTextnode(thisDIDEntry, "HighPID", HighPid);
+                        addTextnode(thisDIDEntry, "LowPID", LowPid);
+                        addTextnode(thisDIDEntry, "Name", Name);
+                        addTextnode(thisDIDEntry, "Bit", Bit);
+                        addTextnode(thisDIDEntry, "LowText", lowText);
+                        addTextnode(thisDIDEntry, "HighText", highText);
+                        textBox.Text += "Bit-Discription:" + lowText + "(L) " + highText + "(H)" + "\r\n";
+                    }
+                }
+            }
+        }
+
+        private void addTextnode(XmlNode parent, String name, String content)
+        {
+            XmlText newTextNode = xmlDoc.CreateTextNode(content);
+            XmlElement newElement = xmlDoc.CreateElement(name);
+            newElement.AppendChild(newTextNode);
+            parent.AppendChild(newElement);
+        }
+
+        private XmlElement addSubNode(XmlNode parent, String name)
+        {
+            XmlElement newElement = xmlDoc.CreateElement(name);
+            parent.AppendChild(newElement);
+            return newElement;
+        }
+
+        private XmlDocument openFile(String fileName)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+
+                
+            XmlTextWriter xmlWriter = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
+            xmlWriter.Formatting = Formatting.Indented;
+            xmlWriter.WriteProcessingInstruction("xml", "version='1.0' encoding='UTF-8'");
+            xmlWriter.WriteStartElement("oobdobx");
+            //If WriteProcessingInstruction is used as above,
+            //Do not use WriteEndElement() here
+            //xmlWriter.WriteEndElement();
+            //it will cause the &ltRoot></Root> to be &ltRoot />
+            xmlWriter.Close();
+            xmlDoc.Load(fileName);
+            
+            root = xmlDoc.DocumentElement;
+            bitmapNode = xmlDoc.CreateElement("bitmap");
+            root.AppendChild(bitmapNode);
+
+
+            return xmlDoc;
+        }
+
+        private void closeFile(XmlDocument xmlDoc, String fileName)
+        {
+            try
+            {
+                xmlDoc.Save(fileName);
+            }
+            catch (Exception ex)
+            {
+                //WriteError(ex.ToString());
+            }
+
+        }
+
+        private XmlText newTextNode(String name, String value)
+        {
+            XmlText xmlNode = xmlDoc.CreateTextNode(name);
+            xmlNode.Value = value;
+            return xmlNode;
         }
 
     }
