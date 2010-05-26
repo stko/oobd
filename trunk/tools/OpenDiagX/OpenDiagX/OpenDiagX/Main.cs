@@ -15,9 +15,8 @@ namespace OpenDiagX
 {
     public partial class Main : Form
     {
-        XmlElement bitmapNode;
         XmlNode root;
-        XmlDocument xmlDoc;
+        XmlDocument xmlDocOut;
 
         public Main()
         {
@@ -44,9 +43,9 @@ namespace OpenDiagX
             //transformer.Load(xsl, settings, resolver);
             myXslTrans.Load("input.xslt");
 
-            XmlDocument xmlDocOut = new XmlDocument();
+            XmlDocument xmlDoc = new XmlDocument();
             // Create a memory-based stream. 
-            byte[] storage = new byte[255];
+            //byte[] storage = new byte[255];
             MemoryStream memstrm = new MemoryStream();
 
             // Wrap memstrm in a reader and a writer. 
@@ -57,13 +56,13 @@ namespace OpenDiagX
             //Create a stream for output
             //using (XmlWriter xmlWriter =
             using (XmlWriter xmlWriter =
-            xmlDocOut.CreateNavigator().AppendChild())
+            xmlDoc.CreateNavigator().AppendChild())
             {
-                myXslTrans.Transform(fileNameTextBox.Text, null, xmlWriter);
+                myXslTrans.Transform(fileNameTextBox.Text, xmlWriter);
             }
-            xmlDoc = openFile("test.sxml");
+            xmlDocOut = openFile("test.sxml");
             // Create XPathNavigator object by calling CreateNavigator of XmlDocument
-            XPathNavigator nav = xmlDocOut.CreateNavigator();
+            XPathNavigator nav = xmlDoc.CreateNavigator();
 
 
             //Move to root node
@@ -74,12 +73,13 @@ namespace OpenDiagX
             //root.AppendChild(xmlDoc.CreateElement("name").AppendChild(newTextNode("name",nav.Name.ToString())));
             //root.AppendChild(xmlDoc.CreateElement("name").AppendChild(xmlDoc.CreateTextNode( nav.Name.ToString())));
             //XmlText newTextNode=xmlDoc.CreateTextNode(nav.Name.ToString());
-            XmlText newTextNode = xmlDoc.CreateTextNode("blabla");
-            XmlElement newElement = xmlDoc.CreateElement("name");
+            /*
+            XmlText newTextNode = xmlDocOut.CreateTextNode("blabla");
+            XmlElement newElement = xmlDocOut.CreateElement("name");
             newElement.AppendChild(newTextNode);
             root.AppendChild(newElement);
             addTextnode(root, "name", "blabla");
-
+            */
             
 
             textBox.Text += "Name:" + nav.Name.ToString() + "\r\n";
@@ -135,14 +135,17 @@ namespace OpenDiagX
 
 
             }
-            closeFile(xmlDoc, "test.sxml");
+            //closeFile(xmlDoc, "test.sxml");
 
 
             //Perform the actual transformation
-            xmlDocOut.WriteContentTo(myWriter);
+            myXslTrans.Load("output.xslt");
+
+            //xmlDocOut.WriteContentTo(myWriter);
+            myXslTrans.Transform(xmlDocOut, myWriter);
             myWriter.Flush();
             memstrm.Seek(0, SeekOrigin.Begin);
-            //textBox.Text += memrdr.ReadToEnd();
+            textBox.Text += memrdr.ReadToEnd();
 
 
         }
@@ -207,15 +210,15 @@ namespace OpenDiagX
 
         private void addTextnode(XmlNode parent, String name, String content)
         {
-            XmlText newTextNode = xmlDoc.CreateTextNode(content);
-            XmlElement newElement = xmlDoc.CreateElement(name);
+            XmlText newTextNode = xmlDocOut.CreateTextNode(content);
+            XmlElement newElement = xmlDocOut.CreateElement(name);
             newElement.AppendChild(newTextNode);
             parent.AppendChild(newElement);
         }
 
         private XmlElement addSubNode(XmlNode parent, String name)
         {
-            XmlElement newElement = xmlDoc.CreateElement(name);
+            XmlElement newElement = xmlDocOut.CreateElement(name);
             parent.AppendChild(newElement);
             return newElement;
         }
@@ -223,8 +226,10 @@ namespace OpenDiagX
         private XmlDocument openFile(String fileName)
         {
             XmlDocument xmlDoc = new XmlDocument();
+            
 
                 
+            /*
             XmlTextWriter xmlWriter = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
             xmlWriter.Formatting = Formatting.Indented;
             xmlWriter.WriteProcessingInstruction("xml", "version='1.0' encoding='UTF-8'");
@@ -235,31 +240,35 @@ namespace OpenDiagX
             //it will cause the &ltRoot></Root> to be &ltRoot />
             xmlWriter.Close();
             xmlDoc.Load(fileName);
+            */
+ 
+       //Create a document type node and  
+        //add it to the document.
+        /*
+        XmlDocumentType doctype;
+        doctype = xmlDoc.CreateDocumentType("book", null, null, "<!ELEMENT book ANY>");
+        xmlDoc.AppendChild(doctype);
+        */
+    //Create the root element and 
+    //add it to the document.
+            root = xmlDoc.CreateElement("oobdobx");
             
-            root = xmlDoc.DocumentElement;
+    xmlDoc.AppendChild(root);
+
+
+            //root = xmlDoc.DocumentElement;
+            /*
             bitmapNode = xmlDoc.CreateElement("bitmap");
             root.AppendChild(bitmapNode);
-
+            */
 
             return xmlDoc;
         }
 
-        private void closeFile(XmlDocument xmlDoc, String fileName)
-        {
-            try
-            {
-                xmlDoc.Save(fileName);
-            }
-            catch (Exception ex)
-            {
-                //WriteError(ex.ToString());
-            }
-
-        }
-
+ 
         private XmlText newTextNode(String name, String value)
         {
-            XmlText xmlNode = xmlDoc.CreateTextNode(name);
+            XmlText xmlNode = xmlDocOut.CreateTextNode(name);
             xmlNode.Value = value;
             return xmlNode;
         }
