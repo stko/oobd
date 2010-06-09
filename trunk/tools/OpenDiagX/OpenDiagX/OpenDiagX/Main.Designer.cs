@@ -70,6 +70,7 @@
             this.saveAsButton.TabIndex = 8;
             this.saveAsButton.Text = "Save as..";
             this.saveAsButton.UseVisualStyleBackColor = true;
+            this.saveAsButton.Click += new System.EventHandler(this.saveAsButton_Click);
             // 
             // startButton
             // 
@@ -98,9 +99,9 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(137, 48);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(98, 13);
+            this.label3.Size = new System.Drawing.Size(74, 13);
             this.label3.TabIndex = 5;
-            this.label3.Text = "Output-Transformer";
+            this.label3.Text = "Output-Format";
             // 
             // inComboBox
             // 
@@ -117,9 +118,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(9, 48);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(93, 13);
+            this.label2.Size = new System.Drawing.Size(66, 13);
             this.label2.TabIndex = 3;
-            this.label2.Text = "Input- Transformer";
+            this.label2.Text = "Input-Format";
             // 
             // fileButton
             // 
@@ -150,10 +151,6 @@
             this.label1.Size = new System.Drawing.Size(31, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Input";
-            // 
-            // saveFileDialog
-            // 
-            this.saveFileDialog.CheckFileExists = true;
             // 
             // textBox
             // 
