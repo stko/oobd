@@ -71,11 +71,4 @@ endproc
 </xsl:template>
 
 
-procedure PIDNUM0202
-(*#menuitem "*" "U" "Number of DTCs From Most Recent Control Routine" "PIDNUM0202" "NUMPID" "Input"*)
-    getNUMPID( $02 , $02 , 8 , 1 , 0 , "Raw")
-endproc
-
-
-
 </xsl:stylesheet> 
