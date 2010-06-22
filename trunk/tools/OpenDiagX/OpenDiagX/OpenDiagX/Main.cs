@@ -101,12 +101,12 @@ namespace OpenDiagX
                 while (iterator.MoveNext())
                 {
                     String dataType = getpath(iterator.Current, "DID_TYPE");
-                    textBox.Text += "Data Type: "+dataType+"\r\n";
+                    //textBox.Text += "Data Type: "+dataType+"\r\n";
                     if (dataType.Equals("bitmapped")) handleBitmap(iterator);
                     if (dataType.Equals("single_value"))
                     {
                         String subDataType = getpath(iterator.Current,"SUB_FIELD/DATA_DEFINITION/DATA_TYPE");
-                        textBox.Text += "Sub Data Type: " + subDataType + "\r\n";
+                        //textBox.Text += "Sub Data Type: " + subDataType + "\r\n";
                         if (subDataType.Equals("ascii")) handleASCII(iterator);
                         if (subDataType.Equals("unsigned")) handleUnsigned(iterator);
                     }
