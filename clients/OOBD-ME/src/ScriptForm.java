@@ -36,7 +36,7 @@ public class ScriptForm extends Form implements ActionListener, Runnable {
     List cellList = null;
     Script myEngine = null;
 
-    public ScriptForm(Form parent, List cellList, String title, Script scriptEngine,OutputDisplay mainMidget) {
+    public ScriptForm(Form parent, List cellList, String title, Script scriptEngine, OutputDisplay mainMidget) {
         super(title);
         this.parent = parent;
         this.cellList = cellList;
@@ -47,8 +47,7 @@ public class ScriptForm extends Form implements ActionListener, Runnable {
     }
 
     public String showForm() {
-        this.show();
-
+        setLayout(new BoxLayout(BoxLayout.Y_AXIS));
         cellList.setListCellRenderer(new ScriptCellRenderer());
         cellList.addActionListener(new ActionListener() {
 
@@ -69,12 +68,13 @@ public class ScriptForm extends Form implements ActionListener, Runnable {
         this.addCommand(backCommand = new Command("Back"));
         this.addCommand(detailCommand = new Command("Detail"));
         addCommandListener(this);
+        show();
+        this.setFocused(cellList);
         return "";
 
     }
 
     public void run() {
-        System.out.println("Systemform-Thread has started");
         try {
             while (true) {
                 Thread.sleep(100);
@@ -82,8 +82,7 @@ public class ScriptForm extends Form implements ActionListener, Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("Systemform-Thread has started");
-    }
+     }
 
     public void actionPerformed(ActionEvent ae) {
 
@@ -100,36 +99,36 @@ public class ScriptForm extends Form implements ActionListener, Runnable {
 
     }
 
-    class MyRenderer extends Label implements ListCellRenderer {
-
-        private Label focus = new Label("");
-
-        MyRenderer(String text) {
-            setText(text);
-            focus.getStyle().setBgTransparency(100);
-        }
-
-        public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected) {
-            setText(value.toString());
-            if (isSelected) {
-                setFocus(true);
-                getStyle().setBgTransparency(100);
-                getStyle().setBgColor(255, true);
-            } else {
-                setFocus(false);
-                getStyle().setBgTransparency(0);
-            }
-            return this;
-        }
-
-        public String toString() {
-            return getText();
-        }
-
-        public Component getListFocusComponent(List list) {
-            return focus;
-        }
-    }
+//    class MyRenderer extends Label implements ListCellRenderer {
+//
+//        private Label focus = new Label("");
+//
+//        MyRenderer(String text) {
+//            setText(text);
+//            focus.getStyle().setBgTransparency(100);
+//        }
+//
+//        public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected) {
+//            setText(value.toString());
+//            if (isSelected) {
+//                setFocus(true);
+//                getStyle().setBgTransparency(100);
+//                getStyle().setBgColor(255, true);
+//            } else {
+//                setFocus(false);
+//                getStyle().setBgTransparency(0);
+//            }
+//            return this;
+//        }
+//
+//        public String toString() {
+//            return getText();
+//        }
+//
+//        public Component getListFocusComponent(List list) {
+//            return focus;
+//        }
+//    }
 
     class ScriptCellRenderer extends Container implements ListCellRenderer {
 

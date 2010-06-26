@@ -26,9 +26,8 @@ public class BTSerial extends Form implements ActionListener, Runnable {
     private Command BackCommand = null;
     private StringBuffer inBuffer = new StringBuffer();
 
-    public BTSerial(Form parent) {
+    public BTSerial() {
         super("Scanning BT...");
-        this.parent = parent;
         new Thread(this).start();
     }
 
@@ -55,7 +54,8 @@ public class BTSerial extends Form implements ActionListener, Runnable {
         }
     }
 
-    public String getDeviceURL() {
+    public String getDeviceURL(final Form parent) {
+        this.parent = parent;
         this.show();
 
         deviceList = new List();

@@ -38,7 +38,7 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
     private LuaState state;
      */
     private String response;
-    private BTSerial btComm;
+    public BTSerial btComm;
     private Form f;
     Command startCommand;
     Command blindCommand;
@@ -217,13 +217,13 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
         Display.init(this);
         if (f == null) {
             try {
-                Resources r = Resources.open("/LWUITtheme.res");
+                Resources r = Resources.open("/OOBDtheme.res");
                 UIManager.getInstance().setThemeProps(r.getTheme("LWUITDefault"));
             } catch (java.io.IOException ioe) {
                 System.out.println("Couldn't load theme.");
             }
             f = new Form("OOBD ME");
-            btComm = new BTSerial(f);
+            btComm = new BTSerial();
             // try to load Prefs
             try {
                 mPreferences = new Preferences("preferences");
@@ -303,7 +303,8 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
         }
         if (command == configCommand) {
 
-            btComm.getDeviceURL();
+            //btComm.getDeviceURL();
+            ConfigForm myConfig=new ConfigForm(f,btComm);
 
         }
 
