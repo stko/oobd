@@ -9,6 +9,8 @@
  */
 import java.io.InputStream;
 import java.io.IOException;
+import javax.microedition.io.*;
+import javax.microedition.io.file.*;
 
 
 import se.krka.kahlua.stdlib.BaseLib;
@@ -42,7 +44,16 @@ public class LuaScript extends Script {
     }
 
     public void doScript(String fileName) throws IOException {
-        InputStream resource = getClass().getResourceAsStream(fileName);
+        InputStream resource;
+        if (fileName.startsWith("file:")) {
+            FileConnection fc = (FileConnection) Connector.open(fileName);
+            if (!fc.exists()) {
+                throw new IOException("File does not exists");
+            }
+            resource = fc.openInputStream();
+        } else {
+            resource = getClass().getResourceAsStream(fileName);
+        }
         LuaClosure callback = LuaPrototype.loadByteCode(resource, state.getEnvironment());
         state.call(callback, null, null, null);
 
@@ -62,11 +73,11 @@ public class LuaScript extends Script {
                 stacktrace.printStackTrace();
             }
         }
-        
+
         //String response = BaseLib.rawTostring(fObject.env.rawget(1));
         //fObject.push(response.intern());
         return (String) results[1];
-         
+
         //return "-";
     }
 
@@ -103,16 +114,18 @@ public class LuaScript extends Script {
     }
 
     public String getString(int index) {
-        System.out.println("Lua get string index "+Integer.toString(index));
+        System.out.println("Lua get string index " + Integer.toString(index));
         String response = BaseLib.rawTostring(callFrame.get(index));
-       // callFrame.push(response.intern());
+        // callFrame.push(response.intern());
         return response;
     }
+
     public boolean getBoolean(int index) {
         Boolean response = (Boolean) callFrame.get(index);
         //callFrame.push(response);
         return response.booleanValue();
     }
+
     public int getInt(int index) {
         Double response = BaseLib.rawTonumber(callFrame.get(index));
         //callFrame.push(response);

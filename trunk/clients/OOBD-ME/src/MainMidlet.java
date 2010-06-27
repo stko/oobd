@@ -41,17 +41,22 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
     public BTSerial btComm;
     private Form f;
     Command startCommand;
-    Command blindCommand;
     Command exitCommand;
     Command configCommand;
     private String outputArea = "";
     private boolean freshDisplayOutput = false;
     private boolean blindMode = false;
-    private  Form writeForm=null;
+    private Form writeForm = null;
     private OutputDisplay myDisplay;
     private List cellList = null;
     Preferences mPreferences;
     private static final String prefsURL = "BTMAC";
+    private static final String prefsScript = "SCRIPT";
+    private static final String prefsTheme = "THEME";
+    private static final String scriptDefault = "/OOBD.lbc";
+    private static final String themeDefault = "/OOBDtheme.res";
+    private String actTheme = themeDefault;
+    private String actScript = scriptDefault;
 
     public MainMidlet() {
         myDisplay = this;
@@ -216,26 +221,23 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
 
         Display.init(this);
         if (f == null) {
-            try {
-                Resources r = Resources.open("/OOBDtheme.res");
-                UIManager.getInstance().setThemeProps(r.getTheme("LWUITDefault"));
-            } catch (java.io.IOException ioe) {
-                System.out.println("Couldn't load theme.");
-            }
-            f = new Form("OOBD ME");
             btComm = new BTSerial();
             // try to load Prefs
             try {
                 mPreferences = new Preferences("preferences");
+                actTheme = mPreferences.get(prefsTheme);
+                if (actTheme == null) {
+                    actTheme = themeDefault;
+                }
+                actScript = mPreferences.get(prefsScript);
+                btComm.URL = mPreferences.get(prefsURL);
+                if (actScript == null) {
+                    actScript = scriptDefault;
+                }
             } catch (RecordStoreException rse) {
-//      mForm = new Form("Exception");
-//      mForm.append(new StringItem(null, rse.toString()));
-//      mForm.addCommand(new Command("Exit", Command.EXIT, 0));
-//      mForm.setCommandListener(this);
-//      return;
             }
-
-            btComm.URL = mPreferences.get(prefsURL);
+            setTheme(actTheme);
+            f = new Form("OOBD ME");
             f.setLayout(new BorderLayout());
             try {
                 image = Image.createImage("/oobd.PNG");
@@ -253,12 +255,10 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
 
             startCommand = new Command("Start");
             configCommand = new Command("Config");
-            blindCommand = new Command("Blind");
-            exitCommand = new Command("Exit");
+           exitCommand = new Command("Exit");
             f.addCommand(startCommand);
             f.addCommand(exitCommand);
-            f.addCommand(blindCommand);
-            f.addCommand(configCommand);
+           f.addCommand(configCommand);
             f.show();
             f.addCommandListener(this);
         }
@@ -287,15 +287,6 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
     public void actionPerformed(ActionEvent ae) {
         Command command = ae.getCommand();
 
-        if (command == blindCommand) {
-            blindMode = !blindMode;
-            if (blindMode) {
-                Dialog.show("BlindMode", "BlindMode is on", "ok", "ok");
-
-            } else {
-                Dialog.show("BlindMode", "BlindMode is off", "ok", "ok");
-            }
-        }
 
         if (command == exitCommand) {
 
@@ -304,14 +295,19 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
         if (command == configCommand) {
 
             //btComm.getDeviceURL();
-            ConfigForm myConfig=new ConfigForm(f,btComm);
+            ConfigForm myConfig = new ConfigForm(f, btComm, this);
 
         }
 
         if (command == startCommand) {
             if (blindMode || tryToConnect()) {
                 try {
-                    scriptEngine.doScript("/HHOpen.lbc");
+                    System.out.println("Try to load script " + actScript);
+                    scriptEngine.doScript(actScript);
+                    if (!actScript.equals(scriptDefault)) {
+                        mPreferences.put(prefsScript, actScript);
+                    }
+
                 } catch (java.io.IOException ioe) {
                     ioe.printStackTrace();
                 }
@@ -321,10 +317,51 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
         }
     }
 
+    public void setTheme(String themeFile) {
+        if (themeFile != null) {
+            try {
+                Resources r = Resources.open(themeFile);
+                UIManager.getInstance().setThemeProps(r.getTheme("LWUITDefault"));
+                actTheme = themeFile;
+                if (!actTheme.equals(themeDefault)) {
+                    mPreferences.put(prefsTheme, actTheme);
+                }
+            } catch (java.io.IOException ioe) {
+                System.out.println("Couldn't load theme.");
+
+                try {
+                    Resources r = Resources.open(actTheme);
+                    UIManager.getInstance().setThemeProps(r.getTheme("LWUITDefault"));
+                } catch (java.io.IOException ioe2) {
+                    System.out.println("Couldn't load theme.");
+                }
+            }
+        }
+    }
+
+    public void setScript(String scriptFile) {
+        if (scriptFile != null) {
+            actScript = scriptFile;
+        }else{
+            actScript =scriptDefault;
+        }
+    }
+
+    public void setBlindMode(boolean active) {
+        blindMode = active;
+    }
+
+    public boolean getBlindMode() {
+        return blindMode;
+    }
+
+    public String getScript() {
+        return actScript;
+    }
+
     boolean tryToConnect() {
         if (!btComm.isConnected()) {
 
-            //btComm.URL = "00126F072725";
             if (btComm.URL != null) {
                 btComm.Connect(btComm.URL);
                 if (btComm.isConnected()) {
@@ -346,13 +383,13 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
     }
 
     public void prepareDisplayWrite(String outputLine) {
-        outputArea += outputLine +"\n";
+        outputArea += outputLine + "\n";
         freshDisplayOutput = true;
     }
 
     public void outputDisplayIfAny() {
         if (freshDisplayOutput) {
-            ShowWrite("",writeForm);
+            ShowWrite("", writeForm);
         }
     }
 

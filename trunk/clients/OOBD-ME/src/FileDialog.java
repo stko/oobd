@@ -31,6 +31,7 @@ public class FileDialog extends Form implements ActionListener, Runnable {
 
     private String currDirName;
     private ConfigForm parent; //Where this form was started from
+    private int requestID;
     private String ext;
     private Command backCommand = null;
     Form mySelf = null;
@@ -40,10 +41,11 @@ public class FileDialog extends Form implements ActionListener, Runnable {
     private final static String SEP_STR = "/";
     private final static char SEP = '/';
 
-    public FileDialog(ConfigForm parent, String title, String path, String ext) {
+    public FileDialog(ConfigForm parent, String title, String path, String ext, int requestID) {
         super(title);
         this.parent = parent;
         this.mySelf = this;
+        this.requestID=requestID;
         this.addComponent(browser);
         new Thread(this).start();
         if (path == null || "".equals(path)) {
@@ -88,7 +90,7 @@ public class FileDialog extends Form implements ActionListener, Runnable {
                         traverseDirectory(currFile);
                         showCurrDir();
                     } else {
-                        parent.setFileDialogResult(currDirName, currFile);
+                        parent.setFileDialogResult("file://localhost/" +currDirName, currFile,requestID);
                         parent.showBack();
 
                     }
@@ -108,7 +110,7 @@ public class FileDialog extends Form implements ActionListener, Runnable {
     public void actionPerformed(ActionEvent ae) {
         Command command = ae.getCommand();
         if (command == backCommand) {
-            parent.setFileDialogResult(null, null);
+            parent.setFileDialogResult(null, null,requestID);
             parent.showBack();
         }
     }

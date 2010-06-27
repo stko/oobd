@@ -93,7 +93,7 @@ public class BTSerial extends Form implements ActionListener, Runnable {
             //new Thread(this).start();
             } else {
             Dialog.show("BT Scan", "Sorry, no Device found", "Back", null);
-            parent.show();
+            parent.showBack();
             return null;
         }
 
@@ -123,7 +123,7 @@ public class BTSerial extends Form implements ActionListener, Runnable {
         Command command = ae.getCommand();
         if (command == BackCommand) {
             URL = null;
-            parent.show();
+            parent.showBack();
         }
 
     }

@@ -82,7 +82,7 @@ public class ScriptForm extends Form implements ActionListener, Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-     }
+    }
 
     public void actionPerformed(ActionEvent ae) {
 
@@ -129,7 +129,6 @@ public class ScriptForm extends Form implements ActionListener, Runnable {
 //            return focus;
 //        }
 //    }
-
     class ScriptCellRenderer extends Container implements ListCellRenderer {
 
         private Label title = new Label("");
@@ -139,35 +138,29 @@ public class ScriptForm extends Form implements ActionListener, Runnable {
         private Label focus = new Label("");
 
         public ScriptCellRenderer() {
-            if (true) {
-                setLayout(new BorderLayout());
-                Container cntLeft = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-                Container cntRight = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-                value.getStyle().setBgTransparency(0);
-                value.getStyle().setFont(Font.createSystemFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
-                title.getStyle().setBgTransparency(0);
-                update.getStyle().setBgTransparency(0);
-                timer.getStyle().setBgTransparency(0);
-                cntLeft.addComponent(value);
-                cntLeft.addComponent(title);
-                cntRight.addComponent(update);
-                cntRight.addComponent(timer);
-                addComponent(BorderLayout.CENTER, cntLeft);
-                addComponent(BorderLayout.EAST, cntRight);
-            } else {
 
-
-                setLayout(new GridLayout(2, 2));
-                value.getStyle().setBgTransparency(0);
-                value.getStyle().setFont(Font.createSystemFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
-                title.getStyle().setBgTransparency(0);
-                update.getStyle().setBgTransparency(0);
-                timer.getStyle().setBgTransparency(0);
-                addComponent(value);
-                addComponent(update);
-                addComponent(title);
-                addComponent(timer);
-            }
+            setLayout(new BorderLayout());
+            Container cntLeft = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+            Container cntRight = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+            value.getStyle().setBgTransparency(0);
+            value.getStyle().setPadding(3, 0, 3, 3);
+            value.getStyle().setMargin(0, 0, 0, 0);
+            value.getStyle().setFont(Font.createSystemFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
+            title.getStyle().setBgTransparency(0);
+            title.getStyle().setPadding(0, 3, 3, 3);
+            title.getStyle().setMargin(0, 0, 0, 0);
+            update.getStyle().setBgTransparency(0);
+            update.getStyle().setPadding(3, 0, 3, 3);
+            update.getStyle().setMargin(0, 0, 0, 0);
+            timer.getStyle().setBgTransparency(0);
+            timer.getStyle().setPadding(0, 3, 3, 3);
+            timer.getStyle().setMargin(0, 0, 0, 0);
+            cntLeft.addComponent(value);
+            cntLeft.addComponent(title);
+            cntRight.addComponent(update);
+            cntRight.addComponent(timer);
+            addComponent(BorderLayout.CENTER, cntLeft);
+            addComponent(BorderLayout.EAST, cntRight);
             focus.getStyle().setBgTransparency(100);
         }
 
