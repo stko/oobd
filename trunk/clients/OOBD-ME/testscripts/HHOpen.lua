@@ -1,14 +1,18 @@
+--[[
+HHOpen.lua
+--]]
+
+
 
 -- include the basic connectivity
 
--- require 'dxm'
 
-initCellTable = initCellTableCall
-addCell = addCellCall
-showCellTable = showCellTableCall
 
 --- use the following lines for debugging in lua editor
 ---[[
+initCellTable = initCellTableCall
+addCell = addCellCall
+showCellTable = showCellTableCall
 serFlush = serFlushCall
 serWrite = serWriteCall
 serWait = serWaitCall
@@ -20,12 +24,9 @@ serDisplayWrite = serDisplayWriteCall
 readcount= 1
 input = {}
 input[1]="Searching"
-input[2]="014"
-input[3]="1: 49 02 02 41 42 43"
-input[4]="2: 44 45 46 47 48 49 4A"
-input[5]="3: 4B 4C 4D 4E 4F 50 51"
-input[6]=">"
-input[7]=""
+input[2]="41 00 E8 19 30 12"
+input[3]=">"
+input[4]=""
 
 function serReadLn()
 	readcount=readcount +1
@@ -36,11 +37,32 @@ function serWait()
 	return 0
 end
 
-function serWrite()
+function serWrite(data)
+	print ("Serwrite:" ,data)
 end
 
 function serFlush()
 end
+
+
+function initCellTable()
+	print("Start Menu generation");
+end
+
+function addCell(title, func , intial,update , timer , id)
+	print("<---");
+	print("title: ", title);
+	print("function: ", func);
+	print("id: ", id);
+	print("--->");
+end
+
+function showCellTable(title)
+	print("Show Menu", title);
+end
+
+
+
 --]]
 
 -- define the receive buffer
@@ -85,6 +107,7 @@ function send()
 							udsBuffer[udsLen]=tonumber(byteStr,16)
 							udsLen = udsLen +1
 						end
+						udsLen = udsLen - 1
 						doLoop = false
 					else -- Multiframe
 						-- die Längenangabe
@@ -102,6 +125,7 @@ function send()
 	end
 	return  udsLen
 end
+
 
 ---------------------- System Info Menu --------------------------------------
 
@@ -176,9 +200,163 @@ end
 
 ---------------------- Sensor Data Menu --------------------------------------
 
+function CalcNumPid( byteNr , nrOfBytes, multiplier, offset, unit)
+	value=0
+	for i = 0 , nrOfBytes -1, 1 do -- get raw value
+		value = value * 256 + udsBuffer[ 2 + byteNr + i]
+	end
+	-- do the calculation
+	value = value * multiplier + offset
+	return value ..unit
+end
+
+--[[
+-- here it becomes tricky: store the necessary function calls as a id- indexed hash table
+
+local PID01CMDs = {
+	------------------------ these are the lines copied from the "CalcNumPid" section in the OBD2_PIDs - OpenOffice- File
+	id0x4 = function() return CalcNumPid( 1 , 1 , 0.392156862745 , 0, " %") end,
+	id0x5 = function() return CalcNumPid( 1 , 1 , 1 , -40, "°C") end,
+	id0x6 = function() return CalcNumPid( 1 , 1 , 0.78125 , -100, " %") end,
+	id0x7 = function() return CalcNumPid( 1 , 1 , 0.78125 , -100, " %") end,
+	id0x8 = function() return CalcNumPid( 1 , 1 , 0.78125 , -100, " %") end,
+	id0x9 = function() return CalcNumPid( 1 , 1 , 0.78125 , -100, " %") end,
+	id0x0A = function() return CalcNumPid( 1 , 1 , 3 , 0, "kPa (gauge)") end,
+	id0x0B = function() return CalcNumPid( 1 , 1 , 1 , 0, "kPa (absolute)") end,
+	id0x0C = function() return CalcNumPid( 1 , 2 , 0.25 , 0, "rpm") end,
+	id0x0D = function() return CalcNumPid( 1 , 1 , 1 , 0, "km/h") end,
+	id0x0E = function() return CalcNumPid( 1 , 1 , 0.5 , -65, "° relative to #1 cylinder") end,
+	id0x0F = function() return CalcNumPid( 1 , 1 , 1 , -40, "°C") end,
+	id0x10 = function() return CalcNumPid( 1 , 2 , 0.01 , 0, "g/s") end,
+	id0x11 = function() return CalcNumPid( 1 , 1 , 0.392156862745 , 0, " %") end,
+
+
+	id0x14 = function() return CalcNumPid( 1 , 1 , 0.5 , 0, "Volts") end,
+	id0x114 = function() return CalcNumPid( 2 , 1 , 0.78125 , -100, "%") end,
+
+    	-------------
+	id0xFF = "index error"
+
+  }
+
+--]]
+
+---[[
+-- here it becomes tricky: store the necessary function calls as a id- indexed hash table
+
+local PID01CMDs = {
+	------------------------ these are the lines copied from the "CalcNumPid" section in the OBD2_PIDs - OpenOffice- File
+id0x4 = { byte = 1 , size =  1 , mult = 0.392156862745 , offset = 0, unit = " %"} ,
+id0x5 = { byte = 1 , size =  1 , mult = 1 , offset = -40, unit = "°C"} ,
+id0x6 = { byte = 1 , size =  1 , mult = 0.78125 , offset = -100, unit = " %"} ,
+id0x7 = { byte = 1 , size =  1 , mult = 0.78125 , offset = -100, unit = " %"} ,
+id0x8 = { byte = 1 , size =  1 , mult = 0.78125 , offset = -100, unit = " %"} ,
+id0x9 = { byte = 1 , size =  1 , mult = 0.78125 , offset = -100, unit = " %"} ,
+id0x0A = { byte = 1 , size =  1 , mult = 3 , offset = 0, unit = "kPa (gauge)"} ,
+id0x0B = { byte = 1 , size =  1 , mult = 1 , offset = 0, unit = "kPa (absolute)"} ,
+id0x0C = { byte = 1 , size =  2 , mult = 0.25 , offset = 0, unit = "rpm"} ,
+id0x0D = { byte = 1 , size =  1 , mult = 1 , offset = 0, unit = "km/h"} ,
+id0x0E = { byte = 1 , size =  1 , mult = 0.5 , offset = -65, unit = "° relative to #1 cylinder"} ,
+id0x0F = { byte = 1 , size =  1 , mult = 1 , offset = -40, unit = "°C"} ,
+id0x10 = { byte = 1 , size =  2 , mult = 0.01 , offset = 0, unit = "g/s"} ,
+id0x11 = { byte = 1 , size =  1 , mult = 0.392156862745 , offset = 0, unit = " %"} ,
+
+
+id0x14 = { byte = 1 , size =  1 , mult = 0.5 , offset = 0, unit = "Volts"} ,
+id0x114 = { byte = 2 , size =  1 , mult = 0.78125 , offset = -100, unit = "%"} ,
+    	-------------
+	id0xFF = "index error"
+
+  }
+
+--]]
+
+function getNumPIDs(oldvalue,id)
+	numID=tonumber(id)
+	ascID=tostring(numID % 256 , 16 )
+	if string.len(ascID) % 2 == 1 then -- adding leading 0, if necessary
+		ascID = "0"..ascID
+	end
+	echoWrite("01"..ascID.."\r\n")
+	udsLen=send()
+	print ("udsLen", udsLen)
+	if udsLen>0 then
+		if udsBuffer[1]==65 then
+			res=""
+			-- having the functions hashed by the id.		
+			paramList=PID01CMDs["id"..id]
+			res= paramList ~= null and CalcNumPid( paramList.byte , paramList.size , paramList.mult , paramList.offset, paramList.unit)  or "index error"
+			return res
+		else
+			return "Error"
+		end
+	else
+		return "NO DATA"
+	end
+end
+
+
+function hasBit(value, bitNr) -- bitNr starts with 0
+	bitValue=2 ^ bitNr
+	return value % (bitValue + bitValue) >= bitValue -- found in the internet: nice trick to do bitoperations in Lua, which does not have such functions by default
+end
+
+
+function createCall(availPIDs, id, title, func)
+	if hasBit(availPIDs, 20- (id % 256)) then
+		addCell(title, func,"-",true , false, "0x"..tostring(id,16))
+	end
+end
+
+
+function createCMD01Menu()
+	echoWrite("0100\r\n")
+	udsLen=send()
+	if udsLen>0 then
+		if udsBuffer[1]==65 then
+			availPIDs=0
+			for i = 0 , 3, 1 do -- get the bit field, which PIDs are available
+				availPIDs=availPIDs*256 +udsBuffer[3+i]
+			end
+			print (availPIDs)
+			if availPIDs ~= 0 then
+				initCellTable()
+				------------------------ these are the lines copied from the "createCall" section in the OBD2_PIDs - OpenOffice- File
+				createCall(availPIDs, 0x4,"Calculated engine load value", "GetNumPIDs")
+				createCall(availPIDs, 0x5,"Engine coolant temperature", "GetNumPIDs")
+				createCall(availPIDs, 0x6,"Short term fuel % trim—Bank 1", "GetNumPIDs")
+				createCall(availPIDs, 0x7,"Long term fuel % trim—Bank 1", "GetNumPIDs")
+				createCall(availPIDs, 0x8,"Short term fuel % trim—Bank 2", "GetNumPIDs")
+				createCall(availPIDs, 0x9,"Long term fuel % trim—Bank 2", "GetNumPIDs")
+				createCall(availPIDs, 0x0A,"Fuel pressure", "GetNumPIDs")
+				createCall(availPIDs, 0x0B,"Intake manifold absolute pressure", "GetNumPIDs")
+				createCall(availPIDs, 0x0C,"Engine RPM", "GetNumPIDs")
+				createCall(availPIDs, 0x0D,"Vehicle speed", "GetNumPIDs")
+				createCall(availPIDs, 0x0E,"Timing advance", "GetNumPIDs")
+				createCall(availPIDs, 0x0F,"Intake air temperature", "GetNumPIDs")
+				createCall(availPIDs, 0x10,"MAF air flow rate", "GetNumPIDs")
+				createCall(availPIDs, 0x11,"Throttle position", "GetNumPIDs")
+				createCall(availPIDs, 0x14,"Bank 1, Sensor 1: Oxygen sensor voltage", "GetNumPIDs")
+				createCall(availPIDs, 0x114,"Bank 1, Sensor 1: Short term fuel trim", "GetNumPIDs")
+				-----------------------------------------
+				showCellTable("CMD 01 PIDs")		
+			else
+				return "No avail. PIDs found"
+			end
+
+		else
+			return "Error"
+		end
+	else
+		return "NO DATA"
+	end
+end
+
+
 function Sensor_Menu(oldvalue,id)
 	initCellTable()
 	addCell("RPM", "sens_rpm","-",true , false, "")
+	addCell("Dynamic Menu >>>", "createCMD01Menu",">>>",true , false, "")
 	addCell("<<< Main", "Menu_Main","<<<",false , false, "")
 	showCellTable("Vehicle Info")
 	return oldvalue
@@ -276,5 +454,7 @@ end
 
 ----------------- Do the initial settings --------------
 Menu_Main("")
+--createCMD01Menu("",0)
+--print (getNumPIDs("","0x5"))
 return
 
