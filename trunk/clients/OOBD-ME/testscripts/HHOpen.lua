@@ -13,6 +13,8 @@ HHOpen.lua
 initCellTable = initCellTableCall
 addCell = addCellCall
 showCellTable = showCellTableCall
+--]]
+---[[
 serFlush = serFlushCall
 serWrite = serWriteCall
 serWait = serWaitCall
@@ -26,11 +28,16 @@ input = {}
 input[1]="Searching"
 input[2]="41 00 E8 19 30 12"
 input[3]=">"
-input[4]=""
+
 
 function serReadLn()
+	res= input[readcount]
+	print ("read from input: ",res, readcount)
 	readcount=readcount +1
-	return input[readcount -1]
+	if readcount >#input then
+		readcount = 1
+	end
+	return res
 end
 
 function serWait()
@@ -44,7 +51,10 @@ end
 function serFlush()
 end
 
+--]]
 
+
+--[[
 function initCellTable()
 	print("Start Menu generation");
 end
@@ -210,38 +220,9 @@ function CalcNumPid( byteNr , nrOfBytes, multiplier, offset, unit)
 	return value ..unit
 end
 
---[[
--- here it becomes tricky: store the necessary function calls as a id- indexed hash table
-
-local PID01CMDs = {
-	------------------------ these are the lines copied from the "CalcNumPid" section in the OBD2_PIDs - OpenOffice- File
-	id0x4 = function() return CalcNumPid( 1 , 1 , 0.392156862745 , 0, " %") end,
-	id0x5 = function() return CalcNumPid( 1 , 1 , 1 , -40, "°C") end,
-	id0x6 = function() return CalcNumPid( 1 , 1 , 0.78125 , -100, " %") end,
-	id0x7 = function() return CalcNumPid( 1 , 1 , 0.78125 , -100, " %") end,
-	id0x8 = function() return CalcNumPid( 1 , 1 , 0.78125 , -100, " %") end,
-	id0x9 = function() return CalcNumPid( 1 , 1 , 0.78125 , -100, " %") end,
-	id0x0A = function() return CalcNumPid( 1 , 1 , 3 , 0, "kPa (gauge)") end,
-	id0x0B = function() return CalcNumPid( 1 , 1 , 1 , 0, "kPa (absolute)") end,
-	id0x0C = function() return CalcNumPid( 1 , 2 , 0.25 , 0, "rpm") end,
-	id0x0D = function() return CalcNumPid( 1 , 1 , 1 , 0, "km/h") end,
-	id0x0E = function() return CalcNumPid( 1 , 1 , 0.5 , -65, "° relative to #1 cylinder") end,
-	id0x0F = function() return CalcNumPid( 1 , 1 , 1 , -40, "°C") end,
-	id0x10 = function() return CalcNumPid( 1 , 2 , 0.01 , 0, "g/s") end,
-	id0x11 = function() return CalcNumPid( 1 , 1 , 0.392156862745 , 0, " %") end,
 
 
-	id0x14 = function() return CalcNumPid( 1 , 1 , 0.5 , 0, "Volts") end,
-	id0x114 = function() return CalcNumPid( 2 , 1 , 0.78125 , -100, "%") end,
 
-    	-------------
-	id0xFF = "index error"
-
-  }
-
---]]
-
----[[
 -- here it becomes tricky: store the necessary function calls as a id- indexed hash table
 
 local PID01CMDs = {
@@ -265,26 +246,26 @@ id0x11 = { byte = 1 , size =  1 , mult = 0.392156862745 , offset = 0, unit = " 
 id0x14 = { byte = 1 , size =  1 , mult = 0.5 , offset = 0, unit = "Volts"} ,
 id0x114 = { byte = 2 , size =  1 , mult = 0.78125 , offset = -100, unit = "%"} ,
     	-------------
-	id0xFF = "index error"
+	id0xFF = "dummy"
 
   }
 
---]]
+
 
 function getNumPIDs(oldvalue,id)
+	id = string.sub(id,3)  -- remove the leading 0x
 	numID=tonumber(id)
 	ascID=tostring(numID % 256 , 16 )
-	if string.len(ascID) % 2 == 1 then -- adding leading 0, if necessary
+	if #ascID % 2 == 1 then -- adding leading 0, if necessary
 		ascID = "0"..ascID
 	end
 	echoWrite("01"..ascID.."\r\n")
 	udsLen=send()
-	print ("udsLen", udsLen)
 	if udsLen>0 then
 		if udsBuffer[1]==65 then
 			res=""
 			-- having the functions hashed by the id.		
-			paramList=PID01CMDs["id"..id]
+			paramList=PID01CMDs["id0x"..id]
 			res= paramList ~= null and CalcNumPid( paramList.byte , paramList.size , paramList.mult , paramList.offset, paramList.unit)  or "index error"
 			return res
 		else
@@ -309,7 +290,7 @@ function createCall(availPIDs, id, title, func)
 end
 
 
-function createCMD01Menu()
+function createCMD01Menu(oldvalue,id)
 	echoWrite("0100\r\n")
 	udsLen=send()
 	if udsLen>0 then
@@ -318,28 +299,28 @@ function createCMD01Menu()
 			for i = 0 , 3, 1 do -- get the bit field, which PIDs are available
 				availPIDs=availPIDs*256 +udsBuffer[3+i]
 			end
-			print (availPIDs)
 			if availPIDs ~= 0 then
 				initCellTable()
 				------------------------ these are the lines copied from the "createCall" section in the OBD2_PIDs - OpenOffice- File
-				createCall(availPIDs, 0x4,"Calculated engine load value", "GetNumPIDs")
-				createCall(availPIDs, 0x5,"Engine coolant temperature", "GetNumPIDs")
-				createCall(availPIDs, 0x6,"Short term fuel % trim—Bank 1", "GetNumPIDs")
-				createCall(availPIDs, 0x7,"Long term fuel % trim—Bank 1", "GetNumPIDs")
-				createCall(availPIDs, 0x8,"Short term fuel % trim—Bank 2", "GetNumPIDs")
-				createCall(availPIDs, 0x9,"Long term fuel % trim—Bank 2", "GetNumPIDs")
-				createCall(availPIDs, 0x0A,"Fuel pressure", "GetNumPIDs")
-				createCall(availPIDs, 0x0B,"Intake manifold absolute pressure", "GetNumPIDs")
-				createCall(availPIDs, 0x0C,"Engine RPM", "GetNumPIDs")
-				createCall(availPIDs, 0x0D,"Vehicle speed", "GetNumPIDs")
-				createCall(availPIDs, 0x0E,"Timing advance", "GetNumPIDs")
-				createCall(availPIDs, 0x0F,"Intake air temperature", "GetNumPIDs")
-				createCall(availPIDs, 0x10,"MAF air flow rate", "GetNumPIDs")
-				createCall(availPIDs, 0x11,"Throttle position", "GetNumPIDs")
-				createCall(availPIDs, 0x14,"Bank 1, Sensor 1: Oxygen sensor voltage", "GetNumPIDs")
-				createCall(availPIDs, 0x114,"Bank 1, Sensor 1: Short term fuel trim", "GetNumPIDs")
+				createCall(availPIDs, 0x4,"Calculated engine load value", "getNumPIDs")
+				createCall(availPIDs, 0x5,"Engine coolant temperature", "getNumPIDs")
+				createCall(availPIDs, 0x6,"Short term fuel % trim—Bank 1", "getNumPIDs")
+				createCall(availPIDs, 0x7,"Long term fuel % trim—Bank 1", "getNumPIDs")
+				createCall(availPIDs, 0x8,"Short term fuel % trim—Bank 2", "getNumPIDs")
+				createCall(availPIDs, 0x9,"Long term fuel % trim—Bank 2", "getNumPIDs")
+				createCall(availPIDs, 0x0A,"Fuel pressure", "getNumPIDs")
+				createCall(availPIDs, 0x0B,"Intake manifold absolute pressure", "getNumPIDs")
+				createCall(availPIDs, 0x0C,"Engine RPM", "getNumPIDs")
+				createCall(availPIDs, 0x0D,"Vehicle speed", "getNumPIDs")
+				createCall(availPIDs, 0x0E,"Timing advance", "getNumPIDs")
+				createCall(availPIDs, 0x0F,"Intake air temperature", "getNumPIDs")
+				createCall(availPIDs, 0x10,"MAF air flow rate", "getNumPIDs")
+				createCall(availPIDs, 0x11,"Throttle position", "getNumPIDs")
+				createCall(availPIDs, 0x14,"Bank 1, Sensor 1: Oxygen sensor voltage", "getNumPIDs")
+				createCall(availPIDs, 0x114,"Bank 1, Sensor 1: Short term fuel trim", "getNumPIDs")
 				-----------------------------------------
-				showCellTable("CMD 01 PIDs")		
+				showCellTable("CMD 01 PIDs")
+				return oldvalue
 			else
 				return "No avail. PIDs found"
 			end
