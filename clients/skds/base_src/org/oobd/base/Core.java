@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.oobd.base.support.Onion;
 import java.lang.reflect.*;
-import java.io.File;
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import java.util.Collection;
+import java.util.Properties;
 import org.oobd.base.bus.OobdBus;
 import org.oobd.base.connector.OobdConnector;
 import org.oobd.base.protocol.OobdProtocol;
@@ -40,6 +41,7 @@ public class Core implements OOBDConstants, CoreTickListener {
     HashMap<String, ArrayList<Visualizer>> visualizers;
     static Core thisInstance; //Class variable points to only instance
     CoreTick ticker;
+    Properties props;
 
     public Core(IFui myUserInterface, IFsystem mySystemInterface) {
         thisInstance = this;
@@ -54,6 +56,12 @@ public class Core implements OOBDConstants, CoreTickListener {
         visualizers = new HashMap<String, ArrayList<Visualizer>>();
 
         //userInterface.sm("Moin");
+                props = new Properties();
+        try {
+            props.load(new FileInputStream(OOBDConstants.CorePrefsFileName));
+        } catch (IOException ignored) {
+        }
+
         Onion testOnion = Onion.generate();
         testOnion.setValue("test", "moin");
         testOnion.setValue("test2", "moin2");
@@ -93,7 +101,7 @@ public class Core implements OOBDConstants, CoreTickListener {
 
         // ----------- load Busses -------------------------------
         try {
-            HashMap<String, Class<?>> classObjects = loadOobdClasses("../../org/oobd/ui/swing/build/classes/org/oobd/base/bus", "org.oobd.base.bus.", Class.forName("org.oobd.base.bus.OobdBus"));
+            HashMap<String, Class<?>> classObjects = loadOobdClasses(props.getProperty("BusClassPath", "../../org/oobd/ui/swing/build/classes/org/oobd/base/bus"), "org.oobd.base.bus.", Class.forName("org.oobd.base.bus.OobdBus"));
             for (Iterator iter = classObjects.keySet().iterator(); iter.hasNext();) {
                 String element = (String) iter.next();
                 Class<?> value = (Class<?>) classObjects.get(element);
@@ -113,7 +121,7 @@ public class Core implements OOBDConstants, CoreTickListener {
         }
         // ----------- load Connectors -------------------------------
         try {
-            HashMap<String, Class<?>> classObjects = loadOobdClasses("../../org/oobd/ui/swing/build/classes/org/oobd/base/connector", "org.oobd.base.connector.", Class.forName("org.oobd.base.connector.OobdConnector"));
+            HashMap<String, Class<?>> classObjects = loadOobdClasses(props.getProperty("ConnectorClassPath","../../org/oobd/ui/swing/build/classes/org/oobd/base/connector"), "org.oobd.base.connector.", Class.forName("org.oobd.base.connector.OobdConnector"));
             for (Iterator iter = classObjects.keySet().iterator(); iter.hasNext();) {
                 String element = (String) iter.next();
                 Class<?> value = (Class<?>) classObjects.get(element);
@@ -133,7 +141,7 @@ public class Core implements OOBDConstants, CoreTickListener {
         }
         // ----------- load Protocols -------------------------------
         try {
-            HashMap<String, Class<?>> classObjects = loadOobdClasses("../../org/oobd/ui/swing/build/classes/org/oobd/base/protocol", "org.oobd.base.protocol.", Class.forName("org.oobd.base.protocol.OobdProtocol"));
+            HashMap<String, Class<?>> classObjects = loadOobdClasses(props.getProperty("ProtocolClassPath","../../org/oobd/ui/swing/build/classes/org/oobd/base/protocol"), "org.oobd.base.protocol.", Class.forName("org.oobd.base.protocol.OobdProtocol"));
             for (Iterator iter = classObjects.keySet().iterator(); iter.hasNext();) {
                 String element = (String) iter.next();
                 Class<?> value = (Class<?>) classObjects.get(element);
@@ -153,7 +161,7 @@ public class Core implements OOBDConstants, CoreTickListener {
         }
         // ----------- load Scriptengines AS CLASSES, NOT AS INSTANCES!-------------------------------
         try {
-            scriptengines = loadOobdClasses("../../org/oobd/ui/swing/build/classes/org/oobd/base/scriptengine", "org.oobd.base.scriptengine.", Class.forName("org.oobd.base.scriptengine.OobdScriptengine"));
+            scriptengines = loadOobdClasses(props.getProperty("EngineClassPath","../../org/oobd/ui/swing/build/classes/org/oobd/base/scriptengine"), "org.oobd.base.scriptengine.", Class.forName("org.oobd.base.scriptengine.OobdScriptengine"));
             for (Iterator iter = scriptengines.keySet().iterator(); iter.hasNext();) {
                 String element = (String) iter.next();
                 Class<?> value = scriptengines.get(element);
