@@ -14,4 +14,5 @@ import org.oobd.base.*;
  */
 public abstract class OobdProtocol extends OobdPlugin{
 
+    abstract public void run();
 }

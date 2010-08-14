@@ -29,5 +29,5 @@ abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstan
 
     }
 
-    abstract public void start();
+    
 }

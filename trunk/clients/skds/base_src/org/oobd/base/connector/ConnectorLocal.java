@@ -24,7 +24,11 @@ public class ConnectorLocal extends OobdConnector implements OOBDConstants {
     }
 
     @Override
-    public String getScriptEngineName() {
+    public String getPluginName() {
         return "c:Local";
+    }
+
+    public void run() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

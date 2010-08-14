@@ -20,7 +20,7 @@ public class ScriptengineLua extends OobdScriptengine {
     }
 
     @Override
-    public String getScriptEngineName() {
+    public String getPluginName() {
         return "se:Lua";
     }
 
@@ -28,7 +28,7 @@ public class ScriptengineLua extends OobdScriptengine {
         return "Script";
     }
 
-    public void start(){
+    public void run(){
         
     }
 }

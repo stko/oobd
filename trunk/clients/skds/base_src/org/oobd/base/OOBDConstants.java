@@ -30,4 +30,6 @@ public interface OOBDConstants {
     // Types of the different visualizer update requests
     public static final Integer UR_USER = 0;
     public final static String CorePrefsFileName = "oobdcore.props";
+    //
+    public final static String CoreMailboxName = "core";
 }
