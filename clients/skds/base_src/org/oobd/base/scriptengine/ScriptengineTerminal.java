@@ -38,23 +38,23 @@ public class ScriptengineTerminal extends OobdScriptengine implements OOBDConsta
         Debug.msg("scriptengineterminal", DEBUG_BORING, "positiver Actiontest...");
         Debug.msg("scriptengineterminal", DEBUG_BORING, "negativer Actiontest...");
         try {
-            core.transferMsg(new Message(this, OOBDConstants.CoreMailboxName, new Onion("{\"type\":\"noaction\"}")));
-            core.transferMsg(new Message(this, OOBDConstants.CoreMailboxName, new Onion(""
+            core.transferMsg(new Message(this, CoreMailboxName, new Onion("{\"type\":\"noaction\"}")));
+            core.transferMsg(new Message(this, CoreMailboxName, new Onion(""
                     + "{'type':'" + CM_CANVAS + "',"
                     + "'owner':'" + this.id + "',"
                     + "'name':'Canvastest_1'}")));
-            core.transferMsg(new Message(this, OOBDConstants.CoreMailboxName, new Onion(""
+            core.transferMsg(new Message(this, CoreMailboxName, new Onion(""
                     + "{'type':'" + CM_CANVAS + "',"
                     + "'owner':'" + this.id + "',"
                     + "'name':'Canvastest_2'}")));
-            core.transferMsg(new Message(this, OOBDConstants.CoreMailboxName, new Onion(""
+            core.transferMsg(new Message(this, CoreMailboxName, new Onion(""
                     + "{'type':'" + CM_VISUALIZE + "',"
                     + "'owner':"
                     + "{'name':'" + this.id + "'},"
                     + "'canvas':'Canvastest_1',"
                     + "'tooltip':'erste Worte...',"
                     + "'name':'table_1'}")));
-            core.transferMsg(new Message(this, OOBDConstants.CoreMailboxName, new Onion(""
+            core.transferMsg(new Message(this, CoreMailboxName, new Onion(""
                     + "{'type':'" + CM_VISUALIZE + "',"
                     + "'owner':"
                     + "{'name':'" + this.id + "'},"
@@ -69,7 +69,7 @@ public class ScriptengineTerminal extends OobdScriptengine implements OOBDConsta
                     + "{'name':'table_2'},"
                     + "'ValueString':'uups..'}");
             */
-            core.transferMsg(new Message(this, OOBDConstants.CoreMailboxName, new Onion("" + "{'type':'" + CM_VALUE + "'," + "'owner':" + "{'name':'" + this.id + "'}," + "'to':" + "{'name':'table_2'}," + "'ValueString':'uups..'}")));
+            core.transferMsg(new Message(this, CoreMailboxName, new Onion("" + "{'type':'" + CM_VALUE + "'," + "'owner':" + "{'name':'" + this.id + "'}," + "'to':" + "{'name':'table_2'}," + "'ValueString':'uups..'}")));
         } catch (JSONException ex) {
             Logger.getLogger(ScriptengineTerminal.class.getName()).log(Level.SEVERE, null, ex);
         }

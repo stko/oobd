@@ -39,7 +39,8 @@ public interface IFvisualizer {
      * controls the update of the visualisation of this visualizer
      * @param viz
      * @param onion
+     * @return true if update has been done
      */
-    public void update(int level);
+    public boolean update(int level);
 
 }

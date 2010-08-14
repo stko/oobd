@@ -52,9 +52,9 @@ public class Visualizer {
     }
 
     public String getValue(String name) {
-        if (value!=null){
+        if (value != null) {
             return value.getOnionString(name);
-        }else{
+        } else {
             return null;
         }
     }
@@ -88,14 +88,32 @@ public class Visualizer {
     public void doUpdate(int updateLevel) {
         if (myObject != null && updateNeeded) {
             myObject.update(updateLevel);
-            updateNeeded =
-                    false;
+            updateNeeded = !myObject.update(updateLevel);
         }
     }
-   /** Update request from Component
+
+    /** Update request from Component
      *  0: start 1: update data 2: finish
      */
     public void updateRequest(int type) {
-        System.out.println("Update request"+Integer.toString(type));
+        System.out.println("Update request" + Integer.toString(type));
+        System.out.println("my ownwer is: " + ownerEngine.toString());
+        try {
+            Core.getSingleInstance().transferMsg(new Message(Core.getSingleInstance(), OOBDConstants.CoreMailboxName, new Onion(""
+                    + "{" +
+                    "'type':'" + OOBDConstants.CM_UPDATE +
+                    "'," +
+                    "'vis':'" + this.name +
+                    "',"  +
+                    "'to':'" + getOwnerEngine() +
+                    "',"  +
+                    "'actValue':'" + getValue("ValueString") +
+                    "',"  +
+                    "'updType':" + Integer.toString(type) +
+                    "}")));
+        } catch (JSONException ex) {
+            Logger.getLogger(Visualizer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 }

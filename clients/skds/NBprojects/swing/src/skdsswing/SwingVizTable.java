@@ -125,21 +125,24 @@ public class SwingVizTable extends JTable implements IFvisualizer {
 
     }
 
-    public void update(int level) {
+    public boolean update(int level) {
         System.out.println("Update level:" + Integer.toString(level));
         switch (level) {
             case 0: {
                 awaitingUpdate = true;
+                return false;
             }
             case 2: {
                 if (awaitingUpdate == true) {
                     this.invalidate();
                     this.validate();
                     this.repaint();
-
                     awaitingUpdate = false;
+                    return true;
                 }
             }
+            default:
+                return false;
         }
     }
 }
