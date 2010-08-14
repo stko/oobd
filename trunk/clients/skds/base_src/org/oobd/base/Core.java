@@ -379,6 +379,12 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                 Debug.msg("Core", DEBUG_INFO, "visualitation requested");
                 handleValue(myOnion);
             }
+            if (myOnion.isType(CM_UPDATE)) {
+                Debug.msg("Core", DEBUG_INFO, "forward UPDATE request to"+myOnion.getString("to"));
+                   transferMsg(new Message(this, myOnion.getString("to"), myOnion));
+
+            }
+
             if (myOnion.isType(CM_CANVAS)) {
                 Debug.msg("Core", DEBUG_INFO, "Canvas requested");
                 String dummy = myOnion.getOnionString("owner");
@@ -478,7 +484,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             actionRequest(thisMsg.content);
 
         }
-        transferMsg(new Message(this, "ScriptengineTerminal.1", null));
+        //transferMsg(new Message(this, "ScriptengineTerminal.1", null));
         updateVisualizers();
         ticker.enable(true);
     }

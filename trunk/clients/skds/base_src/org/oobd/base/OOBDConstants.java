@@ -13,6 +13,7 @@ public interface OOBDConstants {
     public static final String CM_VISUALIZE = "VISUALIZE";
     public static final String CM_CANVAS = "CANVAS";
     public static final String CM_VALUE = "VALUE";
+    public static final String CM_UPDATE = "UPDATE";
     // IDs used for internal core list handling
     public static final String CL_PANE = "pane";
     public static final String CL_CANVAS = "canvas";
