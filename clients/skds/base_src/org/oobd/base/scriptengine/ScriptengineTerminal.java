@@ -4,10 +4,11 @@
  */
 package org.oobd.base.scriptengine;
 
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.JSONException;
 import org.oobd.base.*;
-
-
+import org.oobd.base.support.Onion;
 
 /**
  * generic abstract for the implementation of protocols
@@ -17,58 +18,66 @@ public class ScriptengineTerminal extends OobdScriptengine implements OOBDConsta
 
     public ScriptengineTerminal(String ID, Core myCore) {
         super(ID, myCore);
-        Debug.msg("scriptengineterminal",DEBUG_BORING,"Ich bin der ScriptengineTerminal...");
+        Debug.msg("scriptengineterminal", DEBUG_BORING, "Ich bin der ScriptengineTerminal...");
 
     }
 
     @Override
-    public String getScriptEngineName() {
+    public String getPluginName() {
         return "se:Terminal";
     }
 
     public static String publicName() {
         return "Terminal";
     }
+
     /**
      * @todo: Acion canvas wir der Owner noch als reiner String übergeben, nicht als Sub-Onion
      */
-    public void start(){
-        Debug.msg("scriptengineterminal",DEBUG_BORING,"positiver Actiontest...");
-        Debug.msg("scriptengineterminal",DEBUG_BORING,"negativer Actiontest...");
-        core.actionRequest("{\"type\":\"noaction\"}");
-        core.actionRequest(""+
-                "{'type':'"+CM_CANVAS+"'," +
-                "'owner':'"+this.id+"'," +
-                "'name':'Canvastest_1'}"
-                );
-        core.actionRequest(""+
-                "{'type':'"+CM_CANVAS+"'," +
-                "'owner':'"+this.id+"'," +
-                "'name':'Canvastest_2'}"
-                );
-        core.actionRequest(""+
-                "{'type':'"+CM_VISUALIZE+"'," +
-                "'owner':"+
-                "{'name':'"+this.id+"'}," +
-               "'canvas':'Canvastest_1'," +
-                "'tooltip':'erste Worte...'," +
-                "'name':'table_1'}"
-                );
-        core.actionRequest(""+
-                "{'type':'"+CM_VISUALIZE+"'," +
-                "'owner':"+
-                "{'name':'"+this.id+"'}," +
-                "'canvas':'Canvastest_1'," +
-                "'tooltip':'Wort 2'," +
-                "'name':'table_2'}"
-                );
-       core.actionRequest(""+
-                "{'type':'"+CM_VALUE+"'," +
-                "'owner':"+
-                "{'name':'"+this.id+"'}," +
-                "'to':"+
-                "{'name':'table_2'}," +
-                "'ValueString':'uups..'}"
-                );
+    public void run() {
+        Debug.msg("scriptengineterminal", DEBUG_BORING, "positiver Actiontest...");
+        Debug.msg("scriptengineterminal", DEBUG_BORING, "negativer Actiontest...");
+        try {
+            core.transferMsg(new Message(this, OOBDConstants.CoreMailboxName, new Onion("{\"type\":\"noaction\"}")));
+            core.transferMsg(new Message(this, OOBDConstants.CoreMailboxName, new Onion(""
+                    + "{'type':'" + CM_CANVAS + "',"
+                    + "'owner':'" + this.id + "',"
+                    + "'name':'Canvastest_1'}")));
+            core.transferMsg(new Message(this, OOBDConstants.CoreMailboxName, new Onion(""
+                    + "{'type':'" + CM_CANVAS + "',"
+                    + "'owner':'" + this.id + "',"
+                    + "'name':'Canvastest_2'}")));
+            core.transferMsg(new Message(this, OOBDConstants.CoreMailboxName, new Onion(""
+                    + "{'type':'" + CM_VISUALIZE + "',"
+                    + "'owner':"
+                    + "{'name':'" + this.id + "'},"
+                    + "'canvas':'Canvastest_1',"
+                    + "'tooltip':'erste Worte...',"
+                    + "'name':'table_1'}")));
+            core.transferMsg(new Message(this, OOBDConstants.CoreMailboxName, new Onion(""
+                    + "{'type':'" + CM_VISUALIZE + "',"
+                    + "'owner':"
+                    + "{'name':'" + this.id + "'},"
+                    + "'canvas':'Canvastest_1',"
+                    + "'tooltip':'Wort 2',"
+                    + "'name':'table_2'}")));
+           /* core.actionRequest(""
+                    + "{'type':'" + CM_VALUE + "',"
+                    + "'owner':"
+                    + "{'name':'" + this.id + "'},"
+                    + "'to':"
+                    + "{'name':'table_2'},"
+                    + "'ValueString':'uups..'}");
+            */
+            core.transferMsg(new Message(this, OOBDConstants.CoreMailboxName, new Onion("" + "{'type':'" + CM_VALUE + "'," + "'owner':" + "{'name':'" + this.id + "'}," + "'to':" + "{'name':'table_2'}," + "'ValueString':'uups..'}")));
+        } catch (JSONException ex) {
+            Logger.getLogger(ScriptengineTerminal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        while (keepRunning == true) {
+            Debug.msg("scriptengineterminal", DEBUG_BORING, "sleeping...");
+            getMsg(true);
+            Debug.msg("scriptengineterminal", DEBUG_BORING, "waked up after received msg...");
+
+        }
     }
 }

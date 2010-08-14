@@ -23,7 +23,13 @@ public class ProtocolUDS extends OobdProtocol implements OOBDConstants{
         Debug.msg("protocoluds",DEBUG_BORING,"Core registered...");
     }
 
-    @Override public String getScriptEngineName(){
+    @Override public String getPluginName(){
         return "p:UDS";
     }
+
+    public void run() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+
 }

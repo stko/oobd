@@ -24,7 +24,11 @@ public class BusEcho extends OobdBus implements OOBDConstants{
     }
 
     @Override
-    public String getScriptEngineName() {
+    public String getPluginName() {
         return "b:Echo";
+    }
+
+    public void run() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

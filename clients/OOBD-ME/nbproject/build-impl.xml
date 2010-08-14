@@ -936,7 +936,7 @@
     <target name="semc-run" depends="semc-icon-assembly,semc-ppro-emulator,semc-do-run" if="semc-platform.trigger"/>
     <!--savaje-run-->
     <target name="savaje-run" if="savaje-platform.trigger">
-        <sunEmulatorExec home="${platform.home}" mainclass="${main.class}" args="${application.args}" jvmargs="${run.jvmargs}" device="${platform.device}" profile="${platform.profile}" xlet="${main.class.xlet}" applet="${main.class.applet}">
+        <sunEmulatorExec home="${platform.home}" mainclass="${main.class}" args="${application.args}" jvmargs="${run.cmd.options}" device="${platform.device}" profile="${platform.profile}" xlet="${main.class.xlet}" applet="${main.class.applet}">
             <fileset dir="${dist.dir}">
                 <exclude name="javadoc/**"/>
             </fileset>
@@ -945,7 +945,7 @@
     <!--sjmc-run-->
     <target name="sjmc-run" if="sjmc-platform.trigger">
         <taskdef name="sjmcEmulatorExec" classname="org.netbeans.modules.j2me.cdc.project.sjmc.SJMCToolkitEmulatorExecTask" classpath="${libs.sjmc-ant-utils.classpath}"/>
-        <sjmcEmulatorExec home="${platform.home}" mainclass="${main.class}" args="${application.args}" jvmargs="${run.jvmargs}" device="${platform.device}" profile="${platform.profile}" xlet="${main.class.xlet}" applet="${main.class.applet}">
+        <sjmcEmulatorExec home="${platform.home}" mainclass="${main.class}" args="${application.args}" jvmargs="${run.cmd.options}" device="${platform.device}" profile="${platform.profile}" xlet="${main.class.xlet}" applet="${main.class.applet}">
             <fileset dir="${dist.dir}">
                 <exclude name="javadoc/**"/>
             </fileset>
@@ -1059,7 +1059,7 @@
     <!--savaje-debug-->
     <target name="savaje-debug" if="savaje-platform.trigger">
         <parallel>
-            <sunEmulatorExec home="${platform.home}" mainclass="${main.class}" args="${application.args}" jvmargs="${run.jvmargs}" device="${platform.device}" profile="${platform.profile}" xlet="${main.class.xlet}" applet="${main.class.applet}" debug="true" debuggeraddressproperty="jpda.port">
+            <sunEmulatorExec home="${platform.home}" mainclass="${main.class}" args="${application.args}" jvmargs="${run.cmd.options}" device="${platform.device}" profile="${platform.profile}" xlet="${main.class.xlet}" applet="${main.class.applet}" debug="true" debuggeraddressproperty="jpda.port">
                 <fileset dir="${dist.dir}">
                     <exclude name="javadoc/**"/>
                 </fileset>
@@ -1074,7 +1074,7 @@
     <target name="sjmc-debug" if="sjmc-platform.trigger">
         <taskdef name="sjmcEmulatorExec" classname="org.netbeans.modules.j2me.cdc.project.sjmc.SJMCToolkitEmulatorExecTask" classpath="${libs.sjmc-ant-utils.classpath}"/>
         <parallel>
-            <sjmcEmulatorExec home="${platform.home}" mainclass="${main.class}" args="${application.args}" jvmargs="${run.jvmargs}" device="${platform.device}" profile="${platform.profile}" xlet="${main.class.xlet}" applet="${main.class.applet}" debug="true" debuggeraddressproperty="jpda.port">
+            <sjmcEmulatorExec home="${platform.home}" mainclass="${main.class}" args="${application.args}" jvmargs="${run.cmd.options}" device="${platform.device}" profile="${platform.profile}" xlet="${main.class.xlet}" applet="${main.class.applet}" debug="true" debuggeraddressproperty="jpda.port">
                 <fileset dir="${dist.dir}">
                     <exclude name="javadoc/**"/>
                 </fileset>

@@ -6,7 +6,6 @@ package org.oobd.base;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.oobd.base.support.Onion;
 import java.lang.reflect.*;
 import java.io.*;
 import java.net.URL;
@@ -17,6 +16,7 @@ import java.util.Iterator;
 
 import java.util.Collection;
 import java.util.Properties;
+import org.oobd.base.support.Onion;
 import org.oobd.base.bus.OobdBus;
 import org.oobd.base.connector.OobdConnector;
 import org.oobd.base.protocol.OobdProtocol;
@@ -28,7 +28,7 @@ import org.oobd.base.visualizer.Visualizer;
  * The interface for nearly all interaction between the generic oobd maschine and the different environments
  * @author steffen
  */
-public class Core implements OOBDConstants, CoreTickListener {
+public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener {
 
     IFui userInterface;
     IFsystem systemInterface;
@@ -56,7 +56,7 @@ public class Core implements OOBDConstants, CoreTickListener {
         visualizers = new HashMap<String, ArrayList<Visualizer>>();
 
         //userInterface.sm("Moin");
-                props = new Properties();
+        props = new Properties();
         try {
             props.load(new FileInputStream(OOBDConstants.CorePrefsFileName));
         } catch (IOException ignored) {
@@ -121,7 +121,7 @@ public class Core implements OOBDConstants, CoreTickListener {
         }
         // ----------- load Connectors -------------------------------
         try {
-            HashMap<String, Class<?>> classObjects = loadOobdClasses(props.getProperty("ConnectorClassPath","../../org/oobd/ui/swing/build/classes/org/oobd/base/connector"), "org.oobd.base.connector.", Class.forName("org.oobd.base.connector.OobdConnector"));
+            HashMap<String, Class<?>> classObjects = loadOobdClasses(props.getProperty("ConnectorClassPath", "../../org/oobd/ui/swing/build/classes/org/oobd/base/connector"), "org.oobd.base.connector.", Class.forName("org.oobd.base.connector.OobdConnector"));
             for (Iterator iter = classObjects.keySet().iterator(); iter.hasNext();) {
                 String element = (String) iter.next();
                 Class<?> value = (Class<?>) classObjects.get(element);
@@ -141,7 +141,7 @@ public class Core implements OOBDConstants, CoreTickListener {
         }
         // ----------- load Protocols -------------------------------
         try {
-            HashMap<String, Class<?>> classObjects = loadOobdClasses(props.getProperty("ProtocolClassPath","../../org/oobd/ui/swing/build/classes/org/oobd/base/protocol"), "org.oobd.base.protocol.", Class.forName("org.oobd.base.protocol.OobdProtocol"));
+            HashMap<String, Class<?>> classObjects = loadOobdClasses(props.getProperty("ProtocolClassPath", "../../org/oobd/ui/swing/build/classes/org/oobd/base/protocol"), "org.oobd.base.protocol.", Class.forName("org.oobd.base.protocol.OobdProtocol"));
             for (Iterator iter = classObjects.keySet().iterator(); iter.hasNext();) {
                 String element = (String) iter.next();
                 Class<?> value = (Class<?>) classObjects.get(element);
@@ -161,7 +161,7 @@ public class Core implements OOBDConstants, CoreTickListener {
         }
         // ----------- load Scriptengines AS CLASSES, NOT AS INSTANCES!-------------------------------
         try {
-            scriptengines = loadOobdClasses(props.getProperty("EngineClassPath","../../org/oobd/ui/swing/build/classes/org/oobd/base/scriptengine"), "org.oobd.base.scriptengine.", Class.forName("org.oobd.base.scriptengine.OobdScriptengine"));
+            scriptengines = loadOobdClasses(props.getProperty("EngineClassPath", "../../org/oobd/ui/swing/build/classes/org/oobd/base/scriptengine"), "org.oobd.base.scriptengine.", Class.forName("org.oobd.base.scriptengine.OobdScriptengine"));
             for (Iterator iter = scriptengines.keySet().iterator(); iter.hasNext();) {
                 String element = (String) iter.next();
                 Class<?> value = scriptengines.get(element);
@@ -211,6 +211,11 @@ public class Core implements OOBDConstants, CoreTickListener {
         }
     }
 
+    @Override
+    public String getPluginName() {
+        return OOBDConstants.CoreMailboxName;
+    }
+
     /**
      * create ScriptEngine identified by its public Name. Returns a unique ID which is used from now on for all communication between the core and the UI
      * @param id public name of scriptengine to be created
@@ -251,7 +256,8 @@ public class Core implements OOBDConstants, CoreTickListener {
     public void startScriptEngine(String id) {
         Debug.msg("core", DEBUG_BORING, "Start scriptengine: " + id);
         OobdScriptengine o = activeEngines.get(id);
-        o.start();
+        Thread t1 = new Thread(o);
+        t1.start();
     }
 
     /**
@@ -284,8 +290,8 @@ public class Core implements OOBDConstants, CoreTickListener {
 
             URLClassLoader loader = new URLClassLoader(new java.net.URL[]{sourceURL}, Thread.currentThread().getContextClassLoader());
             // Für jeden File im Verzeichnis...
-            for (int i = 0; i <
-                    files.length; i++) {
+            for (int i = 0; i
+                    < files.length; i++) {
                 // Splittet jeden Dateinamen in Bezeichnung und Endung
                 // siehe "regular expression" und String.split()
                 String name[] = files[i].getName().split("\\.");
@@ -437,14 +443,47 @@ public class Core implements OOBDConstants, CoreTickListener {
         }
     }
 
+    public boolean transferMsg(Message msg) {
+        if (OOBDConstants.CoreMailboxName.equals(msg.rec)){
+            this.sendMsg(msg);
+            return true;
+        }else{
+        OobdPlugin receiver = activeEngines.get(msg.rec);
+        if (receiver == null) {
+            receiver = busses.get(msg.rec);
+        }
+        if (receiver == null) {
+            receiver = connectors.get(msg.rec);
+        }
+        if (receiver == null) {
+            receiver = protocols.get(msg.rec);
+        }
+        if (receiver != null) {
+            receiver.sendMsg(msg);
+            return true;
+        } else {
+            return false;
+        }
+        }
+    }
+
     /** the central timer for the core
      *
      */
     public void coreTick() {
         ticker.enable(false);
         System.out.println("Tick..");
+        Message thisMsg;
+        while((thisMsg=msgPort.getMsg(false))!=null){
+            actionRequest(thisMsg.content);
+
+        }
+        transferMsg(new Message(this, "ScriptengineTerminal.1", null));
         updateVisualizers();
         ticker.enable(true);
+    }
+
+    public void run() {
     }
 }
 
