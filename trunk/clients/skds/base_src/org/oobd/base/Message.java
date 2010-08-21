@@ -26,5 +26,8 @@ public class Message {
         this.content=content;
 
     }
+    public Onion getContent(){
+        return content;
+    }
 
 }

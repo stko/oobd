@@ -42,6 +42,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     static Core thisInstance; //Class variable points to only instance
     CoreTick ticker;
     Properties props;
+    boolean runCore = true;
 
     public Core(IFui myUserInterface, IFsystem mySystemInterface) {
         thisInstance = this;
@@ -54,6 +55,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         activeEngines = new HashMap<String, OobdScriptengine>();
         assignments = new HashMap<String, Object>();
         visualizers = new HashMap<String, ArrayList<Visualizer>>();
+
 
         //userInterface.sm("Moin");
         props = new Properties();
@@ -184,6 +186,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         ticker = new CoreTick();
         ticker.setCoreTickListener(this);
         new Thread(ticker).start();
+        new Thread(this).start();
     }
 
     /**
@@ -380,8 +383,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                 handleValue(myOnion);
             }
             if (myOnion.isType(CM_UPDATE)) {
-                Debug.msg("Core", DEBUG_INFO, "forward UPDATE request to"+myOnion.getString("to"));
-                   transferMsg(new Message(this, myOnion.getString("to"), myOnion));
+                Debug.msg("Core", DEBUG_INFO, "forward UPDATE request to" + myOnion.getString("to"));
+                transferMsg(new Message(this, myOnion.getString("to"), myOnion));
 
             }
 
@@ -450,26 +453,26 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     }
 
     public boolean transferMsg(Message msg) {
-        if (OOBDConstants.CoreMailboxName.equals(msg.rec)){
+        if (OOBDConstants.CoreMailboxName.equals(msg.rec)) {
             this.sendMsg(msg);
             return true;
-        }else{
-        OobdPlugin receiver = activeEngines.get(msg.rec);
-        if (receiver == null) {
-            receiver = busses.get(msg.rec);
-        }
-        if (receiver == null) {
-            receiver = connectors.get(msg.rec);
-        }
-        if (receiver == null) {
-            receiver = protocols.get(msg.rec);
-        }
-        if (receiver != null) {
-            receiver.sendMsg(msg);
-            return true;
         } else {
-            return false;
-        }
+            OobdPlugin receiver = activeEngines.get(msg.rec);
+            if (receiver == null) {
+                receiver = busses.get(msg.rec);
+            }
+            if (receiver == null) {
+                receiver = connectors.get(msg.rec);
+            }
+            if (receiver == null) {
+                receiver = protocols.get(msg.rec);
+            }
+            if (receiver != null) {
+                receiver.sendMsg(msg);
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 
@@ -478,18 +481,20 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public void coreTick() {
         ticker.enable(false);
-        System.out.println("Tick..");
-        Message thisMsg;
-        while((thisMsg=msgPort.getMsg(false))!=null){
-            actionRequest(thisMsg.content);
-
-        }
-        //transferMsg(new Message(this, "ScriptengineTerminal.1", null));
+        //System.out.println("Tick..");
         updateVisualizers();
         ticker.enable(true);
     }
 
     public void run() {
+        while (runCore == true) {
+            Message thisMsg;
+            while ((thisMsg = msgPort.getMsg(100)) != null) {
+                actionRequest(thisMsg.content);
+
+            }
+            //transferMsg(new Message(this, "ScriptengineTerminal.1", null));
+        }
     }
 }
 
@@ -497,13 +502,13 @@ class CoreTick implements Runnable {
 
     boolean keepRunning = true;
     boolean enableTicks = true;
-    private static final int LONG_TIME = 1000; /* 1 Seconds */
+    private static final int LONG_TIME = 100; /* 1 Seconds */
 
     CoreTickListener l = null; /* Currently only one listener. There could be many*/
 
 
     public void run() {
-        System.out.println(" End Core tick thread");
+        System.out.println(" Start Core tick thread");
         while (keepRunning) {
             try {
                 Thread.currentThread().sleep(LONG_TIME);

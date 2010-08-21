@@ -1,4 +1,4 @@
-# Doxyfile 1.5.6
+# Doxyfile 1.6.3
 
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project
@@ -25,7 +25,7 @@ DOXYFILE_ENCODING      = UTF-8
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded 
 # by quotes) that should identify the project.
 
-PROJECT_NAME           = OOBD - OpenOnBoardDiagnostics
+PROJECT_NAME           = OpenOnBoardDiagnostics
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. 
 # This could be handy for archiving the generated documentation or 
@@ -54,11 +54,11 @@ CREATE_SUBDIRS         = NO
 # information to generate all constant output in the proper language. 
 # The default language is English, other supported languages are: 
 # Afrikaans, Arabic, Brazilian, Catalan, Chinese, Chinese-Traditional, 
-# Croatian, Czech, Danish, Dutch, Farsi, Finnish, French, German, Greek, 
-# Hungarian, Italian, Japanese, Japanese-en (Japanese with English messages), 
-# Korean, Korean-en, Lithuanian, Norwegian, Macedonian, Persian, Polish, 
-# Portuguese, Romanian, Russian, Serbian, Slovak, Slovene, Spanish, Swedish, 
-# and Ukrainian.
+# Croatian, Czech, Danish, Dutch, Esperanto, Farsi, Finnish, French, German, 
+# Greek, Hungarian, Italian, Japanese, Japanese-en (Japanese with English 
+# messages), Korean, Korean-en, Lithuanian, Norwegian, Macedonian, Persian, 
+# Polish, Portuguese, Romanian, Russian, Serbian, Serbian-Cyrilic, Slovak, 
+# Slovene, Spanish, Swedish, Ukrainian, and Vietnamese.
 
 OUTPUT_LANGUAGE        = English
 
@@ -155,13 +155,6 @@ QT_AUTOBRIEF           = NO
 
 MULTILINE_CPP_IS_BRIEF = NO
 
-# If the DETAILS_AT_TOP tag is set to YES then Doxygen 
-# will output the detailed description near the top, like JavaDoc.
-# If set to NO, the detailed description appears after the member 
-# documentation.
-
-DETAILS_AT_TOP         = NO
-
 # If the INHERIT_DOCS tag is set to YES (the default) then an undocumented 
 # member inherits the documentation from any documented member that it 
 # re-implements.
@@ -214,6 +207,18 @@ OPTIMIZE_FOR_FORTRAN   = NO
 
 OPTIMIZE_OUTPUT_VHDL   = NO
 
+# Doxygen selects the parser to use depending on the extension of the files it parses. 
+# With this tag you can assign which parser to use for a given extension. 
+# Doxygen has a built-in mapping, but you can override or extend it using this tag. 
+# The format is ext=language, where ext is a file extension, and language is one of 
+# the parsers supported by doxygen: IDL, Java, Javascript, C#, C, C++, D, PHP, 
+# Objective-C, Python, Fortran, VHDL, C, C++. For instance to make doxygen treat 
+# .inc files as Fortran files (default is PHP), and .f files as C (default is Fortran), 
+# use: inc=Fortran f=C. Note that for custom extensions you also need to set
+# FILE_PATTERNS otherwise the files are not read by doxygen.
+
+EXTENSION_MAPPING      = 
+
 # If you use STL classes (i.e. std::string, std::vector, etc.) but do not want 
 # to include (a tag file for) the STL sources as input, then you should 
 # set this tag to YES in order to let doxygen match functions declarations and 
@@ -223,7 +228,7 @@ OPTIMIZE_OUTPUT_VHDL   = NO
 
 BUILTIN_STL_SUPPORT    = NO
 
-# If you use Microsoft's C++/CLI language, you should set this option to YES to
+# If you use Microsoft's C++/CLI language, you should set this option to YES to 
 # enable parsing support.
 
 CPP_CLI_SUPPORT        = NO
@@ -267,6 +272,22 @@ SUBGROUPING            = YES
 # types are typedef'ed and only the typedef is referenced, never the tag name.
 
 TYPEDEF_HIDES_STRUCT   = NO
+
+# The SYMBOL_CACHE_SIZE determines the size of the internal cache use to 
+# determine which symbols to keep in memory and which to flush to disk. 
+# When the cache is full, less often used symbols will be written to disk. 
+# For small to medium size projects (<1000 input files) the default value is 
+# probably good enough. For larger projects a too small cache size can cause 
+# doxygen to be busy swapping symbols to and from disk most of the time 
+# causing a significant performance penality. 
+# If the system has enough physical memory increasing the cache will improve the 
+# performance by keeping more symbols in memory. Note that the value works on 
+# a logarithmic scale so increasing the size by one will rougly double the 
+# memory usage. The cache size is given by this formula: 
+# 2^(16+SYMBOL_CACHE_SIZE). The valid range is 0..9, the default is 0, 
+# corresponding to a cache size of 2^16 = 65536 symbols
+
+SYMBOL_CACHE_SIZE      = 0
 
 #---------------------------------------------------------------------------
 # Build related configuration options
@@ -366,6 +387,12 @@ HIDE_SCOPE_NAMES       = NO
 
 SHOW_INCLUDE_FILES     = YES
 
+# If the FORCE_LOCAL_INCLUDES tag is set to YES then Doxygen 
+# will list include files with double quotes in the documentation 
+# rather than with sharp brackets.
+
+FORCE_LOCAL_INCLUDES   = NO
+
 # If the INLINE_INFO tag is set to YES (the default) then a tag [inline] 
 # is inserted in the documentation for inline members.
 
@@ -385,6 +412,16 @@ SORT_MEMBER_DOCS       = YES
 
 SORT_BRIEF_DOCS        = NO
 
+# If the SORT_MEMBERS_CTORS_1ST tag is set to YES then doxygen
+# will sort the (brief and detailed) documentation of class members so that
+# constructors and destructors are listed first. If set to NO (the default)
+# the constructors will appear in the respective orders defined by
+# SORT_MEMBER_DOCS and SORT_BRIEF_DOCS.
+# This tag will be ignored for brief docs if SORT_BRIEF_DOCS is set to NO
+# and ignored for detailed docs if SORT_MEMBER_DOCS is set to NO.
+
+SORT_MEMBERS_CTORS_1ST = NO
+
 # If the SORT_GROUP_NAMES tag is set to YES then doxygen will sort the 
 # hierarchy of group names into alphabetical order. If set to NO (the default) 
 # the group names will appear in their defined order.
@@ -395,7 +432,7 @@ SORT_GROUP_NAMES       = NO
 # sorted by fully-qualified names, including namespaces. If set to 
 # NO (the default), the class list will be sorted only by class name, 
 # not including the namespace part. 
-# Note: This option is not very useful if HIDE_SCOPE_NAMES is set to YES.
+# Note: This option is not very useful if HIDE_SCOPE_NAMES is set to YES. 
 # Note: This option applies only to the class list, not to the 
 # alphabetical list.
 
@@ -452,14 +489,14 @@ SHOW_USED_FILES        = YES
 
 SHOW_DIRECTORIES       = NO
 
-# Set the SHOW_FILES tag to NO to disable the generation of the Files page.
+# Set the SHOW_FILES tag to NO to disable the generation of the Files page. 
 # This will remove the Files entry from the Quick Index and from the 
 # Folder Tree View (if specified). The default is YES.
 
 SHOW_FILES             = YES
 
 # Set the SHOW_NAMESPACES tag to NO to disable the generation of the 
-# Namespaces page.  This will remove the Namespaces entry from the Quick Index
+# Namespaces page.  This will remove the Namespaces entry from the Quick Index 
 # and from the Folder Tree View (if specified). The default is YES.
 
 SHOW_NAMESPACES        = YES
@@ -473,6 +510,15 @@ SHOW_NAMESPACES        = YES
 # is used as the file version. See the manual for examples.
 
 FILE_VERSION_FILTER    = 
+
+# The LAYOUT_FILE tag can be used to specify a layout file which will be parsed by 
+# doxygen. The layout file controls the global structure of the generated output files 
+# in an output format independent way. The create the layout file that represents 
+# doxygen's defaults, run doxygen with the -l option. You can optionally specify a 
+# file name after the option, if omitted DoxygenLayout.xml will be used as the name 
+# of the layout file.
+
+LAYOUT_FILE            = 
 
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
@@ -534,7 +580,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = org
+INPUT                  = NBprojects/swing
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
@@ -672,10 +718,10 @@ REFERENCED_BY_RELATION = NO
 
 REFERENCES_RELATION    = NO
 
-# If the REFERENCES_LINK_SOURCE tag is set to YES (the default)
-# and SOURCE_BROWSER tag is set to YES, then the hyperlinks from
-# functions in REFERENCES_RELATION and REFERENCED_BY_RELATION lists will
-# link to the source code.  Otherwise they will link to the documentstion.
+# If the REFERENCES_LINK_SOURCE tag is set to YES (the default) 
+# and SOURCE_BROWSER tag is set to YES, then the hyperlinks from 
+# functions in REFERENCES_RELATION and REFERENCED_BY_RELATION lists will 
+# link to the source code.  Otherwise they will link to the documentation.
 
 REFERENCES_LINK_SOURCE = YES
 
@@ -758,18 +804,25 @@ HTML_FOOTER            =
 
 HTML_STYLESHEET        = 
 
+# If the HTML_TIMESTAMP tag is set to YES then the footer of each generated HTML 
+# page will contain the date and time when the page was generated. Setting 
+# this to NO can help when comparing the output of multiple runs.
+
+HTML_TIMESTAMP         = YES
+
 # If the HTML_ALIGN_MEMBERS tag is set to YES, the members of classes, 
 # files or namespaces will be aligned in HTML using tables. If set to 
 # NO a bullet list will be used.
 
 HTML_ALIGN_MEMBERS     = YES
 
-# If the GENERATE_HTMLHELP tag is set to YES, additional index files 
-# will be generated that can be used as input for tools like the 
-# Microsoft HTML help workshop to generate a compiled HTML help file (.chm) 
-# of the generated HTML documentation.
+# If the HTML_DYNAMIC_SECTIONS tag is set to YES then the generated HTML 
+# documentation will contain sections that can be hidden and shown after the 
+# page has loaded. For this to work a browser that supports 
+# JavaScript and DHTML is required (for instance Mozilla 1.0+, Firefox 
+# Netscape 6.0+, Internet explorer 5.0+, Konqueror, or Safari).
 
-GENERATE_HTMLHELP      = NO
+HTML_DYNAMIC_SECTIONS  = NO
 
 # If the GENERATE_DOCSET tag is set to YES, additional index files 
 # will be generated that can be used as input for Apple's Xcode 3 
@@ -778,7 +831,8 @@ GENERATE_HTMLHELP      = NO
 # HTML output directory. Running make will produce the docset in that 
 # directory and running "make install" will install the docset in 
 # ~/Library/Developer/Shared/Documentation/DocSets so that Xcode will find 
-# it at startup.
+# it at startup. 
+# See http://developer.apple.com/tools/creatingdocsetswithdoxygen.html for more information.
 
 GENERATE_DOCSET        = NO
 
@@ -796,13 +850,12 @@ DOCSET_FEEDNAME        = "Doxygen generated docs"
 
 DOCSET_BUNDLE_ID       = org.doxygen.Project
 
-# If the HTML_DYNAMIC_SECTIONS tag is set to YES then the generated HTML 
-# documentation will contain sections that can be hidden and shown after the 
-# page has loaded. For this to work a browser that supports 
-# JavaScript and DHTML is required (for instance Mozilla 1.0+, Firefox 
-# Netscape 6.0+, Internet explorer 5.0+, Konqueror, or Safari).
+# If the GENERATE_HTMLHELP tag is set to YES, additional index files 
+# will be generated that can be used as input for tools like the 
+# Microsoft HTML help workshop to generate a compiled HTML help file (.chm) 
+# of the generated HTML documentation.
 
-HTML_DYNAMIC_SECTIONS  = NO
+GENERATE_HTMLHELP      = NO
 
 # If the GENERATE_HTMLHELP tag is set to YES, the CHM_FILE tag can 
 # be used to specify the file name of the resulting .chm file. You 
@@ -824,8 +877,8 @@ HHC_LOCATION           =
 
 GENERATE_CHI           = NO
 
-# If the GENERATE_HTMLHELP tag is set to YES, the CHM_INDEX_ENCODING
-# is used to encode HtmlHelp index (hhk), content (hhc) and project file
+# If the GENERATE_HTMLHELP tag is set to YES, the CHM_INDEX_ENCODING 
+# is used to encode HtmlHelp index (hhk), content (hhc) and project file 
 # content.
 
 CHM_INDEX_ENCODING     = 
@@ -841,6 +894,72 @@ BINARY_TOC             = NO
 
 TOC_EXPAND             = NO
 
+# If the GENERATE_QHP tag is set to YES and both QHP_NAMESPACE and QHP_VIRTUAL_FOLDER 
+# are set, an additional index file will be generated that can be used as input for 
+# Qt's qhelpgenerator to generate a Qt Compressed Help (.qch) of the generated 
+# HTML documentation.
+
+GENERATE_QHP           = NO
+
+# If the QHG_LOCATION tag is specified, the QCH_FILE tag can 
+# be used to specify the file name of the resulting .qch file. 
+# The path specified is relative to the HTML output folder.
+
+QCH_FILE               = 
+
+# The QHP_NAMESPACE tag specifies the namespace to use when generating 
+# Qt Help Project output. For more information please see 
+# http://doc.trolltech.com/qthelpproject.html#namespace
+
+QHP_NAMESPACE          = org.doxygen.Project
+
+# The QHP_VIRTUAL_FOLDER tag specifies the namespace to use when generating 
+# Qt Help Project output. For more information please see 
+# http://doc.trolltech.com/qthelpproject.html#virtual-folders
+
+QHP_VIRTUAL_FOLDER     = doc
+
+# If QHP_CUST_FILTER_NAME is set, it specifies the name of a custom filter to add. 
+# For more information please see 
+# http://doc.trolltech.com/qthelpproject.html#custom-filters
+
+QHP_CUST_FILTER_NAME   = 
+
+# The QHP_CUST_FILT_ATTRS tag specifies the list of the attributes of the custom filter to add.For more information please see 
+# <a href="http://doc.trolltech.com/qthelpproject.html#custom-filters">Qt Help Project / Custom Filters</a>.
+
+QHP_CUST_FILTER_ATTRS  = 
+
+# The QHP_SECT_FILTER_ATTRS tag specifies the list of the attributes this project's 
+# filter section matches. 
+# <a href="http://doc.trolltech.com/qthelpproject.html#filter-attributes">Qt Help Project / Filter Attributes</a>.
+
+QHP_SECT_FILTER_ATTRS  = 
+
+# If the GENERATE_QHP tag is set to YES, the QHG_LOCATION tag can 
+# be used to specify the location of Qt's qhelpgenerator. 
+# If non-empty doxygen will try to run qhelpgenerator on the generated 
+# .qhp file.
+
+QHG_LOCATION           = 
+
+# If the GENERATE_ECLIPSEHELP tag is set to YES, additional index files  
+# will be generated, which together with the HTML files, form an Eclipse help  
+# plugin. To install this plugin and make it available under the help contents 
+# menu in Eclipse, the contents of the directory containing the HTML and XML 
+# files needs to be copied into the plugins directory of eclipse. The name of 
+# the directory within the plugins directory should be the same as 
+# the ECLIPSE_DOC_ID value. After copying Eclipse needs to be restarted before
+# the help appears.
+
+GENERATE_ECLIPSEHELP   = NO
+
+# A unique identifier for the eclipse help plugin. When installing the plugin 
+# the directory name containing the HTML and XML files should also have 
+# this name.
+
+ECLIPSE_DOC_ID         = org.doxygen.Project
+
 # The DISABLE_INDEX tag can be used to turn on/off the condensed index at 
 # top of each HTML page. The value NO (the default) enables the index and 
 # the value YES disables it.
@@ -852,22 +971,20 @@ DISABLE_INDEX          = NO
 
 ENUM_VALUES_PER_LINE   = 4
 
-# The GENERATE_TREEVIEW tag is used to specify whether a tree-like index
-# structure should be generated to display hierarchical information.
-# If the tag value is set to FRAME, a side panel will be generated
+# The GENERATE_TREEVIEW tag is used to specify whether a tree-like index 
+# structure should be generated to display hierarchical information. 
+# If the tag value is set to YES, a side panel will be generated 
 # containing a tree-like index structure (just like the one that 
 # is generated for HTML Help). For this to work a browser that supports 
-# JavaScript, DHTML, CSS and frames is required (for instance Mozilla 1.0+, 
-# Netscape 6.0+, Internet explorer 5.0+, or Konqueror). Windows users are 
-# probably better off using the HTML help feature. Other possible values 
-# for this tag are: HIERARCHIES, which will generate the Groups, Directories,
-# and Class Hiererachy pages using a tree view instead of an ordered list;
-# ALL, which combines the behavior of FRAME and HIERARCHIES; and NONE, which
-# disables this behavior completely. For backwards compatibility with previous
-# releases of Doxygen, the values YES and NO are equivalent to FRAME and NONE
-# respectively.
+# JavaScript, DHTML, CSS and frames is required (i.e. any modern browser). 
+# Windows users are probably better off using the HTML help feature.
 
-GENERATE_TREEVIEW      = NONE
+GENERATE_TREEVIEW      = NO
+
+# By enabling USE_INLINE_TREES, doxygen will generate the Groups, Directories, 
+# and Class Hierarchy pages using a tree view instead of an ordered list.
+
+USE_INLINE_TREES       = NO
 
 # If the treeview is enabled (see GENERATE_TREEVIEW) then this tag can be 
 # used to set the initial width (in pixels) of the frame in which the tree 
@@ -882,6 +999,26 @@ TREEVIEW_WIDTH         = 250
 # to force them to be regenerated.
 
 FORMULA_FONTSIZE       = 10
+
+# When the SEARCHENGINE tag is enabled doxygen will generate a search box
+# for the HTML output. The underlying search engine uses javascript 
+# and DHTML and should work on any modern browser. Note that when using
+# HTML help (GENERATE_HTMLHELP), Qt help (GENERATE_QHP), or docsets
+# (GENERATE_DOCSET) there is already a search function so this one should 
+# typically be disabled. For large projects the javascript based search engine 
+# can be slow, then enabling SERVER_BASED_SEARCH may provide a better solution.
+
+SEARCHENGINE           = NO
+
+# When the SERVER_BASED_SEARCH tag is enabled the search engine will be
+# implemented using a PHP enabled web server instead of at the web client
+# using Javascript. Doxygen will generate the search PHP script and index 
+# file to put on the web server. The advantage of the server
+# based approach is that it scales better to large projects and allows
+# full text search. The disadvances is that it is more difficult to setup 
+# and does not have live searching capabilities.
+
+SERVER_BASED_SEARCH    = NO
 
 #---------------------------------------------------------------------------
 # configuration options related to the LaTeX output
@@ -899,7 +1036,10 @@ GENERATE_LATEX         = NO
 LATEX_OUTPUT           = latex
 
 # The LATEX_CMD_NAME tag can be used to specify the LaTeX command name to be 
-# invoked. If left blank `latex' will be used as the default command name.
+# invoked. If left blank `latex' will be used as the default command name. 
+# Note that when enabling USE_PDFLATEX this option is only used for 
+# generating bitmaps for formulas in the HTML output, but not in the 
+# Makefile that is written to the output directory.
 
 LATEX_CMD_NAME         = latex
 
@@ -958,6 +1098,13 @@ LATEX_BATCHMODE        = NO
 # in the output.
 
 LATEX_HIDE_INDICES     = NO
+
+# If LATEX_SOURCE_CODE is set to YES then doxygen will include
+# source code with syntax highlighting in the LaTeX output.
+# Note that which sources are shown also depends on other settings
+# such as SOURCE_BROWSER.
+
+LATEX_SOURCE_CODE      = NO
 
 #---------------------------------------------------------------------------
 # configuration options related to the RTF output
@@ -1110,7 +1257,7 @@ PERLMOD_PRETTY         = YES
 PERLMOD_MAKEVAR_PREFIX = 
 
 #---------------------------------------------------------------------------
-# Configuration options related to the preprocessor   
+# Configuration options related to the preprocessor
 #---------------------------------------------------------------------------
 
 # If the ENABLE_PREPROCESSING tag is set to YES (the default) Doxygen will 
@@ -1176,7 +1323,7 @@ EXPAND_AS_DEFINED      =
 SKIP_FUNCTION_MACROS   = YES
 
 #---------------------------------------------------------------------------
-# Configuration::additions related to external references   
+# Configuration::additions related to external references
 #---------------------------------------------------------------------------
 
 # The TAGFILES option can be used to specify one or more tagfiles. 
@@ -1188,9 +1335,9 @@ SKIP_FUNCTION_MACROS   = YES
 #   TAGFILES = file1=loc1 "file2 = loc2" ... 
 # where "loc1" and "loc2" can be relative or absolute paths or 
 # URLs. If a location is present for each tag, the installdox tool 
-# does not have to be run to correct the links.
-# Note that each tag file must have a unique name
-# (where the name does NOT include the path)
+# does not have to be run to correct the links. 
+# Note that each tag file must have a unique name 
+# (where the name does NOT include the path) 
 # If a tag file is not located in the directory in which doxygen 
 # is run, you must also specify the path to the tagfile here.
 
@@ -1219,7 +1366,7 @@ EXTERNAL_GROUPS        = YES
 PERL_PATH              = /usr/bin/perl
 
 #---------------------------------------------------------------------------
-# Configuration options related to the dot tool   
+# Configuration options related to the dot tool
 #---------------------------------------------------------------------------
 
 # If the CLASS_DIAGRAMS tag is set to YES (the default) Doxygen will 
@@ -1229,7 +1376,7 @@ PERL_PATH              = /usr/bin/perl
 # fallback. It is recommended to install and use dot, since it yields more 
 # powerful graphs.
 
-CLASS_DIAGRAMS         = YES
+CLASS_DIAGRAMS         = NO
 
 # You can define message sequence charts within doxygen comments using the \msc 
 # command. Doxygen will then run the mscgen tool (see 
@@ -1251,7 +1398,7 @@ HIDE_UNDOC_RELATIONS   = YES
 # toolkit from AT&T and Lucent Bell Labs. The other options in this section 
 # have no effect if this option is set to NO (the default)
 
-HAVE_DOT               = NO
+HAVE_DOT               = YES
 
 # By default doxygen will write a font called FreeSans.ttf to the output 
 # directory and reference it in all dot files that doxygen generates. This 
@@ -1263,6 +1410,11 @@ HAVE_DOT               = NO
 # containing the font.
 
 DOT_FONTNAME           = FreeSans
+
+# The DOT_FONTSIZE tag can be used to set the size of the font of dot graphs. 
+# The default size is 10pt.
+
+DOT_FONTSIZE           = 10
 
 # By default doxygen will tell dot to use the output directory to look for the 
 # FreeSans.ttf font (which doxygen will put there itself). If you specify a 
@@ -1276,7 +1428,7 @@ DOT_FONTPATH           =
 # indirect inheritance relations. Setting this tag to YES will force the 
 # the CLASS_DIAGRAMS tag to NO.
 
-CLASS_GRAPH            = YES
+CLASS_GRAPH            = NO
 
 # If the COLLABORATION_GRAPH and HAVE_DOT tags are set to YES then doxygen 
 # will generate a graph for each documented class showing the direct and 
@@ -1306,14 +1458,14 @@ TEMPLATE_RELATIONS     = NO
 # file showing the direct and indirect include dependencies of the file with 
 # other documented files.
 
-INCLUDE_GRAPH          = YES
+INCLUDE_GRAPH          = NO
 
 # If the ENABLE_PREPROCESSING, SEARCH_INCLUDES, INCLUDED_BY_GRAPH, and 
 # HAVE_DOT tags are set to YES then doxygen will generate a graph for each 
 # documented header file showing the documented files that directly or 
 # indirectly include this file.
 
-INCLUDED_BY_GRAPH      = YES
+INCLUDED_BY_GRAPH      = NO
 
 # If the CALL_GRAPH and HAVE_DOT options are set to YES then 
 # doxygen will generate a call dependency graph for every global function 
@@ -1321,7 +1473,7 @@ INCLUDED_BY_GRAPH      = YES
 # the time of a run. So in most cases it will be better to enable call graphs 
 # for selected functions only using the \callgraph command.
 
-CALL_GRAPH             = NO
+CALL_GRAPH             = YES
 
 # If the CALLER_GRAPH and HAVE_DOT tags are set to YES then 
 # doxygen will generate a caller dependency graph for every global function 
@@ -1329,7 +1481,7 @@ CALL_GRAPH             = NO
 # the time of a run. So in most cases it will be better to enable caller 
 # graphs for selected functions only using the \callergraph command.
 
-CALLER_GRAPH           = NO
+CALLER_GRAPH           = YES
 
 # If the GRAPHICAL_HIERARCHY and HAVE_DOT tags are set to YES then doxygen 
 # will graphical hierarchy of all classes instead of a textual one.
@@ -1338,13 +1490,13 @@ GRAPHICAL_HIERARCHY    = YES
 
 # If the DIRECTORY_GRAPH, SHOW_DIRECTORIES and HAVE_DOT tags are set to YES 
 # then doxygen will show the dependencies a directory has on other directories 
-# in a graphical way. The dependency relations are determined by the #include
+# in a graphical way. The dependency relations are determined by the #include 
 # relations between the files in the directories.
 
 DIRECTORY_GRAPH        = YES
 
 # The DOT_IMAGE_FORMAT tag can be used to set the image format of the images 
-# generated by dot. Possible values are png, jpg, or gif
+# generated by dot. Possible values are png, jpg, or gif 
 # If left blank png will be used.
 
 DOT_IMAGE_FORMAT       = png
@@ -1381,10 +1533,10 @@ DOT_GRAPH_MAX_NODES    = 50
 MAX_DOT_GRAPH_DEPTH    = 0
 
 # Set the DOT_TRANSPARENT tag to YES to generate images with a transparent 
-# background. This is enabled by default, which results in a transparent 
-# background. Warning: Depending on the platform used, enabling this option 
-# may lead to badly anti-aliased labels on the edges of a graph (i.e. they 
-# become hard to read).
+# background. This is disabled by default, because dot on Windows does not 
+# seem to support this out of the box. Warning: Depending on the platform used, 
+# enabling this option may lead to badly anti-aliased labels on the edges of 
+# a graph (i.e. they become hard to read).
 
 DOT_TRANSPARENT        = YES
 
@@ -1406,12 +1558,3 @@ GENERATE_LEGEND        = YES
 # the various graphs.
 
 DOT_CLEANUP            = YES
-
-#---------------------------------------------------------------------------
-# Configuration::additions related to the search engine   
-#---------------------------------------------------------------------------
-
-# The SEARCHENGINE tag specifies whether or not a search engine should be 
-# used. If set to NO the values of all tags below this one will be ignored.
-
-SEARCHENGINE           = NO
