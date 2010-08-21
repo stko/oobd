@@ -80,7 +80,7 @@ public class SwingVizTable extends JTable implements IFvisualizer {
                     Point p = e.getPoint();
                     int row = myTable.rowAtPoint(p);
                     int col = myTable.columnAtPoint(p);
-                    if (col == 0 && row > 0) {
+                    if (col == 0 && row > -1) {
                         Visualizer value = (Visualizer) myTable.getValueAt(row, col);
                         value.updateRequest(OOBDConstants.UR_USER);
                         System.out.println(" double click");
@@ -126,7 +126,7 @@ public class SwingVizTable extends JTable implements IFvisualizer {
     }
 
     public boolean update(int level) {
-        System.out.println("Update level:" + Integer.toString(level));
+       // System.out.println("Update level:" + Integer.toString(level));
         switch (level) {
             case 0: {
                 awaitingUpdate = true;

@@ -61,21 +61,36 @@ public class ScriptengineTerminal extends OobdScriptengine implements OOBDConsta
                     + "'canvas':'Canvastest_1',"
                     + "'tooltip':'Wort 2',"
                     + "'name':'table_2'}")));
-           /* core.actionRequest(""
+            core.transferMsg(new Message(this, CoreMailboxName, new Onion(""
                     + "{'type':'" + CM_VALUE + "',"
                     + "'owner':"
                     + "{'name':'" + this.id + "'},"
                     + "'to':"
                     + "{'name':'table_2'},"
-                    + "'ValueString':'uups..'}");
-            */
-            core.transferMsg(new Message(this, CoreMailboxName, new Onion("" + "{'type':'" + CM_VALUE + "'," + "'owner':" + "{'name':'" + this.id + "'}," + "'to':" + "{'name':'table_2'}," + "'ValueString':'uups..'}")));
+                    + "'ValueString':'uups..'}")));
         } catch (JSONException ex) {
             Logger.getLogger(ScriptengineTerminal.class.getName()).log(Level.SEVERE, null, ex);
         }
+        int i = 0;
         while (keepRunning == true) {
             Debug.msg("scriptengineterminal", DEBUG_BORING, "sleeping...");
-            getMsg(true);
+            Message msg = getMsg(true);
+            Onion on = msg.getContent();
+            String vis = on.getOnionString("vis");
+            Debug.msg("scriptengineterminal", DEBUG_BORING, "Msg received:" + msg.getContent().toString());
+            try {
+
+                core.transferMsg(new Message(this, CoreMailboxName, new Onion(""
+                        + "{'type':'" + CM_VALUE + "',"
+                        + "'owner':"
+                        + "{'name':'" + this.id + "'},"
+                        + "'to':"
+                        + "{'name':'" + vis + "'},"
+                        + "'ValueString':'" + Integer.toString(i) + "'}")));
+            } catch (JSONException ex) {
+                Logger.getLogger(ScriptengineTerminal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            i++;
             Debug.msg("scriptengineterminal", DEBUG_BORING, "waked up after received msg...");
 
         }

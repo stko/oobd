@@ -27,8 +27,16 @@ public class MessagePort {
     }
 
     protected Message getMsg(boolean wait) {
+        if (wait == true) {
+            return getMsg(-1);
+        } else {
+            return getMsg(0);
+        }
+    }
+
+    protected Message getMsg(int timeout) {
         if (myMsgs.isEmpty()) {
-            if (wait == true) {
+            if (timeout < 0) { // wait forever
                 try {
                     synchronized (myMsgs) {
                         myMsgs.wait();
@@ -38,7 +46,22 @@ public class MessagePort {
                 }
                 return (Message) myMsgs.remove(0);
             } else {
-                return null;
+                if (timeout == 0) {
+                    return null;
+                } else {
+                    try {
+                        synchronized (myMsgs) {
+                            myMsgs.wait(timeout);
+                        }
+                    } catch (InterruptedException ex) {
+                        return null;
+                    }
+                    if (myMsgs.isEmpty()) {
+                        return null;
+                    } else {
+                        return (Message) myMsgs.remove(0);
+                    }
+                }
             }
         } else {
             return (Message) myMsgs.remove(0);
