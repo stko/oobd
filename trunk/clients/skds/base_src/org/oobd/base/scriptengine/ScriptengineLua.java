@@ -35,11 +35,12 @@ public class ScriptengineLua extends OobdScriptengine {
 
     private LuaState state;
     private LuaCallFrame callFrame;
-    private int nArguments;
+    private OobdScriptengine myself;
 
     public ScriptengineLua(String ID, Core myCore) {
         super(ID, myCore);
         Debug.msg("scriptenginelua", DEBUG_BORING, "Ich bin der ScriptengineLua...");
+        myself = this;
 
 
 
@@ -71,38 +72,257 @@ public class ScriptengineLua extends OobdScriptengine {
             Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
+            register("initCellTableCall", new JavaFunction() {
+
+                public int call(LuaCallFrame callFrame, int nArguments) {
+                    System.out.println("Lua calls initCellTable");
+                    //BaseLib.luaAssert(nArguments >0, "not enough args");
+                    initRPC(callFrame, nArguments);
+                    // cellList = new List();
+                    try {
+                        core.transferMsg(new Message(myself, CoreMailboxName, new Onion(""
+                                + "{'type':'" + CM_CANVAS + "',"
+                                + "'owner':'" + myself.id + "',"
+                                + "'name':'Canvastest_1'}")));
+                    } catch (JSONException ex) {
+                        Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    //finishRPC(callFrame, nArguments);
+                    System.out.println("Lua leaves initCellTable");
+                    return 1;
+                }
+            });
+            register("addCellCall", new JavaFunction() {
+
+                public int call(LuaCallFrame callFrame, int nArguments) {
+                    //BaseLib.luaAssert(nArguments >0, "not enough args");
+                    System.out.println("Lua calls addCell");
+                    initRPC(callFrame, nArguments);
+//                    cellList.addItem(new ScriptCell(
+//                            getString(0), //String title
+//                            getString(1), //String function
+//                            getString(2), //String initalValue
+//                            getBoolean(3), //boolean update
+//                            getBoolean(4), //boolean timer
+//                            getString(5) //String id
+//                            ));
+                    try {
+                        String updevent = "";
+                        if (getBoolean(3) /*boolean update*/) {
+                            if (!updevent.isEmpty()) {
+                                updevent += "|";
+                            }
+                            updevent += "UPDATE";
+                        }
+                        if (getBoolean(4) /*boolean timer*/) {
+                            if (!updevent.isEmpty()) {
+                                updevent += "|";
+                            }
+                            updevent += "timer";
+                        }
+                        if (!updevent.isEmpty()) {
+                            updevent = "'updevent':'" + updevent + "',";
+                        }
+                        String optid = getString(5); //String id
+                        if (!optid.isEmpty()) {
+                            optid = "'optid':'" + optid + "',";
+                        }
+                        core.transferMsg(new Message(myself, CoreMailboxName, new Onion(""
+                                + "{'type':'" + CM_VISUALIZE + "',"
+                                + "'owner':"
+                                + "{'name':'" + myself.id + "'},"
+                                + "'canvas':'Canvastest_1',"
+                                + updevent
+                                + optid
+                                + "'tooltip':'" + getString(0) + "',"
+                                + "'name':'" + getString(1) + "'}")));
+
+                    } catch (JSONException ex) {
+                        Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    finishRPC(callFrame, nArguments);
+                    return 1;
+                }
+            });
+
+            register("showCellTableCall", new JavaFunction() {
+
+                public int call(LuaCallFrame callFrame, int nArguments) {
+                    System.out.println("Lua calls showCellTable");
+                    //BaseLib.luaAssert(nArguments >0, "not enough args");
+                    initRPC(callFrame, nArguments);
+                    // do nothing...
+
+                    // writeForm = new ScriptForm(f, cellList, getString(0), scriptEngine, myDisplay);
+                    finishRPC(callFrame, nArguments);
+                    return 1;
+                }
+            });
+
+            register("serReadLnCall", new JavaFunction() {
+
+                public int call(LuaCallFrame callFrame, int nArguments) {
+                    System.out.println("Lua calls serReadLn");
+                    //BaseLib.luaAssert(nArguments >0, "not enough args");
+                    initRPC(callFrame, nArguments);
+                    System.out.println("timeout value:" + Integer.toString(getInt(0)));
+                    if (getBoolean(1) == true) {
+                        System.out.println("ignore value: true");
+                    } else {
+                        if (getBoolean(1) == false) {
+                            System.out.println("ignore value: false");
+                        } else {
+                            System.out.println("ignore value: undefined");
+                        }
+                    }
+                    String result = "";
+                    Message answer = null;
+                    try {
+                        answer = myself.getMsgPort().sendAndWait(new Message(myself, BusMailboxName, new Onion(""
+                                + "{'type':'" + CM_BUSTEST + "',"
+                                + "'owner':"
+                                + "{'name':'" + myself.id + "'},"
+                                + "'command':'serReadLn',"
+                                + "'timeout':'" + getInt(0) + "',"
+                                + "'ignore':'" + Boolean.toString(getBoolean(1)) + "'}")), 5000);
+                        result = answer.getContent().getString("result");
+
+                    } catch (JSONException ex) {
+                        Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+
+//                    if (btComm != null) {
+//                        result = btComm.readln(getInt(0), getBoolean(1));
+//                        //result = btComm.readln(2000, true);
+//                    }
+                    callFrame.push(result.intern());
+                    finishRPC(callFrame, nArguments);
+                    return 1;
+                }
+            });
+
+            register("serWaitCall", new JavaFunction() {
+
+                public int call(LuaCallFrame callFrame, int nArguments) {
+                    System.out.println("Lua calls serWait");
+                    //BaseLib.luaAssert(nArguments >0, "not enough args");
+                    initRPC(callFrame, nArguments);
+                    int result = 0;
+                    Message answer = null;
+                    try {
+                        answer = myself.getMsgPort().sendAndWait(new Message(myself, BusMailboxName, new Onion(""
+                                + "{'type':'" + CM_BUSTEST + "',"
+                                + "'owner':"
+                                + "{'name':'" + myself.id + "'},"
+                                + "'command':'serWait',"
+                                + "'timeout':'" + getInt(1) + "',"
+                                + "'data':'" + getString(0) + "'}")), 500);
+                        result = answer.getContent().getInt("result");
+
+                    } catch (JSONException ex) {
+                        Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+//                    if (btComm != null) {
+//                        result = btComm.wait(getString(0), getInt(1));
+//                    }
+                    callFrame.push(new Integer(result));
+                    finishRPC(callFrame, nArguments);
+                    return 1;
+                }
+            });
+
+            register("serSleepCall", new JavaFunction() {
+
+                public int call(LuaCallFrame callFrame, int nArguments) {
+                    System.out.println("Lua calls serSleep");
+                    //BaseLib.luaAssert(nArguments >0, "not enough args");
+                    initRPC(callFrame, nArguments);
+                    try {
+                        Thread.sleep(getInt(0));
+                    } catch (InterruptedException e) {
+                        // the VM doesn't want us to sleep anymore,
+                        // so get back to work
+                    }
+                    finishRPC(callFrame, nArguments);
+                    return 1;
+                }
+            });
+
+            register("serWriteCall", new JavaFunction() {
+
+                public int call(LuaCallFrame callFrame, int nArguments) {
+                    System.out.println("Lua calls serWrite");
+                    //BaseLib.luaAssert(nArguments >0, "not enough args");
+                    initRPC(callFrame, nArguments);
+                    try{
+                        myself.getMsgPort().sendAndWait(new Message(myself, BusMailboxName, new Onion(""
+                                + "{'type':'" + CM_BUSTEST + "',"
+                                + "'owner':"
+                                + "{'name':'" + myself.id + "'},"
+                                + "'command':'serWrite',"
+                                + "'data':'" + getString(0) + "'}")), 5000);
+                   } catch (JSONException ex) {
+                        Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+//                    if (btComm != null) {
+//                        btComm.write(getString(0));
+//                    }
+                    finishRPC(callFrame, nArguments);
+                    return 1;
+                }
+            });
+
+            register("serFlushCall", new JavaFunction() {
+
+                public int call(LuaCallFrame callFrame, int nArguments) {
+                    System.out.println("Lua calls serFlush");
+                    //BaseLib.luaAssert(nArguments >0, "not enough args");
+                    initRPC(callFrame, nArguments);
+                    try{
+                        myself.getMsgPort().sendAndWait(new Message(myself, BusMailboxName, new Onion(""
+                                + "{'type':'" + CM_BUSTEST + "',"
+                                + "'owner':"
+                                + "{'name':'" + myself.id + "'},"
+                                + "'command':'serWrite',"
+                                + "'data':'" + getString(0) + "'}")), 5000);
+                   } catch (JSONException ex) {
+                        Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+//                      if (btComm != null) {
+//                        btComm.flush();
+//                    }
+                    finishRPC(callFrame, nArguments);
+                    return 1;
+                }
+            });
+
+            register("serDisplayWriteCall", new JavaFunction() {
+
+                public int call(LuaCallFrame callFrame, int nArguments) {
+                    System.out.println("Lua calls serDisplayWrite");
+                    //BaseLib.luaAssert(nArguments >0, "not enough args");
+                    initRPC(callFrame, nArguments);
+                    //prepareDisplayWrite(getString(0));
+                    System.out.println("Not implemented yet: WriteIntoOutputWindow: "+getString(0));
+                    finishRPC(callFrame, nArguments);
+                    return 1;
+                }
+            });
+
             core.transferMsg(new Message(this, CoreMailboxName, new Onion("{\"type\":\"noaction\"}")));
-            core.transferMsg(new Message(this, CoreMailboxName, new Onion(""
-                    + "{'type':'" + CM_CANVAS + "',"
-                    + "'owner':'" + this.id + "',"
-                    + "'name':'Canvastest_1'}")));
-            core.transferMsg(new Message(this, CoreMailboxName, new Onion(""
-                    + "{'type':'" + CM_CANVAS + "',"
-                    + "'owner':'" + this.id + "',"
-                    + "'name':'Canvastest_2'}")));
-            core.transferMsg(new Message(this, CoreMailboxName, new Onion(""
-                    + "{'type':'" + CM_VISUALIZE + "',"
-                    + "'owner':"
-                    + "{'name':'" + this.id + "'},"
-                    + "'canvas':'Canvastest_1',"
-                    + "'tooltip':'erste Worte...',"
-                    + "'name':'table_1'}")));
-            core.transferMsg(new Message(this, CoreMailboxName, new Onion(""
-                    + "{'type':'" + CM_VISUALIZE + "',"
-                    + "'owner':"
-                    + "{'name':'" + this.id + "'},"
-                    + "'canvas':'Canvastest_1',"
-                    + "'tooltip':'Wort 2',"
-                    + "'name':'table_2'}")));
-            core.transferMsg(new Message(this, CoreMailboxName, new Onion(""
-                    + "{'type':'" + CM_VALUE + "',"
-                    + "'owner':"
-                    + "{'name':'" + this.id + "'},"
-                    + "'to':"
-                    + "{'name':'table_2'},"
-                    + "'ValueString':'uups..'}")));
+
         } catch (JSONException ex) {
             Logger.getLogger(ScriptengineTerminal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            //doScript("/OOBD.lbc");
+            doScript("OOBD.lbc");
+        } catch (IOException ex) {
+            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
         }
         int i = 0;
         while (keepRunning == true) {
@@ -131,6 +351,7 @@ public class ScriptengineLua extends OobdScriptengine {
 
     public void doScript(String fileName) throws IOException {
         InputStream resource = new FileInputStream(fileName);
+        //InputStream resource=getClass().getResourceAsStream(fileName);
         LuaClosure callback = LuaPrototype.loadByteCode(resource, state.getEnvironment());
         state.call(callback, null, null, null);
 
@@ -183,7 +404,7 @@ public class ScriptengineLua extends OobdScriptengine {
 
     public void initRPC(Object key, int nArgs) {
         callFrame = (LuaCallFrame) key;
-        nArguments = nArgs;
+
     }
 
     public void finishRPC(Object key, int nArgs) {

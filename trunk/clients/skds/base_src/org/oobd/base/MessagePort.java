@@ -5,6 +5,9 @@
 package org.oobd.base;
 
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.JSONException;
 
 /**
  *
@@ -13,15 +16,36 @@ import java.util.Vector;
 public class MessagePort {
 
     final Vector myMsgs;
+    int replyID = 0;
+    int waitingforID = 0;
 
     public MessagePort() {
         myMsgs = new Vector();
     }
 
     public void receive(Message thisMessage) {
-        synchronized (myMsgs) {
-            myMsgs.add(thisMessage);
-            myMsgs.notify();
+        int thisReplyID;
+        try {
+            thisReplyID = thisMessage.content.getInt("replyID");
+        } catch (JSONException ex) {
+            thisReplyID = -1;
+        }
+        if (thisReplyID > 0) { // the message contains a replyID
+            if (thisReplyID == waitingforID) { //only if this is really the message we are waiting for, otherways just delete this obviously old reply
+                synchronized (myMsgs) {
+                    myMsgs.insertElementAt(thisMessage, 0); //put the message as the first one in the message quere
+                    waitingforID = 0; // reset the waitingFor Flag
+                    myMsgs.notify();
+                }
+
+            }
+        } else {
+            synchronized (myMsgs) {
+                myMsgs.add(thisMessage);
+                if (waitingforID == 0) { //if we not just waiting for a delicated reply message
+                    myMsgs.notify();
+                }
+            }
         }
 
     }
@@ -34,8 +58,16 @@ public class MessagePort {
         }
     }
 
+    public Message sendAndWait(Message msg, int timeout) {
+        replyID = (replyID > 10000) ? 1 : replyID + 1;
+        waitingforID = replyID;
+        Core.getSingleInstance().transferMsg(msg);
+        return getMsg(timeout);
+    }
+
     protected Message getMsg(int timeout) {
-        if (myMsgs.isEmpty()) {
+
+        if (myMsgs.isEmpty() || waitingforID != 0) {
             if (timeout < 0) { // wait forever
                 try {
                     synchronized (myMsgs) {
@@ -44,6 +76,7 @@ public class MessagePort {
                 } catch (InterruptedException ex) {
                     return null;
                 }
+                waitingforID = 0; // reset the waitingFor Flag
                 return (Message) myMsgs.remove(0);
             } else {
                 if (timeout == 0) {
@@ -64,6 +97,7 @@ public class MessagePort {
                 }
             }
         } else {
+            waitingforID = 0; // reset the waitingFor Flag
             return (Message) myMsgs.remove(0);
         }
     }

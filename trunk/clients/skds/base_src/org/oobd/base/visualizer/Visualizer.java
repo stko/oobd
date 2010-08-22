@@ -107,6 +107,8 @@ public class Visualizer {
                     "',"  +
                     "'to':'" + getOwnerEngine() +
                     "',"  +
+                     "'optid':'" + getValue("optid") +
+                    "',"  +
                     "'actValue':'" + getValue("ValueString") +
                     "',"  +
                     "'updType':" + Integer.toString(type) +
