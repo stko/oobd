@@ -1,15 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.oobd.base;
 
 import org.oobd.base.support.Onion;
 
 /**
- * Interface to allow the oobd core to talk to the graphical interface
- * @author steffen
+ * \brief Interface for the application object who does the graphical User Interface to communicate with the OOBD core
  */
+
 public interface IFui  {
 
     /**

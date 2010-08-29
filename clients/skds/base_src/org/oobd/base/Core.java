@@ -1,6 +1,24 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * \mainpage Welcome to the OOBD Programming Manual
+ * 
+ * \section Introduction
+ *
+ * This documentation is made for 2 purposes: First explain the system functionality, and second of course the general concept of how the
+ * different components work together.
+ *
+ * As the functionality is very specific, while the concept is very gereric, it will be a litte bit tricky to join these both counterparts together. Let's see, if it works.
+ *
+ *
+ * \section The Concept
+ *
+ * OOBD should be a framework for hopefully all kind of (automotive vehicle) diagnostics, where diagnostic in OOBD is not defined as just monitoring real time data,
+ * its defined as sending a question and visualize the answer.
+ *
+ * When looking more in detail into this basic requierement, you'll find five tasks which are nessecary to fulfill this.
+ *
+ * \li coordination: Something must handle the fundamental things (dynamic module handling, message transfer, file i/o etc.). This is done by the \ref core
+ * \li visualisation: Finally somebody wants to see results or wants to do some user input. This is handled by the \ref visualizers
+ * 
  */
 package org.oobd.base;
 
@@ -25,25 +43,48 @@ import org.oobd.base.support.OnionNoEntryException;
 import org.oobd.base.visualizer.Visualizer;
 
 /**
- * The interface for nearly all interaction between the generic oobd maschine and the different environments
- * @author steffen
+ * \defgroup init Initialisation during startup
  */
+
+/**
+ * \defgroup core Kernel, Runtime & Interprocess Functions
+ */
+
+/**
+ * \brief The Master Control Unit - the Core object
+ *
+ * The Core object provides all basic functionality and "glues" everything else together
+ * 
+ */
+
+
 public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener {
 
     IFui userInterface;
     IFsystem systemInterface;
-    HashMap<String, OobdBus> busses; //stores all available busses
-    HashMap<String, OobdConnector> connectors; //stores all available busses
-    HashMap<String, OobdProtocol> protocols; //stores all available protocols
-    HashMap<String, Class<?>> scriptengines; //stores all available scriptengines
-    HashMap<String, OobdScriptengine> activeEngines; //stores all active scriptengines
-    HashMap<String, Object> assignments; //stores all active assignments
-    HashMap<String, ArrayList<Visualizer>> visualizers;
+    HashMap<String, OobdBus> busses; ///<stores all available busses
+    HashMap<String, OobdConnector> connectors; ///<stores all available connectors
+    HashMap<String, OobdProtocol> protocols; ///<stores all available protocols
+    HashMap<String, Class<?>> scriptengines; ///<stores all available scriptengine classes
+    HashMap<String, OobdScriptengine> activeEngines; ///<stores all active (instanced) scriptengine objects
+    /**
+     * The assingnments - hashtable works as a poor mens registry, where everything, which needs to stored somehow, is kept as a string => object pair
+     */
+    HashMap<String, Object> assignments; 
+    HashMap<String, ArrayList<Visualizer>> visualizers;///<stores all available visalizers
     static Core thisInstance; //Class variable points to only instance
     CoreTick ticker;
     Properties props;
     boolean runCore = true;
 
+
+    /**
+     * \brief The Application creates one single instance of the core class
+     *
+     * @param myUserInterface reference to the View - interface, which is used to handle all visual in- and output
+     * @param mySystemInterface reference to the actual application and runtime enviroment, on which OOBD is actual running on
+     * 
+     */
     public Core(IFui myUserInterface, IFsystem mySystemInterface) {
         thisInstance = this;
         userInterface = myUserInterface;
@@ -190,19 +231,22 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     }
 
     /**
-     * a help routine returns actual Instance of Core class
+     * a static help routine which returns the actual running Instance of the Core class
      * @return Core
      */
     public static Core getSingleInstance() {
         return thisInstance;
     }
 
-    public void register(String msg) {
-        userInterface.sm(msg);
-    }
+
 
     /**
-     * add generated visualizers to global list
+     * \brief add generated visualizers to global list
+     * 
+     * several owners (=scriptengines) do have their own visualizers. This is stored in the visualizers hash
+     *
+     * @param owner who owns the visualizer
+     * @param vis the visualizer
      */
     public void addVisualizer(String owner, Visualizer vis) {
         if (visualizers.containsKey(owner)) {
@@ -220,7 +264,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     }
 
     /**
-     * create ScriptEngine identified by its public Name. Returns a unique ID which is used from now on for all communication between the core and the UI
+     * \brief create ScriptEngine identified by its public Name
+     *
+     * Returns a unique ID which is used from now on for all communication between the core and the UI
      * @param id public name of scriptengine to be created
      * @param classtype
      * @return unique id of this class, made out of its public name and counter. Needed to link UI canvas to this object
@@ -229,32 +275,33 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     public String createScriptEngine(String id) {
         Debug.msg("core", DEBUG_INFO, "Core should create scriptengine: " + id);
         Integer i = 1;
-        while (activeEngines.containsKey(id + "." + i.toString())) {
+        while (activeEngines.containsKey(id + "." + i.toString())) { //searching for a free id
             i++;
         }
         String seID = id + "." + i.toString();
         OobdScriptengine o = null;
         Class[] argsClass = new Class[2]; // first we set up an pseudo - args - array for the scriptengine- constructor
-        argsClass[0] = seID.getClass(); // and fill it with the info, that the argument for the constructor will be first a String
-        argsClass[1] = this.getClass(); // and fill it with the info, that the argument for the constructor will be first a String
+        argsClass[0] = seID.getClass(); // and fill it with the info of the arguments classes
+        argsClass[1] = this.getClass(); 
         Class classRef = scriptengines.get(id); // then we get the class of the wanted scriptengine
         try {
-            Constructor con = classRef.getConstructor(argsClass); // and let Java find the correct constructor with one string as parameter
-            Object[] args = {seID, this}; //we will an args-array with our String parameter
+            Constructor con = classRef.getConstructor(argsClass); // and let Java find the correct constructor matching to the args classes
+            Object[] args = {seID, this}; //creating the args-array
             o = (OobdScriptengine) con.newInstance(args); // and finally create the object from the scriptengine class with its unique id as parameter
         } catch (Exception e) {
             e.printStackTrace();
         }
-        activeEngines.put(seID, o);
+        activeEngines.put(seID, o); //store the new created scriptengine
         return seID;
     }
 
     /**
-     * create ScriptEngine identified by its public Name. Returns a unique ID which is used from now on for all communication between the core and the UI
-     * @param id public name of scriptengine to be created
-     * @param classtype
-     * @return unique id of this class, made out of its public name and counter. Needed to link UI canvas to this object
+     * \brief starts a scriptengine
      *
+     * During startup, the core reports all available scriptengines to the User Interface to let the user choose with which one he wants to work with.
+     *
+     * This engine is then been started with createScriptEngine()
+     * \ingroup init
      */
     public void startScriptEngine(String id) {
         Debug.msg("core", DEBUG_BORING, "Start scriptengine: " + id);
@@ -264,44 +311,44 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     }
 
     /**
-     * loads different dynamic classes via an URLClassLoader.
-     * Aa an URLClassloader is generic and can handle URLs, file systems and also jar files,
+     * \brief generate the lists of available OOBD classes for scriptengines, busses etc.
+     * Loads different dynamic classes via an URLClassLoader.
+     * As an URLClassloader is generic and can handle URLs, file systems and also jar files,
      * this loader is located in the core section of oobd. Just the information about the correct load path
      * is environment specific and needs to come from the systemInterface
-     * @param path
-     * @param classtype
-     * @return
+     * @param path directory to seach in
+     * @param classtype reference class for what to search for
+     * @return Hashmap
      * @todo loadOobdClasses supports actual only class files in a dir, but not in a jar file. The jar system from "Dynamisches_laden_von_Klassen_example.txt" needs to be implemented also
      * @todo the classloader needs to be extended to support encrypted (=licenced) class files
      * @bug what do do that the procedure also support relative filepaths?
      *
      */
     public HashMap loadOobdClasses(String path, String classPrefix, Class classType) {
-        // abgekuckt unter http://de.wikibooks.org/wiki/Java_Standard:_Class
+        // inspired by http://de.wikibooks.org/wiki/Java_Standard:_Class
         HashMap<String, Class<?>> myInstances = new HashMap<String, Class<?>>();
         File directory = new File(path);
         if (directory.exists()) {
             File[] files = directory.listFiles();
             URL sourceURL = null;
             try {
-                // Den Pfad des Verzeichnisses auslesen
+                // read the path of the directory
                 sourceURL = directory.toURI().toURL();
             } catch (java.net.MalformedURLException ex) {
                 Debug.msg("core", DEBUG_WARNING, ex.getMessage());
             }
-// Einen URLClassLoader für das Verzeichnis instanzieren
+            // generate URLClassLoader for that directory
 
             URLClassLoader loader = new URLClassLoader(new java.net.URL[]{sourceURL}, Thread.currentThread().getContextClassLoader());
-            // Für jeden File im Verzeichnis...
+            // For each file in dir...
             for (int i = 0; i
                     < files.length; i++) {
-                // Splittet jeden Dateinamen in Bezeichnung und Endung
-                // siehe "regular expression" und String.split()
+                // split file name into name and extension
                 String name[] = files[i].getName().split("\\.");
-                // Nur Class-Dateien ohne "$" werden berücksichtigt
+                // only class names without $ are taken
                 if (name.length > 1 && name[1].equals("class") && name[1].indexOf("$") == -1) {
                     try {
-                        // Die Klasse laden
+                        // load the class itself
                         Class<?> source = loader.loadClass(classPrefix + name[0]);
                         // Prüfen, ob die geladene Klasse das Interface implementiert
                         // bzw. ob sie das Interface beerbt
@@ -325,9 +372,16 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     }
 
     /**
-     * tells the UserInterface about the existence of a scriptengine, e.g. to add this to a selection menu
+     * \brief Tells the UserInterface about the existence of a scriptengine
+     *
+     * During startup, the core identifies all available scriptengines  and report them by this function to the Userinterface e.g. to add this to a selection menu.
+     *
+     * The userinterface must collect these information and present this to the user, as the first step of the user interaction would be, that the user
+     * selects the scriptengine he wants to work with and start their functionality by calling startScriptEngine()
      * @param id the key of the scriptengines hash array where the loaded instances are been stored
      * @param visibleName
+     * @todo is the description here correct, that the user interface starts an engine with startscriptEngine()?
+     * \ingroup init
      */
     void announceScriptEngine(String id, String visibleName) {
         userInterface.announceScriptengine(id, visibleName);
@@ -347,20 +401,22 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         }
     }
 
+    /**
+     * \brief Tells Value to all visualizers of a scriptengine
+     * @param value Onoin containing value and scriptengine
+     * \ingroup visualisation
+     */
     public void handleValue(Onion value) {
-        String owner = value.getOnionString("owner/name");
+        String owner = value.getOnionString("owner/name"); //who's the owner of that value?
         if (owner == null) {
             Debug.msg("core", DEBUG_WARNING, "onion id does not contain name");
         } else {
-            Collection c = visualizers.values();
-            //obtain an Iterator for Collection
-            Iterator itr;
-            ArrayList affectedVisualizers = visualizers.get(owner);
+            ArrayList affectedVisualizers = visualizers.get(owner); //which visualizers belong to that owner
             if (affectedVisualizers != null) {
                 Iterator visItr = affectedVisualizers.iterator();
                 while (visItr.hasNext()) {
                     Visualizer vis = (Visualizer) visItr.next();
-                    vis.setValue(value);
+                    vis.setValue(value); // send the value to all visualisers of that owner
                 }
             }
         }
@@ -428,7 +484,12 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         assignments.remove(id + ":" + subclass);
     }
 
-    /** updates all visualizers
+    /** \brief updates all visualizers
+     *
+     * to not having several UI refreshes in parallel, update requests are only be collected for each visualizer and only been refreshed when the central core
+     * raises this update event.
+     *
+     *
      *
      */
     public void updateVisualizers() {
@@ -452,11 +513,18 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         }
     }
 
+    /**
+     * \brief transfer a message to the receiver
+     * @param msg a message, containing sender, receipient and the message itself
+     * @return true, if receipient was known
+     *
+     * \ingroup core
+     */
     public boolean transferMsg(Message msg) {
-        if (OOBDConstants.CoreMailboxName.equals(msg.rec)) {
+        if (OOBDConstants.CoreMailboxName.equals(msg.rec)) { //is the core the receiver?
             this.sendMsg(msg);
             return true;
-        } else {
+        } else { //find receipient
             OobdPlugin receiver = activeEngines.get(msg.rec);
             if (receiver == null) {
                 receiver = busses.get(msg.rec);
@@ -476,7 +544,10 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         }
     }
 
-    /** the central timer for the core
+    /** 
+     * The Central Timer
+     *
+     * in here all functions are called which needs a regular run
      *
      */
     public void coreTick() {
@@ -486,10 +557,14 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         ticker.enable(true);
     }
 
+    /**
+     * \brief the Core thread
+     */
+
     public void run() {
         while (runCore == true) {
             Message thisMsg;
-            while ((thisMsg = msgPort.getMsg(100)) != null) {
+            while ((thisMsg = msgPort.getMsg(100)) != null) { // just waiting and handling messages
                 actionRequest(thisMsg.content);
 
             }
@@ -498,11 +573,15 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     }
 }
 
+/**
+ *
+ * \brief Helpclass for Core timer events
+ */
 class CoreTick implements Runnable {
 
     boolean keepRunning = true;
     boolean enableTicks = true;
-    private static final int LONG_TIME = 100; /* 1 Seconds */
+    private static final int LONG_TIME = 100; /* 0.1 Seconds */
 
     CoreTickListener l = null; /* Currently only one listener. There could be many*/
 
