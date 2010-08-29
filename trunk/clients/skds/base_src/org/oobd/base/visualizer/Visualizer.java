@@ -1,7 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * \defgroup visualisation Visualize values and return User inputs
  */
+
 package org.oobd.base.visualizer;
 
 import java.util.logging.Level;

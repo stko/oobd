@@ -1,13 +1,10 @@
-/*
- * Some help functions for debugging
- */
+
 package org.oobd.base;
 
 import java.util.HashMap;
 
 /**
- *
- * @author steffen
+ *\brief Helpclass to control debug output level depenting on the system who does the output
  */
 public class Debug implements OOBDConstants {
 
