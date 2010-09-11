@@ -1,23 +1,27 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 
 package org.oobd.base.visualizer;
 import org.oobd.base.support.Onion;
 /**
  *
- * @author steffen
+ * \brief Interface for the GUI elements (buttons, textfields, tables..)  to support the OOBD core functions
+ * \ingroup visualisation
  */
 public interface IFvisualizer {
     /**
-     * tells, if that visualisation is a single element or represents a whole group of visualisations, like an JTable
-     * @return
+     * /brief does the visualisation element represents a group of values?
+     * 
+     * Tells, if that visualisation is a single element, like a butten,  or does it represent a whole group of visualisations, like an JTable, where each column
+     * of the table is a single visualisation
+     *
+     * @return true, if group
      */
     public boolean isGroup();
 
     /**
-     * links the visualizer to the real visualization component
+     * \brief links the visualizer to the real visualization component
+     *
+     * When e.g. the user press a button, the button needs to tell this to his corrosponding visualizer to start some action.
      * @param viz
      */
     public void setVisualizer(Visualizer viz);

@@ -17,37 +17,51 @@ public interface IFui  {
     public void sm(String msg);
 
     /**
-     * register the core object to the UserInterface for calls of core methods
+     * \brief register the core instance to the UserInterface
+     * 
+     * \ingroup init
+     * 
      * @param Core the core object
      */
     public void registerOobdCore(Core core);
 
     /**
-     * tells the UserInterface about the existence of a scriptengine, e.g. to add this to a selection menu
+     * \brief tells the UserInterface about the existence of a scriptengine
+     * \ingroup init
+     * 
+     * During startup, the core looks for all scriptengines the user might want to use and these
+     * through this function to the user interface, e.g. to add this to a selection menu
      * @param id the key of the scriptengines hash array where the loaded instances are been stored
      * @param visibleName
      */
     public void announceScriptengine(String id, String visibleName);
 
     /**
-     * this method is UI- depending and returns the class which comes closes to the requested visualizer type
-     *
+     * \brief search for a specific vizualizer type
+     * \ingroup visualization
+     * this method is UI- depending and returns the class which comes closest to the requested visualizer type.
+     * 
+     * 
      * @param visualizerType
      * @param theme
-     * @return
+     * @return Visulizerclass, if found
      */
     public Class getVisualizerClass(String visualizerType, String theme);
 
 
     /**
-     * this method is UI- depending and places a visualizer onto an canvas
+     * \brief places a visualizer onto an canvas
+     * \ingroup visualization
+     *
+     * puts the visualizer defined in the onion data on one of the canvas on the pane, which were previously defined with addCanvas
      *
      * @param myOnion
      */
                 public void visualize(Onion myOnion);
 
     /**
-     * Adds a new canvas to the pane of the given ScriptEngine
+     * \brief Adds a new canvas to the pane of the given ScriptEngine
+     * \ingroup visualization
      * @param seID ID of the ScriptEngine
      * @param Name of the new canvas
      */
@@ -55,7 +69,8 @@ public interface IFui  {
 
 
     /**
-     * Deletes a canvas from the pane of the given ScriptEngine
+     * \brief Deletes a canvas from the pane of the given ScriptEngine
+     * \ingroup visualization
      * @param seID ID of the ScriptEngine
      * @param Name of the new canvas
      */

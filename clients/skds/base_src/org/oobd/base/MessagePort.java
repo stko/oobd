@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.oobd.base;
 
 import java.util.Vector;
@@ -11,7 +8,8 @@ import org.json.JSONException;
 
 /**
  *
- * @author steffen
+ * \brief Message-Port to supply sending, reading and waiting for messages
+ * \ingroup core
  */
 public class MessagePort {
 
@@ -23,6 +21,16 @@ public class MessagePort {
         myMsgs = new Vector();
     }
 
+    /**
+     * \brief gets a message from the core and sorts it in the waiting massage quere
+     *
+     * This function is called by the core when a message for the messageport owner comes in.
+     *
+     * As it need to be sure, that an unexpected system message does not wake up a task who is waiting for an answer to a message he has sented, the messages are been
+     * sorted into the reveive msq quere and the task is waked up then accourdingly.
+     *
+     * @param thisMessage
+     */
     public void receive(Message thisMessage) {
         int thisReplyID;
         try {
@@ -49,7 +57,12 @@ public class MessagePort {
         }
 
     }
-
+/**
+ * \brief get the next message in the quere
+ * \ingroup core
+ * @param wait if true, waits forever for a message, otherways returns immediadly, even without a message
+ * @return message
+ */
     protected Message getMsg(boolean wait) {
         if (wait == true) {
             return getMsg(-1);
@@ -58,6 +71,13 @@ public class MessagePort {
         }
     }
 
+    /**
+     * \brief send a message and waits for the answer
+     * \ingroup core
+     * @param msg the message
+     * @param timeout timeout in ms to wait for an answer. 0: wait forever, <0 : Don't wait (which would be a little bit senseless ;-)
+     * @return
+     */
     public Message sendAndWait(Message msg, int timeout) {
         replyID = (replyID > 10000) ? 1 : replyID + 1;
         waitingforID = replyID;
@@ -65,6 +85,12 @@ public class MessagePort {
         return getMsg(timeout);
     }
 
+/**
+ * \brief get the next message in the quere
+ * \ingroup core
+ * @param timeout in ms to wait for an message  . 0: wait forever, <0 don't wait
+ * @return message
+ */
     protected Message getMsg(int timeout) {
 
         if (myMsgs.isEmpty() || waitingforID != 0) {
