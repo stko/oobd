@@ -580,7 +580,8 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = NBprojects/swing base_src/org/oobd/
+INPUT                  = NBprojects/swing \
+                         base_src/org/oobd/
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
@@ -1428,14 +1429,14 @@ DOT_FONTPATH           =
 # indirect inheritance relations. Setting this tag to YES will force the 
 # the CLASS_DIAGRAMS tag to NO.
 
-CLASS_GRAPH            = NO
+CLASS_GRAPH            = YES
 
 # If the COLLABORATION_GRAPH and HAVE_DOT tags are set to YES then doxygen 
 # will generate a graph for each documented class showing the direct and 
 # indirect implementation dependencies (inheritance, containment, and 
 # class references variables) of the class with other documented classes.
 
-COLLABORATION_GRAPH    = YES
+COLLABORATION_GRAPH    = NO
 
 # If the GROUP_GRAPHS and HAVE_DOT tags are set to YES then doxygen 
 # will generate a graph for groups, showing the direct groups dependencies
@@ -1473,7 +1474,7 @@ INCLUDED_BY_GRAPH      = NO
 # the time of a run. So in most cases it will be better to enable call graphs 
 # for selected functions only using the \callgraph command.
 
-CALL_GRAPH             = YES
+CALL_GRAPH             = NO
 
 # If the CALLER_GRAPH and HAVE_DOT tags are set to YES then 
 # doxygen will generate a caller dependency graph for every global function 
@@ -1481,7 +1482,7 @@ CALL_GRAPH             = YES
 # the time of a run. So in most cases it will be better to enable caller 
 # graphs for selected functions only using the \callergraph command.
 
-CALLER_GRAPH           = YES
+CALLER_GRAPH           = NO
 
 # If the GRAPHICAL_HIERARCHY and HAVE_DOT tags are set to YES then doxygen 
 # will graphical hierarchy of all classes instead of a textual one.

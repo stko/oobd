@@ -44,6 +44,39 @@ import org.oobd.base.visualizer.Visualizer;
 
 /**
  * \defgroup init Initialisation during startup
+ *
+ * At startup, different objects come to live and tell each other about their existence and their capabilities
+ *
+ * This is mainly to create the links between the generic core functions and the application depending User interface and system enviroment.
+ *
+ * This is done in the following steps:
+ * \li the Application class itself implements the Interface IFsystem
+ * \li the main class, which controls the GUI (like the form, the activity or whatever) implements the Interface IFsystem
+ *
+ * When the application starts, it first creates an instance of the GUI class. After that, it creates the (single) instance of the OOBD core
+ *
+ * myCore = new Core(this, GUI_instance)
+ *
+ *
+ * When the Core instance is initiated, it
+ * \li announces itself to the GUI object
+ * \li announces itself to the GUI object
+ * \li tells the GUI about available scriptengines 
+ *
+ *
+ *  \msc
+    GUI,App,Core;
+    App->Core [label="new Core()"];
+    App<-Core [label="registerOobdCore()", URL="\ref org::oobd::base::IFsystem.registerOobdCore()"];
+    GUI<-Core [label="registerOobdCore()", URL="\ref org::oobd::base::IFui.registerOobdCore()"];
+    GUI<-Core [label="1. Engine found", URL="\ref org::oobd::base::IFui.announceScriptengine()"];
+    --- [label="for all engines found"];
+    GUI<-Core [label="..n Engine found", URL="\ref org::oobd::base::IFui.announceScriptengine()"];
+ \endmsc
+ *
+ * that's already all.
+ *
+ * Now the systems waits that the user selects through the GUI one of the announced script engines to work with. How this works can be found in \ref visualisation
  */
 
 /**
@@ -80,6 +113,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
     /**
      * \brief The Application creates one single instance of the core class
+     * \ingroup init
      *
      * @param myUserInterface reference to the View - interface, which is used to handle all visual in- and output
      * @param mySystemInterface reference to the actual application and runtime enviroment, on which OOBD is actual running on
@@ -301,7 +335,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * During startup, the core reports all available scriptengines to the User Interface to let the user choose with which one he wants to work with.
      *
      * This engine is then been started with createScriptEngine()
-     * \ingroup init
+     * \ingroup visualisation
      */
     public void startScriptEngine(String id) {
         Debug.msg("core", DEBUG_BORING, "Start scriptengine: " + id);

@@ -16,6 +16,5 @@ public class SwingSystem implements IFsystem{
 
    public void registerOobdCore(Core thisCore){
        core=thisCore;
-       core.register("Moin vom System");
    }
 }
