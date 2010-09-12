@@ -334,7 +334,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      *
      * During startup, the core reports all available scriptengines to the User Interface to let the user choose with which one he wants to work with.
      *
-     * This engine is then been started with createScriptEngine()
+     * This engine is then been first created with createScriptEngine(), and when all initalisation is been done, it's started with startScriptEngine()
      * \ingroup visualisation
      */
     public void startScriptEngine(String id) {
@@ -482,7 +482,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                 Debug.msg("Core", DEBUG_INFO, "Canvas requested");
                 String dummy = myOnion.getOnionString("owner");
 
-                userInterface.addCanvas(myOnion.getOnionString("owner"), myOnion.getOnionString("name"));
+                userInterface.addCanvas(myOnion.getOnionString("owner"), myOnion.getOnionString("name"),1,1);
             }
 
         } catch (org.json.JSONException e) {
@@ -491,7 +491,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
     /**
      * generic hashtable to store several relational data assignments during runtine
-     * Can be called either with a onion or with an json-String containing the onion data
+     * 
      * @param id string identifier
      * @param subclass string sub identifier
      * @param data object reference to store
