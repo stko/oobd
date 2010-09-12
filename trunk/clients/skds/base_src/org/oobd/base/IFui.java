@@ -38,7 +38,7 @@ public interface IFui  {
 
     /**
      * \brief search for a specific vizualizer type
-     * \ingroup visualization
+     * \ingroup visualisation
      * this method is UI- depending and returns the class which comes closest to the requested visualizer type.
      * 
      * 
@@ -51,7 +51,7 @@ public interface IFui  {
 
     /**
      * \brief places a visualizer onto an canvas
-     * \ingroup visualization
+     * \ingroup visualisation
      *
      * puts the visualizer defined in the onion data on one of the canvas on the pane, which were previously defined with addCanvas
      *
@@ -61,16 +61,16 @@ public interface IFui  {
 
     /**
      * \brief Adds a new canvas to the pane of the given ScriptEngine
-     * \ingroup visualization
+     * \ingroup visualisation
      * @param seID ID of the ScriptEngine
      * @param Name of the new canvas
      */
-    public void addCanvas(String seID, String Name);
+    public void addCanvas(String seID, String Name, int colcount, int rowcount);
 
 
     /**
      * \brief Deletes a canvas from the pane of the given ScriptEngine
-     * \ingroup visualization
+     * \ingroup visualisation
      * @param seID ID of the ScriptEngine
      * @param Name of the new canvas
      */

@@ -35,8 +35,6 @@ public class ScriptengineTerminal extends OobdScriptengine implements OOBDConsta
      * @todo: Acion canvas wir der Owner noch als reiner String übergeben, nicht als Sub-Onion
      */
     public void run() {
-        Debug.msg("scriptengineterminal", DEBUG_BORING, "positiver Actiontest...");
-        Debug.msg("scriptengineterminal", DEBUG_BORING, "negativer Actiontest...");
         try {
             core.transferMsg(new Message(this, CoreMailboxName, new Onion("{\"type\":\"noaction\"}")));
             core.transferMsg(new Message(this, CoreMailboxName, new Onion(""

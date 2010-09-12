@@ -119,13 +119,12 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
 
     }
 
-    /**
-     * Returns the class (not the instance!) to visulize the requested visualizer type
-     * @param visualizerType
-     * @param theme optional to request a design different from standard
-     * @return
-     */
+   
     public Class getVisualizerClass(String visualizerType, String theme) {
+        /**
+         * @todo implement different types of visualisation
+         * Obviously this implementation returns always the same class to visualize
+         */
         return SwingVizTable.class;
 
     }
@@ -137,7 +136,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         Class[] argsClass = new Class[2]; // first we set up an pseudo - args - array for the scriptengine- constructor
         argsClass[0] = String.class; // and fill it with the info, that the argument for the constructor will be first a String
         argsClass[1] = String.class;
-        ; // and fill it with the info, that the argument for the constructor will be first a String
+        // and fill it with the info, that the argument for the constructor will be first a String
         try {
             Method classMethod = visualizerClass.getMethod("getInstance", argsClass); // and let Java find the correct constructor with one string as parameter
             Object[] args = {newVisualizer.getOwnerEngine(), newVisualizer.getName()}; //we will an args-array with our String parameter
@@ -163,8 +162,14 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
             e.printStackTrace();
         }
     }
-
-    public void addCanvas(String seID, String name) {
+    /**
+     * @todo row and colum sizing needs to be implemented
+     * @param seID
+     * @param name
+     * @param colcount
+     * @param rowcount
+     */
+    public void addCanvas(String seID, String name, int colcount, int rowcount){
         delCanvas(seID, name);
         JTabbedPane basejTabPane = (JTabbedPane) oobdCore.getAssign(seID, org.oobd.base.OOBDConstants.CL_PANE);
 
@@ -206,6 +211,8 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
      * create ScriptEngine, when the user select the "Start.." menu item
      * @todo the event needs to checked if it really comes from a "Start.." menu entry
      * @todo tabs needs a "close" button as described on http://java.sun.com/docs/books/tutorial/uiswing/examples/components/index.html#TabComponentsDemo
+     * @todo actual this function creates straight the pane for the scriptengine  - would it not be better to put this into a seperate oobd interface function to make it better structured?
+     *
      *
      */
     @Action
