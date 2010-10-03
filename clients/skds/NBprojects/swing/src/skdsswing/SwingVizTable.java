@@ -109,11 +109,12 @@ public class SwingVizTable extends JTable implements IFvisualizer {
 
     public void setVisualizer(Visualizer viz) {
         myTable.getRowCount();
+        /** here the visulasions works quite simple: The visualizer itself is inserted in the table,
+         * so that each time the table is redrawn, the visualizer.toString() method is used to give the cell value.
+         * in other visualisation elements this might be needed to do more complicated, but for a simple textual representation
+         * this method is good enough
+         */
         myTable.putClientProperty(myTable.getRowCount(), viz);
-    }
-
-    public void putValue(Visualizer viz, Onion onion) {
-        myTable.setValueAt("test", (Integer) this.getClientProperty(viz), 0);
     }
 
     public void initValue(Visualizer viz, Onion onion) {
