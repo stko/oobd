@@ -5,17 +5,19 @@
  *
  * To make all this inpendent from the internal processes, the following principles have been used:
  *
- * \section Setting up the User Interface
+ * \section StartAction Start the first Activities
+ * The whole mechanism is started when the user e.g. selects an available scriptengine out of the list (see \link init initialisation \endlink where that list comes from). At the same time 
+ * the GUI sets up the pane for that scriptengine to have something where the scriptengine can draw onto.
+ *
+ * \section setupUI Setting up the User Interface
  * \subsection pane Each scriptengine has his own drawing pane
  *
  * Whenever a scriptengine is started, the system opens a new drawing pane for this scriptengine. The pane and the scriptengine belong together, and the pane is reserved for his
  * scriptengine to place its visual elements on it.
  *
- * Depenting on the implementation, there can also be one pane, which does not belong to a scriptengine, but to the user hinself. Here he can arrange his own visualistions, as
- * the content of sriptengine panels are only controlled by the scriptengines itself.
+ * Depending on the implementation, there can also be one pane, which does not belong to a scriptengine, but to the user hinself. Here he can arrange his own visualistions, as
+ * the content of scriptengine panels are only controlled by the scriptengines itself.
  *
- * A scriptengine is started, when the user e.g. selects an available scriptengine out of the list (see \link init initialisation \endlink where that list comes from). At the same time 
- * the GUI sets up the pane for that scriptengine to have something where the scriptengine can draw onto.
  * 
  *  \msc
     User,GUI,Core;
@@ -25,7 +27,8 @@
     GUI->Core [label="startScriptEngine()", URL="\ref org::oobd::base::Core.startScriptEngine()"];
  \endmsc
  * 
- * 
+ * It's up to the implementation to allow the user multiple or just one scriptengine at a time.
+ *
  * \subsection canvas Each pane has one or more named canvas
  * 
  * While the pane itself is more the generic container for all the scriptengine avtivities, a canvas is a real drawing surface where the scriptengine can put visual elements 
@@ -54,21 +57,63 @@
  *
  * This needs to be understood first:
  *
- * If you have e.g. a button, this button can obviously only represent one element. But in case you have a table, than this can respresent a whole table of values.
- * And as the only one, who knows, if it can represent just one or multiple values, it that class itself. For that reason the class itself decide if for a new value also a
+ * If you have e.g. a button, this button can obviously only represent one element. But in case you have a table, than this can represent a whole table of values.
+ * And the only one, who knows, if it can represent just one or multiple values, it that class itself. For that reason the class itself decide if for a new value also a
  * new instance is needed or if an exisiting instance can handle the new value too
  *
  * \remark As the getInstance() needs to be a static method of that class, but static methods can not be defined in an Interface, the programmer itself is responcible to implement this
  * method, it can't be covered already in the IFui - interface
  *
+ * After creating the visual element, the element is told who its corrosponding visualizer is by calling its setVisualizer() method
+ * 
  *  \msc
     IFvisualiser,GUI,Core;
     GUI<-Core [label="visualize()", URL="\ref org::oobd::base::IFui.visualize()"];
     GUI<-GUI [label="getVisualizerClass()", URL="\ref org::oobd::base::IFui.getVisualizerClass()"];
-    IFvisualiser<-IFvisualiser [label="getVisualizerClass()", URL="\ref org::oobd::base::IFui.getVisualizerClass()"];
+    IFvisualiser<-GUI [label="getInstance()", URL="\ref org::oobd::base::IFui.getInstance()"];
      --- [label="place new element"];
+ * IFvisualiser<-GUI [label="setVisualizer()", URL="\ref org::oobd::base::IFui.setVisualizer()"];
+ *
   \endmsc
 
+ *
+ * After the responsible visualisation object has been identified, it's supplied with all necessary information via the onion object and it's placed on the canvas with the
+ * right coordinates, min & max values and unit.
+ *
+ * \section updatevalues Updating Values on the screen
+ *
+ * Whenever there's a new value to visualize, the core calls the update() method of the visualisation element to tell that there a new values to show (with 0 as parameter).
+ *
+ * The update() method is called several times: First with an 0 as level just to tell the element that there's an update to come, and later again with a 2 to do the update now.
+ * This two way method is used to avoid that each new value causes an immediate UI refresh, which is time consuming. By this method all new vaules can be updated with just one UI refresh.
+ *
+ *
+ *
+ *  \msc
+    IFvisualiser,Core;
+
+    --- [label="inform about updates to come"];
+    IFvisualiser<-Core [label="Update(0)", URL="\ref org::oobd::base::IFui.Update()"];
+   --- [label="refresh the UI"];
+    IFvisualiser<-Core [label="Update(2)", URL="\ref org::oobd::base::IFui.Update()"];
+
+  \endmsc
+
+
+ *
+ *\section userinputs User Input Handling
+ *
+ * When ever the visalisation element founds that the user did some actions, like press a button, doubleclick on a value or a new selection in a combobox, it calls  updateRequest()
+ * of its corrosponding visualizer. The visualizer than forwards the message to the core for further handling
+ *
+ *  \msc
+    IFvisualiser,Core;
+
+    IFvisualiser->Core [label="updateRequest()", URL="\ref org::oobd::base::IFui.updateRequest()"];
+
+  \endmsc
+
+ *
  *
  */
 
@@ -163,7 +208,8 @@ public class Visualizer {
     }
 
     /** Update request from Component
-     *  0: start 1: update data 2: finish
+     *  \todo the information, if the user has changed any selection, needs to be addded
+     * \ingroup visualisation
      */
     public void updateRequest(int type) {
         System.out.println("Update request" + Integer.toString(type));

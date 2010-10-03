@@ -13,7 +13,7 @@ public interface IFvisualizer {
      * 
      * Tells, if that visualisation is a single element, like a button,  or does it represent a whole group of visualisations, like an JTable, where each column
      * of the table is a single visualisation
-     * \ingroup visualisation
+     * 
      *
      * @return true, if group
      */
@@ -28,17 +28,7 @@ public interface IFvisualizer {
      */
     public void setVisualizer(Visualizer viz);
 
-    /**
-     * \brief makes the visualisation component to show the value
-     * \ingroup visualisation
-     *
-     * This method of the visual object is called when the OOBD core wants to display a new value. It's then up to the visual object to make it visible (just print the value, or e.g.
-     * display a bar graph)
-     * @param viz the corrosponding visualizer
-     * @param onion an onion data structure containing the details \see http://sourceforge.net/apps/mediawiki/oobd/index.php?title=SKDS:onion for details
-     */
-    public void putValue(Visualizer viz,Onion onion);
-    /**
+     /**
      * \brief initialize the visualisation object
      * \ingroup visualisation
      *

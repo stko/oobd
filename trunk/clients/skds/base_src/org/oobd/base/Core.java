@@ -3,7 +3,7 @@
  * 
  * \section Introduction
  *
- * This documentation is made for 2 purposes: First explain the system functionality, and second of course the general concept of how the
+ * This documentation is made for twopurposes: First explain the system functionality, and second of course the general concept of how the
  * different components work together.
  *
  * As the functionality is very specific, while the concept is very gereric, it will be a litte bit tricky to join these both counterparts together. Let's see, if it works.
@@ -16,8 +16,11 @@
  *
  * When looking more in detail into this basic requierement, you'll find five tasks which are nessecary to fulfill this.
  *
- * \li coordination: Something must handle the fundamental things (dynamic module handling, message transfer, file i/o etc.). This is done by the \ref core
- * \li visualisation: Finally somebody wants to see results or wants to do some user input. This is handled by the \ref visualizers
+ * Each of these tasks build its own chapter. If you want to understand and program your own user interface, you've only to read and implement the chapter about \ref visualisation,
+ * how to create a own \ref scriptengine can be found there etc.
+ *
+ * \li coordination: Something inside must handle the fundamental things (dynamic module handling, message transfer, file i/o etc.). This is done by the \ref core
+ * \li visualisation: Finally somebody wants to see results or wants to do some user input. This is handled by the \ref visualisation
  * 
  */
 package org.oobd.base;
@@ -438,7 +441,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     /**
      * \brief Tells Value to all visualizers of a scriptengine
      * @param value Onoin containing value and scriptengine
-     * \ingroup visualisation
+     * 
      */
     public void handleValue(Onion value) {
         String owner = value.getOnionString("owner/name"); //who's the owner of that value?
