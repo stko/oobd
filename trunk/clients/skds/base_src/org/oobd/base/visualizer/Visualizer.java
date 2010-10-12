@@ -140,6 +140,7 @@ public class Visualizer {
     public Visualizer(Onion onion) {
         ownerEngine = onion.getOnion(OOBDConstants.FN_OWNER);
         name = onion.getOnionString(OOBDConstants.FN_NAME);
+        value=onion;
 //        this.myObject=myObject;
         Core.getSingleInstance().addVisualizer(ownerEngine.getOnionString(OOBDConstants.FN_NAME), this);
     }
@@ -188,7 +189,7 @@ public class Visualizer {
 
     @Override
     public String toString() {
-        String val = getValue(OOBDConstants.FN_VALUESTRING);
+        String val = getValue("value");
         if (val == null) {
             return "#NA";
         } else {
@@ -214,6 +215,7 @@ public class Visualizer {
     public void updateRequest(int type) {
         System.out.println("Update request" + Integer.toString(type));
         System.out.println("my ownwer is: " + ownerEngine.toString());
+        System.out.println("actual visualizer data: " + value.toString());
         try {
             Core.getSingleInstance().transferMsg(new Message(Core.getSingleInstance(), OOBDConstants.CoreMailboxName, new Onion(""
                     + "{" +
@@ -225,7 +227,7 @@ public class Visualizer {
                     "',"  +
                      "'optid':'" + getValue("optid") +
                     "',"  +
-                    "'actValue':'" + getValue("ValueString") +
+                    "'actValue':'" + getValue("value") +
                     "',"  +
                     "'updType':" + Integer.toString(type) +
                     "}")));
