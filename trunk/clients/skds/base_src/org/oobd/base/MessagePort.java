@@ -5,6 +5,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONException;
+import org.oobd.base.support.Onion;
 
 /**
  *
@@ -22,7 +23,7 @@ public class MessagePort {
     }
 
     /**
-     * \brief gets a message from the core and sorts it in the waiting massage quere
+     * \brief gets a message from the core and sorts it in the waiting message quere
      *
      * This function is called by the core when a message for the messageport owner comes in.
      *
@@ -69,6 +70,21 @@ public class MessagePort {
         } else {
             return getMsg(0);
         }
+    }
+
+/**
+ * \brief sends an answer to a message
+ * \ingroup core
+ * @param msg the original message
+ * @param onion the content of the message
+ * @return message
+ */
+    protected void  replyMsg(Message msg, Onion content) {
+        String rec = msg.rec;
+        msg.rec=msg.sender;
+        msg.sender = rec;
+        msg.content= content;
+        Core.getSingleInstance().transferMsg(msg);
     }
 
     /**

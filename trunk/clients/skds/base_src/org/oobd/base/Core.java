@@ -181,15 +181,17 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
         // ----------- load Busses -------------------------------
         try {
-            HashMap<String, Class<?>> classObjects = loadOobdClasses(props.getProperty("BusClassPath", "../../org/oobd/ui/swing/build/classes/org/oobd/base/bus"), "org.oobd.base.bus.", Class.forName("org.oobd.base.bus.OobdBus"));
+            HashMap<String, Class<?>> classObjects = loadOobdClasses(props.getProperty("BusClassPath", "../../org/oobd/ui/swing/build/classes/org/oobd/base/bus"),props.getProperty("BusClassPrefix",  "org.oobd.base.bus."), Class.forName("org.oobd.base.bus.OobdBus"));
             for (Iterator iter = classObjects.keySet().iterator(); iter.hasNext();) {
                 String element = (String) iter.next();
                 Class<?> value = (Class<?>) classObjects.get(element);
                 try {
                     OobdBus thisClass = (OobdBus) value.newInstance();
                     thisClass.registerCore(this);
-                    busses.put(element, thisClass);
+                    new Thread(thisClass).start();
 
+                    busses.put(element, thisClass);
+                    Debug.msg("core", DEBUG_BORING, "Register "+element+" as bus");
                 } catch (InstantiationException ex) {
                     // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
                     Debug.msg("core", DEBUG_ERROR, ex.getMessage());

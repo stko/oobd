@@ -27,6 +27,8 @@ import se.krka.kahlua.vm.LuaPrototype;
 import se.krka.kahlua.vm.LuaState;
 import org.json.JSONException;
 
+import sun.misc.*;
+
 /**
  *
  * @author steffen
@@ -71,7 +73,7 @@ public class ScriptengineLua extends OobdScriptengine {
         } catch (IOException ex) {
             Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
         }
-        try {
+        
             register("initCellTableCall", new JavaFunction() {
 
                 public int call(LuaCallFrame callFrame, int nArguments) {
@@ -138,8 +140,8 @@ public class ScriptengineLua extends OobdScriptengine {
                                 + "'tooltip':'" + getString(0) + "',"
                                 + "'value':'" + getString(2) + "',"
                                 + "'optid':'" + getString(5) + "',"
-                                + "'name':'" + getString(1) +
-                                "'}")));
+                                + "'name':'" + getString(1)
+                                + "'}")));
 
                     } catch (JSONException ex) {
                         Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
@@ -190,7 +192,14 @@ public class ScriptengineLua extends OobdScriptengine {
                                 + "'command':'serReadLn',"
                                 + "'timeout':'" + getInt(0) + "',"
                                 + "'ignore':'" + Boolean.toString(getBoolean(1)) + "'}")), 5000);
-                        result = answer.getContent().getString("result");
+                        if (answer != null) {
+                            try {
+                                result = new String(new BASE64Decoder().decodeBuffer(answer.getContent().getString("result")));
+                            } catch (IOException ex) {
+                                Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+
+                        }
 
                     } catch (JSONException ex) {
                         Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
@@ -210,7 +219,7 @@ public class ScriptengineLua extends OobdScriptengine {
             register("serWaitCall", new JavaFunction() {
 
                 public int call(LuaCallFrame callFrame, int nArguments) {
-                    System.out.println("Lua calls serWait");
+                    System.out.println("Lua calls serWait with strang data:>" + getString(0) + "<");
                     //BaseLib.luaAssert(nArguments >0, "not enough args");
                     initRPC(callFrame, nArguments);
                     int result = 0;
@@ -222,8 +231,11 @@ public class ScriptengineLua extends OobdScriptengine {
                                 + "{'name':'" + myself.id + "'},"
                                 + "'command':'serWait',"
                                 + "'timeout':'" + getInt(1) + "',"
-                                + "'data':'" + getString(0) + "'}")), 500);
-                        result = answer.getContent().getInt("result");
+                                + "'data':'" + new BASE64Encoder().encode(getString(0).getBytes()) + "'}")), 500);
+                        if (answer != null) {
+                            result = answer.getContent().getInt("result");
+
+                        }
 
                     } catch (JSONException ex) {
                         Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
@@ -258,19 +270,19 @@ public class ScriptengineLua extends OobdScriptengine {
             register("serWriteCall", new JavaFunction() {
 
                 public int call(LuaCallFrame callFrame, int nArguments) {
-                    System.out.println("Lua calls serWrite with string:"+getString(0));
+                    System.out.println("Lua calls serWrite with string:" + getString(0));
 
                     //BaseLib.luaAssert(nArguments >0, "not enough args");
                     initRPC(callFrame, nArguments);
-                    try{
+                    try {
                         myself.getMsgPort().sendAndWait(new Message(myself, BusMailboxName, new Onion("{"
-                             /*   + "'type':'" + CM_BUSTEST + "',"
+                                + "'type':'" + CM_BUSTEST + "',"
                                 + "'owner':"
                                 + "{'name':'" + myself.id + "'},"
                                 + "'command':'serWrite',"
-                               */ + "'data':'" + getString(0) + "'"
-                                +"}")), 5000);
-                   } catch (JSONException ex) {
+                                + "'data':'" + new BASE64Encoder().encode(getString(0).getBytes()) + "'"
+                                + "}")), 0);
+                    } catch (JSONException ex) {
                         Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
                     }
 //                    if (btComm != null) {
@@ -287,13 +299,13 @@ public class ScriptengineLua extends OobdScriptengine {
                     System.out.println("Lua calls serFlush");
                     //BaseLib.luaAssert(nArguments >0, "not enough args");
                     initRPC(callFrame, nArguments);
-                    try{
+                    try {
                         myself.getMsgPort().sendAndWait(new Message(myself, BusMailboxName, new Onion(""
                                 + "{'type':'" + CM_BUSTEST + "',"
                                 + "'owner':"
                                 + "{'name':'" + myself.id + "'},"
-                                + "'command':'serWrite'}")), 5000);
-                   } catch (JSONException ex) {
+                                + "'command':'serFlush'}")), 0);
+                    } catch (JSONException ex) {
                         Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
                     }
 //                      if (btComm != null) {
@@ -307,21 +319,31 @@ public class ScriptengineLua extends OobdScriptengine {
             register("serDisplayWriteCall", new JavaFunction() {
 
                 public int call(LuaCallFrame callFrame, int nArguments) {
-                    System.out.println("Lua calls serDisplayWrite");
+                    System.out.println("Lua calls serDisplayWrite with string:" + getString(0));
+
                     //BaseLib.luaAssert(nArguments >0, "not enough args");
                     initRPC(callFrame, nArguments);
-                    //prepareDisplayWrite(getString(0));
-                    System.out.println("Not implemented yet: WriteIntoOutputWindow: "+getString(0));
+                    try {
+                        myself.getMsgPort().sendAndWait(new Message(myself, BusMailboxName, new Onion("{"
+                                + "'type':'" + CM_BUSTEST + "',"
+                                + "'owner':"
+                                + "{'name':'" + myself.id + "'},"
+                                + "'command':'serDisplayWrite',"
+                                + "'data':'" + new BASE64Encoder().encode(getString(0).getBytes()) + "'"
+                                + "}")), 0);
+                    } catch (JSONException ex) {
+                        Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+//                    if (btComm != null) {
+//                        btComm.write(getString(0));
+//                    }
                     finishRPC(callFrame, nArguments);
                     return 1;
                 }
             });
 
-            core.transferMsg(new Message(this, CoreMailboxName, new Onion("{\"type\":\"noaction\"}")));
 
-        } catch (JSONException ex) {
-            Logger.getLogger(ScriptengineTerminal.class.getName()).log(Level.SEVERE, null, ex);
-        }
+         
         try {
             //doScript("/OOBD.lbc");
             doScript("OOBD.lbc");
@@ -344,7 +366,7 @@ public class ScriptengineLua extends OobdScriptengine {
                         + "'to':"
                         + "{'name':'" + vis + "'},"
                         //+ "'value':'" + Integer.toString(i)
-                        + "'value':'" + callFunction(vis,new Object[]{on.getOnionString("vis"),on.getOnionString("optid")})
+                        + "'value':'" + callFunction(vis, new Object[]{on.getOnionString("vis"), on.getOnionString("optid")})
                         + "'}")));
             } catch (JSONException ex) {
                 Logger.getLogger(ScriptengineTerminal.class.getName()).log(Level.SEVERE, null, ex);
@@ -421,7 +443,7 @@ public class ScriptengineLua extends OobdScriptengine {
         System.out.println("Lua get string index " + Integer.toString(index));
         String response = BaseLib.rawTostring(callFrame.get(index));
         // callFrame.push(response.intern());
-        System.out.println("Lua get string value: " +response);
+        System.out.println("Lua get string value: " + response);
         return response;
     }
 
