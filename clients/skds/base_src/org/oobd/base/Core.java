@@ -560,6 +560,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * \ingroup core
      */
     public boolean transferMsg(Message msg) {
+        System.out.println("Core received message for "+msg.rec+" from "+msg.sender+" content:"+msg.getContent().toString());
         if (OOBDConstants.CoreMailboxName.equals(msg.rec)) { //is the core the receiver?
             this.sendMsg(msg);
             return true;
@@ -576,8 +577,10 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             }
             if (receiver != null) {
                 receiver.sendMsg(msg);
+                 System.out.println("Core send msg to "+msg.rec);
                 return true;
             } else {
+                 System.out.println("Core coudn't send msg to "+msg.rec+"Receiver not in database");
                 return false;
             }
         }

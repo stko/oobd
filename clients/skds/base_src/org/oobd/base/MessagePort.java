@@ -1,4 +1,3 @@
-
 package org.oobd.base;
 
 import java.util.Vector;
@@ -39,15 +38,13 @@ public class MessagePort {
         } catch (JSONException ex) {
             thisReplyID = -1;
         }
-        if (thisReplyID > 0) { // the message contains a replyID
-            if (thisReplyID == waitingforID) { //only if this is really the message we are waiting for, otherways just delete this obviously old reply
-                synchronized (myMsgs) {
-                    myMsgs.insertElementAt(thisMessage, 0); //put the message as the first one in the message quere
-                    waitingforID = 0; // reset the waitingFor Flag
-                    myMsgs.notify();
-                }
-
+        if (thisReplyID == waitingforID) { //only if this is really the message we are waiting for, otherways just delete this obviously old reply
+            synchronized (myMsgs) {
+                myMsgs.insertElementAt(thisMessage, 0); //put the message as the first one in the message quere
+                waitingforID = 0; // reset the waitingFor Flag
+                myMsgs.notify();
             }
+
         } else {
             synchronized (myMsgs) {
                 myMsgs.add(thisMessage);
@@ -58,12 +55,13 @@ public class MessagePort {
         }
 
     }
-/**
- * \brief get the next message in the quere
- * \ingroup core
- * @param wait if true, waits forever for a message, otherways returns immediadly, even without a message
- * @return message
- */
+
+    /**
+     * \brief get the next message in the quere
+     * \ingroup core
+     * @param wait if true, waits forever for a message, otherways returns immediadly, even without a message
+     * @return message
+     */
     protected Message getMsg(boolean wait) {
         if (wait == true) {
             return getMsg(-1);
@@ -72,18 +70,18 @@ public class MessagePort {
         }
     }
 
-/**
- * \brief sends an answer to a message
- * \ingroup core
- * @param msg the original message
- * @param onion the content of the message
- * @return message
- */
-    protected void  replyMsg(Message msg, Onion content) {
+    /**
+     * \brief sends an answer to a message
+     * \ingroup core
+     * @param msg the original message
+     * @param onion the content of the message
+     * @return message
+     */
+    protected void replyMsg(Message msg, Onion content) {
         String rec = msg.rec;
-        msg.rec=msg.sender;
+        msg.rec = msg.sender;
         msg.sender = rec;
-        msg.content= content;
+        msg.content = content;
         Core.getSingleInstance().transferMsg(msg);
     }
 
@@ -97,16 +95,21 @@ public class MessagePort {
     public Message sendAndWait(Message msg, int timeout) {
         replyID = (replyID > 10000) ? 1 : replyID + 1;
         waitingforID = replyID;
+        try {
+            msg.content.put("replyID", replyID);
+        } catch (JSONException ex) {
+            Logger.getLogger(MessagePort.class.getName()).log(Level.SEVERE, null, ex);
+        }
         Core.getSingleInstance().transferMsg(msg);
         return getMsg(timeout);
     }
 
-/**
- * \brief get the next message in the quere
- * \ingroup core
- * @param timeout in ms to wait for an message  . 0: wait forever, <0 don't wait
- * @return message
- */
+    /**
+     * \brief get the next message in the quere
+     * \ingroup core
+     * @param timeout in ms to wait for an message  . 0: wait forever, <0 don't wait
+     * @return message
+     */
     protected Message getMsg(int timeout) {
 
         if (myMsgs.isEmpty() || waitingforID != 0) {

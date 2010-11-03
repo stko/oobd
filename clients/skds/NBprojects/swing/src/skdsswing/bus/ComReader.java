@@ -1,97 +1,113 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package skdsswing.bus;
 
 import java.io.*;
 import java.util.Vector;
+import gnu.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+public class ComReader implements Runnable {
 
-public class ComReader implements  Runnable {
-
-
-
-    private StreamConnection connection;
-    private List deviceList = null;
     public String URL = null;
-    private TerminalIOStream btConnection = null;
-    private Form parent; //Where this form was started from
-    private Command BackCommand = null;
     private StringBuffer inBuffer = new StringBuffer();
+    SerialPort serialPort;
+    InputStream inStream;
+    OutputStream outStream;
+    InputStreamReader inStreamReader;
+    OutputStreamWriter outStreamWriter;
 
-    public BTSerial() {
-        super("Scanning BT...");
+    public ComReader() {
         new Thread(this).start();
     }
 
-    public String Connect(String thisURL) {
-        if (thisURL != null) {
-            try {
-                System.out.println("BT-URL: " + URL);
-                btConnection = new TerminalIOStream((StreamConnection) Connector.open("btspp://" + URL + ":1", Connector.READ_WRITE));
-                //Dialog.show("BT-Connect", "Success!", "OK", null);
-                return URL;
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
-
-    public void Closeconnection() {
-        if (btConnection != null) {
-            btConnection.close();
-            btConnection = null;
-        }
-    }
-
-    public String getDeviceURL(final Form parent) {
-        this.parent = parent;
-        this.show();
-
-        deviceList = new List();
-        deviceList.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent evt) {
-                System.out.println("Listhandler");
-                URL = deviceList.getSelectedItem().toString();
-                parent.showBack();
-            }
-        });
+    public void connect(CommPortIdentifier portId) {
         try {
-            BluetoothDeviceDiscovery.main();
+            serialPort = (SerialPort) portId.open("SimpleReadApp", 2000);
+            inStream = serialPort.getInputStream();
+            inStreamReader = new InputStreamReader(inStream);
+            outStream = serialPort.getOutputStream();
+            outStreamWriter = new OutputStreamWriter(outStream, "iso-8859-1");
+        } catch (PortInUseException ex) {
+            Logger.getLogger(ComReader.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        int deviceCount = BluetoothDeviceDiscovery.vecDevices.size();
-        System.out.println("Devicecount: " + Integer.toString(deviceCount));
-        if (deviceCount > -1) {
-            for (int i = 0; i < deviceCount; i++) {
-                RemoteDevice remoteDevice = (RemoteDevice) BluetoothDeviceDiscovery.vecDevices.elementAt(i);
-                deviceList.addItem(new MyRenderer(remoteDevice.getBluetoothAddress()));
-                /**
-                 * for later extensions:
-                 * the user friendly name of the device can be found as
-                 *
-                 * remoteDevice.getFriendlyName(true)
-                 */
-            }
-            //deviceList.addItem(new MyRenderer("test dummy"));
-            this.addComponent(deviceList);
-            this.addCommand(BackCommand = new Command("Back"));
-            addCommandListener(this);
-            return URL;
-            //new Thread(this).start();
-            } else {
-            Dialog.show("BT Scan", "Sorry, no Device found", "Back", null);
-            parent.showBack();
-            return null;
-        }
 
+    }
+
+    public void Closeconnection() {
+        if (serialPort != null) {
+            close();
+            serialPort = null;
+        }
+    }
+
+    public void close() {
+        if (serialPort != null) {
+            try {
+                inStreamReader.close();
+                inStreamReader = null;
+                inStream.close();
+                inStream = null;
+                outStreamWriter.close();
+                outStreamWriter = null;
+                outStream.close();
+                outStream = null;
+
+                serialPort.close();
+                serialPort = null;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public synchronized void write(char c) {
+        if (serialPort != null) {
+            try {
+                outStreamWriter.write(c);
+                outStreamWriter.flush();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    public synchronized void write(String s) {
+        if (serialPort != null) {
+            try {
+               System.out.println("Serial output:" +s);
+               outStreamWriter.write(s);
+                outStreamWriter.flush();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    public synchronized char readChar() {
+        int inChar = -1;
+        if (serialPort != null) {
+            try {
+                if (inStream.available() > 0) {
+                    inChar = inStreamReader.read();
+                    return (char) inChar;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return (char) 0;
+
+    }
+
+    public synchronized boolean isEmpty() {
+        try {
+            return (!(serialPort != null && inStream.available() == 0));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 
     public void run() {
@@ -101,8 +117,8 @@ public class ComReader implements  Runnable {
 
                 int input;
 
-                if (btConnection != null) {
-                    input = btConnection.inStreamReader.read();
+                if (serialPort != null) {
+                    input = inStreamReader.read();
                     if (input > 0) {
                         inBuffer.append((char) input);
                     }
@@ -113,29 +129,19 @@ public class ComReader implements  Runnable {
         }
     }
 
-    public void actionPerformed(ActionEvent ae) {
-
-        Command command = ae.getCommand();
-        if (command == BackCommand) {
-            URL = null;
-            parent.showBack();
-        }
-
-    }
-
     public void flush() {
-        if (btConnection != null) {
+        if (serialPort != null) {
             while (read() > (char) 0);
         }
 
     }
 
     public boolean isConnected() {
-        return btConnection != null;
+        return serialPort != null;
     }
 
     public int read() {
-        if (btConnection != null) {
+        if (serialPort != null) {
             if (inBuffer.length() > 0) {
                 char c = inBuffer.charAt(0);
                 inBuffer.deleteCharAt(0);
@@ -175,7 +181,7 @@ public class ComReader implements  Runnable {
                     } catch (InterruptedException e) {
                         // the VM doesn't want us to sleep anymore,
                         // so get back to work
-                        }
+                    }
 
                 } else {
                     timeout -= sleepTime;
@@ -187,24 +193,13 @@ public class ComReader implements  Runnable {
                         } catch (InterruptedException e) {
                             // the VM doesn't want us to sleep anymore,
                             // so get back to work
-                            }
+                        }
                     }
                 }
             }
         }
+        System.out.println("Serial input:" +res);
         return res;
-    }
-
-    public void write(char c) {
-        if (btConnection != null) {
-            btConnection.write(c);
-        }
-    }
-
-    public void write(String s) {
-        if (btConnection != null) {
-            btConnection.write(s);
-        }
     }
 
     public int wait(String conditions, int timeout) {
@@ -228,7 +223,7 @@ public class ComReader implements  Runnable {
                     } catch (InterruptedException e) {
                         // the VM doesn't want us to sleep anymore,
                         // so get back to work
-                        }
+                    }
 
                 } else {
                     timeout -= sleepTime;
@@ -240,7 +235,7 @@ public class ComReader implements  Runnable {
                         } catch (InterruptedException e) {
                             // the VM doesn't want us to sleep anymore,
                             // so get back to work
-                            }
+                        }
                     }
                 }
             }
@@ -311,36 +306,7 @@ class Conditions {
     }
 }
 
-class MyRenderer extends Label implements ListCellRenderer {
 
-    private Label focus = new Label("");
-
-    MyRenderer(String text) {
-        setText(text);
-        focus.getStyle().setBgTransparency(100);
-    }
-
-    public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected) {
-        setText(value.toString());
-        if (isSelected) {
-            setFocus(true);
-            getStyle().setBgTransparency(100);
-            getStyle().setBgColor(255, true);
-        } else {
-            setFocus(false);
-            getStyle().setBgTransparency(0);
-        }
-        return this;
-    }
-
-    public String toString() {
-        return getText();
-    }
-
-    public Component getListFocusComponent(List list) {
-        return focus;
-    }
-}
 
 
 

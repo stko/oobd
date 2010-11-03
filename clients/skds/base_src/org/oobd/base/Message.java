@@ -23,7 +23,7 @@ public class Message {
     public Message(OobdPlugin sender, String rec, Onion content){
 
         this.sendObject=sender;
-        this.sender=sender.getPluginName();
+        this.sender=sender.getId();
         this.rec=rec;
         this.content=content;
 

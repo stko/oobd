@@ -1,8 +1,6 @@
 
 package org.oobd.base;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.oobd.base.support.Onion;
 
 
@@ -15,6 +13,7 @@ public abstract class OobdPlugin implements Runnable {
     protected static Core core;
     protected MessagePort msgPort;
     protected boolean keepRunning = true;
+    protected String id;
 
     public void registerCore(Core thisCore) {
         core = thisCore;
@@ -33,6 +32,10 @@ public abstract class OobdPlugin implements Runnable {
     }
 
      public abstract String getPluginName();
+
+     public  String getId(){
+         return id;
+     }
 
     protected Message getMsg(boolean wait) {
         return (Message) msgPort.getMsg(wait);

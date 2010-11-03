@@ -12,9 +12,8 @@ import org.oobd.base.*;
  */
 abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstants {
 
-    String id;
-    Core core;
 
+  
     public static String publicName() {
         /* the abstract class also needs to have this method, because it's also loaded during dynamic loading, and the empty return string
          ** is the indicator for this abstract class
@@ -24,6 +23,7 @@ abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstan
 
     public OobdScriptengine(String myID, Core myCore) {
         id = myID;
+        System.out.println("Setting Scriptengine ID to "+ id);
         core = myCore;
         Debug.msg("oobdscriptengine",DEBUG_BORING,"Scriptengine  object created: " + id);
 
