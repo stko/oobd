@@ -76,8 +76,8 @@ public class ComReader implements Runnable {
     public synchronized void write(String s) {
         if (serialPort != null) {
             try {
-               System.out.println("Serial output:" +s);
-               outStreamWriter.write(s);
+                System.out.println("Serial output:" + s);
+                outStreamWriter.write(s);
                 outStreamWriter.flush();
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -112,20 +112,20 @@ public class ComReader implements Runnable {
 
     public void run() {
         System.out.println("Thread has started");
-        try {
-            while (true) {
+        while (true) {
 
-                int input;
+            int input;
 
-                if (serialPort != null) {
+            if (serialPort != null) {
+                try {
                     input = inStreamReader.read();
                     if (input > 0) {
                         inBuffer.append((char) input);
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -198,7 +198,7 @@ public class ComReader implements Runnable {
                 }
             }
         }
-        System.out.println("Serial input:" +res);
+        System.out.println("Serial input:" + res);
         return res;
     }
 
