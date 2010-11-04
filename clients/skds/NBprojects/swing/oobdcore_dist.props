@@ -1,3 +1,7 @@
 #OOBD Core Preferences
+#OOBD Core Preferences
+# Search path for dynamic classes
 EngineClassPath=/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/NBprojects/Base/build/classes/org/oobd/base/scriptengine
-#../../org/oobd/ui/swing/build/classes/org/oobd/base
+ProtocolClassPath=/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/NBprojects/Base/build/classes/org/oobd/base/protocol
+BusClassPath=/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/NBprojects/swing/build/classes/skdsswing/bus
+BusClassPrefix=skdsswing.bus.
