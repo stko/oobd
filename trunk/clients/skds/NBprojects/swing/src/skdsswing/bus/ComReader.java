@@ -123,7 +123,6 @@ public class ComReader implements Runnable {
                         inBuffer.append((char) input);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
         }
