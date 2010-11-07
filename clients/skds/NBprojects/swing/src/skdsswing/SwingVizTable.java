@@ -26,13 +26,7 @@ public class SwingVizTable extends JTable implements IFvisualizer {
 
     static HashMap<String, SwingVizTable> singleInstance = new HashMap<String, SwingVizTable>();
     static String[] columnNames = {"value", "Description"};
-    static Object[][] data = {
-        {"Mary", "Campione"},
-        {"Alison", "Huml"},
-        {"Kathy", "Walrath"},
-        {"Sharon", "Zakhour"},
-        {"Philip", "Milne"}
-    };
+    
     boolean toBePlaced = true; //indicates, if the actual instance is already been placed on an canvas or not
     boolean awaitingUpdate = false;
     JTable myTable;
@@ -42,23 +36,28 @@ public class SwingVizTable extends JTable implements IFvisualizer {
      * getInstance, which decides on the parameter groupId, if a new instance of that visualizer needs to be created or
      * if the own instance gets the job
      * 
+     * unfortunatelly this method is static, so it can be put in the interface, where it would normally belongs to
      * 
-     * 
-     * @param groupID to define, if in case of an multiple value visualizer (like a table) a new instance is needed (for another canvas) or not
-     * @param owner tells the component to which interfacing visualizer class it belongs to
+     * @param pageID tells the component to which page it belongs to
      * @return a graphic component
      */
-    public static IFvisualizer getInstance(String owner, String groupID) {
+    public static IFvisualizer getInstance(String pageID, String vizName) {
         SwingVizTable newInst;
-        if (singleInstance.containsKey(owner)) {
-            newInst = singleInstance.get(owner);
+        if (singleInstance.containsKey(pageID)) {
+            newInst = singleInstance.get(pageID);
         } else {
             newInst = new SwingVizTable();
-            singleInstance.put(owner, newInst);
+            singleInstance.put(pageID, newInst);
             return newInst;
         }
         return newInst;
     }
+
+
+    public void remove(String pageID){
+        singleInstance.remove(pageID);
+    }
+
 
     public SwingVizTable() {
         super();

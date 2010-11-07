@@ -10,9 +10,9 @@ HHOpen.lua
 
 --- use the following lines for debugging in lua editor
 ---[[
-initCellTable = initCellTableCall
-addCell = addCellCall
-showCellTable = showCellTableCall
+openPage = openPageCall
+addElement = addElementCall
+pageDone = pageDoneCall
 --]]
 ---[[
 serFlush = serFlushCall
@@ -55,11 +55,11 @@ end
 
 
 --[[
-function initCellTable()
-	print("Start Menu generation");
+function openPage(title)
+	print("Start Menu generation ", title);
 end
 
-function addCell(title, func , intial,update , timer , id)
+function addElement(title, func , intial,update , timer , id)
 	print("<---");
 	print("title: ", title);
 	print("function: ", func);
@@ -67,8 +67,8 @@ function addCell(title, func , intial,update , timer , id)
 	print("--->");
 end
 
-function showCellTable(title)
-	print("Show Menu", title);
+function pageDone()
+	print("Show Menu");
 end
 
 
@@ -140,12 +140,12 @@ end
 ---------------------- System Info Menu --------------------------------------
 
 function SysInfo_Menu(oldvalue,id)
-	initCellTable()
-	addCell("DXM Serial", "dxmserial","-",true , false, "")
-	addCell("DXM BIOS", "dxmbios","-",true, false, "")
-	addCell("Power", "power","-",true , false, "")
-	addCell("<<< Main", "Menu_Main","<<<",false , false, "")
-	showCellTable("Sysinfo")
+	openPage("Sysinfo")
+	addElement("DXM Serial", "dxmserial","-",true , false, "")
+	addElement("DXM BIOS", "dxmbios","-",true, false, "")
+	addElement("Power", "power","-",true , false, "")
+	addElement("<<< Main", "Menu_Main","<<<",false , false, "")
+	pageDone()
 	return oldvalue
 end
 
@@ -177,10 +177,10 @@ end
 ---------------------- Vehicle Info Menu --------------------------------------
 
 function VIN_Menu(oldvalue,id)
-	initCellTable()
-	addCell("VIN", "vin","-",true , false, "")
-	addCell("<<< Main", "Menu_Main","<<<",false , false, "")
-	showCellTable("Vehicle Info")
+	openPage("Vehicle Info")
+	addElement("VIN", "vin","-",true , false, "")
+	addElement("<<< Main", "Menu_Main","<<<",false , false, "")
+	pageDone()
 	return oldvalue
 end
 
@@ -285,7 +285,7 @@ end
 
 function createCall(availPIDs, id, title, func)
 	if hasBit(availPIDs, 20- (id % 256)) then
-		addCell(title, func,"-",true , false, "0x"..tostring(id,16))
+		addElement(title, func,"-",true , false, "0x"..tostring(id,16))
 	end
 end
 
@@ -300,7 +300,7 @@ function createCMD01Menu(oldvalue,id)
 				availPIDs=availPIDs*256 +udsBuffer[3+i]
 			end
 			if availPIDs ~= 0 then
-				initCellTable()
+				openPage("CMD 01 PIDs")
 				------------------------ these are the lines copied from the "createCall" section in the OBD2_PIDs - OpenOffice- File
 				createCall(availPIDs, 0x4,"Calculated engine load value", "getNumPIDs")
 				createCall(availPIDs, 0x5,"Engine coolant temperature", "getNumPIDs")
@@ -319,7 +319,7 @@ function createCMD01Menu(oldvalue,id)
 				createCall(availPIDs, 0x14,"Bank 1, Sensor 1: Oxygen sensor voltage", "getNumPIDs")
 				createCall(availPIDs, 0x114,"Bank 1, Sensor 1: Short term fuel trim", "getNumPIDs")
 				-----------------------------------------
-				showCellTable("CMD 01 PIDs")
+				pageDone()
 				return oldvalue
 			else
 				return "No avail. PIDs found"
@@ -335,11 +335,11 @@ end
 
 
 function Sensor_Menu(oldvalue,id)
-	initCellTable()
-	addCell("RPM", "sens_rpm","-",true , false, "")
-	addCell("Dynamic Menu >>>", "createCMD01Menu",">>>",true , false, "")
-	addCell("<<< Main", "Menu_Main","<<<",false , false, "")
-	showCellTable("Vehicle Info")
+	openPage("Vehicle Info")
+	addElement("RPM", "sens_rpm","-",true , false, "")
+	addElement("Dynamic Menu >>>", "createCMD01Menu",">>>",true , false, "")
+	addElement("<<< Main", "Menu_Main","<<<",false , false, "")
+	pageDone()
 	return oldvalue
 end
 
@@ -411,15 +411,15 @@ end
 ---------------------- Main Menu --------------------------------------
 
 function Menu_Main(oldvalue,id)
-	initCellTable()
-	addCell("Sensor Data >>>", "Sensor_Menu",">>>",false , false, "")
-	addCell("Trouble Codes", "showdtcs","-",false, false, "")
-	addCell("Vehicle Info >>>", "VIN_Menu",">>>",false , false, "")
-	addCell("Protocol Info >>>", "notyet",">>>",false , false, "")
-	addCell("Change ECU >>>", "notyet",">>>",false , false, "")
-	addCell("System Info >>>", "SysInfo_Menu",">>>",false , false, "")
-	addCell("Greetings", "greet","",false , false, "")
-	showCellTable("HHOpen Main")
+	openPage("HHOpen Main")
+	addElement("Sensor Data >>>", "Sensor_Menu",">>>",false , false, "")
+	addElement("Trouble Codes", "showdtcs","-",false, false, "")
+	addElement("Vehicle Info >>>", "VIN_Menu",">>>",false , false, "")
+	addElement("Protocol Info >>>", "notyet",">>>",false , false, "")
+	addElement("Change ECU >>>", "notyet",">>>",false , false, "")
+	addElement("System Info >>>", "SysInfo_Menu",">>>",false , false, "")
+	addElement("Greetings", "greet","",false , false, "")
+	pageDone()
 	return oldvalue
 end
 

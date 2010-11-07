@@ -75,32 +75,32 @@ public class ScriptengineLua extends OobdScriptengine {
             Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-            register("initCellTableCall", new JavaFunction() {
+            register("openPageCall", new JavaFunction() {
 
                 public int call(LuaCallFrame callFrame, int nArguments) {
-                    System.out.println("Lua calls initCellTable");
+                    System.out.println("Lua calls openPage");
                     //BaseLib.luaAssert(nArguments >0, "not enough args");
                     initRPC(callFrame, nArguments);
                     // cellList = new List();
                     try {
                         core.transferMsg(new Message(myself, CoreMailboxName, new Onion(""
-                                + "{'type':'" + CM_CANVAS + "',"
+                                + "{'type':'" + CM_PAGE + "',"
                                 + "'owner':'" + myself.getId() + "',"
-                                + "'name':'Canvastest_1'}")));
+                                + "'name':'"+getString(0)+"'}")));
                     } catch (JSONException ex) {
                         Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
                     //finishRPC(callFrame, nArguments);
-                    System.out.println("Lua leaves initCellTable");
+                    System.out.println("Lua leaves openPage");
                     return 1;
                 }
             });
-            register("addCellCall", new JavaFunction() {
+            register("addElementCall", new JavaFunction() {
 
                 public int call(LuaCallFrame callFrame, int nArguments) {
                     //BaseLib.luaAssert(nArguments >0, "not enough args");
-                    System.out.println("Lua calls addCell");
+                    System.out.println("Lua calls addElement");
                     initRPC(callFrame, nArguments);
 //                    cellList.addItem(new ScriptCell(
 //                            getString(0), //String title
@@ -153,16 +153,24 @@ public class ScriptengineLua extends OobdScriptengine {
                 }
             });
 
-            register("showCellTableCall", new JavaFunction() {
+            register("pageDoneCall", new JavaFunction() {
 
                 public int call(LuaCallFrame callFrame, int nArguments) {
-                    System.out.println("Lua calls showCellTable");
-                    //BaseLib.luaAssert(nArguments >0, "not enough args");
+                    System.out.println("Lua calls pageDone");
+                   //BaseLib.luaAssert(nArguments >0, "not enough args");
                     initRPC(callFrame, nArguments);
-                    // do nothing...
+                    // cellList = new List();
+                    try {
+                        core.transferMsg(new Message(myself, CoreMailboxName, new Onion(""
+                                + "{'type':'" + CM_PAGEDONE + "',"
+                                + "'owner':'" + myself.getId() + "',"
+                                + "'name':'Canvastest_1'}")));
+                    } catch (JSONException ex) {
+                        Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
-                    // writeForm = new ScriptForm(f, cellList, getString(0), scriptEngine, myDisplay);
-                    finishRPC(callFrame, nArguments);
+                    //finishRPC(callFrame, nArguments);
+                    System.out.println("Lua leaves pageDone");
                     return 1;
                 }
             });

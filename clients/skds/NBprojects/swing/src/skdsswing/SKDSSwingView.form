@@ -19,7 +19,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <Component id="mainToolBar" min="-2" pref="25" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="mainSplitPanel" pref="479" max="32767" attributes="0"/>
+                  <Component id="mainSplitPanel" pref="469" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -53,8 +53,8 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="scriptEngineToolbar" alignment="1" pref="787" max="32767" attributes="0"/>
-                      <Component id="mainSeTabbedPane" alignment="1" pref="787" max="32767" attributes="0"/>
+                      <Component id="scriptEngineToolbar" alignment="1" pref="793" max="32767" attributes="0"/>
+                      <Component id="mainSeTabbedPane" alignment="1" pref="793" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
@@ -62,7 +62,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="scriptEngineToolbar" min="-2" pref="25" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="mainSeTabbedPane" pref="446" max="32767" attributes="0"/>
+                          <Component id="mainSeTabbedPane" pref="438" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -105,7 +105,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="visualizerToolBar" min="-2" pref="25" max="-2" attributes="0"/>
-                          <EmptySpace pref="452" max="32767" attributes="0"/>
+                          <EmptySpace pref="444" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -202,7 +202,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="statusMessageLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="690" max="32767" attributes="0"/>
+                  <EmptySpace pref="688" max="32767" attributes="0"/>
                   <Component id="progressBar" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="statusAnimationLabel" min="-2" max="-2" attributes="0"/>

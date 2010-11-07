@@ -68,32 +68,28 @@ import org.oobd.base.visualizer.Visualizer;
  *
  *
  *  \msc
-    GUI,App,Core;
-    App->Core [label="new Core()"];
-    App<-Core [label="registerOobdCore()", URL="\ref org::oobd::base::IFsystem.registerOobdCore()"];
-    GUI<-Core [label="registerOobdCore()", URL="\ref org::oobd::base::IFui.registerOobdCore()"];
-    GUI<-Core [label="1. Engine found", URL="\ref org::oobd::base::IFui.announceScriptengine()"];
-    --- [label="for all engines found"];
-    GUI<-Core [label="..n Engine found", URL="\ref org::oobd::base::IFui.announceScriptengine()"];
- \endmsc
+GUI,App,Core;
+App->Core [label="new Core()"];
+App<-Core [label="registerOobdCore()", URL="\ref org::oobd::base::IFsystem.registerOobdCore()"];
+GUI<-Core [label="registerOobdCore()", URL="\ref org::oobd::base::IFui.registerOobdCore()"];
+GUI<-Core [label="1. Engine found", URL="\ref org::oobd::base::IFui.announceScriptengine()"];
+--- [label="for all engines found"];
+GUI<-Core [label="..n Engine found", URL="\ref org::oobd::base::IFui.announceScriptengine()"];
+\endmsc
  *
  * that's already all.
  *
  * Now the systems waits that the user selects through the GUI one of the announced script engines to work with. How this works can be found in \ref visualisation
  */
-
 /**
  * \defgroup core Kernel, Runtime & Interprocess Functions
  */
-
 /**
  * \brief The Master Control Unit - the Core object
  *
  * The Core object provides all basic functionality and "glues" everything else together
  * 
  */
-
-
 public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener {
 
     IFui userInterface;
@@ -106,13 +102,12 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     /**
      * The assingnments - hashtable works as a poor mens registry, where everything, which needs to stored somehow, is kept as a string => object pair
      */
-    HashMap<String, Object> assignments; 
+    HashMap<String, Object> assignments;
     HashMap<String, ArrayList<Visualizer>> visualizers;///<stores all available visalizers
     static Core thisInstance; //Class variable points to only instance
     CoreTick ticker;
     Properties props;
     boolean runCore = true;
-
 
     /**
      * \brief The Application creates one single instance of the core class
@@ -142,28 +137,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         } catch (IOException ignored) {
         }
 
-        Onion testOnion = Onion.generate();
-        testOnion.setValue("test", "moin");
-        testOnion.setValue("test2", "moin2");
-        testOnion.setValue("path/test3", "moin3");
-        testOnion.setValue("path/test4", "moin4");
-        testOnion.setValue("path/path2/test5", "moin5");
 
-        try {
-            Debug.msg("core", DEBUG_BORING, testOnion.getOnionObject("test").toString());
-            Debug.msg("core", DEBUG_BORING, testOnion.getOnionObject("test2").toString());
-            Debug.msg("core", DEBUG_BORING, testOnion.getOnionObject("path/test3").toString());
-            Debug.msg("core", DEBUG_BORING, testOnion.getOnionObject("path/path2/test5").toString());
-        } catch (OnionNoEntryException ex) {
-            Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        Onion testOnion2 = null;
-        try {
-            testOnion2 = new Onion(testOnion.toString());
-        } catch (org.json.JSONException e) {
-        }
-        Debug.msg("core", DEBUG_BORING, testOnion.toString());
-        Debug.msg("core", DEBUG_BORING, testOnion2.toString());
         systemInterface.registerOobdCore(this); //Anounce itself at the Systeminterface
         userInterface.registerOobdCore(this); //Anounce itself at the Userinterface
 
@@ -181,7 +155,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
         // ----------- load Busses -------------------------------
         try {
-            HashMap<String, Class<?>> classObjects = loadOobdClasses(props.getProperty("BusClassPath", "../../org/oobd/ui/swing/build/classes/org/oobd/base/bus"),props.getProperty("BusClassPrefix",  "org.oobd.base.bus."), Class.forName("org.oobd.base.bus.OobdBus"));
+            HashMap<String, Class<?>> classObjects = loadOobdClasses(props.getProperty("BusClassPath", "../../org/oobd/ui/swing/build/classes/org/oobd/base/bus"), props.getProperty("BusClassPrefix", "org.oobd.base.bus."), Class.forName("org.oobd.base.bus.OobdBus"));
             for (Iterator iter = classObjects.keySet().iterator(); iter.hasNext();) {
                 String element = (String) iter.next();
                 Class<?> value = (Class<?>) classObjects.get(element);
@@ -191,7 +165,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     new Thread(thisClass).start();
 
                     busses.put(element, thisClass);
-                    Debug.msg("core", DEBUG_BORING, "Register "+element+" as bus");
+                    Debug.msg("core", DEBUG_BORING, "Register " + element + " as bus");
                 } catch (InstantiationException ex) {
                     // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
                     Debug.msg("core", DEBUG_ERROR, ex.getMessage());
@@ -277,8 +251,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         return thisInstance;
     }
 
-
-
     /**
      * \brief add generated visualizers to global list
      * 
@@ -321,7 +293,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         OobdScriptengine o = null;
         Class[] argsClass = new Class[2]; // first we set up an pseudo - args - array for the scriptengine- constructor
         argsClass[0] = seID.getClass(); // and fill it with the info of the arguments classes
-        argsClass[1] = this.getClass(); 
+        argsClass[1] = this.getClass();
         Class classRef = scriptengines.get(id); // then we get the class of the wanted scriptengine
         try {
             Constructor con = classRef.getConstructor(argsClass); // and let Java find the correct constructor matching to the args classes
@@ -483,11 +455,17 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
             }
 
-            if (myOnion.isType(CM_CANVAS)) {
-                Debug.msg("Core", DEBUG_INFO, "Canvas requested");
+            if (myOnion.isType(CM_PAGE)) {
+                Debug.msg("Core", DEBUG_INFO, "Page requested");
                 String dummy = myOnion.getOnionString("owner");
 
-                userInterface.addCanvas(myOnion.getOnionString("owner"), myOnion.getOnionString("name"),1,1);
+                userInterface.openPage(myOnion.getOnionString("owner"), myOnion.getOnionString("name"), 1, 1);
+            }
+            if (myOnion.isType(CM_PAGEDONE)) {
+                Debug.msg("Core", DEBUG_INFO, "Page done requested");
+                String dummy = myOnion.getOnionString("owner");
+
+                userInterface.openPageCompleted(myOnion.getOnionString("owner"), myOnion.getOnionString("name"));
             }
 
         } catch (org.json.JSONException e) {
@@ -560,7 +538,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * \ingroup core
      */
     public boolean transferMsg(Message msg) {
-        System.out.println("Core received message for "+msg.rec+" from "+msg.sender+" content:"+msg.getContent().toString());
+        System.out.println("Core received message for " + msg.rec + " from " + msg.sender + " content:" + msg.getContent().toString());
         if (OOBDConstants.CoreMailboxName.equals(msg.rec)) { //is the core the receiver?
             this.sendMsg(msg);
             return true;
@@ -577,10 +555,10 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             }
             if (receiver != null) {
                 receiver.sendMsg(msg);
-                 System.out.println("Core send msg to "+msg.rec);
+                System.out.println("Core send msg to " + msg.rec);
                 return true;
             } else {
-                 System.out.println("Core coudn't send msg to "+msg.rec+"Receiver not in database");
+                System.out.println("Core coudn't send msg to " + msg.rec + "Receiver not in database");
                 return false;
             }
         }
@@ -602,10 +580,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     /**
      * \brief the Core thread
      */
-
     public void run() {
+        Message thisMsg;
         while (runCore == true) {
-            Message thisMsg;
             while ((thisMsg = msgPort.getMsg(100)) != null) { // just waiting and handling messages
                 actionRequest(thisMsg.content);
 

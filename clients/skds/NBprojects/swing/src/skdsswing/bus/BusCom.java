@@ -76,9 +76,8 @@ public class BusCom extends OobdBus implements OOBDConstants {
         System.out.println("Set default port to " + defaultPort);
 
         // parse ports and if the default port is found, initialized the reader
-        // first set a workaround to find device ttyACM0 , accourding to https://bugs.launchpad.net/ubuntu/+source/rxtx/+bug/367833
-        System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM0");
-        System.setProperty("gnu.io.rxtx.SerialPorts", "/dev/ttyACM1");
+        // first set a workaround to find special devices like ttyACM0 , accourding to https://bugs.launchpad.net/ubuntu/+source/rxtx/+bug/367833
+        System.setProperty("gnu.io.rxtx.SerialPorts", defaultPort);
         portList = CommPortIdentifier.getPortIdentifiers();
         while (portList.hasMoreElements()) {
             portId = (CommPortIdentifier) portList.nextElement();

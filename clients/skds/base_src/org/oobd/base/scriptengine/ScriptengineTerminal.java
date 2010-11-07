@@ -38,11 +38,11 @@ public class ScriptengineTerminal extends OobdScriptengine implements OOBDConsta
         try {
             core.transferMsg(new Message(this, CoreMailboxName, new Onion("{\"type\":\"noaction\"}")));
             core.transferMsg(new Message(this, CoreMailboxName, new Onion(""
-                    + "{'type':'" + CM_CANVAS + "',"
+                    + "{'type':'" + CM_PAGE + "',"
                     + "'owner':'" + this.id + "',"
                     + "'name':'Canvastest_1'}")));
             core.transferMsg(new Message(this, CoreMailboxName, new Onion(""
-                    + "{'type':'" + CM_CANVAS + "',"
+                    + "{'type':'" + CM_PAGE + "',"
                     + "'owner':'" + this.id + "',"
                     + "'name':'Canvastest_2'}")));
             core.transferMsg(new Message(this, CoreMailboxName, new Onion(""
