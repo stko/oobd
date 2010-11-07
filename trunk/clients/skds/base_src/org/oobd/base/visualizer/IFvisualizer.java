@@ -40,7 +40,7 @@ public interface IFvisualizer {
     public void initValue(Visualizer viz,Onion onion);
 
     /**
-     * \requests the update of the visualisation
+     * \brief requests the update of the visualisation
      * \ingroup visualisation
      *
      * @param viz the corrosponding visualizer
@@ -49,5 +49,15 @@ public interface IFvisualizer {
      * @todo the usage of the different udpate levels in unclear yet-
      */
     public boolean update(int level);
+
+    /***
+     * \brief tells the visualisation class, that a instance, defined by the page its on, is not longer needed
+     * \ingroup visualisation
+     * @param pageID
+     */
+    public void remove(String pageID);
+
+
+
 
 }

@@ -27,6 +27,8 @@ import org.oobd.base.Core;
 import org.oobd.base.IFui;
 import org.oobd.base.support.Onion;
 import org.oobd.base.visualizer.*;
+import java.util.Vector;
+import java.util.Iterator;
 
 /**
  * The application's main frame.
@@ -119,7 +121,6 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
 
     }
 
-   
     public Class getVisualizerClass(String visualizerType, String theme) {
         /**
          * @todo implement different types of visualisation
@@ -132,6 +133,12 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
     public void visualize(Onion myOnion) {
         Visualizer newVisualizer = new Visualizer(myOnion);
         JComponent newJComponent;
+        // to be able to delete the created  objects on a a page later when closing the page, we need to log the creation here
+        Vector<IFvisualizer> pageObjects = (Vector<IFvisualizer>) oobdCore.getAssign(newVisualizer.getOwnerEngine(), org.oobd.base.OOBDConstants.CL_OBJECTS);
+        if (pageObjects == null) {
+            pageObjects = new Vector<IFvisualizer>();
+            oobdCore.setAssign(newVisualizer.getOwnerEngine(), org.oobd.base.OOBDConstants.CL_OBJECTS, pageObjects);
+        }
         Class<IFvisualizer> visualizerClass = getVisualizerClass(myOnion.getOnionString("type"), myOnion.getOnionString("theme"));
         Class[] argsClass = new Class[2]; // first we set up an pseudo - args - array for the scriptengine- constructor
         argsClass[0] = String.class; // and fill it with the info, that the argument for the constructor will be first a String
@@ -142,14 +149,16 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
             Object[] args = {newVisualizer.getOwnerEngine(), newVisualizer.getName()}; //we will an args-array with our String parameter
             newJComponent = (JComponent) classMethod.invoke(null, args); // and finally create the object from the scriptengine class with its unique id as parameter
             newVisualizer.setOwner((IFvisualizer) newJComponent);
-
+            // add to internal list
+            pageObjects.add((IFvisualizer) newJComponent);
             if (((IFvisualizer) newJComponent).isGroup()) {
+                // if the component is not already placed
                 JScrollPane scrollpane = new JScrollPane(newJComponent);
                 scrollpane.setPreferredSize(new Dimension(300, 300));
                 GridBagConstraints c = new GridBagConstraints();
                 JPanel panel = (JPanel) oobdCore.getAssign(
                         newVisualizer.getOwnerEngine(),
-                        org.oobd.base.OOBDConstants.CL_PANE + ":" + myOnion.getOnionString("canvas"));
+                        org.oobd.base.OOBDConstants.CL_PANE + ":page");
                 c.fill = GridBagConstraints.BOTH;
                 c.gridx = 0;
                 c.gridy = 0;
@@ -162,6 +171,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
             e.printStackTrace();
         }
     }
+
     /**
      * @todo row and colum sizing needs to be implemented
      * @param seID
@@ -169,23 +179,35 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
      * @param colcount
      * @param rowcount
      */
-    public void addCanvas(String seID, String name, int colcount, int rowcount){
-        delCanvas(seID, name);
+    public void openPage(String seID, String name, int colcount, int rowcount) {
         JTabbedPane basejTabPane = (JTabbedPane) oobdCore.getAssign(seID, org.oobd.base.OOBDConstants.CL_PANE);
+        if (basejTabPane != null) {
+            java.awt.Component oldPage = (java.awt.Component) oobdCore.getAssign(seID, org.oobd.base.OOBDConstants.CL_PANE + ":page");
+            if (oldPage != null) {
+                Vector<IFvisualizer> pageObjects = (Vector<IFvisualizer>) oobdCore.getAssign(seID, org.oobd.base.OOBDConstants.CL_OBJECTS);
+                if (pageObjects != null) {
 
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setName(name);
-        //JTabbedPane pane = new JTabbedPane();
-        //pane.add(panel);
-        basejTabPane.add(panel);
-        oobdCore.setAssign(seID, org.oobd.base.OOBDConstants.CL_PANE + ":" + name, panel);
-        GridBagConstraints c = new GridBagConstraints();
+                    Iterator<IFvisualizer> itr = pageObjects.iterator();
+                    while (itr.hasNext()) {
+                        itr.next().remove(seID);
+                    }
+                }
+                basejTabPane.remove(oldPage);
+            }
+            JPanel panel = new JPanel(new GridBagLayout());
+            panel.setName(name);
+            //JTabbedPane pane = new JTabbedPane();
+            //pane.add(panel);
+            basejTabPane.add(panel);
 
-        /**
-         * For each component to be added to this container:
-         * ...Create the component...
-         * ...Set instance variables in the GridBagConstraints instance...
-         */
+            oobdCore.setAssign(seID, org.oobd.base.OOBDConstants.CL_PANE + ":page", panel);
+            GridBagConstraints c = new GridBagConstraints();
+
+            /**
+             * For each component to be added to this container:
+             * ...Create the component...
+             * ...Set instance variables in the GridBagConstraints instance...
+             */
 //        JButton button = new JButton("Button 1");
 //        c.fill = GridBagConstraints.HORIZONTAL;
 //        c.gridx = 0;
@@ -197,14 +219,19 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
 //        c.gridx = 0;
 //        c.gridy = 1;
 //        panel.add(button, c);
+        }
     }
 
-    public void delCanvas(String seID, String name) {
-        if (oobdCore.getAssign(seID, org.oobd.base.OOBDConstants.CL_PANE + ":" + name) != null) {
-            // delete the canvas..
-            //delCanvas(seID, Name)
-        }
+    public void openPageCompleted(String seID, String name) {
+        java.awt.Component oldPage = (java.awt.Component) oobdCore.getAssign(seID, org.oobd.base.OOBDConstants.CL_PANE + ":page");
+        System.out.println("Repaint Component?");
 
+        if (oldPage != null) {
+       System.out.println("Repaint Component!");
+            oldPage.invalidate();
+            oldPage.validate();
+            oldPage.repaint();
+        }
     }
 
     /**
@@ -227,6 +254,8 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         // and now, after initalisation of the UI, let the games begin...
         oobdCore.setAssign(seID, org.oobd.base.OOBDConstants.CL_PANE, newjTabPane); //store the related drawing pane, the TabPane for that scriptengine
         oobdCore.startScriptEngine(seID);
+
+
     }
 
     @Action
@@ -235,8 +264,12 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
             JFrame mainFrame = SKDSSwingApp.getApplication().getMainFrame();
             aboutBox = new SKDSSwingAboutBox(mainFrame);
             aboutBox.setLocationRelativeTo(mainFrame);
+
+
         }
         SKDSSwingApp.getApplication().show(aboutBox);
+
+
     }
 
     /** This method is called from within the constructor to

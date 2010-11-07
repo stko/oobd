@@ -65,7 +65,7 @@ public interface IFui  {
      * @param seID ID of the ScriptEngine
      * @param Name of the new canvas
      */
-    public void addCanvas(String seID, String Name, int colcount, int rowcount);
+    public void openPage(String seID, String Name, int colcount, int rowcount);
 
 
     /**
@@ -74,5 +74,5 @@ public interface IFui  {
      * @param seID ID of the ScriptEngine
      * @param Name of the new canvas
      */
-    public void delCanvas(String seID, String Name);
+    public void openPageCompleted(String seID, String Name);
 }

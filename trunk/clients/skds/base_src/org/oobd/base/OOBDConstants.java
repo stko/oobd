@@ -11,14 +11,15 @@ public interface OOBDConstants {
     // Type of the different onion  messages, which are send through the system (the so called Core- messages)
 
     public static final String CM_VISUALIZE = "VISUALIZE";
-    public static final String CM_CANVAS = "CANVAS";
+    public static final String CM_PAGE = "PAGE";
+    public static final String CM_PAGEDONE = "PAGEDONE";
     public static final String CM_VALUE = "VALUE";
     public static final String CM_UPDATE = "UPDATE";
     public static final String CM_RES_BUS = "RESULT_BUS";
     public static final String CM_BUSTEST = "BUSTEST";
     // IDs used for internal core list handling
     public static final String CL_PANE = "pane";
-    public static final String CL_CANVAS = "canvas";
+    public static final String CL_OBJECTS = "objects";
     // constants for the debug message handling
     public static final Integer DEBUG_BORING = 0;
     public static final Integer DEBUG_INFO = 1;
