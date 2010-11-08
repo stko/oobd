@@ -11,7 +11,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.SortedSet;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,13 +59,13 @@ public class ReadTextData {
             }
         } catch (IOException ex) {
             Logger.getLogger(DTCReader.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-              
+        }              
     }
-    
-    public int find(String searchkey){
+
+
+    public boolean find(String searchkey){
         this.searchkey=searchkey;
-        pointer=0;        
+        stringfound=false;
         rowNums=new Vector (data.keySet());
         Collections.sort(rowNums);
         
@@ -74,33 +73,34 @@ public class ReadTextData {
             for (String string : data.get(pointer)) {
                 if (string.matches(".*"+searchkey+".*")){
                     stringfound=true;
-                    return pointer;
+                    return true;
                 }                    
             }
         }
-        return -1;
+        return false;
     }
 
-    public int findNext(){
+
+    public boolean findNext(){
         pointer++;
         if (!stringfound)
-            return -1;
+            return false;
         else{
 //            SortedSet rowNums=(SortedSet)data.keySet();
             while (pointer<rowNums.size()){
                 for (String string : data.get(pointer)) {
                     if (string.matches(".*"+searchkey+".*")){
-                        stringfound=true;
-                        return pointer;
+                        return true;
                     }
                 }
                 pointer++;
             }
-            return -2;   //EOF reached
+            return false;   //EOF reached
         }
     }
 
-    public String get(int row,String colName){
+
+    public String get(String colName){
         int colNum=-1;
         for (int i = 0; i < header.length; i++) {
             if (header[i].matches(colName))
@@ -109,7 +109,7 @@ public class ReadTextData {
         if (colNum==-1)
             return "Invalid Collumn Name";
         else
-            return data.get(row)[colNum];
+            return data.get(pointer)[colNum];
     }
 
     public String[] getHeader(){
