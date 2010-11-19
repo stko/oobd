@@ -26,8 +26,10 @@ serDisplayWrite = serDisplayWriteCall
 readcount= 1
 input = {}
 input[1]="Searching"
-input[2]="41 00 E8 19 30 12"
+input[2]="41 00 FF FF FF FF"
 input[3]=">"
+input[4]="41 14 FF FF FF FF"
+input[5]=">"
 
 
 function serReadLn()
@@ -227,24 +229,54 @@ end
 
 local PID01CMDs = {
 	------------------------ these are the lines copied from the "CalcNumPid" section in the OBD2_PIDs - OpenOffice- File
+-------------- 1 section -----------------------------------------------
 id0x4 = { byte = 1 , size =  1 , mult = 0.392156862745 , offset = 0, unit = " %"} ,
 id0x5 = { byte = 1 , size =  1 , mult = 1 , offset = -40, unit = "°C"} ,
 id0x6 = { byte = 1 , size =  1 , mult = 0.78125 , offset = -100, unit = " %"} ,
 id0x7 = { byte = 1 , size =  1 , mult = 0.78125 , offset = -100, unit = " %"} ,
 id0x8 = { byte = 1 , size =  1 , mult = 0.78125 , offset = -100, unit = " %"} ,
 id0x9 = { byte = 1 , size =  1 , mult = 0.78125 , offset = -100, unit = " %"} ,
-id0x0A = { byte = 1 , size =  1 , mult = 3 , offset = 0, unit = "kPa (gauge)"} ,
-id0x0B = { byte = 1 , size =  1 , mult = 1 , offset = 0, unit = "kPa (absolute)"} ,
-id0x0C = { byte = 1 , size =  2 , mult = 0.25 , offset = 0, unit = "rpm"} ,
-id0x0D = { byte = 1 , size =  1 , mult = 1 , offset = 0, unit = "km/h"} ,
-id0x0E = { byte = 1 , size =  1 , mult = 0.5 , offset = -65, unit = "° relative to #1 cylinder"} ,
-id0x0F = { byte = 1 , size =  1 , mult = 1 , offset = -40, unit = "°C"} ,
+id0xA = { byte = 1 , size =  1 , mult = 3 , offset = 0, unit = "kPa (gauge)"} ,
+id0xB = { byte = 1 , size =  1 , mult = 1 , offset = 0, unit = "kPa (absolute)"} ,
+id0xC = { byte = 1 , size =  2 , mult = 0.25 , offset = 0, unit = "rpm"} ,
+id0xD = { byte = 1 , size =  1 , mult = 1 , offset = 0, unit = "km/h"} ,
+id0xE = { byte = 1 , size =  1 , mult = 0.5 , offset = -65, unit = "° relative to #1 cylinder"} ,
+id0xF = { byte = 1 , size =  1 , mult = 1 , offset = -40, unit = "°C"} ,
 id0x10 = { byte = 1 , size =  2 , mult = 0.01 , offset = 0, unit = "g/s"} ,
 id0x11 = { byte = 1 , size =  1 , mult = 0.392156862745 , offset = 0, unit = " %"} ,
 
 
 id0x14 = { byte = 1 , size =  1 , mult = 0.5 , offset = 0, unit = "Volts"} ,
 id0x114 = { byte = 2 , size =  1 , mult = 0.78125 , offset = -100, unit = "%"} ,
+id0x15 = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts%"} ,
+id0x115 = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "Volts%"} ,
+id0x16 = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts%"} ,
+id0x116 = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "Volts%"} ,
+id0x17 = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts%"} ,
+id0x117 = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "Volts%"} ,
+id0x18 = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts%"} ,
+id0x118 = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "Volts%"} ,
+id0x19 = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts%"} ,
+id0x119 = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "Volts%"} ,
+id0x1A = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts%"} ,
+id0x11A = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "Volts%"} ,
+id0x1B = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts%"} ,
+id0x11B = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "Volts%"} ,
+id0x1F = { byte = 1 , size = 2 , mult = 1 , offset = 0, unit = "seconds"} ,
+-------------- 2 section -----------------------------------------------
+id0x21 = { byte = 1 , size = 2 , mult = 1 , offset = 0, unit = "km"} ,
+id0x22 = { byte = 1 , size = 2 , mult = 0.078125 , offset = 0, unit = "kPa"} ,
+id0x23 = { byte = 1 , size = 2 , mult = 10 , offset = 0, unit = "kPa (gauge)"} ,
+id0x24 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "N/AV"} ,
+id0x124 = { byte = 2 , size = 2 , mult = 0.000122070313 , offset = 0, unit = "N/AV"} ,
+id0x25 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "N/AV"} ,
+id0x125 = { byte = 2 , size = 2 , mult = 0.000122070313 , offset = 0, unit = "N/AV"} ,
+id0x26 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "N/AV"} ,
+id0x126 = { byte = 2 , size = 2 , mult = 0.000122070313 , offset = 0, unit = "N/AV"} ,
+id0x27 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "N/AV"} ,
+id0x127 = { byte = 2 , size = 2 , mult = 0.000122070313 , offset = 0, unit = "N/AV"} ,
+id0x28 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "N/AV"} ,
+id0x128 = { byte = 2 , size = 2 , mult = 0.000122070313 , offset = 0, unit = "N/AV"} ,
     	-------------
 	id0xFF = "dummy"
 
@@ -253,18 +285,22 @@ id0x114 = { byte = 2 , size =  1 , mult = 0.78125 , offset = -100, unit = "%"} ,
 
 
 function getNumPIDs(oldvalue,id)
+        print(" anfang getNumPIDS")
 	id = string.sub(id,3)  -- remove the leading 0x
-	numID=tonumber(id)
-	ascID=tostring(numID % 256 , 16 )
+	numID=tonumber(id,16)
+        ascID= string.format("%x",numID % 256)
+        print("ascID=",ascID,id)
 	if #ascID % 2 == 1 then -- adding leading 0, if necessary
 		ascID = "0"..ascID
 	end
 	echoWrite("01"..ascID.."\r\n")
 	udsLen=send()
+        print("Nach UDSsend")
 	if udsLen>0 then
 		if udsBuffer[1]==65 then
 			res=""
 			-- having the functions hashed by the id.		
+                        print("Id",id)
 			paramList=PID01CMDs["id0x"..id]
 			res= paramList ~= null and CalcNumPid( paramList.byte , paramList.size , paramList.mult , paramList.offset, paramList.unit)  or "index error"
 			return res
@@ -285,13 +321,19 @@ end
 
 function createCall(availPIDs, id, title, func)
 	if hasBit(availPIDs, 20- (id % 256)) then
-		addElement(title, func,"-",true , false, "0x"..tostring(id,16))
+                idstring=string.format("%X",id)
+                print("Id-String=",idstring,id)
+		addElement(title, func,"-",true , false, "0x"..string.format("%X",id))
+
 	end
 end
 
 
 function createCMD01Menu(oldvalue,id)
 	echoWrite("0100\r\n")
+      --echoWrite("0120\r\n")
+      --echoWrite("0140\r\n")
+
 	udsLen=send()
 	if udsLen>0 then
 		if udsBuffer[1]==65 then
@@ -308,16 +350,32 @@ function createCMD01Menu(oldvalue,id)
 				createCall(availPIDs, 0x7,"Long term fuel % trim—Bank 1", "getNumPIDs")
 				createCall(availPIDs, 0x8,"Short term fuel % trim—Bank 2", "getNumPIDs")
 				createCall(availPIDs, 0x9,"Long term fuel % trim—Bank 2", "getNumPIDs")
-				createCall(availPIDs, 0x0A,"Fuel pressure", "getNumPIDs")
-				createCall(availPIDs, 0x0B,"Intake manifold absolute pressure", "getNumPIDs")
-				createCall(availPIDs, 0x0C,"Engine RPM", "getNumPIDs")
-				createCall(availPIDs, 0x0D,"Vehicle speed", "getNumPIDs")
-				createCall(availPIDs, 0x0E,"Timing advance", "getNumPIDs")
-				createCall(availPIDs, 0x0F,"Intake air temperature", "getNumPIDs")
+				createCall(availPIDs, 0xA,"Fuel pressure", "getNumPIDs")
+				createCall(availPIDs, 0xB,"Intake manifold absolute pressure", "getNumPIDs")
+				createCall(availPIDs, 0xC,"Engine RPM", "getNumPIDs")
+				createCall(availPIDs, 0xD,"Vehicle speed", "getNumPIDs")
+				createCall(availPIDs, 0xE,"Timing advance", "getNumPIDs")
+				createCall(availPIDs, 0xF,"Intake air temperature", "getNumPIDs")
 				createCall(availPIDs, 0x10,"MAF air flow rate", "getNumPIDs")
 				createCall(availPIDs, 0x11,"Throttle position", "getNumPIDs")
 				createCall(availPIDs, 0x14,"Bank 1, Sensor 1: Oxygen sensor voltage", "getNumPIDs")
 				createCall(availPIDs, 0x114,"Bank 1, Sensor 1: Short term fuel trim", "getNumPIDs")
+                                createCall(availPIDs, 0x15,"Bank 1, Sensor 2: Oxygen sensor voltage", "GetNumPIDs")
+                                createCall(availPIDs, 0x115,"Bank 1, Sensor 2: Short term fuel trim", "GetNumPIDs")
+                                createCall(availPIDs, 0x16,"Bank 1, Sensor 3: Oxygen sensor voltage", "GetNumPIDs")
+                                createCall(availPIDs, 0x116,"Bank 1, Sensor 3: Short term fuel trim", "GetNumPIDs")
+                                createCall(availPIDs, 0x17,"Bank 1, Sensor 4: Oxygen sensor voltage", "GetNumPIDs")
+                                createCall(availPIDs, 0x117,"Bank 1, Sensor 4: Short term fuel trim", "GetNumPIDs")
+                                createCall(availPIDs, 0x18,"Bank 2, Sensor 1: Oxygen sensor voltage", "GetNumPIDs")
+                                createCall(availPIDs, 0x118,"Bank 2, Sensor 1: Short term fuel trim", "GetNumPIDs")
+                                createCall(availPIDs, 0x19,"Bank 2, Sensor 2: Oxygen sensor voltage", "GetNumPIDs")
+                                createCall(availPIDs, 0x119,"Bank 2, Sensor 2: Short term fuel trim", "GetNumPIDs")
+                                createCall(availPIDs, 0x1A,"Bank 2, Sensor 3: Oxygen sensor voltage", "GetNumPIDs")
+                                createCall(availPIDs, 0x11A,"Bank 2, Sensor 3: Short term fuel trim", "GetNumPIDs")
+                                createCall(availPIDs, 0x1B,"Bank 2, Sensor 4: Oxygen sensor voltage", "GetNumPIDs")
+                                createCall(availPIDs, 0x11B,"Bank 2, Sensor 4: Short term fuel trim", "GetNumPIDs")
+                                createCall(availPIDs, 0x1F,"Run time since engine start", "GetNumPIDs")
+                                
 				-----------------------------------------
 				pageDone()
 				return oldvalue
@@ -333,11 +391,55 @@ function createCMD01Menu(oldvalue,id)
 	end
 end
 
+function createCMD02Menu(oldvalue,id)
+      echoWrite("0120\r\n")
+      --echoWrite("0140\r\n")
+
+	udsLen=send()
+	if udsLen>0 then
+		if udsBuffer[1]==65 then
+			availPIDs=0
+			for i = 0 , 3, 1 do -- get the bit field, which PIDs are available
+				availPIDs=availPIDs*256 +udsBuffer[3+i]
+			end
+			if availPIDs ~= 0 then
+				initCellTable()
+				------------------------ these are the lines copied from the "createCall" 2 section in the OBD2_PIDs - OpenOffice- File
+
+                                createCall(availPIDs, 0x21,"Distance traveled with malfunction indicator lamp (MIL) on", "GetNumPIDs")
+                                createCall(availPIDs, 0x22,"Fuel Rail Pressure (relative to mainfold vacuum)", "GetNumPIDs")
+                                createCall(availPIDs, 0x23,"Fuel Rail Pressure (diesel)", "GetNumPIDs")
+                                createCall(availPIDs, 0x24,"O2S1_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
+                                createCall(availPIDs, 0x124,"O2S1_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
+                                createCall(availPIDs, 0x25,"O2S2_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
+                                createCall(availPIDs, 0x125,"O2S2_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
+                                createCall(availPIDs, 0x26,"O2S3_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
+                                createCall(availPIDs, 0x126,"O2S3_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
+                                createCall(availPIDs, 0x27,"O2S4_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
+                                createCall(availPIDs, 0x127,"O2S4_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
+                                createCall(availPIDs, 0x28,"O2S5_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
+                                createCall(availPIDs, 0x128,"O2S5_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
+				-----------------------------------------
+				showCellTable("CMD 02 PIDs")
+				return oldvalue
+			else
+				return "No avail. PIDs found"
+			end
+
+		else
+			return "Error"
+		end
+	else
+		return "NO DATA"
+	end
+end
+
 
 function Sensor_Menu(oldvalue,id)
-	openPage("Vehicle Info")
+	openPage("Sensor Info")
 	addElement("RPM", "sens_rpm","-",true , false, "")
-	addElement("Dynamic Menu >>>", "createCMD01Menu",">>>",true , false, "")
+	addElement("Dynamic Menu1 >>>", "createCMD01Menu",">>>",true , false, "")
+        addElement("Dynamic Menu2 >>>", "createCMD02Menu",">>>",true , false, "")
 	addElement("<<< Main", "Menu_Main","<<<",false , false, "")
 	pageDone()
 	return oldvalue
