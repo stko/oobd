@@ -23,8 +23,7 @@ abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstan
 
     public OobdScriptengine(String myID, Core myCore) {
         id = myID;
-        System.out.println("Setting Scriptengine ID to "+ id);
-        core = myCore;
+         core = myCore;
         Debug.msg("oobdscriptengine",DEBUG_BORING,"Scriptengine  object created: " + id);
 
     }

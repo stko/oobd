@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Properties;
 import org.oobd.base.support.Onion;
 import org.oobd.base.bus.OobdBus;
@@ -145,8 +146,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         File dir1 = new File(".");
         File dir2 = new File("..");
         try {
-            System.out.println("Current dir : " + dir1.getCanonicalPath());
-            System.out.println("Parent  dir : " + dir2.getCanonicalPath());
+            //System.out.println("Current dir : " + dir1.getCanonicalPath());
+            //System.out.println("Parent  dir : " + dir2.getCanonicalPath());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -440,13 +441,11 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public void actionRequest(Onion myOnion) {
         try {
-            Debug.msg("core", DEBUG_BORING, "type is:" + myOnion.getString("type"));
+
             if (myOnion.isType(CM_VISUALIZE)) {
-                Debug.msg("Core", DEBUG_INFO, "visualitation requested");
                 userInterface.visualize(myOnion);
             }
             if (myOnion.isType(CM_VALUE)) {
-                Debug.msg("Core", DEBUG_INFO, "visualitation requested");
                 handleValue(myOnion);
             }
             if (myOnion.isType(CM_UPDATE)) {
@@ -456,15 +455,11 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             }
 
             if (myOnion.isType(CM_PAGE)) {
-                Debug.msg("Core", DEBUG_INFO, "Page requested");
                 String dummy = myOnion.getOnionString("owner");
 
                 userInterface.openPage(myOnion.getOnionString("owner"), myOnion.getOnionString("name"), 1, 1);
             }
             if (myOnion.isType(CM_PAGEDONE)) {
-                Debug.msg("Core", DEBUG_INFO, "Page done requested");
-                String dummy = myOnion.getOnionString("owner");
-
                 userInterface.openPageCompleted(myOnion.getOnionString("owner"), myOnion.getOnionString("name"));
             }
 
@@ -511,20 +506,30 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public void updateVisualizers() {
 
-        Collection c = visualizers.values();
-        //obtain an Iterator for Collection
-        Iterator itr;
+        Collection<ArrayList<Visualizer>> c = Collections.synchronizedCollection(visualizers.values());
+        //Collection<ArrayList<Visualizer>> c = visualizers.values();
+        synchronized (c) {
+            //obtain an Iterator for Collection
+            Iterator<ArrayList<Visualizer>> itr;
 
-        //iterate through HashMap values iterator
-        // run through the 3 update states: 0: start 1: update data 2: finish
-        for (int i = 0; i < 3; i++) {
-            itr = c.iterator();
-            while (itr.hasNext()) {
-                ArrayList engineVisualizers = (ArrayList) itr.next();
-                Iterator visItr = engineVisualizers.iterator();
-                while (visItr.hasNext()) {
-                    Visualizer vis = (Visualizer) visItr.next();
-                    vis.doUpdate(i);
+            //iterate through HashMap values iterator
+            // run through the 3 update states: 0: start 1: update data 2: finish
+            for (int i = 0; i < 3; i++) {
+                itr = c.iterator();
+                while (itr.hasNext()) {
+                    ArrayList<Visualizer> engineVisualizers = itr.next();
+
+                    synchronized (engineVisualizers) {
+                        Iterator<Visualizer> visItr = engineVisualizers.iterator();
+                        synchronized (visItr) {
+                            while (visItr.hasNext()) {
+                                Visualizer vis = visItr.next();
+                                synchronized (vis) {
+                                    vis.doUpdate(i);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

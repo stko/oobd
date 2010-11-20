@@ -57,50 +57,51 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
     private static final String themeDefault = "/OOBDtheme.res";
     private String actTheme = themeDefault;
     private String actScript = scriptDefault;
+    private String actPageName = "?";
 
     public MainMidlet() {
         myDisplay = this;
         scriptEngine = new LuaScript();
         scriptEngine.Script();
 
-        scriptEngine.register("initCellTableCall", new JavaFunction() {
+        scriptEngine.register("openPageCall", new JavaFunction() {
 
             public int call(LuaCallFrame callFrame, int nArguments) {
-                System.out.println("Lua calls initCellTable");
+                System.out.println("Lua calls openPage");
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
                 scriptEngine.initRPC(callFrame, nArguments);
                 cellList = new List();
+                actPageName=scriptEngine.getString(0);
                 //scriptEngine.finishRPC(callFrame, nArguments);
-                System.out.println("Lua leaves initCellTable");
+                System.out.println("Lua leaves openPage");
                 return 1;
             }
         });
-        scriptEngine.register("addCellCall", new JavaFunction() {
+        scriptEngine.register("addElementCall", new JavaFunction() {
 
             public int call(LuaCallFrame callFrame, int nArguments) {
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
-                System.out.println("Lua calls addCell");
+                System.out.println("Lua calls addElement");
                 scriptEngine.initRPC(callFrame, nArguments);
                 cellList.addItem(new ScriptCell(
                         scriptEngine.getString(0), //String title
                         scriptEngine.getString(1), //String function
                         scriptEngine.getString(2), //String initalValue
-                        scriptEngine.getBoolean(3), //boolean update
-                        scriptEngine.getBoolean(4), //boolean timer
-                        scriptEngine.getString(5) //String id
+                        scriptEngine.getInt(3), //int OOBDElementFlags
+                        scriptEngine.getString(4) //String id
                         ));
                 scriptEngine.finishRPC(callFrame, nArguments);
                 return 1;
             }
         });
 
-        scriptEngine.register("showCellTableCall", new JavaFunction() {
+        scriptEngine.register("pageDoneCall", new JavaFunction() {
 
             public int call(LuaCallFrame callFrame, int nArguments) {
-                System.out.println("Lua calls showCellTable");
+                System.out.println("Lua calls pageDone");
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
                 scriptEngine.initRPC(callFrame, nArguments);
-                writeForm = new ScriptForm(f, cellList, scriptEngine.getString(0), scriptEngine, myDisplay);
+                writeForm = new ScriptForm(f, cellList, actPageName, scriptEngine, myDisplay);
                 scriptEngine.finishRPC(callFrame, nArguments);
                 return 1;
             }

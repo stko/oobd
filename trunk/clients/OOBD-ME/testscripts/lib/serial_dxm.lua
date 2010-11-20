@@ -1,4 +1,8 @@
 
+-- include the basic connectivity
+
+
+
 --- use the following lines for debugging in lua editor
 ---[[
 openPage = openPageCall
@@ -17,8 +21,10 @@ serDisplayWrite = serDisplayWriteCall
 readcount= 1
 input = {}
 input[1]="Searching"
-input[2]="41 00 E8 19 30 12"
+input[2]="41 00 FF FF FF FF"
 input[3]=">"
+input[4]="41 14 FF FF FF FF"
+input[5]=">"
 
 
 function serReadLn()
@@ -50,7 +56,7 @@ function openPage(title)
 	print("Start Menu generation ", title);
 end
 
-function addElement(title, func , intial,update , timer , id)
+function addElement(title, func , intial,flags , id)
 	print("<---");
 	print("title: ", title);
 	print("function: ", func);
@@ -126,5 +132,3 @@ function send()
 	end
 	return  udsLen
 end
-
-

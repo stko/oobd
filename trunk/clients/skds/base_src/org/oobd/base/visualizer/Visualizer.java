@@ -20,12 +20,12 @@
  *
  * 
  *  \msc
-    User,GUI,Core;
-    User->GUI [label="choose a scriptengine"];
-    GUI->Core [label="createScriptEngine()", URL="\ref org::oobd::base::Core.createScriptEngine()"];
-     --- [label="create pane"];
-    GUI->Core [label="startScriptEngine()", URL="\ref org::oobd::base::Core.startScriptEngine()"];
- \endmsc
+User,GUI,Core;
+User->GUI [label="choose a scriptengine"];
+GUI->Core [label="createScriptEngine()", URL="\ref org::oobd::base::Core.createScriptEngine()"];
+--- [label="create pane"];
+GUI->Core [label="startScriptEngine()", URL="\ref org::oobd::base::Core.startScriptEngine()"];
+\endmsc
  * 
  * It's up to the implementation to allow the user multiple or just one scriptengine at a time.
  *
@@ -43,11 +43,11 @@
  * It's up to the actual implementation, if these grid coordinates will be used or if the elements are just put into an list, like on an mobile phone with a small display.
  *
  *  \msc
-    GUI,Core;
-    GUI<-Core [label="openPage()", URL="\ref org::oobd::base::IFui.openPage()"];
-     --- [label="add visual elements to page"];
-   GUI<-Core [label="openPageCompleted()", URL="\ref org::oobd::base::IFui.openPageCompleted()"];
-  \endmsc
+GUI,Core;
+GUI<-Core [label="openPage()", URL="\ref org::oobd::base::IFui.openPage()"];
+--- [label="add visual elements to page"];
+GUI<-Core [label="openPageCompleted()", URL="\ref org::oobd::base::IFui.openPageCompleted()"];
+\endmsc
 
  * \subsection visualisator Visual Elements are placed on a page
  *
@@ -69,14 +69,14 @@
  * After creating the visual element, the element is told who its corrosponding visualizer is by calling its setVisualizer() method
  * 
  *  \msc
-    IFvisualiser,GUI,Core;
-    GUI<-Core [label="visualize()", URL="\ref org::oobd::base::IFui.visualize()"];
-    GUI<-GUI [label="getVisualizerClass()", URL="\ref org::oobd::base::IFui.getVisualizerClass()"];
-    IFvisualiser<-GUI [label="getInstance()", URL="\ref org::oobd::base::IFui.getInstance()"];
-     --- [label="place new element"];
+IFvisualiser,GUI,Core;
+GUI<-Core [label="visualize()", URL="\ref org::oobd::base::IFui.visualize()"];
+GUI<-GUI [label="getVisualizerClass()", URL="\ref org::oobd::base::IFui.getVisualizerClass()"];
+IFvisualiser<-GUI [label="getInstance()", URL="\ref org::oobd::base::IFui.getInstance()"];
+--- [label="place new element"];
  * IFvisualiser<-GUI [label="setVisualizer()", URL="\ref org::oobd::base::IFui.setVisualizer()"];
  *
-  \endmsc
+\endmsc
 
  *
  * After the responsible visualisation object has been identified, it's supplied with all necessary information via the onion object and it's placed on the page with the
@@ -92,14 +92,14 @@
  *
  *
  *  \msc
-    IFvisualiser,Core;
+IFvisualiser,Core;
 
-    --- [label="inform about updates to come"];
-    IFvisualiser<-Core [label="Update(0)", URL="\ref org::oobd::base::IFui.Update()"];
-   --- [label="refresh the UI"];
-    IFvisualiser<-Core [label="Update(2)", URL="\ref org::oobd::base::IFui.Update()"];
+--- [label="inform about updates to come"];
+IFvisualiser<-Core [label="Update(0)", URL="\ref org::oobd::base::IFui.Update()"];
+--- [label="refresh the UI"];
+IFvisualiser<-Core [label="Update(2)", URL="\ref org::oobd::base::IFui.Update()"];
 
-  \endmsc
+\endmsc
 
 
  *
@@ -109,16 +109,15 @@
  * of its corrosponding visualizer. The visualizer than forwards the message to the core for further handling
  *
  *  \msc
-    IFvisualiser,Core;
+IFvisualiser,Core;
 
-    IFvisualiser->Core [label="updateRequest()", URL="\ref org::oobd::base::IFui.updateRequest()"];
+IFvisualiser->Core [label="updateRequest()", URL="\ref org::oobd::base::IFui.updateRequest()"];
 
-  \endmsc
+\endmsc
 
  *
  *
  */
-
 package org.oobd.base.visualizer;
 
 import java.util.logging.Level;
@@ -136,13 +135,15 @@ public class Visualizer {
     Onion ownerEngine;
     Onion value;
     String name;
+    String optId;
     IFvisualizer myObject;
     boolean updateNeeded = false;
 
     public Visualizer(Onion onion) {
         ownerEngine = onion.getOnion(OOBDConstants.FN_OWNER);
         name = onion.getOnionString(OOBDConstants.FN_NAME);
-        value=onion;
+        optId = onion.getOnionString(OOBDConstants.FN_OPTID);
+        value = onion;
 //        this.myObject=myObject;
         Core.getSingleInstance().addVisualizer(ownerEngine.getOnionString(OOBDConstants.FN_NAME), this);
     }
@@ -164,7 +165,7 @@ public class Visualizer {
             try {
                 this.value = new Onion(value.toString());
                 updateNeeded = true;
-            } catch (JSONException ex) {
+             } catch (JSONException ex) {
             }
         }
     }
@@ -220,19 +221,19 @@ public class Visualizer {
         System.out.println("actual visualizer data: " + value.toString());
         try {
             Core.getSingleInstance().transferMsg(new Message(Core.getSingleInstance(), OOBDConstants.CoreMailboxName, new Onion(""
-                    + "{" +
-                    "'type':'" + OOBDConstants.CM_UPDATE +
-                    "'," +
-                    "'vis':'" + this.name +
-                    "',"  +
-                    "'to':'" + getOwnerEngine() +
-                    "',"  +
-                     "'optid':'" + getValue("optid") +
-                    "',"  +
-                    "'actValue':'" + getValue("value") +
-                    "',"  +
-                    "'updType':" + Integer.toString(type) +
-                    "}")));
+                    + "{"
+                    + "'type':'" + OOBDConstants.CM_UPDATE
+                    + "',"
+                    + "'vis':'" + this.name
+                    + "',"
+                    + "'to':'" + getOwnerEngine()
+                    + "',"
+                    + "'optid':'" + this.optId
+                    + "',"
+                    + "'actValue':'" + getValue("value")
+                    + "',"
+                    + "'updType':" + Integer.toString(type)
+                    + "}")));
         } catch (JSONException ex) {
             Logger.getLogger(Visualizer.class.getName()).log(Level.SEVERE, null, ex);
         }

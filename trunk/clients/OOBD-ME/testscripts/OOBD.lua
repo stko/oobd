@@ -1,152 +1,18 @@
 --[[
-HHOpen.lua
+OOBD.lua
 --]]
 
 
-
--- include the basic connectivity
-
-
-
---- use the following lines for debugging in lua editor
----[[
-openPage = openPageCall
-addElement = addElementCall
-pageDone = pageDoneCall
---]]
----[[
-serFlush = serFlushCall
-serWrite = serWriteCall
-serWait = serWaitCall
-serReadLn = serReadLnCall
-serDisplayWrite = serDisplayWriteCall
---]]
-
---[[
-readcount= 1
-input = {}
-input[1]="Searching"
-input[2]="41 00 FF FF FF FF"
-input[3]=">"
-input[4]="41 14 FF FF FF FF"
-input[5]=">"
-
-
-function serReadLn()
-	res= input[readcount]
-	print ("read from input: ",res, readcount)
-	readcount=readcount +1
-	if readcount >#input then
-		readcount = 1
-	end
-	return res
-end
-
-function serWait()
-	return 0
-end
-
-function serWrite(data)
-	print ("Serwrite:" ,data)
-end
-
-function serFlush()
-end
-
---]]
-
-
---[[
-function openPage(title)
-	print("Start Menu generation ", title);
-end
-
-function addElement(title, func , intial,update , timer , id)
-	print("<---");
-	print("title: ", title);
-	print("function: ", func);
-	print("id: ", id);
-	print("--->");
-end
-
-function pageDone()
-	print("Show Menu");
-end
-
-
-
---]]
-
--- define the receive buffer
-
-udsBuffer = {}
-udslen =0
-
--- the global receiving routine. Trys to read single- or multiframe answers from the dxm and stores it in udsbuffer, setting the reveived length in udslen
-
-function send()
-	udsLen=0
-	answ=""
-	answ=serReadLn(2000, true)
-	if answ == "" then
-		return 0
-	else
-		doLoop = true
-		byteCount= udsLen+1 -- auf Abbruchbedingung setzen
-		while doLoop and  answ ~="" do
-			nChar = string.byte(answ)
-			if nChar >=48 and nChar <=57 then  -- an 1. Stelle steht eine Zahl-> positive Antwort
-				if string.sub(answ,2,2) == ":" then
-					answ = string.sub(answ,4) -- wegschneiden des Zaehlers am Anfang
-					while byteCount <=udsLen  and answ ~="" do
-						byteStr= string.sub(answ,1,2)
-						answ = string.sub(answ,4)
-						udsBuffer[byteCount]=tonumber(byteStr,16)
-						byteCount = byteCount + 1
-					end
-					if byteCount >=udsLen then
-						doLoop=false
-						serWait(">",2000)
-					else
-						answ=serReadLn(2000, true)
-					end
-				else
-					if string.sub(answ,3,3) == " " then -- singleframe
-						udsLen=1
-						while answ ~="" do
-							byteStr= string.sub(answ,1,2)
-							answ = string.sub(answ,4)
-							udsBuffer[udsLen]=tonumber(byteStr,16)
-							udsLen = udsLen +1
-						end
-						udsLen = udsLen - 1
-						doLoop = false
-					else -- Multiframe
-						-- die Längenangabe
-						udsLen=tonumber(answ,16)
-						byteCount=1
-						answ=serReadLn(2000, true)
-
-					end
-				end
-			else
-				answ=serReadLn(2000, true)
-			end
-			
-		end
-	end
-	return  udsLen
-end
 
 
 ---------------------- System Info Menu --------------------------------------
 
 function SysInfo_Menu(oldvalue,id)
 	openPage("Sysinfo")
-	addElement("DXM Serial", "dxmserial","-",true , false, "")
-	addElement("DXM BIOS", "dxmbios","-",true, false, "")
-	addElement("Power", "power","-",true , false, "")
-	addElement("<<< Main", "Menu_Main","<<<",false , false, "")
+	addElement("DXM Serial", "dxmserial","-",0x2, "")
+	addElement("DXM BIOS", "dxmbios","-",0x2, "")
+	addElement("Power", "power","-",0x2, "")
+	addElement("<<< Main", "Menu_Main","<<<",0x1, "")
 	pageDone()
 	return oldvalue
 end
@@ -180,8 +46,8 @@ end
 
 function VIN_Menu(oldvalue,id)
 	openPage("Vehicle Info")
-	addElement("VIN", "vin","-",true , false, "")
-	addElement("<<< Main", "Menu_Main","<<<",false , false, "")
+	addElement("VIN", "vin","-",0x2, "")
+	addElement("<<< Main", "Menu_Main","<<<",0x1, "")
 	pageDone()
 	return oldvalue
 end
@@ -320,10 +186,10 @@ end
 
 
 function createCall(availPIDs, id, title, func)
-	if hasBit(availPIDs, 20- (id % 256)) then
+	if hasBit(availPIDs, 0x20- (id % 256)) then
                 idstring=string.format("%X",id)
                 print("Id-String=",idstring,id)
-		addElement(title, func,"-",true , false, "0x"..string.format("%X",id))
+		addElement(title, func,"-",0x2, "0x"..string.format("%X",id))
 
 	end
 end
@@ -403,7 +269,7 @@ function createCMD02Menu(oldvalue,id)
 				availPIDs=availPIDs*256 +udsBuffer[3+i]
 			end
 			if availPIDs ~= 0 then
-				initCellTable()
+				openPage("CMD 02 PIDs")
 				------------------------ these are the lines copied from the "createCall" 2 section in the OBD2_PIDs - OpenOffice- File
 
                                 createCall(availPIDs, 0x21,"Distance traveled with malfunction indicator lamp (MIL) on", "GetNumPIDs")
@@ -420,7 +286,7 @@ function createCMD02Menu(oldvalue,id)
                                 createCall(availPIDs, 0x28,"O2S5_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
                                 createCall(availPIDs, 0x128,"O2S5_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
 				-----------------------------------------
-				showCellTable("CMD 02 PIDs")
+				pageDone()
 				return oldvalue
 			else
 				return "No avail. PIDs found"
@@ -437,10 +303,10 @@ end
 
 function Sensor_Menu(oldvalue,id)
 	openPage("Sensor Info")
-	addElement("RPM", "sens_rpm","-",true , false, "")
-	addElement("Dynamic Menu1 >>>", "createCMD01Menu",">>>",true , false, "")
-        addElement("Dynamic Menu2 >>>", "createCMD02Menu",">>>",true , false, "")
-	addElement("<<< Main", "Menu_Main","<<<",false , false, "")
+	addElement("RPM", "sens_rpm","-",0x2, "")
+	addElement("Dynamic Menu1 >", "createCMD01Menu",">>>",0x1, "")
+        addElement("Dynamic Menu2 >", "createCMD02Menu",">>>",0x1, "")
+	addElement("<<< Main", "Menu_Main","<<<",0x1, "")
 	pageDone()
 	return oldvalue
 end
@@ -514,13 +380,13 @@ end
 
 function Menu_Main(oldvalue,id)
 	openPage("HHOpen Main")
-	addElement("Sensor Data >>>", "Sensor_Menu",">>>",false , false, "")
-	addElement("Trouble Codes", "showdtcs","-",false, false, "")
-	addElement("Vehicle Info >>>", "VIN_Menu",">>>",false , false, "")
-	addElement("Protocol Info >>>", "notyet",">>>",false , false, "")
-	addElement("Change ECU >>>", "notyet",">>>",false , false, "")
-	addElement("System Info >>>", "SysInfo_Menu",">>>",false , false, "")
-	addElement("Greetings", "greet","",false , false, "")
+	addElement("Sensor Data >>>", "Sensor_Menu",">>>",0x1, "")
+	addElement("Trouble Codes", "showdtcs","-",0x1, "")
+	addElement("Vehicle Info >>>", "VIN_Menu",">>>",0x1, "")
+	addElement("Protocol Info >>>", "notyet",">>>",0x1, "")
+	addElement("Change ECU >>>", "notyet",">>>",0x1, "")
+	addElement("System Info >>>", "SysInfo_Menu",">>>",0x1, "")
+	addElement("Greetings", "greet","",0x1, "")
 	pageDone()
 	return oldvalue
 end

@@ -1,19 +1,74 @@
+!include nsDialogs.nsh
+!include LogicLib.nsh
+!include "winMessages.nsh"
+
+
+
 SetCompress force
 SetCompressor /SOLID lzma
 Name "OOBD-Swing"
 OutFile "OOBD-Swing_Windows_Setup.exe"
 XPStyle on
+Var Dialog
+Var Label
+Var ComboBox
+Var SelectionCB
+
 InstallDir "$APPDATA\OOBD\OOBD-Swing"
 InstallDirRegKey HKCU "SOFTWARE\OOBD\OOBD-Swing" "InstDir"
 #!include "ZipDLL.nsh"
 Page license
 Page directory
+Page custom nsDialogsPage 
+
 Page instfiles
 UninstPage uninstConfirm
 UninstPage instfiles
 
 LicenseData gpl-2.0.txt
 LicenseForceSelection checkbox
+
+Function nsDialogsPage
+nsDialogs::Create 1018
+	Pop $Dialog
+
+	${If} $Dialog == error
+		Abort
+	${EndIf}
+	${NSD_CreateLabel} 0 0 100% 12u "Select your serial Comport (does not work yet, just ignore it..)"
+	Pop $Label
+
+	${NSD_CreateDropList} 100 40 20% 59u “”
+	Pop $ComboBox
+
+	SendMessage $ComboBox ${CB_ADDSTRING} 0 “STR:COM1”
+	SendMessage $ComboBox ${CB_ADDSTRING} 0 “STR:COM2”
+	SendMessage $ComboBox ${CB_ADDSTRING} 0 “STR:COM3”
+	SendMessage $ComboBox ${CB_ADDSTRING} 0 “STR:COM4”
+	SendMessage $ComboBox ${CB_ADDSTRING} 0 “STR:COM5”
+	SendMessage $ComboBox ${CB_ADDSTRING} 0 “STR:COM6”
+	SendMessage $ComboBox ${CB_ADDSTRING} 0 “STR:COM7”
+	SendMessage $ComboBox ${CB_ADDSTRING} 0 “STR:COM8”
+	SendMessage $ComboBox ${CB_ADDSTRING} 0 “STR:COM9”
+	SendMessage $ComboBox ${CB_ADDSTRING} 0 “STR:COM10”
+	SendMessage $ComboBox ${CB_ADDSTRING} 0 “STR:COM11”
+	SendMessage $ComboBox ${CB_ADDSTRING} 0 “STR:COM12”
+
+	#SendMessage $ComboBox ${CB_SELECTSTRING} 0 “STR:COM2”
+
+	GetFunctionAddress $0 CBOnChange
+	nsDialogs::OnChange $ComboBox $0
+
+
+	nsDialogs::Show
+
+FunctionEnd
+
+Function CBOnChange
+	SendMessage $ComboBox ${CB_GETCURSEL} 0 0 $SelectionCB
+
+	MessageBox MB_OK $SelectionCB
+FunctionEnd
 
 Section "OOBD-Swing"
 SetOutPath $INSTDIR
@@ -25,7 +80,7 @@ File /oname=OOBD-Swing.jar  "dist/SKDS-Swing.jar"
 File /oname=buscom.props  "buscom_dist.props"
 File /oname=oobdcore.props  "oobdcore_dist.props"
 File "oobd.url"
-File /oname=OOBD.lbc "../../../OOBD-ME/testscripts/HHOpen.lbc"
+File /oname=OOBD.lbc "../../../OOBD-ME/testscripts/OOBD.lbc"
 
 #FileOpen $0 $INSTDIR\file.dat w
 #FileClose $0
