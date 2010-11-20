@@ -30,6 +30,7 @@ public interface OOBDConstants {
     // IDs used as field names in the onions
     public static final String FN_NAME = "name";
     public static final String FN_OWNER = "owner";
+    public static final String FN_OPTID = "optid";
     public static final String FN_VALUESTRING = "ValueString";
     // Types of the different visualizer update requests
     public static final Integer UR_USER = 0;
@@ -37,4 +38,8 @@ public interface OOBDConstants {
     //
     public final static String CoreMailboxName = "core";
     public final static String BusMailboxName = "BusCom";
+    // definitions of the Visual Elements Handling flags
+    public final static int VE_MENU = 0x01;
+    public final static int VE_UPDATE = 0x02;
+    public final static int VE_TIMER = 0x04;
 }

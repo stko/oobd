@@ -13,15 +13,13 @@ public class ScriptCell {
     private String value;
     private String function;
     private String id;
-    private boolean update;
-    private boolean timer;
+    private int  oobdElementFlags;
 
-    ScriptCell(String title, String function, String initalValue, boolean update, boolean timer, String id) {
+    ScriptCell(String title, String function, String initalValue, int oobdElementFlags, String id) {
         this.title = title;
         this.value = initalValue;
         this.function = function;
-        this.update = update;
-        this.timer = timer;
+        this.oobdElementFlags = oobdElementFlags;
         this.id = id;
     }
 
@@ -38,11 +36,11 @@ public class ScriptCell {
     }
 
     public boolean getUpdate() {
-        return update;
+        return (oobdElementFlags & 0x02)>0; //if OOBDELEMENTFLAG_UPDATE is set
     }
 
     public boolean getTimer() {
-        return timer;
+        return (oobdElementFlags & 0x04)>0; //if OOBDELEMENTFLAG_TIMER is set
     }
 
     public String toString() {
