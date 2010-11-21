@@ -186,7 +186,10 @@ end
 
 
 function createCall(availPIDs, id, title, func)
-	if hasBit(availPIDs, 0x20- (id % 256)) then
+      smallId= id % 256
+      byteNr=(smallId - (smallId % 8))/8
+      bitNr = 7- (smallId - byteNr *8) 
+	if hasBit(availPIDs[byteNr], bitNr) then
                 idstring=string.format("%X",id)
                 print("Id-String=",idstring,id)
 		addElement(title, func,"-",0x2, "0x"..string.format("%X",id))
@@ -203,9 +206,9 @@ function createCMD01Menu(oldvalue,id)
 	udsLen=send()
 	if udsLen>0 then
 		if udsBuffer[1]==65 then
-			availPIDs=0
+			availPIDs={}
 			for i = 0 , 3, 1 do -- get the bit field, which PIDs are available
-				availPIDs=availPIDs*256 +udsBuffer[3+i]
+				availPIDs[i] = udsBuffer[3+i]
 			end
 			if availPIDs ~= 0 then
 				openPage("CMD 01 PIDs")
