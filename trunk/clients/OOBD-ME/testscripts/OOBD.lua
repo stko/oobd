@@ -151,7 +151,7 @@ id0x128 = { byte = 2 , size = 2 , mult = 0.000122070313 , offset = 0, unit = "N/
 
 
 function getNumPIDs(oldvalue,id)
-        print(" anfang getNumPIDS")
+        print(" anfang getNumPIDs")
 	id = string.sub(id,3)  -- remove the leading 0x
 	numID=tonumber(id,16)
         ascID= string.format("%x",numID % 256)
@@ -188,7 +188,8 @@ end
 function createCall(availPIDs, id, title, func)
       smallId= id % 256
       byteNr=(smallId - (smallId % 8))/8
-      bitNr = 7- (smallId - byteNr *8) 
+      bitNr = 7- (smallId - byteNr *8)
+      print("bitNr= byteNr",bitNr,byteNr)
 	if hasBit(availPIDs[byteNr], bitNr) then
                 idstring=string.format("%X",id)
                 print("Id-String=",idstring,id)
@@ -229,21 +230,21 @@ function createCMD01Menu(oldvalue,id)
 				createCall(availPIDs, 0x11,"Throttle position", "getNumPIDs")
 				createCall(availPIDs, 0x14,"Bank 1, Sensor 1: Oxygen sensor voltage", "getNumPIDs")
 				createCall(availPIDs, 0x114,"Bank 1, Sensor 1: Short term fuel trim", "getNumPIDs")
-                                createCall(availPIDs, 0x15,"Bank 1, Sensor 2: Oxygen sensor voltage", "GetNumPIDs")
-                                createCall(availPIDs, 0x115,"Bank 1, Sensor 2: Short term fuel trim", "GetNumPIDs")
-                                createCall(availPIDs, 0x16,"Bank 1, Sensor 3: Oxygen sensor voltage", "GetNumPIDs")
-                                createCall(availPIDs, 0x116,"Bank 1, Sensor 3: Short term fuel trim", "GetNumPIDs")
-                                createCall(availPIDs, 0x17,"Bank 1, Sensor 4: Oxygen sensor voltage", "GetNumPIDs")
-                                createCall(availPIDs, 0x117,"Bank 1, Sensor 4: Short term fuel trim", "GetNumPIDs")
-                                createCall(availPIDs, 0x18,"Bank 2, Sensor 1: Oxygen sensor voltage", "GetNumPIDs")
-                                createCall(availPIDs, 0x118,"Bank 2, Sensor 1: Short term fuel trim", "GetNumPIDs")
-                                createCall(availPIDs, 0x19,"Bank 2, Sensor 2: Oxygen sensor voltage", "GetNumPIDs")
-                                createCall(availPIDs, 0x119,"Bank 2, Sensor 2: Short term fuel trim", "GetNumPIDs")
-                                createCall(availPIDs, 0x1A,"Bank 2, Sensor 3: Oxygen sensor voltage", "GetNumPIDs")
-                                createCall(availPIDs, 0x11A,"Bank 2, Sensor 3: Short term fuel trim", "GetNumPIDs")
-                                createCall(availPIDs, 0x1B,"Bank 2, Sensor 4: Oxygen sensor voltage", "GetNumPIDs")
-                                createCall(availPIDs, 0x11B,"Bank 2, Sensor 4: Short term fuel trim", "GetNumPIDs")
-                                createCall(availPIDs, 0x1F,"Run time since engine start", "GetNumPIDs")
+                                createCall(availPIDs, 0x15,"Bank 1, Sensor 2: Oxygen sensor voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x115,"Bank 1, Sensor 2: Short term fuel trim", "getNumPIDs")
+                                createCall(availPIDs, 0x16,"Bank 1, Sensor 3: Oxygen sensor voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x116,"Bank 1, Sensor 3: Short term fuel trim", "getNumPIDs")
+                                createCall(availPIDs, 0x17,"Bank 1, Sensor 4: Oxygen sensor voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x117,"Bank 1, Sensor 4: Short term fuel trim", "getNumPIDs")
+                                createCall(availPIDs, 0x18,"Bank 2, Sensor 1: Oxygen sensor voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x118,"Bank 2, Sensor 1: Short term fuel trim", "getNumPIDs")
+                                createCall(availPIDs, 0x19,"Bank 2, Sensor 2: Oxygen sensor voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x119,"Bank 2, Sensor 2: Short term fuel trim", "getNumPIDs")
+                                createCall(availPIDs, 0x1A,"Bank 2, Sensor 3: Oxygen sensor voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x11A,"Bank 2, Sensor 3: Short term fuel trim", "getNumPIDs")
+                                createCall(availPIDs, 0x1B,"Bank 2, Sensor 4: Oxygen sensor voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x11B,"Bank 2, Sensor 4: Short term fuel trim", "getNumPIDs")
+                                createCall(availPIDs, 0x1F,"Run time since engine start", "getNumPIDs")
                                 
 				-----------------------------------------
 				pageDone()
@@ -267,27 +268,27 @@ function createCMD02Menu(oldvalue,id)
 	udsLen=send()
 	if udsLen>0 then
 		if udsBuffer[1]==65 then
-			availPIDs=0
+			availPIDs={}
 			for i = 0 , 3, 1 do -- get the bit field, which PIDs are available
-				availPIDs=availPIDs*256 +udsBuffer[3+i]
+				availPIDs[i] = udsBuffer[3+i]
 			end
 			if availPIDs ~= 0 then
 				openPage("CMD 02 PIDs")
 				------------------------ these are the lines copied from the "createCall" 2 section in the OBD2_PIDs - OpenOffice- File
 
-                                createCall(availPIDs, 0x21,"Distance traveled with malfunction indicator lamp (MIL) on", "GetNumPIDs")
-                                createCall(availPIDs, 0x22,"Fuel Rail Pressure (relative to mainfold vacuum)", "GetNumPIDs")
-                                createCall(availPIDs, 0x23,"Fuel Rail Pressure (diesel)", "GetNumPIDs")
-                                createCall(availPIDs, 0x24,"O2S1_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
-                                createCall(availPIDs, 0x124,"O2S1_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
-                                createCall(availPIDs, 0x25,"O2S2_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
-                                createCall(availPIDs, 0x125,"O2S2_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
-                                createCall(availPIDs, 0x26,"O2S3_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
-                                createCall(availPIDs, 0x126,"O2S3_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
-                                createCall(availPIDs, 0x27,"O2S4_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
-                                createCall(availPIDs, 0x127,"O2S4_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
-                                createCall(availPIDs, 0x28,"O2S5_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
-                                createCall(availPIDs, 0x128,"O2S5_WR_lambda(1): Equivalence Ratio Voltage", "GetNumPIDs")
+                                createCall(availPIDs, 0x21,"Distance traveled with malfunction indicator lamp (MIL) on", "getNumPIDs")
+                                createCall(availPIDs, 0x22,"Fuel Rail Pressure (relative to mainfold vacuum)", "getNumPIDs")
+                                createCall(availPIDs, 0x23,"Fuel Rail Pressure (diesel)", "getNumPIDs")
+                                createCall(availPIDs, 0x24,"O2S1_WR_lambda(1): Equivalence Ratio Voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x124,"O2S1_WR_lambda(1): Equivalence Ratio Voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x25,"O2S2_WR_lambda(1): Equivalence Ratio Voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x125,"O2S2_WR_lambda(1): Equivalence Ratio Voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x26,"O2S3_WR_lambda(1): Equivalence Ratio Voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x126,"O2S3_WR_lambda(1): Equivalence Ratio Voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x27,"O2S4_WR_lambda(1): Equivalence Ratio Voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x127,"O2S4_WR_lambda(1): Equivalence Ratio Voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x28,"O2S5_WR_lambda(1): Equivalence Ratio Voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x128,"O2S5_WR_lambda(1): Equivalence Ratio Voltage", "getNumPIDs")
 				-----------------------------------------
 				pageDone()
 				return oldvalue
