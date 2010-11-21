@@ -21,5 +21,5 @@ CP=cp
 
 # your path to copy the compiled lua code file to
 
-LUACOMPPATH="../res/"
+LBCPATH="../res"
 
