@@ -187,7 +187,7 @@ end
 
 function createCall(availPIDs, id, title, func)
       smallId= id % 256
-      if smallId >= 31 then smallId = smallId % 31 end
+      if smallId > 31 then smallId = smallId % 31 end
       byteNr=(smallId - (smallId % 8))/8
       bitNr = 7- (smallId - byteNr *8)
       if hasBit(availPIDs[byteNr], bitNr) then
