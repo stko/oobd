@@ -163,7 +163,8 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
                 c.gridx = 0;
                 c.gridy = 0;
                 //panel.add(newJComponent, c);
-                panel.add(scrollpane, c);
+                panel.add(scrollpane,0);//, c);
+                panel.validate();
             }
             ((IFvisualizer) newJComponent).initValue(newVisualizer, myOnion);
 
@@ -199,10 +200,10 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
             //JTabbedPane pane = new JTabbedPane();
             //pane.add(panel);
             basejTabPane.add(panel);
-
+            basejTabPane.setSelectedIndex(basejTabPane.getTabCount()-1);
             oobdCore.setAssign(seID, org.oobd.base.OOBDConstants.CL_PANE + ":page", panel);
             GridBagConstraints c = new GridBagConstraints();
-
+            basejTabPane.validate();
             /**
              * For each component to be added to this container:
              * ...Create the component...
@@ -286,7 +287,17 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         mainSplitPanel = new javax.swing.JSplitPane();
         scriptEnginePanel = new javax.swing.JPanel();
         scriptEngineToolbar = new javax.swing.JToolBar();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jToggleButton1 = new javax.swing.JToggleButton();
         mainSeTabbedPane = new javax.swing.JTabbedPane();
+        outputPanel = new javax.swing.JPanel();
+        outputToolBar = new javax.swing.JToolBar();
+        outputClearButton = new javax.swing.JButton();
+        outputSaveButton = new javax.swing.JButton();
+        outputEnableButton = new javax.swing.JToggleButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
         VisualizerPanel = new javax.swing.JPanel();
         visualizerToolBar = new javax.swing.JToolBar();
         menuBar = new javax.swing.JMenuBar();
@@ -313,21 +324,113 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         scriptEngineToolbar.setRollover(true);
         scriptEngineToolbar.setName("scriptEngineToolBar"); // NOI18N
 
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(skdsswing.SKDSSwingApp.class).getContext().getResourceMap(SKDSSwingView.class);
+        jButton1.setIcon(resourceMap.getIcon("backButton.icon")); // NOI18N
+        jButton1.setText(resourceMap.getString("backButton.text")); // NOI18N
+        jButton1.setToolTipText(resourceMap.getString("backButton.toolTipText")); // NOI18N
+        jButton1.setFocusable(false);
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.setName("backButton"); // NOI18N
+        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        scriptEngineToolbar.add(jButton1);
+
+        jButton2.setIcon(resourceMap.getIcon("jButton2.icon")); // NOI18N
+        jButton2.setText(resourceMap.getString("jButton2.text")); // NOI18N
+        jButton2.setToolTipText(resourceMap.getString("jButton2.toolTipText")); // NOI18N
+        jButton2.setFocusable(false);
+        jButton2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton2.setName("jButton2"); // NOI18N
+        jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        scriptEngineToolbar.add(jButton2);
+
+        jToggleButton1.setIcon(resourceMap.getIcon("jToggleButton1.icon")); // NOI18N
+        jToggleButton1.setText(resourceMap.getString("jToggleButton1.text")); // NOI18N
+        jToggleButton1.setToolTipText(resourceMap.getString("jToggleButton1.toolTipText")); // NOI18N
+        jToggleButton1.setFocusable(false);
+        jToggleButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jToggleButton1.setName("jToggleButton1"); // NOI18N
+        jToggleButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        scriptEngineToolbar.add(jToggleButton1);
+
         mainSeTabbedPane.setName("mainSeTabbedPane"); // NOI18N
+
+        outputPanel.setName("outputPanel"); // NOI18N
+
+        outputToolBar.setRollover(true);
+        outputToolBar.setName("outputToolBar"); // NOI18N
+
+        outputClearButton.setIcon(resourceMap.getIcon("outputClearButton.icon")); // NOI18N
+        outputClearButton.setText(resourceMap.getString("outputClearButton.text")); // NOI18N
+        outputClearButton.setToolTipText(resourceMap.getString("outputClearButton.toolTipText")); // NOI18N
+        outputClearButton.setFocusable(false);
+        outputClearButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        outputClearButton.setName("outputClearButton"); // NOI18N
+        outputClearButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        outputToolBar.add(outputClearButton);
+
+        outputSaveButton.setIcon(resourceMap.getIcon("outputSaveButton.icon")); // NOI18N
+        outputSaveButton.setText(resourceMap.getString("outputSaveButton.text")); // NOI18N
+        outputSaveButton.setToolTipText(resourceMap.getString("outputSaveButton.toolTipText")); // NOI18N
+        outputSaveButton.setFocusable(false);
+        outputSaveButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        outputSaveButton.setName("outputSaveButton"); // NOI18N
+        outputSaveButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        outputToolBar.add(outputSaveButton);
+
+        outputEnableButton.setIcon(resourceMap.getIcon("outputEnableButton.icon")); // NOI18N
+        outputEnableButton.setSelected(true);
+        outputEnableButton.setText(resourceMap.getString("outputEnableButton.text")); // NOI18N
+        outputEnableButton.setToolTipText(resourceMap.getString("outputEnableButton.toolTipText")); // NOI18N
+        outputEnableButton.setFocusable(false);
+        outputEnableButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        outputEnableButton.setName("outputEnableButton"); // NOI18N
+        outputEnableButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        outputToolBar.add(outputEnableButton);
+
+        jScrollPane1.setName("jScrollPane1"); // NOI18N
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jTextArea1.setName("jTextArea1"); // NOI18N
+        jScrollPane1.setViewportView(jTextArea1);
+
+        javax.swing.GroupLayout outputPanelLayout = new javax.swing.GroupLayout(outputPanel);
+        outputPanel.setLayout(outputPanelLayout);
+        outputPanelLayout.setHorizontalGroup(
+            outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, outputPanelLayout.createSequentialGroup()
+                .addComponent(outputToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(371, Short.MAX_VALUE))
+            .addGroup(outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 781, Short.MAX_VALUE))
+        );
+        outputPanelLayout.setVerticalGroup(
+            outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(outputPanelLayout.createSequentialGroup()
+                .addComponent(outputToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(333, Short.MAX_VALUE))
+            .addGroup(outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, outputPanelLayout.createSequentialGroup()
+                    .addGap(54, 54, 54)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        mainSeTabbedPane.addTab(resourceMap.getString("outputPanel.TabConstraints.tabTitle"), resourceMap.getIcon("outputPanel.TabConstraints.tabIcon"), outputPanel); // NOI18N
 
         javax.swing.GroupLayout scriptEnginePanelLayout = new javax.swing.GroupLayout(scriptEnginePanel);
         scriptEnginePanel.setLayout(scriptEnginePanelLayout);
         scriptEnginePanelLayout.setHorizontalGroup(
             scriptEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scriptEngineToolbar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 787, Short.MAX_VALUE)
-            .addComponent(mainSeTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 787, Short.MAX_VALUE)
+            .addComponent(scriptEngineToolbar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 793, Short.MAX_VALUE)
+            .addComponent(mainSeTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 793, Short.MAX_VALUE)
         );
         scriptEnginePanelLayout.setVerticalGroup(
             scriptEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(scriptEnginePanelLayout.createSequentialGroup()
-                .addComponent(scriptEngineToolbar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scriptEngineToolbar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(mainSeTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE))
+                .addComponent(mainSeTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE))
         );
 
         mainSplitPanel.setRightComponent(scriptEnginePanel);
@@ -347,7 +450,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
             VisualizerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(VisualizerPanelLayout.createSequentialGroup()
                 .addComponent(visualizerToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(452, Short.MAX_VALUE))
+                .addContainerGap(448, Short.MAX_VALUE))
         );
 
         mainSplitPanel.setLeftComponent(VisualizerPanel);
@@ -364,12 +467,11 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addComponent(mainToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(mainSplitPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE))
+                .addComponent(mainSplitPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE))
         );
 
         menuBar.setName("menuBar"); // NOI18N
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(skdsswing.SKDSSwingApp.class).getContext().getResourceMap(SKDSSwingView.class);
         fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
         fileMenu.setName("fileMenu"); // NOI18N
 
@@ -412,7 +514,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
             .addGroup(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusMessageLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 690, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 688, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel)
@@ -436,12 +538,22 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel VisualizerPanel;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JTabbedPane mainSeTabbedPane;
     private javax.swing.JSplitPane mainSplitPanel;
     private javax.swing.JToolBar mainToolBar;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenu openMenu;
+    private javax.swing.JButton outputClearButton;
+    private javax.swing.JToggleButton outputEnableButton;
+    private javax.swing.JPanel outputPanel;
+    private javax.swing.JButton outputSaveButton;
+    private javax.swing.JToolBar outputToolBar;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JPanel scriptEnginePanel;
     private javax.swing.JToolBar scriptEngineToolbar;
