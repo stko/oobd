@@ -68,7 +68,7 @@ void
 obp_uds (void *pvParameters)
 {
   int keeprunning = 1;
-  data_packet dp;
+  data_packet * dp;
 
 /* function pointers to the bus interface */
   extern bus_init actBus_init;
@@ -80,6 +80,7 @@ obp_uds (void *pvParameters)
   extern xQueueHandle outputQueue;
   extern print_cbf printdata_CAN;
   MsgData *msg;
+  int i;
   unsigned char telegram[8];
   portBASE_TYPE msgType;
   /* select the can bus as output */
@@ -89,21 +90,7 @@ obp_uds (void *pvParameters)
   busControl (ODB_CMD_RECV, recvdata);
   for (; keeprunning;)
     {
-/*
-      //actBus_flush ();
-      dp.len = 8;
-      dp.recv = 0x7E0;
-      dp.data = &telegram;
-      telegram[0] = 11;
-      telegram[1] = 22;
-      telegram[2] = 33;
-      telegram[3] = 44;
-      telegram[4] = 55;
-      telegram[5] = 66;
-      telegram[6] = 77;
-      telegram[7] = 88;
-      actBus_send (&dp);
-*/
+
 	if (MSG_NONE != (msgType = waitMsg (protocolQueue, &msg, portMAX_DELAY)))	// portMAX_DELAY
 	//handle message
 	{
@@ -120,6 +107,12 @@ obp_uds (void *pvParameters)
 		}
 	      break;
 	    case MSG_SERIAL_DATA:
+	      // make sure that the telegram fulfills the UDS spec.
+	      dp =(data_packet*)msg->addr;
+	      dp->len &=0x7; // limit the length to max 8 
+	      for (i=dp->len;i<8;i++){ //fill unused bytes with 0
+		dp->data[i]=0;
+	      }
 	       actBus_send ((data_packet*)msg->addr);
 	      disposeMsg (msg);
 	      break;

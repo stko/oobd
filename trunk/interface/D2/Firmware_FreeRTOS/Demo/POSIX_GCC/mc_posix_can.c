@@ -36,6 +36,12 @@
 #include "odb_can.h"
 #include "mc_can.h"
 
+
+/* UDP Packet size to send/receive. */
+#define mainUDP_SEND_ADDRESS		"127.0.0.1"
+#define UDP_PORT_SEND			( 9998 )
+#define UDP_PORT_RECEIVE		( 9999 )
+
 /* global vars */
 struct sockaddr_in xReceiveAddress;
 int iSocketReceive = 0;
