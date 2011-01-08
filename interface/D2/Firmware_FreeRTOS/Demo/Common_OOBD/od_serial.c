@@ -67,8 +67,10 @@ inputRedirectTask (void *pvParameters)
 	  if (pdTRUE ==
 	      xQueueReceive (internalSerialRxQueue, &ucRx, portMAX_DELAY))
 	    {
-	      printChar (ucRx);
-	      putchar(ucRx);
+	      if (ucRx != 13 && ucRx !=10){
+		printChar (ucRx);
+		putchar(ucRx);
+	      }
 	      msg = createMsg (&ucRx, 1);
 	      if (pdPASS !=sendMsg (MSG_SERIAL_IN, inputQueue, msg)){
 		DEBUGPRINT ("Serial Redirect queue full!!\n", 'a');	      }
@@ -104,10 +106,33 @@ void sendData(data_packet *dp){
 			}
 }
 
+void sendParam(portBASE_TYPE key, portBASE_TYPE value){
+  DEBUGPRINT("Sending Param %d Value %d\n",key,value);
+}
+
 
 /*-----------------------------------------------------------*/
+#define crEOL ( 16 )
+#define crBLANK ( 17 )
+#define crCMD ( 18 )
+#define crHEX ( 19 )
+#define crUNKWN ( 20 )
+
+
 
 char checkValidChar(char a){
+  if (a== 13){
+    return crEOL;
+  }
+  if (a== '\t' || a == ' '){
+    return crBLANK;
+  }
+  if (a== 'p' || a == 'P'){
+    return crCMD;
+  }
+  if (a== '$'){
+    return crHEX;
+  }
   if (a>47 && a<58){
     return a-48;
   }else{
@@ -117,14 +142,10 @@ char checkValidChar(char a){
       if (a>96 && a<103){
 	return a-87;
       }else{
-	if (a==13){
-	  return 16;
-	}else{
-	  return 17;
+	return crUNKWN;
 	}
       }
     }
-  }
 }
 
 /*-----------------------------------------------------------*/
@@ -136,30 +157,71 @@ inputParserTask (void *pvParameters)
   //extern xQueueHandle inputQueue;
   MsgData *incomingMsg;
   char inChar;
-  portBASE_TYPE msgType = 0;
-  data_packet dp;
-  portBASE_TYPE packetInCount=0, totalInCount=0;
+  portBASE_TYPE msgType = 0, lastErr=0, processFurther = 1, hexInput=0;
+  portBASE_TYPE cmdKey=0 ,cmdValue = 0; // the both possible params
+  static data_packet dp;
+  static unsigned char buffer[8];
+  enum states //!< the possible states of the input parser state machine
+{
+  S_DATA,  //!< we just reading data to transmit
+  S_PARAM, //!< we just interpreting parameters
+  S_WAITEOL, //!< input error orrured or all params already given, so just waiting for EOL
+  S_SLEEP, //!< do nothing, until data has finally transfered
+  S_INIT  //!< initial state, waiting for input
+};
+  portBASE_TYPE actState=S_INIT, totalInCount=0;
+  dp.data=&buffer;
   for (;;)
     {
       if (MSG_NONE != (msgType = waitMsg (inputQueue, &incomingMsg, portMAX_DELAY)))
 	{
-	  switch (msgType){
-	    case MSG_SERIAL_IN:
-		inChar=*(char*)incomingMsg->addr;
-		disposeMsg (incomingMsg);
-		//handle input
-		if (inChar == 13 && totalInCount > 0){
+	DEBUGPRINT("totalInCount: %d\n",totalInCount);
+	switch (msgType){
+	  case MSG_SERIAL_IN:
+	    processFurther = 1;
+	    if (actState !=S_SLEEP ){ // if we not actual ignore any input 
+	      inChar=checkValidChar(*(char*)incomingMsg->addr); 
+	      DEBUGPRINT("charCode: %d \n",inChar);
+	      if (actState == S_WAITEOL){ // just waiting for an end of line
+		if (inChar == crEOL){
+		  if (lastErr){
+		    printser_string("Error:");
+		    printser_int(lastErr,10);
+		  }
+		  actState = S_INIT;
+		}
+	      }
+	      if (actState == S_INIT){
+		cmdKey=0;
+		cmdValue =0;
+		lastErr=0;
+		hexInput=0;
+		totalInCount=0;
+		if (inChar<16){ // first char is a valid hex char (0-F), so we switch into data line mode
+		  actState = S_DATA;
+		DEBUGPRINT ("Enter Data Mode\n",'a');
+		}
+		if (inChar == crCMD ){ // first char is a valid hex char (0-F), so we switch into data line mode
+		  actState = S_PARAM;
+		  processFurther = 0;
+		DEBUGPRINT ("Enter Param Mode\n",'a');
+		}
+		if (inChar == crEOL ){ // just print the command prompt
+		    printser_string("\r\n>");
+		}
+	      }
+	      if (actState==S_DATA){
+		if (inChar == crEOL){
+		  if (dp.len > 0){
 		  DEBUGPRINT ("EOL detected, send Buffer\n",'a');
-		    if (dp.len > 0){
-		     printser_string("\r\n");
-		        sendData(&dp);
-		    }
-		    totalInCount=0;
-		    
+		    printser_string("\r\n>");
+		    sendData(&dp);
+		  }
+		  actState = S_INIT;
+
 		}
 		else{
 		  //check for valid input 
-		  inChar= checkValidChar(inChar);
 		  if (inChar < 16){ // valid char, already as it's hex value
 		    if (totalInCount == 0){
 		      /* reset the protocol */
@@ -168,24 +230,90 @@ inputParserTask (void *pvParameters)
 		      dp.len=0;
 		    }
 		    totalInCount++;
-		     DEBUGPRINT ("%d:%d\n",totalInCount,inChar);
-		    if (totalInCount & 1 ){// just to see if totalInCount is just odd or even
-		      dp.data[++dp.len-1]=inChar<<4;
+		    DEBUGPRINT ("%d:%d\n",totalInCount,inChar);
+		    if (totalInCount % 2 ){// just to see if totalInCount is just odd or even
+		      dp.data[(++dp.len)-1]=inChar<<4;
 		    }else{
 		      dp.data[dp.len-1]+=inChar;		      
 		    }
 		    if ((dp.len > 7) && ((totalInCount & 1) == 0 )){// buffer full, transfer to protocol
-		     DEBUGPRINT ("Receive buffer full, send Buffer\n",'a');
-		     printser_string("\n");
+		      DEBUGPRINT ("Receive buffer full, send Buffer\n",'a');
+		      printser_string("\r\n>");
 		      sendData(&dp);
 		      dp.len=0;
 		    }
+		  }else{ // forbitten char, just waiting for end of line
+		    actState=S_WAITEOL;
+		    lastErr=1;
 		  }
 		}
-	    break;
-	    default:
-	      disposeMsg(incomingMsg);
-	  }
+	      }
+	      
+	      if (actState==S_PARAM && processFurther){
+		if (inChar == crEOL){
+		  if (totalInCount==3 || totalInCount==4){
+		  DEBUGPRINT ("EOL detected, send Param\n",'a');
+		    printser_string("\r\n>");
+		    sendParam(cmdKey,cmdValue);
+		  }else{
+		    lastErr=2;
+		  }
+		  actState = S_INIT;
+		}
+		else{
+		  /*check for valid input 
+		  * totalInCount is used to define where we are in the input line:
+		  * 0: at the beginning
+		  * 1: just reading the first parameter
+		  * 2: between the two numbers
+		  * 3: reading the second parameter
+		  * 4: input done, just waiting for EOL
+		  *
+		  */
+		  
+		  if (inChar==crHEX){
+		    if(totalInCount == 0 || totalInCount == 2) {// we are before the 2 numbers
+		      hexInput=1;
+		      totalInCount++; //starting to input a number
+		    }else{ // forbitten char, just waiting for end of line
+		      actState=S_WAITEOL;
+		      lastErr=2;
+		    }
+		  }else{
+		  if (inChar==crBLANK){
+		  DEBUGPRINT("Blank detected\n",'a');
+		  if(totalInCount == 1 || totalInCount==3){ //finish the input of a param
+		  totalInCount++; 
+		  }
+		  }else{
+		    if (inChar < 16){ // valid char, already as it's hex value
+		      if (inChar > 10 && !hexInput){ //wrong number format
+			actState=S_WAITEOL;
+			lastErr=2;
+		      }else {
+			if (totalInCount == 0 || totalInCount==1){
+			  cmdKey=cmdKey*(10+(6*hexInput))+inChar;
+			  totalInCount=1; //in case we were on 0 before
+			}
+			if (totalInCount == 2 || totalInCount==3){
+			  cmdValue=cmdValue*(10+(6*hexInput))+inChar;
+			  totalInCount=3; //in case we were on 2 before
+			}
+		      }
+		      }else{ // forbitten char, just waiting for end of line
+			actState=S_WAITEOL;
+			lastErr=1;
+		      }
+		    }
+		  }
+		}
+	      }
+	      
+	    }
+	  break;
+	}
+	disposeMsg (incomingMsg);
+	DEBUGPRINT("Actual State (out): %d \n",actState);
 	}
     }
 }

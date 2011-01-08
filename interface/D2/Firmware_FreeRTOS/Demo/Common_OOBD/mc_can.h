@@ -34,12 +34,6 @@
 #ifndef INC_MC_CAN_H
 #define INC_MC_CAN_H
 
-
-/* UDP Packet size to send/receive. */
-#define mainUDP_SEND_ADDRESS		"127.0.0.1"
-#define UDP_PORT_SEND			( 9998 )
-#define UDP_PORT_RECEIVE		( 9999 )
-
 portBASE_TYPE bus_init_can ();
 portBASE_TYPE bus_send_can (data_packet * data);
 void bus_flush_can ();
