@@ -77,7 +77,8 @@
 #define ODB_ERR_ERRFRAME 	1
 #define ODP_ERR_NOMODULE	2
 
-
+#define PARAM_TIMEOUT ( 5 )
+#define PARAM_RECVID  ( 6 )
 
 //! callback function for RX
 

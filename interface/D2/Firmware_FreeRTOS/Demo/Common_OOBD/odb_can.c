@@ -47,19 +47,20 @@ print_telegram (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 {
   static data_packet *dp;
   dp = data;
- printser_string("# 0x");
- printser_int(dp->recv,16);
- printser_string("  0x");
- printser_int( dp->err,16);
- printser_string("  ");
- printser_int( dp->len,10);
- printser_string("  ");
- int i;
- for (i=0; i<8;i++){
-  printser_uint8ToHex( dp->data[i]);
-  printser_string("  ");
- }
- printser_string("\n");
+  printser_string ("\r\n# 0x");
+  printser_int (dp->recv, 16);
+  printser_string ("  0x");
+  printser_int (dp->err, 16);
+  printser_string ("  ");
+  printser_int (dp->len, 10);
+  printser_string ("  ");
+  int i;
+  for (i = 0; i < 8; i++)
+    {
+      printser_uint8ToHex (dp->data[i]);
+      printser_string ("  ");
+    }
+  printser_string ("\n");
 }
 
 

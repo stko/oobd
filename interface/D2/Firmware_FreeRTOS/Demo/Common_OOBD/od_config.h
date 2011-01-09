@@ -67,12 +67,15 @@
 
 
 // debugging macros so we can pin down message origin at a glance
+#if (OOBD_PLATFORM == POSIX )	// switch debug messages on or off
 #define WHERESTR  "[file %s, line %d]: "
 #define WHEREARG  __FILE__, __LINE__
 #define DEBUGPRINT2(...)       fprintf(stderr, __VA_ARGS__)
 #define DEBUGPRINT3(...)       printf(__VA_ARGS__)
 #define DEBUGPRINT(_fmt, ...)  DEBUGPRINT2(WHERESTR _fmt, WHEREARG, __VA_ARGS__)
-//...
+#else
+#define DEBUGPRINT(_fmt, ...)
+#endif
 
 
 
@@ -94,11 +97,14 @@
 
 /* define message types */
 #define MSG_NONE		( 0 )
-#define MSG_INIT		( 1 )
-#define MSG_SERIAL_IN		( 2 )
-#define MSG_BUS_RECV		( 3 )
-#define MSG_SERIAL_DATA		( 4 )
-#define MSG_SERIAL_PARAM	( 5 )
+#define MSG_INIT		( 1 )	//!< generic msg to initialize (whatever)
+#define MSG_SERIAL_IN		( 2 )	//!< a char coming from the serial input
+#define MSG_BUS_RECV		( 3 )	//!< received some data on the bus
+#define MSG_SERIAL_DATA		( 4 )	//!< received some data to be send from the serial input
+#define MSG_SERIAL_PARAM	( 5 )	//!< received a paramter set from the cmd line
+#define MSG_INPUT_FEEDBACK	( 6 )	//!< feedback to the cmd line
+#define MSG_TICK		( 7 )	//!< system clock tick
+#define MSG_SERIAL_RELEASE	( 8 )	//!< tell the serial input to listen for cmds again
 
 
 /*-------- Global Vars --------------*/

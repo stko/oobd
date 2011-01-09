@@ -46,7 +46,6 @@ outputTask (void *pvParameters)
   MsgData *msg;
   print_cbf printdata;
   portBASE_TYPE msgType;
-  data_packet *dp;
   if (NULL != outputQueue)
     {
       for (;;)
@@ -58,19 +57,19 @@ outputTask (void *pvParameters)
 	      switch (msgType)
 		{
 		case MSG_BUS_RECV:
+		case MSG_INPUT_FEEDBACK:
 		  // use callback function to output data
-		  dp = msg->addr;
 		  printdata = msg->print;
-		  printdata (msgType, dp, printChar);
+		  printdata (msgType, msg->addr, printChar);
 		  break;
 		}
-	      //disposeMsg (msg);
+	      disposeMsg (msg);
 	    }
 	}
     }
 
   /* Port wasn't opened. */
-  DEBUGPRINT ("No Output queue.\n", 'a');
+  DEBUGPRINT ("FATAL ERROR: No Output queue.\n", 'a');
   vTaskDelete (NULL);
 }
 
