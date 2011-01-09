@@ -54,7 +54,7 @@ recvdata (data_packet * p)
 	  DEBUGPRINT ("FATAL ERROR: protocol queue is full!\n", 'a');
 
 	}
-     }
+    }
   else
     {
       DEBUGPRINT ("FATAL ERROR: Out of Heap space!l\n", 'a');
@@ -68,7 +68,7 @@ void
 obp_uds (void *pvParameters)
 {
   int keeprunning = 1;
-  data_packet * dp;
+  data_packet *dp;
 
 /* function pointers to the bus interface */
   extern bus_init actBus_init;
@@ -78,11 +78,16 @@ obp_uds (void *pvParameters)
   extern bus_close actBus_close;
   extern xQueueHandle protocolQueue;
   extern xQueueHandle outputQueue;
+  extern xQueueHandle inputQueue;
   extern print_cbf printdata_CAN;
   MsgData *msg;
+  portBASE_TYPE *paramData;
   int i;
   unsigned char telegram[8];
   portBASE_TYPE msgType;
+  portBASE_TYPE recvID = 0x7E0;
+  portBASE_TYPE configTimeout = 6;
+  portBASE_TYPE timeout = 0;
   /* select the can bus as output */
   odbarr[ODB_CAN] ();
   actBus_init ();
@@ -91,7 +96,7 @@ obp_uds (void *pvParameters)
   for (; keeprunning;)
     {
 
-	if (MSG_NONE != (msgType = waitMsg (protocolQueue, &msg, portMAX_DELAY)))	// portMAX_DELAY
+      if (MSG_NONE != (msgType = waitMsg (protocolQueue, &msg, portMAX_DELAY)))	// portMAX_DELAY
 	//handle message
 	{
 	  switch (msgType)
@@ -102,26 +107,72 @@ obp_uds (void *pvParameters)
 	      // forward data to the output task
 	      if (pdPASS != sendMsg (MSG_BUS_RECV, outputQueue, msg))
 		{
-		  DEBUGPRINT ("FATAL ERROR: protocol queue is full!\n", 'a');
+		  DEBUGPRINT ("FATAL ERROR: output queue is full!\n", 'a');
 
 		}
+	      if (pdPASS != sendMsg (MSG_SERIAL_RELEASE, inputQueue, NULL))
+		{
+		  DEBUGPRINT ("FATAL ERROR: input queue is full!\n", 'a');
+
+		}
+	      timeout = 0;
 	      break;
 	    case MSG_SERIAL_DATA:
 	      // make sure that the telegram fulfills the UDS spec.
-	      dp =(data_packet*)msg->addr;
-	      dp->len &=0x7; // limit the length to max 8 
-	      for (i=dp->len;i<8;i++){ //fill unused bytes with 0
-		dp->data[i]=0;
-	      }
-	       actBus_send ((data_packet*)msg->addr);
-	      disposeMsg (msg);
+	      dp = (data_packet *) msg->addr;
+	      dp->recv = recvID;
+	      dp->len &= 0x7;	// limit the length to max 8 
+	      for (i = dp->len; i < 8; i++)
+		{		//fill unused bytes with 0
+		  dp->data[i] = 0;
+		}
+	      actBus_send ((data_packet *) msg->addr);
+	      // forward the data to the output task
+	      msg->print = printdata_CAN;
+	      if (pdPASS != sendMsg (MSG_BUS_RECV, outputQueue, msg))
+		{
+		  DEBUGPRINT ("FATAL ERROR: output queue is full!\n", 'a');
+
+		}
+
+	      //disposeMsg (msg);
+	      timeout = configTimeout;
 	      break;
 	    case MSG_SERIAL_PARAM:
+	      paramData = (portBASE_TYPE *) msg->addr;
+	      DEBUGPRINT ("parameter received %d %d\n", paramData[0],
+			  paramData[1]);
+	      switch (paramData[0])
+		{
+		case PARAM_TIMEOUT:
+		  configTimeout = paramData[1] + 1;
+		  break;
+		case PARAM_RECVID:
+		  recvID = paramData[1];
+		  break;
+		}
 	      disposeMsg (msg);
 	      break;
 	    case MSG_INIT:
-	      DEBUGPRINT("Reset Protocol\n",'a');
+	      DEBUGPRINT ("Reset Protocol\n", 'a');
 	      disposeMsg (msg);
+	      break;
+	    case MSG_TICK:
+	      disposeMsg (msg);
+	      if (timeout > 0)
+		{		// we just waiting for an answer
+		  if (timeout == 1)
+		    {		// time's gone...
+		      if (pdPASS !=
+			  sendMsg (MSG_SERIAL_RELEASE, inputQueue, NULL))
+			{
+			  DEBUGPRINT ("FATAL ERROR: input queue is full!\n",
+				      'a');
+
+			}
+		    }
+		  timeout--;
+		}
 	      break;
 	    default:
 	      disposeMsg (msg);

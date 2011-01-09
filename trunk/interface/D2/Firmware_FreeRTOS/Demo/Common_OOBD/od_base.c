@@ -42,7 +42,7 @@ bus_flush actBus_flush = NULL;
 bus_param actBus_param = NULL;
 bus_close actBus_close = NULL;
 
-char outputBuffer [100];
+char outputBuffer[100];
 
 
 void
@@ -170,7 +170,7 @@ waitMsg (xQueueHandle recv, MsgData ** msgdata, portBASE_TYPE timeout)
   if (pdPASS == (recvStatus = xQueueReceive (recv, &odMsg, timeout)))
     {
       *msgdata = odMsg.msgPtr;
-     return odMsg.msgType;
+      return odMsg.msgType;
     }
   else
     {
@@ -181,104 +181,132 @@ waitMsg (xQueueHandle recv, MsgData ** msgdata, portBASE_TYPE timeout)
 
 
 
-void strreverse(char* begin, char* end) {
+void
+strreverse (char *begin, char *end)
+{
 
-	char aux;
+  char aux;
 
-	while(end>begin) {
-		aux=*end;
-		*end--=*begin;
-		*begin++=aux;
-	}
+  while (end > begin)
+    {
+      aux = *end;
+      *end-- = *begin;
+      *begin++ = aux;
+    }
 }
 
-void uint8ToHex(char *buf, uint8_t value) {
-	static const char num[] = "0123456789abcdef";
+void
+uint8ToHex (char *buf, uint8_t value)
+{
+  static const char num[] = "0123456789abcdef";
 
-	// write upper nibble
-	buf[0] = num[value >> 4];
-	// write lower nibble
-	buf[1] = num[value & 0x0F];
-	buf[2] = 0;
+  // write upper nibble
+  buf[0] = num[value >> 4];
+  // write lower nibble
+  buf[1] = num[value & 0x0F];
+  buf[2] = 0;
 }
 
-void uint16ToHex(char *buf, uint16_t value) {
-	uint8ToHex(buf, (uint8_t)(value >> 8));
-	buf += 2;
-	uint8ToHex(buf, (uint8_t)value);
-	buf += 2;
-	*buf = 0;
+void
+uint16ToHex (char *buf, uint16_t value)
+{
+  uint8ToHex (buf, (uint8_t) (value >> 8));
+  buf += 2;
+  uint8ToHex (buf, (uint8_t) value);
+  buf += 2;
+  *buf = 0;
 }
 
-void uint32ToHex(char *buf, uint32_t value) {
-	uint16ToHex(buf, (uint16_t)(value >> 16));
-	buf += 4;
-	uint16ToHex(buf, (uint16_t)value);
-	buf += 4;
-	*buf = 0;
+void
+uint32ToHex (char *buf, uint32_t value)
+{
+  uint16ToHex (buf, (uint16_t) (value >> 16));
+  buf += 4;
+  uint16ToHex (buf, (uint16_t) value);
+  buf += 4;
+  *buf = 0;
 }
 
-void itoa(int value, char* str, int base) {
+void
+itoa (int value, char *str, int base)
+{
 
-	static const char num[] = "0123456789abcdefghijklmnopqrstuvwxyz";
-	char* wstr=str;
-	int sign;
+  static const char num[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+  char *wstr = str;
+  int sign;
 
-	div_t res;
+  div_t res;
 
-	// Validate base
-	if (base<2 || base>35) {
-		*wstr='\0';
-		return;
-	}
+  // Validate base
+  if (base < 2 || base > 35)
+    {
+      *wstr = '\0';
+      return;
+    }
 
-	// Take care of sign
-	if ((sign=value) < 0) value = -value;
+  // Take care of sign
+  if ((sign = value) < 0)
+    value = -value;
 
-	// Conversion. Number is reversed.
-	do {
-		res = div(value,base);
-		*wstr++ = num[res.rem];
-		value=res.quot;
-	} while (value != 0);
+  // Conversion. Number is reversed.
+  do
+    {
+      res = div (value, base);
+      *wstr++ = num[res.rem];
+      value = res.quot;
+    }
+  while (value != 0);
 
-	if(sign<0) *wstr++='-';
+  if (sign < 0)
+    *wstr++ = '-';
 
-	*wstr='\0';
+  *wstr = '\0';
 
-	// Reverse string
-	strreverse(str,wstr-1);
+  // Reverse string
+  strreverse (str, wstr - 1);
 }
 
-void printser_string(char const * str){
+void
+printser_string (char const *str)
+{
   extern printChar_cbf printChar;
- if (str) {
-		/* transmit characters until 0 character */
-		while (*str) {
-			/* write character to buffer and increment pointer*/
-			putchar(*str);
-			printChar(*str++);
-		}
+  if (str)
+    {
+      /* transmit characters until 0 character */
+      while (*str)
+	{
+	  /* write character to buffer and increment pointer */
+	  putchar (*str);
+	  printChar (*str++);
 	}
+    }
 
 }
 
-void printser_int(int value, int base){
-  itoa(value, (char *) &outputBuffer, base);
-  printser_string((char *) &outputBuffer);
+void
+printser_int (int value, int base)
+{
+  itoa (value, (char *) &outputBuffer, base);
+  printser_string ((char *) &outputBuffer);
 }
 
-void printser_uint32ToHex( uint32_t value) {
-  uint32ToHex((char *) &outputBuffer,  value);
-  printser_string((char *) &outputBuffer);
+void
+printser_uint32ToHex (uint32_t value)
+{
+  uint32ToHex ((char *) &outputBuffer, value);
+  printser_string ((char *) &outputBuffer);
 }
 
-void printser_uint16ToHex( uint16_t value) {
-  uint16ToHex((char *) &outputBuffer,  value);
-  printser_string((char *) &outputBuffer);
+void
+printser_uint16ToHex (uint16_t value)
+{
+  uint16ToHex ((char *) &outputBuffer, value);
+  printser_string ((char *) &outputBuffer);
 }
 
-void printser_uint8ToHex( uint8_t value) {
-  uint8ToHex((char *) &outputBuffer,  value);
-  printser_string((char *) &outputBuffer);
+void
+printser_uint8ToHex (uint8_t value)
+{
+  uint8ToHex ((char *) &outputBuffer, value);
+  printser_string ((char *) &outputBuffer);
 }

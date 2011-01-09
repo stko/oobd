@@ -38,8 +38,7 @@
 #include "od_serial.h"
 #include "od_outputTask.h"
 
-// Achtung - muß noch entfernt werden...
-#include "mc_can.h"
+
 
 /* Constant definition used to turn on/off the pre-emptive scheduler. */
 static const short sUsingPreemption = configUSE_PREEMPTION;
@@ -52,8 +51,8 @@ static const short sUsingPreemption = configUSE_PREEMPTION;
 void
 tickTask (void *pvParameters)
 {
-
-  char buffer[1024];
+  extern xQueueHandle protocolQueue;
+  // char buffer[1024];
   for (;;)
     {
 /*
@@ -62,7 +61,12 @@ tickTask (void *pvParameters)
       vTaskGetRunTimeStats (buffer);
       DEBUGPRINT ("%s", buffer);
 */
-      vTaskDelay (5000 / portTICK_RATE_MS);
+      if (pdPASS != sendMsg (MSG_TICK, protocolQueue, NULL))
+	{
+	  DEBUGPRINT ("FATAL ERROR: protocol queue is full!\n", 'a');
+
+	}
+      vTaskDelay (10 / portTICK_RATE_MS);	// 10ms tich time
 
     }
 }
@@ -78,7 +82,7 @@ main (void)
   //vParTestInitialise ();
   //vPrintInitialise ();
   // Version String
-  DEBUGPRINT("OOBD Build: %s\n",SVNREV);
+  DEBUGPRINT ("OOBD Build: %s\n", SVNREV);
   /* Activate the busses */
   initBusses ();
   /* Activate the protocols */

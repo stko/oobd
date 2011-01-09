@@ -88,18 +88,18 @@ portBASE_TYPE sendMsgFromISR (portBASE_TYPE msgType, xQueueHandle recv,
 			      MsgData * msg);
 portBASE_TYPE waitMsg (xQueueHandle recv, MsgData ** msg,
 		       portBASE_TYPE timeout);
-		       
-		       
+
+
 // Print functions
 
-void printser_string(char const * str);
+void printser_string (char const *str);
 
-void printser_int(int value, int base);
+void printser_int (int value, int base);
 
-void printser_uint32ToHex( uint32_t value) ;
+void printser_uint32ToHex (uint32_t value);
 
-void printser_uint16ToHex( uint16_t value);
+void printser_uint16ToHex (uint16_t value);
 
-void printser_uint8ToHex( uint8_t value);
+void printser_uint8ToHex (uint8_t value);
 
 #endif /* INC_OD_BASE_H */
