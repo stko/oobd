@@ -29,31 +29,8 @@ static xQueueHandle hSerialRx;
 static xQueueHandle hSerialTx;
 
 void InitSerialComm() {
-//	uint32_t tmp;
 
-	/* Enable PORTA Clock */
-	RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
-
-	/* Enable USART1 Clock */
-	RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
-
-	/* Enable USART1 */
-	USART1->CR1 = USART_CR1_UE;
-
-	/* Set baudrate divider to 39,0625 -> 115200 baud @ 72MHz */
-	USART1->BRR = (39 << 4) | (1);
-
-	USART1->CR2 = 0;
-	USART1->CR3 = 0;
-	USART1->CR1 = USART_CR1_UE | USART_CR1_TE | USART_CR1_RE | USART_CR1_RXNEIE;
-
-	/* configure PA9 input (RX), PA10 alternate push/pull output (TX) */
-/*
-	tmp = GPIOA->CRH;
-	tmp &= ~((GPIO_CRH_CNF9 | GPIO_CRH_CNF10) | (GPIO_CRH_MODE9 | GPIO_CRH_MODE10));
-	tmp |= GPIO_CRH_CNF10_0 | GPIO_CRH_CNF9_1 | GPIO_CRH_MODE9_1 | GPIO_CRH_MODE9_0;
-	GPIOA->CRH = tmp;
-*/
+	uart1_puts("\r\n*** InitSerialComm() ***");
 
 	hSerialTx = xQueueCreate( TX_QUEUE_SIZE, sizeof( uint8_t ) );
 	hSerialRx = xQueueCreate( RX_QUEUE_SIZE, sizeof( uint8_t ) );
@@ -67,13 +44,6 @@ void InitSerialComm() {
 				(void *)NULL,
 				SERIAL_COMM_TASK_PRIORITY,
 				(xTaskHandle *)NULL );
-
-		/* Set USART1 interrupt to low priority */
-		NVIC->IP[USART1_IRQn] = (uint8_t)0xE0;
-		/* Clear pending USART1 interrupt */
-		NVIC_ClearPendingIRQ(USART1_IRQn);
-		/* Enable USART1 interrupt */
-		NVIC_EnableIRQ(USART1_IRQn);
 	}
 }
 
@@ -191,6 +161,9 @@ static void prvSerialTxTask( void *pvParameters )
 }
 
 void USART1_IRQHandler(void) {
+
+	uart1_puts("\r\n*** Entering USART1_IRQHandler ***");
+
 	uint16_t sr = USART1->SR;
 	char ch;
 	static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
@@ -223,6 +196,7 @@ void USART1_IRQHandler(void) {
 			USART1->CR1 &= ~USART_CR1_TXEIE;
 		}
 	}
+	uart1_puts("\r\n*** Exiting USART1_IRQHandler ***");
 }
 
 void strreverse(char* begin, char* end) {

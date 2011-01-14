@@ -48,6 +48,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void);
 #else
 void CAN1_RX0_IRQHandler(void);
 #endif
+void USART1_IRQHandler(void);
 
 #ifdef __cplusplus
 }
