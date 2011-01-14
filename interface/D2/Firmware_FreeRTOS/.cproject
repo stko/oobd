@@ -5,6 +5,9 @@
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827" moduleId="org.eclipse.cdt.core.settings" name="Debug_STM32">
+				<macros>
+					<stringMacro name="build_project" type="VALUE_TEXT" value="Debug_STM32_Build"/>
+				</macros>
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -66,8 +69,11 @@
 							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.debug.329726973" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.debug"/>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1016718555" name="stm32f10x_can.c" rcbsApplicability="disable" resourcePath="Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_can.c" toolsToInvoke="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug.646274676.638592265">
+						<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug.646274676.638592265" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug.646274676"/>
+					</fileInfo>
 					<sourceEntries>
-						<entry excluding="Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_i2c.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_crc.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_cec.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_adc.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/can.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/can.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c|Demo/Common/drivers/ST/STM32F10xFWLib/v3_0_0|Source/portable/MemMang/heap_3.c|Source/portable/MemMang/heap_2.c|Source/portable/GCC/Posix|Demo/POSIX_GCC|Demo/Common_OOBD|OOBD_Firmware/src/can.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c|freeRTOS_CM3/Source/portable/MemMang/heap_3.c|freeRTOS_CM3/Source/portable/MemMang/heap_2.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/can_debug.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_i2c.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_crc.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_cec.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_adc.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/can.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/can.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c|Demo/Common/drivers/ST/STM32F10xFWLib/v3_0_0|Source/portable/MemMang/heap_3.c|Source/portable/MemMang/heap_2.c|Source/portable/GCC/Posix|Demo/POSIX_GCC|Demo/Common_OOBD|OOBD_Firmware/src/can.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c|freeRTOS_CM3/Source/portable/MemMang/heap_3.c|freeRTOS_CM3/Source/portable/MemMang/heap_2.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -1889,7 +1895,9 @@
 					</profile>
 				</scannerConfigBuildInfo>
 			</storageModule>
-			<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+			<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
+				<buildTargets/>
+			</storageModule>
 		</cconfiguration>
 		<cconfiguration id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922" moduleId="org.eclipse.cdt.core.settings" name="Release_STM32">
@@ -1951,8 +1959,11 @@
 							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release.1856569119" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release"/>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.1152157794" name="stm32f10x_can.c" rcbsApplicability="disable" resourcePath="Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_can.c" toolsToInvoke="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release.1876267419.2147195742">
+						<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release.1876267419.2147195742" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release.1876267419"/>
+					</fileInfo>
 					<sourceEntries>
-						<entry excluding="Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_i2c.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_crc.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_cec.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_adc.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/can.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/can.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c|Demo/Common/drivers/ST/STM32F10xFWLib/v3_0_0|Source/portable/MemMang/heap_3.c|Source/portable/MemMang/heap_2.c|Source/portable/GCC/Posix|Demo/POSIX_GCC|Demo/Common_OOBD|OOBD_Firmware/src/can.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c|STM32F10x_StdPeriph_Driver/src/misc.c|freeRTOS_CM3/Source/portable/MemMang/heap_3.c|freeRTOS_CM3/Source/portable/MemMang/heap_2.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/can_debug.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_i2c.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_crc.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_cec.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_adc.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/can.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/can.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c|Demo/Common/drivers/ST/STM32F10xFWLib/v3_0_0|Source/portable/MemMang/heap_3.c|Source/portable/MemMang/heap_2.c|Source/portable/GCC/Posix|Demo/POSIX_GCC|Demo/Common_OOBD|OOBD_Firmware/src/can.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c|STM32F10x_StdPeriph_Driver/src/misc.c|freeRTOS_CM3/Source/portable/MemMang/heap_3.c|freeRTOS_CM3/Source/portable/MemMang/heap_2.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -3774,7 +3785,9 @@
 					</profile>
 				</scannerConfigBuildInfo>
 			</storageModule>
-			<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+			<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
+				<buildTargets/>
+			</storageModule>
 		</cconfiguration>
 		<cconfiguration id="cdt.managedbuild.config.gnu.exe.debug.1870774293">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.debug.1870774293" moduleId="org.eclipse.cdt.core.settings" name="Debug_POSIX_Sim">
@@ -5636,6 +5649,9 @@
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 			<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 			<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
+			<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
+				<buildTargets/>
+			</storageModule>
 		</cconfiguration>
 		<cconfiguration id="cdt.managedbuild.config.gnu.exe.release.1562554120">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.release.1562554120" moduleId="org.eclipse.cdt.core.settings" name="Release_POSIX_Sim">
@@ -7497,6 +7513,9 @@
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 			<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 			<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
+			<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
+				<buildTargets/>
+			</storageModule>
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">

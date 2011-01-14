@@ -22,6 +22,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "SystemConfig.h"
 #include "stm32f10x.h"
+#include "SerialComm.h"
 
 /* -------- Used Global variables -----------------------------------------------------*/
 
@@ -48,22 +49,21 @@
 void System_Configuration(void)
 {
   /* System Clocks Configuration */
-//  RCC_Configuration();
+/*  RCC_Configuration(); */
 
-  /* NVIC Configuration */
-//  NVIC_Configuration();
-  
-  /* GPIO configuration */
+   /* GPIO configuration */
   GPIO_Configuration();
-
   /* Configure EXTI Line0 to generate an interrupt on falling edge */
 /*  EXTI_Configuration(); */
 
-  /* GPIO configuration */
-//  CAN_Configuration();
+  /* CAN1 configuration */
+/*  CAN_Configuration(); */
 
   /* Timer configuration */
 /*  TIMx_Configuration(TIMER_LCD); */
+
+  /* NVIC Configuration */
+   NVIC_Configuration();
 }
 
 
@@ -78,13 +78,13 @@ void RCC_Configuration(void)
   RCC_DeInit();
 
   /* HCLK = SYSCLK/4 = 2MHz */
-  RCC_HCLKConfig(RCC_SYSCLK_Div4);
+/*  RCC_HCLKConfig(RCC_SYSCLK_Div4); */
   
   /* PCLK2 = HCLK = 2MHz */
-  RCC_PCLK2Config(RCC_HCLK_Div1);
+//  RCC_PCLK2Config(RCC_HCLK_Div1);
 
   /* PCLK1 = HCLK = 2MHz */
-  RCC_PCLK1Config(RCC_HCLK_Div1);
+/*  RCC_PCLK1Config(RCC_HCLK_Div1); */
     
   /* Flash 2 wait state */
 /*  FLASH_SetLatency(FLASH_Latency_0); */
@@ -100,9 +100,6 @@ void RCC_Configuration(void)
     
   /* TIM to be used clock enable */
 /*  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIMx, ENABLE); */
-
-  /* GPIOx clocks enable */
-//  RCC_APB2PeriphClockCmd(RCC_APB2Periph_Used_GPIO | RCC_APB2Periph_AFIO, ENABLE);
 }
 
 /**
@@ -116,7 +113,7 @@ void NVIC_Configuration(void)
 
   /* Setting the priority grouping bits length */
 //  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
+ // NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);
   
   /* Enable the TIM_LCD global Interrupt */
 
@@ -126,17 +123,26 @@ void NVIC_Configuration(void)
 //  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 //  NVIC_Init(&NVIC_InitStructure);
 
+  /* Enable the USART1 Interrupt */
+  NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+
   /* Enable CAN1 interrupt */
+/*
 #ifndef STM32F10X_CL
   NVIC_InitStructure.NVIC_IRQChannel = USB_LP_CAN1_RX0_IRQn;
 #else
  NVIC_InitStructure.NVIC_IRQChannel = CAN1_RX0_IRQn;
-#endif /* STM32F10X_CL*/
- NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0;
+#endif */ /* STM32F10X_CL*/
+/*
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
-
+*/
   /* Enable the EXTI0 Interrupt */
 //  NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;
 //  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
@@ -155,12 +161,13 @@ void GPIO_Configuration(void)
 {
   GPIO_InitTypeDef GPIO_InitStructure;
 
+  /* GPIOx clocks enable */
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB |
+		  RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO, ENABLE);
+
   /* Configure all unused GPIO port pins in Analog Input mode (floating input
      trigger OFF), this will reduce the power consumption and increase the
      device immunity against EMI/EMC ******************************************/
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOA |
-		  	  	  	  	 RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC, ENABLE);
-
   GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_All;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
@@ -189,18 +196,7 @@ void GPIO_Configuration(void)
    //-------------------------------------------------------------------------------------------------------------------//
 
   /* Enable USART1 Clock */
-	RCC->APB2ENR |= RCC_APB2ENR_USART1EN;
-
-	/* Enable USART1 */
-	USART1->CR1 = USART_CR1_UE;
-
-	/* Set baudrate divider to 39,0625 -> 115200 baud @ 72MHz */
-	USART1->BRR = (39 << 4) | (1);
-
-	USART1->CR2 = 0;
-	USART1->CR3 = 0;
-	USART1->CR1 = USART_CR1_UE | USART_CR1_TE | USART_CR1_RE | USART_CR1_RXNEIE;
-
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 
   /* initialize USART1 on PA9 (USART1_TX) and PA10 (USART1_RX) */
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -211,6 +207,9 @@ void GPIO_Configuration(void)
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  /* configuration of USART1 */
+  USART_Configuration();
 
   //-------------------------------------------------------------------------------------------------------------------//
    // PB 0 = ??? = GPIO_Mode_AIN - Input floating for low power consumption (see above)
@@ -268,7 +267,6 @@ void GPIO_Configuration(void)
    //-------------------------------------------------------------------------------------------------------------------//
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    /* set GPIO Push-Pull output */
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14 | GPIO_Pin_15;
     /* initialize new PortC settings  */
     GPIO_Init(GPIOC, &GPIO_InitStructure);
@@ -318,6 +316,47 @@ void EXTI_Configuration(void)
 //  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
 //  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
 //  EXTI_Init(&EXTI_InitStructure);
+}
+
+void USART_Configuration(void)
+{
+	USART_InitTypeDef USART_InitStructure;
+
+/* USARTx configuration ------------------------------------------------------*/
+  /* USARTx configured as follow:
+        - BaudRate = 9600 baud
+        - Word Length = 8 Bits
+        - Two Stop Bit
+        - Odd parity
+        - Hardware flow control disabled (RTS and CTS signals)
+        - Receive and transmit enabled
+  */
+   USART_InitStructure.USART_BaudRate = 115200;
+   USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+   USART_InitStructure.USART_StopBits = USART_StopBits_1;
+   USART_InitStructure.USART_Parity = USART_Parity_No;
+   USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+   USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+
+   /* Configure USART1 */
+   USART_Init(USART1, &USART_InitStructure);
+
+   /* Configure USART1 */
+   USART_Init(USART1, &USART_InitStructure);
+
+  /* Enable the USART1-Transmit interrupt: this interrupt is generated when the
+     USART1 transmit data register is empty */
+   /* USART_ITConfig(USART1, USART_IT_TXE, ENABLE); */
+
+  /* Enable the USART1-Receive interrupt: this interrupt is generated when the
+     USART1 receive data register is not empty */
+  USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+
+  /* Enable the USART1 */
+  USART_Cmd(USART1, ENABLE);
+
+  /* initialize Serial-COMport FreeRTOS tasks */
+  InitSerialComm();
 }
 
 /**

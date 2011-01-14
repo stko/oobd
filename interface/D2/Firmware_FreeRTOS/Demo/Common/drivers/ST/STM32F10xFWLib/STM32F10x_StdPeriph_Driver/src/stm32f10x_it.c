@@ -31,8 +31,9 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-CanRxMsg RxMessage;
-CanTxMsg TxMessage;
+//CanRxMsg RxMessage;
+//CanTxMsg TxMessage;
+
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -142,11 +143,8 @@ void SysTick_Handler(void)
   * @param  None
   * @retval None
   */
-#ifndef STM32F10X_CL
+/*
 void USB_LP_CAN1_RX0_IRQHandler(void)
-#else
-void CAN1_RX0_IRQHandler(void)
-#endif)
 {
 	GPIO_ResetBits(GPIOB,GPIO_Pin_4);
 	GPIO_ResetBits(GPIOB,GPIO_Pin_5);
@@ -155,7 +153,7 @@ void CAN1_RX0_IRQHandler(void)
 
 	if ((RxMessage.StdId == 0x321)&&(RxMessage.IDE == CAN_ID_STD)&&(RxMessage.DLC == 1)&&(RxMessage.Data[0] == 0x55))
 	{
-	    /* Turn Off LED4, LED5 */
+	    // Turn Off LED4, LED5
 		GPIO_SetBits(GPIOB,GPIO_Pin_4);
 	    GPIO_SetBits(GPIOB,GPIO_Pin_5);
 
@@ -172,7 +170,7 @@ void CAN1_RX0_IRQHandler(void)
 	}
 	else
 	{
-		/* Turn On LED4, LED5 */
+		// Turn On LED4, LED5
 		GPIO_ResetBits(GPIOB,GPIO_Pin_4);
 		GPIO_ResetBits(GPIOB,GPIO_Pin_5);
 
@@ -188,7 +186,7 @@ void CAN1_RX0_IRQHandler(void)
 	    CAN_Transmit(CAN1, &TxMessage);
 	}
 }
-
+*/
 /******************************************************************************/
 /*                 STM32F10x Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
