@@ -90,7 +90,7 @@ CFLAGS=-I . \
 
 # Source files
 SOURCE=	mc_posix_can.c \
-		mc_posix_serial.c
+		mc_posix_serial.c 
 
 
 
@@ -102,7 +102,7 @@ FREERTOS_SOURCE= $(RTOS_SOURCE_DIR)/list.c \
 		$(RTOS_SOURCE_DIR)/queue.c \
 		$(RTOS_SOURCE_DIR)/tasks.c \
 		$(RTOS_PORT_DIR)/port.c \
-		$(RTOS_SOURCE_DIR)/portable/MemMang/heap_2.c
+		$(RTOS_SOURCE_DIR)/portable/MemMang/heap_3.c
 
 PORT_INCLUDE_SOURCE= $(PORT_INCLUDE_DIR)/AsyncIO.c \
 		$(PORT_INCLUDE_DIR)/AsyncIOSerial.c \

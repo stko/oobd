@@ -265,6 +265,7 @@ inputParserTask (void *pvParameters)
 		      lastErr = 0;
 		      hexInput = 0;
 		      totalInCount = 0;
+		      dp.len=0;
 		      if (inChar < 16)
 			{	// first char is a valid hex char (0-F), so we switch into data line mode
 			  actState = S_DATA;
@@ -315,7 +316,6 @@ inputParserTask (void *pvParameters)
 				}
 			      if ((dp.len > 7) && ((totalInCount & 1) == 0))
 				{	// buffer full, transfer to protocol
-				  createFeedbackMsg (0);
 				  sendData (&dp);
 				  dp.len = 0;
 				}
@@ -428,6 +428,7 @@ inputParserTask (void *pvParameters)
 		  actState = S_INIT;	// start again
 		}
 	    }
+
 	  disposeMsg (incomingMsg);
 	}
     }
