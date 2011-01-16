@@ -107,6 +107,26 @@
 #define MSG_SERIAL_RELEASE	( 8 )	//!< tell the serial input to listen for cmds again
 
 
+
+/* define parameter types */
+#define PARAM_INFO    		( 0 )
+#define PARAM_ECHO    		( 1 )
+#define PARAM_LISTEN    	( 2 )
+#define PARAM_PROTOCOL 		( 3 )
+#define PARAM_BUS 		( 4 )
+#define PARAM_BUS_CONFIG 	( 5 )
+#define PARAM_TIMEOUT 		( 6 )
+#define PARAM_TIMEOUT_PENDING 	( 7 )
+#define PARAM_BLOCKSIZE 	( 8 )
+#define PARAM_FRAME_DELAY 	( 9 )
+#define PARAM_RECVID  		( 10 )
+#define PARAM_TP_ON 		( 11 )
+#define PARAM_TP_OFF 		( 12 )
+#define PARAM_TP_FREQ 		( 13 )
+
+
+
+
 /*-------- Global Vars --------------*/
 
 

@@ -145,11 +145,35 @@ obp_uds (void *pvParameters)
 			  paramData[1]);
 	      switch (paramData[0])
 		{
+		case  PARAM_INFO:
+		  break;
+		case PARAM_ECHO:
+		  break;
+		case PARAM_LISTEN:
+		  break;
+		case PARAM_PROTOCOL:
+		  break;
+		case PARAM_BUS:
+		  break;
+		case PARAM_BUS_CONFIG:
+		  break;
 		case PARAM_TIMEOUT:
 		  configTimeout = paramData[1] + 1;
 		  break;
+		case PARAM_TIMEOUT_PENDING:
+		  break;
+		case PARAM_BLOCKSIZE:
+		  break;
+		case PARAM_FRAME_DELAY:
+		  break;
 		case PARAM_RECVID:
 		  recvID = paramData[1];
+		  break;
+		case PARAM_TP_ON:
+		  break;
+		case PARAM_TP_OFF:
+		  break;
+		case PARAM_TP_FREQ:
 		  break;
 		}
 	      break;
