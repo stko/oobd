@@ -81,6 +81,7 @@ obp_uds (void *pvParameters)
   extern xQueueHandle inputQueue;
   extern print_cbf printdata_CAN;
   MsgData *msg;
+  unsigned char doNotDisposeMsg=0;
   portBASE_TYPE *paramData;
   int i;
   unsigned char telegram[8];
@@ -99,6 +100,7 @@ obp_uds (void *pvParameters)
       if (MSG_NONE != (msgType = waitMsg (protocolQueue, &msg, portMAX_DELAY)))	// portMAX_DELAY
 	//handle message
 	{
+	  unsigned char doNotDisposeMsg=0;
 	  switch (msgType)
 	    {
 	    case MSG_BUS_RECV:
@@ -115,6 +117,7 @@ obp_uds (void *pvParameters)
 		  DEBUGPRINT ("FATAL ERROR: input queue is full!\n", 'a');
 
 		}
+		doNotDisposeMsg=1;
 	      timeout = 0;
 	      break;
 	    case MSG_SERIAL_DATA:
@@ -122,20 +125,18 @@ obp_uds (void *pvParameters)
 	      dp = (data_packet *) msg->addr;
 	      dp->recv = recvID;
 	      dp->len &= 0x7;	// limit the length to max 8 
-	      for (i = dp->len; i < 8; i++)
+/*	      for (i = dp->len; i < 8; i++)
 		{		//fill unused bytes with 0
 		  dp->data[i] = 0;
 		}
-	      actBus_send ((data_packet *) msg->addr);
+*/	      actBus_send ((data_packet *) msg->addr);
 	      // forward the data to the output task
 	      msg->print = printdata_CAN;
 	      if (pdPASS != sendMsg (MSG_BUS_RECV, outputQueue, msg))
 		{
 		  DEBUGPRINT ("FATAL ERROR: output queue is full!\n", 'a');
-
 		}
-
-	      //disposeMsg (msg);
+		doNotDisposeMsg=1;
 	      timeout = configTimeout;
 	      break;
 	    case MSG_SERIAL_PARAM:
@@ -151,14 +152,11 @@ obp_uds (void *pvParameters)
 		  recvID = paramData[1];
 		  break;
 		}
-	      disposeMsg (msg);
 	      break;
 	    case MSG_INIT:
 	      DEBUGPRINT ("Reset Protocol\n", 'a');
-	      disposeMsg (msg);
 	      break;
 	    case MSG_TICK:
-	      disposeMsg (msg);
 	      if (timeout > 0)
 		{		// we just waiting for an answer
 		  if (timeout == 1)
@@ -174,10 +172,10 @@ obp_uds (void *pvParameters)
 		  timeout--;
 		}
 	      break;
-	    default:
+	    }
+	    if (!doNotDisposeMsg){
 	      disposeMsg (msg);
 	    }
-
 	}
       //vTaskDelay (5000 / portTICK_RATE_MS);
 

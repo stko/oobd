@@ -130,7 +130,9 @@ createDataMsg (data_packet * data)
 void
 disposeMsg (MsgData * p)
 {
-  vPortFree (p);
+ if (p != NULL){
+   vPortFree (p);
+ }
 }
 
 /*
