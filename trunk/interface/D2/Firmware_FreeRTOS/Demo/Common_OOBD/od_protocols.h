@@ -68,8 +68,6 @@
 /* Receive 
  * param: function ptr to a recv_cbf as typedef below
  */
-#define ODB_CMD_RECV		4
-
 
 /* bus and protocol error codes */
 

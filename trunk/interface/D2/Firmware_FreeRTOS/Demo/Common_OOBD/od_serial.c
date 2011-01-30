@@ -265,7 +265,7 @@ inputParserTask (void *pvParameters)
 		      lastErr = 0;
 		      hexInput = 0;
 		      totalInCount = 0;
-		      dp.len=0;
+		      dp.len = 0;
 		      if (inChar < 16)
 			{	// first char is a valid hex char (0-F), so we switch into data line mode
 			  actState = S_DATA;
@@ -276,8 +276,10 @@ inputParserTask (void *pvParameters)
 			  processFurther = 0;
 			}
 		      if (inChar == crEOL)
-			{	// just print the command prompt
-			  createFeedbackMsg (0);
+			{
+			  // in case we filled the buffer already previously    
+			  sendMsg (MSG_SEND_BUFFER, protocolQueue, NULL);
+			  actState = S_SLEEP;
 			}
 		    }
 		  if (actState == S_DATA)
@@ -287,6 +289,8 @@ inputParserTask (void *pvParameters)
 			  if (dp.len > 0)
 			    {
 			      sendData (&dp);
+			      // tells the  protocol to send the buffer
+			      sendMsg (MSG_SEND_BUFFER, protocolQueue, NULL);
 			      actState = S_SLEEP;
 			    }
 			  else

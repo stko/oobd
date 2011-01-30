@@ -104,7 +104,9 @@
 #define MSG_SERIAL_PARAM	( 5 )	//!< received a paramter set from the cmd line
 #define MSG_INPUT_FEEDBACK	( 6 )	//!< feedback to the cmd line
 #define MSG_TICK		( 7 )	//!< system clock tick
-#define MSG_SERIAL_RELEASE	( 8 )	//!< tell the serial input to listen for cmds again
+#define MSG_SERIAL_RELEASE	( 8 )	//!< tells the serial input to listen for cmds again
+#define MSG_SEND_BUFFER		( 9 )	//!< tells the  protocol to send the filled input buffer
+#define MSG_DUMP_BUFFER		( 10 )	//!< buffer filled, request to dump
 
 
 
@@ -123,6 +125,8 @@
 #define PARAM_TP_ON 		( 11 )
 #define PARAM_TP_OFF 		( 12 )
 #define PARAM_TP_FREQ 		( 13 )
+#define ODB_CMD_RECV		( 14 )	//!< only for internal use: sets the callback routine when receiving a bus packet
+
 
 
 

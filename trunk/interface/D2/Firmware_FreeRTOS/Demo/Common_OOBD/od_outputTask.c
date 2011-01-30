@@ -57,6 +57,7 @@ outputTask (void *pvParameters)
 	      switch (msgType)
 		{
 		case MSG_BUS_RECV:
+		case MSG_DUMP_BUFFER:
 		case MSG_INPUT_FEEDBACK:
 		  // use callback function to output data
 		  printdata = msg->print;

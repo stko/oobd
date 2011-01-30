@@ -60,7 +60,7 @@ print_telegram (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
       printser_uint8ToHex (dp->data[i]);
       printser_string ("  ");
     }
-  printser_string ("\n");
+  printser_string ("\r\n");
 }
 
 
