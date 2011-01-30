@@ -75,7 +75,6 @@ createMsg (void *data, size_t size)
 	  dataDescr->addr = (void *) dataDescr + sizeof (struct MsgData);
 	  // copy payload into the fresh mem
 	  memcpy (dataDescr->addr, data, size);
-
 	  return dataDescr;
 	}
       else
@@ -130,9 +129,10 @@ createDataMsg (data_packet * data)
 void
 disposeMsg (MsgData * p)
 {
- if (p != NULL){
-   vPortFree (p);
- }
+  if (p != NULL)
+    {
+      vPortFree (p);
+    }
 }
 
 /*
