@@ -143,7 +143,44 @@ id0x27 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "N/A
 id0x127 = { byte = 2 , size = 2 , mult = 0.000122070313 , offset = 0, unit = "N/AV"} ,
 id0x28 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "N/AV"} ,
 id0x128 = { byte = 2 , size = 2 , mult = 0.000122070313 , offset = 0, unit = "N/AV"} ,
-    	-------------
+-------------- 3 section -----------------------------------------------
+id0x29 = { byte = 1 , size = 1 , mult = 0.000030517578 , offset = 0, unit = "N/AV"} ,
+id0x129 = { byte = 1 , size = 1 , mult = 0.000122070313 , offset = 0, unit = "N/AV"} ,
+id0x2A = { byte = 1 , size = 1 , mult = 0.000030517578 , offset = 0, unit = "N/AV"} ,
+id0x12A = { byte = 1 , size = 1 , mult = 0.000122070313 , offset = 0, unit = "N/AV"} ,
+id0x2B = { byte = 1 , size = 1 , mult = 0.000030517578 , offset = 0, unit = "N/AV"} ,
+id0x12B = { byte = 1 , size = 1 , mult = 0.000122070313 , offset = 0, unit = "N/AV"} ,
+id0x2C = { byte = 1 , size = 1 , mult = 0.3921568627 , offset = 0, unit = "%"} ,
+id0x2D = { byte = 1 , size = 1 , mult = 0.78125 , offset = -100, unit = "%"} ,
+id0x2E = { byte = 1 , size = 1 , mult = 0.3921568627 , offset = 0, unit = "%"} ,
+id0x2F = { byte = 1 , size = 1 , mult = 0.3921568627 , offset = 0, unit = "%"} ,
+id0x30 = { byte = 1 , size = 1 , mult = 1 , offset = 0, unit = "N/A"} ,
+id0x31 = { byte = 1 , size = 1 , mult = 0 , offset = 0, unit = "km"} ,
+id0x32 = { byte = 1 , size = 1 , mult = 0.25 , offset = -8.192, unit = "Pa"} ,
+id0x33 = { byte = 1 , size = 1 , mult = 1 , offset = 0, unit = "kPa (Absolute)"} ,
+id0x34 = { byte = 1 , size = 1 , mult = 0.000030517578, offset = 0, unit = "N/A mA"} ,
+id0x134 = { byte = 1 , size = 1 , mult = 0.00390625, offset = -128, unit = "N/A mA"} ,
+id0x35 = { byte = 1 , size = 1 , mult = 0.000030517578, offset = 0, unit = "N/A mA"} ,
+id0x135 = { byte = 1 , size = 1 , mult = 0.00390625, offset = -128, unit = "N/A mA"} ,
+id0x36 = { byte = 1 , size = 1 , mult = 0.000030517578, offset = 0, unit = "N/A mA"} ,
+id0x136 = { byte = 1 , size = 1 , mult = 0.00390625, offset = -128, unit = "N/A mA"} ,
+id0x37 = { byte = 1 , size = 1 , mult = 0.000030517578, offset = 0, unit = "N/A mA"} ,
+id0x137 = { byte = 1 , size = 1 , mult = 0.00390625, offset = -128, unit = "N/A mA"} ,
+id0x38 = { byte = 1 , size = 1 , mult = 0.000030517578, offset = 0, unit = "N/A mA"} ,
+id0x138 = { byte = 1 , size = 1 , mult = 0.00390625, offset = -128, unit = "N/A mA"} ,
+id0x39 = { byte = 1 , size = 1 , mult = 0.000030517578, offset = 0, unit = "N/A mA"} ,
+id0x139 = { byte = 1 , size = 1 , mult = 0.00390625, offset = -128, unit = "N/A mA"} ,
+id0x3A = { byte = 1 , size = 1 , mult = 0.000030517578, offset = 0, unit = "N/A mA"} ,
+id0x13A = { byte = 1 , size = 1 , mult = 0.00390625, offset = -128, unit = "N/A mA"} ,
+id0x3B = { byte = 1 , size = 1 , mult = 0.000030517578, offset = 0, unit = "N/A mA"} ,
+id0x13B = { byte = 1 , size = 1 , mult = 0.00390625, offset = -128, unit = "N/A mA"} ,
+id0x3C = { byte = 1 , size = 1 , mult = 0.1 , offset = -40, unit = "°C"} ,
+id0x3D = { byte = 1 , size = 1 , mult = 0.1 , offset = -40, unit = "°C"} ,
+id0x3E = { byte = 1 , size = 1 , mult = 0.1 , offset = -40, unit = "°C"} ,
+id0x3F = { byte = 1 , size = 1 , mult = 0.1 , offset = -40, unit = "°C"} ,
+id0x42 = { byte = 1 , size = 1 , mult = 0.001 , offset = 0, unit = "V"} ,
+id0x43 = { byte = 1 , size = 1 , mult = 0.392156862745 , offset = 0, unit = "%"} ,
+id0x44 = { byte = 1 , size = 1 , mult = 0 , offset = 0, unit = "N/A"} ,
 	id0xFF = "dummy"
 
   }
@@ -304,12 +341,76 @@ function createCMD02Menu(oldvalue,id)
 	end
 end
 
+function createCMD03Menu(oldvalue,id)
+
+     echoWrite("0140\r\n")
+
+	udsLen=send()
+	if udsLen>0 then
+		if udsBuffer[1]==65 then
+			availPIDs={}
+			for i = 0 , 3, 1 do -- get the bit field, which PIDs are available
+				availPIDs[i] = udsBuffer[3+i]
+			end
+			if availPIDs ~= 0 then
+				openPage("CMD 03 PIDs")
+				------------------------ these are the lines copied from the "createCall" 3 section in the OBD2_PIDs - OpenOffice- File
+                                createCall(availPIDs, 0x29,"O2S6_WR_lambda(1)", "getNumPIDs")
+                                createCall(availPIDs, 0x129,"Equivalence Ratio Voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x2A,"O2S7_WR_lambda(1)", "getNumPIDs")
+                                createCall(availPIDs, 0x12A,"Equivalence Ratio Voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x2B,"O2S8_WR_lambda(1)", "getNumPIDs")
+                                createCall(availPIDs, 0x12B,"Equivalence Ratio Voltage", "getNumPIDs")
+                                createCall(availPIDs, 0x2C,"Commanded EGR", "getNumPIDs")
+                                createCall(availPIDs, 0x2D,"EGR Error", "getNumPIDs")
+                                createCall(availPIDs, 0x2E,"Commanded evaporative purge", "getNumPIDs")
+                                createCall(availPIDs, 0x2F,"Fuel Level Input", "getNumPIDs")
+                                createCall(availPIDs, 0x30,"# of warm-ups since codes cleared", "getNumPIDs")
+                                createCall(availPIDs, 0x31,"Distance traveled since codes cleared", "getNumPIDs")
+                                createCall(availPIDs, 0x32,"Evap. System Vapor Pressure", "getNumPIDs")
+                                createCall(availPIDs, 0x33,"Barometic pressure", "getNumPIDs")
+                                createCall(availPIDs, 0x34,"O2S1_WR_lambda(1)", "getNumPIDs")
+                                createCall(availPIDs, 0x134,"Equivalence Ratio Current", "getNumPIDs")
+                                createCall(availPIDs, 0x35,"O2S2_WR_lambda(1)", "getNumPIDs")
+                                createCall(availPIDs, 0x135,"Equivalence Ratio Current", "getNumPIDs")
+                                createCall(availPIDs, 0x36,"O2S3_WR_lambda(1)", "getNumPIDs")
+                                createCall(availPIDs, 0x136,"Equivalence Ratio Current", "getNumPIDs")
+                                createCall(availPIDs, 0x37,"O2S4_WR_lambda(1)", "getNumPIDs")
+                                createCall(availPIDs, 0x137,"Equivalence Ratio Current", "getNumPIDs")
+                                createCall(availPIDs, 0x38,"O2S5_WR_lambda(1)", "getNumPIDs")
+                                createCall(availPIDs, 0x138,"Equivalence Ratio Current", "getNumPIDs")
+                                createCall(availPIDs, 0x39,"O2S6_WR_lambda(1)", "getNumPIDs")
+                                createCall(availPIDs, 0x139,"Equivalence Ratio Current", "getNumPIDs")
+                                createCall(availPIDs, 0x3A,"O2S7_WR_lambda(1)", "getNumPIDs")
+                                createCall(availPIDs, 0x13A,"Equivalence Ratio Current", "getNumPIDs")
+                                createCall(availPIDs, 0x3B,"O2S8_WR_lambda(1)", "getNumPIDs")
+                                createCall(availPIDs, 0x13B,"Equivalence Ratio Current", "getNumPIDs")
+                                createCall(availPIDs, 0x3C,"Catalyst Temperature Bank 1, Sensor 1", "getNumPIDs")
+                                createCall(availPIDs, 0x3D,"Catalyst Temperature Bank 2, Sensor 1", "getNumPIDs")
+                                createCall(availPIDs, 0x3E,"Catalyst Temperature Bank 1, Sensor 2", "getNumPIDs")
+                                createCall(availPIDs, 0x3F,"Catalyst Temperature Bank 2, Sensor 2", "getNumPIDs")
+                        	-----------------------------------------
+				pageDone()
+				return oldvalue
+			else
+				return "No avail. PIDs found"
+			end
+
+		else
+			return "Error"
+		end
+	else
+		return "NO DATA"
+	end
+end
+
 
 function Sensor_Menu(oldvalue,id)
 	openPage("Sensor Info")
 	addElement("RPM", "sens_rpm","-",0x2, "")
 	addElement("Dynamic Menu1 >", "createCMD01Menu",">>>",0x1, "")
         addElement("Dynamic Menu2 >", "createCMD02Menu",">>>",0x1, "")
+        addElement("Dynamic Menu3 >", "createCMD03Menu",">>>",0x1, "")
 	addElement("<<< Main", "Menu_Main","<<<",0x1, "")
 	pageDone()
 	return oldvalue
