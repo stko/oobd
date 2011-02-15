@@ -31,9 +31,6 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-//CanRxMsg RxMessage;
-//CanTxMsg TxMessage;
-
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -107,10 +104,11 @@ void UsageFault_Handler(void)
   * @param  None
   * @retval None
   */
+/** definition within FreeRTOS port.c
 void SVC_Handler(void)
 {
 }
-
+*/
 /**
   * @brief  This function handles Debug Monitor exception.
   * @param  None
@@ -125,38 +123,52 @@ void DebugMon_Handler(void)
   * @param  None
   * @retval None
   */
+/** definition within FreeRTOS port.c
 void PendSV_Handler(void)
 {
 }
+*/
 
 /**
   * @brief  This function handles SysTick Handler.
   * @param  None
   * @retval None
   */
+/** definition within FreeRTOS port.c
 void SysTick_Handler(void)
 {
 }
+*/
 
 /**
   * @brief  This function handles PPP interrupt request.
   * @param  None
   * @retval None
   */
-/*
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {
-	GPIO_ResetBits(GPIOB,GPIO_Pin_4);
-	GPIO_ResetBits(GPIOB,GPIO_Pin_5);
+	uint8_t i = 0;
+	CanRxMsg RxMessage;
+	CanTxMsg TxMessage;
+
+	#ifdef DEBUG_SERIAL
+		uart1_puts("\r\n*** USB_LP_CAN1_RX0_IRQHandler starting ***");
+	#endif
+
+	RxMessage.StdId = 0x00;
+	RxMessage.ExtId = 0x00;
+	RxMessage.IDE = CAN_ID_STD;
+	RxMessage.DLC = 0;
+	RxMessage.FMI = 0;
+	for (i = 0; i < 8; i++)
+	{
+	  RxMessage.Data[i] = 0x00;
+	}
 
 	CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
 
 	if ((RxMessage.StdId == 0x321)&&(RxMessage.IDE == CAN_ID_STD)&&(RxMessage.DLC == 1)&&(RxMessage.Data[0] == 0x55))
 	{
-	    // Turn Off LED4, LED5
-		GPIO_SetBits(GPIOB,GPIO_Pin_4);
-	    GPIO_SetBits(GPIOB,GPIO_Pin_5);
-
 	    TxMessage.StdId   = 0x7eF;
 	    TxMessage.ExtId   = 0x01;
 	    TxMessage.RTR     = CAN_RTR_DATA;
@@ -170,10 +182,6 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 	}
 	else
 	{
-		// Turn On LED4, LED5
-		GPIO_ResetBits(GPIOB,GPIO_Pin_4);
-		GPIO_ResetBits(GPIOB,GPIO_Pin_5);
-
 	    TxMessage.StdId   = 0x7eF;
 	    TxMessage.ExtId   = 0x01;
 	    TxMessage.RTR     = CAN_RTR_DATA;
@@ -185,8 +193,12 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 	    TxMessage.Data[3] =  RxMessage.Data[0];
 	    CAN_Transmit(CAN1, &TxMessage);
 	}
+
+	#ifdef DEBUG_SERIAL
+		uart1_puts("\r\n*** USB_LP_CAN1_RX0_IRQHandler finished ***");
+	#endif
 }
-*/
+
 /******************************************************************************/
 /*                 STM32F10x Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */

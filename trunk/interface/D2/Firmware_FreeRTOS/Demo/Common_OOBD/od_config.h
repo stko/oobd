@@ -41,11 +41,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#ifdef OOBD_PLATFORM_POSIX
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <sys/stat.h>
 #include <mqueue.h>
+#endif
 #include <errno.h>
 #include <unistd.h>
 
@@ -60,14 +62,15 @@
 // #include "print.h"
 // #include "fileIO.h"
 
+#ifdef OOBD_PLATFORM_POSIX
 #include "AsyncIO/AsyncIO.h"
 #include "AsyncIO/AsyncIOSocket.h"
 #include "AsyncIO/PosixMessageQueueIPC.h"
 #include "AsyncIO/AsyncIOSerial.h"
-
+#endif
 
 // debugging macros so we can pin down message origin at a glance
-#if (OOBD_PLATFORM == POSIX )	// switch debug messages on or off
+#ifdef OOBD_PLATFORM_POSIX	// switch debug messages on or off
 #define WHERESTR  "[file %s, line %d]: "
 #define WHEREARG  __FILE__, __LINE__
 #define DEBUGPRINT2(...)       fprintf(stderr, __VA_ARGS__)
