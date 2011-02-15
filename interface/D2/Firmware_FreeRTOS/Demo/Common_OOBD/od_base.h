@@ -34,6 +34,7 @@
 #ifndef INC_OD_BASE_H
 #define INC_OD_BASE_H
 
+#include <stdint.h>
 #include "od_config.h"
 
 void initProtocols ();

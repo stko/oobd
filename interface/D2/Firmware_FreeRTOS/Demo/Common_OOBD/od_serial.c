@@ -60,17 +60,27 @@ inputRedirectTask (void *pvParameters)
   extern xQueueHandle internalSerialRxQueue;
   unsigned char ucRx;
   MsgData *msg;
+
+#ifdef DEBUG_SERIAL
+	uart1_puts("\r\n*** inputRedirectTask entered! ***");
+#endif
+
   if (NULL != internalSerialRxQueue)
     {
       for (;;)
 	{
-	  if (pdTRUE ==
+#ifdef DEBUG_SERIAL
+	uart1_puts("\r\n*** inputRedirectTask is running! ***");
+#endif
+    	if (pdTRUE ==
 	      xQueueReceive (internalSerialRxQueue, &ucRx, portMAX_DELAY))
 	    {
 	      if (ucRx != 13 && ucRx != 10)
 		{
 		  printChar (ucRx);
+#ifdef OOBD_PLATFORM_POSIX
 		  putchar (ucRx);
+#endif
 		}
 	      msg = createMsg (&ucRx, 1);
 	      if (pdPASS != sendMsg (MSG_SERIAL_IN, inputQueue, msg))
@@ -217,8 +227,11 @@ checkValidChar (char a)
 void
 inputParserTask (void *pvParameters)
 {
+#ifdef DEBUG_SERIAL
+	uart1_puts("\r\n*** inputParserTask entered! ***");
+#endif
 
-  //extern xQueueHandle inputQueue;
+  extern xQueueHandle inputQueue;
   MsgData *incomingMsg;
   char inChar;
   portBASE_TYPE msgType = 0, lastErr = 0, processFurther = 1, hexInput = 0;
@@ -237,7 +250,10 @@ inputParserTask (void *pvParameters)
   dp.data = &buffer;
   for (;;)
     {
-      if (MSG_NONE !=
+#ifdef DEBUG_SERIAL
+	uart1_puts("\r\n*** inputRedirectTask is running! ***");
+#endif
+	  if (MSG_NONE !=
 	  (msgType = waitMsg (inputQueue, &incomingMsg, portMAX_DELAY)))
 	{
 	  switch (msgType)
@@ -443,15 +459,26 @@ inputParserTask (void *pvParameters)
 portBASE_TYPE
 serial_init ()
 {
+#ifdef DEBUG_SERIAL
+	uart1_puts("\r\n*** serial_init() entered! ***");
+#endif
 
-  // extern xQueueHandle protocolQueue;
+  extern xQueueHandle protocolQueue;
+  extern xQueueHandle inputQueue;
+
   protocolQueue = xQueueCreate (QUEUE_SIZE_PROTOCOL, sizeof (struct OdMsg));
   inputQueue = xQueueCreate (QUEUE_SIZE_INPUT, sizeof (struct OdMsg));
   serial_init_mc ();
-  xTaskCreate (inputRedirectTask, "SerialRedirect", configMINIMAL_STACK_SIZE,
-	       NULL, TASK_PRIO_LOW, NULL);
-  xTaskCreate (inputParserTask, "InputParser", configMINIMAL_STACK_SIZE,
-	       NULL, TASK_PRIO_MID, NULL);
+
+  xTaskCreate (inputRedirectTask, (const signed portCHAR *) "SerialRedirect", configMINIMAL_STACK_SIZE,
+		  (void *) NULL, TASK_PRIO_LOW, (xTaskHandle *) NULL);
+  xTaskCreate (inputParserTask, (const signed portCHAR *) "InputParser", configMINIMAL_STACK_SIZE,
+		  (void *) NULL, TASK_PRIO_MID, (xTaskHandle *) NULL);
+
+#ifdef DEBUG_SERIAL
+	uart1_puts("\r\n*** serial_init() finished! ***");
+#endif
+
   return pdPASS;
 
 }

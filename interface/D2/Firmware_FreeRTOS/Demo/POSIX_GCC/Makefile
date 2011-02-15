@@ -19,7 +19,7 @@
 PROJECT_NAME=OOBD_POSIX
 
 # set compiler switch
-OOBD_PLATFORM=POSIX
+OOBD_PLATFORM=OOBD_PLATFORM_POSIX
 
 # Directory definition.
 RTOS_SOURCE_DIR=../../Source
@@ -71,7 +71,7 @@ CFLAGS=-I . \
 		-D__GCC_POSIX__=1 \
 		-DDEBUG_BUILD=1 \
 		-DSVNREV=$(SVNVERSION) \
-		-DOOBDPLATFORM=$(OOBD_PLATFORM) \
+		-D$(OOBD_PLATFORM) \
 		-DUSE_STDIO=1 \
 		-O0 \
 		-g \
