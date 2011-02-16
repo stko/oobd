@@ -24,6 +24,7 @@
 #include "SystemConfig.h"
 #include "stm32f10x.h"
 #include "SerialComm.h"
+#include "od_config.h"
 
 /* -------- Used Global variables -----------------------------------------------------*/
 
@@ -279,10 +280,10 @@ void USART_Configuration(void)
 
 /* USARTx configuration ------------------------------------------------------*/
   /* USARTx configured as follow:
-        - BaudRate = 9600 baud
+        - BaudRate = 115200 baud
         - Word Length = 8 Bits
-        - Two Stop Bit
-        - Odd parity
+        - One Stop Bit
+        - None parity
         - Hardware flow control disabled (RTS and CTS signals)
         - Receive and transmit enabled
   */
@@ -292,9 +293,6 @@ void USART_Configuration(void)
    USART_InitStructure.USART_Parity = USART_Parity_No;
    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
    USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
-
-   /* Configure USART1 */
-   USART_Init(USART1, &USART_InitStructure);
 
    /* Configure USART1 */
    USART_Init(USART1, &USART_InitStructure);
@@ -321,12 +319,10 @@ void USART_Configuration(void)
 */ 
 void CAN_Configuration(void)
 {
-	CAN_InitTypeDef        CAN_InitStructure;
-	CAN_FilterInitTypeDef  CAN_FilterInitStructure;
+    DEBUGUARTPRINT("\r\n*** CAN configuration (CAN1) entered");
 
-	#ifdef DEBUG_SERIAL
-   	   uart1_puts("\r\n*** CAN configuration (CAN1) starting ***");
-	#endif
+    CAN_InitTypeDef        CAN_InitStructure;
+	CAN_FilterInitTypeDef  CAN_FilterInitStructure;
 
    /* CAN register init */
    CAN_DeInit(CAN1);
@@ -380,9 +376,7 @@ void CAN_Configuration(void)
 
     CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE);
 
-    #ifdef DEBUG_SERIAL
-    	uart1_puts("\r\n*** CAN configuration (CAN1) finished***");
-	#endif
+   	DEBUGUARTPRINT("\r\n*** CAN configuration (CAN1) finished***");
 }
  
 /******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/

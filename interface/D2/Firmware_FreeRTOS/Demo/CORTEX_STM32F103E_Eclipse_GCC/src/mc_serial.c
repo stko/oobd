@@ -41,53 +41,33 @@
 */
 
 #include "stm32f10x.h"
-/*
-#include "portmacro.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-*/
 
-xTaskHandle hSerialTask;
 /* file handle to communicate with the oobd side. */
 static int oobdIOHandle = 0;
 
 //callback routine to write a char to the output
 
-#define RX_CMD_BUFFER_SIZE	32
-#define TX_QUEUE_SIZE	256
-#define RX_QUEUE_SIZE	256
+#define TX_QUEUE_SIZE	2
+#define RX_QUEUE_SIZE	2
 
 #define ONE_SECOND_DELAY					( ( portTickType ) 1000 / portTICK_RATE_MS )
 
-//static void prvSerialTxTask( void *pvParameters );
 #define SERIAL_COMM_TASK_PRIORITY			( tskIDLE_PRIORITY + 3 )
 
-static uint8_t rxCmdBuffer[RX_CMD_BUFFER_SIZE+1];
-
 void uart1_putc(char c);
-
-//static xQueueHandle hSerialRx;
-//static xQueueHandle hSerialTx;
 
 portBASE_TYPE
 serial_init_mc ()
 {
+  DEBUGUARTPRINT("\r\n*** serial_init_mc() - entered ***");
   extern printChar_cbf printChar; /* callback function */
   extern xQueueHandle internalSerialRxQueue;
-//  printChar = writeChar;;
   printChar = uart1_putc;;
 
-#ifdef DEBUG_SERIAL
-  uart1_puts("\r\n*** serial_init_mc() - entered ***");
-#endif
-
   // Set-up the Serial Console Echo task
-  internalSerialRxQueue = xQueueCreate (2, sizeof (unsigned char));
+  internalSerialRxQueue = xQueueCreate (RX_QUEUE_SIZE, sizeof (unsigned char));
 
-#ifdef DEBUG_SERIAL
-  uart1_puts("\r\n*** serial_init_mc() - finished ***");
-#endif
+  DEBUGUARTPRINT("\r\n*** serial_init_mc() - finished ***");
 
   return pdPASS;
 }
@@ -114,18 +94,7 @@ void uart1_putc(char c) {
 int uart1_getc() {
 	return -1;
 }
-/*
-void SerialSendStr(char const *str) {
-	if (str) {
-		while (*str) {
-			xQueueSendToBack(hSerialTx, (void *)str, portMAX_DELAY);
-			str++;
-		}
-		// enable TXE interrupt
-		USART1->CR1 |= USART_CR1_TXEIE;
-	}
-}
-*/
+
 typedef enum {
 	RX_STATE_IDLE = 0,
 	RX_STATE_CMD,
@@ -167,53 +136,10 @@ void sendRomTable() {
 	sendMemLoc(pRomTable);
 }
 */
-/*
-static void prvSerialTxTask( void *pvParameters )
-{
-	char rxChar;
-	E_RX_STATE rxState = RX_STATE_IDLE;
-	int rxCmdIndex = 0;
-uart1_puts("\r\nprvSerialTxTask entered!!!");
 
-	for(;;) {
-		while (pdFALSE == xQueueReceive(hSerialRx, &rxChar, portMAX_DELAY)) ;
-		switch (rxState) {
-			case RX_STATE_IDLE:
-				if ((rxChar != 0x0a) && (rxChar != 0x0d)) {
-					rxState = RX_STATE_CMD;
-					rxCmdIndex = 0;
-					rxCmdBuffer[rxCmdIndex++] = rxChar;
-				}
-				break;
-
-			case RX_STATE_CMD:
-				uart1_puts("\r\nprvSerialTxTask - received character!!!");
-				if ((rxChar == 0x0a) || (rxChar == 0x0d)) {
-					rxState = RX_STATE_IDLE;
-					rxCmdBuffer[rxCmdIndex] = 0;
-
-					sendCPUInfo();
-					sendRomTable();
-				} else {
-					if (rxCmdIndex < RX_CMD_BUFFER_SIZE) {
-						rxCmdBuffer[rxCmdIndex++] = rxChar;
-						xQueueSendToBack(hSerialTx, &rxChar, portMAX_DELAY);
-					}
-				}
-				break;
-
-			default:
-				rxState = RX_STATE_IDLE;
-				rxCmdIndex = 0;
-				break;
-		}
-	}
-}
-*/
 void USART1_IRQHandler(void) {
-#ifdef DEBUG_SERIAL
-	uart1_puts("\r\n*** USART1_IRQHandler starting ***");
-#endif
+	DEBUGUARTPRINT("\r\n*** USART1_IRQHandler starting ***");
+
 	extern xQueueHandle internalSerialRxQueue;
 	uint16_t sr = USART1->SR;
 	char ch;
@@ -226,9 +152,8 @@ void USART1_IRQHandler(void) {
 
 		if (pdPASS == xQueueSendToBackFromISR(internalSerialRxQueue, &ch, &xHigherPriorityTaskWoken))
 		{
-			#ifdef DEBUG_SERIAL
-				uart1_puts("\r\n*** internalSerialRxQueue Zeichen geschrieben ***");
-			#endif
+			DEBUGUARTPRINT("\r\n*** internalSerialRxQueue Zeichen geschrieben ***");
+
 			// Switch context if necessary.
 			if( xHigherPriorityTaskWoken )
 			{
@@ -237,18 +162,14 @@ void USART1_IRQHandler(void) {
 		}
 		else
 		{
-			#ifdef DEBUG_SERIAL
-				uart1_puts("\r\n*** internalSerialRxQueue Zeichen NICHT geschrieben ***");
-			#endif
+			DEBUGUARTPRINT("\r\n*** internalSerialRxQueue Zeichen NICHT geschrieben ***");
 		}
 	}
 
 	/*
 	// Check if transmit buffer is empty
 	if (sr & USART_SR_TXE) {
-#ifdef DEBUG_SERIAL
-	uart1_puts("\r\n*** USART1_IRQHandler TRANSMIT interrupt detected ***");
-#endif
+     	DEBUGUARTPRINT("\r\n*** USART1_IRQHandler TRANSMIT interrupt detected ***");
 		// Send character if available
 		if (pdTRUE == xQueueReceiveFromISR(hSerialTx, &ch, &xTaskWokenByReceive)) {
 				USART1->DR = ch;
@@ -263,9 +184,7 @@ void USART1_IRQHandler(void) {
 		}
 	}
 */
-#ifdef DEBUG_SERIAL
-	uart1_puts("\r\n*** USART1_IRQHandler finished ***");
-#endif
+	DEBUGUARTPRINT("\r\n*** USART1_IRQHandler finished ***");
 }
 
 /*

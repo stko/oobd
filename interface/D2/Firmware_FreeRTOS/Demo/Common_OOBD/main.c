@@ -57,9 +57,9 @@ xQueueHandle inputQueue;
 void
 tickTask (void *pvParameters)
 {
-#ifdef DEBUG_SERIAL
-  uart1_puts("\r\n*** tickTask entered! ***");
-#endif
+
+  DEBUGUARTPRINT("\r\n*** tickTask entered! ***");
+
   extern xQueueHandle protocolQueue;
   // char buffer[1024];
   for (;;)
@@ -73,9 +73,6 @@ tickTask (void *pvParameters)
       if (pdPASS != sendMsg (MSG_TICK, protocolQueue, NULL))
 	{
 	  DEBUGPRINT ("FATAL ERROR: protocol queue is full!\n", 'a');
-#ifdef DEBUG_SERIAL
-  uart1_puts("\r\n*** FATAL ERROR: protocol queue is full! ***");
-#endif
 	}
       vTaskDelay (10 / portTICK_RATE_MS);	// 10ms tich time
 
@@ -101,9 +98,7 @@ main (void)
 	SystemInit();
 	System_Configuration();
 
-	#ifdef DEBUG_SERIAL
-		uart1_puts("\r\n*** Starting RTOS ***");
-	#endif
+	DEBUGUARTPRINT(USART1, "\r\n*** Starting RTOS ***");
 #endif
   // Version String
 //  DEBUGPRINT ("OOBD Build: %s\n", SVNREV);
@@ -117,27 +112,25 @@ main (void)
   /*activate the output task */
   initOutput ();
 
-
-/*
   // starting with the first protocol in the list
   if (pdPASS == xTaskCreate (odparr[0], (const signed portCHAR *) "prot", configMINIMAL_STACK_SIZE, (void *) NULL,
 	       TASK_PRIO_LOW, (xTaskHandle *) NULL))
-	  uart1_puts("\r\n*** 'prot' Task created ***");
+	  DEBUGUARTPRINT("\r\n*** 'prot' Task created ***");
   else
-	  uart1_puts("\r\n*** 'prot' Task NOT created ***");
+	  DEBUGUARTPRINT("\r\n*** 'prot' Task NOT created ***");
   if (pdPASS == xTaskCreate (tickTask, (const signed portCHAR *) "Tick", configMINIMAL_STACK_SIZE, (void *) NULL,
 	       TASK_PRIO_LOW, (xTaskHandle *) NULL))
-	  uart1_puts("\r\n*** 'Tick' Task created ***");
+	  DEBUGUARTPRINT("\r\n*** 'Tick' Task created ***");
   else
-	  uart1_puts("\r\n*** 'Tick' Task NOT created ***");
-*/
+	  DEBUGUARTPRINT("\r\n*** 'Tick' Task NOT created ***");
+
 
 
   /* Set the scheduler running.  This function will not return unless a task calls vTaskEndScheduler(). */
   vTaskStartScheduler ();
-#ifdef DEBUG_SERIAL
-  uart1_puts("\r\nSomething got wrong, RTOS terminated !!!");
-#endif
+
+  DEBUGUARTPRINT("\r\nSomething got wrong, RTOS terminated !!!");
+
   return 1;
 }
 /*-----------------------------------------------------------*/

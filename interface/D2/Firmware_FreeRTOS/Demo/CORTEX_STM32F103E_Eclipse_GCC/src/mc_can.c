@@ -35,6 +35,9 @@
 #include "od_protocols.h"
 #include "odb_can.h"
 #include "mc_can.h"
+#ifdef OOBD_PLATFORM_STM32
+#include "stm32f10x.h"
+#endif
 
 #ifdef OOBD_PLATFORM_POSIX
 /* UDP Packet size to send/receive. */

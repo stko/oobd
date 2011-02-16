@@ -34,13 +34,15 @@
 #include "od_serial.h"
 #include "mc_serial.h"
 #include "od_base.h"
+#ifdef OOBD_PLATFORM_STM32
+#include "stm32f10x.h"
+#endif
 
 /* global message queues */
 xQueueHandle internalSerialRxQueue = NULL;
 xQueueHandle inputQueue = NULL;
 xQueueHandle outputQueue = NULL;
 xQueueHandle protocolQueue = NULL;
-
 
 //! pointer to writeChar() function
 printChar_cbf printChar = NULL;
@@ -58,20 +60,19 @@ void
 inputRedirectTask (void *pvParameters)
 {
   extern xQueueHandle internalSerialRxQueue;
+  extern xQueueHandle inputQueue;
+
   unsigned char ucRx;
   MsgData *msg;
 
-#ifdef DEBUG_SERIAL
-	uart1_puts("\r\n*** inputRedirectTask entered! ***");
-#endif
+  DEBUGUARTPRINT("\r\n*** inputRedirectTask entered! ***");
 
   if (NULL != internalSerialRxQueue)
     {
       for (;;)
 	{
-#ifdef DEBUG_SERIAL
-	uart1_puts("\r\n*** inputRedirectTask is running! ***");
-#endif
+   	    DEBUGUARTPRINT("\r\n*** inputRedirectTask is running! ***");
+
     	if (pdTRUE ==
 	      xQueueReceive (internalSerialRxQueue, &ucRx, portMAX_DELAY))
 	    {
@@ -103,6 +104,8 @@ inputRedirectTask (void *pvParameters)
 void
 sendData (data_packet * dp)
 {
+  extern xQueueHandle protcolQueue;
+
   MsgData *msg;
   int i;
   for (i = dp->len; i < 8; i++)
@@ -114,7 +117,6 @@ sendData (data_packet * dp)
       if (pdPASS != sendMsg (MSG_SERIAL_DATA, protocolQueue, msg))
 	{
 	  DEBUGPRINT ("FATAL ERROR: protocol queue is full!\n", 'a');
-
 	}
     }
   else
@@ -126,6 +128,8 @@ sendData (data_packet * dp)
 void
 sendParam (portBASE_TYPE key, portBASE_TYPE value)
 {
+  extern xQueueHandle protocolQueue;
+
   MsgData *msg;
   portBASE_TYPE p[2];
   p[0] = key;
@@ -161,6 +165,8 @@ printSerData (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 void
 createFeedbackMsg (portBASE_TYPE err)
 {
+  extern xQueueHandle outputQueue;
+
   MsgData *msg;
   msg = createMsg (&err, sizeof (err));
   msg->print = printSerData;
@@ -227,11 +233,11 @@ checkValidChar (char a)
 void
 inputParserTask (void *pvParameters)
 {
-#ifdef DEBUG_SERIAL
-	uart1_puts("\r\n*** inputParserTask entered! ***");
-#endif
+  DEBUGUARTPRINT("\r\n*** inputParserTask entered! ***");
 
   extern xQueueHandle inputQueue;
+  extern xQueueHandle protocolQueue;
+
   MsgData *incomingMsg;
   char inChar;
   portBASE_TYPE msgType = 0, lastErr = 0, processFurther = 1, hexInput = 0;
@@ -250,9 +256,8 @@ inputParserTask (void *pvParameters)
   dp.data = &buffer;
   for (;;)
     {
-#ifdef DEBUG_SERIAL
-	uart1_puts("\r\n*** inputRedirectTask is running! ***");
-#endif
+	  DEBUGUARTPRINT("\r\n*** inputRedirectTask is running! ***");
+
 	  if (MSG_NONE !=
 	  (msgType = waitMsg (inputQueue, &incomingMsg, portMAX_DELAY)))
 	{
@@ -459,9 +464,7 @@ inputParserTask (void *pvParameters)
 portBASE_TYPE
 serial_init ()
 {
-#ifdef DEBUG_SERIAL
-	uart1_puts("\r\n*** serial_init() entered! ***");
-#endif
+  DEBUGUARTPRINT("\r\n*** serial_init() entered! ***");
 
   extern xQueueHandle protocolQueue;
   extern xQueueHandle inputQueue;
@@ -475,10 +478,7 @@ serial_init ()
   xTaskCreate (inputParserTask, (const signed portCHAR *) "InputParser", configMINIMAL_STACK_SIZE,
 		  (void *) NULL, TASK_PRIO_MID, (xTaskHandle *) NULL);
 
-#ifdef DEBUG_SERIAL
-	uart1_puts("\r\n*** serial_init() finished! ***");
-#endif
+  DEBUGUARTPRINT("\r\n*** serial_init() finished! ***");
 
   return pdPASS;
-
 }
