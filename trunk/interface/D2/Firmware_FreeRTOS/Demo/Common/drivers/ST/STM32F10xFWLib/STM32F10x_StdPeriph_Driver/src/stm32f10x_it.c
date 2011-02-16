@@ -22,6 +22,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
+#include "od_config.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
@@ -147,14 +148,12 @@ void SysTick_Handler(void)
   */
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {
+	DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler entered ***");
+
 	uint8_t i = 0;
 	CanRxMsg RxMessage;
 	CanTxMsg TxMessage;
-
-	#ifdef DEBUG_SERIAL
-		uart1_puts("\r\n*** USB_LP_CAN1_RX0_IRQHandler starting ***");
-	#endif
-
+	
 	RxMessage.StdId = 0x00;
 	RxMessage.ExtId = 0x00;
 	RxMessage.IDE = CAN_ID_STD;
@@ -194,9 +193,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 	    CAN_Transmit(CAN1, &TxMessage);
 	}
 
-	#ifdef DEBUG_SERIAL
-		uart1_puts("\r\n*** USB_LP_CAN1_RX0_IRQHandler finished ***");
-	#endif
+	DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler finished ***");
 }
 
 /******************************************************************************/

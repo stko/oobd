@@ -34,12 +34,16 @@
 #include "od_config.h"
 #include "od_serial.h"
 #include "od_base.h"
+#ifdef OOBD_PLATFORM_STM32
+#include "stm32f10x.h"
+#endif
 
 /*-----------------------------------------------------------*/
 
 void
 outputTask (void *pvParameters)
 {
+  DEBUGUARTPRINT("\r\n*** outputTask entered! ***");
   extern printChar_cbf printChar;
   extern xQueueHandle outputQueue;
   extern printChar_cbf printChar;
@@ -50,7 +54,8 @@ outputTask (void *pvParameters)
     {
       for (;;)
 	{
-	  if (MSG_NONE !=
+    	  DEBUGUARTPRINT("\r\n*** outputTask is running! ***");
+    	  if (MSG_NONE !=
 	      (msgType = waitMsg (outputQueue, &msg, portMAX_DELAY)))
 	    //handle message
 	    {
@@ -68,7 +73,6 @@ outputTask (void *pvParameters)
 	    }
 	}
     }
-
   /* Port wasn't opened. */
   DEBUGPRINT ("FATAL ERROR: No Output queue.\n", 'a');
   vTaskDelete (NULL);
@@ -79,10 +83,14 @@ outputTask (void *pvParameters)
 void
 initOutput ()
 {
-  extern xQueueHandle outputQueue;
+	  DEBUGUARTPRINT("\r\n*** initOutput() entered! ***");
+	extern xQueueHandle outputQueue;
   outputQueue = xQueueCreate (QUEUE_SIZE_OUTPUT, sizeof (struct OdMsg));
 
   /* Create a Task which waits to receive bytes. */
-  xTaskCreate (outputTask, "Output", configMINIMAL_STACK_SIZE,
-	       NULL, TASK_PRIO_LOW, NULL);
+  if (pdPASS == xTaskCreate (outputTask, "Output", configMINIMAL_STACK_SIZE,
+	       NULL, TASK_PRIO_LOW, NULL))
+	  DEBUGUARTPRINT("\r\n*** outputTask created! ***");
+
+  DEBUGUARTPRINT("\r\n*** initOutput() entered! ***");
 }
