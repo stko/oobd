@@ -16,7 +16,7 @@
 	Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
-	1 tab == 4 spaces!
+	1 tab == 2 spaces!
 
 	Please ensure to read the configuration and relevant port sections of the
 	online documentation.
@@ -50,11 +50,10 @@ printChar_cbf printChar = NULL;
 /* input buffer */
 
 /*
- * This is just a workaround, as the Posix vAsyncSerialIODataAvailableISR fills only one single Quere, but as the
- * receving tasks uses the multiMessage-Interface, we need the inputRedirectTask to shuffle the received chars from one
+ * This is just a workaround, as the Posix vAsyncSerialIODataAvailableISR fills only one single Queue, but as the
+ * receiving tasks uses the multiMessage-Interface, we need the inputRedirectTask to shuffle the received chars from one
  * queue to the next
  */
-
 
 void
 inputRedirectTask (void *pvParameters)
@@ -70,35 +69,41 @@ inputRedirectTask (void *pvParameters)
   if (NULL != internalSerialRxQueue)
     {
       for (;;)
-	{
-   	    DEBUGUARTPRINT("\r\n*** inputRedirectTask is running! ***");
+        {
+          DEBUGUARTPRINT("\r\n*** inputRedirectTask is running! ***");
 
-    	if (pdTRUE ==
-	      xQueueReceive (internalSerialRxQueue, &ucRx, portMAX_DELAY))
-	    {
-	      if (ucRx != 13 && ucRx != 10)
-		{
-		  printChar (ucRx);
-#ifdef OOBD_PLATFORM_POSIX
-		  putchar (ucRx);
-#endif
-		}
-	      msg = createMsg (&ucRx, 1);
-	      if (pdPASS != sendMsg (MSG_SERIAL_IN, inputQueue, msg))
-		{
-		  DEBUGPRINT ("FATAL ERROR: Serial Redirect queue full!!\n",
-			      'a');
-		}
-
-	    }
-	}
+          if (pdTRUE ==
+              xQueueReceive (internalSerialRxQueue, &ucRx, portMAX_DELAY))
+            {
+              if (ucRx != 13 && ucRx != 10)
+                {
+                  printChar (ucRx);
+                  #ifdef OOBD_PLATFORM_POSIX
+                    putchar (ucRx);
+                  #endif
+                }
+              else
+                {
+                  DEBUGUARTPRINT("\r\n*** inputRedirectTask: CR or LF detected -internalSerialRxQueue ***");
+                }
+               msg = createMsg (&ucRx, 1);
+               if (pdPASS != sendMsg (MSG_SERIAL_IN, inputQueue, msg))
+                {
+                  DEBUGPRINT ("FATAL ERROR: Serial Redirect queue full!!\n",
+                      'a');
+                }
+               else
+                {
+                  DEBUGUARTPRINT ("\r\n*** inputRedirectTask: inputQueue - sendMsg ***");
+                }
+            }
+        }
     }
 
   /* Port wasn't opened. */
   DEBUGPRINT ("FATAL ERROR: No internalSerialRxQueue!\n", 'a');
   vTaskDelete (NULL);
 }
-
 
 /*-----------------------------------------------------------*/
 void
@@ -115,9 +120,13 @@ sendData (data_packet * dp)
   if (NULL != (msg = createDataMsg (dp)))
     {
       if (pdPASS != sendMsg (MSG_SERIAL_DATA, protocolQueue, msg))
-	{
-	  DEBUGPRINT ("FATAL ERROR: protocol queue is full!\n", 'a');
-	}
+        {
+          DEBUGPRINT ("FATAL ERROR: protocol queue is full!\n", 'a');
+        }
+      else
+        {
+          DEBUGUARTPRINT ("\r\n*** sendData: sendMsg - protocolQueue");
+        }
     }
   else
     {
@@ -459,7 +468,7 @@ inputParserTask (void *pvParameters)
     }
 }
 
-
+/*-----------------------------------------------------------*/
 
 portBASE_TYPE
 serial_init ()
@@ -469,14 +478,21 @@ serial_init ()
   extern xQueueHandle protocolQueue;
   extern xQueueHandle inputQueue;
 
-  protocolQueue = xQueueCreate (QUEUE_SIZE_PROTOCOL, sizeof (struct OdMsg));
-  inputQueue = xQueueCreate (QUEUE_SIZE_INPUT, sizeof (struct OdMsg));
+  if (pdPASS == (protocolQueue = xQueueCreate (QUEUE_SIZE_PROTOCOL, sizeof (struct OdMsg))))
+      DEBUGUARTPRINT("\r\n*** protocolQueue created ***");
+
+  if (pdPASS == (inputQueue = xQueueCreate (QUEUE_SIZE_INPUT, sizeof (struct OdMsg))))
+      DEBUGUARTPRINT("\r\n*** inputQueue created ***");
+
   serial_init_mc ();
 
-  xTaskCreate (inputRedirectTask, (const signed portCHAR *) "SerialRedirect", configMINIMAL_STACK_SIZE,
-		  (void *) NULL, TASK_PRIO_LOW, (xTaskHandle *) NULL);
-  xTaskCreate (inputParserTask, (const signed portCHAR *) "InputParser", configMINIMAL_STACK_SIZE,
-		  (void *) NULL, TASK_PRIO_MID, (xTaskHandle *) NULL);
+  if (pdPASS == xTaskCreate (inputRedirectTask, (const signed portCHAR *) "SerialRedirect", configMINIMAL_STACK_SIZE,
+		  (void *) NULL, TASK_PRIO_LOW, (xTaskHandle *) NULL))
+    DEBUGUARTPRINT("\r\n*** inputRedirectTask created ***");
+
+  if (pdPASS == xTaskCreate (inputParserTask, (const signed portCHAR *) "InputParser", configMINIMAL_STACK_SIZE,
+		  (void *) NULL, TASK_PRIO_MID, (xTaskHandle *) NULL))
+	  DEBUGUARTPRINT("\r\n*** inputParserTask created ***");
 
   DEBUGUARTPRINT("\r\n*** serial_init() finished! ***");
 

@@ -16,7 +16,7 @@
 	Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
-	1 tab == 4 spaces!
+	1 tab == 2 spaces!
 
 	Please ensure to read the configuration and relevant port sections of the
 	online documentation.
@@ -34,7 +34,9 @@
 #include "od_config.h"
 #include "od_base.h"
 #include "od_protocols.h"
-
+#ifdef OOBD_PLATFORM_STM32
+#include "stm32f10x.h"
+#endif
 
 bus_init actBus_init = NULL;
 bus_send actBus_send = NULL;
@@ -182,7 +184,6 @@ waitMsg (xQueueHandle recv, MsgData ** msgdata, portBASE_TYPE timeout)
 }
 
 
-
 void
 strreverse (char *begin, char *end)
 {
@@ -278,7 +279,9 @@ printser_string (char const *str)
       while (*str)
 	{
 	  /* write character to buffer and increment pointer */
-	  putchar (*str);
+		#ifdef OOBD_PLATFORM_POSIX
+			putchar (*str);
+		#endif
 	  printChar (*str++);
 	}
     }

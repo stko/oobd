@@ -16,7 +16,7 @@
 	Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
-	1 tab == 4 spaces!
+	1 tab == 2 spaces!
 
 	Please ensure to read the configuration and relevant port sections of the
 	online documentation.
@@ -44,15 +44,9 @@
 
 /* Constant definition used to turn on/off the pre-emptive scheduler. */
 static const short sUsingPreemption = configUSE_PREEMPTION;
-/*
-xQueueHandle protocolQueue;
-xQueueHandle internalSerialRxQueue;
-xQueueHandle protocolQueue;
-xQueueHandle inputQueue;
-*/
-#define SERIAL_COMM_TASK_PRIORITY			( tskIDLE_PRIORITY + 3 )
-/*-----------------------------------------------------------*/
 
+#define SERIAL_COMM_TASK_PRIORITY			( tskIDLE_PRIORITY + 3 )
+/*---------------------------------------------------------------------------*/
 
 void
 tickTask (void *pvParameters)
@@ -78,8 +72,7 @@ tickTask (void *pvParameters)
 
     }
 }
-
-/*-----------------------------------------------------------*/
+/*---------------------------------------------------------------------------*/
 
 int
 main (void)
@@ -91,15 +84,14 @@ main (void)
 		       system_stm32f10x.c file
 	 */
 
-	/* Initialise the FreeRTOS hardware and utilities. */
-	/* Initialize DXM1 hardware, i.e. GPIO, CAN, USART1 */
-#ifdef OOBD_PLATFORM_STM32
+  #ifdef OOBD_PLATFORM_STM32
+    /* Initialise the FreeRTOS hardware and utilities. */
+    SystemInit();
+	  /* Initialize DXM1 hardware, i.e. GPIO, CAN, USART1 */
+ 	  System_Configuration();
+  #endif
 
-	SystemInit();
-	System_Configuration();
-
-	DEBUGUARTPRINT(USART1, "\r\n*** Starting RTOS ***");
-#endif
+	  DEBUGUARTPRINT(USART1, "\r\n*** Starting FreeRTOS ***");
   // Version String
 //  DEBUGPRINT ("OOBD Build: %s\n", SVNREV);
 
@@ -133,8 +125,7 @@ main (void)
 
   return 1;
 }
-/*-----------------------------------------------------------*/
-
+/*---------------------------------------------------------------------------*/
 
 void
 vApplicationIdleHook (void)
@@ -150,5 +141,4 @@ vApplicationIdleHook (void)
 //  nanosleep (&xTimeToSleep, &xTimeSlept);
 #endif
 }
-
-/*-----------------------------------------------------------*/
+/*---------------------------------------------------------------------------*/
