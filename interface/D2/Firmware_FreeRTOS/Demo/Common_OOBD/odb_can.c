@@ -40,8 +40,6 @@ print_cbf printdata_CAN = NULL;
 
 /*-----------------------------------------------------------*/
 
-
-
 void
 print_telegram (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 {
@@ -62,7 +60,7 @@ print_telegram (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
     }
   printser_string ("\r\n");
 }
-
+/*-----------------------------------------------------------*/
 
 void
 odb_can_setup ()
@@ -81,13 +79,12 @@ odb_can_setup ()
   actBus_flush = bus_flush_can;
   actBus_param = bus_param_can;
   actBus_close = bus_close_can;
-
-
 }
-
+/*-----------------------------------------------------------*/
 
 void
 odb_can_init ()
 {
   odbarr[ODB_CAN] = odb_can_setup;
 }
+/*-----------------------------------------------------------*/

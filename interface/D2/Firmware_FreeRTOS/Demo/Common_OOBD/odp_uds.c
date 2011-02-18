@@ -16,7 +16,7 @@
 	Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
-	1 tab == 4 spaces!
+	1 tab == 2 spaces!
 
 	Please ensure to read the configuration and relevant port sections of the
 	online documentation.
@@ -39,7 +39,7 @@
 #include "stm32f10x.h"
 #endif
 
-// some defines only need internally
+/* some defines only need internally */
 #define SM_UDS_STANDBY 			( 0 )
 #define SM_UDS_INIT    			( 1 )
 #define SM_UDS_WAIT_FOR_FC 		( 2 )
@@ -188,7 +188,7 @@ printdata_Buffer (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
       printser_uint8ToHex (myUDSBuffer->data[i]);
     }
   printser_string ("\r");
-  // release the input queue
+  /* release the input queue */
   if (pdPASS != sendMsg (MSG_SERIAL_RELEASE, inputQueue, NULL))
     {
       DEBUGPRINT ("FATAL ERROR: input queue is full!\n", 'a');
@@ -210,19 +210,19 @@ recvdata (data_packet * p)
   if (NULL != (msg = createDataMsg (p)))
     {
       if (pdPASS != sendMsg (MSG_BUS_RECV, protocolQueue, msg))
-	{
-	  DEBUGPRINT ("FATAL ERROR: protocol queue is full!\n", 'a');
-
-	}
+        {
+          DEBUGPRINT ("FATAL ERROR: protocol queue is full!\n", 'a');
+        }
+      else
+        {
+          DEBUGUARTPRINT ("\r\n*** recvdata: sendMsg - protocolQueue ***");
+        }
     }
   else
     {
       DEBUGPRINT ("FATAL ERROR: Out of Heap space!l\n", 'a');
     }
 }
-
-
-
 
 /*!
 

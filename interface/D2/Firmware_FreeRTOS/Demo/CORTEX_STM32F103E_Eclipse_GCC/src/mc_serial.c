@@ -16,7 +16,7 @@
 	Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
-	1 tab == 4 spaces!
+	1 tab == 2 spaces!
 
 	Please ensure to read the configuration and relevant port sections of the
 	online documentation.
@@ -33,19 +33,7 @@
 /* OOBD headers. */
 #include "od_config.h"
 #include "mc_serial.h"
-//#include "SerialComm.h"
-
-/*
-#include <string.h>
-#include <stdlib.h>
-*/
-
 #include "stm32f10x.h"
-
-/* file handle to communicate with the oobd side. */
-static int oobdIOHandle = 0;
-
-//callback routine to write a char to the output
 
 #define TX_QUEUE_SIZE	2
 #define RX_QUEUE_SIZE	2
@@ -56,15 +44,15 @@ static int oobdIOHandle = 0;
 
 void uart1_putc(char c);
 
+/*---------------------------------------------------------------------------*/
 portBASE_TYPE
 serial_init_mc ()
 {
-  DEBUGUARTPRINT("\r\n*** serial_init_mc() - entered ***");
   extern printChar_cbf printChar; /* callback function */
   extern xQueueHandle internalSerialRxQueue;
   printChar = uart1_putc;;
 
-  // Set-up the Serial Console Echo task
+  /* Set-up the Serial Console FreeRTOS Echo task */
   internalSerialRxQueue = xQueueCreate (RX_QUEUE_SIZE, sizeof (unsigned char));
 
   DEBUGUARTPRINT("\r\n*** serial_init_mc() - finished ***");
@@ -72,6 +60,7 @@ serial_init_mc ()
   return pdPASS;
 }
 
+/*---------------------------------------------------------------------------*/
 void uart1_puts(char const *str) {
 	if (str) {
 		/* transmit characters until 0 character */
@@ -84,6 +73,7 @@ void uart1_puts(char const *str) {
 	}
 }
 
+/*---------------------------------------------------------------------------*/
 void uart1_putc(char c) {
 	/* wait for transmit buffer empty */
 	while (0 == ((USART1->SR) & (USART_SR_TXE))) ;
@@ -94,13 +84,28 @@ void uart1_putc(char c) {
 int uart1_getc() {
 	return -1;
 }
+/*---------------------------------------------------------------------------*/
 
 typedef enum {
 	RX_STATE_IDLE = 0,
 	RX_STATE_CMD,
 	RX_STATE_CRLF
 } E_RX_STATE;
+/*---------------------------------------------------------------------------*/
 /*
+void SerialSendStr(char const *str) {
+  if (str) {
+    while (*str) {
+      xQueueSendToBack(hSerialTx, (void *)str, portMAX_DELAY);
+      str++;
+    }
+    // enable TXE interrupt
+    USART1->CR1 |= USART_CR1_TXEIE;
+  }
+}
+*/
+/*---------------------------------------------------------------------------*/
+
 void sendMemLoc(uint32_t *ptr) {
 	char sbuf[32];
 
@@ -111,10 +116,11 @@ void sendMemLoc(uint32_t *ptr) {
 	pstr = sbuf + strlen(sbuf);
 	uint32ToHex(pstr, *ptr);
 	strcat(pstr, "\r\n");
-	SerialSendStr(sbuf);
+//	SerialSendStr(sbuf);
+  uart1_puts(sbuf);
 }
-*/
-/*
+/*---------------------------------------------------------------------------*/
+
 void sendCPUInfo() {
 	char sbuf[32];
 
@@ -123,10 +129,11 @@ void sendCPUInfo() {
 	uint32ToHex(pstr, SCB->CPUID);
 	pstr = sbuf + strlen(sbuf);
 	strcpy(pstr, "\r\n");
-	SerialSendStr(sbuf);
+//	SerialSendStr(sbuf);
+	uart1_puts(sbuf);
 }
-*/
-/*
+/*---------------------------------------------------------------------------*/
+
 void sendRomTable() {
 	uint32_t *pRomTable = (uint32_t *)0xE00FF000;
 
@@ -135,7 +142,7 @@ void sendRomTable() {
 	}
 	sendMemLoc(pRomTable);
 }
-*/
+/*---------------------------------------------------------------------------*/
 
 void USART1_IRQHandler(void) {
 	DEBUGUARTPRINT("\r\n*** USART1_IRQHandler starting ***");
@@ -186,75 +193,4 @@ void USART1_IRQHandler(void) {
 */
 	DEBUGUARTPRINT("\r\n*** USART1_IRQHandler finished ***");
 }
-
-/*
-void strreverse(char* begin, char* end) {
-
-	char aux;
-
-	while(end>begin) {
-		aux=*end;
-		*end--=*begin;
-		*begin++=aux;
-	}
-}
-*/
-/*
-void uint8ToHex(char *buf, uint8_t value) {
-	static const char num[] = "0123456789abcdef";
-
-	// write upper nibble
-	buf[0] = num[value >> 4];
-	// write lower nibble
-	buf[1] = num[value & 0x0F];
-	buf[2] = 0;
-}
-
-void uint16ToHex(char *buf, uint16_t value) {
-	uint8ToHex(buf, (uint8_t)(value >> 8));
-	buf += 2;
-	uint8ToHex(buf, (uint8_t)value);
-	buf += 2;
-	*buf = 0;
-}
-
-void uint32ToHex(char *buf, uint32_t value) {
-	uint16ToHex(buf, (uint16_t)(value >> 16));
-	buf += 4;
-	uint16ToHex(buf, (uint16_t)value);
-	buf += 4;
-	*buf = 0;
-}
-
-void itoa(int value, char* str, int base) {
-
-	static const char num[] = "0123456789abcdefghijklmnopqrstuvwxyz";
-	char* wstr=str;
-	int sign;
-
-	div_t res;
-
-	// Validate base
-	if (base<2 || base>35) {
-		*wstr='\0';
-		return;
-	}
-
-	// Take care of sign
-	if ((sign=value) < 0) value = -value;
-
-	// Conversion. Number is reversed.
-	do {
-		res = div(value,base);
-		*wstr++ = num[res.rem];
-		value=res.quot;
-	} while (value != 0);
-
-	if(sign<0) *wstr++='-';
-
-	*wstr='\0';
-
-	// Reverse string
-	strreverse(str,wstr-1);
-}
-*/
+/*---------------------------------------------------------------------------*/

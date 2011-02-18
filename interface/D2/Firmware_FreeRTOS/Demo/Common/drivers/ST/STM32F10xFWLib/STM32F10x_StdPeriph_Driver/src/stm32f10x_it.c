@@ -141,61 +141,6 @@ void SysTick_Handler(void)
 }
 */
 
-/**
-  * @brief  This function handles PPP interrupt request.
-  * @param  None
-  * @retval None
-  */
-void USB_LP_CAN1_RX0_IRQHandler(void)
-{
-	DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler entered ***");
-
-	uint8_t i = 0;
-	CanRxMsg RxMessage;
-	CanTxMsg TxMessage;
-	
-	RxMessage.StdId = 0x00;
-	RxMessage.ExtId = 0x00;
-	RxMessage.IDE = CAN_ID_STD;
-	RxMessage.DLC = 0;
-	RxMessage.FMI = 0;
-	for (i = 0; i < 8; i++)
-	{
-	  RxMessage.Data[i] = 0x00;
-	}
-
-	CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
-
-	if ((RxMessage.StdId == 0x321)&&(RxMessage.IDE == CAN_ID_STD)&&(RxMessage.DLC == 1)&&(RxMessage.Data[0] == 0x55))
-	{
-	    TxMessage.StdId   = 0x7eF;
-	    TxMessage.ExtId   = 0x01;
-	    TxMessage.RTR     = CAN_RTR_DATA;
-	    TxMessage.IDE     = CAN_ID_STD;
-	    TxMessage.DLC     = 4;
-	    TxMessage.Data[0] = (RxMessage.StdId >> 8) & 0xFF;
-	    TxMessage.Data[1] =  RxMessage.StdId       & 0xFF;
-	    TxMessage.Data[2] =  RxMessage.DLC;
-	    TxMessage.Data[3] =  RxMessage.Data[0];
-	    CAN_Transmit(CAN1, &TxMessage);
-	}
-	else
-	{
-	    TxMessage.StdId   = 0x7eF;
-	    TxMessage.ExtId   = 0x01;
-	    TxMessage.RTR     = CAN_RTR_DATA;
-	    TxMessage.IDE     = CAN_ID_STD;
-	    TxMessage.DLC     = 4;
-	    TxMessage.Data[0] = (RxMessage.StdId >> 8) & 0xFF;
-	    TxMessage.Data[1] =  RxMessage.StdId       & 0xFF;
-	    TxMessage.Data[2] =  RxMessage.DLC;
-	    TxMessage.Data[3] =  RxMessage.Data[0];
-	    CAN_Transmit(CAN1, &TxMessage);
-	}
-
-	DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler finished ***");
-}
-
 /******************************************************************************/
 /*                 STM32F10x Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */

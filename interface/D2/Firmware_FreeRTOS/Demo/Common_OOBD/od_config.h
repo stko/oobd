@@ -80,10 +80,11 @@
 #else
 //#define WHERESTR  "[line %d]: "
 //#define WHEREARG  __LINE__
-#define WHERESTR  "[file %s, line %d]: "
-#define WHEREARG  __FILE__, __LINE__
+//#define WHERESTR  "[file %s, line %d]: "
+//#define WHEREARG  __FILE__, __LINE__
 //#define DEBUGPRINT(_fmt, ...) /* uncomment to disable DEBUGPRINT and comment the line below */
-#define DEBUGPRINT(_fmt, ...) DEBUGUARTPRINT(WHERESTR _fmt, WHEREARG, __VA_ARGS__)
+//#define DEBUGPRINT(_fmt, ...) DEBUGUARTPRINT(WHERESTR _fmt, WHEREARG, __VA_ARGS__)
+#define DEBUGPRINT(_fmt, ...) DEBUGUARTPRINT(__VA_ARGS__)
 #define DEBUGUARTPRINT(...)  uart1_puts(__VA_ARGS__)
 #endif
 

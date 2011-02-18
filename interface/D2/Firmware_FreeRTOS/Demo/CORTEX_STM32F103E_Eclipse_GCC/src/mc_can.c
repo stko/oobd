@@ -16,7 +16,7 @@
 	Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
-	1 tab == 4 spaces!
+	1 tab == 2 spaces!
 
 	Please ensure to read the configuration and relevant port sections of the
 	online documentation.
@@ -35,177 +35,68 @@
 #include "od_protocols.h"
 #include "odb_can.h"
 #include "mc_can.h"
-#ifdef OOBD_PLATFORM_STM32
 #include "stm32f10x.h"
-#endif
 
-#ifdef OOBD_PLATFORM_POSIX
-/* UDP Packet size to send/receive. */
-#define mainUDP_SEND_ADDRESS		"127.0.0.1"
-#define UDP_PORT_SEND			( 9998 )
-#define UDP_PORT_RECEIVE		( 9999 )
-
-/* global vars */
-struct sockaddr_in xReceiveAddress;
-int iSocketReceive = 0;
-xQueueHandle xUDPReceiveQueue = NULL;
-struct sockaddr_in xSendAddress;
-int iSocketSend = 0, iReturn = 0, iSendTaskList = pdTRUE;
-#endif
-
-//callback function for received data
+/* callback function for received data */
 recv_cbf reportReceicedData = NULL;
-/* Send/Receive UDP packets. */
-void prvUDPTask (void *pvParameters);
-
-
-/*-----------------------------------------------------------*/
 
 portBASE_TYPE
 bus_init_can ()
 {
-#ifdef OOBD_PLATFORM_POSIX
-  // Initialise Receives sockets. 
-  xReceiveAddress.sin_family = AF_INET;
-  xReceiveAddress.sin_addr.s_addr = INADDR_ANY;
-  xReceiveAddress.sin_port = htons (UDP_PORT_RECEIVE);
-
-  // Set-up the Receive Queue and open the socket ready to receive. 
-  xUDPReceiveQueue = xQueueCreate (2, sizeof (xUDPPacket));
-  iSocketReceive =
-    iSocketOpenUDP (vUDPReceiveAndDeliverCallback, xUDPReceiveQueue,
-		    &xReceiveAddress);
-
-  // Remember to open a whole in your Firewall to be able to receive!!!
-
-
-  iSocketSend = iSocketOpenUDP (NULL, NULL, NULL);
-
-  if (iSocketSend != 0)
-    {
-      xSendAddress.sin_family = AF_INET;
-      /* Set the UDP main address to reflect your local subnet. */
-      iReturn =
-	!inet_aton (mainUDP_SEND_ADDRESS,
-		    (struct in_addr *) &(xSendAddress.sin_addr.s_addr));
-      xSendAddress.sin_port = htons (UDP_PORT_SEND);
-      /* Create a Task which waits to receive messages and sends its own when it times out. */
-      xTaskCreate (prvUDPTask, "UDPRxTx", configMINIMAL_STACK_SIZE, NULL,
-		   TASK_PRIO_MID, NULL);
-
-      /* Remember to open a whole in your Firewall to be able to receive!!! */
-
-      return pdPASS;
-    }
-  else
-    {
-
-      vSocketClose (iSocketSend);
-      DEBUGPRINT ("UDP Task: Unable to open a socket.\n", 'a');
-      return pdFAIL;
-    }
-#endif
-
+  return pdPASS;
 }
-
-/*-----------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 
 portBASE_TYPE
 bus_send_can (data_packet * data)
 {
-#ifdef OOBD_PLATFORM_POSIX
+  DEBUGUARTPRINT("\r\n*** bus_send_can entered! ***");
 
-//	static xUDPPacket xPacket;
-//!!! hier CAN-Sendespezifische Routine mit den SendeDaten !!!
-  xPacket.ucPacket[0] = data->recv & 0xFF;	//just use the LByte
-  xPacket.ucPacket[1] = data->len;
-  xPacket.ucPacket[2] = 0;	// err not used here
-  xPacket.ucPacket[3] = data->data[0];
-  xPacket.ucPacket[4] = data->data[1];
-  xPacket.ucPacket[5] = data->data[2];
-  xPacket.ucPacket[6] = data->data[3];
-  xPacket.ucPacket[7] = data->data[4];
-  xPacket.ucPacket[8] = data->data[5];
-  xPacket.ucPacket[9] = data->data[6];
-  xPacket.ucPacket[10] = data->data[7];
-/* wird nicht benoetigt
-  iReturn = iSocketUDPSendTo (iSocketSend, &xPacket, &xSendAddress);
-  if (sizeof (xUDPPacket) != iReturn)
-    {
-      DEBUGPRINT ("UDP Failed to send whole packet: %d.\n", errno);
-    }
+  CanTxMsg TxMessage;
 
+  TxMessage.StdId = 0x7E8;        /* CAN - ID */
+  TxMessage.ExtId = 0x01;         /* Standard CAN identifier 11bit */
+  TxMessage.RTR   = CAN_RTR_DATA; /* Data frame */
+  TxMessage.IDE   = CAN_ID_STD;   /* IDE=0 for Standard CAN identifier 11 bit */
+  TxMessage.DLC   = 8;            /* Data length code, default 8 byte */
+
+  TxMessage.Data[0] = data->data[0];
+  TxMessage.Data[1] = data->data[1];
+  TxMessage.Data[2] = data->data[2];
+  TxMessage.Data[3] = data->data[3];
+  TxMessage.Data[4] = data->data[4];
+  TxMessage.Data[5] = data->data[5];
+  TxMessage.Data[6] = data->data[6];
+  TxMessage.Data[7] = data->data[7];
+
+  /* transmit whole CAN frame as specified above on CAN1 */
+  CAN_Transmit(CAN1, &TxMessage);
+
+  DEBUGUARTPRINT("\r\n*** bus_send_can finished! ***");
   return pdPASS;
-*/
-#endif
 }
+/*----------------------------------------------------------------------------*/
 
-
-/*-----------------------------------------------------------*/
 void
 bus_flush_can ()
 {
   DEBUGPRINT ("Flush CAN\n", 'a');
 }
+/*----------------------------------------------------------------------------*/
 
-
-/*-----------------------------------------------------------*/
 portBASE_TYPE
 bus_param_can (portBASE_TYPE cmd, void *param)
 {
   return pdPASS;
 }
+/*----------------------------------------------------------------------------*/
 
-
-/*-----------------------------------------------------------*/
 void
 bus_close_can ()
 {
 
-
 }
-
-
-
-/*-----------------------------------------------------------*/
-
-void
-prvUDPTask (void *pvParameters)
-{
-//  static xUDPPacket xPacket;
-  static data_packet dp;
-  //struct sockaddr_in xSendAddress;
-  // int iSocketSend, iReturn = 0, iSendTaskList = pdTRUE;
-  //xQueueHandle xUDPReceiveQueue = (xQueueHandle) pvParameters;
-
-  /* Open a socket for sending. */
-
-  for (;;)
-    {
-#ifdef OOBD_PLATFORM_POSIX
-	  if (pdPASS ==
-	  xQueueReceive (xUDPReceiveQueue, &xPacket, 2500 / portTICK_RATE_MS))
-	{
-//!!! ab hier ab in die ISR vom CAN-Teil
-		  /* Data received. Process it. */
-	  dp.recv = xPacket.ucPacket[0] + 0x700;	// add the HByte again
-	  dp.len = xPacket.ucPacket[1];
-	  dp.err = xPacket.ucPacket[2];	// use received value for error simulations
-	  dp.data = &xPacket.ucPacket[3];	// data starts here
-	  //xPacket.ucNull = 0; /* Ensure the string is terminated. */
-	  //DEBUGPRINT ("--%s", xPacket.ucPacket);
-	  reportReceicedData (&dp);
-//!!!
-	}
-#endif
-    }
-
-
-  /* Unable to open the socket. Bail out. */
-  vTaskDelete (NULL);
-}
-
-
+/*----------------------------------------------------------------------------*/
 
 portBASE_TYPE
 busControl (portBASE_TYPE cmd, void *param)
@@ -221,3 +112,40 @@ busControl (portBASE_TYPE cmd, void *param)
       break;
     }
 }
+/*----------------------------------------------------------------------------*/
+
+void USB_LP_CAN1_RX0_IRQHandler(void)
+{
+  DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler entered ***");
+
+  uint8_t i;
+  CanRxMsg RxMessage;
+  static data_packet dp;
+  /* CanTxMsg TxMessage; */
+
+  /* initialize RxMessage CAN frame */
+  RxMessage.StdId = 0x00;
+  RxMessage.ExtId = 0x00;
+  RxMessage.IDE   = CAN_ID_STD;
+  RxMessage.DLC   = 0;
+  RxMessage.FMI   = 0;
+  for (i = 0; i < 8; i++)
+  {
+    RxMessage.Data[i] = 0x00;
+  }
+
+  CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
+
+  if (RxMessage.StdId != 0)
+    {
+      /* Data received. Process it. */
+      dp.recv = RxMessage.StdId;
+      dp.len  = RxMessage.DLC;
+      dp.err  = 0x00; /* use received value for error simulations */
+      dp.data = &RxMessage.Data[0]; /* data starts here */
+      reportReceicedData (&dp);
+    }
+
+  DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler finished ***");
+}
+/*----------------------------------------------------------------------------*/

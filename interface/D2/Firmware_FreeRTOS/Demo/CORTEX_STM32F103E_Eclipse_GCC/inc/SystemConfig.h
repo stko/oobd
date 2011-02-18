@@ -12,7 +12,5 @@ void        NVIC_Configuration(void);
 void        SysTick_Configuration(void);
 /* void        ADC_Configuration(void);  */
 /* void        SPI_Configuration(void);  */
-void        CAN_Configuration(void);
-void 		USART_Configuration(void);
 
 #endif  /* __SystemConfig_H */
