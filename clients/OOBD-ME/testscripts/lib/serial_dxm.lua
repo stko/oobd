@@ -79,7 +79,7 @@ udslen =0
 
 -- the global receiving routine. Trys to read single- or multiframe answers from the dxm and stores it in udsbuffer, setting the reveived length in udslen
 
-function send()
+function receive()
 	udsLen=0
 	answ=""
 	answ=serReadLn(2000, true)
@@ -127,7 +127,7 @@ function send()
 			else
 				answ=serReadLn(2000, true)
 			end
-			
+
 		end
 	end
 	return  udsLen
