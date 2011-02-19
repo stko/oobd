@@ -55,7 +55,7 @@ end
 
 function vin(oldvalue,id)
 	echoWrite("0902\r\n")
-	udsLen=send()
+	udsLen=receive()
 	if udsLen>0 then
 		if udsBuffer[1]==73 then
 			local pos=4
@@ -197,12 +197,12 @@ function getNumPIDs(oldvalue,id)
 		ascID = "0"..ascID
 	end
 	echoWrite("01"..ascID.."\r\n")
-	udsLen=send()
+	udsLen=receive()
         print("Nach UDSsend")
 	if udsLen>0 then
 		if udsBuffer[1]==65 then
 			res=""
-			-- having the functions hashed by the id.		
+			-- having the functions hashed by the id.
                         print("Id",id)
 			paramList=PID01CMDs["id0x"..id]
 			res= paramList ~= null and CalcNumPid( paramList.byte , paramList.size , paramList.mult , paramList.offset, paramList.unit)  or "index error"
@@ -241,7 +241,7 @@ function createCMD01Menu(oldvalue,id)
       --echoWrite("0120\r\n")
       --echoWrite("0140\r\n")
 
-	udsLen=send()
+	udsLen=receive()
 	if udsLen>0 then
 		if udsBuffer[1]==65 then
 			availPIDs={}
@@ -282,7 +282,7 @@ function createCMD01Menu(oldvalue,id)
                                 createCall(availPIDs, 0x1B,"Bank 2, Sensor 4: Oxygen sensor voltage", "getNumPIDs")
                                 createCall(availPIDs, 0x11B,"Bank 2, Sensor 4: Short term fuel trim", "getNumPIDs")
                                 createCall(availPIDs, 0x1F,"Run time since engine start", "getNumPIDs")
-                                
+
 				-----------------------------------------
 				pageDone()
 				return oldvalue
@@ -302,7 +302,7 @@ function createCMD02Menu(oldvalue,id)
       echoWrite("0120\r\n")
       --echoWrite("0140\r\n")
 
-	udsLen=send()
+	udsLen=receive()
 	if udsLen>0 then
 		if udsBuffer[1]==65 then
 			availPIDs={}
@@ -345,7 +345,7 @@ function createCMD03Menu(oldvalue,id)
 
      echoWrite("0140\r\n")
 
-	udsLen=send()
+	udsLen=receive()
 	if udsLen>0 then
 		if udsBuffer[1]==65 then
 			availPIDs={}
@@ -419,7 +419,7 @@ end
 
 function sens_rpm(oldvalue,id)
 	echoWrite("010C\r\n")
-	udsLen=send()
+	udsLen=receive()
 	if udsLen>0 then
 		if udsBuffer[1]==65 then
 			local value=(udsBuffer[3]*256 +udsBuffer[4] )/ 4
@@ -441,7 +441,7 @@ end
 
 function showdtcs(oldvalue,id)
 	echoWrite("03\r\n")
-	udsLen=send()
+	udsLen=receive()
 	if udsLen>0 then
 		if udsBuffer[1]==67 then
 			local nrOfDTC= udsBuffer[2]
