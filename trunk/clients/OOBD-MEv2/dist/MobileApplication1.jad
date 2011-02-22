@@ -1,0 +1,8 @@
+MIDlet-1: Menue1, ,org.oobd.mobile.OOBD_MEv2
+MIDlet-Jar-Size: 13293
+MIDlet-Jar-URL: MobileApplication1.jar
+MIDlet-Name: MobileApplication1
+MIDlet-Vendor: Vendor
+MIDlet-Version: 1.0
+MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Profile: MIDP-2.1
