@@ -1,19 +1,14 @@
 package org.oobd.mobile;
 
 
-import javax.microedition.lcdui.Command;
-import javax.microedition.lcdui.CommandListener;
-import javax.microedition.lcdui.Display;
-import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Form;
-import javax.microedition.lcdui.Spacer;
-import javax.microedition.lcdui.TextField;
+import javax.microedition.lcdui.*;
 
 /**
  *
  * @author steffen
  */
-public class ConfigForm extends Form implements CommandListener, Runnable {
+public class ConfigForm extends Form implements CommandListener,ItemCommandListener, Runnable {
+
 
     private Form parent; //Where this form was started from
     private BTSerial btComm; //Where the bluetooth routines are
@@ -26,6 +21,11 @@ public class ConfigForm extends Form implements CommandListener, Runnable {
     private TextField scriptConf;
     private TextField btConf;
     private Spacer confSpacer;
+    Command backCmd;
+    Command btCmd;
+    Command scriptCmd;
+    private final ChoiceGroup choiceGroup;
+
 
 
     public ConfigForm(Form parent, BTSerial btComm, OOBD_MEv2 mainMidlet) {
@@ -37,32 +37,50 @@ public class ConfigForm extends Form implements CommandListener, Runnable {
         new Thread(this).start();
 
         btConf= new TextField("Configure Bluetooth Device:", "...Search", 32, TextField.UNEDITABLE);
-        confSpacer = new Spacer(10,10);
-        scriptConf = new TextField("Select script:", "/LUA.lbc", 32, TextField.UNEDITABLE);
+        btCmd=new Command("Configure Bluetooth", Command.ITEM, 0);
+        btConf.addCommand(btCmd);
+        btConf.setItemCommandListener(this);
 
+        confSpacer = new Spacer(10,10);
+
+        scriptConf = new TextField("Select script:", "/LUA.lbc", 32, TextField.UNEDITABLE);
+        scriptCmd = new Command("Select Script", Command.ITEM, 0);
+        scriptConf.addCommand(scriptCmd);
+        scriptConf.setItemCommandListener(this);
+
+        choiceGroup = new ChoiceGroup("Blind Mode (for tesing)", Choice.MULTIPLE);
+        choiceGroup.append("activated", null);
+        choiceGroup.setSelectedFlags(new boolean[] { false });
+        
         this.append(btConf);
         this.append(confSpacer);
         this.append(scriptConf);
+        this.append(choiceGroup);
 
+        
         this.setCommandListener(this);
-        this.addCommand(new Command("Back",Command.BACK,0));
+        Command back=new Command("Back",Command.BACK,0);
+        this.addCommand(back);
 
         Display.getDisplay(mainMidlet).setCurrent(this);
     }
 
+    public void commandAction(Command c, Item item) {
+        if (c==btCmd){
+            btComm.getDeviceURL(this, mainMidlet.getDisplay());
+        }
+        else if(c==scriptCmd){
 
-
-    public void commandAction(Command c, Displayable d) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        }
     }
 
     public void run() {
-        try {
-            while (true) {
-                Thread.sleep(100);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void commandAction(Command c, Displayable d) {
+        if (c==backCmd){
+            mainMidlet.getDisplay().setCurrent(parent);
         }
     }
     
