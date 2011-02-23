@@ -49,21 +49,14 @@ public class BTSerial extends Form implements CommandListener, Runnable {
         }
     }
 
-    public String getDeviceURL(final Form parent, Display display) {
+    public void getDeviceURL(final Form parent, Display display) {
         this.parent = parent;
         
 
         deviceList = new List("Available Bluetooth devices", List.EXCLUSIVE);
         deviceList.setCommandListener(this);
 
-/**        deviceList.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent evt) {
-                System.out.println("Listhandler");
-                URL = deviceList.getSelectedItem().toString();
-                parent.showBack();
-            }
-        });**/
 
         try {
             BluetoothDeviceDiscovery.main();
@@ -95,12 +88,12 @@ public class BTSerial extends Form implements CommandListener, Runnable {
             
             
             
-            return URL;
+            
             //new Thread(this).start();
             } else {
             Alert notFound = new Alert("Bluetoothconfig", "No Bluetooth device found!", null, AlertType.ERROR);
             display.setCurrent(notFound);
-            return null;
+            
         }
 
     }

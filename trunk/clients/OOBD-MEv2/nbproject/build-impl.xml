@@ -357,7 +357,9 @@
         <antcall target="do-clean" inheritall="true" inheritrefs="true"/>
     </target>
     <!--deps-jar-->
-    <target name="deps-jar" depends="conditional-clean" unless="no.deps"/>
+    <target name="deps-jar" depends="conditional-clean" unless="no.deps">
+        <ant target="jar" inheritall="false" antfile="${project.Kahlua}/build.xml"/>
+    </target>
     <!--preprocess-->
     <target name="pre-preprocess"/>
     <target name="do-preprocess" unless="no.preprocess">
