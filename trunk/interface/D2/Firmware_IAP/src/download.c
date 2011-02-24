@@ -24,6 +24,7 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "common.h"
+#include "stm32f10x_gpio.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -49,6 +50,7 @@ void SerialDownload(void)
   int32_t Size = 0;
 
   SerialPutString("Waiting for the file to be sent ... (press 'a' to abort)\n\r");
+  GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red ON */
   Size = Ymodem_Receive(&tab_1024[0]);
   if (Size > 0)
   {
@@ -59,22 +61,27 @@ void SerialDownload(void)
     SerialPutString(Number);
     SerialPutString(" Bytes\r\n");
     SerialPutString("-------------------\n");
+    GPIO_SetBits(GPIOB,GPIO_Pin_5); /* LED 1 - red OFF */
   }
   else if (Size == -1)
   {
     SerialPutString("\n\n\rThe image size is higher than the allowed space memory!\n\r");
+    GPIO_SetBits(GPIOB,GPIO_Pin_5); /* LED 1 - red OFF */
   }
   else if (Size == -2)
   {
     SerialPutString("\n\n\rVerification failed!\n\r");
+    GPIO_SetBits(GPIOB,GPIO_Pin_5); /* LED 1 - red OFF */
   }
   else if (Size == -3)
   {
     SerialPutString("\r\n\nAborted by user.\n\r");
+    GPIO_SetBits(GPIOB,GPIO_Pin_5); /* LED 1 - red OFF */
   }
   else
   {
     SerialPutString("\n\rFailed to receive the file!\n\r");
+    GPIO_SetBits(GPIOB,GPIO_Pin_5); /* LED 1 - red OFF */
   }
 }
 

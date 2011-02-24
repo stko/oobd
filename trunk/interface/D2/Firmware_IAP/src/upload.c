@@ -24,6 +24,7 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "common.h"
+#include "stm32f10x_gpio.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -42,26 +43,27 @@ void SerialUpload(void)
   uint32_t status = 0; 
 
   SerialPutString("\n\n\rSelect Receive File ... (press any key to abort)\n\r");
-
+  GPIO_ResetBits(GPIOB,GPIO_Pin_5); /* LED 1 - red ON */
   if (GetKey() == CRC16)
   {
     /* Transmit the flash image through ymodem protocol */
     status = Ymodem_Transmit((uint8_t*)ApplicationAddress, (const uint8_t*)"UploadedFlashImage.bin", FLASH_IMAGE_SIZE);
-
     if (status != 0) 
     {
       SerialPutString("\n\rError Occured while Transmitting File\n\r");
+      GPIO_SetBits(GPIOB,GPIO_Pin_5); /* LED 1 - red OFF */
     }
     else
     {
       SerialPutString("\n\rFile Trasmitted Successfully \n\r");
+      GPIO_SetBits(GPIOB,GPIO_Pin_5); /* LED 1 - red OFF */
     }
   }
   else
   {
     SerialPutString("\r\n\nAborted by user.\n\r");  
+    GPIO_SetBits(GPIOB,GPIO_Pin_5); /* LED 1 - red OFF */
   }
- 
 }
 
 /**
