@@ -45,45 +45,46 @@ static void IAP_Init(void);
   */
 int main(void)
 {
+  uint32_t nCount = 1000000;
+
   /* Flash unlock */
   FLASH_Unlock();
-
-  /* Initialize Key Button mounted on STM3210X-EVAL board */       
-/*  STM_EVAL_PBInit(BUTTON_KEY, BUTTON_MODE_GPIO); */
-
-  /* Test if Key push-button on STM3210X-EVAL Board is pressed */
-//  if (GetKey()  != 'c')
-//  {
-    /* If Key is pressed */
-    /* Execute the IAP driver in order to re-program the Flash */
-    IAP_Init();
-    SerialPutString("\r\n======================================================================");
-    SerialPutString("\r\n=              (C) COPYRIGHT 2010 STMicroelectronics                 =");
-    SerialPutString("\r\n=                                                                    =");
-    SerialPutString("\r\n=     In-Application Programming Application  (Version 3.3.0)        =");
-    SerialPutString("\r\n=                                                                    =");
-    SerialPutString("\r\n=                                   By MCD Application Team          =");
-    SerialPutString("\r\n======================================================================");
-    SerialPutString("\r\n\r\n");
-    Main_Menu ();
-//  }
-  /* Keep the user application running */
-//  else
-//  {
-    /* Test if user code is programmed starting from address "ApplicationAddress" */
-//    if (((*(__IO uint32_t*)ApplicationAddress) & 0x2FFE0000 ) == 0x20000000)
-//    {
-      /* Jump to user application */
-//      JumpAddress = *(__IO uint32_t*) (ApplicationAddress + 4);
-//      Jump_To_Application = (pFunction) JumpAddress;
-      /* Initialize user application's Stack Pointer */
-//      __set_MSP(*(__IO uint32_t*) ApplicationAddress);
-//      Jump_To_Application();
-//    }
-//  }
+  /* Execute the IAP driver in order to re-program the Flash */
+  IAP_Init();
 
   while (1)
-  {}
+  {
+    for(; nCount != 0; nCount--) /* delay */
+    {
+      if ( USART_GetFlagStatus(USART1, USART_FLAG_RXNE) != RESET)
+      {
+        if ((char)USART1->DR == 'f')
+        {
+          /* If Key is pressed */
+          SerialPutString("\r\n======================================================================");
+          SerialPutString("\r\n=              (C) COPYRIGHT 2010 STMicroelectronics                 =");
+          SerialPutString("\r\n=                                                                    =");
+          SerialPutString("\r\n=     In-Application Programming Application  (Version 3.3.0)        =");
+          SerialPutString("\r\n=                                                                    =");
+          SerialPutString("\r\n=                                   By MCD Application Team          =");
+          SerialPutString("\r\n======================================================================");
+          SerialPutString("\r\n\r\n");
+          Main_Menu ();
+        }
+       }
+     };
+    /* Keep the user application running */
+    /* Test if user code is programmed starting from address "ApplicationAddress" */
+    if (((*(__IO uint32_t*)ApplicationAddress) & 0x2FFE0000 ) == 0x20000000)
+    {
+      /* Jump to user application */
+      JumpAddress = *(__IO uint32_t*) (ApplicationAddress + 4);
+      Jump_To_Application = (pFunction) JumpAddress;
+      /* Initialize user application's Stack Pointer */
+      __set_MSP(*(__IO uint32_t*) ApplicationAddress);
+      Jump_To_Application();
+    }
+  }
 }
 
 /**
@@ -122,6 +123,19 @@ void IAP_Init(void)
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  /* configure Output (open drain) of LED1 - green (PB5) and LED2 - red (PB4) */
+  GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE); /* release alternative GPIO function of PB4 */
+  GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_4 | GPIO_Pin_5;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_Out_OD;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+  /* set LED 1 and LED 2 to default = OFF */
+  GPIO_SetBits(GPIOB,GPIO_Pin_4);   /* LED 2 - green OFF */
+  GPIO_SetBits(GPIOB,GPIO_Pin_5);   /* LED 1 - red OFF */
+
+  GPIO_ResetBits(GPIOB,GPIO_Pin_4); /* LED 2 - green ON */
 
   /* USART resources configuration (Clock, GPIO pins and USART registers) ----*/
   /* USART configured as follow:
