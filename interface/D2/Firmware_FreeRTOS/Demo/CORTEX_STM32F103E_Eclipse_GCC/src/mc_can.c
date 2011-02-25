@@ -54,7 +54,7 @@ bus_send_can (data_packet * data)
 
   CanTxMsg TxMessage;
 
-  TxMessage.StdId = 0x7E8;        /* CAN - ID */
+  TxMessage.StdId = data->recv;     /* CAN - ID */
   TxMessage.ExtId = 0x01;         /* Standard CAN identifier 11bit */
   TxMessage.RTR   = CAN_RTR_DATA; /* Data frame */
   TxMessage.IDE   = CAN_ID_STD;   /* IDE=0 for Standard CAN identifier 11 bit */

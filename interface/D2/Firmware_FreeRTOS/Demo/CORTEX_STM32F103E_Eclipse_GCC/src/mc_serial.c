@@ -156,9 +156,8 @@ void USART1_IRQHandler(void) {
 	// Check for received Data
 	if (sr & USART_SR_RXNE) {
 		ch = USART_ReceiveData(USART1);
-
-		if (pdPASS == xQueueSendToBackFromISR(internalSerialRxQueue, &ch, &xHigherPriorityTaskWoken))
-		{
+	  if (pdPASS == xQueueSendToBackFromISR(internalSerialRxQueue, &ch, &xHigherPriorityTaskWoken))
+		  {
 			DEBUGUARTPRINT("\r\n*** internalSerialRxQueue Zeichen geschrieben ***");
 
 			// Switch context if necessary.
