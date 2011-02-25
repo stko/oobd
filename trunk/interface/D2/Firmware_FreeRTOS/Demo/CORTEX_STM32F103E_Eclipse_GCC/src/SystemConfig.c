@@ -67,7 +67,7 @@ void System_Configuration(void)
   CAN1_Configuration();
 
   /* NVIC configuration */
-  NVIC_Configuration();
+//  NVIC_Configuration();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -79,6 +79,9 @@ void System_Configuration(void)
 void NVIC_Configuration(void)
 {
   NVIC_InitTypeDef NVIC_InitStructure;
+
+  /* Set the Vector Table base location at 0x3000 */
+  NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x3000);
 
   /* Setting the priority grouping bits length */
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
@@ -175,10 +178,10 @@ void GPIO_Configuration(void)
     * PB 1 = ??? = GPIO_Mode_AIN - Input floating for low power consumption
     * PB 2 = ??? = GPIO_Mode_AIN - Input floating for low power consumption
     * PB 3 = ??? = GPIO_Mode_AIN - Input floating for low power consumption
-    * PB 4 = DXM1 IO Pin 13, LED2    = B Output
-    * PB 5 = DXM1 IO Pin 12, LED1    = B Output
-    * PB 6 = 24LC16, SCL = GPIO_Mode_AF_OD = Alternate Function output Open Drain
-    * PB 7 = 24LC16, SDA = GPIO_Mode_AF_OD = Alternate Function output Open Drain
+    * PB 4 = DXM1 IO Pin 13, LED2 - red = GPIO_Mode_Out_OD - Output open drain
+    * PB 5 = DXM1 IO Pin 12, LED1 - green = GPIO_Mode_Out_OD - Output open drain
+    * PB 6 = 24LC16, SCL = GPIO_Mode_AF_OD = Alternate Function output open drain
+    * PB 7 = 24LC16, SDA = GPIO_Mode_AF_OD = Alternate Function output open drain
     * --------------------------------------------------------------------------
     * PB 8 = TJA1050 Pin 4 (RxD)  = GPIO_Mode_IPU - Input Pullup
     * PB 9 = TJA1050 Pin 1 (TxD)  = GPIO_Mode_AF_PP - Alternate Function output Push Pull
@@ -214,10 +217,10 @@ void GPIO_Configuration(void)
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1, ENABLE);
 
   /* Configure I2C pins: SCL and SDA ----------------------------------------*/
-  GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_6 | GPIO_Pin_7;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_OD;
-  GPIO_Init(GPIOB, &GPIO_InitStructure);
+//  GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_6 | GPIO_Pin_7;
+//  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//  GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_OD;
+//  GPIO_Init(GPIOB, &GPIO_InitStructure);
 
   /** --------------------------------------------------------------------------
     * PC13 = ??? = GPIO_Mode_AIN - Input floating for low power consumption
@@ -329,9 +332,9 @@ void CAN1_Configuration(void)
   CAN_FilterInitStructure.CAN_FilterNumber = 0;
   CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
   CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
-  CAN_FilterInitStructure.CAN_FilterIdHigh = 0x0000;
+  CAN_FilterInitStructure.CAN_FilterIdHigh = 0x0700 << 5; /* CAN-ID 0x700 */
   CAN_FilterInitStructure.CAN_FilterIdLow = 0x0000;
-  CAN_FilterInitStructure.CAN_FilterMaskIdHigh = 0x0000;
+  CAN_FilterInitStructure.CAN_FilterMaskIdHigh = 0x0700 << 5; /* Range 0x700-0x7FF) */
   CAN_FilterInitStructure.CAN_FilterMaskIdLow = 0x0000;
   CAN_FilterInitStructure.CAN_FilterFIFOAssignment = 0;
   CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;

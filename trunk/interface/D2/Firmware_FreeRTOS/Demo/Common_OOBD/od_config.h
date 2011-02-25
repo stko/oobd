@@ -71,27 +71,24 @@
 
 // debugging macros so we can pin down message origin at a glance
 #ifdef OOBD_PLATFORM_POSIX	// switch debug messages on or off
-#define WHERESTR  "[file %s, line %d]: "
-#define WHEREARG  __FILE__, __LINE__
-#define DEBUGPRINT2(...)       fprintf(stderr, __VA_ARGS__)
-#define DEBUGPRINT3(...)       printf(__VA_ARGS__)
-#define DEBUGPRINT(_fmt, ...)  DEBUGPRINT2(WHERESTR _fmt, WHEREARG, __VA_ARGS__)
-#define DEBUGUARTPRINT(...)
+  #define WHERESTR  "[file %s, line %d]: "
+  #define WHEREARG  __FILE__, __LINE__
+  #define DEBUGPRINT2(...)       fprintf(stderr, __VA_ARGS__)
+  #define DEBUGPRINT3(...)       printf(__VA_ARGS__)
+  #define DEBUGPRINT(_fmt, ...)  DEBUGPRINT2(WHERESTR _fmt, WHEREARG, __VA_ARGS__)
+  #define DEBUGUARTPRINT(...)
+#elif DEBUG_SERIAL_STM32
+  #define DEBUGPRINT(_fmt, ...) DEBUGUARTPRINT(__VA_ARGS__)
+  #define DEBUGUARTPRINT(...)  uart1_puts(__VA_ARGS__)
 #else
-//#define WHERESTR  "[line %d]: "
-//#define WHEREARG  __LINE__
-//#define WHERESTR  "[file %s, line %d]: "
-//#define WHEREARG  __FILE__, __LINE__
-//#define DEBUGPRINT(_fmt, ...) /* uncomment to disable DEBUGPRINT and comment the line below */
-//#define DEBUGPRINT(_fmt, ...) DEBUGUARTPRINT(WHERESTR _fmt, WHEREARG, __VA_ARGS__)
-#define DEBUGPRINT(_fmt, ...) DEBUGUARTPRINT(__VA_ARGS__)
-#define DEBUGUARTPRINT(...)  uart1_puts(__VA_ARGS__)
+  #define DEBUGPRINT(_fmt, ...)
+  #define DEBUGUARTPRINT(...)
 #endif
 
 /* Priority definitions for the tasks . */
 #define TASK_PRIO_LOW		( tskIDLE_PRIORITY + 1 )
 #define TASK_PRIO_MID		( tskIDLE_PRIORITY + 2 )
-#define TASK_PRIO_HIGH		( tskIDLE_PRIORITY + 3 )
+#define TASK_PRIO_HIGH  ( tskIDLE_PRIORITY + 3 )
 
 #define mainDEBUG_LOG_BUFFER_SIZE	( ( unsigned short ) 20480 )
 /* Remove some of the CPU intensive tasks. */
@@ -116,34 +113,25 @@
 #define MSG_SEND_BUFFER		( 9 )	//!< tells the  protocol to send the filled input buffer
 #define MSG_DUMP_BUFFER		( 10 )	//!< buffer filled, request to dump
 
-
-
 /* define parameter types */
-#define PARAM_INFO    		( 0 )
-#define PARAM_ECHO    		( 1 )
-#define PARAM_LISTEN    	( 2 )
-#define PARAM_PROTOCOL 		( 3 )
-#define PARAM_BUS 		( 4 )
-#define PARAM_BUS_CONFIG 	( 5 )
-#define PARAM_TIMEOUT 		( 6 )
-#define PARAM_TIMEOUT_PENDING 	( 7 )
-#define PARAM_BLOCKSIZE 	( 8 )
-#define PARAM_FRAME_DELAY 	( 9 )
-#define PARAM_RECVID  		( 10 )
-#define PARAM_TP_ON 		( 11 )
-#define PARAM_TP_OFF 		( 12 )
-#define PARAM_TP_FREQ 		( 13 )
+#define PARAM_INFO    		    ( 0 )
+#define PARAM_ECHO    		    ( 1 )
+#define PARAM_LISTEN    	    ( 2 )
+#define PARAM_PROTOCOL 		    ( 3 )
+#define PARAM_BUS 		        ( 4 )
+#define PARAM_BUS_CONFIG 	    ( 5 )
+#define PARAM_TIMEOUT 		    ( 6 )
+#define PARAM_TIMEOUT_PENDING ( 7 )
+#define PARAM_BLOCKSIZE 	    ( 8 )
+#define PARAM_FRAME_DELAY 	  ( 9 )
+#define PARAM_RECVID  		    ( 10 )
+#define PARAM_TP_ON           ( 11 )
+#define PARAM_TP_OFF          ( 12 )
+#define PARAM_TP_FREQ         ( 13 )
 #define ODB_CMD_RECV		( 14 )	//!< only for internal use: sets the callback routine when receiving a bus packet
-
-
-
-
+#define PARAM_BOOTLOADER      ( 91 )
 
 /*-------- Global Vars --------------*/
-
-
-
-
 
 
 
