@@ -113,7 +113,7 @@ main (void)
   */
   #ifdef OOBD_PLATFORM_STM32
   /* Buffer of data to be received by I2C1 */
-  uint8_t Buffer_Rx1[255];
+  /*  uint8_t Buffer_Rx1[255]; */
 
   /* SystemInit(); */ /* not needed as SystemInit() is called from startup */
 	/* Initialize DXM1 hardware, i.e. GPIO, CAN, USART1 */
@@ -133,12 +133,12 @@ main (void)
   DEBUGUARTPRINT("\r\n*** Starting FreeRTOS ***");
 
   // Version String
-  #ifdef OOBD_PLATFORM_POSIX
+//  #ifdef OOBD_PLATFORM_POSIX
     DEBUGPRINT ("OOBD Build: %s\n", SVNREV);
-  #else
-    DEBUGUARTPRINT("\r\nOOBD Build: ");
-    DEBUGUARTPRINT(SVNREV);
-  #endif
+//  #else
+//    DEBUGUARTPRINT("\r\nOOBD Build: ");
+//    DEBUGUARTPRINT(SVNREV);
+//  #endif
 
 /*
 #ifdef OOBD_PLATFORM_STM32
@@ -182,6 +182,10 @@ main (void)
   vTaskStartScheduler ();
 
   DEBUGUARTPRINT("\r\nSomething got wrong, RTOS terminated !!!");
+
+  #ifdef OOBD_PLATFORM_STM32
+    SCB->AIRCR = 0x05FA0604; /* soft reset */
+  #endif
 
   return 1;
 }
