@@ -129,10 +129,9 @@
 #define PARAM_TP_OFF          ( 12 )
 #define PARAM_TP_FREQ         ( 13 )
 #define ODB_CMD_RECV		( 14 )	//!< only for internal use: sets the callback routine when receiving a bus packet
-#define PARAM_BOOTLOADER      ( 91 )
+#define PARAM_RESET           ( 99 )
 
 /*-------- Global Vars --------------*/
-
 
 
 //! callback function for print a single char

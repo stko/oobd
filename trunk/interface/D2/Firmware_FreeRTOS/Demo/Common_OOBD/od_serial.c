@@ -250,16 +250,16 @@ inputParserTask (void *pvParameters)
   MsgData *incomingMsg;
   char inChar;
   portBASE_TYPE msgType = 0, lastErr = 0, processFurther = 1, hexInput = 0;
-  portBASE_TYPE cmdKey = 0, cmdValue = 0;	// the both possible params
+  portBASE_TYPE cmdKey = 0, cmdValue = 0;	/* the both possible params */
   static data_packet dp;
   static unsigned char buffer[8];
-  enum states			//!< the possible states of the input parser state machine
+  enum states		/* !< the possible states of the input parser state machine */
   {
-    S_DATA,			//!< we just reading data to transmit
-    S_PARAM,			//!< we just interpreting parameters
-    S_WAITEOL,			//!< input error orrured or all params already given, so just waiting for EOL
-    S_SLEEP,			//!< do nothing, until data has finally transfered
-    S_INIT			//!< initial state, waiting for input
+    S_DATA,			/* !< we just reading data to transmit */
+    S_PARAM,		/* !< we just interpreting parameters */
+    S_WAITEOL,	/* !< input error orrured or all params already given, so just waiting for EOL */
+    S_SLEEP,		/* !< do nothing, until data has finally transfered */
+    S_INIT			/* !< initial state, waiting for input */
   };
   portBASE_TYPE actState = S_INIT, totalInCount = 0;
   dp.data = &buffer;
@@ -268,204 +268,194 @@ inputParserTask (void *pvParameters)
 	  DEBUGUARTPRINT("\r\n*** inputRedirectTask is running! ***");
 
 	  if (MSG_NONE !=
-	  (msgType = waitMsg (inputQueue, &incomingMsg, portMAX_DELAY)))
-	{
-	  switch (msgType)
+	     (msgType = waitMsg (inputQueue, &incomingMsg, portMAX_DELAY)))
+	  {
+	    switch (msgType)
 	    {
-	    case MSG_SERIAL_IN:
-	      processFurther = 1;
-	      if (actState != S_SLEEP)
-		{		// if we not actual ignore any input 
-		  inChar = checkValidChar (*(char *) incomingMsg->addr);
-		  if (actState == S_WAITEOL)
-		    {		// just waiting for an end of line
-		      if (inChar == crEOL)
-			{
-			  if (lastErr)
-			    {
-			      createFeedbackMsg (1);
-			    }
-			  actState = S_INIT;
-			}
-		    }
-		  if (actState == S_INIT)
-		    {
-		      cmdKey = 0;
-		      cmdValue = 0;
-		      lastErr = 0;
-		      hexInput = 0;
-		      totalInCount = 0;
-		      dp.len = 0;
-		      if (inChar < 16)
-			{	// first char is a valid hex char (0-F), so we switch into data line mode
-			  actState = S_DATA;
-			}
-		      if (inChar == crCMD)
-			{	// first char is a valid hex char (0-F), so we switch into data line mode
-			  actState = S_PARAM;
-			  processFurther = 0;
-			}
-		      if (inChar == crEOL)
-			{
-			  // in case we filled the buffer already previously    
-			  sendMsg (MSG_SEND_BUFFER, protocolQueue, NULL);
-			  actState = S_SLEEP;
-			}
-		    }
-		  if (actState == S_DATA)
-		    {
-		      if (inChar == crEOL)
-			{
-			  if (dp.len > 0)
-			    {
-			      sendData (&dp);
-			      // tells the  protocol to send the buffer
-			      sendMsg (MSG_SEND_BUFFER, protocolQueue, NULL);
-			      actState = S_SLEEP;
-			    }
-			  else
-			    {
-			      actState = S_INIT;
-			    }
-			}
-		      else
-			{
-			  //check for valid input 
-			  if (inChar < 16)
-			    {	// valid char, already as it's hex value
-			      if (totalInCount == 0)
-				{
-				  /* reset the protocol */
-				  sendMsg (MSG_INIT, protocolQueue, NULL);
-				  dp.len = 0;
-				}
-			      totalInCount++;
-			      if (totalInCount % 2)
-				{	// just to see if totalInCount is just odd or even
-				  dp.data[(++dp.len) - 1] = inChar << 4;
-				}
-			      else
-				{
-				  dp.data[dp.len - 1] += inChar;
-				}
-			      if ((dp.len > 7) && ((totalInCount & 1) == 0))
-				{	// buffer full, transfer to protocol
-				  sendData (&dp);
-				  dp.len = 0;
-				}
-			    }
-			  else
-			    {	// forbitten char, just waiting for end of line
-			      actState = S_WAITEOL;
-			      lastErr = 1;
-			    }
-			}
-		    }
+	      case MSG_SERIAL_IN:
+	        processFurther = 1;
+	        if (actState != S_SLEEP)
+	        { /* if we not actual ignore any input */
+	          inChar = checkValidChar (*(char *) incomingMsg->addr);
+	          if (actState == S_WAITEOL)
+	          {		/* just waiting for an end of line */
+	            if (inChar == crEOL)
+	            {
+	              if (lastErr)
+	              {
+	                createFeedbackMsg (1);
+	              }
+	              actState = S_INIT;
+	            }
+	          }
+	          if (actState == S_INIT)
+	          {
+	            cmdKey = 0;
+	            cmdValue = 0;
+	            lastErr = 0;
+	            hexInput = 0;
+	            totalInCount = 0;
+	            dp.len = 0;
+	            if (inChar < 16)
+	            {	/* first char is a valid hex char (0-F), so we switch into data line mode */
+	              actState = S_DATA;
+	            }
+	            if (inChar == crCMD)
+	            {	/* first char is a valid hex char (0-F), so we switch into data line mode */
+	              actState = S_PARAM;
+	              processFurther = 0;
+	            }
+	            if (inChar == crEOL)
+	            { /* in case we filled the buffer already previously */
+	              sendMsg (MSG_SEND_BUFFER, protocolQueue, NULL);
+	              actState = S_SLEEP;
+	            }
+	          }
+	          if (actState == S_DATA)
+	          {
+	            if (inChar == crEOL)
+	            {
+	              if (dp.len > 0)
+	              {
+	                sendData (&dp);
+	                /* tells the  protocol to send the buffer */
+	                sendMsg (MSG_SEND_BUFFER, protocolQueue, NULL);
+	                actState = S_SLEEP;
+	              }
+	              else
+	              {
+	                actState = S_INIT;
+	              }
+	            }
+	            else
+	            { /* check for valid input */
+	              if (inChar < 16)
+	              {	/* valid char, already as it's hex value */
+	                if (totalInCount == 0)
+	                { /* reset the protocol */
+	                  sendMsg (MSG_INIT, protocolQueue, NULL);
+	                  dp.len = 0;
+	                }
+	                totalInCount++;
+	                if (totalInCount % 2)
+	                {	/* just to see if totalInCount is just odd or even */
+	                  dp.data[(++dp.len) - 1] = inChar << 4;
+	                }
+	                else
+	                {
+	                  dp.data[dp.len - 1] += inChar;
+	                }
+	                if ((dp.len > 7) && ((totalInCount & 1) == 0))
+	                {	/* buffer full, transfer to protocol */
+	                  sendData (&dp);
+	                  dp.len = 0;
+	                }
+	              }
+	              else
+	              {	/* forbitten char, just waiting for end of line */
+	                actState = S_WAITEOL;
+	                lastErr = 1;
+	              }
+	            }
+	          }
 
-		  if (actState == S_PARAM && processFurther)
-		    {
-		      if (inChar == crEOL)
-			{
-			  if (totalInCount == 3 || totalInCount == 4)
-			    {
-			      createFeedbackMsg (0);
-			      sendParam (cmdKey, cmdValue);
-			    }
-			  else
-			    {
-			      lastErr = 2;
-			    }
-			  actState = S_INIT;
-			}
-		      else
-			{
-			  /*check for valid input 
-			   * totalInCount is used to define where we are in the input line:
-			   * 0: at the beginning
-			   * 1: just reading the first parameter
-			   * 2: between the two numbers
-			   * 3: reading the second parameter
-			   * 4: input done, just waiting for EOL
-			   *
-			   */
-
-			  if (inChar == crHEX)
-			    {
-			      if (totalInCount == 0 || totalInCount == 2)
-				{	// we are before the 2 numbers
-				  hexInput = 1;
-				  totalInCount++;	//starting to input a number
-				}
-			      else
-				{	// forbitten char, just waiting for end of line
-				  actState = S_WAITEOL;
-				  lastErr = 2;
-				}
-			    }
-			  else
-			    {
-			      if (inChar == crBLANK)
-				{
-				  if (totalInCount == 1 || totalInCount == 3)
-				    {	//finish the input of a param
-				      hexInput = 0;	// reset the number format
-				      totalInCount++;
-				    }
-				}
-			      else
-				{
-				  if (inChar < 16)
-				    {	// valid char, already as it's hex value
-				      if (inChar > 10 && !hexInput)
-					{	//wrong number format
-					  actState = S_WAITEOL;
-					  lastErr = 2;
-					}
-				      else
-					{
-					  if (totalInCount == 0
-					      || totalInCount == 1)
-					    {
-					      cmdKey =
-						cmdKey * (10 +
-							  (6 * hexInput)) +
-						inChar;
-					      totalInCount = 1;	//in case we were on 0 before
-					    }
-					  if (totalInCount == 2
-					      || totalInCount == 3)
-					    {
-					      cmdValue =
-						cmdValue * (10 +
-							    (6 * hexInput)) +
-						inChar;
-					      totalInCount = 3;	//in case we were on 2 before
-					    }
-					}
-				    }
-				  else
-				    {	// forbitten char, just waiting for end of line
-				      actState = S_WAITEOL;
-				      lastErr = 1;
-				    }
-				}
-			    }
-			}
-		    }
-
-		}
+	        if (actState == S_PARAM && processFurther)
+	        {
+	          if (inChar == crEOL)
+	          {
+	            if (totalInCount == 3 || totalInCount == 4)
+	            {
+	              createFeedbackMsg (0);
+	              sendParam (cmdKey, cmdValue);
+	            }
+	            else
+	            {
+	              lastErr = 2;
+	            }
+	            actState = S_INIT;
+	          }
+	          else
+	          {
+	            /* check for valid input
+	             * totalInCount is used to define where we are in the input line:
+	             * 0: at the beginning
+	             * 1: just reading the first parameter
+	             * 2: between the two numbers
+	             * 3: reading the second parameter
+	             * 4: input done, just waiting for EOL
+	             *
+	             */
+	            if (inChar == crHEX)
+	            {
+	              if (totalInCount == 0 || totalInCount == 2)
+	              {	/* we are before the 2 numbers */
+	                hexInput = 1;
+	                totalInCount++;	/* starting to input a number */
+	              }
+	              else
+	              {	/* forbitten char, just waiting for end of line */
+	                actState = S_WAITEOL;
+	                lastErr = 2;
+	              }
+	            }
+	            else
+	            {
+	              if (inChar == crBLANK)
+	              {
+	                if (totalInCount == 1 || totalInCount == 3)
+	                {	/* finish the input of a param */
+	                  hexInput = 0;	/* reset the number format */
+	                  totalInCount++;
+	                }
+	              }
+	              else
+	              {
+	                if (inChar < 16)
+	                {	/* valid char, already as it's hex value */
+	                  if (inChar > 10 && !hexInput)
+	                  { /* wrong number format */
+	                    actState = S_WAITEOL;
+	                    lastErr = 2;
+	                  }
+	                  else
+	                  {
+	                    if (totalInCount == 0 || totalInCount == 1)
+	                    {
+	                      cmdKey = cmdKey * (10 + (6 * hexInput)) +	inChar;
+	                      totalInCount = 1;	/* in case we were on 0 before */
+	                    }
+	                    if (totalInCount == 2 || totalInCount == 3)
+	                    {
+	                      cmdValue = cmdValue * (10 + (6 * hexInput)) +	inChar;
+	                      totalInCount = 3;	/* in case we were on 2 before */
+	                    }
+	                  }
+	                }
+	                else
+	                {	/* forbitten char, just waiting for end of line */
+	                  actState = S_WAITEOL;
+	                  lastErr = 1;
+	                }
+	              }
+	            }
+	          }
+	        }
+	      }
 	      break;
-	    case MSG_SERIAL_RELEASE:
-	      if (actState == S_SLEEP)
-		{		//do we just waiting for an answer?
-		  createFeedbackMsg (0);
-		  actState = S_INIT;	// start again
-		}
-	    }
 
-	  disposeMsg (incomingMsg);
-	}
+	      case MSG_SERIAL_RELEASE:
+	        if (actState == S_SLEEP)
+	        {	/* do we just waiting for an answer? */
+	          createFeedbackMsg (0);
+	          actState = S_INIT;	/* start again */
+	        }
+	        break;
+	      default:
+	        break;
+	    }
+	    disposeMsg (incomingMsg);
     }
+  }
 }
 
 /*-----------------------------------------------------------*/
