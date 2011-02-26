@@ -5,6 +5,7 @@
 
 package org.oobd.mobile;
 
+import java.io.IOException;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
@@ -12,6 +13,8 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.ImageItem;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.Spacer;
@@ -29,11 +32,12 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     Form mainwindow;
     ConfigForm configwindow;
     Spacer confSpacer;
+    ImageItem logoItem;
     TextField btConf;
     TextField scriptConf;
-    Command confCom;
-    Command back2mainCom;
-    Command startCom;
+    Command confCmd;
+    Command back2mainCmd;
+    Command startCmd;
     Display display;
     Preferences mPreferences;
     boolean initialized=false;
@@ -43,6 +47,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     private String actScript = scriptDefault;
     private LuaScript scriptEngine;
     private List cellList;
+    private boolean blindMode;
 
 
     public void startApp() {
@@ -67,11 +72,20 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
             mainwindow = new Form("OOBD-MEv2",null);
             mainwindow.setCommandListener(this);
 
-            confCom = new Command("Config", Command.SCREEN,0);
-            mainwindow.addCommand(confCom);
-            startCom = new Command("Start", Command.OK,0);
-            mainwindow.addCommand(startCom);
+            confCmd = new Command("Config", Command.SCREEN,0);
+            mainwindow.addCommand(confCmd);
+            startCmd = new Command("Start", Command.OK,0);
+            mainwindow.addCommand(startCmd);
 
+//            Image logo=null;
+//            try {
+//                logo = Image.createImage("res/oobd_small.png");
+//            } catch (IOException ex) {
+//                ex.printStackTrace();
+//            }
+//            logoItem = new ImageItem("OODB-MEv2", logo, ImageItem.LAYOUT_CENTER, "Logo not loaded");
+
+//            mainwindow.append(logoItem);
             display.setCurrent(mainwindow);
         }
     }
@@ -84,22 +98,28 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     }
 
     public void commandAction(Command c, Displayable d) {
-        if (d == mainwindow) {                                           
-            if (c == confCom) {                                         
-                if (configwindow == null){
-                    configwindow = new ConfigForm(mainwindow, btComm, this);
-
-                }
-                                          
-                display.setCurrent(configwindow);
-            }                                           
-        }
-        if (d == configwindow) {
-            if (c == back2mainCom) {
-                display.setCurrent(mainwindow);
+                                                   
+        if (c == confCmd) {
+            if (configwindow == null){
+                configwindow = new ConfigForm(mainwindow, btComm, this);
             }
+            display.setCurrent(configwindow);
         }
         
+        else if(c == startCmd) {
+            if (blindMode || tryToConnect()) {
+                try {
+                    System.out.println("Try to load script " + actScript);
+                    scriptEngine.doScript(actScript);
+                    if (!actScript.equals(scriptDefault)) {
+                        mPreferences.put(prefsScript, actScript);
+                    }
+
+                } catch (java.io.IOException ioe) {
+                    ioe.printStackTrace();
+                }
+            }
+        }    
     }
 
     public Display getDisplay() {
@@ -110,6 +130,35 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
         Alert check = new Alert("Debug Message",text,null,AlertType.CONFIRMATION);
         display.setCurrent(check);
     }
+
+    boolean tryToConnect() {
+        if (!btComm.isConnected()) {
+
+            if (btComm.URL != null) {
+                btComm.Connect(btComm.URL);
+                if (btComm.isConnected()) {
+                    mPreferences.put(prefsURL, btComm.URL);
+
+                    return true;
+                } else {
+                    display.setCurrent(new Alert("Start not possible", "Communication not possible", null, AlertType.WARNING));
+                    return false;
+                }
+            } else {
+                display.setCurrent(new Alert("Start not possible", "Please configure your Bluetooth device first", null, AlertType.WARNING));
+                return false;
+            }
+        } else {
+            return true;
+        }
+
+    }
+
+    public boolean isBlindMode() {
+        return blindMode;
+    }
+
+
 
 //    private void initiateScriptEngine(){
 //        scriptEngine = new LuaScript();

@@ -2,6 +2,7 @@ package org.oobd.mobile;
 
 
 import javax.microedition.lcdui.*;
+import org.netbeans.microedition.lcdui.pda.FileBrowser;
 
 /**
  *
@@ -10,11 +11,10 @@ import javax.microedition.lcdui.*;
 public class ConfigForm extends Form implements CommandListener,ItemCommandListener, Runnable {
 
 
+    Display display;
     private Form parent; //Where this form was started from
     private BTSerial btComm; //Where the bluetooth routines are
-    private Command backCommand = null;
- //   Button scriptSelect = null;
-    ConfigForm mySelf = null;
+    
     final int SCRIPTREQUEST = 1;
     final int THEMEREQUEST = 2;
     private OOBD_MEv2 mainMidlet;
@@ -24,7 +24,9 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
     Command backCmd;
     Command btCmd;
     Command scriptCmd;
+    
     private final ChoiceGroup choiceGroup;
+    private FileBrowser fileBrowser;
 
 
 
@@ -34,17 +36,19 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
         this.mainMidlet = mainMidlet;
         this.btComm= btComm;
 
-        new Thread(this).start();
+        display = Display.getDisplay(mainMidlet);
+
+//        new Thread(this).start();
 
         btConf= new TextField("Configure Bluetooth Device:", "...Search", 32, TextField.UNEDITABLE);
-        btCmd=new Command("Configure Bluetooth", Command.ITEM, 0);
+        btCmd=new Command("Select", Command.ITEM, 0);
         btConf.addCommand(btCmd);
         btConf.setItemCommandListener(this);
 
         confSpacer = new Spacer(10,10);
 
         scriptConf = new TextField("Select script:", "/LUA.lbc", 32, TextField.UNEDITABLE);
-        scriptCmd = new Command("Select Script", Command.ITEM, 0);
+        scriptCmd = new Command("Select", Command.ITEM, 0);
         scriptConf.addCommand(scriptCmd);
         scriptConf.setItemCommandListener(this);
 
@@ -57,32 +61,51 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
         this.append(scriptConf);
         this.append(choiceGroup);
 
-        
+        backCmd = new Command("Back",Command.BACK,0);
         this.setCommandListener(this);
-        Command back=new Command("Back",Command.BACK,0);
-        this.addCommand(back);
+        
+        this.addCommand(backCmd);
 
-        Display.getDisplay(mainMidlet).setCurrent(this);
+        display.setCurrent(this);
     }
 
     public void commandAction(Command c, Item item) {
         if (c==btCmd){
-            btComm.getDeviceURL(this, mainMidlet.getDisplay());
+//            display.setCurrent(new Alert("btcmd test"));
+            btComm.getDeviceURL(this, display);
         }
         else if(c==scriptCmd){
+            if (fileBrowser == null) {                
+                fileBrowser = new FileBrowser(display);
+                fileBrowser.setTitle("Select a script");
+                fileBrowser.setCommandListener(this);
+                fileBrowser.addCommand(FileBrowser.SELECT_FILE_COMMAND);                
+            }
+            display.setCurrent(fileBrowser);
 
         }
+        
     }
-
+    public void commandAction(Command c, Displayable d) {
+        if (c==backCmd){
+//            display.setCurrent(new Alert("test"));
+            display.setCurrent(parent);
+        }
+        else if(c==FileBrowser.SELECT_FILE_COMMAND){
+            scriptConf.setString(fileBrowser.getSelectedFileURL());
+            display.setCurrent(this);
+        }
+    }
+    
     public void run() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void commandAction(Command c, Displayable d) {
-        if (c==backCmd){
-            mainMidlet.getDisplay().setCurrent(parent);
-        }
+    public void setBTname(String btName){
+        btConf.setString(btName);
+
     }
+
     
  //   Button btDevice;
 /**
