@@ -38,8 +38,8 @@
 #include "od_serial.h"
 #include "od_outputTask.h"
 #ifdef OOBD_PLATFORM_STM32
-#include "stm32f10x.h"     	/* ST Library v3.4..0 specific header files */
-#include "SystemConfig.h"		/* STM32 hardware specific header file */
+#include "stm32f10x.h"		/* ST Library v3.4..0 specific header files */
+#include "SystemConfig.h"	/* STM32 hardware specific header file */
 #include "mc_i2c_routines.h"
 #endif
 
@@ -52,7 +52,7 @@ static const short sUsingPreemption = configUSE_PREEMPTION;
 void
 tickTask (void *pvParameters)
 {
-  DEBUGUARTPRINT("\r\n*** tickTask entered! ***");
+  DEBUGUARTPRINT ("\r\n*** tickTask entered! ***");
 
   extern xQueueHandle protocolQueue;
   // char buffer[1024];
@@ -72,32 +72,35 @@ tickTask (void *pvParameters)
 
     }
 }
+
 /*---------------------------------------------------------------------------*/
 #ifdef OOBD_PLATFORM_STM32
 void
-blinkLedTask( void *pvParameters )
+blinkLedTask (void *pvParameters)
 {
   portTickType xLastExecutionTime;
 
-  DEBUGUARTPRINT("\r\n*** prvBlinkLedTask entered! ***");
+  DEBUGUARTPRINT ("\r\n*** prvBlinkLedTask entered! ***");
 
   /* Initialise the xLastExecutionTime variable on task entry. */
-  xLastExecutionTime = xTaskGetTickCount();
+  xLastExecutionTime = xTaskGetTickCount ();
 
-  for( ;; )
-  {
-    /* Simple toggle the LED periodically.  This just provides some timing
-    verification. */
-    vTaskDelayUntil( &xLastExecutionTime, ( portTickType ) 1000 / portTICK_RATE_MS );
-    /* Output high -> LED off for 1000ms = 1sec */
-    GPIO_SetBits(GPIOB,GPIO_Pin_4); /* LED2 - green */
-    GPIO_SetBits(GPIOB,GPIO_Pin_5); /* LED1 - red */
+  for (;;)
+    {
+      /* Simple toggle the LED periodically.  This just provides some timing
+         verification. */
+      vTaskDelayUntil (&xLastExecutionTime,
+		       (portTickType) 1000 / portTICK_RATE_MS);
+      /* Output high -> LED off for 1000ms = 1sec */
+      GPIO_SetBits (GPIOB, GPIO_Pin_4);	/* LED2 - green */
+      GPIO_SetBits (GPIOB, GPIO_Pin_5);	/* LED1 - red */
 
-    vTaskDelayUntil( &xLastExecutionTime, ( portTickType ) 1000 / portTICK_RATE_MS );
-    /* Output low -> LED on for 1000ms = 1sec */
-    GPIO_ResetBits(GPIOB,GPIO_Pin_4);  /* LED2 - green */
-    GPIO_ResetBits(GPIOB,GPIO_Pin_5);  /* LED1 - red */
-  }
+      vTaskDelayUntil (&xLastExecutionTime,
+		       (portTickType) 1000 / portTICK_RATE_MS);
+      /* Output low -> LED on for 1000ms = 1sec */
+      GPIO_ResetBits (GPIOB, GPIO_Pin_4);	/* LED2 - green */
+      GPIO_ResetBits (GPIOB, GPIO_Pin_5);	/* LED1 - red */
+    }
 }
 #endif
 /*---------------------------------------------------------------------------*/
@@ -106,20 +109,20 @@ int
 main (void)
 {
   /*!< At this stage the microcontroller clock setting is already configured,
-       this is done through SystemInit() function which is called from startup
-       file (startup_stm32f10x_xx.s) before to branch to application main.
-       To reconfigure the default setting of SystemInit() function, refer to
-       system_stm32f10x.c file
-  */
-  #ifdef OOBD_PLATFORM_STM32
+     this is done through SystemInit() function which is called from startup
+     file (startup_stm32f10x_xx.s) before to branch to application main.
+     To reconfigure the default setting of SystemInit() function, refer to
+     system_stm32f10x.c file
+   */
+#ifdef OOBD_PLATFORM_STM32
   /* Buffer of data to be received by I2C1 */
   /*  uint8_t Buffer_Rx1[255]; */
 
-  /* SystemInit(); */ /* not needed as SystemInit() is called from startup */
-	/* Initialize DXM1 hardware, i.e. GPIO, CAN, USART1 */
- 	System_Configuration();
+  /* SystemInit(); *//* not needed as SystemInit() is called from startup */
+  /* Initialize DXM1 hardware, i.e. GPIO, CAN, USART1 */
+  System_Configuration ();
 /* 	I2C_LowLevel_Init(I2C1); */
-  #endif
+#endif
 
   /* Activate the busses */
   initBusses ();
@@ -130,11 +133,11 @@ main (void)
   /*activate the output task */
   initOutput ();
 
-  DEBUGUARTPRINT("\r\n*** Starting FreeRTOS ***");
+  DEBUGUARTPRINT ("\r\n*** Starting FreeRTOS ***");
 
   // Version String
 //  #ifdef OOBD_PLATFORM_POSIX
-    DEBUGPRINT ("OOBD Build: %s\n", SVNREV);
+  DEBUGPRINT ("OOBD Build: %s\n", SVNREV);
 //  #else
 //    DEBUGUARTPRINT("\r\nOOBD Build: ");
 //    DEBUGUARTPRINT(SVNREV);
@@ -154,41 +157,46 @@ main (void)
 
   // starting with the first protocol in the list
   if (pdPASS == xTaskCreate (odparr[0], (const signed portCHAR *) "prot",
-      configMINIMAL_STACK_SIZE, (void *) NULL, TASK_PRIO_LOW, (xTaskHandle *) NULL))
-	  DEBUGUARTPRINT("\r\n*** 'prot' Task created ***");
+			     configMINIMAL_STACK_SIZE, (void *) NULL,
+			     TASK_PRIO_LOW, (xTaskHandle *) NULL))
+    DEBUGUARTPRINT ("\r\n*** 'prot' Task created ***");
   else
-	  DEBUGUARTPRINT("\r\n*** 'prot' Task NOT created ***");
+    DEBUGUARTPRINT ("\r\n*** 'prot' Task NOT created ***");
 
   if (pdPASS == xTaskCreate (tickTask, (const signed portCHAR *) "Tick",
-      configMINIMAL_STACK_SIZE, (void *) NULL, TASK_PRIO_LOW, (xTaskHandle *) NULL))
-	  DEBUGUARTPRINT("\r\n*** 'Tick' Task created ***");
+			     configMINIMAL_STACK_SIZE, (void *) NULL,
+			     TASK_PRIO_LOW, (xTaskHandle *) NULL))
+    DEBUGUARTPRINT ("\r\n*** 'Tick' Task created ***");
   else
-	  DEBUGUARTPRINT("\r\n*** 'Tick' Task NOT created ***");
+    DEBUGUARTPRINT ("\r\n*** 'Tick' Task NOT created ***");
 
-  #ifdef OOBD_PLATFORM_STM32
-    if (pdPASS == xTaskCreate (blinkLedTask, (const signed portCHAR *) "blinkLed",
-        configMINIMAL_STACK_SIZE, (void *) NULL, TASK_PRIO_LOW, (xTaskHandle *) NULL))
-      DEBUGUARTPRINT("\r\n*** 'blinkLed' Task created ***");
-    else
-      DEBUGUARTPRINT("\r\n*** 'blinkLed' Task NOT created ***");
-  #endif
+#ifdef OOBD_PLATFORM_STM32
+  if (pdPASS ==
+      xTaskCreate (blinkLedTask, (const signed portCHAR *) "blinkLed",
+		   configMINIMAL_STACK_SIZE, (void *) NULL, TASK_PRIO_LOW,
+		   (xTaskHandle *) NULL))
+    DEBUGUARTPRINT ("\r\n*** 'blinkLed' Task created ***");
+  else
+    DEBUGUARTPRINT ("\r\n*** 'blinkLed' Task NOT created ***");
+#endif
 
-  #ifdef OOBD_PLATFORM_STM32
-    /* initialize Interrupt Vector table and activate interrupts*/
-    NVIC_Configuration();
-  #endif
+#ifdef OOBD_PLATFORM_STM32
+  /* initialize Interrupt Vector table and activate interrupts */
+  NVIC_Configuration ();
+#endif
 
   /* Set the scheduler running.  This function will not return unless a task calls vTaskEndScheduler(). */
   vTaskStartScheduler ();
 
-  DEBUGUARTPRINT("\r\nSomething got wrong, RTOS terminated !!!");
+  DEBUGUARTPRINT ("\r\nSomething got wrong, RTOS terminated !!!");
 
-  #ifdef OOBD_PLATFORM_STM32
-    SCB->AIRCR = 0x05FA0604; /* soft reset */
-  #endif
+#ifdef OOBD_PLATFORM_STM32
+  SCB->AIRCR = 0x05FA0604;	/* soft reset */
+#endif
 
   return 1;
 }
+
 /*---------------------------------------------------------------------------*/
 
 void
@@ -205,4 +213,5 @@ vApplicationIdleHook (void)
 //  nanosleep (&xTimeToSleep, &xTimeSlept);
 #endif
 }
+
 /*---------------------------------------------------------------------------*/

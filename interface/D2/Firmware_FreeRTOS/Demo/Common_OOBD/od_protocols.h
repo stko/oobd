@@ -95,7 +95,7 @@ typedef void (*print_cbf) (portBASE_TYPE msgType, void *data,
 typedef portBASE_TYPE (*bus_init) ();
 typedef portBASE_TYPE (*bus_send) (data_packet * data);
 typedef void (*bus_flush) ();
-typedef portBASE_TYPE (*bus_param) (portBASE_TYPE cmd, void *param);
+typedef portBASE_TYPE (*bus_param) (portBASE_TYPE param, portBASE_TYPE value);
 typedef void (*bus_close) ();
 
 
@@ -125,5 +125,6 @@ void (*odbarr[ODB_SIZE]) ();
 // function prototype for the bus interface
 
 portBASE_TYPE busControl (portBASE_TYPE cmd, void *param);
+
 
 #endif /* INC_OD_PROTOCOLS_H */
