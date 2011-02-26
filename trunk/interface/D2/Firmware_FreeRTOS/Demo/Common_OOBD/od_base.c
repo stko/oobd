@@ -279,9 +279,9 @@ printser_string (char const *str)
       while (*str)
 	{
 	  /* write character to buffer and increment pointer */
-		#ifdef OOBD_PLATFORM_POSIX
-			putchar (*str);
-		#endif
+#ifdef OOBD_PLATFORM_POSIX
+	  putchar (*str);
+#endif
 	  printChar (*str++);
 	}
     }

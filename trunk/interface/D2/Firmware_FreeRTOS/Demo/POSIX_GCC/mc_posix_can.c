@@ -143,7 +143,7 @@ bus_flush_can ()
 
 /*-----------------------------------------------------------*/
 portBASE_TYPE
-bus_param_can (portBASE_TYPE cmd, void *param)
+bus_param_can (portBASE_TYPE param, portBASE_TYPE value)
 {
   return pdPASS;
 }

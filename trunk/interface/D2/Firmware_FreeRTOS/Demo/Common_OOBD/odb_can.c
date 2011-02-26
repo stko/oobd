@@ -45,12 +45,14 @@ print_telegram (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 {
   static data_packet *dp;
   dp = data;
-  printser_string ("\r\n# 0x");
+  printser_string ("# 0x");
   printser_int (dp->recv, 16);
   printser_string ("  0x");
   printser_int (dp->err, 16);
   printser_string ("  ");
   printser_int (dp->len, 10);
+  printser_string ("  ");
+  printser_uint32ToHex (&dp->data);
   printser_string ("  ");
   int i;
   for (i = 0; i < 8; i++)
@@ -58,8 +60,9 @@ print_telegram (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
       printser_uint8ToHex (dp->data[i]);
       printser_string ("  ");
     }
-  printser_string ("\r\n");
+  printser_string ("\r");
 }
+
 /*-----------------------------------------------------------*/
 
 void
@@ -80,6 +83,7 @@ odb_can_setup ()
   actBus_param = bus_param_can;
   actBus_close = bus_close_can;
 }
+
 /*-----------------------------------------------------------*/
 
 void
@@ -87,4 +91,5 @@ odb_can_init ()
 {
   odbarr[ODB_CAN] = odb_can_setup;
 }
+
 /*-----------------------------------------------------------*/

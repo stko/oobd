@@ -41,7 +41,7 @@
 void
 outputTask (void *pvParameters)
 {
-  DEBUGUARTPRINT("\r\n*** outputTask entered! ***");
+  DEBUGUARTPRINT ("\r\n*** outputTask entered! ***");
 
   extern printChar_cbf printChar;
   extern xQueueHandle outputQueue;
@@ -50,50 +50,55 @@ outputTask (void *pvParameters)
   portBASE_TYPE msgType;
 
   if (NULL != outputQueue)
-  {
-    for (;;)
     {
-      DEBUGUARTPRINT("\r\n*** outputTask is running! ***");
+      for (;;)
+	{
+	  DEBUGUARTPRINT ("\r\n*** outputTask is running! ***");
 
-      if (MSG_NONE !=	(msgType = waitMsg (outputQueue, &msg, portMAX_DELAY)))
+	  if (MSG_NONE !=
+	      (msgType = waitMsg (outputQueue, &msg, portMAX_DELAY)))
 	    /* handle message */
 	    {
 	      switch (msgType)
-	      {
-	        case MSG_BUS_RECV:
-	        {
-	          DEBUGUARTPRINT("\r\n*** outputTask: outputQueue msgType MSG_BUS_RECV ***");
-            /* use callback function to output data */
-            printdata = msg->print;
-            printdata (msgType, msg->addr, printChar);
-	          break;
-	        }
-	        case MSG_DUMP_BUFFER:
-          {
-            DEBUGUARTPRINT("\r\n*** outputTask: outputQueue msgType MSG_DUMP_BUFFER ***");
-            /* use callback function to output data */
-            printdata = msg->print;
-            printdata (msgType, msg->addr, printChar);
-            break;
-	        }
-	        case MSG_INPUT_FEEDBACK:
-	        {
-            DEBUGUARTPRINT("\r\n*** outputTask: outputQueue msgType MSG_INPUT_FEEDBACK ***");
-            /* use callback function to output data */
-            printdata = msg->print;
-            printdata (msgType, msg->addr, printChar);
-            break;
-	        }
-	        default:
-	        {
-	          DEBUGUARTPRINT("\r\n*** outputTask: outputQueue msgType default ***");
-            break;
-	        }
-	      }
+		{
+		case MSG_BUS_RECV:
+		  {
+		    DEBUGUARTPRINT
+		      ("\r\n*** outputTask: outputQueue msgType MSG_BUS_RECV ***");
+		    /* use callback function to output data */
+		    printdata = msg->print;
+		    printdata (msgType, msg->addr, printChar);
+		    break;
+		  }
+		case MSG_DUMP_BUFFER:
+		  {
+		    DEBUGUARTPRINT
+		      ("\r\n*** outputTask: outputQueue msgType MSG_DUMP_BUFFER ***");
+		    /* use callback function to output data */
+		    printdata = msg->print;
+		    printdata (msgType, msg->addr, printChar);
+		    break;
+		  }
+		case MSG_INPUT_FEEDBACK:
+		  {
+		    DEBUGUARTPRINT
+		      ("\r\n*** outputTask: outputQueue msgType MSG_INPUT_FEEDBACK ***");
+		    /* use callback function to output data */
+		    printdata = msg->print;
+		    printdata (msgType, msg->addr, printChar);
+		    break;
+		  }
+		default:
+		  {
+		    DEBUGUARTPRINT
+		      ("\r\n*** outputTask: outputQueue msgType default ***");
+		    break;
+		  }
+		}
 	      disposeMsg (msg);
 	    }
-	  }
-  }
+	}
+    }
   /* Port wasn't opened. */
   DEBUGPRINT ("FATAL ERROR: No Output queue.\n", 'a');
   vTaskDelete (NULL);
@@ -104,15 +109,15 @@ outputTask (void *pvParameters)
 void
 initOutput ()
 {
-  DEBUGUARTPRINT("\r\n*** initOutput() entered! ***");
+  DEBUGUARTPRINT ("\r\n*** initOutput() entered! ***");
 
   extern xQueueHandle outputQueue;
   outputQueue = xQueueCreate (QUEUE_SIZE_OUTPUT, sizeof (struct OdMsg));
 
-	/* Create a Task which waits to receive bytes. */
-	if (pdPASS == xTaskCreate (outputTask, "Output", configMINIMAL_STACK_SIZE,
-	       NULL, TASK_PRIO_LOW, NULL))
-	  DEBUGUARTPRINT("\r\n*** outputQueue created! ***");
+  /* Create a Task which waits to receive bytes. */
+  if (pdPASS == xTaskCreate (outputTask, "Output", configMINIMAL_STACK_SIZE,
+			     NULL, TASK_PRIO_LOW, NULL))
+    DEBUGUARTPRINT ("\r\n*** outputQueue created! ***");
 
-  DEBUGUARTPRINT("\r\n*** initOutput() finished! ***");
+  DEBUGUARTPRINT ("\r\n*** initOutput() finished! ***");
 }
