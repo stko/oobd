@@ -351,8 +351,22 @@ inputParserTask (void *pvParameters)
 			{
 			  if (totalInCount == 3 || totalInCount == 4)
 			    {
+			      switch (cmdKey)
+				{
+				case PARAM_INFO:
+				   printser_string ("\rOOBD ");
+				   printser_string (OOBDDESIGN);
+				   printser_string (SVNREV);
+				   printser_string (" ");
+				   printser_string (BUILDDATE);
+				  break;
+				case PARAM_ECHO:
+				  break;
+				default:
+				  sendParam (cmdKey, cmdValue);
+				  break;
+				}				
 			      createFeedbackMsg (0);
-			      sendParam (cmdKey, cmdValue);
 			    }
 			  else
 			    {

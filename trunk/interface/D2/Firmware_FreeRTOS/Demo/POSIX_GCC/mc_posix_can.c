@@ -145,6 +145,8 @@ bus_flush_can ()
 portBASE_TYPE
 bus_param_can (portBASE_TYPE param, portBASE_TYPE value)
 {
+  DEBUGPRINT ("Bus Parameter received param %d value %d\n", param,value);
+  
   return pdPASS;
 }
 
