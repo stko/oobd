@@ -315,7 +315,7 @@ obp_uds (void *pvParameters)
   /* Init default parameters */
   config.recvID = 0x7E0;
   config.timeout = 6;
-  config.listen = 6;
+  config.listen = 0;
   config.bus = 3;
   config.busConfig = 0;
   config.timeoutPending = 150;
@@ -353,7 +353,9 @@ obp_uds (void *pvParameters)
 	    {
 	    case MSG_BUS_RECV:
 	      dp = msg->addr;
-	      dumpFrame (dp, printdata_CAN);
+	      if (config.listen>0){
+		dumpFrame (dp, printdata_CAN);
+	      }
 	      DEBUGPRINT ("Tester address %2X PCI %2X\n", dp->recv,
 			  dp->data[0]);
 	      if (dp->recv == config.recvID + 8)
@@ -426,7 +428,9 @@ obp_uds (void *pvParameters)
 			      actBufferPos += actFrameLen;
 			      remainingBytes -= actFrameLen;
 			      actDataPacket.data[0] = 0x20 + sequenceCounter;	// prepare CF
-			      dumpFrame (&actDataPacket, printdata_CAN);
+			      if (config.listen>0){
+				dumpFrame (&actDataPacket, printdata_CAN);
+			      }
 			      actBus_send (&actDataPacket);
 			    }
 			  stateMaschine_state = SM_UDS_WAIT_FOR_ANSWER;
@@ -455,7 +459,9 @@ obp_uds (void *pvParameters)
 			      telegram[0] = 0x33;	//sending FlowControl with BlockSize=0 and STmin =0;
 			      stateMaschine_state == SM_UDS_WAIT_FOR_CF;
 			      timeout = config.timeout;
-			      dumpFrame (&actDataPacket, printdata_CAN);
+			      if (config.listen>0){
+				dumpFrame (&actDataPacket, printdata_CAN);
+			      }
 			      actBus_send (&actDataPacket);
 			    }
 			  else
@@ -507,6 +513,7 @@ obp_uds (void *pvParameters)
 						    actFrameLen);
 					  actBufferPos += actFrameLen;
 					  remainingBytes -= actFrameLen;
+					  timeout=config.timeout;
 					  DEBUGPRINT
 					    ("actualBufferPos %d remaining Bytes %d\n",
 					     actBufferPos, remainingBytes);
@@ -542,6 +549,7 @@ obp_uds (void *pvParameters)
 					  stateMaschine_state =
 					    SM_UDS_STANDBY;
 					  //! \bug errormessage for sequence error is needed here!
+					  DEBUGPRINT("Sequence Error! Received %d , expected %d\n",dp->data[0] & 0x0F,sequenceCounter);
 					  timeout = 0;
 					  if (pdPASS !=
 					      sendMsg (MSG_SERIAL_RELEASE,
@@ -589,6 +597,7 @@ obp_uds (void *pvParameters)
 		case PARAM_ECHO:
 		  break;
 		case PARAM_LISTEN:
+		  config.listen = paramData[1];
 		  break;
 		case PARAM_PROTOCOL:
 		  break;
@@ -654,7 +663,9 @@ obp_uds (void *pvParameters)
 		      actDataPacket.data[0] = udsBuffer->len;
 		      udsBuffer->len = 0;	// prepare buffer to receive
 		      actBufferPos = 0;
-		      dumpFrame (&actDataPacket, printdata_CAN);
+		      if (config.listen>0){
+			dumpFrame (&actDataPacket, printdata_CAN);
+		      }
 		      actBus_send (&actDataPacket);
 		      stateMaschine_state = SM_UDS_WAIT_FOR_ANSWER;
 		      timeout = config.timeout;
@@ -668,7 +679,9 @@ obp_uds (void *pvParameters)
 		      remainingBytes = udsBuffer->len - 6;
 		      actBufferPos = 0;
 		      udsBuffer->len = 0;	// prepare buffer to receive
-		      dumpFrame (&actDataPacket, printdata_CAN);
+		      if (config.listen>0){
+			dumpFrame (&actDataPacket, printdata_CAN);
+		      }
 		      actBus_send (&actDataPacket);
 		      stateMaschine_state = SM_UDS_WAIT_FOR_FC;
 		      timeout = config.timeout;

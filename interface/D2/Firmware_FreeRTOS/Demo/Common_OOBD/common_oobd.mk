@@ -1,4 +1,5 @@
 SVNVERSION=$(warning Look for SVN revision)$(shell $(OOBD_COMMON_DIR)/getrev.sh)
+BUILDDATE=$(warning get actual date)'(const char *)("$(shell date)")'
 
 # OOBD common  source files.
 OOBD_COMMON_SOURCE = $(OOBD_COMMON_DIR)/main.c \

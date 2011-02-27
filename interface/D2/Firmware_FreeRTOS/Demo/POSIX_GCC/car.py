@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import socket
 from yaml import load, dump
-
+import time
 
 
 
@@ -33,7 +33,9 @@ sock_in.bind( (UDP_IP,UDP_PORT_IN) )
 
 def sendTele(msg,data):
   d=data["d"]
+  print dump(data)
   for i in range(len(d)):
+    print d[i]
     msg[3+i]=d[i]
   for i in range(len(d),7):
     msg[4+i]=0
@@ -42,6 +44,7 @@ def sendTele(msg,data):
   global sock_out
   sock_out.sendto( msg, (UDP_IP, UDP_PORT_OUT) )
   print "sended.."
+  time.sleep(0.01 * data["t"])
 
 
 
