@@ -137,10 +137,10 @@ generateTesterPresents (unsigned char *tpArray, unsigned char *canBuffer,
   portBASE_TYPE i;
   int actAddr;
   // first we fill the telegram with the tester present data
-  dp.len = 8;
+  dp.len = 3;
   dp.data = canBuffer;
-  canBuffer[0] = 1;
-  canBuffer[1] = 0x10;		// Service Tester Present
+  canBuffer[0] = 2;
+  canBuffer[1] = 0x3E;		// Service Tester Present
 
   // fill with padding zeros
   for (i = 2; i < 8; i++)
@@ -157,7 +157,7 @@ generateTesterPresents (unsigned char *tpArray, unsigned char *canBuffer,
 	      tpArray[actAddr]--;
 	      if (tpArray[actAddr] == 0)
 		{
-		  dp.recv = i;
+		  dp.recv = i +0x700;
 		  actBus_send (&dp);
 		  tpArray[actAddr] = actTPFreq;
 		}
