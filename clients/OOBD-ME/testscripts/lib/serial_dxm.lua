@@ -4,12 +4,12 @@
 
 
 --- use the following lines for debugging in lua editor
----[[
+--[[
 openPage = openPageCall
 addElement = addElementCall
 pageDone = pageDoneCall
 --]]
----[[
+--[[
 serFlush = serFlushCall
 serWrite = serWriteCall
 serWait = serWaitCall
@@ -17,7 +17,7 @@ serReadLn = serReadLnCall
 serDisplayWrite = serDisplayWriteCall
 --]]
 
---[[
+---[[
 readcount= 1
 input = {}
 input[1]="Searching"
@@ -51,7 +51,7 @@ end
 --]]
 
 
---[[
+---[[
 function openPage(title)
 	print("Start Menu generation ", title);
 end
@@ -76,10 +76,85 @@ end
 
 udsBuffer = {}
 udslen =0
+receive = null
 
--- the global receiving routine. Trys to read single- or multiframe answers from the dxm and stores it in udsbuffer, setting the reveived length in udslen
+function identifyOOBDInterface()
+	print("init Hardware ");
+	local answ=""
+	-- Abfrage auf Diamex
+	echoWrite("ati\r\n")
+	answ=serReadLn(2000, false)
+	-- Antwort auseinanderfiedeln und Prüfen
+	if answ=="41 00 FF FF FF FF" then
+		receive = receive_dxm
+	else
+		echoWrite("p 0 0\r\n")
+		answ=serReadLn(2000, false)
+	-- Antwort auseinanderfiedeln und Prüfen
+		if answ=="41 14 FF FF FF FF" then
+			receive = receive_oobd
+		end
+	end
+end
 
-function receive()
+-- the global receiving routine. Trys to read single- or multiframe answers from the dxm and stores it in udsbuffer, setting the received length in udslen
+
+function receive_dxm()
+	udsLen=0
+	answ=""
+	answ=serReadLn(2000, true)
+	if answ == "" then
+		return 0
+	else
+		doLoop = true
+		byteCount= udsLen+1 -- auf Abbruchbedingung setzen
+		while doLoop and  answ ~="" do
+			nChar = string.byte(answ)
+			if nChar >=48 and nChar <=57 then  -- an 1. Stelle steht eine Zahl-> positive Antwort
+				if string.sub(answ,2,2) == ":" then
+					answ = string.sub(answ,4) -- wegschneiden des Zaehlers am Anfang
+					while byteCount <=udsLen  and answ ~="" do
+						byteStr= string.sub(answ,1,2)
+						answ = string.sub(answ,4)
+						udsBuffer[byteCount]=tonumber(byteStr,16)
+						byteCount = byteCount + 1
+					end
+					if byteCount >=udsLen then
+						doLoop=false
+						serWait(">",2000)
+					else
+						answ=serReadLn(2000, true)
+					end
+				else
+					if string.sub(answ,3,3) == " " then -- singleframe
+						udsLen=1
+						while answ ~="" do
+							byteStr= string.sub(answ,1,2)
+							answ = string.sub(answ,4)
+							udsBuffer[udsLen]=tonumber(byteStr,16)
+							udsLen = udsLen +1
+						end
+						udsLen = udsLen - 1
+						doLoop = false
+					else -- Multiframe
+						-- die LÃ¤ngenangabe
+						udsLen=tonumber(answ,16)
+						byteCount=1
+						answ=serReadLn(2000, true)
+
+					end
+				end
+			else
+				answ=serReadLn(2000, true)
+			end
+
+		end
+	end
+	return  udsLen
+end
+
+
+function receive_OOBD()
 	udsLen=0
 	answ=""
 	answ=serReadLn(2000, true)
