@@ -354,11 +354,13 @@ inputParserTask (void *pvParameters)
 			      switch (cmdKey)
 				{
 				case PARAM_INFO:
-				   printser_string ("\rOOBD ");
-				   printser_string (OOBDDESIGN);
-				   printser_string (SVNREV);
-				   printser_string (" ");
-				   printser_string (BUILDDATE);
+				  printser_string ("\rOOBD ");
+			    printser_string (OOBDDESIGN);
+				  printser_string (SVNREV);
+				  printser_string (" ");
+          #ifdef OOBD_PLATFORM_POSIX
+				    printser_string (BUILDDATE);
+          #endif
 				  break;
 				case PARAM_ECHO:
 				  break;

@@ -136,12 +136,12 @@ main (void)
   DEBUGUARTPRINT ("\r\n*** Starting FreeRTOS ***");
 
   // Version String
-//  #ifdef OOBD_PLATFORM_POSIX
-  DEBUGPRINT ("OOBD Build: %s\n", SVNREV);
-//  #else
-//    DEBUGUARTPRINT("\r\nOOBD Build: ");
-//    DEBUGUARTPRINT(SVNREV);
-//  #endif
+  #ifdef OOBD_PLATFORM_POSIX
+    DEBUGPRINT ("OOBD Build: %s\n", SVNREV);
+  #else
+    uart1_puts("\r\nOOBD Build: ");
+    uart1_puts(SVNREV);
+  #endif
 
 /*
 #ifdef OOBD_PLATFORM_STM32

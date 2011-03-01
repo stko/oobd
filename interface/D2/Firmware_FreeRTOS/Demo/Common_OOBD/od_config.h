@@ -101,17 +101,17 @@
 
 
 /* define message types */
-#define MSG_NONE		( 0 )
-#define MSG_INIT		( 1 )	//!< generic msg to initialize (whatever)
-#define MSG_SERIAL_IN		( 2 )	//!< a char coming from the serial input
-#define MSG_BUS_RECV		( 3 )	//!< received some data on the bus
-#define MSG_SERIAL_DATA		( 4 )	//!< received some data to be send from the serial input
-#define MSG_SERIAL_PARAM	( 5 )	//!< received a paramter set from the cmd line
+#define MSG_NONE		        ( 0 )
+#define MSG_INIT		        ( 1 )	//!< generic msg to initialize (whatever)
+#define MSG_SERIAL_IN		    ( 2 )	//!< a char coming from the serial input
+#define MSG_BUS_RECV		    ( 3 )	//!< received some data on the bus
+#define MSG_SERIAL_DATA		  ( 4 )	//!< received some data to be send from the serial input
+#define MSG_SERIAL_PARAM	  ( 5 )	//!< received a paramter set from the cmd line
 #define MSG_INPUT_FEEDBACK	( 6 )	//!< feedback to the cmd line
-#define MSG_TICK		( 7 )	//!< system clock tick
-#define MSG_SERIAL_RELEASE	( 8 )	//!< tells the serial input to listen for cmds again
-#define MSG_SEND_BUFFER		( 9 )	//!< tells the  protocol to send the filled input buffer
-#define MSG_DUMP_BUFFER		( 10 )	//!< buffer filled, request to dump
+#define MSG_TICK		        ( 7 )	//!< system clock tick
+#define MSG_SERIAL_RELEASE  ( 8 )	//!< tells the serial input to listen for cmds again
+#define MSG_SEND_BUFFER		  ( 9 )	//!< tells the  protocol to send the filled input buffer
+#define MSG_DUMP_BUFFER		  ( 10 )	//!< buffer filled, request to dump
 
 /* define parameter types */
 #define PARAM_INFO    		    ( 0 )
@@ -128,8 +128,18 @@
 #define PARAM_TP_ON           ( 11 )
 #define PARAM_TP_OFF          ( 12 )
 #define PARAM_TP_FREQ         ( 13 )
-#define ODB_CMD_RECV		( 14 )	//!< only for internal use: sets the callback routine when receiving a bus packet
+#define ODB_CMD_RECV		      ( 14 )	//!< only for internal use: sets the callback routine when receiving a bus packet
 #define PARAM_RESET           ( 99 )
+
+/* define values of parameter */
+#define VALUE_BUS_CONFIG_11bit_125kbit  ( 1 )
+#define VALUE_BUS_CONFIG_11bit_250kbit  ( 2 )
+#define VALUE_BUS_CONFIG_11bit_500kbit  ( 3 )
+#define VALUE_BUS_CONFIG_11bit_1000kbit ( 4 )
+#define VALUE_BUS_CONFIG_29bit_125kbit  ( 5 )
+#define VALUE_BUS_CONFIG_29bit_250kbit  ( 6 )
+#define VALUE_BUS_CONFIG_29bit_500kbit  ( 7 )
+#define VALUE_BUS_CONFIG_29bit_1000kbit ( 8 )
 
 /*-------- Global Vars --------------*/
 

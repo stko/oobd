@@ -36,4 +36,18 @@
 
 void obd_uds_init ();
 
+/* store all parameter in one single struct to maybe later store such param sets in EEPROM */
+struct UdsConfig
+{
+  portBASE_TYPE recvID, //!< Module ID
+    timeout,      //!< timeout in systemticks
+    listen,     //!< listen level
+    bus,      //!< id of actual used bus
+    busConfig,    //!< nr of actual used bus configuration
+    timeoutPending,   //!< timeout for response pending delays in system ticks
+    blockSize,    //!< max. number of frames to send, overwrites the values received from Module, if > 0.
+    separationTime,   //!< delay between two frames,overwrites the values received from Module, if > 0
+    tpFreq      //!< time between two tester presents in systemticks
+} config;
+
 #endif /* INC_ODP_UDS_H */
