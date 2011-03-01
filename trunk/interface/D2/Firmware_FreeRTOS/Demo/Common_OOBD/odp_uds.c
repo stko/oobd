@@ -163,8 +163,6 @@ generateTesterPresents (unsigned char *tpArray, unsigned char *canBuffer,
 		}
 	    }
 	}
-
-
     }
 }
 
@@ -280,7 +278,7 @@ obp_uds (void *pvParameters)
   extern xQueueHandle outputQueue;
   extern xQueueHandle inputQueue;
   extern print_cbf printdata_CAN;
-  extern RebootState;
+//  extern RebootState;
   MsgData *msg;
   MsgData *ownMsg;
   portBASE_TYPE *paramData;
@@ -299,25 +297,13 @@ obp_uds (void *pvParameters)
   /* Memory eater Nr. 2: The Tester Present Marker Flags */
   unsigned char tp_Flags[128];
   portBASE_TYPE msgType;
-  /* store all parameter in one single struct to maybe later store such param sets in EEPROM */
-  struct UdsConfig
-  {
-    portBASE_TYPE recvID,	//!< Module ID
-      timeout,			//!< timeout in systemticks
-      listen,			//!< listen level
-      bus,			//!< id of actual used bus
-      busConfig,		//!< nr of actual used bus configuration
-      timeoutPending,		//!< timeout for response pending delays in system ticks
-      blockSize,		//!< max. number of frames to send, overwrites the values received from Module, if > 0. 
-      separationTime,		//!< delay between two frames,overwrites the values received from Module, if > 0
-      tpFreq			//!< time between two tester presents in systemticks
-  } config;
+
   /* Init default parameters */
   config.recvID = 0x7E0;
   config.timeout = 6;
   config.listen = 0;
   config.bus = 3;
-  config.busConfig = 0;
+  config.busConfig = VALUE_BUS_CONFIG_11bit_500kbit; /* default */
   config.timeoutPending = 150;
   config.blockSize = 0;
   config.separationTime = 0;
@@ -456,7 +442,7 @@ obp_uds (void *pvParameters)
 				{	// just fill the telegram with 0
 				  telegram[i] = 0;
 				}
-			      telegram[0] = 0x33;	//sending FlowControl with BlockSize=0 and STmin =0;
+			      telegram[0] = 0x30; /* 0x30 = 3=>FlowControl, 0=>CTS = ContinoueToSend */
 			      stateMaschine_state == SM_UDS_WAIT_FOR_CF;
 			      timeout = config.timeout;
 			      if (config.listen>0){
@@ -604,6 +590,11 @@ obp_uds (void *pvParameters)
 		case PARAM_BUS:
 		  break;
 		case PARAM_BUS_CONFIG:
+		  if (paramData[1] != 0)
+		  {
+		    config.busConfig = paramData[1];
+		    CAN1_Configuration(); /* reinitialization of CAN interface */
+		  }
 		  break;
 		case PARAM_TIMEOUT:
 		  config.timeout = paramData[1] + 1;
@@ -626,7 +617,7 @@ obp_uds (void *pvParameters)
 		case PARAM_TP_FREQ:
 		  config.tpFreq = paramData[1];
 		  break;
-#ifdef OOBD_PLATFORM_STM32
+    #ifdef OOBD_PLATFORM_STM32
 		case PARAM_RESET:
 		  if (1 == paramData[1])
 		    {
@@ -639,7 +630,7 @@ obp_uds (void *pvParameters)
 		      SCB->AIRCR = 0x05FA0004;	/* hard reset */
 		    }
 		  break;
-#endif
+    #endif
 		}
 
 	      actBus_param (paramData[0], paramData[1]);	// forward the received params to the underlying bus.

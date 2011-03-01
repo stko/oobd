@@ -32,14 +32,13 @@
 #include "stm32f10x.h"
 #include "SerialComm.h"
 #include "od_config.h"
+#include "odp_uds.h"
 
 /* -------- Used Global variables --------------------------------------------*/
 
 /* Private typedef -----------------------------------------------------------*/
 
 /* Private define ------------------------------------------------------------*/
-/* CAN BAUD RATE SELECTION */
-#define  CAN_BAUDRATE_500KB /* _125KB, _250KB, _500KB, _1000KB */
 
 /* Private macro -------------------------------------------------------------*/
 
@@ -255,7 +254,7 @@ void USART1_Configuration(void)
     *      - Hardware flow control disabled (RTS and CTS signals)
     *      - Receive and transmit enabled
     */
-  USART_InitStructure.USART_BaudRate            = 115200;
+  USART_InitStructure.USART_BaudRate            = USART1_BAUDRATE_DEFAULT;
   USART_InitStructure.USART_WordLength          = USART_WordLength_8b;
   USART_InitStructure.USART_StopBits            = USART_StopBits_1;
   USART_InitStructure.USART_Parity              = USART_Parity_No;
@@ -275,6 +274,142 @@ void USART1_Configuration(void)
 
   /* Enable the USART1 */
   USART_Cmd(USART1, ENABLE);
+#ifdef TODO
+  DEBUGUARTPRINT("\r\n*** Start Autobaud SCAN for BTM222! ***");
+
+
+  char  ReceivedData;
+  uint8_t   AutobaudControl, InvalidChar = 0;
+  uint32_t  nCount;
+
+  for (AutobaudControl=0; AutobaudControl<=8; AutobaudControl++)
+  {
+    USART_SendData(USART1, "atl?"); /* send command to BTM222 */
+
+    for(nCount=100000; nCount != 0; nCount--); /* delay */
+
+    ReceivedData = USART_ReceiveData(USART1); /* receive character from BTM222 */
+
+    switch (ReceivedData)
+    {
+      case '0':
+        DEBUGUARTPRINT("\r\n*** BTM222 - L0 = 4800bps detected! ***");
+        /* USART_SendData(USART1, "atl5"); */ /* default baudrate 115200 */
+        /* if ("OK" == USART_REceidData
+         */
+        AutobaudControl = 4;
+        break;
+
+      case '1':
+        DEBUGUARTPRINT("\r\n*** BTM222 - L1 = 9600bps detected! ***");
+        AutobaudControl = 4;
+        break;
+
+      case '2':
+        DEBUGUARTPRINT("\r\n*** BTM222 - L2 = 19200bps detected! ***");
+        AutobaudControl = 4;
+        break;
+
+      case '3':
+        DEBUGUARTPRINT("\r\n*** BTM222 - L3 = 38400bps detected! ***");
+        AutobaudControl = 4;
+        break;
+
+      case '4':
+        DEBUGUARTPRINT("\r\n*** BTM222 - L4 = 57600bps detected! ***");
+        AutobaudControl = 4;
+        break;
+
+      case '5':
+        DEBUGUARTPRINT("\r\n*** BTM222 - L5 = 115200bps detected! ***");
+        AutobaudControl = 8; /* exit for loop */
+        break;
+
+      case '6':
+        DEBUGUARTPRINT("\r\n*** BTM222 - L6 = 230400bps detected! ***");
+        AutobaudControl = 4;
+        break;
+
+      case '7':
+        DEBUGUARTPRINT("\r\n*** BTM222 - L7 = 460800bps detected! ***");
+        AutobaudControl = 4;
+        break;
+
+      default:
+        DEBUGUARTPRINT("\r\n*** BTM222 - baudrate not detected! ***");
+        AutobaudControl++;
+        break;
+    }
+
+    switch (AutobaudControl)
+    {
+      case 0:
+        /* Initialize USART1 with next possible baudrate of BTM222 */
+        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_9600;
+        USART_Init(USART1, &USART_InitStructure);
+        break;
+
+      case 1:
+        /* Initialize USART1 with next possible baudrate of BTM222 */
+        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_19200;
+        USART_Init(USART1, &USART_InitStructure);
+        break;
+
+      case 2:
+        /* Initialize USART1 with next possible baudrate of BTM222 */
+        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_38400;
+        USART_Init(USART1, &USART_InitStructure);
+        break;
+
+      case 3:
+        /* Initialize USART1 with next possible baudrate of BTM222 */
+        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_57600;
+        USART_Init(USART1, &USART_InitStructure);
+        break;
+
+      case 4:
+        /* Initialize USART1 with next possible baudrate of BTM222 */
+        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_115200;
+        USART_Init(USART1, &USART_InitStructure);
+        break;
+
+      case 5:
+        /* Initialize USART1 with next possible baudrate of BTM222 */
+        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_230400;
+        USART_Init(USART1, &USART_InitStructure);
+        break;
+
+      case 6:
+        /* Initialize USART1 with next possible baudrate of BTM222 */
+        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_460800;
+        USART_Init(USART1, &USART_InitStructure);
+        break;
+
+      case 7:
+        /* fallback to default baudrate */
+        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_DEFAULT;
+        USART_Init(USART1, &USART_InitStructure);
+        break;
+
+      case 8:
+        break;
+
+      default:
+        break;
+    }
+    /*
+  }
+    else
+      {
+
+
+      }
+*/
+    } /* end of for */
+  /* Enable the USART1-Receive interrupt: this interrupt is generated when the
+     USART1 receive data register is not empty */
+  USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+#endif
 }
 /*----------------------------------------------------------------------------*/
 
@@ -305,26 +440,40 @@ void CAN1_Configuration(void)
   CAN_InitStructure.CAN_Mode = CAN_Mode_Normal;
   CAN_InitStructure.CAN_SJW  = CAN_SJW_1tq;
 
-  #ifdef  CAN_BAUDRATE_125KB
+  if (config.busConfig == VALUE_BUS_CONFIG_11bit_125kbit ||
+      config.busConfig == VALUE_BUS_CONFIG_29bit_125kbit)
+  {
     CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
     CAN_InitStructure.CAN_BS2 = CAN_BS2_5tq;
     CAN_InitStructure.CAN_Prescaler = 32; /* BRP Baudrate prescaler */
-  #endif
-  #ifdef CAN_BAUDRATE_250KB
+  }
+  else if ( config.busConfig == VALUE_BUS_CONFIG_11bit_250kbit ||
+            config.busConfig == VALUE_BUS_CONFIG_29bit_250kbit)
+  {
     CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
     CAN_InitStructure.CAN_BS2 = CAN_BS2_5tq;
     CAN_InitStructure.CAN_Prescaler = 16; /* BRP Baudrate prescaler */
-  #endif
-  #ifdef CAN_BAUDRATE_500KB
+  }
+  else if ( config.busConfig == VALUE_BUS_CONFIG_11bit_500kbit ||
+            config.busConfig == VALUE_BUS_CONFIG_29bit_500kbit)
+  {
     CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
     CAN_InitStructure.CAN_BS2 = CAN_BS2_5tq;
     CAN_InitStructure.CAN_Prescaler = 8; /* BRP Baudrate prescaler */
-  #endif
-  #ifdef CAN_BAUDRATE_1000KB
+  }
+  else if ( config.busConfig == VALUE_BUS_CONFIG_11bit_1000kbit ||
+            config.busConfig == VALUE_BUS_CONFIG_29bit_1000kbit)
+  {
     CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
     CAN_InitStructure.CAN_BS2 = CAN_BS2_5tq;
     CAN_InitStructure.CAN_Prescaler = 4; /* BRP Baudrate prescaler */
-  #endif
+  }
+  else
+  {
+    CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
+    CAN_InitStructure.CAN_BS2 = CAN_BS2_5tq;
+    CAN_InitStructure.CAN_Prescaler = 8; /* BRP Baudrate prescaler */
+  }
 
   CAN_Init(CAN1, &CAN_InitStructure);
 

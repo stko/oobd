@@ -34,6 +34,7 @@
 #include "od_config.h"
 #include "od_protocols.h"
 #include "odb_can.h"
+#include "odp_uds.h"
 #include "mc_can.h"
 #include "stm32f10x.h"
 
@@ -54,11 +55,22 @@ bus_send_can (data_packet * data)
 
   CanTxMsg TxMessage;
 
-  TxMessage.StdId = data->recv;     /* CAN - ID */
-  TxMessage.ExtId = 0x01;         /* Standard CAN identifier 11bit */
-  TxMessage.RTR   = CAN_RTR_DATA; /* Data frame */
-  TxMessage.IDE   = CAN_ID_STD;   /* IDE=0 for Standard CAN identifier 11 bit */
-  TxMessage.DLC   = 8;            /* Data length code, default 8 byte */
+  if (config.busConfig == VALUE_BUS_CONFIG_29bit_125kbit ||
+      config.busConfig == VALUE_BUS_CONFIG_29bit_250kbit ||
+      config.busConfig == VALUE_BUS_CONFIG_29bit_500kbit ||
+      config.busConfig == VALUE_BUS_CONFIG_29bit_1000kbit)
+  {
+    TxMessage.ExtId = data->recv;   /* Extended CAN identifier 29bit */
+    TxMessage.IDE   = CAN_ID_EXT;   /* IDE=1 for Extended CAN identifier 29 bit */
+  }
+  else
+  {
+    TxMessage.StdId = data->recv;   /* Standard CAN identifier 11bit */
+    TxMessage.IDE   = CAN_ID_STD;   /* IDE=0 for Standard CAN identifier 11 bit */
+  }
+
+  TxMessage.RTR     = CAN_RTR_DATA; /* Data frame */
+  TxMessage.DLC     = data->len;    /* Data length code */
 
   TxMessage.Data[0] = data->data[0];
   TxMessage.Data[1] = data->data[1];
@@ -85,7 +97,7 @@ bus_flush_can ()
 /*----------------------------------------------------------------------------*/
 
 portBASE_TYPE
-bus_param_can (portBASE_TYPE cmd, void *param)
+bus_param_can (portBASE_TYPE param, portBASE_TYPE value)
 {
   return pdPASS;
 }
