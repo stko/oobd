@@ -37,9 +37,11 @@
 #include "odp_uds.h"
 #include "mc_can.h"
 #include "stm32f10x.h"
+#include "SystemConfig.h"
 
 /* callback function for received data */
-recv_cbf reportReceicedData = NULL;
+recv_cbf  reportReceicedData = NULL;
+uint8_t   CAN_BusConfig;
 
 portBASE_TYPE
 bus_init_can ()
@@ -55,6 +57,21 @@ bus_send_can (data_packet * data)
 
   CanTxMsg TxMessage;
 
+<<<<<<< .mine
+  if (CAN_BusConfig == VALUE_BUS_CONFIG_29bit_125kbit ||
+      CAN_BusConfig == VALUE_BUS_CONFIG_29bit_250kbit ||
+      CAN_BusConfig == VALUE_BUS_CONFIG_29bit_500kbit ||
+      CAN_BusConfig == VALUE_BUS_CONFIG_29bit_1000kbit)
+  {
+    TxMessage.ExtId = data->recv;   /* Extended CAN identifier 29bit */
+    TxMessage.IDE   = CAN_ID_EXT;   /* IDE=1 for Extended CAN identifier 29 bit */
+  }
+  else
+  {
+    TxMessage.StdId = data->recv;   /* Standard CAN identifier 11bit */
+    TxMessage.IDE   = CAN_ID_STD;   /* IDE=0 for Standard CAN identifier 11 bit */
+  }
+=======
   if (config.busConfig == VALUE_BUS_CONFIG_29bit_125kbit ||
       config.busConfig == VALUE_BUS_CONFIG_29bit_250kbit ||
       config.busConfig == VALUE_BUS_CONFIG_29bit_500kbit ||
@@ -68,6 +85,7 @@ bus_send_can (data_packet * data)
     TxMessage.StdId = data->recv;   /* Standard CAN identifier 11bit */
     TxMessage.IDE   = CAN_ID_STD;   /* IDE=0 for Standard CAN identifier 11 bit */
   }
+>>>>>>> .r136
 
   TxMessage.RTR     = CAN_RTR_DATA; /* Data frame */
   TxMessage.DLC     = data->len;    /* Data length code */
@@ -99,6 +117,18 @@ bus_flush_can ()
 portBASE_TYPE
 bus_param_can (portBASE_TYPE param, portBASE_TYPE value)
 {
+  switch (param)
+  {
+    case PARAM_BUS_CONFIG:
+      if (value != 0)
+        CAN1_Configuration(value); /* reinitialization of CAN interface */
+        CAN_BusConfig = value;
+      break;
+
+    default:
+      break;
+  }
+
   return pdPASS;
 }
 /*----------------------------------------------------------------------------*/
@@ -148,15 +178,18 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 
   CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
 
-  if (RxMessage.StdId != 0)
-    {
-      /* Data received. Process it. */
-      dp.recv = RxMessage.StdId;
-      dp.len  = RxMessage.DLC;
-      dp.err  = 0x00; /* use received value for error simulations */
-      dp.data = &RxMessage.Data[0]; /* data starts here */
-      reportReceicedData (&dp);
-    }
+  if (RxMessage.StdId != 0 || RxMessage.ExtId != 0)
+  {
+    /* Data received. Process it. */
+    if (RxMessage.IDE = CAN_ID_STD)
+      dp.recv = RxMessage.StdId; /* Standard CAN frame 11bit received */
+    else
+      dp.recv = RxMessage.ExtId; /* Extended CAN frame 29bit received */
+    dp.len  = RxMessage.DLC;
+    dp.err  = 0x00; /* use received value for error simulations */
+    dp.data = &RxMessage.Data[0]; /* data starts here */
+    reportReceicedData (&dp);
+  }
 
   DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler finished ***");
 }
