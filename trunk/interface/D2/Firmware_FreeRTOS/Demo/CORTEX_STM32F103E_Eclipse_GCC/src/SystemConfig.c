@@ -63,7 +63,7 @@ void System_Configuration(void)
   USART1_Configuration();
 
   /* USART1 configuration */
-  CAN1_Configuration();
+  CAN1_Configuration(VALUE_BUS_CONFIG_11bit_500kbit); /* default initialization */
 
   /* NVIC configuration */
 //  NVIC_Configuration();
@@ -418,7 +418,7 @@ void USART1_Configuration(void)
   * @param  None
   * @retval None
   */
-void CAN1_Configuration(void)
+void CAN1_Configuration(uint8_t CAN_BusConfig)
 {
   DEBUGUARTPRINT("\r\n*** CANx_Configuration (CAN1) entered! ***");
 
@@ -436,34 +436,61 @@ void CAN1_Configuration(void)
   CAN_InitStructure.CAN_AWUM = DISABLE; /* Automatic wakeup mode */
   CAN_InitStructure.CAN_NART = DISABLE; /* No automatic retransmission */
   CAN_InitStructure.CAN_RFLM = DISABLE; /* Receive FIFO locked mode */
-  CAN_InitStructure.CAN_TXFP = ENABLE; /* Transmit FIFO priority */
+  CAN_InitStructure.CAN_TXFP = ENABLE;  /* Transmit FIFO priority */
   CAN_InitStructure.CAN_Mode = CAN_Mode_Normal;
   CAN_InitStructure.CAN_SJW  = CAN_SJW_1tq;
 
+<<<<<<< .mine
+  if (CAN_BusConfig == VALUE_BUS_CONFIG_11bit_125kbit ||
+      CAN_BusConfig == VALUE_BUS_CONFIG_29bit_125kbit)
+  {
+=======
   if (config.busConfig == VALUE_BUS_CONFIG_11bit_125kbit ||
       config.busConfig == VALUE_BUS_CONFIG_29bit_125kbit)
   {
+>>>>>>> .r136
     CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
     CAN_InitStructure.CAN_BS2 = CAN_BS2_5tq;
     CAN_InitStructure.CAN_Prescaler = 32; /* BRP Baudrate prescaler */
+<<<<<<< .mine
+  }
+  else if ( CAN_BusConfig == VALUE_BUS_CONFIG_11bit_250kbit ||
+            CAN_BusConfig == VALUE_BUS_CONFIG_29bit_250kbit)
+  {
+=======
   }
   else if ( config.busConfig == VALUE_BUS_CONFIG_11bit_250kbit ||
             config.busConfig == VALUE_BUS_CONFIG_29bit_250kbit)
   {
+>>>>>>> .r136
     CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
     CAN_InitStructure.CAN_BS2 = CAN_BS2_5tq;
     CAN_InitStructure.CAN_Prescaler = 16; /* BRP Baudrate prescaler */
+<<<<<<< .mine
+  }
+  else if ( CAN_BusConfig == VALUE_BUS_CONFIG_11bit_500kbit ||
+            CAN_BusConfig == VALUE_BUS_CONFIG_29bit_500kbit)
+  {
+=======
   }
   else if ( config.busConfig == VALUE_BUS_CONFIG_11bit_500kbit ||
             config.busConfig == VALUE_BUS_CONFIG_29bit_500kbit)
   {
+>>>>>>> .r136
     CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
     CAN_InitStructure.CAN_BS2 = CAN_BS2_5tq;
     CAN_InitStructure.CAN_Prescaler = 8; /* BRP Baudrate prescaler */
+<<<<<<< .mine
+  }
+  else if ( CAN_BusConfig == VALUE_BUS_CONFIG_11bit_1000kbit ||
+            CAN_BusConfig == VALUE_BUS_CONFIG_29bit_1000kbit)
+  {
+=======
   }
   else if ( config.busConfig == VALUE_BUS_CONFIG_11bit_1000kbit ||
             config.busConfig == VALUE_BUS_CONFIG_29bit_1000kbit)
   {
+>>>>>>> .r136
     CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
     CAN_InitStructure.CAN_BS2 = CAN_BS2_5tq;
     CAN_InitStructure.CAN_Prescaler = 4; /* BRP Baudrate prescaler */
@@ -478,15 +505,15 @@ void CAN1_Configuration(void)
   CAN_Init(CAN1, &CAN_InitStructure);
 
   /* CAN filter init */
-  CAN_FilterInitStructure.CAN_FilterNumber = 0;
-  CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
-  CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
-  CAN_FilterInitStructure.CAN_FilterIdHigh = 0x0700 << 5; /* CAN-ID 0x700 */
-  CAN_FilterInitStructure.CAN_FilterIdLow = 0x0000;
-  CAN_FilterInitStructure.CAN_FilterMaskIdHigh = 0x0700 << 5; /* Range 0x700-0x7FF) */
-  CAN_FilterInitStructure.CAN_FilterMaskIdLow = 0x0000;
-  CAN_FilterInitStructure.CAN_FilterFIFOAssignment = 0;
-  CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
+  CAN_FilterInitStructure.CAN_FilterNumber          = 0;
+  CAN_FilterInitStructure.CAN_FilterMode            = CAN_FilterMode_IdMask;
+  CAN_FilterInitStructure.CAN_FilterScale           = CAN_FilterScale_32bit;
+  CAN_FilterInitStructure.CAN_FilterIdHigh          = 0x0700 << 5; /* CAN-ID 0x700 */
+  CAN_FilterInitStructure.CAN_FilterIdLow           = 0x0000;
+  CAN_FilterInitStructure.CAN_FilterMaskIdHigh      = 0x0700 << 5; /* Range 0x700-0x7FF) */
+  CAN_FilterInitStructure.CAN_FilterMaskIdLow       = 0x0000;
+  CAN_FilterInitStructure.CAN_FilterFIFOAssignment  = 0;
+  CAN_FilterInitStructure.CAN_FilterActivation      = ENABLE;
   CAN_FilterInit(&CAN_FilterInitStructure);
 
   CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE);
