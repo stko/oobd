@@ -440,57 +440,30 @@ void CAN1_Configuration(uint8_t CAN_BusConfig)
   CAN_InitStructure.CAN_Mode = CAN_Mode_Normal;
   CAN_InitStructure.CAN_SJW  = CAN_SJW_1tq;
 
-<<<<<<< .mine
   if (CAN_BusConfig == VALUE_BUS_CONFIG_11bit_125kbit ||
       CAN_BusConfig == VALUE_BUS_CONFIG_29bit_125kbit)
   {
-=======
-  if (config.busConfig == VALUE_BUS_CONFIG_11bit_125kbit ||
-      config.busConfig == VALUE_BUS_CONFIG_29bit_125kbit)
-  {
->>>>>>> .r136
     CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
     CAN_InitStructure.CAN_BS2 = CAN_BS2_5tq;
     CAN_InitStructure.CAN_Prescaler = 32; /* BRP Baudrate prescaler */
-<<<<<<< .mine
   }
   else if ( CAN_BusConfig == VALUE_BUS_CONFIG_11bit_250kbit ||
             CAN_BusConfig == VALUE_BUS_CONFIG_29bit_250kbit)
   {
-=======
-  }
-  else if ( config.busConfig == VALUE_BUS_CONFIG_11bit_250kbit ||
-            config.busConfig == VALUE_BUS_CONFIG_29bit_250kbit)
-  {
->>>>>>> .r136
     CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
     CAN_InitStructure.CAN_BS2 = CAN_BS2_5tq;
     CAN_InitStructure.CAN_Prescaler = 16; /* BRP Baudrate prescaler */
-<<<<<<< .mine
   }
   else if ( CAN_BusConfig == VALUE_BUS_CONFIG_11bit_500kbit ||
             CAN_BusConfig == VALUE_BUS_CONFIG_29bit_500kbit)
   {
-=======
-  }
-  else if ( config.busConfig == VALUE_BUS_CONFIG_11bit_500kbit ||
-            config.busConfig == VALUE_BUS_CONFIG_29bit_500kbit)
-  {
->>>>>>> .r136
     CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
     CAN_InitStructure.CAN_BS2 = CAN_BS2_5tq;
     CAN_InitStructure.CAN_Prescaler = 8; /* BRP Baudrate prescaler */
-<<<<<<< .mine
   }
   else if ( CAN_BusConfig == VALUE_BUS_CONFIG_11bit_1000kbit ||
             CAN_BusConfig == VALUE_BUS_CONFIG_29bit_1000kbit)
   {
-=======
-  }
-  else if ( config.busConfig == VALUE_BUS_CONFIG_11bit_1000kbit ||
-            config.busConfig == VALUE_BUS_CONFIG_29bit_1000kbit)
-  {
->>>>>>> .r136
     CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
     CAN_InitStructure.CAN_BS2 = CAN_BS2_5tq;
     CAN_InitStructure.CAN_Prescaler = 4; /* BRP Baudrate prescaler */
@@ -504,6 +477,8 @@ void CAN1_Configuration(uint8_t CAN_BusConfig)
 
   CAN_Init(CAN1, &CAN_InitStructure);
 
+
+  //! \todo Filter must be configurable via parameter to use also 29bit CAN-ID
   /* CAN filter init */
   CAN_FilterInitStructure.CAN_FilterNumber          = 0;
   CAN_FilterInitStructure.CAN_FilterMode            = CAN_FilterMode_IdMask;
