@@ -155,7 +155,8 @@ printSerData (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
       printser_string ("Error: ");
       printser_int (err, 10);
     }
-  printser_string ("\r>");
+  //printLF();
+  printser_string (">");
 }
 
 void
@@ -231,6 +232,7 @@ inputParserTask (void *pvParameters)
 
   extern xQueueHandle inputQueue;
   extern xQueueHandle protocolQueue;
+  extern portBASE_TYPE lfType;
 
   MsgData *incomingMsg;
   char inChar;
@@ -304,7 +306,7 @@ inputParserTask (void *pvParameters)
 			    {
 			      sendData (&dp);
 			      /* tells the  protocol to send the buffer */
-			      printser_string ("\r");
+			      //printLF();
 			      sendMsg (MSG_SEND_BUFFER, protocolQueue, NULL);
 			      actState = S_SLEEP;
 			    }
@@ -354,7 +356,8 @@ inputParserTask (void *pvParameters)
 			      switch (cmdKey)
 				{
 				case PARAM_INFO:
-				  printser_string ("\rOOBD ");
+				  //printLF();
+				  printser_string ("OOBD ");
 			    printser_string (OOBDDESIGN);
 				  printser_string (SVNREV);
 				  printser_string (" ");
@@ -363,6 +366,9 @@ inputParserTask (void *pvParameters)
           #endif
 				  break;
 				case PARAM_ECHO:
+				  break;
+				case PARAM_LINEFEED:
+				  lfType=cmdValue;
 				  break;
 				default:
 				  sendParam (cmdKey, cmdValue);

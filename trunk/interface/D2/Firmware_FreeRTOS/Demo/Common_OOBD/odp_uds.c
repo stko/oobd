@@ -187,12 +187,12 @@ printdata_Buffer (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
       printser_uint8ToHex (myUDSBuffer->data[i]);
       if ((i % 8) == 0 && i > 0)
 	{
-	  printser_string ("\r");
+	  //printLF();
 	}
     }
   if ((i % 8) != 0)
     {
-      printser_string ("\r");
+      //printLF();
     }
   /* clear the buffer */
   myUDSBuffer->len = 0;

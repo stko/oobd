@@ -44,6 +44,8 @@ bus_flush actBus_flush = NULL;
 bus_param actBus_param = NULL;
 bus_close actBus_close = NULL;
 
+portBASE_TYPE lfType =0 ;
+
 char outputBuffer[100];
 
 
@@ -183,6 +185,19 @@ waitMsg (xQueueHandle recv, MsgData ** msgdata, portBASE_TYPE timeout)
 
 }
 
+void printLF(){
+  switch (lfType){
+    case VALUE_LF_LF:
+      printser_string("\n");
+      break;
+    case VALUE_LF_CR:
+      printser_string("\r");
+      break;
+    case VALUE_LF_CRLF:
+    default: 
+      printser_string("\r\n");
+  }
+}
 
 void
 strreverse (char *begin, char *end)
