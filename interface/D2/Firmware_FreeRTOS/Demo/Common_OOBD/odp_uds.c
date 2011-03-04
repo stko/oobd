@@ -185,14 +185,14 @@ printdata_Buffer (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
   for (i = 0; i < myUDSBuffer->len; i++)
     {
       printser_uint8ToHex (myUDSBuffer->data[i]);
-      if ((i % 8) == 0 && i > 0)
+      if ((i % 8) == 0 && i > 0 && i < myUDSBuffer->len-1)
 	{
-	  //printLF();
+	  printLF();
 	}
     }
   if ((i % 8) != 0)
     {
-      //printLF();
+     // printLF();
     }
   /* clear the buffer */
   myUDSBuffer->len = 0;
@@ -434,6 +434,93 @@ obp_uds (void *pvParameters)
 			  stateMachine_state = SM_UDS_WAIT_FOR_ANSWER;
 			  timeout = config.timeout;
 			}
+		      if (stateMachine_state == SM_UDS_WAIT_FOR_CF)
+			{			
+			    if ((dp->data[0] & 0xF0) == 0x20)
+			      {	/* consecutive Frame */
+				DEBUGPRINT
+				  ("Consecutive Frame seq. %d\n",
+				    sequenceCounter);
+				sequenceCounter =
+				  sequenceCounter >
+				  14 ? 0 : sequenceCounter + 1;
+				if ((dp->data[0] & 0x0F) ==
+				    sequenceCounter)
+				  {
+				    DEBUGPRINT ("Sequence ok seq. %d\n",
+						sequenceCounter);
+				    actFrameLen =
+				      remainingBytes >
+				      7 ? 7 : remainingBytes;
+				    CAN2data (udsBuffer, &(dp->data[1]),
+					      actBufferPos,
+					      actFrameLen);
+				    actBufferPos += actFrameLen;
+				    remainingBytes -= actFrameLen;
+				    timeout=config.timeout;
+				    DEBUGPRINT
+				      ("actualBufferPos %d remaining Bytes %d\n",
+					actBufferPos, remainingBytes);
+				    if (remainingBytes == 0)
+				      {	/* finished */
+					stateMachine_state =
+					  SM_UDS_STANDBY;
+					timeout = 0;
+					/* to dump the  buffer, we send the address of the udsbuffer to the print routine */
+					ownMsg =
+					  createMsg (&udsBuffer,
+						      sizeof
+						      (udsBuffer));
+					/* add correct print routine; */
+					ownMsg->print =
+					  printdata_Buffer;
+					/* forward data to the output task */
+					if (pdPASS !=
+					    sendMsg (MSG_DUMP_BUFFER,
+						      outputQueue,
+						      ownMsg))
+					  {
+					    DEBUGPRINT
+					      ("FATAL ERROR: output queue is full!\n",
+						'a');
+					  }
+				      }
+				  }
+				else
+				  {	/* sequence error! */
+				    stateMachine_state =
+				      SM_UDS_STANDBY;
+				    //! \bug errormessage for sequence error is needed here!
+				    DEBUGPRINT("Sequence Error! Received %d , expected %d\n",dp->data[0] & 0x0F,sequenceCounter);
+				    timeout = 0;
+				    if (pdPASS !=
+					sendMsg (MSG_SERIAL_RELEASE,
+						  inputQueue, NULL))
+				      {
+					DEBUGPRINT
+					  ("FATAL ERROR: input queue is full!\n",
+					    'a');
+
+				      }
+				  }
+				  
+				}else{
+				  stateMachine_state =
+				    SM_UDS_STANDBY;
+				  //! \bug errormessage for wrong error is needed here!
+				  DEBUGPRINT("Wrong Frame Error! Received %d , expected 0x2x\n",dp->data[0] );
+				  timeout = 0;
+				  if (pdPASS !=
+				      sendMsg (MSG_SERIAL_RELEASE,
+						inputQueue, NULL))
+				    {
+				      DEBUGPRINT
+					("FATAL ERROR: input queue is full!\n",
+					  'a');
+
+				    }
+				}
+			    }
 		      if (stateMachine_state == SM_UDS_WAIT_FOR_ANSWER)
 			{
 			  if ((dp->data[0] & 0xF0) == 0x10)
@@ -466,6 +553,8 @@ obp_uds (void *pvParameters)
 			    {
 			      if ((dp->data[0] & 0xF0) == 0x00)
 				{	/*Single Frame */
+			      DEBUGPRINT ("Single Frame with %d Bytes\n",
+					  dp->data[0]);
 				  udsBuffer->len = dp->data[0];
 				  CAN2data (udsBuffer, &(dp->data[1]), 0,
 					    dp->data[0]);
@@ -486,77 +575,6 @@ obp_uds (void *pvParameters)
 					("FATAL ERROR: output queue is full!\n",
 					 'a');
 
-				    }
-				}
-			      else
-				{
-				  if ((dp->data[0] & 0xF0) == 0x20)
-				    {	/* consecutive Frame */
-				      DEBUGPRINT
-					("Consecutive Frame seq. %d\n",
-					 sequenceCounter);
-				      sequenceCounter =
-					sequenceCounter >
-					14 ? 0 : sequenceCounter + 1;
-				      if ((dp->data[0] & 0x0F) ==
-					  sequenceCounter)
-					{
-					  DEBUGPRINT ("Sequence ok seq. %d\n",
-						      sequenceCounter);
-					  actFrameLen =
-					    remainingBytes >
-					    7 ? 7 : remainingBytes;
-					  CAN2data (udsBuffer, &(dp->data[1]),
-						    actBufferPos,
-						    actFrameLen);
-					  actBufferPos += actFrameLen;
-					  remainingBytes -= actFrameLen;
-					  timeout=config.timeout;
-					  DEBUGPRINT
-					    ("actualBufferPos %d remaining Bytes %d\n",
-					     actBufferPos, remainingBytes);
-					  if (remainingBytes == 0)
-					    {	/* finished */
-					      stateMachine_state =
-						SM_UDS_STANDBY;
-					      timeout = 0;
-					      /* to dump the  buffer, we send the address of the udsbuffer to the print routine */
-					      ownMsg =
-						createMsg (&udsBuffer,
-							   sizeof
-							   (udsBuffer));
-					      /* add correct print routine; */
-					      ownMsg->print =
-						printdata_Buffer;
-					      /* forward data to the output task */
-					      if (pdPASS !=
-						  sendMsg (MSG_DUMP_BUFFER,
-							   outputQueue,
-							   ownMsg))
-						{
-						  DEBUGPRINT
-						    ("FATAL ERROR: output queue is full!\n",
-						     'a');
-						}
-					    }
-					}
-				      else
-					{	/* sequence error! */
-					  stateMachine_state =
-					    SM_UDS_STANDBY;
-					  //! \bug errormessage for sequence error is needed here!
-					  DEBUGPRINT("Sequence Error! Received %d , expected %d\n",dp->data[0] & 0x0F,sequenceCounter);
-					  timeout = 0;
-					  if (pdPASS !=
-					      sendMsg (MSG_SERIAL_RELEASE,
-						       inputQueue, NULL))
-					    {
-					      DEBUGPRINT
-						("FATAL ERROR: input queue is full!\n",
-						 'a');
-
-					    }
-					}
 				    }
 				}
 			    }
