@@ -139,7 +139,8 @@ main (void)
   #ifdef OOBD_PLATFORM_POSIX
     DEBUGPRINT ("OOBD Build: %s\n", SVNREV);
   #else
-    uart1_puts("\r\nOOBD Build: ");
+    printLF();
+    uart1_puts("OOBD Build: ");
     uart1_puts(SVNREV);
   #endif
 

@@ -116,19 +116,20 @@
 /* define parameter types */
 #define PARAM_INFO    		    ( 0 )
 #define PARAM_ECHO    		    ( 1 )
-#define PARAM_LISTEN    	    ( 2 )
-#define PARAM_PROTOCOL 		    ( 3 )
-#define PARAM_BUS 		        ( 4 )
-#define PARAM_BUS_CONFIG 	    ( 5 )
-#define PARAM_TIMEOUT 		    ( 6 )
-#define PARAM_TIMEOUT_PENDING ( 7 )
-#define PARAM_BLOCKSIZE 	    ( 8 )
-#define PARAM_FRAME_DELAY 	  ( 9 )
-#define PARAM_RECVID  		    ( 10 )
-#define PARAM_TP_ON           ( 11 )
-#define PARAM_TP_OFF          ( 12 )
-#define PARAM_TP_FREQ         ( 13 )
-#define ODB_CMD_RECV		      ( 14 )	//!< only for internal use: sets the callback routine when receiving a bus packet
+#define PARAM_LINEFEED    	    ( 2 )
+#define PARAM_LISTEN    	    ( 3 )
+#define PARAM_PROTOCOL 		    ( 4 )
+#define PARAM_BUS 		    ( 5 )
+#define PARAM_BUS_CONFIG 	    ( 6 )
+#define PARAM_TIMEOUT 		    ( 7 )
+#define PARAM_TIMEOUT_PENDING       ( 8 )
+#define PARAM_BLOCKSIZE 	    ( 9 )
+#define PARAM_FRAME_DELAY 	    ( 10 )
+#define PARAM_RECVID  		    ( 11 )
+#define PARAM_TP_ON                 ( 12 )
+#define PARAM_TP_OFF                ( 13 )
+#define PARAM_TP_FREQ               ( 14 )
+#define ODB_CMD_RECV		    ( 15 )	//!< only for internal use: sets the callback routine when receiving a bus packet
 #define PARAM_RESET           ( 99 )
 
 /* define values of parameter */
@@ -140,6 +141,10 @@
 #define VALUE_BUS_CONFIG_29bit_250kbit  ( 6 )
 #define VALUE_BUS_CONFIG_29bit_500kbit  ( 7 )
 #define VALUE_BUS_CONFIG_29bit_1000kbit ( 8 )
+
+#define VALUE_LF_CRLF (0)
+#define VALUE_LF_LF (1)
+#define VALUE_LF_CR (2)
 
 /*-------- Global Vars --------------*/
 

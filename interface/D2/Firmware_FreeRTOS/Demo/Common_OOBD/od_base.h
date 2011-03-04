@@ -103,4 +103,7 @@ void printser_uint16ToHex (uint16_t value);
 
 void printser_uint8ToHex (uint8_t value);
 
+
+
+void printLF();
 #endif /* INC_OD_BASE_H */
