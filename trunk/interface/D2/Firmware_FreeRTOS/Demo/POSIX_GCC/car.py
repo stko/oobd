@@ -44,7 +44,7 @@ def sendTele(msg,data):
   global sock_out
   sock_out.sendto( msg, (UDP_IP, UDP_PORT_OUT) )
   print "sended.."
-  time.sleep(0.01 * data["t"])
+  #time.sleep(0.001 * data["t"])
 
 
 
@@ -73,7 +73,7 @@ while True:
       nrOfBytes = nrOfBytes -6 # 6 bytes aready received
       pid= "%02X%02X%02X" % ( msg[i+0] , msg[i+1] , msg[i+2])
       nextStep=0 # send FlowControl, wait for consecutive frames
-      sendTele(msg,{'d':[0x33,0x30,0x00,0x00]})
+      sendTele(msg,{'d':[0x30,0x30,0x00,0x00]})
       
     ################# Consecutive Frame #############
     if frameType == 2: # consecutive frame

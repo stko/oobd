@@ -155,7 +155,7 @@ printSerData (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
       printser_string ("Error: ");
       printser_int (err, 10);
     }
-  //printLF();
+  printLF();
   printser_string (">");
 }
 
@@ -306,7 +306,7 @@ inputParserTask (void *pvParameters)
 			    {
 			      sendData (&dp);
 			      /* tells the  protocol to send the buffer */
-			      //printLF();
+			      printLF();
 			      sendMsg (MSG_SEND_BUFFER, protocolQueue, NULL);
 			      actState = S_SLEEP;
 			    }
@@ -356,7 +356,7 @@ inputParserTask (void *pvParameters)
 			      switch (cmdKey)
 				{
 				case PARAM_INFO:
-				  //printLF();
+				  printLF();
 				  printser_string ("OOBD ");
 			    printser_string (OOBDDESIGN);
 				  printser_string (SVNREV);
