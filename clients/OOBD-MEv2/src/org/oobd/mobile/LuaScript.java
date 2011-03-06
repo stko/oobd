@@ -13,8 +13,6 @@ import java.io.InputStream;
 import java.io.IOException;
 import javax.microedition.io.*;
 import javax.microedition.io.file.*;
-
-
 import se.krka.kahlua.stdlib.BaseLib;
 import se.krka.kahlua.stdlib.CoroutineLib;
 import se.krka.kahlua.stdlib.MathLib;
