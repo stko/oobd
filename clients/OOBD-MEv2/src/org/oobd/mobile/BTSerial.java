@@ -68,12 +68,18 @@ public class BTSerial extends Form implements CommandListener, Runnable {
             for (int i = 0; i < deviceCount; i++) {
                 RemoteDevice remoteDevice = (RemoteDevice) BluetoothDeviceDiscovery.vecDevices.elementAt(i);
                 deviceList.append(remoteDevice.getBluetoothAddress(),null);
-                /**
-                 * for later extensions:
-                 * the user friendly name of the device can be found as
-                 *
-                 * remoteDevice.getFriendlyName(true)
-                 */
+                try {
+                    System.out.println("Found device: " + remoteDevice.getFriendlyName(true));
+                    /**
+                     * for later extensions:
+                     * the user friendly name of the device can be found as
+                     *
+                     * remoteDevice.getFriendlyName(true)
+                     */
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+
             }
             //deviceList.addItem(new MyRenderer("test dummy"));
             backCommand = new Command("Back", Command.BACK, 0);
@@ -100,6 +106,7 @@ public class BTSerial extends Form implements CommandListener, Runnable {
             int index = deviceList.getSelectedIndex();
             RemoteDevice remoteDevice = (RemoteDevice) BluetoothDeviceDiscovery.vecDevices.elementAt(index);
             parent.setBTname(remoteDevice.getBluetoothAddress());
+            URL=remoteDevice.getBluetoothAddress();
             display.setCurrent(parent);
         }
     }
