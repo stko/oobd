@@ -21,6 +21,7 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
     private TextField scriptConf;
     private TextField btConf;
     private Spacer confSpacer;
+    private Spacer confSpacer2;
     Command backCmd;
     Command btCmd;
     Command scriptCmd;
@@ -52,6 +53,8 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
         scriptConf.addCommand(scriptCmd);
         scriptConf.setItemCommandListener(this);
 
+        confSpacer2 = new Spacer(10,10);
+
         choiceGroup = new ChoiceGroup("Blind Mode (for tesing)", Choice.MULTIPLE);
         choiceGroup.append("activated", null);
         choiceGroup.setSelectedFlags(new boolean[] { false });
@@ -59,6 +62,7 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
         this.append(btConf);
         this.append(confSpacer);
         this.append(scriptConf);
+        this.append(confSpacer2);
         this.append(choiceGroup);
 
         backCmd = new Command("Back",Command.BACK,0);

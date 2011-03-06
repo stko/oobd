@@ -48,6 +48,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     private LuaScript scriptEngine;
     private List cellList;
     private boolean blindMode;
+    private Command exitCmd;
 
 
     public void startApp() {
@@ -76,6 +77,8 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
             mainwindow.addCommand(confCmd);
             startCmd = new Command("Start", Command.OK,0);
             mainwindow.addCommand(startCmd);
+            exitCmd = new Command("Exit", Command.EXIT,0);
+            mainwindow.addCommand(exitCmd);
 
 //            Image logo=null;
 //            try {
@@ -94,6 +97,8 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     }
 
     public void destroyApp(boolean unconditional) {
+        display.setCurrent(null);
+        notifyDestroyed();
         
     }
 
@@ -119,7 +124,10 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                     ioe.printStackTrace();
                 }
             }
-        }    
+        }
+        else if (c == exitCmd){
+            destroyApp(true);
+        }
     }
 
     public Display getDisplay() {
