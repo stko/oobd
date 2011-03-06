@@ -12,6 +12,7 @@ function SysInfo_Menu(oldvalue,id)
 	addElement("DXM Serial", "dxmserial","-",0x2, "")
 	addElement("DXM BIOS", "dxmbios","-",0x2, "")
 	addElement("Power", "power","-",0x2, "")
+	addElement("Which Bus?", "getBus","-",0x2, "")
 	addElement("<<< Main", "Menu_Main","<<<",0x1, "")
 	pageDone()
 	return oldvalue
@@ -41,16 +42,17 @@ function power(oldvalue,id)
 	return answ
 end
 
+function getBus(oldvalue,id)
+	echoWrite("0100\r\n") -- first send something to let the DXM search for a available bus
+	udsLen=receive()
+	echoWrite("atdp\r\n")
+	local answ=""
+	answ=serReadLn(2000, false)
+	return answ
+end
+
 
 ---------------------- Vehicle Info Menu --------------------------------------
-
-function VIN_Menu(oldvalue,id)
-	openPage("Vehicle Info")
-	addElement("VIN", "vin","-",0x2, "")
-	addElement("<<< Main", "Menu_Main","<<<",0x1, "")
-	pageDone()
-	return oldvalue
-end
 
 
 function vin(oldvalue,id)
@@ -249,7 +251,7 @@ function createCMD01Menu(oldvalue,id)
 				availPIDs[i] = udsBuffer[3+i]
 			end
 			if availPIDs ~= 0 then
-				openPage("CMD 01 PIDs")
+				openPage("Sensor Data")
 				------------------------ these are the lines copied from the "createCall" section in the OBD2_PIDs - OpenOffice- File
 				createCall(availPIDs, 0x4,"Calculated engine load value", "getNumPIDs")
 				createCall(availPIDs, 0x5,"Engine coolant temperature", "getNumPIDs")
@@ -284,6 +286,7 @@ function createCMD01Menu(oldvalue,id)
                                 createCall(availPIDs, 0x1F,"Run time since engine start", "getNumPIDs")
 
 				-----------------------------------------
+				addElement("<<< Main", "Menu_Main","<<<",0x1, "")
 				pageDone()
 				return oldvalue
 			else
@@ -310,7 +313,7 @@ function createCMD02Menu(oldvalue,id)
 				availPIDs[i] = udsBuffer[3+i]
 			end
 			if availPIDs ~= 0 then
-				openPage("CMD 02 PIDs")
+				openPage("Snapshots")
 				------------------------ these are the lines copied from the "createCall" 2 section in the OBD2_PIDs - OpenOffice- File
 
                                 createCall(availPIDs, 0x21,"Distance traveled with malfunction indicator lamp (MIL) on", "getNumPIDs")
@@ -327,6 +330,7 @@ function createCMD02Menu(oldvalue,id)
                                 createCall(availPIDs, 0x28,"O2S5_WR_lambda(1): Equivalence Ratio Voltage", "getNumPIDs")
                                 createCall(availPIDs, 0x128,"O2S5_WR_lambda(1): Equivalence Ratio Voltage", "getNumPIDs")
 				-----------------------------------------
+				addElement("<<< Main", "Menu_Main","<<<",0x1, "")
 				pageDone()
 				return oldvalue
 			else
@@ -390,42 +394,13 @@ function createCMD03Menu(oldvalue,id)
                                 createCall(availPIDs, 0x3E,"Catalyst Temperature Bank 1, Sensor 2", "getNumPIDs")
                                 createCall(availPIDs, 0x3F,"Catalyst Temperature Bank 2, Sensor 2", "getNumPIDs")
                         	-----------------------------------------
+				addElement("<<< Main", "Menu_Main","<<<",0x1, "")
 				pageDone()
 				return oldvalue
 			else
 				return "No avail. PIDs found"
 			end
 
-		else
-			return "Error"
-		end
-	else
-		return "NO DATA"
-	end
-end
-
-
-function Sensor_Menu(oldvalue,id)
-	openPage("Sensor Info")
-	addElement("RPM", "sens_rpm","-",0x2, "")
-	addElement("Dynamic Menu1 >", "createCMD01Menu",">>>",0x1, "")
-        addElement("Dynamic Menu2 >", "createCMD02Menu",">>>",0x1, "")
-        addElement("Dynamic Menu3 >", "createCMD03Menu",">>>",0x1, "")
-	addElement("<<< Main", "Menu_Main","<<<",0x1, "")
-	pageDone()
-	return oldvalue
-end
-
-
-function sens_rpm(oldvalue,id)
-	echoWrite("010C\r\n")
-	udsLen=receive()
-	if udsLen>0 then
-		if udsBuffer[1]==65 then
-			local value=(udsBuffer[3]*256 +udsBuffer[4] )/ 4
-			local res=tonumber(value)
-			res= res.." RPM"
-			return res
 		else
 			return "Error"
 		end
@@ -442,6 +417,7 @@ end
 function showdtcs(oldvalue,id)
 	echoWrite("03\r\n")
 	udsLen=receive()
+	  print ( "udsLen: ", udsLen)
 	if udsLen>0 then
 		if udsBuffer[1]==67 then
 			local nrOfDTC= udsBuffer[2]
@@ -484,12 +460,13 @@ end
 ---------------------- Main Menu --------------------------------------
 
 function Menu_Main(oldvalue,id)
-	openPage("HHOpen Main")
-	addElement("Sensor Data >>>", "Sensor_Menu",">>>",0x1, "")
+	openPage("OOBD-ME Main")
+	addElement("Sensor Data >", "createCMD01Menu",">>>",0x1, "")
+        addElement("Snapshot Data >", "createCMD02Menu",">>>",0x1, "")
+        addElement("Dynamic Menu3 >", "createCMD03Menu",">>>",0x1, "")
 	addElement("Trouble Codes", "showdtcs","-",0x1, "")
-	addElement("Vehicle Info >>>", "VIN_Menu",">>>",0x1, "")
-	addElement("Protocol Info >>>", "notyet",">>>",0x1, "")
-	addElement("Change ECU >>>", "notyet",">>>",0x1, "")
+	addElement("VIN Number", "vin","-",0x2, "")
+--	addElement("Protocol Info >>>", "notyet",">>>",0x1, "")
 	addElement("System Info >>>", "SysInfo_Menu",">>>",0x1, "")
 	addElement("Greetings", "greet","",0x1, "")
 	pageDone()
@@ -507,8 +484,7 @@ function echoWrite(text)
 end
 
 ----------------- Do the initial settings --------------
+identifyOOBDInterface()
 Menu_Main("")
---createCMD01Menu("",0)
---print (getNumPIDs("","0x5"))
 return
 

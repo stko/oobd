@@ -105,31 +105,16 @@ public class BusCom extends OobdBus implements OOBDConstants {
             if ("serWrite".equalsIgnoreCase(command)) {
                 try {
                     reader.write(new String(new BASE64Decoder().decodeBuffer(on.getOnionString("data"))));
-                    replyMsg(msg, new Onion(""
-                            + "{'type':'" + CM_RES_BUS + "',"
-                            + "'owner':"
-                            + "{'name':'" + getPluginName() + "'},"
-                            + "'result':'" + "" + "'}"));
-                } catch (JSONException ex) {
-                    Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
                     Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             } else if ("serFlush".equalsIgnoreCase(command)) {
-                try {
                     reader.flush();
-                    replyMsg(msg, new Onion(""
-                            + "{'type':'" + CM_RES_BUS + "',"
-                            + "'owner':"
-                            + "{'name':'" + getPluginName() + "'},"
-                            + "'result':'" + "" + "'}"));
-                } catch (JSONException ex) {
-                    Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
-                }
+
             } else if ("serWait".equalsIgnoreCase(command)) {
                 try {
-                    Integer result = reader.wait(new String(new BASE64Decoder().decodeBuffer(on.getOnionString("data"))), on.getInt("timeout"));
+                    Integer result =  reader.wait(new String(new BASE64Decoder().decodeBuffer(on.getOnionString("data"))), on.getInt("timeout"));
                     System.out.println("busCom serWait: " + result);
                     replyMsg(msg, new Onion(""
                             + "{'type':'" + CM_RES_BUS + "',"
@@ -155,18 +140,6 @@ public class BusCom extends OobdBus implements OOBDConstants {
                             + "{'name':'" + getPluginName() + "'},"
                             + "'replyID':"+on.getInt("replyID")+ ","
                             + "'result':'" + new BASE64Encoder().encode(result.getBytes()) + "'}"));
-                } catch (JSONException ex) {
-                    Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-            } else {
-                try {
-
-                    replyMsg(msg, new Onion(""
-                            + "{'type':'" + CM_RES_BUS + "',"
-                            + "'owner':"
-                            + "{'name':'" + getPluginName() + "'},"
-                            + "'result':'" + "" + "'}"));
                 } catch (JSONException ex) {
                     Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
                 }
