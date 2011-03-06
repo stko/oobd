@@ -152,7 +152,8 @@ printSerData (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
   err = *(portBASE_TYPE *) data;
   if (err)
     {
-      printser_string ("Error: ");
+      printLF();
+     printser_string (":Error: ");
       printser_int (err, 10);
     }
   printLF();
