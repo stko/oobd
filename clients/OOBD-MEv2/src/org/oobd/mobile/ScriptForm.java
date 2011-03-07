@@ -6,6 +6,7 @@ import org.oobd.mobile.template.OutputDisplay;
 import javax.microedition.io.*;
 import javax.bluetooth.*;
 import java.io.*;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.lcdui.*;
@@ -37,9 +38,10 @@ public class ScriptForm extends Form implements CommandListener, Runnable {
 
     public String showForm() {
         
-        
-        for (Object object : scriptTable.elements()) {
-            
+        Enumeration e = scriptTable.keys();
+        while (e.hasMoreElements()) {
+            String id = (String) e.nextElement();
+            this.append((ScriptCell)scriptTable.get(id));
         }
                 
 //        setLayout(new BoxLayout(BoxLayout.Y_AXIS));
