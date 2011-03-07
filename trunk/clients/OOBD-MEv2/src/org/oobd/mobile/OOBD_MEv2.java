@@ -6,6 +6,7 @@
 package org.oobd.mobile;
 
 import java.io.IOException;
+import java.util.Hashtable;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
@@ -46,12 +47,15 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     private static final String scriptDefault = "/OOBD.lbc";
     private String actScript = scriptDefault;
     private LuaScript scriptEngine;
-    private List cellList;
+    //private List cellList;
     private boolean blindMode;
     private Command exitCmd;
+    Hashtable scriptTable = new Hashtable();
+    private String actPageName;
 
 
     public void startApp() {
+
 
         if (!initialized){
             initialized=true;
@@ -168,148 +172,149 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
 
 
 
-//    private void initiateScriptEngine(){
-//        scriptEngine = new LuaScript();
-//        scriptEngine.Script();
-//
-//        scriptEngine.register("openPageCall", new JavaFunction() {
-//            private String actPageName;
-//
-//            public int call(LuaCallFrame callFrame, int nArguments) {
-//                System.out.println("Lua calls openPage");
-//                //BaseLib.luaAssert(nArguments >0, "not enough args");
-//                scriptEngine.initRPC(callFrame, nArguments);
-//                cellList = new List("Scriptliste", List.MULTIPLE);
-//                actPageName=scriptEngine.getString(0);
-//                //scriptEngine.finishRPC(callFrame, nArguments);
-//                System.out.println("Lua leaves openPage");
-//                return 1;
-//            }
-//        });
-//        scriptEngine.register("addElementCall", new JavaFunction() {
-//
-//            public int call(LuaCallFrame callFrame, int nArguments) {
-//                //BaseLib.luaAssert(nArguments >0, "not enough args");
-//                System.out.println("Lua calls addElement");
-//                scriptEngine.initRPC(callFrame, nArguments);
-//                cellList.addItem(new ScriptCell(
-//                        scriptEngine.getString(0), //String title
-//                        scriptEngine.getString(1), //String function
-//                        scriptEngine.getString(2), //String initalValue
-//                        scriptEngine.getInt(3), //int OOBDElementFlags
-//                        scriptEngine.getString(4) //String id
-//                        ));
-//                scriptEngine.finishRPC(callFrame, nArguments);
-//                return 1;
-//            }
-//        });
-//        scriptEngine.register("pageDoneCall", new JavaFunction() {
-//
-//            public int call(LuaCallFrame callFrame, int nArguments) {
-//                System.out.println("Lua calls pageDone");
-//                //BaseLib.luaAssert(nArguments >0, "not enough args");
-//                scriptEngine.initRPC(callFrame, nArguments);
-//                writeForm = new ScriptForm(f, cellList, actPageName, scriptEngine, myDisplay);
-//                scriptEngine.finishRPC(callFrame, nArguments);
-//                return 1;
-//            }
-//        });
-//        scriptEngine.register("serReadLnCall", new JavaFunction() {
-//
-//            public int call(LuaCallFrame callFrame, int nArguments) {
-//                System.out.println("Lua calls serReadLn");
-//                //BaseLib.luaAssert(nArguments >0, "not enough args");
-//                scriptEngine.initRPC(callFrame, nArguments);
-//                System.out.println("timeout value:" + Integer.toString(scriptEngine.getInt(0)));
-//                if (scriptEngine.getBoolean(1) == true) {
-//                    System.out.println("ignore value: true");
-//                } else {
-//                    if (scriptEngine.getBoolean(1) == false) {
-//                        System.out.println("ignore value: false");
-//                    } else {
-//                        System.out.println("ignore value: undefined");
-//                    }
-//                }
-//                String result = "";
-//                if (btComm != null) {
-//                    result = btComm.readln(scriptEngine.getInt(0), scriptEngine.getBoolean(1));
-//                    //result = btComm.readln(2000, true);
-//                }
-//                callFrame.push(result.intern());
-//                scriptEngine.finishRPC(callFrame, nArguments);
-//                return 1;
-//            }
-//        });
-//        scriptEngine.register("serWaitCall", new JavaFunction() {
-//
-//            public int call(LuaCallFrame callFrame, int nArguments) {
-//                System.out.println("Lua calls serWait");
-//                //BaseLib.luaAssert(nArguments >0, "not enough args");
-//                scriptEngine.initRPC(callFrame, nArguments);
-//                int result = 0;
-//                if (btComm != null) {
-//                    result = btComm.wait(scriptEngine.getString(0), scriptEngine.getInt(1));
-//                }
-//                callFrame.push(new Integer(result));
-//                scriptEngine.finishRPC(callFrame, nArguments);
-//                return 1;
-//            }
-//        });
-//        scriptEngine.register("serSleepCall", new JavaFunction() {
-//
-//            public int call(LuaCallFrame callFrame, int nArguments) {
-//                System.out.println("Lua calls serSleep");
-//                //BaseLib.luaAssert(nArguments >0, "not enough args");
-//                scriptEngine.initRPC(callFrame, nArguments);
-//                try {
-//                    Thread.sleep(scriptEngine.getInt(0));
-//                } catch (InterruptedException e) {
-//                    // the VM doesn't want us to sleep anymore,
-//                    // so get back to work
-//                }
-//                scriptEngine.finishRPC(callFrame, nArguments);
-//                return 1;
-//            }
-//        });
-//        scriptEngine.register("serWriteCall", new JavaFunction() {
-//
-//            public int call(LuaCallFrame callFrame, int nArguments) {
-//                System.out.println("Lua calls serWrite");
-//                //BaseLib.luaAssert(nArguments >0, "not enough args");
-//                scriptEngine.initRPC(callFrame, nArguments);
-//                if (btComm != null) {
-//                    btComm.write(scriptEngine.getString(0));
-//                }
-//                scriptEngine.finishRPC(callFrame, nArguments);
-//                return 1;
-//            }
-//        });
-//        scriptEngine.register("serFlushCall", new JavaFunction() {
-//
-//            public int call(LuaCallFrame callFrame, int nArguments) {
-//                System.out.println("Lua calls serFlush");
-//                //BaseLib.luaAssert(nArguments >0, "not enough args");
-//                scriptEngine.initRPC(callFrame, nArguments);
-//                if (btComm != null) {
-//                    btComm.flush();
-//                }
-//                scriptEngine.finishRPC(callFrame, nArguments);
-//                return 1;
-//            }
-//        });
-//        scriptEngine.register("serDisplayWriteCall", new JavaFunction() {
-//
-//            public int call(LuaCallFrame callFrame, int nArguments) {
-//                System.out.println("Lua calls serDisplayWrite");
-//                //BaseLib.luaAssert(nArguments >0, "not enough args");
-//                scriptEngine.initRPC(callFrame, nArguments);
-//                prepareDisplayWrite(scriptEngine.getString(0));
-//                scriptEngine.finishRPC(callFrame, nArguments);
-//                return 1;
-//            }
-//        });
-//
-//    }
-//
+    private void initiateScriptEngine(){
+        scriptEngine = new LuaScript();
+        scriptEngine.Script();
+
+        scriptEngine.register("openPageCall", new JavaFunction() {
+            
+
+            public int call(LuaCallFrame callFrame, int nArguments) {
+                System.out.println("Lua calls openPage");
+                //BaseLib.luaAssert(nArguments >0, "not enough args");
+                scriptEngine.initRPC(callFrame, nArguments);
+                //alt cellList = new List("Scriptliste", List.MULTIPLE);
+                actPageName=scriptEngine.getString(0);
+                //scriptEngine.finishRPC(callFrame, nArguments);
+                System.out.println("Lua leaves openPage");
+                return 1;
+            }
+        });
+        scriptEngine.register("addElementCall", new JavaFunction() {
+
+            public int call(LuaCallFrame callFrame, int nArguments) {
+                //BaseLib.luaAssert(nArguments >0, "not enough args");
+                System.out.println("Lua calls addElement");
+                scriptEngine.initRPC(callFrame, nArguments);
+
+                scriptTable.put(scriptEngine.getString(4),new ScriptCell(
+                        scriptEngine.getString(0), //String title
+                        scriptEngine.getString(1), //String function
+                        scriptEngine.getString(2), //String initalValue
+                        scriptEngine.getInt(3), //int OOBDElementFlags
+                        scriptEngine.getString(4) //String id
+                        ));
+                scriptEngine.finishRPC(callFrame, nArguments);
+                return 1;
+            }
+        });
+        scriptEngine.register("pageDoneCall", new JavaFunction() {
+
+            public int call(LuaCallFrame callFrame, int nArguments) {
+                System.out.println("Lua calls pageDone");
+                //BaseLib.luaAssert(nArguments >0, "not enough args");
+                scriptEngine.initRPC(callFrame, nArguments);
+                new ScriptForm(mainwindow, scriptTable, actPageName, scriptEngine, display);
+                scriptEngine.finishRPC(callFrame, nArguments);
+                return 1;
+            }
+        });
+        scriptEngine.register("serReadLnCall", new JavaFunction() {
+
+            public int call(LuaCallFrame callFrame, int nArguments) {
+                System.out.println("Lua calls serReadLn");
+                //BaseLib.luaAssert(nArguments >0, "not enough args");
+                scriptEngine.initRPC(callFrame, nArguments);
+                System.out.println("timeout value:" + Integer.toString(scriptEngine.getInt(0)));
+                if (scriptEngine.getBoolean(1) == true) {
+                    System.out.println("ignore value: true");
+                } else {
+                    if (scriptEngine.getBoolean(1) == false) {
+                        System.out.println("ignore value: false");
+                    } else {
+                        System.out.println("ignore value: undefined");
+                    }
+                }
+                String result = "";
+                if (btComm != null) {
+                    result = btComm.readln(scriptEngine.getInt(0), scriptEngine.getBoolean(1));
+                    //result = btComm.readln(2000, true);
+                }
+                callFrame.push(result.intern());
+                scriptEngine.finishRPC(callFrame, nArguments);
+                return 1;
+            }
+        });
+        scriptEngine.register("serWaitCall", new JavaFunction() {
+
+            public int call(LuaCallFrame callFrame, int nArguments) {
+                System.out.println("Lua calls serWait");
+                //BaseLib.luaAssert(nArguments >0, "not enough args");
+                scriptEngine.initRPC(callFrame, nArguments);
+                int result = 0;
+                if (btComm != null) {
+                    result = btComm.wait(scriptEngine.getString(0), scriptEngine.getInt(1));
+                }
+                callFrame.push(new Integer(result));
+                scriptEngine.finishRPC(callFrame, nArguments);
+                return 1;
+            }
+        });
+        scriptEngine.register("serSleepCall", new JavaFunction() {
+
+            public int call(LuaCallFrame callFrame, int nArguments) {
+                System.out.println("Lua calls serSleep");
+                //BaseLib.luaAssert(nArguments >0, "not enough args");
+                scriptEngine.initRPC(callFrame, nArguments);
+                try {
+                    Thread.sleep(scriptEngine.getInt(0));
+                } catch (InterruptedException e) {
+                    // the VM doesn't want us to sleep anymore,
+                    // so get back to work
+                }
+                scriptEngine.finishRPC(callFrame, nArguments);
+                return 1;
+            }
+        });
+        scriptEngine.register("serWriteCall", new JavaFunction() {
+
+            public int call(LuaCallFrame callFrame, int nArguments) {
+                System.out.println("Lua calls serWrite");
+                //BaseLib.luaAssert(nArguments >0, "not enough args");
+                scriptEngine.initRPC(callFrame, nArguments);
+                if (btComm != null) {
+                    btComm.write(scriptEngine.getString(0));
+                }
+                scriptEngine.finishRPC(callFrame, nArguments);
+                return 1;
+            }
+        });
+        scriptEngine.register("serFlushCall", new JavaFunction() {
+
+            public int call(LuaCallFrame callFrame, int nArguments) {
+                System.out.println("Lua calls serFlush");
+                //BaseLib.luaAssert(nArguments >0, "not enough args");
+                scriptEngine.initRPC(callFrame, nArguments);
+                if (btComm != null) {
+                    btComm.flush();
+                }
+                scriptEngine.finishRPC(callFrame, nArguments);
+                return 1;
+            }
+        });
+        scriptEngine.register("serDisplayWriteCall", new JavaFunction() {
+
+            public int call(LuaCallFrame callFrame, int nArguments) {
+                System.out.println("Lua calls serDisplayWrite");
+                //BaseLib.luaAssert(nArguments >0, "not enough args");
+                scriptEngine.initRPC(callFrame, nArguments);
+                //prepareDisplayWrite(scriptEngine.getString(0));
+                scriptEngine.finishRPC(callFrame, nArguments);
+                return 1;
+            }
+        });
+
+    }
+
     
 }
