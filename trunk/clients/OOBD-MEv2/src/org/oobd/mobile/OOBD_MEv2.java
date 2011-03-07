@@ -84,15 +84,15 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
             exitCmd = new Command("Exit", Command.EXIT,0);
             mainwindow.addCommand(exitCmd);
 
-//            Image logo=null;
-//            try {
-//                logo = Image.createImage("res/oobd_small.png");
-//            } catch (IOException ex) {
-//                ex.printStackTrace();
-//            }
-//            logoItem = new ImageItem("OODB-MEv2", logo, ImageItem.LAYOUT_CENTER, "Logo not loaded");
+            Image logo=null;
+            try {
+                logo = Image.createImage("/oobd.PNG");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            logoItem = new ImageItem("OODB-MEv2", logo, ImageItem.LAYOUT_CENTER, "Logo not loaded");
 
-//            mainwindow.append(logoItem);
+            mainwindow.append(logoItem);
             display.setCurrent(mainwindow);
         }
     }
