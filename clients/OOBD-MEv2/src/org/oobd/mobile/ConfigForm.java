@@ -102,7 +102,7 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
     }
     
     public void run() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("CommandAction not yet supported");
     }
 
     public void setBTname(String btName){

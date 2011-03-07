@@ -2,9 +2,11 @@ package org.oobd.mobile;
 
 
 
+import org.oobd.mobile.template.OutputDisplay;
 import javax.microedition.io.*;
 import javax.bluetooth.*;
 import java.io.*;
+import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.lcdui.*;
 
@@ -16,23 +18,30 @@ import javax.microedition.lcdui.*;
 public class ScriptForm extends Form implements CommandListener, Runnable {
 
     private Form parent; //Where this form was started from
-    private OutputDisplay mainMidget; //Where the output routines are
+//    private OutputDisplay mainMidget; //Where the output routines are
     private Command backCommand = null;
     private Command detailCommand = null;
     List cellList = null;
     Script myEngine = null;
+    Hashtable scriptTable;
 
-    public ScriptForm(Form parent, List cellList, String title, Script scriptEngine, OutputDisplay mainMidget) {
+    public ScriptForm(Form parent, Hashtable scriptTable, String title, Script scriptEngine, Display display) {
         super(title);
         this.parent = parent;
-        this.cellList = cellList;
+        this.scriptTable=scriptTable;
         this.myEngine = scriptEngine;
-        this.mainMidget = mainMidget;
+        //this.mainMidget = mainMidget;
         new Thread(this).start();
         showForm();
     }
 
     public String showForm() {
+        
+        
+        for (Object object : scriptTable.elements()) {
+            
+        }
+                
 //        setLayout(new BoxLayout(BoxLayout.Y_AXIS));
 //        cellList.setListCellRenderer(new ScriptCellRenderer());
 //        cellList.addActionListener(new ActionListener() {
@@ -71,7 +80,7 @@ public class ScriptForm extends Form implements CommandListener, Runnable {
     }
 
     public void commandAction(Command c, Displayable d) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("CommandAction not yet supported");
     }
 
     }

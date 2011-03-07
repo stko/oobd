@@ -1,6 +1,7 @@
 package org.oobd.mobile;
 
 
+import org.oobd.mobile.template.TerminalIOStream;
 import javax.microedition.io.*;
 import javax.bluetooth.*;
 import java.io.*;

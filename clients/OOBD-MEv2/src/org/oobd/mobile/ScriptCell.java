@@ -20,17 +20,18 @@ public class ScriptCell extends CustomItem  {
     private String id;
     private String update="-";
     private String timer="-";
-    
+    private int  oobdElementFlags;
     private int minHeigth=30;
     private int minWidth=150;
     private int prefHeight=30;
     private int prefWidth=250;
 
-    public ScriptCell(String title, String initalValue, String id) {
+    public ScriptCell(String title, String function, String initalValue, int oobdElementFlags, String id) {
         super("");
         this.title = title;
-        this.value = initalValue;
         this.function = function;
+        this.value = initalValue;
+        this.oobdElementFlags = oobdElementFlags;
         this.id = id;
     }
 

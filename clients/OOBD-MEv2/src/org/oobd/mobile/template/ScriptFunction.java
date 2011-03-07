@@ -1,4 +1,4 @@
-package org.oobd.mobile;
+package org.oobd.mobile.template;
 
 /*
  * To change this template, choose Tools | Templates

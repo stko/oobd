@@ -1,4 +1,4 @@
-package org.oobd.mobile;
+package org.oobd.mobile.template;
 
 
 import javax.microedition.io.StreamConnection;
@@ -12,7 +12,7 @@ public class TerminalIOStream {
 
     InputStream inStream;
     OutputStream outStream;
-    InputStreamReader inStreamReader;
+    public InputStreamReader inStreamReader;
     OutputStreamWriter outStreamWriter;
     StreamConnection connection;
     boolean setUp = false;
