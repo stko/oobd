@@ -165,7 +165,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
   if (RxMessage.StdId != 0 || RxMessage.ExtId != 0)
     {
       /* Data received. Process it. */
-      if (RxMessage.IDE = CAN_ID_STD)
+      if (RxMessage.IDE == CAN_ID_STD)
         dp.recv = RxMessage.StdId; /* Standard CAN frame 11bit received */
       else
         dp.recv = RxMessage.ExtId; /* Extended CAN frame 29bit received */

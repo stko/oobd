@@ -270,146 +270,196 @@ void USART1_Configuration(void)
 
   /* Enable the USART1-Receive interrupt: this interrupt is generated when the
      USART1 receive data register is not empty */
-  USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+//  USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
 
   /* Enable the USART1 */
   USART_Cmd(USART1, ENABLE);
-#ifdef TODO
-  DEBUGUARTPRINT("\r\n*** Start Autobaud SCAN for BTM222! ***");
+#ifdef todo_autobaud
+    char  ReceivedData;
+    uint8_t   AutobaudControl;
+    uint32_t  nCount;
+    uint8_t TxBuffer[] = "atl?\r\n";
+    uint8_t RxBuffer[6];
+#define TxBufferSize   (countof(TxBuffer))
+#define countof(a)   (sizeof(a) / sizeof(*(a)))
 
-
-  char  ReceivedData;
-  uint8_t   AutobaudControl, InvalidChar = 0;
-  uint32_t  nCount;
-
-  for (AutobaudControl=0; AutobaudControl<=8; AutobaudControl++)
-  {
-    USART_SendData(USART1, "atl?"); /* send command to BTM222 */
-
-    for(nCount=100000; nCount != 0; nCount--); /* delay */
-
-    ReceivedData = USART_ReceiveData(USART1); /* receive character from BTM222 */
-
-    switch (ReceivedData)
+    __IO uint8_t TxCounter, RxCounter;
+/*
+    TxCounter = 0;
+    RxCounter = 0;
+    while(TxCounter < TxBufferSize)
     {
-      case '0':
-        DEBUGUARTPRINT("\r\n*** BTM222 - L0 = 4800bps detected! ***");
-        /* USART_SendData(USART1, "atl5"); */ /* default baudrate 115200 */
-        /* if ("OK" == USART_REceidData
-         */
-        AutobaudControl = 4;
-        break;
-
-      case '1':
-        DEBUGUARTPRINT("\r\n*** BTM222 - L1 = 9600bps detected! ***");
-        AutobaudControl = 4;
-        break;
-
-      case '2':
-        DEBUGUARTPRINT("\r\n*** BTM222 - L2 = 19200bps detected! ***");
-        AutobaudControl = 4;
-        break;
-
-      case '3':
-        DEBUGUARTPRINT("\r\n*** BTM222 - L3 = 38400bps detected! ***");
-        AutobaudControl = 4;
-        break;
-
-      case '4':
-        DEBUGUARTPRINT("\r\n*** BTM222 - L4 = 57600bps detected! ***");
-        AutobaudControl = 4;
-        break;
-
-      case '5':
-        DEBUGUARTPRINT("\r\n*** BTM222 - L5 = 115200bps detected! ***");
-        AutobaudControl = 8; /* exit for loop */
-        break;
-
-      case '6':
-        DEBUGUARTPRINT("\r\n*** BTM222 - L6 = 230400bps detected! ***");
-        AutobaudControl = 4;
-        break;
-
-      case '7':
-        DEBUGUARTPRINT("\r\n*** BTM222 - L7 = 460800bps detected! ***");
-        AutobaudControl = 4;
-        break;
-
-      default:
-        DEBUGUARTPRINT("\r\n*** BTM222 - baudrate not detected! ***");
-        AutobaudControl++;
-        break;
-    }
-
-    switch (AutobaudControl)
-    {
-      case 0:
-        /* Initialize USART1 with next possible baudrate of BTM222 */
-        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_9600;
-        USART_Init(USART1, &USART_InitStructure);
-        break;
-
-      case 1:
-        /* Initialize USART1 with next possible baudrate of BTM222 */
-        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_19200;
-        USART_Init(USART1, &USART_InitStructure);
-        break;
-
-      case 2:
-        /* Initialize USART1 with next possible baudrate of BTM222 */
-        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_38400;
-        USART_Init(USART1, &USART_InitStructure);
-        break;
-
-      case 3:
-        /* Initialize USART1 with next possible baudrate of BTM222 */
-        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_57600;
-        USART_Init(USART1, &USART_InitStructure);
-        break;
-
-      case 4:
-        /* Initialize USART1 with next possible baudrate of BTM222 */
-        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_115200;
-        USART_Init(USART1, &USART_InitStructure);
-        break;
-
-      case 5:
-        /* Initialize USART1 with next possible baudrate of BTM222 */
-        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_230400;
-        USART_Init(USART1, &USART_InitStructure);
-        break;
-
-      case 6:
-        /* Initialize USART1 with next possible baudrate of BTM222 */
-        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_460800;
-        USART_Init(USART1, &USART_InitStructure);
-        break;
-
-      case 7:
-        /* fallback to default baudrate */
-        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_DEFAULT;
-        USART_Init(USART1, &USART_InitStructure);
-        break;
-
-      case 8:
-        break;
-
-      default:
-        break;
-    }
-    /*
-  }
-    else
-      {
-
-
-      }
 */
+      /* Send one byte from USARTy to USARTz */
+//      USART_SendData(USART1, TxBuffer[TxCounter++]);
+
+      /* Loop until USARTy DR register is empty */
+//      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
+//      {
+//      }
+//    }
+
+    for (AutobaudControl=0; AutobaudControl<=9; AutobaudControl++)
+    {
+/*
+      TxCounter = 0;
+      RxCounter = 0;
+      while(TxCounter < TxBufferSize)
+      {
+*/
+        /* Send one byte from USARTy to USARTz */
+//        USART_SendData(USART1, TxBuffer[TxCounter++]);
+
+        /* Loop until USARTy DR register is empty */
+//        while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
+//        {
+//        }
+//      }
+        uart1_puts ("atl?\r");
+
+
+      /* Loop until the USARTz Receive Data Register is not empty */
+      while(USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET)
+      {
+          RxBuffer[RxCounter++] = (USART_ReceiveData(USART1) & 0x7F);
+      }
+
+      AutobaudControl++;
+
+      switch (RxBuffer[0])
+      {
+       case '1':
+//          DEBUGUARTPRINT("\r\n*** BTM222 - L1 = 9600bps detected! ***");
+         *TxBuffer = "atl5\r\n";
+//         USART_SendData(USART1, "atl5"); /* set BTM222 to default baudrate */
+         AutobaudControl = 9;
+          break;
+
+        case '2':
+//          DEBUGUARTPRINT("\r\n*** BTM222 - L2 = 19200bps detected! ***");
+//          USART_SendData(USART1, "atl5"); /* set BTM222 to default baudrate */
+          *TxBuffer = "atl5\r\n";
+          AutobaudControl = 9;
+          break;
+
+        case '3':
+//          DEBUGUARTPRINT("\r\n*** BTM222 - L3 = 38400bps detected! ***");
+//          USART_SendData(USART1, "atl5"); /* set BTM222 to default baudrate */
+          *TxBuffer = "atl5\r\n";
+          AutobaudControl = 9;
+          break;
+
+        case '4':
+//          DEBUGUARTPRINT("\r\n*** BTM222 - L4 = 57600bps detected! ***");
+//          USART_SendData(USART1, "atl5"); /* set BTM222 to default baudrate */
+          *TxBuffer = "atl5\r\n”";
+          AutobaudControl = 9;
+          break;
+
+        case '5':
+//          DEBUGUARTPRINT("\r\n*** BTM222 - L5 = 115200bps detected! ***");
+          AutobaudControl = 9;
+          break;
+
+        case '6':
+//          DEBUGUARTPRINT("\r\n*** BTM222 - L6 = 230400bps detected! ***");
+//          USART_SendData(USART1, "atl5"); /* set BTM222 to default baudrate */
+          *TxBuffer = "atl5\r\n";
+          AutobaudControl = 9;
+          break;
+
+        case '7':
+//          DEBUGUARTPRINT("\r\n*** BTM222 - L7 = 460800bps detected! ***");
+//          USART_SendData(USART1, "atl5"); /* set BTM222 to default baudrate */
+          *TxBuffer = "atl5\r\n";
+          AutobaudControl = 9;
+          break;
+
+        default:
+//          DEBUGUARTPRINT("\r\n*** BTM222 - baudrate not detected! ***");
+          AutobaudControl++; /* increment AutobaudControl counter */
+          break;
+      }
+
+      if (AutobaudControl == 9)
+      {
+          TxCounter = 0;
+          while(TxCounter < TxBufferSize)
+          {
+            /* Send one byte from USARTy to USARTz */
+            USART_SendData(USART1, TxBuffer[TxCounter++]);
+
+            /* Loop until USARTy DR register is empty */
+            while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
+            {
+            }
+          }
+      }
+
+
+      switch (AutobaudControl)
+      {
+        case 1:
+          /* Initialize USART1 with next possible baudrate of BTM222 */
+          USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_4800;
+          break;
+
+        case 2:
+          /* Initialize USART1 with next possible baudrate of BTM222 */
+          USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_9600;
+
+          break;
+
+        case 3:
+          /* Initialize USART1 with next possible baudrate of BTM222 */
+          USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_19200;
+          break;
+
+        case 4:
+          /* Initialize USART1 with next possible baudrate of BTM222 */
+          USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_38400;
+          break;
+
+        case 5:
+          /* Initialize USART1 with next possible baudrate of BTM222 */
+          USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_57600;
+          break;
+
+        case 6:
+          /* Initialize USART1 with next possible baudrate of BTM222 */
+          USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_115200;
+          break;
+
+        case 7:
+          /* Initialize USART1 with next possible baudrate of BTM222 */
+          USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_230400;
+          break;
+
+        case 8:
+          /* Initialize USART1 with next possible baudrate of BTM222 */
+          USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_460800;
+          break;
+
+        case 9:
+          USART_SendData(USART1, "atl5"); /* set BTM222 to default baudrate */
+          /* fallback to default baudrate */
+          USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_DEFAULT;
+          break;
+
+        default:
+          break;
+      }
+      USART_Init(USART1, &USART_InitStructure); /* reinitialization of USART */
     } /* end of for */
+
+//  DEBUGUARTPRINT("\r\n*** Autobaud SCAN for BTM222 finished! ***");
+
+//  USART_Init(USART1, &USART_InitStructure);
+#endif
   /* Enable the USART1-Receive interrupt: this interrupt is generated when the
      USART1 receive data register is not empty */
   USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
-#endif
+
 }
 /*----------------------------------------------------------------------------*/
 

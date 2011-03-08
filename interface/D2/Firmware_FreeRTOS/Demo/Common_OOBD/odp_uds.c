@@ -135,7 +135,7 @@ generateTesterPresents (unsigned char *tpArray, unsigned char *canBuffer,
   portBASE_TYPE i;
   int actAddr;
   // first we fill the telegram with the tester present data
-  dp.len = 3;
+  dp.len = 8;             /* Tester present message must be 8 bytes */
   dp.data = canBuffer;
   canBuffer[0] = 2;
   canBuffer[1] = 0x3E;		// Service Tester Present
