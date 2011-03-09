@@ -23,6 +23,13 @@ public class ComReader implements Runnable {
     public void connect(CommPortIdentifier portId) {
         try {
             serialPort = (SerialPort) portId.open("SimpleReadApp", 2000);
+            try{
+                serialPort.setSerialPortParams(115200, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+                serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
+            }
+            catch (UnsupportedCommOperationException ex){
+                throw new IOException("Unsupported serial port parameter");
+            }
             inStream = serialPort.getInputStream();
             inStreamReader = new InputStreamReader(inStream);
             outStream = serialPort.getOutputStream();
