@@ -44,7 +44,7 @@ def sendTele(msg,data):
   global sock_out
   sock_out.sendto( msg, (UDP_IP, UDP_PORT_OUT) )
   print "sended.."
-  #time.sleep(0.001 * data["t"])
+  time.sleep(0.01 * data["t"])
 
 
 

@@ -52,8 +52,6 @@ print_telegram (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
   printser_string ("  ");
   printser_int (dp->len, 10);
   printser_string ("  ");
-  printser_uint32ToHex (&dp->data);
-  printser_string ("  ");
   int i;
   for (i = 0; i < 8; i++)
     {

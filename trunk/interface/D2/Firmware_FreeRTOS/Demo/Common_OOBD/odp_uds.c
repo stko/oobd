@@ -50,7 +50,7 @@
 
 #define UDSSIZE ( 4095 )
 
-typedef struct
+typedef struct UDSBUFFER
 {
   portBASE_TYPE len;
   unsigned char data[UDSSIZE];
@@ -328,7 +328,7 @@ obp_uds (void *pvParameters)
   actBus_init ();
   /* tell the Rx-ISR about the function to use for received data */
   busControl (ODB_CMD_RECV, recvdata);
-  udsBuffer = pvPortMalloc (sizeof (struct UdsConfig));
+  udsBuffer = pvPortMalloc (sizeof (struct UDSBUFFER));
   udsBuffer->len = 0;
   if (udsBuffer == NULL)
     {
