@@ -71,7 +71,7 @@ createMsg (void *data, size_t size)
       MsgData *dataDescr;
       // get mem for the MsgData itself + the payload
       dataDescr = pvPortMalloc (sizeof (struct MsgData) + size);
-      if (dataDescr != NULL)
+       if (dataDescr != NULL)
 	{
 	  // store the payload size
 	  dataDescr->len = size;
@@ -79,6 +79,40 @@ createMsg (void *data, size_t size)
 	  dataDescr->addr = (void *) dataDescr + sizeof (struct MsgData);
 	  // copy payload into the fresh mem
 	  memcpy (dataDescr->addr, data, size);
+	  return dataDescr;
+	}
+      else
+	{
+	  return NULL;
+	}
+    }
+  else
+    {
+      return NULL;
+    }
+}
+
+
+MsgData *
+createPacketMsg (data_packet *data, size_t size)
+{
+  // is there any msgdata at all?
+  if (data != NULL && size > 0)
+    {
+      MsgData *dataDescr;
+      // get mem for the MsgData itself + the payload
+      dataDescr = pvPortMalloc (sizeof (struct MsgData) + size);
+       if (dataDescr != NULL)
+	{
+	  // store the payload size
+	  dataDescr->len = size;
+	  // store the payload address
+	  dataDescr->addr = (void *) dataDescr + sizeof (struct MsgData);
+	  // copy payload into the fresh mem
+	  memcpy (dataDescr->addr, data, size);
+	  // now the data lies in another memory area, so we'vr to correct the data->data pointer to this new addresses also
+	  data=dataDescr->addr;
+	  data->data=(void *) data+sizeof (struct data_packet);
 	  return dataDescr;
 	}
       else
@@ -103,6 +137,7 @@ createDataMsg (data_packet * data)
       data_packet *newDataDescr;
       MsgData *newMsg;
       // get mem for the new data_packet itself + the payload
+      
       newDataDescr = pvPortMalloc (sizeof (struct data_packet) + data->len);
       if (newDataDescr != NULL)
 	{
@@ -110,11 +145,11 @@ createDataMsg (data_packet * data)
 	  memcpy (newDataDescr, data, sizeof (struct data_packet));
 	  // store the payload address
 	  newDataDescr->data =
-	    (unsigned char *) newDataDescr + sizeof (struct data_packet);
+	    (void *) newDataDescr + sizeof (struct data_packet);
 	  // copy payload into the fresh mem
 	  memcpy (newDataDescr->data, data->data, data->len);
 	  newMsg =
-	    createMsg (newDataDescr, sizeof (struct data_packet) + data->len);
+	    createPacketMsg (newDataDescr, sizeof (struct data_packet) + data->len);
 	  vPortFree (newDataDescr);
 	  return newMsg;
 	}
