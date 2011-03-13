@@ -101,7 +101,10 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
     }
 
     public void sm(String msg) {
-        JOptionPane.showMessageDialog(null, msg);
+        //JOptionPane.showMessageDialog(null, msg);
+        //http://stackoverflow.com/questions/1235644/bringing-tab-to-front-in-jtabbedpane
+        jTextAreaOutput.append(msg + "\n");
+        mainSeTabbedPane.setSelectedComponent(outputPanel);
     }
 
     public void registerOobdCore(Core core) {
@@ -163,7 +166,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
                 c.gridx = 0;
                 c.gridy = 0;
                 //panel.add(newJComponent, c);
-                panel.add(scrollpane,0);//, c);
+                panel.add(scrollpane, 0);//, c);
                 panel.validate();
             }
             ((IFvisualizer) newJComponent).initValue(newVisualizer, myOnion);
@@ -200,7 +203,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
             //JTabbedPane pane = new JTabbedPane();
             //pane.add(panel);
             basejTabPane.add(panel);
-            basejTabPane.setSelectedIndex(basejTabPane.getTabCount()-1);
+            basejTabPane.setSelectedIndex(basejTabPane.getTabCount() - 1);
             oobdCore.setAssign(seID, org.oobd.base.OOBDConstants.CL_PANE + ":page", panel);
             GridBagConstraints c = new GridBagConstraints();
             basejTabPane.validate();
@@ -228,7 +231,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         System.out.println("Repaint Component?");
 
         if (oldPage != null) {
-       System.out.println("Repaint Component!");
+            System.out.println("Repaint Component!");
             oldPage.invalidate();
             oldPage.validate();
             oldPage.repaint();
@@ -252,6 +255,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         JTabbedPane newjTabPane = new JTabbedPane(); //create a inner JTabbedPane as container for the later coming scriptengine pages
         newjTabPane.setName(seID); // set the name of that canvas that it can be found again later
         mainSeTabbedPane.addTab(seID, newjTabPane); // and put this canvas inside the pane which belongs to that particular scriptengine
+        mainSeTabbedPane.setSelectedComponent(newjTabPane); // bring the new pane to front
         // and now, after initalisation of the UI, let the games begin...
         oobdCore.setAssign(seID, org.oobd.base.OOBDConstants.CL_PANE, newjTabPane); //store the related drawing pane, the TabPane for that scriptengine
         oobdCore.startScriptEngine(seID);
@@ -269,7 +273,12 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
 
         }
         SKDSSwingApp.getApplication().show(aboutBox);
+    }
 
+
+        @Action
+    public void clearOutputWindow() {
+        jTextAreaOutput.setText("");
 
     }
 
@@ -296,8 +305,8 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         outputClearButton = new javax.swing.JButton();
         outputSaveButton = new javax.swing.JButton();
         outputEnableButton = new javax.swing.JToggleButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        jScrollPaneOutput = new javax.swing.JScrollPane();
+        jTextAreaOutput = new javax.swing.JTextArea();
         VisualizerPanel = new javax.swing.JPanel();
         visualizerToolBar = new javax.swing.JToolBar();
         menuBar = new javax.swing.JMenuBar();
@@ -359,6 +368,8 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         outputToolBar.setRollover(true);
         outputToolBar.setName("outputToolBar"); // NOI18N
 
+        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(skdsswing.SKDSSwingApp.class).getContext().getActionMap(SKDSSwingView.class, this);
+        outputClearButton.setAction(actionMap.get("clearOutputWindow")); // NOI18N
         outputClearButton.setIcon(resourceMap.getIcon("outputClearButton.icon")); // NOI18N
         outputClearButton.setText(resourceMap.getString("outputClearButton.text")); // NOI18N
         outputClearButton.setToolTipText(resourceMap.getString("outputClearButton.toolTipText")); // NOI18N
@@ -387,12 +398,12 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         outputEnableButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         outputToolBar.add(outputEnableButton);
 
-        jScrollPane1.setName("jScrollPane1"); // NOI18N
+        jScrollPaneOutput.setName("jScrollPaneOutput"); // NOI18N
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jTextArea1.setName("jTextArea1"); // NOI18N
-        jScrollPane1.setViewportView(jTextArea1);
+        jTextAreaOutput.setColumns(20);
+        jTextAreaOutput.setRows(5);
+        jTextAreaOutput.setName("jTextAreaOutput"); // NOI18N
+        jScrollPaneOutput.setViewportView(jTextAreaOutput);
 
         javax.swing.GroupLayout outputPanelLayout = new javax.swing.GroupLayout(outputPanel);
         outputPanel.setLayout(outputPanelLayout);
@@ -402,17 +413,17 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
                 .addComponent(outputToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(371, Short.MAX_VALUE))
             .addGroup(outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 781, Short.MAX_VALUE))
+                .addComponent(jScrollPaneOutput, javax.swing.GroupLayout.DEFAULT_SIZE, 781, Short.MAX_VALUE))
         );
         outputPanelLayout.setVerticalGroup(
             outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(outputPanelLayout.createSequentialGroup()
                 .addComponent(outputToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(333, Short.MAX_VALUE))
+                .addContainerGap(330, Short.MAX_VALUE))
             .addGroup(outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, outputPanelLayout.createSequentialGroup()
                     .addGap(54, 54, 54)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
+                    .addComponent(jScrollPaneOutput, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -430,7 +441,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
             .addGroup(scriptEnginePanelLayout.createSequentialGroup()
                 .addComponent(scriptEngineToolbar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(mainSeTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE))
+                .addComponent(mainSeTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE))
         );
 
         mainSplitPanel.setRightComponent(scriptEnginePanel);
@@ -450,7 +461,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
             VisualizerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(VisualizerPanelLayout.createSequentialGroup()
                 .addComponent(visualizerToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(448, Short.MAX_VALUE))
+                .addContainerGap(446, Short.MAX_VALUE))
         );
 
         mainSplitPanel.setLeftComponent(VisualizerPanel);
@@ -467,7 +478,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addComponent(mainToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(mainSplitPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE))
+                .addComponent(mainSplitPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE))
         );
 
         menuBar.setName("menuBar"); // NOI18N
@@ -479,7 +490,6 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         openMenu.setName("openMenu"); // NOI18N
         fileMenu.add(openMenu);
 
-        javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(skdsswing.SKDSSwingApp.class).getContext().getActionMap(SKDSSwingView.class, this);
         exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
         exitMenuItem.setName("exitMenuItem"); // NOI18N
         fileMenu.add(exitMenuItem);
@@ -540,8 +550,8 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
     private javax.swing.JPanel VisualizerPanel;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JScrollPane jScrollPaneOutput;
+    private javax.swing.JTextArea jTextAreaOutput;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JTabbedPane mainSeTabbedPane;

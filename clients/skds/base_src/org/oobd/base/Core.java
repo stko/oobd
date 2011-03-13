@@ -45,6 +45,7 @@ import org.oobd.base.protocol.OobdProtocol;
 import org.oobd.base.scriptengine.OobdScriptengine;
 import org.oobd.base.support.OnionNoEntryException;
 import org.oobd.base.visualizer.Visualizer;
+import sun.misc.*;
 
 /**
  * \defgroup init Initialisation during startup
@@ -131,7 +132,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         visualizers = new HashMap<String, ArrayList<Visualizer>>();
 
 
-        //userInterface.sm("Moin");
         props = new Properties();
         try {
             props.load(new FileInputStream(OOBDConstants.CorePrefsFileName));
@@ -242,6 +242,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         ticker.setCoreTickListener(this);
         new Thread(ticker).start();
         new Thread(this).start();
+        userInterface.sm("Moin");
+
     }
 
     /**
@@ -461,6 +463,13 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             }
             if (myOnion.isType(CM_PAGEDONE)) {
                 userInterface.openPageCompleted(myOnion.getOnionString("owner"), myOnion.getOnionString("name"));
+            }
+            if (myOnion.isType(CM_WRITESTRING)) {
+                try {
+                    userInterface.sm(new String(new BASE64Decoder().decodeBuffer(myOnion.getOnionString("data"))));
+                } catch (IOException ex) {
+                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
         } catch (org.json.JSONException e) {
