@@ -19,7 +19,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <Component id="mainToolBar" min="-2" pref="25" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="mainSplitPanel" pref="473" max="32767" attributes="0"/>
+                  <Component id="mainSplitPanel" pref="471" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -62,7 +62,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="scriptEngineToolbar" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="mainSeTabbedPane" pref="421" max="32767" attributes="0"/>
+                          <Component id="mainSeTabbedPane" pref="419" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -139,7 +139,7 @@
                                   <EmptySpace pref="371" max="32767" attributes="0"/>
                               </Group>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                  <Component id="jScrollPane1" alignment="0" pref="781" max="32767" attributes="0"/>
+                                  <Component id="jScrollPaneOutput" alignment="0" pref="781" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -147,12 +147,12 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="outputToolBar" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="333" max="32767" attributes="1"/>
+                                  <EmptySpace pref="330" max="32767" attributes="1"/>
                               </Group>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
-                                      <Component id="jScrollPane1" pref="313" max="32767" attributes="0"/>
+                                      <Component id="jScrollPaneOutput" pref="310" max="32767" attributes="0"/>
                                       <EmptySpace min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -170,6 +170,9 @@
                           <SubComponents>
                             <Component class="javax.swing.JButton" name="outputClearButton">
                               <Properties>
+                                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                                  <action class="skdsswing.SKDSSwingView" id="clearOutputWindow" methodName="clearOutputWindow"/>
+                                </Property>
                                 <Property name="icon" type="javax.swing.Icon" resourceKey="outputClearButton.icon"/>
                                 <Property name="text" type="java.lang.String" resourceKey="outputClearButton.text"/>
                                 <Property name="toolTipText" type="java.lang.String" resourceKey="outputClearButton.toolTipText"/>
@@ -204,9 +207,9 @@
                             </Component>
                           </SubComponents>
                         </Container>
-                        <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+                        <Container class="javax.swing.JScrollPane" name="jScrollPaneOutput">
                           <Properties>
-                            <Property name="name" type="java.lang.String" value="jScrollPane1" noResource="true"/>
+                            <Property name="name" type="java.lang.String" value="jScrollPaneOutput" noResource="true"/>
                           </Properties>
                           <AuxValues>
                             <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
@@ -214,11 +217,11 @@
 
                           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                           <SubComponents>
-                            <Component class="javax.swing.JTextArea" name="jTextArea1">
+                            <Component class="javax.swing.JTextArea" name="jTextAreaOutput">
                               <Properties>
                                 <Property name="columns" type="int" value="20"/>
                                 <Property name="rows" type="int" value="5"/>
-                                <Property name="name" type="java.lang.String" value="jTextArea1" noResource="true"/>
+                                <Property name="name" type="java.lang.String" value="jTextAreaOutput" noResource="true"/>
                               </Properties>
                             </Component>
                           </SubComponents>
@@ -249,7 +252,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="visualizerToolBar" min="-2" pref="25" max="-2" attributes="0"/>
-                          <EmptySpace pref="448" max="32767" attributes="0"/>
+                          <EmptySpace pref="446" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>

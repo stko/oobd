@@ -297,8 +297,8 @@ public class ScriptengineLua extends OobdScriptengine {
                     //BaseLib.luaAssert(nArguments >0, "not enough args");
                     initRPC(callFrame, nArguments);
                     try {
-                        core.transferMsg(new Message(myself, BusMailboxName, new Onion("{"
-                                + "'type':'" + CM_BUSTEST + "',"
+                        core.transferMsg(new Message(myself, CoreMailboxName, new Onion("{"
+                                + "'type':'" + CM_WRITESTRING + "',"
                                 + "'owner':"
                                 + "{'name':'" + myself.getId() + "'},"
                                 + "'command':'serDisplayWrite',"
