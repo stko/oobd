@@ -52,6 +52,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     private Command exitCmd;
     Hashtable scriptTable = new Hashtable();
     private String actPageName;
+    private ScriptForm currentScript;
 
 
     public void startApp() {
@@ -118,6 +119,10 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
         else if(c == startCmd) {
             if (blindMode || tryToConnect()) {
                 try {
+                    if (scriptEngine==null){
+                        initiateScriptEngine();
+                    }
+
                     System.out.println("Try to load script " + actScript);
                     scriptEngine.doScript(actScript);
                     if (!actScript.equals(scriptDefault)) {
@@ -174,7 +179,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
 
     private void initiateScriptEngine(){
         scriptEngine = new LuaScript();
-        scriptEngine.Script();
+        //scriptEngine.Script();
 
         scriptEngine.register("openPageCall", new JavaFunction() {
             
@@ -214,7 +219,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 System.out.println("Lua calls pageDone");
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
                 scriptEngine.initRPC(callFrame, nArguments);
-                new ScriptForm(mainwindow, scriptTable, actPageName, scriptEngine, display);
+                currentScript = new ScriptForm(mainwindow, scriptTable, actPageName, scriptEngine, display);
                 scriptEngine.finishRPC(callFrame, nArguments);
                 return 1;
             }
@@ -316,5 +321,12 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
 
     }
 
+    public String getActScript() {
+        return actScript;
+    }
+
+    public void switchBlindMode(boolean state){
+        blindMode=state;
+    }
     
 }
