@@ -48,7 +48,7 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
 
         confSpacer = new Spacer(10,10);
 
-        scriptConf = new TextField("Select script:", "/LUA.lbc", 32, TextField.UNEDITABLE);
+        scriptConf = new TextField("Select script:", mainMidlet.getActScript(), 32, TextField.UNEDITABLE);
         scriptCmd = new Command("Select", Command.ITEM, 0);
         scriptConf.addCommand(scriptCmd);
         scriptConf.setItemCommandListener(this);
@@ -58,6 +58,7 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
         choiceGroup = new ChoiceGroup("Blind Mode (for tesing)", Choice.MULTIPLE);
         choiceGroup.append("activated", null);
         choiceGroup.setSelectedFlags(new boolean[] { false });
+
         
         this.append(btConf);
         this.append(confSpacer);
@@ -93,6 +94,12 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
     public void commandAction(Command c, Displayable d) {
         if (c==backCmd){
 //            display.setCurrent(new Alert("test"));
+            if (choiceGroup.isSelected(0)){
+                mainMidlet.switchBlindMode(true);
+            }
+            else {
+                mainMidlet.switchBlindMode(false);
+            }
             display.setCurrent(parent);
         }
         else if(c==FileBrowser.SELECT_FILE_COMMAND){
