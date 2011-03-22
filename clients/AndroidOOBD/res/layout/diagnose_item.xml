@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="1dp">
+
+
+    <TextView
+        android:id="@+id/diagnose_function_value"
+        android:text="100"
+        android:textSize="20sp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10sp"
+        android:layout_width="100sp"
+        android:layout_alignParentLeft="true"
+        android:textStyle="bold" />
+        
+    <TextView
+        android:id="@+id/diagnose_function_name"
+        android:text="RPM"
+        android:textSize="20sp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10sp"
+        android:layout_width="100sp"
+        android:layout_below="@id/diagnose_function_value"
+        android:layout_alignParentLeft="true"
+        android:textStyle="bold" />
+        
+    <TextView
+        android:id="@+id/diagnose_function_flag1"
+        android:text="ü"
+        android:textSize="20sp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10sp"
+        android:layout_width="10sp"
+        android:layout_alignParentRight="true"
+        android:textStyle="bold" />
+        
+    <TextView
+        android:id="@+id/diagnose_function_flag2"
+        android:text="1"
+        android:textSize="20sp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10sp"
+        android:layout_width="10sp"
+        android:layout_below="@id/diagnose_function_flag1"
+        android:layout_alignParentRight="true"
+        android:textStyle="bold" />
+
+</RelativeLayout>
+

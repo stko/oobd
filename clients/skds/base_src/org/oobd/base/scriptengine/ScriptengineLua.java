@@ -9,6 +9,8 @@ import java.util.logging.Logger;
 import java.util.Properties;
 import org.oobd.base.*;
 import org.oobd.base.support.Onion;
+import org.oobd.ui.android.R;
+import org.oobd.ui.android.application.OOBDApp;
 
 import java.io.InputStream;
 import java.io.IOException;
@@ -28,7 +30,11 @@ import se.krka.kahlua.vm.LuaPrototype;
 import se.krka.kahlua.vm.LuaState;
 import org.json.JSONException;
 
-import sun.misc.*;
+import org.apache.commons.codec.binary.Base64;
+//import sun.misc.*;
+
+import android.content.res.Resources;
+import android.os.Environment;
 
 /**
  *
@@ -67,12 +73,23 @@ public class ScriptengineLua extends OobdScriptengine {
         MathLib.register(state);
         StringLib.register(state);
         CoroutineLib.register(state);
-
-        InputStream resource = getClass().getResourceAsStream("/stdlib.lbc");
+        
+        
         try {
+        	System.out.println("+++ try to initialize engine");
+        	//System.out.println ("File found: " + file.getAbsolutePath()+ file.getName());
+            
+        	//activate the following line in normal mode:
+        	//InputStream resource = new FileInputStream("/sdcard/stdlib.lbc");
+
+        	//activate the following line in debugging mode (not necessary for emulator):
+        	InputStream resource = OOBDApp.getInstance().getAssets().open("stdlib.lbc");
+            
+            
             state.call(LuaPrototype.loadByteCode(resource, state.getEnvironment()), null, null, null);
         } catch (IOException ex) {
             Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
         
             register("openPageCall", new JavaFunction() {
@@ -106,7 +123,9 @@ public class ScriptengineLua extends OobdScriptengine {
                             updevent = "'updevent':" + oobdElementFlags + ",";
                         }
                         String optid = getString(4); //String id
-                        if (!optid.isEmpty()) {
+                        // Android: String.isEmpty() not available
+                        //if (!optid.isEmpty()) {
+                        if (optid.length() != 0) {
                             optid = "'optid':'" + optid + "',";
                         }
                         core.transferMsg(new Message(myself, CoreMailboxName, new Onion(""
@@ -171,11 +190,16 @@ public class ScriptengineLua extends OobdScriptengine {
                                 + "'timeout':'" + getInt(0) + "',"
                                 + "'ignore':'" + Boolean.toString(getBoolean(1)) + "'}")), 5000);
                         if (answer != null) {
-                            try {
-                                result = new String(new BASE64Decoder().decodeBuffer(answer.getContent().getString("result")));
-                            } catch (IOException ex) {
-                                Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+                            //try {
+                            	//sun.misc does not work in Android --> replaced by apache commons
+                        		//does not need try - catch
+                                //result = new String(new BASE64Decoder().decodeBuffer(answer.getContent().getString("result")));
+                            	//Apache:
+                        		//result = new String(Base64.decodeBase64(answer.getContent().getString("result")));
+                        		result = new String(Base64Coder.decode(answer.getContent().getString("result")));
+                            //} catch (IOException ex) {
+                            //    Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+                            //}
                         }
                     } catch (JSONException ex) {
                         Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
@@ -201,6 +225,8 @@ public class ScriptengineLua extends OobdScriptengine {
                     int result = 0;
                     Message answer = null;
                     try {
+                    	//sun.misc does not work in Android --> replaced by apache commons
+                    	/*
                         answer = myself.getMsgPort().sendAndWait(new Message(myself, BusMailboxName, new Onion(""
                                 + "{'type':'" + CM_BUSTEST + "',"
                                 + "'owner':"
@@ -208,6 +234,18 @@ public class ScriptengineLua extends OobdScriptengine {
                                 + "'command':'serWait',"
                                 + "'timeout':'" + getInt(1) + "',"
                                 + "'data':'" + new BASE64Encoder().encode(getString(0).getBytes()) + "'}")), 500);
+                        */
+                    	//Apache:
+                    	//+ "'data':'" + Base64Coder.encodeBase64String(getString(0).getBytes()).trim() + "'}")), 500);
+                    	
+                    	answer = myself.getMsgPort().sendAndWait(new Message(myself, BusMailboxName, new Onion(""
+                                + "{'type':'" + CM_BUSTEST + "',"
+                                + "'owner':"
+                                + "{'name':'" + myself.getId() + "'},"
+                                + "'command':'serWait',"
+                                + "'timeout':'" + getInt(1) + "',"
+                                + "'data':'" + Base64Coder.encodeString(getString(0)) + "'}")), 500);
+                    	
                         if (answer != null) {
                             System.out.println("Lua calls serWait returns with onion:" + answer.getContent().toString() );
                             result = answer.getContent().getInt("result");
@@ -255,7 +293,7 @@ public class ScriptengineLua extends OobdScriptengine {
                                 + "'owner':"
                                 + "{'name':'" + myself.getId() + "'},"
                                 + "'command':'serWrite',"
-                                + "'data':'" + new BASE64Encoder().encode(getString(0).getBytes()) + "'"
+                                + "'data':'" + Base64Coder.encodeString(getString(0)) + "'"
                                 + "}")));
                     } catch (JSONException ex) {
                         Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
@@ -297,12 +335,12 @@ public class ScriptengineLua extends OobdScriptengine {
                     //BaseLib.luaAssert(nArguments >0, "not enough args");
                     initRPC(callFrame, nArguments);
                     try {
-                        core.transferMsg(new Message(myself, CoreMailboxName, new Onion("{"
-                                + "'type':'" + CM_WRITESTRING + "',"
+                        core.transferMsg(new Message(myself, BusMailboxName, new Onion("{"
+                                + "'type':'" + CM_BUSTEST + "',"
                                 + "'owner':"
                                 + "{'name':'" + myself.getId() + "'},"
                                 + "'command':'serDisplayWrite',"
-                                + "'data':'" + new BASE64Encoder().encode(getString(0).getBytes()) + "'"
+                                + "'data':'" + Base64Coder.encodeString(getString(0)) + "'"
                                 + "}")));
                     } catch (JSONException ex) {
                         Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
@@ -321,7 +359,7 @@ public class ScriptengineLua extends OobdScriptengine {
 
         Properties props = new Properties();
         try {
-            props.load(new FileInputStream("enginelua.props"));
+            props.load(new FileInputStream("resources/enginelua.props"));
         } catch (IOException ignored) {
             Debug.msg("scriptengineterminal", DEBUG_WARNING, "couldn't load properties");
         }
@@ -329,7 +367,11 @@ public class ScriptengineLua extends OobdScriptengine {
         try {
             //doScript("/OOBD.lbc");
              System.out.println("Lua file " + props.getProperty("LuaDefaultScript", "OOBD.lbc"));
-            doScript(props.getProperty("LuaDefaultScript", "OOBD.lbc"));
+             Resources res = OOBDApp.getInstance().getApplicationContext().getResources();
+             Properties propsScript = new Properties();
+             propsScript.load(res.openRawResource(R.raw.oobdcore));
+             //doScript(props.getProperty("LuaDefaultScript", "raw/OOBD.lbc"));
+             doScript(propsScript.getProperty("LuaDefaultScript", "OOBD.lbc"));
         } catch (IOException ex) {
             Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -362,8 +404,32 @@ public class ScriptengineLua extends OobdScriptengine {
     }
 
     public void doScript(String fileName) throws IOException {
-        InputStream resource = new FileInputStream(fileName);
+    	/* debug code
+    	try {
+	    	System.out.println(fileName);
+	    	File f = new File (fileName);
+	    	FileInputStream fis = new FileInputStream(f);
+	    	byte [] buffer = new byte [(int)f.length()];
+	    	fis.read(buffer);
+	    	for (int  i=0 ; i<f.length() ; i++)
+	    		System.out.print (buffer[i]);
+	    	System.out.println ("Ende");
+	    	fis.close();
+    	}
+    	catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	
+    	*/ 
+    	
+        
         //InputStream resource=getClass().getResourceAsStream(fileName);
+    	// TODO Android bereinigen
+    	
+    	//activate the following line in normal mode:
+    	//InputStream resource = new FileInputStream("/sdcard/oobd.lbc");
+    	//activate the following line in debugging mode (not necessary for emulator):
+    	InputStream resource = OOBDApp.getInstance().getAssets().open("oobd.lbc"); 
         LuaClosure callback = LuaPrototype.loadByteCode(resource, state.getEnvironment());
         state.call(callback, null, null, null);
 

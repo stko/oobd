@@ -4,7 +4,15 @@
  */
 package org.oobd.base.bus;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.json.JSONException;
 import org.oobd.base.*;
+import org.oobd.base.support.Onion;
+
+
 
 /**
  *
@@ -12,8 +20,12 @@ import org.oobd.base.*;
  */
 public class BusEcho extends OobdBus implements OOBDConstants{
 
+	protected boolean keepRunning = true;
+	
+	
+	
     public BusEcho() {
-        Debug.msg("busecho",DEBUG_BORING,"Ich bin BusEcho...");
+        Debug.msg("busecho",DEBUG_BORING,"Ich bin BusEchoAndroid...");
 
     }
 
@@ -29,6 +41,13 @@ public class BusEcho extends OobdBus implements OOBDConstants{
     }
 
     public void run() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
+    	// TODO	uncomment again...
+    	// throw new UnsupportedOperationException("Not supported yet.");
+    	
+    	System.out.println ("Bus Echo not supportded");
+    		
+
+        
     }
 }

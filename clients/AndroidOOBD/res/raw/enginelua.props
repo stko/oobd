@@ -1,0 +1,3 @@
+#OOBD Lua Scriptengine Preferences
+# default Lua Script, in case you don't want to use the standard OOBD.lbc file
+LuaDefaultScript=res/raw/oobd.lbc
