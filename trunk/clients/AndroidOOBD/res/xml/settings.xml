@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<ListPreference android:key="PREF_PAIRED_OBD2_DEVICE"
+		android:title="Paired OBD2 Device" android:summary="Selected: None"
+		android:dialogTitle="Bluetooth paired devices" />
+	<ListPreference android:key="PREF_LUA_SCRIPT"
+		android:title="Lua Script" android:summary="Selected: None"
+		android:dialogTitle="Choose a script" />
+	<CheckBoxPreference android:key="PREF_SIMULATION_MODE"
+		android:title="Simulation Mode" android:summary="If enabled the car connection is simulated"
+		android:defaultValue="false" />
+</PreferenceScreen>

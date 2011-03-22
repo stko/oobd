@@ -1,0 +1,6 @@
+#OOBD BusCom Preferences
+# for Linux
+#SerialPort=/dev/ttyS0
+# for Windows
+SerialPort=COM7
+

@@ -163,6 +163,7 @@ public class Visualizer {
     public void setValue(Onion value) {
         if (this.name.matches(value.getOnionString("to/name"))) {
             try {
+            	System.out.println("Visualizer.setValue(): update needed.");
                 this.value = new Onion(value.toString());
                 updateNeeded = true;
              } catch (JSONException ex) {
@@ -207,7 +208,9 @@ public class Visualizer {
     public void doUpdate(int updateLevel) {
         if (myObject != null && updateNeeded) {
             myObject.update(updateLevel);
+            System.out.println("doUpdate: updateNeeded: " + updateNeeded + " update leve: " + updateLevel);
             updateNeeded = !myObject.update(updateLevel);
+            System.out.println("doUpdate: updateNeeded: " + updateNeeded);
         }
     }
 

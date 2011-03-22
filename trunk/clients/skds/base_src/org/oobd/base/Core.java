@@ -45,7 +45,11 @@ import org.oobd.base.protocol.OobdProtocol;
 import org.oobd.base.scriptengine.OobdScriptengine;
 import org.oobd.base.support.OnionNoEntryException;
 import org.oobd.base.visualizer.Visualizer;
-import sun.misc.*;
+import org.oobd.ui.android.application.OOBDApp;
+
+import android.content.res.Resources;
+
+import org.oobd.ui.android.R;
 
 /**
  * \defgroup init Initialisation during startup
@@ -132,10 +136,16 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         visualizers = new HashMap<String, ArrayList<Visualizer>>();
 
 
+        //userInterface.sm("Moin");
         props = new Properties();
         try {
-            props.load(new FileInputStream(OOBDConstants.CorePrefsFileName));
+        	// TODO Android und Swing vereinheitlichen
+            //props.load(new FileInputStream(OOBDConstants.CorePrefsFileName));
+        	Resources res = OOBDApp.getInstance().getApplicationContext().getResources();
+            props.load(res.openRawResource(R.raw.oobdcore));
+            System.out.println ("--- OOBDCore.props geladen");
         } catch (IOException ignored) {
+        	System.out.println ("OOBDCore.props file not found");
         }
 
 
@@ -146,8 +156,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         File dir1 = new File(".");
         File dir2 = new File("..");
         try {
-            //System.out.println("Current dir : " + dir1.getCanonicalPath());
-            //System.out.println("Parent  dir : " + dir2.getCanonicalPath());
+            System.out.println("Current dir : " + dir1.getCanonicalPath());
+            System.out.println("Parent  dir : " + dir2.getCanonicalPath());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -156,6 +166,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
         // ----------- load Busses -------------------------------
         try {
+        	System.out.println ("Try to load: " + props.getProperty("BusClassPath", "bus"));
             HashMap<String, Class<?>> classObjects = loadOobdClasses(props.getProperty("BusClassPath", "bus"), props.getProperty("BusClassPrefix", "org.oobd.base.bus."), Class.forName("org.oobd.base.bus.OobdBus"));
             for (Iterator iter = classObjects.keySet().iterator(); iter.hasNext();) {
                 String element = (String) iter.next();
@@ -166,15 +177,20 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     new Thread(thisClass).start();
 
                     busses.put(element, thisClass);
+                    System.out.println("Register " + element + " as bus");
                     Debug.msg("core", DEBUG_BORING, "Register " + element + " as bus");
                 } catch (InstantiationException ex) {
                     // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
                     Debug.msg("core", DEBUG_ERROR, ex.getMessage());
+                    ex.printStackTrace();
                 } catch (IllegalAccessException e) {
+                	e.printStackTrace();
                 }
 
             }
         } catch (ClassNotFoundException e) {
+        	System.out.println("Error while trying to load bus class");
+        	e.printStackTrace();
         }
         // ----------- load Connectors -------------------------------
         try {
@@ -229,7 +245,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     java.lang.reflect.Method method = value.getMethod("publicName", new Class[]{}); //no parameters
                     Object instance = null;
                     String result = (String) method.invoke(instance, new Object[]{}); // no parameters
-                    if (!result.isEmpty()) {
+                    // Android: String.isEmpty() not available
+                    //if (!result.isEmpty()) {
+                    if (result.length() != 0) {
                         announceScriptEngine(element, result);
                     }
                 } catch (Exception e) {
@@ -242,9 +260,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         ticker.setCoreTickListener(this);
         new Thread(ticker).start();
         new Thread(this).start();
-        userInterface.sm("Moin");
-
-    }
+    }//constructor
 
     /**
      * a static help routine which returns the actual running Instance of the Core class
@@ -340,7 +356,15 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public HashMap loadOobdClasses(String path, String classPrefix, Class classType) {
         // inspired by http://de.wikibooks.org/wiki/Java_Standard:_Class
-        HashMap<String, Class<?>> myInstances = new HashMap<String, Class<?>>();
+    	System.out.println("Scanne Directory: " + path);
+        
+    	// TODO adapt to Android
+    	//HashMap<String, Class<?>> myInstances = new HashMap<String, Class<?>>();
+        
+    	HashMap<String, Class<?>> myInstances = systemInterface.loadOobdClasses (path, classPrefix, classType);
+        
+        // TODO copy this code section to Swing / ME IFSystem implementation
+        /*
         File directory = new File(path);
         if (directory.exists()) {
             File[] files = directory.listFiles();
@@ -350,6 +374,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                 sourceURL = directory.toURI().toURL();
             } catch (java.net.MalformedURLException ex) {
                 Debug.msg("core", DEBUG_WARNING, ex.getMessage());
+                ex.printStackTrace();
             }
             // generate URLClassLoader for that directory
 
@@ -358,6 +383,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             for (int i = 0; i
                     < files.length; i++) {
                 // split file name into name and extension
+            	System.out.println("File, das als Klasse zu laden ist: " + files[i].getName());
                 String name[] = files[i].getName().split("\\.");
                 // only class names without $ are taken
                 if (name.length > 1 && name[1].equals("class") && name[1].indexOf("$") == -1) {
@@ -376,12 +402,17 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     } catch (ClassNotFoundException ex) {
                         // Wird geworfen, wenn die Klasse nicht gefunden wurde
                         Debug.msg("core", DEBUG_ERROR, ex.getMessage());
+                        ex.printStackTrace();
                     }
 
                 }
             }
-        }
-        // returns Hasmap filled with classes found
+        }// if
+        else
+        	System.out.println("Directory " + directory.getName() + " does not exist. Class " + classPrefix + " could not be loaded.");
+        // returns Hashmap filled with classes found
+         * 
+         */
         return myInstances;
     }
 
@@ -463,13 +494,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             }
             if (myOnion.isType(CM_PAGEDONE)) {
                 userInterface.openPageCompleted(myOnion.getOnionString("owner"), myOnion.getOnionString("name"));
-            }
-            if (myOnion.isType(CM_WRITESTRING)) {
-                try {
-                    userInterface.sm(new String(new BASE64Decoder().decodeBuffer(myOnion.getOnionString("data"))));
-                } catch (IOException ex) {
-                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
-                }
             }
 
         } catch (org.json.JSONException e) {
