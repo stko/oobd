@@ -84,7 +84,8 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
                 fileBrowser = new FileBrowser(display);
                 fileBrowser.setTitle("Select a script");
                 fileBrowser.setCommandListener(this);
-                fileBrowser.addCommand(FileBrowser.SELECT_FILE_COMMAND);                
+                fileBrowser.addCommand(FileBrowser.SELECT_FILE_COMMAND);
+                fileBrowser.addCommand(backCmd);
             }
             display.setCurrent(fileBrowser);
 
@@ -92,8 +93,7 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
         
     }
     public void commandAction(Command c, Displayable d) {
-        if (c==backCmd){
-//            display.setCurrent(new Alert("test"));
+        if (c==backCmd&d==this){
             if (choiceGroup.isSelected(0)){
                 mainMidlet.switchBlindMode(true);
             }
@@ -101,6 +101,9 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
                 mainMidlet.switchBlindMode(false);
             }
             display.setCurrent(parent);
+        }
+        else if (c==backCmd&d==fileBrowser){
+            display.setCurrent(this);
         }
         else if(c==FileBrowser.SELECT_FILE_COMMAND){
             scriptConf.setString(fileBrowser.getSelectedFileURL());
