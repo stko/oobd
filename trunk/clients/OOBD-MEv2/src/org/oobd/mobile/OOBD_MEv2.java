@@ -5,6 +5,7 @@
 
 package org.oobd.mobile;
 
+
 import java.io.IOException;
 import java.util.Hashtable;
 import javax.microedition.lcdui.Alert;
@@ -48,11 +49,13 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     private String actScript = scriptDefault;
     private LuaScript scriptEngine;
     //private List cellList;
-    private boolean blindMode;
+    private boolean blindMode=false; // TODO Remember to set BlindMode to "false"
+    
     private Command exitCmd;
-    Hashtable scriptTable = new Hashtable();
+    Hashtable scriptTable;
+    int tableID=1;
     private String actPageName;
-    private ScriptForm currentScript;
+    private ScriptForm scriptWindow;
 
 
     public void startApp() {
@@ -118,6 +121,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
         
         else if(c == startCmd) {
             if (blindMode || tryToConnect()) {
+//            if (blindMode) {
                 try {
                     if (scriptEngine==null){
                         initiateScriptEngine();
@@ -144,7 +148,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     }
 
     public void showAlert(String text){
-        Alert check = new Alert("Debug Message",text,null,AlertType.CONFIRMATION);
+        Alert check = new Alert("Debug Message",text,null,AlertType.WARNING);
         display.setCurrent(check);
     }
 
@@ -152,9 +156,11 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
         if (!btComm.isConnected()) {
 
             if (btComm.URL != null) {
+                showAlert("Trying to connect to: "+btComm.URL);
                 btComm.Connect(btComm.URL);
                 if (btComm.isConnected()) {
                     mPreferences.put(prefsURL, btComm.URL);
+                    
 
                     return true;
                 } else {
@@ -179,13 +185,14 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
 
     private void initiateScriptEngine(){
         scriptEngine = new LuaScript();
-        //scriptEngine.Script();
+        scriptEngine.Script();
+        scriptWindow = new ScriptForm(mainwindow, scriptEngine, display);
 
-        scriptEngine.register("openPageCall", new JavaFunction() {
-            
-
+        scriptEngine.register("openPageCall", new JavaFunction() {           
             public int call(LuaCallFrame callFrame, int nArguments) {
                 System.out.println("Lua calls openPage");
+                scriptTable = new Hashtable();
+                tableID=1;
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
                 scriptEngine.initRPC(callFrame, nArguments);
                 //alt cellList = new List("Scriptliste", List.MULTIPLE);
@@ -195,14 +202,14 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 return 1;
             }
         });
-        scriptEngine.register("addElementCall", new JavaFunction() {
 
+        scriptEngine.register("addElementCall", new JavaFunction() {
             public int call(LuaCallFrame callFrame, int nArguments) {
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
-                System.out.println("Lua calls addElement");
+                System.out.println("Lua calls addElement with ID: "+tableID);
                 scriptEngine.initRPC(callFrame, nArguments);
-
-                scriptTable.put(scriptEngine.getString(4),new ScriptCell(
+                // TODO Taken counter as scriptTable-ID. Working?
+                scriptTable.put(Integer.toString(tableID++),new ScriptCell(
                         scriptEngine.getString(0), //String title
                         scriptEngine.getString(1), //String function
                         scriptEngine.getString(2), //String initalValue
@@ -213,19 +220,19 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 return 1;
             }
         });
-        scriptEngine.register("pageDoneCall", new JavaFunction() {
 
+        scriptEngine.register("pageDoneCall", new JavaFunction() {
             public int call(LuaCallFrame callFrame, int nArguments) {
                 System.out.println("Lua calls pageDone");
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
-                scriptEngine.initRPC(callFrame, nArguments);
-                currentScript = new ScriptForm(mainwindow, scriptTable, actPageName, scriptEngine, display);
+                scriptEngine.initRPC(callFrame, nArguments);                
                 scriptEngine.finishRPC(callFrame, nArguments);
+                scriptWindow.showForm(actPageName, scriptTable);
                 return 1;
             }
         });
+        
         scriptEngine.register("serReadLnCall", new JavaFunction() {
-
             public int call(LuaCallFrame callFrame, int nArguments) {
                 System.out.println("Lua calls serReadLn");
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
@@ -250,8 +257,8 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 return 1;
             }
         });
-        scriptEngine.register("serWaitCall", new JavaFunction() {
 
+        scriptEngine.register("serWaitCall", new JavaFunction() {
             public int call(LuaCallFrame callFrame, int nArguments) {
                 System.out.println("Lua calls serWait");
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
@@ -265,8 +272,8 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 return 1;
             }
         });
-        scriptEngine.register("serSleepCall", new JavaFunction() {
 
+        scriptEngine.register("serSleepCall", new JavaFunction() {
             public int call(LuaCallFrame callFrame, int nArguments) {
                 System.out.println("Lua calls serSleep");
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
@@ -281,8 +288,8 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 return 1;
             }
         });
-        scriptEngine.register("serWriteCall", new JavaFunction() {
 
+        scriptEngine.register("serWriteCall", new JavaFunction() {
             public int call(LuaCallFrame callFrame, int nArguments) {
                 System.out.println("Lua calls serWrite");
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
@@ -294,8 +301,8 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 return 1;
             }
         });
-        scriptEngine.register("serFlushCall", new JavaFunction() {
 
+        scriptEngine.register("serFlushCall", new JavaFunction() {
             public int call(LuaCallFrame callFrame, int nArguments) {
                 System.out.println("Lua calls serFlush");
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
@@ -307,8 +314,8 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 return 1;
             }
         });
-        scriptEngine.register("serDisplayWriteCall", new JavaFunction() {
 
+        scriptEngine.register("serDisplayWriteCall", new JavaFunction() {
             public int call(LuaCallFrame callFrame, int nArguments) {
                 System.out.println("Lua calls serDisplayWrite");
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
@@ -328,5 +335,4 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     public void switchBlindMode(boolean state){
         blindMode=state;
     }
-    
 }
