@@ -1,73 +1,55 @@
 package org.oobd.mobile;
 
-
-
-import org.oobd.mobile.template.OutputDisplay;
-import javax.microedition.io.*;
-import javax.bluetooth.*;
-import java.io.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
 import javax.microedition.lcdui.*;
 
-
 /**
- *
- * @author steffen
+ * @author axel
  */
-public class ScriptForm extends Form implements CommandListener, Runnable {
+public class ScriptForm extends Form implements CommandListener, ItemCommandListener, Runnable {
 
     private Form parent; //Where this form was started from
-//    private OutputDisplay mainMidget; //Where the output routines are
+    private Form mainMidlet; //Where the output routines are
     private Command backCommand = null;
     private Command detailCommand = null;
-    List cellList = null;
-    Script myEngine = null;
-    Hashtable scriptTable;
+    private Display display;
+    private List cellList = null;
+    private Script myEngine = null;
+    private Hashtable scriptTable;
+    private Command selectCmd = new Command("Select", Command.ITEM, 0);
+    private Command exitCmd = new Command("Exit", Command.EXIT,0);
+    private ScriptCell tempCell;
+    private String tempValue;
 
-    public ScriptForm(Form parent, Hashtable scriptTable, String title, Script scriptEngine, Display display) {
-        super(title);
-        this.parent = parent;
-        this.scriptTable=scriptTable;
+    public ScriptForm(Form mainMidlet, Script scriptEngine, Display display) {
+        super("");
         this.myEngine = scriptEngine;
-        //this.mainMidget = mainMidget;
+        this.display = display;
+        this.mainMidlet = mainMidlet;
         new Thread(this).start();
-        showForm();
+        
     }
 
-    public String showForm() {
-        
+    public void showForm(String title,Hashtable scriptTable) {
+        this.setTitle(title);
+        this.deleteAll();
         Enumeration e = scriptTable.keys();
+        System.out.println("Table-length: "+scriptTable.size());
         while (e.hasMoreElements()) {
             String id = (String) e.nextElement();
-            this.append((ScriptCell)scriptTable.get(id));
+            System.out.println("Current-ID: "+id);
+            tempCell = (ScriptCell)scriptTable.get(id);
+            tempCell.addCommand(selectCmd);
+            tempCell.setItemCommandListener(this);
+            this.append(tempCell);
         }
-                
-//        setLayout(new BoxLayout(BoxLayout.Y_AXIS));
-//        cellList.setListCellRenderer(new ScriptCellRenderer());
-//        cellList.addActionListener(new ActionListener() {
-//
-//            public void actionPerformed(ActionEvent evt) {
-//                System.out.println(cellList.getSelectedItem().toString());
-//                ScriptCell cell = (ScriptCell) cellList.getSelectedItem();
-//                if (cell != null) {
-//                    //Dialog.show("Content", cell.toString(), "ok", null);
-//                    if (cell.execute(1, myEngine)) {
-//                        repaint();
-//                        mainMidget.outputDisplayIfAny();
-//                    }
-//                }
-//            }
-//        });
-//        //cellList.addItem(new ScriptCell("Voltage", "battery", "12.5V",true, false));
-//        this.addComponent(cellList);
-//        this.addCommand(backCommand = new Command("Back"));
-//        this.addCommand(detailCommand = new Command("Detail"));
-//        addCommandListener(this);
-//        show();
-//        this.setFocused(cellList);
-        return "";
+        this.addCommand(exitCmd);
+        this.setCommandListener(this);
+        display.setCurrent(this);
+    }
+
+    public void updateForm(){
 
     }
 
@@ -82,80 +64,18 @@ public class ScriptForm extends Form implements CommandListener, Runnable {
     }
 
     public void commandAction(Command c, Displayable d) {
-        System.out.println("CommandAction not yet supported");
+        if (c == exitCmd){
+            display.setCurrent(mainMidlet);
+        }
     }
 
-    }
-//    class ScriptCellRenderer extends Container implements ListCellRenderer {
+    public void commandAction(Command c, Item item) {
+        if (c == selectCmd){
+            tempCell = (ScriptCell) item;
+            tempValue = myEngine.callFunction(tempCell.getFunction(),new Object[]{tempCell.getValue(),tempCell.getID()});
+            System.out.println("Rückgabe von callFunction: " + tempValue);
+            tempCell.setValue(tempValue);
 
-//        private Label title = new Label("");
-//        private Label value = new Label("");
-//        private Label update = new Label("");
-//        private Label timer = new Label("");
-//        private Label focus = new Label("");
-//
-//        public ScriptCellRenderer() {
-//
-//            setLayout(new BorderLayout());
-//            Container cntLeft = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-//            Container cntRight = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-//            value.getStyle().setBgTransparency(0);
-//            value.getStyle().setPadding(3, 0, 3, 3);
-//            value.getStyle().setMargin(0, 0, 0, 0);
-//            value.getStyle().setFont(Font.createSystemFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
-//            title.getStyle().setBgTransparency(0);
-//            title.getStyle().setPadding(0, 3, 3, 3);
-//            title.getStyle().setMargin(0, 0, 0, 0);
-//            update.getStyle().setBgTransparency(0);
-//            update.getStyle().setPadding(3, 0, 3, 3);
-//            update.getStyle().setMargin(0, 0, 0, 0);
-//            timer.getStyle().setBgTransparency(0);
-//            timer.getStyle().setPadding(0, 3, 3, 3);
-//            timer.getStyle().setMargin(0, 0, 0, 0);
-//            cntLeft.addComponent(value);
-//            cntLeft.addComponent(title);
-//            cntRight.addComponent(update);
-//            cntRight.addComponent(timer);
-//            addComponent(BorderLayout.CENTER, cntLeft);
-//            addComponent(BorderLayout.EAST, cntRight);
-//            focus.getStyle().setBgTransparency(100);
-//        }
-//
-//        public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected) {
-//
-//            ScriptCell cell = (ScriptCell) value;
-//            this.title.setText(cell.getTitle());
-//            this.value.setText(cell.getValue());
-//            //this.update.setIcon(person.getPic());
-//            if (cell.getUpdate()) {
-//                this.update.setText("u");
-//            } else {
-//                this.update.setText("-");
-//            }
-//            if (cell.getTimer()) {
-//                this.timer.setText("t");
-//            } else {
-//                this.timer.setText("-");
-//            }
-//            if (isSelected) {
-//                this.getStyle().setBgColor(5);
-//            }
-//            if (isSelected) {
-//                setFocus(true);
-//                getStyle().setBgTransparency(100);
-//            } else {
-//                setFocus(false);
-//                getStyle().setBgTransparency(0);
-//            }
-//
-//
-//
-//            return this;
-//        }
-//
-//        public Component getListFocusComponent(List list) {
-//            return focus;
-//        }
-//    }
-//Read more: http://lwuit.blogspot.com/2008/07/lwuit-list-renderer-by-chen-fishbein.html#ixzz0q3CKIUfz
-//}
+        }
+    }
+}

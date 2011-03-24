@@ -9,7 +9,7 @@ import java.util.Vector;
 import javax.microedition.lcdui.*;
 
 /**
- * @author Steffen Köhler
+ * @author axel
  */
 public class BTSerial extends Form implements CommandListener, Runnable {
 

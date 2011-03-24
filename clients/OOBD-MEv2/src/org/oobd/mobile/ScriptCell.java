@@ -10,7 +10,7 @@ import javax.microedition.lcdui.Graphics;
 
 /**
  *
- * @author steffen
+ * @author axel
  */
 public class ScriptCell extends CustomItem  {
 
@@ -20,7 +20,7 @@ public class ScriptCell extends CustomItem  {
     private String id;
     private String update="-";
     private String timer="-";
-    private int  oobdElementFlags;
+    private int  oobdElementFlags; //TODO Implement OOBD Element-Flags
     private int minHeigth=30;
     private int minWidth=150;
     private int prefHeight=30;
@@ -29,14 +29,24 @@ public class ScriptCell extends CustomItem  {
     public ScriptCell(String title, String function, String initalValue, int oobdElementFlags, String id) {
         super("");
         this.title = title;
+        System.out.println("Title: "+title);
         this.function = function;
         this.value = initalValue;
         this.oobdElementFlags = oobdElementFlags;
         this.id = id;
     }
 
+    public void setValue(String value) {
+        this.value = value;
+        this.repaint();
+    }
+
     public String getTitle() {
         return title;
+    }
+
+    public String getID() {
+        return id;
     }
 
     public String getValue() {
