@@ -207,10 +207,8 @@ public class Visualizer {
      */
     public void doUpdate(int updateLevel) {
         if (myObject != null && updateNeeded) {
-            myObject.update(updateLevel);
-            System.out.println("doUpdate: updateNeeded: " + updateNeeded + " update leve: " + updateLevel);
             updateNeeded = !myObject.update(updateLevel);
-            System.out.println("doUpdate: updateNeeded: " + updateNeeded);
+            System.out.println("doUpdate(nachher): updateNeeded: " + updateNeeded);
         }
     }
 

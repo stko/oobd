@@ -6,7 +6,6 @@ import org.oobd.base.*;
 import org.oobd.base.bus.*;
 import org.oobd.base.support.Onion;
 import org.json.JSONException;
-import sun.misc.*;
 
 
 import java.io.*;
@@ -81,7 +80,7 @@ public class BusCom extends OobdBus implements OOBDConstants {
         portList = CommPortIdentifier.getPortIdentifiers();
         while (portList.hasMoreElements()) {
             portId = (CommPortIdentifier) portList.nextElement();
-            System.out.println("Scan port: " + portId.getName() + "ID:"+portId.getPortType());
+            System.out.println("Scan port: " + portId.getName() + "ID:" + portId.getPortType());
             if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
                 if (portId.getName().equals(defaultPort)) {
                     System.out.println("Found port: " + defaultPort);
@@ -103,29 +102,22 @@ public class BusCom extends OobdBus implements OOBDConstants {
             Debug.msg("buscom", DEBUG_BORING, "Msg received:" + msg.getContent().toString());
             String command = on.getOnionString("command");
             if ("serWrite".equalsIgnoreCase(command)) {
-                try {
-                    reader.write(new String(new BASE64Decoder().decodeBuffer(on.getOnionString("data"))));
-                } catch (IOException ex) {
-                    Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
+                reader.write(Base64Coder.decodeString(on.getOnionString("data")));
             } else if ("serFlush".equalsIgnoreCase(command)) {
-                    reader.flush();
+                reader.flush();
 
             } else if ("serWait".equalsIgnoreCase(command)) {
                 try {
-                    Integer result =  reader.wait(new String(new BASE64Decoder().decodeBuffer(on.getOnionString("data"))), on.getInt("timeout"));
+                    Integer result = reader.wait(Base64Coder.decodeString(on.getOnionString("data")), on.getInt("timeout"));
                     System.out.println("busCom serWait: " + result);
                     replyMsg(msg, new Onion(""
                             + "{'type':'" + CM_RES_BUS + "',"
                             + "'owner':"
                             + "{'name':'" + getPluginName() + "'},"
-                            + "'result':" + result +","
-                            + "'replyID':"+on.getInt("replyID")
+                            + "'result':" + result + ","
+                            + "'replyID':" + on.getInt("replyID")
                             + "}"));
                 } catch (JSONException ex) {
-                    Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
                     Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
@@ -138,8 +130,8 @@ public class BusCom extends OobdBus implements OOBDConstants {
                             + "{'type':'" + CM_RES_BUS + "',"
                             + "'owner':"
                             + "{'name':'" + getPluginName() + "'},"
-                            + "'replyID':"+on.getInt("replyID")+ ","
-                            + "'result':'" + new BASE64Encoder().encode(result.getBytes()) + "'}"));
+                            + "'replyID':" + on.getInt("replyID") + ","
+                            + "'result':'" + Base64Coder.encodeString(result) + "'}"));
                 } catch (JSONException ex) {
                     Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
                 }

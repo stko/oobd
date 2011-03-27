@@ -23,11 +23,10 @@ public class ComReader implements Runnable {
     public void connect(CommPortIdentifier portId) {
         try {
             serialPort = (SerialPort) portId.open("SimpleReadApp", 2000);
-            try{
+            try {
                 serialPort.setSerialPortParams(115200, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
                 serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
-            }
-            catch (UnsupportedCommOperationException ex){
+            } catch (UnsupportedCommOperationException ex) {
                 throw new IOException("Unsupported serial port parameter");
             }
             inStream = serialPort.getInputStream();
@@ -118,15 +117,17 @@ public class ComReader implements Runnable {
     }
 
     public void run() {
-        System.out.println("Thread has started");
+        System.out.println(" Serial Thread has started");
         while (true) {
 
             int input;
 
             if (serialPort != null) {
+                System.out.println("serial Thread");
                 try {
                     input = inStreamReader.read();
                     if (input > 0) {
+                        System.out.println("input:" + input);
                         inBuffer.append((char) input);
                     }
                 } catch (Exception e) {
@@ -172,11 +173,12 @@ public class ComReader implements Runnable {
         while (doLoop) {
             c = read();
             if (c > 0) {
+                System.out.println(">" + c + "<");
                 //if (c != 10 && c != 13) {
                 if (c > 31) {
                     res += (char) c;
                 }
-                if (c == 13) { // CR detected, condition meet
+                if (c == 10) { // LF detected, condition meet
                     //res+=".";
                     doLoop = res.equals("") && ignoreEmptyLines;
                 }

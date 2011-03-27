@@ -2,8 +2,10 @@ package org.oobd.ui.android.application;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.io.*;
 
 import org.oobd.base.Core;
+import org.oobd.base.OOBDConstants;
 import org.oobd.base.IFsystem;
 import org.oobd.base.IFui;
 
@@ -17,72 +19,94 @@ import android.util.Log;
  * @author Andreas Budde, Peter Mayer
  * Base class to maintain global application state. This activity is Initialised before all others. Store here e.g. list of bluetooth devices,...
  */
-public class OOBDApp extends Application implements IFsystem  {
-	
-	
-	// Constants that are global for the Android App
-	public static final String VISUALIZER_UPDATE = "OOBD Broadcast_UI_Update";
-	public static final String UPDATE_LEVEL = "OOBD Update Level";
-	public static final int REQUEST_ENABLE_BT = 10;
-	
-	public Core core;
-	public IFui androidGui; 
-	
-	// make it singleton
-	private static OOBDApp mInstance;
-	
-	public static OOBDApp getInstance() {
-		return mInstance;
-	}
-	
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		mInstance = this;
-		
-		androidGui = new AndroidGui();
-		new Core(androidGui, this);
-		Log.v(this.getClass().getSimpleName(), "Core creation finalized");
-	}
+public class OOBDApp extends Application implements IFsystem {
 
-	public CharSequence[] getAvailableLuaScript() {
-		// TODO read what scripts are available on the device (e.g. from harddisc?)
-		return new CharSequence[] {"test.lua", "init.lua", "ford.lua" };
-	}
+    // Constants that are global for the Android App
+    public static final String VISUALIZER_UPDATE = "OOBD Broadcast_UI_Update";
+    public static final String UPDATE_LEVEL = "OOBD Update Level";
+    public static final int REQUEST_ENABLE_BT = 10;
+    public Core core;
+    public IFui androidGui;
+    // make it singleton
+    private static OOBDApp mInstance;
 
-	public CharSequence[] getAvailableBluetoothDevices() {
-		// TODO find out what devices are bluetooth coupled
-		return new CharSequence[] {"ODB2 device", "Laptop", "Nokia 8610", "HTC Hero" };
-	}
+    public static OOBDApp getInstance() {
+        return mInstance;
+    }
 
-	
+        public String generateUIFilePath(int pathID, String fileName) {
+        switch (pathID) {
+            case OOBDConstants.FT_PROPS:
+                return "/"+fileName;
 
-	
-	@Override
-	public void registerOobdCore(Core core) {
-		this.core = core;
-		Log.v(this.getClass().getSimpleName(), "Core registered in IFsystem");
-		
-	}
-	
-	@Override
-	public HashMap loadOobdClasses(String path, String classPrefix, Class<?> classType){
-		HashMap<String, Class<?>> myInstances = new HashMap<String, Class<?>>();
-	
-		Class tempClass = null;
-		try {
-			tempClass = Class.forName(path);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		myInstances.put(tempClass.getSimpleName(), tempClass);
-		
-		return myInstances;
-	}
-	
-	public Core getCore() {
-		return core;
-	}
+            default:
+                return null;
+        }
+    }
+
+
+
+    public InputStream generateResourceStream(int pathID, String ResourceName) throws java.util.MissingResourceException {
+        if (pathID == OOBDConstants.FT_PROPS ) {  // Achtung: Hier wird der ResourceName nicht weiter beachtet, weil nur hardcoded der oobdcore verwendet wird. Ist das so richtig
+            try {
+                Resources res = OOBDApp.getInstance().getApplicationContext().getResources();
+                return res.openRawResource(R.raw.oobdcore);
+            } catch (IOException ex) {
+                throw new java.util.MissingResourceException("Resource not found", "OOBDApp", ResourceName);
+            }
+        } else {
+            if (pathID == OOBDConstants.FT_SCRIPT) {
+                return OOBDApp.getInstance().getAssets().open(ResourceName);
+            } else {
+                throw new java.util.MissingResourceException("Resource not known", "OOBDApp", ResourceName);
+            }
+        }
+    }
+
+    public void onCreate() {
+        super.onCreate();
+        mInstance = this;
+
+        androidGui = new AndroidGui();
+        new Core(androidGui, this);
+        Log.v(this.getClass().getSimpleName(), "Core creation finalized");
+    }
+
+    public CharSequence[] getAvailableLuaScript() {
+        // TODO read what scripts are available on the device (e.g. from harddisc?)
+        return new CharSequence[]{"test.lua", "init.lua", "ford.lua"};
+    }
+
+    public CharSequence[] getAvailableBluetoothDevices() {
+        // TODO find out what devices are bluetooth coupled
+        return new CharSequence[]{"ODB2 device", "Laptop", "Nokia 8610", "HTC Hero"};
+    }
+
+    @Override
+    public void registerOobdCore(Core core) {
+        this.core = core;
+        Log.v(this.getClass().getSimpleName(), "Core registered in IFsystem");
+
+    }
+
+    @Override
+    public HashMap loadOobdClasses(String path, String classPrefix, Class<?> classType) {
+        HashMap<String, Class<?>> myInstances = new HashMap<String, Class<?>>();
+
+        Class tempClass = null;
+        try {
+            tempClass = Class.forName(path);
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        myInstances.put(tempClass.getSimpleName(), tempClass);
+
+        return myInstances;
+    }
+
+    public Core getCore() {
+        return core;
+    }
 }

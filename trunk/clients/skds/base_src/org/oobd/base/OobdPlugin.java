@@ -11,12 +11,16 @@ import org.oobd.base.support.Onion;
 public abstract class OobdPlugin implements Runnable {
 
     protected static Core core;
+    protected static IFsystem UISystem;
     protected MessagePort msgPort;
     protected boolean keepRunning = true;
     protected String id;
 
     public void registerCore(Core thisCore) {
         core = thisCore;
+    }
+    public void registerSystem(IFsystem thisSystem) {
+        UISystem = thisSystem;
     }
 
     public OobdPlugin() {
