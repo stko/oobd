@@ -311,7 +311,7 @@ obp_uds (void *pvParameters)
   } config;
 
   /* Init default parameters */
-  config.recvID = 0x7E0;
+  config.recvID = 0x7DF;
   config.timeout = 6;
   config.listen = 0;
   config.bus = 3;
