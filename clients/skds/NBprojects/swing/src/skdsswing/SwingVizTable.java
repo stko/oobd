@@ -26,7 +26,6 @@ public class SwingVizTable extends JTable implements IFvisualizer {
 
     static HashMap<String, SwingVizTable> singleInstance = new HashMap<String, SwingVizTable>();
     static String[] columnNames = {"value", "Description"};
-    
     boolean toBePlaced = true; //indicates, if the actual instance is already been placed on an canvas or not
     boolean awaitingUpdate = false;
     JTable myTable;
@@ -53,11 +52,9 @@ public class SwingVizTable extends JTable implements IFvisualizer {
         return newInst;
     }
 
-
-    public void remove(String pageID){
+    public void remove(String pageID) {
         singleInstance.remove(pageID);
     }
-
 
     public SwingVizTable() {
         super();
@@ -126,10 +123,11 @@ public class SwingVizTable extends JTable implements IFvisualizer {
     }
 
     public boolean update(int level) {
-       // System.out.println("Update level:" + Integer.toString(level));
+        // System.out.println("Update level:" + Integer.toString(level));
         switch (level) {
             case 0: {
                 awaitingUpdate = true;
+                System.out.println("update1: return false");
                 return false;
             }
             case 2: {
@@ -138,11 +136,13 @@ public class SwingVizTable extends JTable implements IFvisualizer {
                     this.validate();
                     this.repaint();
                     awaitingUpdate = false;
+                System.out.println("update2: return true");
                     return true;
                 }
             }
             default:
-                return false;
+                 System.out.println("update3: return false");
+               return false;
         }
     }
 }

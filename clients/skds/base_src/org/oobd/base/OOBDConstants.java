@@ -17,6 +17,7 @@ public interface OOBDConstants {
     public static final String CM_UPDATE = "UPDATE";
     public static final String CM_RES_BUS = "RESULT_BUS";
     public static final String CM_BUSTEST = "BUSTEST";
+    public static final String CM_WRITESTRING = "WRITESTRING";
     // IDs used for internal core list handling
     public static final String CL_PANE = "pane";
     public static final String CL_OBJECTS = "objects";
@@ -35,14 +36,18 @@ public interface OOBDConstants {
     // Types of the different visualizer update requests
     public static final Integer UR_USER = 0;
     // Path for oobdcore.props:
-    // Windows: "resources/oobdcore.props"
-    // Android: 
-    public final static String CorePrefsFileName = "/oobdcore.props";
+     public final static String CorePrefsFileName = "oobdcore.props";
     //
     public final static String CoreMailboxName = "core";
-    public final static String BusMailboxName = "AndroidBusCom";
+    public final static String BusMailboxName = "BusCom";
     // definitions of the Visual Elements Handling flags
     public final static int VE_MENU = 0x01;
     public final static int VE_UPDATE = 0x02;
     public final static int VE_TIMER = 0x04;
+    // dedinitions for the different directories where the UI searches standard files in
+    public final static int FT_PROPS = 0;
+    public final static int FT_SCRIPT = 1;
+    public final static int FT_BUS = 2;
+    public final static int FT_ENGINE = 3;
+    public final static int FT_DATABASE = 4;
 }

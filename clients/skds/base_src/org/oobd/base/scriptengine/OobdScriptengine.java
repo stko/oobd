@@ -21,9 +21,10 @@ abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstan
         return "";
     }
 
-    public OobdScriptengine(String myID, Core myCore) {
+    public OobdScriptengine(String myID, Core myCore, IFsystem mySystem) {
         id = myID;
          core = myCore;
+         UISystem=mySystem;
         Debug.msg("oobdscriptengine",DEBUG_BORING,"Scriptengine  object created: " + id);
 
     }

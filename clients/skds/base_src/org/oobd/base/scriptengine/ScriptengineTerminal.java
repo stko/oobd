@@ -16,8 +16,8 @@ import org.oobd.base.support.Onion;
  */
 public class ScriptengineTerminal extends OobdScriptengine implements OOBDConstants {
 
-    public ScriptengineTerminal(String ID, Core myCore) {
-        super(ID, myCore);
+    public ScriptengineTerminal(String ID, Core myCore, IFsystem mySystem) {
+        super(ID, myCore,mySystem);
         Debug.msg("scriptengineterminal", DEBUG_BORING, "Ich bin der ScriptengineTerminal...");
 
     }

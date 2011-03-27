@@ -3,7 +3,7 @@
  * 
  * \section Introduction
  *
- * This documentation is made for twopurposes: First explain the system functionality, and second of course the general concept of how the
+ * This documentation is made for twopurposes: First explain the UISystem functionality, and second of course the general concept of how the
  * different components work together.
  *
  * As the functionality is very specific, while the concept is very gereric, it will be a litte bit tricky to join these both counterparts together. Let's see, if it works.
@@ -29,8 +29,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.lang.reflect.*;
 import java.io.*;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -45,18 +43,13 @@ import org.oobd.base.protocol.OobdProtocol;
 import org.oobd.base.scriptengine.OobdScriptengine;
 import org.oobd.base.support.OnionNoEntryException;
 import org.oobd.base.visualizer.Visualizer;
-import org.oobd.ui.android.application.OOBDApp;
-
-import android.content.res.Resources;
-
-import org.oobd.ui.android.R;
 
 /**
  * \defgroup init Initialisation during startup
  *
  * At startup, different objects come to live and tell each other about their existence and their capabilities
  *
- * This is mainly to create the links between the generic core functions and the application depending User interface and system enviroment.
+ * This is mainly to create the links between the generic core functions and the application depending User interface and UISystem enviroment.
  *
  * This is done in the following steps:
  * \li the Application class itself implements the Interface IFsystem
@@ -135,22 +128,19 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         assignments = new HashMap<String, Object>();
         visualizers = new HashMap<String, ArrayList<Visualizer>>();
 
+        systemInterface.registerOobdCore(this); //Anounce itself at the Systeminterface
+        userInterface.registerOobdCore(this); //Anounce itself at the Userinterface
 
         //userInterface.sm("Moin");
         props = new Properties();
         try {
-        	// TODO Android und Swing vereinheitlichen
-            //props.load(new FileInputStream(OOBDConstants.CorePrefsFileName));
-        	Resources res = OOBDApp.getInstance().getApplicationContext().getResources();
-            props.load(res.openRawResource(R.raw.oobdcore));
-            System.out.println ("--- OOBDCore.props geladen");
+            props.load(systemInterface.generateResourceStream(FT_PROPS, systemInterface.generateUIFilePath(FT_PROPS, OOBDConstants.CorePrefsFileName)));
+            System.out.println("--- OOBDCore.props geladen");
         } catch (IOException ignored) {
-        	System.out.println ("OOBDCore.props file not found");
+            System.out.println("OOBDCore.props not found");
         }
 
 
-        systemInterface.registerOobdCore(this); //Anounce itself at the Systeminterface
-        userInterface.registerOobdCore(this); //Anounce itself at the Userinterface
 
 
         File dir1 = new File(".");
@@ -166,7 +156,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
         // ----------- load Busses -------------------------------
         try {
-        	System.out.println ("Try to load: " + props.getProperty("BusClassPath", "bus"));
+            System.out.println("Try to load: " + props.getProperty("BusClassPath", "bus"));
             HashMap<String, Class<?>> classObjects = loadOobdClasses(props.getProperty("BusClassPath", "bus"), props.getProperty("BusClassPrefix", "org.oobd.base.bus."), Class.forName("org.oobd.base.bus.OobdBus"));
             for (Iterator iter = classObjects.keySet().iterator(); iter.hasNext();) {
                 String element = (String) iter.next();
@@ -184,13 +174,13 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     Debug.msg("core", DEBUG_ERROR, ex.getMessage());
                     ex.printStackTrace();
                 } catch (IllegalAccessException e) {
-                	e.printStackTrace();
+                    e.printStackTrace();
                 }
 
             }
         } catch (ClassNotFoundException e) {
-        	System.out.println("Error while trying to load bus class");
-        	e.printStackTrace();
+            System.out.println("Error while trying to load bus class");
+            e.printStackTrace();
         }
         // ----------- load Connectors -------------------------------
         try {
@@ -310,13 +300,14 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         }
         String seID = id + "." + i.toString();
         OobdScriptengine o = null;
-        Class[] argsClass = new Class[2]; // first we set up an pseudo - args - array for the scriptengine- constructor
+        Class[] argsClass = new Class[3]; // first we set up an pseudo - args - array for the scriptengine- constructor
         argsClass[0] = seID.getClass(); // and fill it with the info of the arguments classes
         argsClass[1] = this.getClass();
+        argsClass[2] = IFsystem.class;
         Class classRef = scriptengines.get(id); // then we get the class of the wanted scriptengine
         try {
             Constructor con = classRef.getConstructor(argsClass); // and let Java find the correct constructor matching to the args classes
-            Object[] args = {seID, this}; //creating the args-array
+            Object[] args = {seID, this, systemInterface}; //creating the args-array
             o = (OobdScriptengine) con.newInstance(args); // and finally create the object from the scriptengine class with its unique id as parameter
         } catch (Exception e) {
             e.printStackTrace();
@@ -349,67 +340,67 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * @param path directory to seach in
      * @param classtype reference class for what to search for
      * @return Hashmap
-     * @todo loadOobdClasses supports actual only class files in a dir, but not in a jar file. The jar system from "Dynamisches_laden_von_Klassen_example.txt" needs to be implemented also
+     * @todo loadOobdClasses supports actual only class files in a dir, but not in a jar file. The jar UISystem from "Dynamisches_laden_von_Klassen_example.txt" needs to be implemented also
      * @todo the classloader needs to be extended to support encrypted (=licenced) class files
      * @bug what do do that the procedure also support relative filepaths?
      *
      */
     public HashMap loadOobdClasses(String path, String classPrefix, Class classType) {
         // inspired by http://de.wikibooks.org/wiki/Java_Standard:_Class
-    	System.out.println("Scanne Directory: " + path);
-        
-    	// TODO adapt to Android
-    	//HashMap<String, Class<?>> myInstances = new HashMap<String, Class<?>>();
-        
-    	HashMap<String, Class<?>> myInstances = systemInterface.loadOobdClasses (path, classPrefix, classType);
-        
+        System.out.println("Scanne Directory: " + path);
+
+        // TODO adapt to Android
+        //HashMap<String, Class<?>> myInstances = new HashMap<String, Class<?>>();
+
+        HashMap<String, Class<?>> myInstances = systemInterface.loadOobdClasses(path, classPrefix, classType);
+
         // TODO copy this code section to Swing / ME IFSystem implementation
         /*
         File directory = new File(path);
         if (directory.exists()) {
-            File[] files = directory.listFiles();
-            URL sourceURL = null;
-            try {
-                // read the path of the directory
-                sourceURL = directory.toURI().toURL();
-            } catch (java.net.MalformedURLException ex) {
-                Debug.msg("core", DEBUG_WARNING, ex.getMessage());
-                ex.printStackTrace();
-            }
-            // generate URLClassLoader for that directory
+        File[] files = directory.listFiles();
+        URL sourceURL = null;
+        try {
+        // read the path of the directory
+        sourceURL = directory.toURI().toURL();
+        } catch (java.net.MalformedURLException ex) {
+        Debug.msg("core", DEBUG_WARNING, ex.getMessage());
+        ex.printStackTrace();
+        }
+        // generate URLClassLoader for that directory
 
-            URLClassLoader loader = new URLClassLoader(new java.net.URL[]{sourceURL}, Thread.currentThread().getContextClassLoader());
-            // For each file in dir...
-            for (int i = 0; i
-                    < files.length; i++) {
-                // split file name into name and extension
-            	System.out.println("File, das als Klasse zu laden ist: " + files[i].getName());
-                String name[] = files[i].getName().split("\\.");
-                // only class names without $ are taken
-                if (name.length > 1 && name[1].equals("class") && name[1].indexOf("$") == -1) {
-                    try {
-                        // load the class itself
-                        Class<?> source = loader.loadClass(classPrefix + name[0]);
-                        // Prüfen, ob die geladene Klasse das Interface implementiert
-                        // bzw. ob sie das Interface beerbt
-                        // Das Interface darf dabei natürlich nicht im selben Verzeichnis liegen
-                        // oder man muss prüfen, ob es sich um ein Interface handelt Class.isInterface()
-                        if (classType.isAssignableFrom(source)) {
-                            // save unitialized class object in hashmap
-                            myInstances.put(name[0], source);
-                        }
+        URLClassLoader loader = new URLClassLoader(new java.net.URL[]{sourceURL}, Thread.currentThread().getContextClassLoader());
+        // For each file in dir...
+        for (int i = 0; i
+        < files.length; i++) {
+        // split file name into name and extension
+        System.out.println("File, das als Klasse zu laden ist: " + files[i].getName());
+        String name[] = files[i].getName().split("\\.");
+        // only class names without $ are taken
+        if (name.length > 1 && name[1].equals("class") && name[1].indexOf("$") == -1) {
+        try {
+        // load the class itself
+        Class<?> source = loader.loadClass(classPrefix + name[0]);
+        // Prüfen, ob die geladene Klasse das Interface implementiert
+        // bzw. ob sie das Interface beerbt
+        // Das Interface darf dabei natürlich nicht im selben Verzeichnis liegen
+        // oder man muss prüfen, ob es sich um ein Interface handelt Class.isInterface()
+        if (classType.isAssignableFrom(source)) {
+        // save unitialized class object in hashmap
+        myInstances.put(name[0], source);
+        }
 
-                    } catch (ClassNotFoundException ex) {
-                        // Wird geworfen, wenn die Klasse nicht gefunden wurde
-                        Debug.msg("core", DEBUG_ERROR, ex.getMessage());
-                        ex.printStackTrace();
-                    }
+        } catch (ClassNotFoundException ex) {
+        // Wird geworfen, wenn die Klasse nicht gefunden wurde
+        Debug.msg("core", DEBUG_ERROR, ex.getMessage());
+        ex.printStackTrace();
+        }
 
-                }
-            }
+        }
+        }
         }// if
         else
-        	System.out.println("Directory " + directory.getName() + " does not exist. Class " + classPrefix + " could not be loaded.");
+        System.out.println("Directory " + directory.getName() + " does not exist. Class " + classPrefix + " could not be loaded.");
         // returns Hashmap filled with classes found
          * 
          */
@@ -495,7 +486,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             if (myOnion.isType(CM_PAGEDONE)) {
                 userInterface.openPageCompleted(myOnion.getOnionString("owner"), myOnion.getOnionString("name"));
             }
-
+            if (myOnion.isType(CM_WRITESTRING)) {
+                    userInterface.sm( Base64Coder.decodeString(myOnion.getOnionString("data")));
+            }
         } catch (org.json.JSONException e) {
         }
     }
