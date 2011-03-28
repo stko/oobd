@@ -52,9 +52,15 @@ public class LuaScript extends Script {
             }
             resource = fc.openInputStream();
         } else {
+
+            System.out.println("No 'file:' at start");
             resource = getClass().getResourceAsStream(fileName);
+
         }
+
+        System.out.println("InputStream = "+resource.toString());
         LuaClosure callback = LuaPrototype.loadByteCode(resource, state.getEnvironment());
+
         state.call(callback, null, null, null);
 
     }

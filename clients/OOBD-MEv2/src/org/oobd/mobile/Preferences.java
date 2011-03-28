@@ -17,6 +17,7 @@ public class Preferences {
     }
 
     public String get(String key) {
+        System.out.println("Try to get: "+key+"  Result: "+(String) mHashtable.get(key));
         return (String) mHashtable.get(key);
     }
 
@@ -24,6 +25,7 @@ public class Preferences {
         if (value == null) {
             value = "";
         }
+        System.out.println("Set Pref key:"+key+" to value: "+value);
         mHashtable.put(key, value);
     }
 

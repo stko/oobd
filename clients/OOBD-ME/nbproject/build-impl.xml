@@ -96,6 +96,15 @@
         <condition property="app-version.autoincrement.trigger">
             <istrue value="${app-version.autoincrement}"/>
         </condition>
+        <condition property="debug.timeout" value="30000">
+            <or>
+                <equals arg1="${debugger.timeout}" arg2="" trim="true"/>
+                <not>
+                    <isset property="debugger.timeout"/>
+                </not>
+            </or>
+        </condition>
+        <property name="debug.timeout" value="${debugger.timeout}"/>
         <nb-overrideproperty name="buildsystem.baton" value="${src.dir}"/>
     </target>
     <!--cldc-init-->
@@ -1030,7 +1039,6 @@
                 <sleep seconds="5"/>
                 <property name="jpda.port" value="8000"/>
                 <property name="debug.period" value="3000"/>
-                <property name="debug.timeout" value="30000"/>
                 <antcall target="nbdebug" inheritall="true" inheritrefs="true"/>
             </sequential>
         </parallel>
@@ -1100,7 +1108,7 @@
                 <arg value="-Xdebug"/>
             </exec>
             <property name="debug.delay" value="500"/>
-            <nb-mobility-debug address="${active.debug.port}" name="${app.codename}" delay="${debug.delay}" timeout="30000" period="2000"/>
+            <nb-mobility-debug address="${active.debug.port}" name="${app.codename}" delay="${debug.delay}" timeout="${debug.timeout}" period="2000"/>
         </parallel>
     </target>
     <target name="-post-cdc-hi-debug" if="cdc-hi-platform.trigger"/>
@@ -1135,7 +1143,7 @@
     <target name="debug" description="Debug project." depends="clean,jar,remove-timestamp,pre-debug,cldc-debug,ricoh-debug,semc-debug,savaje-debug,sjmc-debug,cdc-hi-debug,nokiaS80-debug,nsicom-debug"/>
     <target name="nbdebug" description="Start NetBeans debugger" if="netbeans.home">
         <property name="debug.delay" value="5000"/>
-        <nb-mobility-debug address="${jpda.port}" name="${app.codename}" delay="${debug.delay}" timeout="30000" period="2000"/>
+        <nb-mobility-debug address="${jpda.port}" name="${app.codename}" delay="${debug.delay}" timeout="${debug.timeout}" period="2000"/>
     </target>
     <target name="debug-run-base" depends="cldc-debug-run,cdc-hi-debug-run"/>
     <target name="-pre-cldc-debug-run" if="cldc-platform.trigger"/>

@@ -492,7 +492,7 @@ function echoWrite(text)
 end
 
 ----------------- Do the initial settings --------------
-identifyOOBDInterface()
+--identifyOOBDInterface()
 Menu_Main("")
 return
 

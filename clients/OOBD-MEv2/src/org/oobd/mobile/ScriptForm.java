@@ -32,8 +32,9 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
     }
 
     public void showForm(String title,Hashtable scriptTable) {
-        this.setTitle(title);
         this.deleteAll();
+        this.setTitle(title);
+
         Enumeration e = scriptTable.keys();
         System.out.println("Table-length: "+scriptTable.size());
         while (e.hasMoreElements()) {
@@ -46,7 +47,16 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
         }
         this.addCommand(exitCmd);
         this.setCommandListener(this);
+        this.updateForm();
+        
         display.setCurrent(this);
+        this.updateForm();
+//        showAlert("Showing page: "+title);
+    }
+
+    public void showAlert(String text){
+        Alert check = new Alert("Debug Message",text,null,AlertType.WARNING);
+        display.setCurrent(check);
     }
 
     public void updateForm(){
