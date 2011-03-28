@@ -57,6 +57,7 @@ public class BTSerial extends Form implements CommandListener, Runnable {
         this.parent = parent;
         this.display = display;
         deviceList = new List("Available Bluetooth devices", List.EXCLUSIVE);
+        display.setCurrent(this);
         deviceList.setCommandListener(this);
         try {
             BluetoothDeviceDiscovery.main();
@@ -77,6 +78,7 @@ public class BTSerial extends Form implements CommandListener, Runnable {
                      *
                      * remoteDevice.getFriendlyName(true)
                      */
+                    
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }

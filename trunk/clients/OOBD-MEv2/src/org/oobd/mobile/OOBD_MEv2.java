@@ -43,13 +43,15 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     Display display;
     Preferences mPreferences;
     boolean initialized=false;
-    private static final String prefsURL = "BTMAC";
-    private static final String prefsScript = "SCRIPT";
-    private static final String scriptDefault = "/OOBD.lbc";
+    private final String urlKey = "BTNAME";
+
+    private String currentURL = "Not yet chosen...";
+    private final String prefsScript = "SCRIPT";
+    private String scriptDefault = "/OOBD.lbc";
     private String actScript = scriptDefault;
     private LuaScript scriptEngine;
     //private List cellList;
-    private boolean blindMode=false; // TODO Remember to set BlindMode to "false"
+    private boolean blindMode=true; // TODO Remember to set BlindMode to "false"
     
     private Command exitCmd;
     Hashtable scriptTable;
@@ -69,8 +71,9 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
             try {
                 mPreferences = new Preferences("preferences");
 
-                actScript = mPreferences.get(prefsScript);
-                btComm.URL = mPreferences.get(prefsURL);
+
+                actScript = mPreferences.get(urlKey);
+                btComm.URL = mPreferences.get(currentURL);
                 if (actScript == null) {
                     actScript = scriptDefault;
                 }
@@ -101,12 +104,22 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
         }
     }
 
+    public void setScript(String script){
+        mPreferences.put(prefsScript, script);
+    }
+
     public void pauseApp() {
     }
 
     public void destroyApp(boolean unconditional) {
+        try {
+            mPreferences.save();
+        } catch (RecordStoreException ex) {
+            ex.printStackTrace();
+        }
         display.setCurrent(null);
-        notifyDestroyed();
+            notifyDestroyed();
+        
         
     }
 
@@ -129,6 +142,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
 
                     System.out.println("Try to load script " + actScript);
                     scriptEngine.doScript(actScript);
+                    System.out.println("Script loaded!");
                     if (!actScript.equals(scriptDefault)) {
                         mPreferences.put(prefsScript, actScript);
                     }
@@ -159,7 +173,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 showAlert("Trying to connect to: "+btComm.URL);
                 btComm.Connect(btComm.URL);
                 if (btComm.isConnected()) {
-                    mPreferences.put(prefsURL, btComm.URL);
+                    mPreferences.put(currentURL, btComm.URL);
                     
 
                     return true;
@@ -227,7 +241,9 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
                 scriptEngine.initRPC(callFrame, nArguments);                
                 scriptEngine.finishRPC(callFrame, nArguments);
+                
                 scriptWindow.showForm(actPageName, scriptTable);
+                
                 return 1;
             }
         });
@@ -335,4 +351,18 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     public void switchBlindMode(boolean state){
         blindMode=state;
     }
+
+    public void storePref(String key, String value){
+        mPreferences.put(key, value);
+    }
+
+    public String getBTurl() {
+        return currentURL;
+    }
+
+    public void setBTurl(String url){
+        currentURL=url;
+        mPreferences.put(urlKey, url);
+    }
+
 }

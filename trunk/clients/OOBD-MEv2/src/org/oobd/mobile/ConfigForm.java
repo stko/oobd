@@ -22,6 +22,8 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
     private final ChoiceGroup choiceGroup;
     private FileBrowser fileBrowser;
 
+    //TODO Store prefered BT-Device
+
     public ConfigForm(Form parent, BTSerial btComm, OOBD_MEv2 mainMidlet) {
         super("OOBD Configuration");
         this.parent = parent;
@@ -30,7 +32,7 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
 
         display = Display.getDisplay(mainMidlet);
 
-        btConf= new TextField("Configure Bluetooth Device:", "...Search", 32, TextField.UNEDITABLE);
+        btConf= new TextField("Configure Bluetooth Device:", mainMidlet.getBTurl(), 32, TextField.UNEDITABLE);
         btCmd=new Command("Select", Command.ITEM, 0);
         btConf.addCommand(btCmd);
         btConf.setItemCommandListener(this);
@@ -59,7 +61,9 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
         this.addCommand(backCmd);
 
         display.setCurrent(this);
+
     }
+
 
     public void commandAction(Command c, Item item) {
         if (c==btCmd){
@@ -90,6 +94,7 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
         }
         else if(c==FileBrowser.SELECT_FILE_COMMAND){
             scriptConf.setString(fileBrowser.getSelectedFileURL());
+            mainMidlet.setScript(fileBrowser.getSelectedFileURL());
             display.setCurrent(this);
         }
     }
@@ -100,5 +105,6 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
 
     public void setBTname(String btName){
         btConf.setString(btName);
+        mainMidlet.setBTurl(btName);
     }
 }
