@@ -106,7 +106,7 @@ public class SwingSystem implements IFsystem {
                 try {
                     return new FileInputStream(ResourceName);
                 } catch (FileNotFoundException ex) {
-                    throw new java.util.MissingResourceException("Resource not found", "SwingSystem", ResourceName);
+                    throw new java.util.MissingResourceException("Resource not found:"+ResourceName, "SwingSystem", ResourceName);
                 }
             } else {
                 throw new java.util.MissingResourceException("Resource not known", "SwingSystem", ResourceName);

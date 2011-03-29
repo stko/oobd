@@ -28,7 +28,6 @@ import se.krka.kahlua.vm.LuaPrototype;
 import se.krka.kahlua.vm.LuaState;
 import org.json.JSONException;
 
-
 /**
  *
  * @author steffen
@@ -351,21 +350,14 @@ public class ScriptengineLua extends OobdScriptengine {
             e.printStackTrace();
         }
 
+
         Properties props = new Properties();
         try {
-            props.load(new FileInputStream("resources/enginelua.props"));
+            props.load(UISystem.generateResourceStream(FT_PROPS, UISystem.generateUIFilePath(FT_PROPS, "enginelua.props")));
+            System.out.println("Lua file " + props.getProperty("LuaDefaultScript", "OOBD.lbc"));
+            doScript(props.getProperty("LuaDefaultScript", "OOBD.lbc"));
         } catch (IOException ignored) {
             Debug.msg("ScriptengineLua", DEBUG_WARNING, "couldn't load properties");
-        }
-
-        try {
-            //doScript("/OOBD.lbc");
-            System.out.println("Lua file " + props.getProperty("LuaDefaultScript", "OOBD.lbc"));
-            Properties propsScript = new Properties();
-            propsScript.load(UISystem.generateResourceStream(FT_PROPS, OOBDConstants.CorePrefsFileName));
-            doScript(propsScript.getProperty("LuaDefaultScript", "OOBD.lbc"));
-        } catch (IOException ex) {
-            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
         }
         int i = 0;
         while (keepRunning == true) {
