@@ -22,7 +22,7 @@
 	online documentation.
 
 
-	OOBD is using FreeTROS (www.FreeRTOS.org)
+	OOBD is using FreeRTOS (www.FreeRTOS.org)
 
 */
 
@@ -44,7 +44,6 @@ xQueueHandle inputQueue = NULL;
 xQueueHandle outputQueue = NULL;
 xQueueHandle protocolQueue = NULL;
 
-
 //! pointer to writeChar() function
 printChar_cbf printChar = NULL;
 
@@ -55,7 +54,6 @@ printChar_cbf printChar = NULL;
  * receiving tasks uses the multiMessage-Interface, we need the inputRedirectTask to shuffle the received chars from one
  * queue to the next
  */
-
 
 void
 inputRedirectTask (void *pvParameters)
@@ -357,20 +355,50 @@ inputParserTask (void *pvParameters)
 			      switch (cmdKey)
 				{
 				case PARAM_INFO:
-				  printLF();
-				  printser_string ("OOBD ");
-			    printser_string (OOBDDESIGN);
-				  printser_string (SVNREV);
-				  printser_string (" ");
-          #ifdef OOBD_PLATFORM_POSIX
-				    printser_string (BUILDDATE);
-          #endif
+				  if (cmdValue == VALUE_PARAM_INFO_VERSION)
+				  {
+					printLF();
+					printser_string ("OOBD ");
+					printser_string (OOBDDESIGN);
+					printser_string (" ");
+					printser_string (SVNREV);
+					printser_string (" ");
+					printser_string (BUILDDATE);
+				  }
+				  #ifdef OOBD_PLATFORM_STM32
+				  else if (cmdValue == VALUE_PARAM_INFO_CPU_INFO)
+			        sendCPUInfo();			/* send CPU Info */
+			      else if (cmdValue == VALUE_PARAM_INFO_MEM_LOC)
+			    	sendMemLoc();      		/* send Mem Location */
+			      else if (cmdValue == VALUE_PARAM_INFO_ROM_TABLE_LOC)
+			    	sendRomTable();      	/* send ROM Table */
+			      else if (cmdValue == VALUE_PARAM_INFO_FREE_HEAP_SIZE)
+			      {
+			    	printser_string ("\r\nFreeRTOS heap (in byte): ");
+				    printser_uint32ToHex (xPortGetFreeHeapSize());	/* send FreeRTOS free heap size */
+			      }
+				  #endif
 				  break;
 				case PARAM_ECHO:
 				  break;
 				case PARAM_LINEFEED:
 				  lfType=cmdValue;
 				  break;
+				#ifdef OOBD_PLATFORM_STM32
+				case PARAM_RESET:
+				  if (1 == cmdValue)
+				  {
+					DEBUGUARTPRINT ("\r\n*** Softreset performed !!!");
+					SCB->AIRCR = 0x05FA0604;	/* soft reset */
+				  }
+				  if (2 == cmdValue)
+				  {
+					DEBUGUARTPRINT ("\r\n*** Hardreset performed !!!");
+					SCB->AIRCR = 0x05FA0004;	/* hard reset */
+				  }
+				  break;
+ 	 	 	 	#endif
+
 				default:
 				  sendParam (cmdKey, cmdValue);
 				  break;
