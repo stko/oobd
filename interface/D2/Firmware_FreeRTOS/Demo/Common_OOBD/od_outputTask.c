@@ -20,7 +20,7 @@
   Please ensure to read the configuration and relevant port sections of the
   online documentation.
 
-  OOBD is using FreeTROS (www.FreeRTOS.org)
+  OOBD is using FreeRTOS (www.FreeRTOS.org)
 
 */
 

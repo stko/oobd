@@ -22,7 +22,7 @@
 	online documentation.
 
 
-	OOBD is using FreeTROS (www.FreeRTOS.org)
+	OOBD is using FreeRTOS (www.FreeRTOS.org)
 
 */
 
@@ -140,8 +140,8 @@ main (void)
     DEBUGPRINT ("OOBD Build: %s\n", SVNREV);
   #else
     printLF();
-    uart1_puts("OOBD Build: ");
-    uart1_puts(SVNREV);
+    printser_string("OOBD Build: ");
+    printser_string(SVNREV);
   #endif
 
 /*

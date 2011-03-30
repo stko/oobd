@@ -173,7 +173,7 @@ void GPIO_Configuration(void)
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
   /** --------------------------------------------------------------------------
-    * PB 0 = ??? = GPIO_Mode_AIN - Input floating for low power consumption
+    * PB 0 = ADC12_IN8 = GPIO_Mode_AIN - Input floating for low power consumption
     * PB 1 = ??? = GPIO_Mode_AIN - Input floating for low power consumption
     * PB 2 = ??? = GPIO_Mode_AIN - Input floating for low power consumption
     * PB 3 = ??? = GPIO_Mode_AIN - Input floating for low power consumption
@@ -192,7 +192,13 @@ void GPIO_Configuration(void)
     * PB15 = DXM1 IO Pin 23, SPI_MOSI = GPIO_Mode_AIN - currently unused
     *---------------------------------------------------------------------------
     */
-
+//! @todo Analog input must be integrated to get the current power supply Vbat
+  /* configure analog input PB0 = ADC12_IN8 */
+/*
+  GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_0;
+  GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AIN;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
+*/
   /* configure Output (open drain) of LED1 - green (PB5) and LED2 - red (PB4) */
   GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE); /* release alternative GPIO function of PB4 */
   GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_4 | GPIO_Pin_5;

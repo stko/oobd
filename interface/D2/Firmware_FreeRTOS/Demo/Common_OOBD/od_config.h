@@ -22,7 +22,7 @@
 	online documentation.
 
 
-	OOBD is using FreeTROS (www.FreeRTOS.org)
+	OOBD is using FreeRTOS (www.FreeRTOS.org)
 
 */
 
@@ -141,6 +141,11 @@
 #define VALUE_BUS_CONFIG_29bit_250kbit  ( 6 )
 #define VALUE_BUS_CONFIG_29bit_500kbit  ( 7 )
 #define VALUE_BUS_CONFIG_29bit_1000kbit ( 8 )
+#define VALUE_PARAM_INFO_VERSION 		( 0 )
+#define VALUE_PARAM_INFO_CPU_INFO 		( 10 )
+#define VALUE_PARAM_INFO_MEM_LOC  		( 11 )
+#define VALUE_PARAM_INFO_ROM_TABLE_LOC  ( 12 )
+#define VALUE_PARAM_INFO_FREE_HEAP_SIZE	( 13 )
 
 #define VALUE_LF_CRLF (0)
 #define VALUE_LF_LF (1)

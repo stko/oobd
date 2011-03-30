@@ -22,7 +22,7 @@
 	online documentation.
 
 
-	OOBD is using FreeTROS (www.FreeRTOS.org)
+	OOBD is using FreeRTOS (www.FreeRTOS.org)
 
 */
 
@@ -640,21 +640,7 @@ obp_uds (void *pvParameters)
 		case PARAM_TP_FREQ:
 		  config.tpFreq = paramData[1];
 		  break;
-    #ifdef OOBD_PLATFORM_STM32
-		case PARAM_RESET:
-		  if (1 == paramData[1])
-		    {
-		      DEBUGUARTPRINT ("\r\n*** Softreset performed !!!");
-		      SCB->AIRCR = 0x05FA0604;	/* soft reset */
-		    }
-		  if (2 == paramData[1])
-		    {
-		      DEBUGUARTPRINT ("\r\n*** Hardreset performed !!!");
-		      SCB->AIRCR = 0x05FA0004;	/* hard reset */
-		    }
-		  break;
-    #endif
-		}
+ 		}
 
 	      actBus_param (paramData[0], paramData[1]);	/* forward the received params to the underlying bus. */
 	      break;
