@@ -46,6 +46,7 @@ static void IAP_Init(void);
 int main(void)
 {
   uint32_t nCount = 1000000;
+  uint8_t  VersionString = 0;
 
   /* Flash unlock */
   FLASH_Unlock();
@@ -54,6 +55,17 @@ int main(void)
 
   while (1)
   {
+	if (VersionString == 0)
+	{
+	  SerialPutString("\r\nOOBD-Flashloader ");
+	  SerialPutString(OOBDDESIGN);
+	  SerialPutString(" ");
+	  SerialPutString(SVNREV);
+	  SerialPutString(" ");
+	  SerialPutString(BUILDDATE);
+	  VersionString = 1;
+	}
+
     for(; nCount != 0; nCount--) /* delay */
     {
       if ( USART_GetFlagStatus(USART1, USART_FLAG_RXNE) != RESET)
@@ -61,15 +73,8 @@ int main(void)
         if ((char)USART1->DR == 'f')
         {
           /* If Key is pressed */
-          SerialPutString("\r\n======================================================================");
-          SerialPutString("\r\n=              (C) COPYRIGHT 2010 STMicroelectronics                 =");
-          SerialPutString("\r\n=                                                                    =");
-          SerialPutString("\r\n=     In-Application Programming Application  (Version 3.3.0)        =");
-          SerialPutString("\r\n=                                                                    =");
-          SerialPutString("\r\n=                                   By MCD Application Team          =");
-          SerialPutString("\r\n======================================================================");
-          SerialPutString("\r\n\r\n");
-          Main_Menu ();
+   	      SerialPutString("\r\nOOBD-Flashloader>");
+       	  Main_Menu ();
         }
        }
      };

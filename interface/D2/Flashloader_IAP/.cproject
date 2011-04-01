@@ -38,6 +38,8 @@
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.warnings.pedantic.216583105" name="Pedantic (-pedantic)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.warnings.pedantic" value="true" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def.1954153954" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="SVNREV='&quot;$(shell LC_ALL=C svnversion -cn ../ | sed -e &quot;s/.*://&quot; -e &quot;s/\([0-9]*\).*/\1/&quot; | grep &quot;[0-9]&quot; )&quot;'"/>
+									<listOptionValue builtIn="false" value="OOBDDESIGN='(const char *)(&quot;D2&quot;)'"/>
+									<listOptionValue builtIn="false" value="BUILDDATE='&quot;$(shell date --rfc-822)&quot;' "/>
 								</option>
 								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input.51061838" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input"/>
 							</tool>
@@ -45,7 +47,7 @@
 								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.level.1532289506" name="Optimization level" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.optimization.level.none" valueType="enumerated"/>
 							</tool>
 							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.debug.2107343206" name="ARM Sourcery Linux GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.debug">
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.scriptfile.2136853498" name="Script file (-T)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.scriptfile" value="${workspace_loc:/DXM1_Firmware_IAP/stm32_flash.ld}" valueType="string"/>
+								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.scriptfile.2136853498" name="Script file (-T)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.scriptfile" value="${workspace_loc:/${ProjName}/stm32_flash.ld}" valueType="string"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.otherobjs.1948475396" name="Other objects" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.otherobjs" valueType="userObjs">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/CMSIS/CM3/DeviceSupport/ST/STM32F10x/startup/gcc_ride7/startup_stm32f10x_md.s}&quot;"/>
 								</option>
@@ -2016,6 +2018,8 @@
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level.477807324" name="Optimization level" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.optimization.level.size" valueType="enumerated"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def.2098135654" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="SVNREV='&quot;$(shell LC_ALL=C svnversion -cn ../ | sed -e &quot;s/.*://&quot; -e &quot;s/\([0-9]*\).*/\1/&quot; | grep &quot;[0-9]&quot; )&quot;'"/>
+									<listOptionValue builtIn="false" value="OOBDDESIGN='(const char *)(&quot;D2&quot;)'"/>
+									<listOptionValue builtIn="false" value="BUILDDATE='&quot;$(shell date --rfc-822)&quot;' "/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths.202978343" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc}&quot;"/>
@@ -2033,7 +2037,7 @@
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.nodeflibs.1836044641" name="Do not use default libraries (-nodefaultlibs)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.nodeflibs" value="true" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.nostdlibs.1745823061" name="No startup or default libs (-nostdlib)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.nostdlibs" value="true" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.gcsections.366457885" name="Remove unused sections (-Xlinker --gc-sections)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.gcsections" value="true" valueType="boolean"/>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.scriptfile.1221416486" name="Script file (-T)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.scriptfile" value="${workspace_loc:/DXM1_Firmware_IAP/stm32_flash.ld}" valueType="string"/>
+								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.scriptfile.1221416486" name="Script file (-T)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.scriptfile" value="${workspace_loc:/${ProjName}/stm32_flash.ld}" valueType="string"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.otherobjs.2068462575" name="Other objects" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.otherobjs" valueType="userObjs">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/CMSIS/CM3/DeviceSupport/ST/STM32F10x/startup/gcc_ride7/startup_stm32f10x_md.s}&quot;"/>
 								</option>
@@ -2046,7 +2050,9 @@
 							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1847844968" name="ARM Sourcery Linux GCC Archiver" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base"/>
 							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.release.1546110716" name="ARM Sourcery Linux GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.release"/>
 							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.release.215368802" name="ARM Sourcery Linux GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.release"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release.1322331072" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release.1322331072" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release">
+								<option id="org.eclipse.cdt.cross.arm.gnu.printsize.general.hex.47989379" name="Hex" superClass="org.eclipse.cdt.cross.arm.gnu.printsize.general.hex" value="true" valueType="boolean"/>
+							</tool>
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>

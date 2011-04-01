@@ -49,7 +49,7 @@ void SerialDownload(void)
   uint8_t Number[10] = "          ";
   int32_t Size = 0;
 
-  SerialPutString("Waiting for the file to be sent ... (press 'a' to abort)\n\r");
+  SerialPutString("\r\nWaiting for the file to be sent ... (press 'a' to abort)\n\r");
   GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red ON */
   Size = Ymodem_Receive(&tab_1024[0]);
   if (Size > 0)
@@ -60,7 +60,7 @@ void SerialDownload(void)
     SerialPutString("\n\r Size: ");
     SerialPutString(Number);
     SerialPutString(" Bytes\r\n");
-    SerialPutString("-------------------\n");
+    SerialPutString("--------------------------------\n");
     GPIO_SetBits(GPIOB,GPIO_Pin_5); /* LED 1 - red OFF */
   }
   else if (Size == -1)
