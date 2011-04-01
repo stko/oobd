@@ -11,8 +11,10 @@ import org.oobd.base.IFui;
 
 import org.oobd.base.support.Onion;
 import org.oobd.ui.android.DiagnoseItem;
+import org.oobd.ui.android.R;
 
 import android.app.Application;
+import android.content.res.Resources;
 import android.util.Log;
 
 /**
@@ -48,15 +50,15 @@ public class OOBDApp extends Application implements IFsystem {
 
     public InputStream generateResourceStream(int pathID, String ResourceName) throws java.util.MissingResourceException {
         if (pathID == OOBDConstants.FT_PROPS ) {  // Achtung: Hier wird der ResourceName nicht weiter beachtet, weil nur hardcoded der oobdcore verwendet wird. Ist das so richtig
-            try {
                 Resources res = OOBDApp.getInstance().getApplicationContext().getResources();
                 return res.openRawResource(R.raw.oobdcore);
-            } catch (IOException ex) {
-                throw new java.util.MissingResourceException("Resource not found", "OOBDApp", ResourceName);
-            }
         } else {
             if (pathID == OOBDConstants.FT_SCRIPT) {
-                return OOBDApp.getInstance().getAssets().open(ResourceName);
+            	try {
+            		return OOBDApp.getInstance().getAssets().open(ResourceName);
+            	} catch (IOException ex) {
+                    throw new java.util.MissingResourceException("Resource not found", "OOBDApp", ResourceName);
+                }	
             } else {
                 throw new java.util.MissingResourceException("Resource not known", "OOBDApp", ResourceName);
             }
