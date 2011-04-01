@@ -364,21 +364,21 @@ void FLASH_DisableWriteProtectionPages(void)
 
     if (status == FLASH_COMPLETE)
     {
-      SerialPutString("Write Protection disabled...\r\n");
+      SerialPutString("\r\nWrite Protection disabled...");
 
-      SerialPutString("...and a System Reset will be generated to re-load the new option bytes\r\n");
+      SerialPutString("\r\n...and a System Reset will be generated to re-load the new option bytes");
 
       /* Generate System Reset to load the new option byte values */
       NVIC_SystemReset();
     }
     else
     {
-      SerialPutString("Error: Flash write unprotection failed...\r\n");
+      SerialPutString("\r\nError: Flash write unprotection failed...");
     }
   }
   else
   {
-    SerialPutString("Flash memory not write protected\r\n");
+    SerialPutString("\r\nFlash memory not write protected");
   }
 }
 
@@ -422,31 +422,19 @@ void Main_Menu(void)
 
   while (1)
   {
-    SerialPutString("\r\n================== Main Menu ============================\r\n\n");
-    SerialPutString("  Download Image To the STM32F10x Internal Flash ------- 1\r\n\n");
-    SerialPutString("  Upload Image From the STM32F10x Internal Flash ------- 2\r\n\n");
-    SerialPutString("  Execute The New Program ------------------------------ 3\r\n\n");
-    
-    if(FlashProtection != 0)
-    {
-      SerialPutString("  Disable the write protection ------------------------- 4\r\n\n");
-    }
-    
-    SerialPutString("==========================================================\r\n\n");
-    
     key = GetKey();
 
-    if (key == 0x31)
+    if (key == 0x31) 		/* ASCII character "1" */
     {
       /* Download user application in the Flash */
       SerialDownload();
     }
-    else if (key == 0x32)
+    else if (key == 0x32)	/* ASCII character "2" */
     {
       /* Upload user application from the Flash */
       SerialUpload();
     }
-    else if (key == 0x33)
+    else if (key == 0x33)	/* ASCII character "3" */
     {
       JumpAddress = *(__IO uint32_t*) (ApplicationAddress + 4);
 
@@ -461,16 +449,22 @@ void Main_Menu(void)
       /* Disable the write protection of desired pages */
       FLASH_DisableWriteProtectionPages();
     }
+    else if ((key == 0x68) || (key == 0x48))
+    {
+      SerialPutString("\r\n======================== Help ============================\r\n\n");
+      SerialPutString("  Download Image To the STM32F10x Internal Flash ------- 1\r\n\n");
+      SerialPutString("  Upload Image From the STM32F10x Internal Flash ------- 2\r\n\n");
+      SerialPutString("  Execute The New Program ------------------------------ 3\r\n\n");
+      if(FlashProtection != 0)
+      {
+        SerialPutString("  Disable the write protection ------------------------- 4\r\n\n");
+      }
+      SerialPutString("==========================================================\r\n\n");
+      SerialPutString("OOBD-Flashloader>");
+    }
     else
     {
-      if (FlashProtection == 0)
-      {
-        SerialPutString("Invalid Number ! ==> The number should be either 1, 2 or 3\r");
-      }
-      else
-      {
-        SerialPutString("Invalid Number ! ==> The number should be either 1, 2, 3 or 4\r");
-      } 
+      SerialPutString("\r\nOOBD-Flashloader>");
     }
   }
 }
