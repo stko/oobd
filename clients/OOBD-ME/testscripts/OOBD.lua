@@ -5,52 +5,6 @@ OOBD.lua
 
 
 
----------------------- System Info Menu --------------------------------------
-
-function SysInfo_Menu(oldvalue,id)
-	openPage("Sysinfo")
-	addElement("DXM Serial", "dxmserial","-",0x2, "")
-	addElement("DXM BIOS", "dxmbios","-",0x2, "")
-	addElement("Power", "power","-",0x2, "")
-	addElement("Which Bus?", "getBus","-",0x2, "")
-	addElement("<<< Main", "Menu_Main","<<<",0x1, "")
-	pageDone()
-	return oldvalue
-end
-
-
-function dxmserial(oldvalue,id)
-	echoWrite("at!00\r\n")
-	local answ=""
-	answ=serReadLn(2000, false)
-	return answ
-end
-
-
-function dxmbios(oldvalue,id)
-	echoWrite("at!01\r\n")
-	local answ=""
-	answ=serReadLn(2000, false)
-	return answ
-end
-
-
-function power(oldvalue,id)
-	echoWrite("at!10\r\n")
-	local answ=""
-	answ=serReadLn(2000, false)
-	return answ
-end
-
-function getBus(oldvalue,id)
-	echoWrite("0100\r\n") -- first send something to let the DXM search for a available bus
-	udsLen=receive()
-	echoWrite("atdp\r\n")
-	local answ=""
-	answ=serReadLn(2000, false)
-	return answ
-end
-
 
 ---------------------- Vehicle Info Menu --------------------------------------
 
@@ -75,6 +29,13 @@ function vin(oldvalue,id)
 	else
 		return "NO DATA"
 	end
+end
+---------------------- Clear Trouble Codes --------------------------------------
+
+
+function clearDTC(oldvalue,id)
+	echoWrite("04\r\n")
+	return "Codes Deleted"
 end
 
 
@@ -286,7 +247,7 @@ function createCMD01Menu(oldvalue,id)
                                 createCall(availPIDs, 0x1F,"Run time since engine start", "getNumPIDs")
 
 				-----------------------------------------
-				addElement("<<< Main", "Menu_Main","<<<",0x1, "")
+				addElement("<<< Main", "Start","<<<",0x1, "")
 				pageDone()
 				return oldvalue
 			else
@@ -330,7 +291,7 @@ function createCMD02Menu(oldvalue,id)
                                 createCall(availPIDs, 0x28,"O2S5_WR_lambda(1): Equivalence Ratio Voltage", "getNumPIDs")
                                 createCall(availPIDs, 0x128,"O2S5_WR_lambda(1): Equivalence Ratio Voltage", "getNumPIDs")
 				-----------------------------------------
-				addElement("<<< Main", "Menu_Main","<<<",0x1, "")
+				addElement("<<< Main", "Start","<<<",0x1, "")
 				pageDone()
 				return oldvalue
 			else
@@ -394,7 +355,7 @@ function createCMD03Menu(oldvalue,id)
                                 createCall(availPIDs, 0x3E,"Catalyst Temperature Bank 1, Sensor 2", "getNumPIDs")
                                 createCall(availPIDs, 0x3F,"Catalyst Temperature Bank 2, Sensor 2", "getNumPIDs")
                         	-----------------------------------------
-				addElement("<<< Main", "Menu_Main","<<<",0x1, "")
+				addElement("<<< Main", "Start","<<<",0x1, "")
 				pageDone()
 				return oldvalue
 			else
@@ -467,32 +428,27 @@ function greet(oldvalue,id)
 end
 ---------------------- Main Menu --------------------------------------
 
-function Menu_Main(oldvalue,id)
+-- This function is called at start and at each re- coonect, so all neccesary (re-)initalisation needs to be done here
+
+
+function Start(oldvalue,id)
+	identifyOOBDInterface()
 	openPage("OOBD-ME Main")
 	addElement("Sensor Data >", "createCMD01Menu",">>>",0x1, "")
         addElement("Snapshot Data >", "createCMD02Menu",">>>",0x1, "")
         addElement("Dynamic Menu3 >", "createCMD03Menu",">>>",0x1, "")
 	addElement("Trouble Codes", "showdtcs","-",0x1, "")
 	addElement("VIN Number", "vin","-",0x2, "")
---	addElement("Protocol Info >>>", "notyet",">>>",0x1, "")
+	addElement("Clear Trouble Codes", "clearDTC","-",0x0, "")
 	addElement("System Info >>>", "SysInfo_Menu",">>>",0x1, "")
 	addElement("Greetings", "greet","",0x1, "")
 	pageDone()
 	return oldvalue
 end
 
-function notyet(oldvalue,id)
-	return "not implemented yet"
-end
-
-function echoWrite(text)
-	serFlush()
-	serWrite(text)
-	serWait(text,2000)
-end
 
 ----------------- Do the initial settings --------------
---identifyOOBDInterface()
-Menu_Main("")
+
+Start("","")
 return
 

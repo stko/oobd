@@ -102,6 +102,19 @@ function getStringPart(text, index)
     
 end
 
+function notyet(oldvalue,id)
+	return "not implemented yet"
+end
+
+function nothing(oldvalue,id)
+	return oldvalue
+end
+
+function echoWrite(text)
+	serFlush()
+	serWrite(text)
+	serWait(text,2000)
+end
 
 -- the global receiving routine. Trys to read single- or multiframe answers from the dxm and stores it in udsbuffer, setting the received length in udslen
 
@@ -185,7 +198,6 @@ end
 function receive_OOBD()
 	udsLen=0
 	answ=""
-	print("Receive via OOBD...")
 	answ=serReadLn(2000, true)
 	if answ == "" then
 	  return -1
@@ -194,6 +206,7 @@ function receive_OOBD()
 	  while doLoop and  answ ~="" do
 	    firstChar=string.sub(answ,1,1)
 	    nChar = string.byte(answ)
+	    --print ("firstchar ",firstChar," charcode ",nChar)
 	    if nChar >=48 and nChar <=57 then  -- an 1. Stelle steht eine Zahl-> positive Antwort
 	      while  answ ~="" do
 		      byteStr= string.sub(answ,1,2)
@@ -208,7 +221,8 @@ function receive_OOBD()
 		answ=getStringPart(answ,2)
 		udsLen=tonumber(answ) * -1 -- return error code as negative value
 	      else
-		if firstChar == ">" then -- end of data
+		if firstChar == "." then -- end of data
+		  print(" EOT detected")
 		  doLoop = false
 		else -- unknown data
 		  udsLen=-2
@@ -221,6 +235,51 @@ function receive_OOBD()
 	return  udsLen
 end
 
+function interface_version(oldvalue,id)
+  local answ=""
+  if hardwareID == "OOBD" then
+    echoWrite("p 0 0\r\n")
+  else
+    echoWrite("at!01\r\n")
+  end
+    answ=serReadLn(2000, true)
+  return answ
+end
+
+function interface_serial(oldvalue,id)
+  local answ=""
+  if hardwareID == "OOBD" then
+    echoWrite("p 0 1\r\n")
+  else
+    echoWrite("at!00\r\n")
+  end
+    answ=serReadLn(2000, true)
+  return answ
+end
+
+function interface_voltage(oldvalue,id)
+  local answ=""
+  if hardwareID == "OOBD" then
+    answ="not implemented yet"
+  else
+    echoWrite("at!10\r\n")
+     answ=serReadLn(2000, true)
+ end
+  return answ
+end
+
+function interface_bus(oldvalue,id)
+  local answ=""
+  if hardwareID == "OOBD" then
+    echoWrite("p 0 6\r\n")
+  else
+	echoWrite("0100\r\n") -- first send something to let the DXM search for a available bus
+	udsLen=receive()
+	echoWrite("atdp\r\n")
+  end
+    answ=serReadLn(2000, true)
+  return answ
+end
 
 
 function identifyOOBDInterface()
@@ -235,10 +294,26 @@ function identifyOOBDInterface()
 	if answ=="OOBD" then
 	  receive = receive_OOBD
 	  hardwareID="OOBD"
+	  -- to support older OOBD firmware, set the Module-ID to functional address
+	  echoWrite("p 11 $7DF\r\n")
+
 	else
 	  receive = receive_DXM
 	  hardwareID="DXM"
 	end
 	print ("Hardware found: ", hardwareID)
+end
+
+---------------------- System Info Menu --------------------------------------
+
+function SysInfo_Menu(oldvalue,id)
+	openPage("Sysinfo")
+	addElement("DXM Serial", "interface_serial","-",0x2, "")
+	addElement("DXM BIOS", "interface_version","-",0x2, "")
+	addElement("Power", "interface_voltage","-",0x2, "")
+	addElement("Which Bus?", "interface_bus","-",0x2, "")
+	addElement("<<< Main", "Start","<<<",0x1, "")
+	pageDone()
+	return oldvalue
 end
 
