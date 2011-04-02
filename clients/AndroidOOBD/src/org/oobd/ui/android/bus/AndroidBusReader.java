@@ -130,6 +130,14 @@ public class AndroidBusReader implements Runnable {
                     }
                 } catch (Exception e) {
                 }
+            }else{
+                // as this thread runs in an unstopped endless loop, as long there's no serial port open, we need to slow him down here...
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        // the VM doesn't want us to sleep anymore,
+                        // so get back to work
+                    }
             }
         }
     }

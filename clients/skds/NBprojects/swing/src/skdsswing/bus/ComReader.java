@@ -123,15 +123,21 @@ public class ComReader implements Runnable {
             int input;
 
             if (serialPort != null) {
-                System.out.println("serial Thread");
                 try {
                     input = inStreamReader.read();
                     if (input > 0) {
-                        System.out.println("input:" + input);
                         inBuffer.append((char) input);
                     }
                 } catch (Exception e) {
                 }
+            }else{
+                // as this thread runs in an unstopped endless loop, as long there's no serial port open, we need to slow him down here...
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        // the VM doesn't want us to sleep anymore,
+                        // so get back to work
+                    }
             }
         }
     }
@@ -173,14 +179,13 @@ public class ComReader implements Runnable {
         while (doLoop) {
             c = read();
             if (c > 0) {
-                System.out.println(">" + c + "<");
                 //if (c != 10 && c != 13) {
                 if (c > 31) {
                     res += (char) c;
                 }
                 if (c == 10) { // LF detected, condition meet
                     //res+=".";
-                    doLoop = res.equals("") && ignoreEmptyLines;
+                   doLoop = res.equals("") && ignoreEmptyLines;
                 }
             } else {
                 if (waitForever) {

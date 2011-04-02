@@ -181,14 +181,8 @@ public class ScriptengineLua extends OobdScriptengine {
                             + "{'name':'" + myself.getId() + "'},"
                             + "'command':'serReadLn',"
                             + "'timeout':'" + getInt(0) + "',"
-                            + "'ignore':'" + Boolean.toString(getBoolean(1)) + "'}")), 5000);
+                            + "'ignore':'" + Boolean.toString(getBoolean(1)) + "'}")), +getInt(0));
                     if (answer != null) {
-                        //try {
-                        //sun.misc does not work in Android --> replaced by apache commons
-                        //does not need try - catch
-                        //result = new String(new BASE64Decoder().decodeBuffer(answer.getContent().getString("result")));
-                        //Apache:
-                        //result = new String(Base64.decodeBase64(answer.getContent().getString("result")));
                         result = new String(Base64Coder.decodeString(answer.getContent().getString("result")));
                         //} catch (IOException ex) {
                         //    Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
@@ -218,19 +212,6 @@ public class ScriptengineLua extends OobdScriptengine {
                 int result = 0;
                 Message answer = null;
                 try {
-                    //sun.misc does not work in Android --> replaced by apache commons
-                    	/*
-                    answer = myself.getMsgPort().sendAndWait(new Message(myself, BusMailboxName, new Onion(""
-                    + "{'type':'" + CM_BUSTEST + "',"
-                    + "'owner':"
-                    + "{'name':'" + myself.getId() + "'},"
-                    + "'command':'serWait',"
-                    + "'timeout':'" + getInt(1) + "',"
-                    + "'data':'" + new BASE64Encoder().encode(getString(0).getBytes()) + "'}")), 500);
-                     */
-                    //Apache:
-                    //+ "'data':'" + Base64Coder.encodeBase64String(getString(0).getBytes()).trim() + "'}")), 500);
-
                     answer = myself.getMsgPort().sendAndWait(new Message(myself, BusMailboxName, new Onion(""
                             + "{'type':'" + CM_BUSTEST + "',"
                             + "'owner':"
@@ -248,10 +229,6 @@ public class ScriptengineLua extends OobdScriptengine {
                 } catch (JSONException ex) {
                     Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
-//                    if (btComm != null) {
-//                        result = btComm.wait(getString(0), getInt(1));
-//                    }
                 callFrame.push(new Integer(result));
                 finishRPC(callFrame, nArguments);
                 return 1;
