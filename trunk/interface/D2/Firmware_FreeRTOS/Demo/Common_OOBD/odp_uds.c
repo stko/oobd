@@ -190,10 +190,8 @@ printdata_Buffer (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 	  printLF();
 	}
     }
-  if ((i % 8) != 0)
-    {
-     // printLF();
-    }
+  printLF();
+  printser_string ("."); // "End of transmission" - indicator
   /* clear the buffer */
   myUDSBuffer->len = 0;
   /* release the input queue */
