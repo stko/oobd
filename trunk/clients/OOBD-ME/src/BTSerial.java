@@ -91,7 +91,7 @@ public class BTSerial extends Form implements ActionListener, Runnable {
             addCommandListener(this);
             return URL;
             //new Thread(this).start();
-            } else {
+        } else {
             Dialog.show("BT Scan", "Sorry, no Device found", "Back", null);
             parent.showBack();
             return null;
@@ -110,7 +110,23 @@ public class BTSerial extends Form implements ActionListener, Runnable {
                     input = btConnection.inStreamReader.read();
                     if (input > 0) {
                         inBuffer.append((char) input);
+                    } else {
+                        try {
+                            Thread.sleep(10);
+                        } catch (InterruptedException e) {
+                            // the VM doesn't want us to sleep anymore,
+                            // so get back to work
+                        }
+
                     }
+                } else {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        // the VM doesn't want us to sleep anymore,
+                        // so get back to work
+                    }
+
                 }
             }
         } catch (Exception e) {
@@ -180,7 +196,7 @@ public class BTSerial extends Form implements ActionListener, Runnable {
                     } catch (InterruptedException e) {
                         // the VM doesn't want us to sleep anymore,
                         // so get back to work
-                        }
+                    }
 
                 } else {
                     timeout -= sleepTime;
@@ -192,7 +208,7 @@ public class BTSerial extends Form implements ActionListener, Runnable {
                         } catch (InterruptedException e) {
                             // the VM doesn't want us to sleep anymore,
                             // so get back to work
-                            }
+                        }
                     }
                 }
             }
@@ -233,7 +249,7 @@ public class BTSerial extends Form implements ActionListener, Runnable {
                     } catch (InterruptedException e) {
                         // the VM doesn't want us to sleep anymore,
                         // so get back to work
-                        }
+                    }
 
                 } else {
                     timeout -= sleepTime;
@@ -245,7 +261,7 @@ public class BTSerial extends Form implements ActionListener, Runnable {
                         } catch (InterruptedException e) {
                             // the VM doesn't want us to sleep anymore,
                             // so get back to work
-                            }
+                        }
                     }
                 }
             }

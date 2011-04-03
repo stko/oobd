@@ -127,6 +127,14 @@ public class ComReader implements Runnable {
                     input = inStreamReader.read();
                     if (input > 0) {
                         inBuffer.append((char) input);
+                    }else{
+                                            try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        // the VM doesn't want us to sleep anymore,
+                        // so get back to work
+                        }
+
                     }
                 } catch (Exception e) {
                 }
