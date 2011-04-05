@@ -185,10 +185,10 @@ end
 function setBus(bus)
   if hardwareID == "OOBD" then
     if bus == "HS-CAN" then
-      echoWrite("p 5 3\r\n")
+      echoWrite("p 6 3\r\n")
     end
     if bus == "MS-CAN" then
-      echoWrite("p 5 1\r\n")
+      echoWrite("p 6 1\r\n")
     end
   else
     
