@@ -221,8 +221,7 @@ function receive_OOBD()
 		answ=getStringPart(answ,2)
 		udsLen=tonumber(answ) * -1 -- return error code as negative value
 	      else
-		if firstChar == "." then -- end of data
-		  print(" EOT detected")
+		if firstChar == "." or firstChar == ">" then -- end of data or promt
 		  doLoop = false
 		else -- unknown data
 		  udsLen=-2
