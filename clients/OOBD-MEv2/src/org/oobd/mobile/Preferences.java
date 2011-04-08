@@ -8,16 +8,19 @@ public class Preferences {
 
     private String mRecordStoreName;
     private Hashtable mHashtable;
+    MobileLogger log;
 
-    public Preferences(String recordStoreName)
+
+    public Preferences(String recordStoreName, OOBD_MEv2 mainMidlet)
             throws RecordStoreException {
+        log = mainMidlet.getLog();
         mRecordStoreName = recordStoreName;
         mHashtable = new Hashtable();
         load();
     }
 
     public String get(String key) {
-        System.out.println("Try to get: "+key+"  Result: "+(String) mHashtable.get(key));
+//        log.log("Try to get: "+key+"  Result: "+(String) mHashtable.get(key));
         return (String) mHashtable.get(key);
     }
 
@@ -25,7 +28,7 @@ public class Preferences {
         if (value == null) {
             value = "";
         }
-        System.out.println("Set Pref key:"+key+" to value: "+value);
+//        log.log("Set Pref key:"+key+" to value: "+value);
         mHashtable.put(key, value);
     }
 
@@ -44,6 +47,7 @@ public class Preferences {
                 String name = pref.substring(0, index);
                 String value = pref.substring(index + 1);
                 put(name, value);
+                log.log("Loaded: "+name+" -> "+value);
             }
         } finally {
             if (re != null) {
@@ -76,6 +80,7 @@ public class Preferences {
                 String pref = key + "|" + value;
                 byte[] raw = pref.getBytes();
                 rs.addRecord(raw, 0, raw.length);
+                log.log("Stored: "+key+" -> "+value);
             }
         } finally {
             if (re != null) {
@@ -83,6 +88,7 @@ public class Preferences {
             }
             if (rs != null) {
                 rs.closeRecordStore();
+                log.log("RecordStore closed");
             }
         }
     }

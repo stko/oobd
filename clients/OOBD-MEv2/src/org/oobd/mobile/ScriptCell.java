@@ -64,6 +64,7 @@ public class ScriptCell extends CustomItem  {
         else
             return true;
     }
+
     public void toggleUpdate(){
         if (update.equals("-"))
             update="u";
