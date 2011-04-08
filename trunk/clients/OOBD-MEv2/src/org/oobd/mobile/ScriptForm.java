@@ -11,6 +11,7 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
 
     private Form parent; //Where this form was started from
     private Form mainMidlet; //Where the output routines are
+    private Form messageForm;
     private Command backCommand = null;
     private Command detailCommand = null;
     private Display display;
@@ -20,7 +21,9 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
     private Command selectCmd = new Command("Select", Command.ITEM, 0);
     private Command exitCmd = new Command("Exit", Command.EXIT,0);
     private ScriptCell tempCell;
-    private String tempValue;
+    private String tempValue="";
+    private boolean resetMessage=true;
+
 
     public ScriptForm(Form mainMidlet, Script scriptEngine, Display display) {
         super("");
@@ -32,19 +35,22 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
     }
 
     public void showForm(String title,Hashtable scriptTable) {
+        resetMessage=true;
         this.deleteAll();
         this.setTitle(title);
-
-        Enumeration e = scriptTable.keys();
+        
         System.out.println("Table-length: "+scriptTable.size());
-        while (e.hasMoreElements()) {
-            String id = (String) e.nextElement();
-            System.out.println("Current-ID: "+id);
-            tempCell = (ScriptCell)scriptTable.get(id);
+        
+        Enumeration e = scriptTable.keys();
+        for (int i = 1; i < scriptTable.size()+1; i++) {
+            System.out.println("Current-ID: "+i);
+            tempCell = (ScriptCell)scriptTable.get(Integer.toString(i));
             tempCell.addCommand(selectCmd);
             tempCell.setItemCommandListener(this);
             this.append(tempCell);
-        }
+            
+        }       
+        
         this.addCommand(exitCmd);
         this.setCommandListener(this);
         this.updateForm();
@@ -58,7 +64,7 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
         Alert check = new Alert("Debug Message",text,null,AlertType.WARNING);
         display.setCurrent(check);
     }
-
+    
     public void updateForm(){
 
     }
@@ -73,9 +79,25 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
         }
     }
 
+    public void showMessage(String text){
+        if (resetMessage){
+            messageForm=new Form("Message");
+            messageForm.setCommandListener(this);
+            backCommand = new Command("BACK", Command.BACK, 0);
+            messageForm.addCommand(backCommand);
+            resetMessage=false;
+        }
+        tempValue = text + " \n";
+        messageForm.append(tempValue);        
+        
+        display.setCurrent(messageForm);
+    }
+
     public void commandAction(Command c, Displayable d) {
         if (c == exitCmd){
             display.setCurrent(mainMidlet);
+        } else if (c == backCommand){
+            display.setCurrent(this);
         }
     }
 
@@ -83,8 +105,10 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
         if (c == selectCmd){
             tempCell = (ScriptCell) item;
             tempValue = myEngine.callFunction(tempCell.getFunction(),new Object[]{tempCell.getValue(),tempCell.getID()});
-            System.out.println("Rückgabe von callFunction: " + tempValue);
+//            System.out.println("Rückgabe von callFunction: " + tempValue);
             tempCell.setValue(tempValue);
+            this.updateForm();
+            tempValue="";
 
         }
     }

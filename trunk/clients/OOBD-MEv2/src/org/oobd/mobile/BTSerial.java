@@ -13,30 +13,37 @@ import javax.microedition.lcdui.*;
  */
 public class BTSerial extends Form implements CommandListener, Runnable {
 
+    public String deviceURL = null;    
+    
     private StreamConnection connection;
     private List deviceList = null;
-    public String URL = null;
+    private String deviceName = null;
     private TerminalIOStream btConnection = null;
     private ConfigForm parent; //Where this form was started from
     private Command BackCommand = null;
     private StringBuffer inBuffer = new StringBuffer();
-    Display display;
-    Command backCommand;
-    Command okCommand;
+    private Display display;
+    private Command backCommand;
+    private Command okCommand;
+    private MobileLogger log;
+    private OOBD_MEv2 mainMidlet;
 
-
-    public BTSerial() {
+    public BTSerial(OOBD_MEv2 mainMidlet) {
         super("Scanning BT...");
+        log = mainMidlet.getLog();
+        this.mainMidlet=mainMidlet;
         new Thread(this).start();
     }
 
     public String Connect(String thisURL) {
         if (thisURL != null) {
             try {
-                System.out.println("BT-URL: " + URL);
-                btConnection = new TerminalIOStream((StreamConnection) Connector.open("btspp://" + URL + ":1", Connector.READ_WRITE));
+                deviceURL=thisURL;
+                
+                btConnection = new TerminalIOStream((StreamConnection) Connector.open("btspp://" + deviceURL + ":1", Connector.READ_WRITE));
                 //Dialog.show("BT-Connect", "Success!", "OK", null);
-                return URL;
+                log.log("Connected to: " + deviceURL + " with the name: "+ deviceName);
+                return deviceURL;
             } catch (IOException ex) {
                 ex.printStackTrace();
                 return null;
@@ -56,9 +63,7 @@ public class BTSerial extends Form implements CommandListener, Runnable {
     public void getDeviceURL(ConfigForm parent, Display display) {
         this.parent = parent;
         this.display = display;
-        deviceList = new List("Available Bluetooth devices", List.EXCLUSIVE);
-        display.setCurrent(this);
-        deviceList.setCommandListener(this);
+        
         try {
             BluetoothDeviceDiscovery.main();
         } catch (IOException ex) {
@@ -67,33 +72,35 @@ public class BTSerial extends Form implements CommandListener, Runnable {
         int deviceCount = BluetoothDeviceDiscovery.vecDevices.size();
         System.out.println("Devicecount: " + Integer.toString(deviceCount));
         if (deviceCount > -1) {
-            for (int i = 0; i < deviceCount; i++) {
-                RemoteDevice remoteDevice = (RemoteDevice) BluetoothDeviceDiscovery.vecDevices.elementAt(i);
-                deviceList.append(remoteDevice.getBluetoothAddress(),null);
-                try {
-                    System.out.println("Found device: " + remoteDevice.getFriendlyName(true));
-                    /**
-                     * for later extensions:
-                     * the user friendly name of the device can be found as
-                     *
-                     * remoteDevice.getFriendlyName(true)
-                     */
-                    
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+            
+            deviceList = new List("Please choose:", List.EXCLUSIVE);
+            deviceList.setTicker(new Ticker("Searching for Bluetooth devices"));
+            display.setCurrent(deviceList);
+            deviceList.setCommandListener(this);
+
+            if (deviceCount > 0){
+                log.log("BT devicecout = "+ deviceCount);
+                for (int i = 0; i < deviceCount; i++) {
+                    RemoteDevice remoteDevice = (RemoteDevice) BluetoothDeviceDiscovery.vecDevices.elementAt(i);
+                    deviceList.append(remoteDevice.getBluetoothAddress(),null);
                 }
 
-            }
-            //deviceList.addItem(new MyRenderer("test dummy"));
-            backCommand = new Command("Back", Command.BACK, 0);
-            okCommand = new Command("Select", Command.OK, 0);
-            deviceList.addCommand(okCommand);
-            deviceList.addCommand(backCommand);
-            setCommandListener(this);            
-            display.setCurrent(deviceList);           
-            //new Thread(this).start();
+                //deviceList.addItem(new MyRenderer("test dummy"));
+                backCommand = new Command("Back", Command.BACK, 0);
+                okCommand = new Command("OK", Command.OK, 0);
+                deviceList.addCommand(okCommand);
+                deviceList.addCommand(backCommand);
+                deviceList.setTicker(null);
+                setCommandListener(this);
+                display.setCurrent(deviceList);
             } else {
-            Alert notFound = new Alert("Bluetoothconfig", "No Bluetooth device found!", null, AlertType.ERROR);
+            Alert notFound = new Alert("Bluetoothconfig", "No Bluetooth devices found. ", null, AlertType.ERROR);
+            notFound.setTimeout(Alert.FOREVER);
+            display.setCurrent(notFound);
+            }
+        } else {
+            Alert notFound = new Alert("Bluetoothconfig", "Bluetooth not activated or available!", null, AlertType.ERROR);
+            notFound.setTimeout(Alert.FOREVER);
             display.setCurrent(notFound);            
         }
     }
@@ -108,12 +115,21 @@ public class BTSerial extends Form implements CommandListener, Runnable {
         if(c==okCommand){
             int index = deviceList.getSelectedIndex();
             RemoteDevice remoteDevice = (RemoteDevice) BluetoothDeviceDiscovery.vecDevices.elementAt(index);
-            parent.setBTname(remoteDevice.getBluetoothAddress());
-            URL=remoteDevice.getBluetoothAddress();
+            try {
+                deviceName = remoteDevice.getFriendlyName(true);
+            } catch (IOException ex) {
+                log.log(ex.toString());
+            }
+            if (deviceName!=null){
+                parent.setBTname(deviceName);
+            } else {
+                parent.setBTname(remoteDevice.getBluetoothAddress());
+            }            
+            deviceURL=remoteDevice.getBluetoothAddress();
+            
             display.setCurrent(parent);
         }
     }
-
 
     public void run() {
         System.out.println("Thread has started");
@@ -134,7 +150,6 @@ public class BTSerial extends Form implements CommandListener, Runnable {
         }
     }
 
-    
     public void flush() {
         if (btConnection != null) {
             while (read() > (char) 0);

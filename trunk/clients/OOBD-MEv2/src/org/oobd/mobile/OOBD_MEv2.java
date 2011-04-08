@@ -23,6 +23,7 @@ import javax.microedition.lcdui.Spacer;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.midlet.*;
 import javax.microedition.rms.RecordStoreException;
+import org.oobd.mobile.OOBD_MEv2;
 import se.krka.kahlua.vm.*;
 
 /**
@@ -40,13 +41,14 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     Command confCmd;
     Command back2mainCmd;
     Command startCmd;
+    Command infoCmd;
+    Command logCmd;
     Display display;
     Preferences mPreferences;
     boolean initialized=false;
     private final String urlKey = "BTNAME";
-
     private String currentURL = "Not yet chosen...";
-    private final String prefsScript = "SCRIPT";
+    private final String scriptKey = "SCRIPT";
     private String scriptDefault = "/OOBD.lbc";
     private String actScript = scriptDefault;
     private LuaScript scriptEngine;
@@ -58,29 +60,39 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     int tableID=1;
     private String actPageName;
     private ScriptForm scriptWindow;
+    public MobileLogger log;
 
 
     public void startApp() {
 
+        log = new MobileLogger(this);
 
+        log.log("App started");
+
+        display = Display.getDisplay(this);
         if (!initialized){
             initialized=true;
 
-            btComm = new BTSerial();
+            btComm = new BTSerial(this);
 
             try {
-                mPreferences = new Preferences("preferences");
+                mPreferences = new Preferences("preferences",this);
 
 
-                actScript = mPreferences.get(urlKey);
-                btComm.URL = mPreferences.get(currentURL);
+                actScript = mPreferences.get(scriptKey);
+                btComm.deviceURL = mPreferences.get(urlKey);
+//                showAlert(mPreferences.get(urlKey));
+//                showAlert(mPreferences.get(scriptKey));
+
                 if (actScript == null) {
                     actScript = scriptDefault;
                 }
             } catch (RecordStoreException rse) {
             }
-            display = Display.getDisplay(this);
-
+            
+            log.log("Prefs loaded");
+            
+            
             mainwindow = new Form("OOBD-MEv2",null);
             mainwindow.setCommandListener(this);
 
@@ -88,6 +100,10 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
             mainwindow.addCommand(confCmd);
             startCmd = new Command("Start", Command.OK,0);
             mainwindow.addCommand(startCmd);
+            infoCmd = new Command("Info", Command.HELP, 1);
+            mainwindow.addCommand(infoCmd);
+            logCmd = new Command("Show Log", Command.HELP,2);
+            mainwindow.addCommand(logCmd);
             exitCmd = new Command("Exit", Command.EXIT,0);
             mainwindow.addCommand(exitCmd);
 
@@ -105,7 +121,8 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     }
 
     public void setScript(String script){
-        mPreferences.put(prefsScript, script);
+        actScript=script;
+//        mPreferences.put(scriptKey, script);
     }
 
     public void pauseApp() {
@@ -117,6 +134,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
         } catch (RecordStoreException ex) {
             ex.printStackTrace();
         }
+        btComm.Closeconnection();
         display.setCurrent(null);
             notifyDestroyed();
         
@@ -144,16 +162,23 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                     scriptEngine.doScript(actScript);
                     System.out.println("Script loaded!");
                     if (!actScript.equals(scriptDefault)) {
-                        mPreferences.put(prefsScript, actScript);
+                        mPreferences.put(scriptKey, actScript);
                     }
 
                 } catch (java.io.IOException ioe) {
+                    log.log(ioe.toString());
                     ioe.printStackTrace();
                 }
             }
         }
         else if (c == exitCmd){
             destroyApp(true);
+        }
+        else if (c == infoCmd){
+            showAlert("Stored values: \n \t Bluetooth-URL: "+mPreferences.get(urlKey)+"\n\t Script: "+mPreferences.get(scriptKey));
+        }
+        else if (c == logCmd){
+            log.showlogs(this);
         }
     }
 
@@ -169,11 +194,11 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     boolean tryToConnect() {
         if (!btComm.isConnected()) {
 
-            if (btComm.URL != null) {
-                showAlert("Trying to connect to: "+btComm.URL);
-                btComm.Connect(btComm.URL);
+            if (btComm.deviceURL != null) {
+                showAlert("Trying to connect to: "+btComm.deviceURL);
+                btComm.Connect(btComm.deviceURL);
                 if (btComm.isConnected()) {
-                    mPreferences.put(currentURL, btComm.URL);
+                    mPreferences.put(currentURL, btComm.deviceURL);
                     
 
                     return true;
@@ -194,8 +219,6 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     public boolean isBlindMode() {
         return blindMode;
     }
-
-
 
     private void initiateScriptEngine(){
         scriptEngine = new LuaScript();
@@ -231,6 +254,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                         scriptEngine.getString(4) //String id
                         ));
                 scriptEngine.finishRPC(callFrame, nArguments);
+
                 return 1;
             }
         });
@@ -336,7 +360,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 System.out.println("Lua calls serDisplayWrite");
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
                 scriptEngine.initRPC(callFrame, nArguments);
-                //prepareDisplayWrite(scriptEngine.getString(0));
+                scriptWindow.showMessage(scriptEngine.getString(0));
                 scriptEngine.finishRPC(callFrame, nArguments);
                 return 1;
             }
@@ -360,9 +384,17 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
         return currentURL;
     }
 
-    public void setBTurl(String url){
-        currentURL=url;
-        mPreferences.put(urlKey, url);
+    public void showMain(){
+        display.setCurrent(mainwindow);
     }
+
+    public MobileLogger getLog() {
+        return log;
+    }
+
+    public String getScriptDefault() {
+        return scriptDefault;
+    }
+
 
 }
