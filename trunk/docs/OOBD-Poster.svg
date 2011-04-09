@@ -180,7 +180,7 @@
      inkscape:window-width="1673"
      inkscape:window-height="1086"
      inkscape:window-x="0"
-     inkscape:window-y="22"
+     inkscape:window-y="24"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
@@ -190,7 +190,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -212,7 +212,7 @@
        id="image2886"
        height="452.13281"
        width="813.96625"
-       xlink:href="file:///home/steffen/Desktop/workcopies/oobd/trunk/docs/OOBD-CAR-3D-RENDER-6_2_03_03_2011.jpg"
+       xlink:href="file:///home/steffen/Desktop/workcopies/oobd/trunk/docs/OOBD_3d_black.jpg"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <g
