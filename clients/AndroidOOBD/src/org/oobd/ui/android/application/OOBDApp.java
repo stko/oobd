@@ -10,12 +10,18 @@ import org.oobd.base.IFsystem;
 import org.oobd.base.IFui;
 
 import org.oobd.base.support.Onion;
+import org.oobd.ui.android.Diagnose;
 import org.oobd.ui.android.DiagnoseItem;
+import org.oobd.ui.android.MainActivity;
 import org.oobd.ui.android.R;
 
+import android.app.AlertDialog;
 import android.app.Application;
+import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * @author Andreas Budde, Peter Mayer
@@ -48,20 +54,47 @@ public class OOBDApp extends Application implements IFsystem {
 
 
 
-    public InputStream generateResourceStream(int pathID, String ResourceName) throws java.util.MissingResourceException {
+    public InputStream generateResourceStream(int pathID, String resourceName) throws java.util.MissingResourceException {
+    	Log.v(this.getClass().getSimpleName(), "Try to load: " + resourceName + " with path ID : " + pathID);
+    	InputStream resource = null;
         if (pathID == OOBDConstants.FT_PROPS ) {  // Achtung: Hier wird der ResourceName nicht weiter beachtet, weil nur hardcoded der oobdcore verwendet wird. Ist das so richtig
-                Resources res = OOBDApp.getInstance().getApplicationContext().getResources();
-                return res.openRawResource(R.raw.oobdcore);
-        } else {
-            if (pathID == OOBDConstants.FT_SCRIPT) {
+        		if (resourceName.contains("oobdcore"))
+        			resource = OOBDApp.getInstance().getApplicationContext().getResources().openRawResource(R.raw.oobdcore);
+        		else if (resourceName.contains("enginelua"))
+        			resource = OOBDApp.getInstance().getApplicationContext().getResources().openRawResource(R.raw.enginelua);
+        		else if (resourceName.contains("buscom"))
+        			resource = OOBDApp.getInstance().getApplicationContext().getResources().openRawResource(R.raw.buscom);
+        		
+                Log.v(this.getClass().getSimpleName(), "File " + resourceName + " could be loaded from /res/raw");
+                return resource;
+        } else if (pathID == OOBDConstants.FT_SCRIPT) {
+        	try {
+        		//InputStream resource = new FileInputStream("/sdcard/stdlib.lbc");
+        		resource = new FileInputStream("/sdcard/oobd/" + resourceName);
+        		Log.v(this.getClass().getSimpleName(), "File " + resourceName + " could be loaded from /sdcard/oobd");
+        		return resource;
+        	} catch (IOException e) {
+        		Log.e(this.getClass().getSimpleName(), "Script not found on SDCard or SDCard not available. Try to read from /assets");
             	try {
-            		return OOBDApp.getInstance().getAssets().open(ResourceName);
+            		resource = OOBDApp.getInstance().getAssets().open(resourceName);
+            		Log.v(this.getClass().getSimpleName(), "File " + resourceName + ": default file loaded from /assets instead of sdcard.");
+            		
+            		// inform user in Dialog Box:
+                    MainActivity.getMyMainActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                        	Toast.makeText(MainActivity.getMyMainActivity().getApplicationContext(), "Skript on SDCard not found. Loading default Script.", Toast.LENGTH_LONG).show();
+                        }
+                    });
+            		return resource;
             	} catch (IOException ex) {
-                    throw new java.util.MissingResourceException("Resource not found", "OOBDApp", ResourceName);
-                }	
-            } else {
-                throw new java.util.MissingResourceException("Resource not known", "OOBDApp", ResourceName);
-            }
+            		Log.e(this.getClass().getSimpleName(), "Script also not found in local directory /assets");
+                    throw new java.util.MissingResourceException("Resource not found", "OOBDApp", resourceName);
+                }
+        	}
+	
+        } else {
+            throw new java.util.MissingResourceException("Resource not known", "OOBDApp", resourceName);
         }
     }
 
