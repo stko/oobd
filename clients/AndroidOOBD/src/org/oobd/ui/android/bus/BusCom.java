@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 import org.oobd.base.*;
 import org.oobd.base.bus.*;
 import org.oobd.base.support.Onion;
+import org.oobd.ui.android.application.OOBDApp;
 import org.json.JSONException;
 
 
@@ -15,7 +16,7 @@ import android.util.Log;
 import java.io.*;
 import java.util.*;
 
-public class AndroidBusCom extends OobdBus implements OOBDConstants {
+public class BusCom extends OobdBus implements OOBDConstants {
 
     InputStream inputStream;
     Thread readThread;
@@ -25,8 +26,8 @@ public class AndroidBusCom extends OobdBus implements OOBDConstants {
 
     
     
-    public AndroidBusCom() {
-        Debug.msg("buscom", DEBUG_BORING, "Ich bin BusCom...");
+    public BusCom() {
+        Debug.msg("buscom", DEBUG_BORING, "Ich bin Android BusCom...");
 
     }
 
@@ -51,7 +52,9 @@ public class AndroidBusCom extends OobdBus implements OOBDConstants {
         //TODO check whether these properties are needed
         Properties props = new Properties();
         try {
-            props.load(new FileInputStream("resources/buscom.props"));
+            //props.load(new FileInputStream("resources/buscom.props"));        	
+        	props.load(OOBDApp.getInstance().generateResourceStream(
+        				FT_PROPS, OOBDApp.getInstance().generateUIFilePath(FT_PROPS, "buscom.props")));
         } catch (IOException ignored) {
         	System.out.println ("buscom.props not found - Does not matter in Android Version");
         }
@@ -65,7 +68,7 @@ public class AndroidBusCom extends OobdBus implements OOBDConstants {
         }
         catch (IOException ex) {
         	Log.e(this.getClass().getSimpleName(), "Error: Could not connect socket.");
-        	Logger.getLogger(AndroidBusCom.class.getName()).log(Level.SEVERE, null, ex);
+        	Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
         }
         
 
@@ -97,7 +100,7 @@ public class AndroidBusCom extends OobdBus implements OOBDConstants {
                             + "{'name':'" + getPluginName() + "'},"
                             + "'result':'" + "" + "'}"));
                 } catch (JSONException ex) {
-                    Logger.getLogger(AndroidBusCom.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
                 } 
 
             } else if ("serFlush".equalsIgnoreCase(command)) {
@@ -109,7 +112,7 @@ public class AndroidBusCom extends OobdBus implements OOBDConstants {
                             + "{'name':'" + getPluginName() + "'},"
                             + "'result':'" + "" + "'}"));
                 } catch (JSONException ex) {
-                    Logger.getLogger(AndroidBusCom.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else if ("serWait".equalsIgnoreCase(command)) {
                 try {
@@ -125,7 +128,7 @@ public class AndroidBusCom extends OobdBus implements OOBDConstants {
                             + "'replyID':"+on.getInt("replyID")
                             + "}"));
                 } catch (JSONException ex) {
-                    Logger.getLogger(AndroidBusCom.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
                 } 
 
 
@@ -148,7 +151,7 @@ public class AndroidBusCom extends OobdBus implements OOBDConstants {
                             + "'replyID':"+on.getInt("replyID")+ ","
                             + "'result':'" + String.valueOf(Base64Coder.encode(result.getBytes())) + "'}"));
                 } catch (JSONException ex) {
-                    Logger.getLogger(AndroidBusCom.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             } else {
@@ -160,7 +163,7 @@ public class AndroidBusCom extends OobdBus implements OOBDConstants {
                             + "{'name':'" + getPluginName() + "'},"
                             + "'result':'" + "" + "'}"));
                 } catch (JSONException ex) {
-                    Logger.getLogger(AndroidBusCom.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             Debug.msg("buscom", DEBUG_BORING, "waked up after received msg...");
@@ -172,7 +175,7 @@ public class AndroidBusCom extends OobdBus implements OOBDConstants {
         }
         catch (IOException ex) {
         	Log.e(this.getClass().getSimpleName(), "Error: Could not close socket.");
-        	Logger.getLogger(AndroidBusCom.class.getName()).log(Level.SEVERE, null, ex);
+        	Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

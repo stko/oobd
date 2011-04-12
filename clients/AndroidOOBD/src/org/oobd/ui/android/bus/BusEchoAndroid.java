@@ -63,7 +63,7 @@ public class BusEchoAndroid extends OobdBus implements OOBDConstants{
                             + "{'name':'" + getPluginName() + "'},"
                             + "'result':'" + "" + "'}"));
                 } catch (JSONException ex) {
-                    Logger.getLogger(AndroidBusCom.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
                 } 
 
             } else if ("serFlush".equalsIgnoreCase(command)) {
@@ -75,7 +75,7 @@ public class BusEchoAndroid extends OobdBus implements OOBDConstants{
                             + "{'name':'" + getPluginName() + "'},"
                             + "'result':'" + "" + "'}"));
                 } catch (JSONException ex) {
-                    Logger.getLogger(AndroidBusCom.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else if ("serWait".equalsIgnoreCase(command)) {
                 try {
@@ -91,7 +91,7 @@ public class BusEchoAndroid extends OobdBus implements OOBDConstants{
                             + "'replyID':"+on.getInt("replyID")
                             + "}"));
                 } catch (JSONException ex) {
-                    Logger.getLogger(AndroidBusCom.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
                 } 
 
 
@@ -114,7 +114,7 @@ public class BusEchoAndroid extends OobdBus implements OOBDConstants{
                             + "'replyID':"+on.getInt("replyID")+ ","
                             + "'result':'" + String.valueOf(Base64Coder.encode(new String ("41 0C 66 E0").getBytes())) + "'}"));
                 } catch (JSONException ex) {
-                    Logger.getLogger(AndroidBusCom.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             } else {
@@ -126,7 +126,7 @@ public class BusEchoAndroid extends OobdBus implements OOBDConstants{
                             + "{'name':'" + getPluginName() + "'},"
                             + "'result':'" + "" + "'}"));
                 } catch (JSONException ex) {
-                    Logger.getLogger(AndroidBusCom.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             Debug.msg("buscom", DEBUG_BORING, "waked up after received msg...");
