@@ -320,6 +320,7 @@ public class ScriptengineLua extends OobdScriptengine {
             }
         });
 
+        //TODO: can the following lines be deleted? Seems to be a debug fragment.
         File dir1 = new File(".");
         try {
             System.out.println("ScriptengineLua Current dir : " + dir1.getCanonicalPath());
@@ -331,8 +332,7 @@ public class ScriptengineLua extends OobdScriptengine {
         Properties props = new Properties();
         try {
             props.load(UISystem.generateResourceStream(FT_PROPS, UISystem.generateUIFilePath(FT_PROPS, "enginelua.props")));
-            System.out.println("Lua file " + props.getProperty("LuaDefaultScript", "OOBD.lbc"));
-            doScript(props.getProperty("LuaDefaultScript", "OOBD.lbc"));
+            doScript(props.getProperty("LuaDefaultScript", "oobd.lbc"));
         } catch (IOException ignored) {
             Debug.msg("ScriptengineLua", DEBUG_WARNING, "couldn't load properties");
         }

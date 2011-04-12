@@ -44,7 +44,7 @@ public interface OOBDConstants {
     public final static int VE_MENU = 0x01;
     public final static int VE_UPDATE = 0x02;
     public final static int VE_TIMER = 0x04;
-    // dedinitions for the different directories where the UI searches standard files in
+    // definitions for the different directories where the UI searches standard files in
     public final static int FT_PROPS = 0;
     public final static int FT_SCRIPT = 1;
     public final static int FT_BUS = 2;
