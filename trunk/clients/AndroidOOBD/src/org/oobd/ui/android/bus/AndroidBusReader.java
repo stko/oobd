@@ -43,7 +43,7 @@ public class AndroidBusReader implements Runnable {
         }
         catch (IOException ex) {
         	Log.e(this.getClass().getSimpleName(), "Error: Could not close socket.");
-        	Logger.getLogger(AndroidBusCom.class.getName()).log(Level.SEVERE, null, ex);
+        	Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -121,12 +121,12 @@ public class AndroidBusReader implements Runnable {
         while (true) {
 
             int input;
-
             if (socket != null) {
                 try {
                     input = inStreamReader.read();
                     if (input > 0) {
                         inBuffer.append((char) input);
+                        System.out.println ("Gelesenes Zeichen" + (char)input);
                     }
                 } catch (Exception e) {
                 }

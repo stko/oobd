@@ -7,7 +7,7 @@ ProtocolClassPath=org.oobd.base.protocol.ProtocolUDS
 ConnectorClassPath=org.oobd.base.connector.ConnectorLocal
 #----------------------------
 #Different Versions: Bus Echo / Android Bluetooth (BT does not work in emulator)
-BusClassPath=org.oobd.ui.android.bus.AndroidBusCom
+BusClassPath=org.oobd.ui.android.bus.BusCom
 BusClassPrefix=org.oobd.ui.android.bus.
 #BusClassPath=org.oobd.ui.android.bus.BusEchoAndroid
 #BusClassPrefix=org.oobd.ui.android.bus.
