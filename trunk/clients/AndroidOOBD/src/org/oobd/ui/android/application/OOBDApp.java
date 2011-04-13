@@ -80,12 +80,14 @@ public class OOBDApp extends Application implements IFsystem {
             		Log.v(this.getClass().getSimpleName(), "File " + resourceName + ": default file loaded from /assets instead of sdcard.");
             		
             		// inform user in Dialog Box:
+            		
                     MainActivity.getMyMainActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                         	Toast.makeText(MainActivity.getMyMainActivity().getApplicationContext(), "Skript on SDCard not found. Loading default Script.", Toast.LENGTH_LONG).show();
                         }
                     });
+                    
             		return resource;
             	} catch (IOException ex) {
             		Log.e(this.getClass().getSimpleName(), "Script also not found in local directory /assets");

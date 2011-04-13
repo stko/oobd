@@ -54,10 +54,6 @@ public class MainActivity extends Activity {
 		return true;
     }
     
-    public void startDiagnoseActivity() {
-    	startActivity(new Intent(MainActivity.this, Diagnose.class));
-    }
-    
     /**
      * Gets called when a menu item is selected (in this case settings)
      */

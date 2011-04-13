@@ -106,7 +106,8 @@ public class AndroidGui implements IFui {
 	@Override
 	public void openPageCompleted(String seID, String Name) {
 		// TODO Auto-generated method stub
-		MainActivity.getMyMainActivity().startDiagnoseActivity();
+		//MainActivity.getMyMainActivity().startDiagnoseActivity();
+		
 		Log.v(this.getClass().getSimpleName(), "...open page completed");
 		
 	}
