@@ -10,8 +10,10 @@ import org.oobd.base.support.Onion;
 public interface IFui  {
 
     /**
-     * just a test
-     * @todo remove test
+     * \brief append and shows a string in the output area
+     *
+     * The string is added to the content of the output area and the output area is made visible to the user
+     *
      * @param msg
      */
     public void sm(String msg);
