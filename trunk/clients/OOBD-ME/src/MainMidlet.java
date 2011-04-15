@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 
+import java.io.IOException;
 import javax.microedition.midlet.*;
 import com.sun.lwuit.Image;
 import com.sun.lwuit.Form;
@@ -17,6 +18,8 @@ import com.sun.lwuit.events.*;
 import com.sun.lwuit.layouts.*;
 import com.sun.lwuit.*;
 import javax.microedition.rms.*;
+import javax.microedition.io.*;
+import javax.wireless.messaging.*;
 
 
 
@@ -71,7 +74,7 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
                 scriptEngine.initRPC(callFrame, nArguments);
                 cellList = new List();
-                actPageName=scriptEngine.getString(0);
+                actPageName = scriptEngine.getString(0);
                 //scriptEngine.finishRPC(callFrame, nArguments);
                 System.out.println("Lua leaves openPage");
                 return 1;
@@ -256,10 +259,10 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
 
             startCommand = new Command("Start");
             configCommand = new Command("Config");
-           exitCommand = new Command("Exit");
+            exitCommand = new Command("Exit");
             f.addCommand(startCommand);
             f.addCommand(exitCommand);
-           f.addCommand(configCommand);
+            f.addCommand(configCommand);
             f.show();
             f.addCommandListener(this);
         }
@@ -343,8 +346,8 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
     public void setScript(String scriptFile) {
         if (scriptFile != null) {
             actScript = scriptFile;
-        }else{
-            actScript =scriptDefault;
+        } else {
+            actScript = scriptDefault;
         }
     }
 
@@ -414,8 +417,55 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
                 big.setText("");
             }
         });
+
+
+        try {
+            Class.forName(
+                    "javax.wireless.messaging.MessageConnection");
+
+            displayForm.addCommand(new Command("Send") {
+
+                public void actionPerformed(ActionEvent evt) {
+                    String appID = getAppProperty("MMS-ApplicationID");
+                    String address = "mms://+5550000:" + appID;
+                    address = "mms://steffen@koehlers.de";
+                    MessageConnection mmsconn = null;
+
+                    try {
+                        /** Open the message connection. */
+                        mmsconn = (MessageConnection) Connector.open(address);
+
+                        MultipartMessage mmmessage = (MultipartMessage) mmsconn.newMessage(
+                                MessageConnection.MULTIPART_MESSAGE);
+                        mmmessage.setAddress(address);
+
+                        byte[] textMsgBytes = outputArea.getBytes();
+                        MessagePart textPart = new MessagePart(textMsgBytes, 0, textMsgBytes.length, "text/plain",
+                                "message", "message text", "UTF-8");
+//Add parts to the message body
+                        mmmessage.addMessagePart(textPart);
+
+
+                        mmmessage.setSubject("MMS Text");
+                        mmsconn.send(mmmessage);
+                    } catch (Exception e) {
+                    }
+
+                    if (mmsconn != null) {
+                            try {
+                                mmsconn.close();
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+                    }
+                }
+            });
+        } catch (Exception e) {
+        }
+
+
+
         //addCommandListener(this);
         displayForm.show();
-
     }
 }
