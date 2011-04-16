@@ -18,8 +18,6 @@ import com.sun.lwuit.events.*;
 import com.sun.lwuit.layouts.*;
 import com.sun.lwuit.*;
 import javax.microedition.rms.*;
-import javax.microedition.io.*;
-import javax.wireless.messaging.*;
 
 
 
@@ -56,6 +54,7 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
     private static final String prefsURL = "BTMAC";
     private static final String prefsScript = "SCRIPT";
     private static final String prefsTheme = "THEME";
+    private static final String prefsMMS = "MMS";
     private static final String scriptDefault = "/OOBD.lbc";
     private static final String themeDefault = "/OOBDtheme.res";
     private String actTheme = themeDefault;
@@ -363,6 +362,18 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
         return actScript;
     }
 
+    public String getMmsAddress() {
+        if (mPreferences.get(prefsMMS)!=null){
+            return mPreferences.get(prefsMMS);
+        }else{
+            return "";
+        }
+    }
+
+    public void setMmsAddress(String MmsAddress) {
+        mPreferences.put(prefsMMS, MmsAddress);
+    }
+
     boolean tryToConnect() {
         if (!btComm.isConnected()) {
 
@@ -393,12 +404,12 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
 
     public void outputDisplayIfAny() {
         if (freshDisplayOutput) {
-            ShowWrite("", writeForm);
+            ShowWrite("", writeForm,this);
         }
     }
 
-    void ShowWrite(String content, final Form parent) {
-        Form displayForm = new Form("Output");
+    void ShowWrite(String content, final Form parent, final MainMidlet mainMidlet) {
+        final Form displayForm = new Form("Output");
         freshDisplayOutput = false;
         outputArea += content;
         final TextArea big = new TextArea(outputArea);
@@ -410,6 +421,20 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
                 parent.showBack();
             }
         });
+
+
+        try { // does the device support MMS???
+            Class.forName("javax.wireless.messaging.MessageConnection");
+
+            displayForm.addCommand(new Command("Send") {
+
+                public void actionPerformed(ActionEvent evt) {
+                    SendMMS sendMMS= new SendMMS(outputArea,displayForm, mainMidlet);
+                }
+            });
+        } catch (Exception e) {
+        }
+
         displayForm.addCommand(new Command("Clear") {
 
             public void actionPerformed(ActionEvent evt) {
@@ -417,52 +442,6 @@ public class MainMidlet extends MIDlet implements ActionListener, OutputDisplay/
                 big.setText("");
             }
         });
-
-
-        try {
-            Class.forName(
-                    "javax.wireless.messaging.MessageConnection");
-
-            displayForm.addCommand(new Command("Send") {
-
-                public void actionPerformed(ActionEvent evt) {
-                    String appID = getAppProperty("MMS-ApplicationID");
-                    String address = "mms://+5550000:" + appID;
-                    address = "mms://steffen@koehlers.de";
-                    MessageConnection mmsconn = null;
-
-                    try {
-                        /** Open the message connection. */
-                        mmsconn = (MessageConnection) Connector.open(address);
-
-                        MultipartMessage mmmessage = (MultipartMessage) mmsconn.newMessage(
-                                MessageConnection.MULTIPART_MESSAGE);
-                        mmmessage.setAddress(address);
-
-                        byte[] textMsgBytes = outputArea.getBytes();
-                        MessagePart textPart = new MessagePart(textMsgBytes, 0, textMsgBytes.length, "text/plain",
-                                "message", "message text", "UTF-8");
-//Add parts to the message body
-                        mmmessage.addMessagePart(textPart);
-
-
-                        mmmessage.setSubject("MMS Text");
-                        mmsconn.send(mmmessage);
-                    } catch (Exception e) {
-                    }
-
-                    if (mmsconn != null) {
-                            try {
-                                mmsconn.close();
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
-                            }
-                    }
-                }
-            });
-        } catch (Exception e) {
-        }
-
 
 
         //addCommandListener(this);
