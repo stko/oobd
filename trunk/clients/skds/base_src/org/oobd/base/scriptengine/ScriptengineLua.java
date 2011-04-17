@@ -34,6 +34,8 @@ import org.json.JSONException;
  */
 public class ScriptengineLua extends OobdScriptengine {
 
+    public static final String ENG_LUA_DEFAULT = "OOBD.lbc";
+    public static final String ENG_LUA_STDLIB = "stdlib.lbc";
     private LuaState state;
     private LuaCallFrame callFrame;
     private OobdScriptengine myself;
@@ -76,7 +78,7 @@ public class ScriptengineLua extends OobdScriptengine {
 
             //activate the following line in debugging mode (not necessary for emulator):
             //InputStream resource = OOBDApp.getInstance().getAssets().open("stdlib.lbc");
-            InputStream resource = UISystem.generateResourceStream(FT_SCRIPT, "stdlib.lbc");
+            InputStream resource = UISystem.generateResourceStream(FT_SCRIPT, ENG_LUA_STDLIB);
 
 
             state.call(LuaPrototype.loadByteCode(resource, state.getEnvironment()), null, null, null);
@@ -183,7 +185,10 @@ public class ScriptengineLua extends OobdScriptengine {
                             + "'timeout':'" + getInt(0) + "',"
                             + "'ignore':'" + Boolean.toString(getBoolean(1)) + "'}")), +getInt(0));
                     if (answer != null) {
-                        result = new String(Base64Coder.decodeString(answer.getContent().getString("result")));
+                        result = answer.getContent().getString("result");
+                        if (result != null && "".equals(result)) {
+                            result = new String(Base64Coder.decodeString(result));
+                        }
                         //} catch (IOException ex) {
                         //    Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
                         //}
@@ -331,8 +336,13 @@ public class ScriptengineLua extends OobdScriptengine {
 
         Properties props = new Properties();
         try {
-            props.load(UISystem.generateResourceStream(FT_PROPS, UISystem.generateUIFilePath(FT_PROPS, "enginelua.props")));
-            doScript(props.getProperty("LuaDefaultScript", "oobd.lbc"));
+            try {
+                props.load(UISystem.generateResourceStream(FT_PROPS, UISystem.generateUIFilePath(FT_PROPS, "enginelua.props")));
+
+            } catch (Exception e) {
+                doScript(ENG_LUA_DEFAULT);
+            }
+            doScript(props.getProperty("LuaDefaultScript", ENG_LUA_DEFAULT));
         } catch (IOException ignored) {
             Debug.msg("ScriptengineLua", DEBUG_WARNING, "couldn't load properties");
         }

@@ -80,6 +80,7 @@ File /oname=OOBD-Swing.jar  "dist/SKDS-Swing.jar"
 File /oname=buscom.props  "buscom_dist.props"
 File /oname=oobdcore.props  "oobdcore_dist.props"
 File "oobd.url"
+File "stdlib.lbc"
 File /oname=OOBD.lbc "../../../OOBD-ME/testscripts/OOBD.lbc"
 
 #FileOpen $0 $INSTDIR\file.dat w
@@ -107,6 +108,7 @@ Delete "$INSTDIR\OOBD-Swing.jar"
 Delete "$INSTDIR\oobd.url"
 Delete "$INSTDIR\*.props"
 Delete "$INSTDIR\OOBD.lbc"
+Delete "$INSTDIR\stdlib.lbc"
 Delete "$INSTDIR\uninstaller.exe"
 RMDir $INSTDIR
 Delete "$SMPROGRAMS\OOBD\OOBD-Swing\OOBD-Swing.lnk"
