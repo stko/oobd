@@ -42,6 +42,7 @@ import org.oobd.base.connector.OobdConnector;
 import org.oobd.base.protocol.OobdProtocol;
 import org.oobd.base.scriptengine.OobdScriptengine;
 import org.oobd.base.support.OnionNoEntryException;
+import org.oobd.base.support.History;
 import org.oobd.base.visualizer.Visualizer;
 
 /**
@@ -106,6 +107,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     static Core thisInstance; //Class variable points to only instance
     CoreTick ticker;
     Properties props;
+    History history;
     boolean runCore = true;
 
     /**
@@ -140,7 +142,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             System.out.println("OOBDCore.props not found");
         }
 
-
+        history=new History();
 
 
         File dir1 = new File(".");
@@ -480,7 +482,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
             if (myOnion.isType(CM_PAGE)) {
                 String dummy = myOnion.getOnionString("owner");
-
                 userInterface.openPage(myOnion.getOnionString("owner"), myOnion.getOnionString("name"), 1, 1);
             }
             if (myOnion.isType(CM_PAGEDONE)) {

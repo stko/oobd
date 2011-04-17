@@ -2,7 +2,9 @@ package skdsswing.bus;
 
 import java.io.*;
 import java.util.Vector;
-import gnu.io.*;
+//import gnu.io.*;
+import purejavacomm.*;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
