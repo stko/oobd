@@ -433,6 +433,7 @@ end
 
 function Start(oldvalue,id)
 	identifyOOBDInterface()
+	setTimeout(25)
 	openPage("OOBD-ME Main")
 	addElement("Sensor Data >", "createCMD01Menu",">>>",0x1, "")
         addElement("Snapshot Data >", "createCMD02Menu",">>>",0x1, "")
