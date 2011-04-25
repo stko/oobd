@@ -86,9 +86,11 @@ public class BusCom extends OobdBus implements OOBDConstants {
                 if (portId.getName().equals(defaultPort)) {
                     System.out.println("Found port: " + defaultPort);
                     portFound = true;
-                    // init reader thread
-
-                    reader.connect(portId);
+                    try {
+                        reader.connect(portId);
+                    } catch (IOException ex) {
+                        Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
 
