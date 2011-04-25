@@ -2,6 +2,7 @@ package skdsswing.bus;
 
 import java.io.*;
 import java.util.Vector;
+//import javax.comm.*;// for SUN's serial/parallel port libraries
 //import gnu.io.*;
 import purejavacomm.*;
 
@@ -12,29 +13,33 @@ public class ComReader implements Runnable {
 
     public String URL = null;
     private StringBuffer inBuffer = new StringBuffer();
-    SerialPort serialPort;
-    InputStream inStream;
-    OutputStream outStream;
-    InputStreamReader inStreamReader;
-    OutputStreamWriter outStreamWriter;
+    SerialPort serialPort = null;
+    InputStream inStream = null;
+    OutputStream outStream = null;
+    // InputStreamReader inStreamReader;
+    // OutputStreamWriter outStreamWriter;
 
     public ComReader() {
         new Thread(this).start();
     }
 
-    public void connect(CommPortIdentifier portId) {
+    public void connect(CommPortIdentifier portId) throws IOException {
         try {
             serialPort = (SerialPort) portId.open("SimpleReadApp", 2000);
-            try {
-                serialPort.setSerialPortParams(115200, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-                serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
-            } catch (UnsupportedCommOperationException ex) {
-                throw new IOException("Unsupported serial port parameter");
-            }
+
+            serialPort.setSerialPortParams(115200, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+            //serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
+            serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
+            serialPort.enableReceiveTimeout(5);
+
             inStream = serialPort.getInputStream();
-            inStreamReader = new InputStreamReader(inStream);
+            // inStreamReader = new InputStreamReader(inStream);
             outStream = serialPort.getOutputStream();
-            outStreamWriter = new OutputStreamWriter(outStream, "iso-8859-1");
+            //outStreamWriter = new OutputStreamWriter(outStream, "iso-8859-1");
+            serialPort.enableReceiveTimeout(5);
+        } catch (UnsupportedCommOperationException ex) {
+            throw new IOException("Unsupported serial port parameter");
+
         } catch (PortInUseException ex) {
             Logger.getLogger(ComReader.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -53,12 +58,12 @@ public class ComReader implements Runnable {
     public void close() {
         if (serialPort != null) {
             try {
-                inStreamReader.close();
-                inStreamReader = null;
+//                inStreamReader.close();
+//                inStreamReader = null;
                 inStream.close();
                 inStream = null;
-                outStreamWriter.close();
-                outStreamWriter = null;
+                //               outStreamWriter.close();
+                //               outStreamWriter = null;
                 outStream.close();
                 outStream = null;
 
@@ -71,10 +76,11 @@ public class ComReader implements Runnable {
     }
 
     public synchronized void write(char c) {
-        if (serialPort != null) {
+        if (outStream != null) {
             try {
-                outStreamWriter.write(c);
-                outStreamWriter.flush();
+                //outStreamWriter.write(c);
+                outStream.write(c);
+                //outStream.flush();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -82,11 +88,11 @@ public class ComReader implements Runnable {
     }
 
     public synchronized void write(String s) {
-        if (serialPort != null) {
+        if (outStream != null) {
             try {
                 System.out.println("Serial output:" + s);
-                outStreamWriter.write(s);
-                outStreamWriter.flush();
+                outStream.write(s.getBytes(), 0, s.length());
+                //outStream.flush();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -95,10 +101,10 @@ public class ComReader implements Runnable {
 
     public synchronized char readChar() {
         int inChar = -1;
-        if (serialPort != null) {
+        if (inStream != null) {
             try {
                 if (inStream.available() > 0) {
-                    inChar = inStreamReader.read();
+                    inChar = inStream.read();
                     return (char) inChar;
                 }
             } catch (Exception e) {
@@ -111,43 +117,57 @@ public class ComReader implements Runnable {
 
     public synchronized boolean isEmpty() {
         try {
-            return (!(serialPort != null && inStream.available() == 0));
+            return (!(inStream != null && inStream.available() == 0));
         } catch (Exception e) {
             e.printStackTrace();
         }
         return true;
     }
 
+    /**
+     * \todo this routine actual polls, but as e.g. shown in the purejavacomm- Demo (),
+     * the reveice can also be done as an EventListener
+     */
     public void run() {
         System.out.println(" Serial Thread has started");
         while (true) {
 
             int input;
+            int n;
 
             if (serialPort != null) {
                 try {
-                    input = inStreamReader.read();
-                    if (input > 0) {
-                        inBuffer.append((char) input);
-                    }else{
-                                            try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        // the VM doesn't want us to sleep anymore,
-                        // so get back to work
-                        }
+                    if (inStream != null) {
+                        n = inStream.available();
+                        if (n > 0) {
+                            byte[] buffer = new byte[n];
+                            n = inStream.read(buffer, 0, n);
+                            for (int i = 0; i < n; ++i) {
+                                inBuffer.append((char) buffer[i]);
+                            }
+                        } else {
+                            try {
+                                Thread.sleep(10);
+                            } catch (InterruptedException e) {
+                                // the VM doesn't want us to sleep anymore,
+                                // so get back to work
+                                e.printStackTrace();
 
+                            }
+                        }
                     }
+
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            }else{
+            } else {
                 // as this thread runs in an unstopped endless loop, as long there's no serial port open, we need to slow him down here...
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        // the VM doesn't want us to sleep anymore,
-                        // so get back to work
-                    }
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    // the VM doesn't want us to sleep anymore,
+                    // so get back to work
+                }
             }
         }
     }
@@ -163,7 +183,7 @@ public class ComReader implements Runnable {
         return serialPort != null;
     }
 
-    public int read() {
+    public synchronized int read() {
         if (serialPort != null) {
             if (inBuffer.length() > 0) {
                 char c = inBuffer.charAt(0);
@@ -171,8 +191,9 @@ public class ComReader implements Runnable {
                 return (int) c;
             } else {
                 return -1;
-            }
-            /*       if (btConnection != null) {
+
+
+            } /*       if (btConnection != null) {
             return btConnection.read();
             }
              */
@@ -195,7 +216,7 @@ public class ComReader implements Runnable {
                 }
                 if (c == 10) { // LF detected, condition meet
                     //res+=".";
-                   doLoop = res.equals("") && ignoreEmptyLines;
+                    doLoop = res.equals("") && ignoreEmptyLines;
                 }
             } else {
                 if (waitForever) {

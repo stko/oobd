@@ -168,12 +168,6 @@ public class ScriptengineLua extends OobdScriptengine {
             public int call(LuaCallFrame callFrame, int nArguments) {
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
                 initRPC(callFrame, nArguments);
-                if (getBoolean(1) == true) {
-                } else {
-                    if (getBoolean(1) == false) {
-                    } else {
-                    }
-                }
                 String result = "";
                 Message answer = null;
                 try {
@@ -186,7 +180,7 @@ public class ScriptengineLua extends OobdScriptengine {
                             + "'ignore':'" + Boolean.toString(getBoolean(1)) + "'}")), +getInt(0));
                     if (answer != null) {
                         result = answer.getContent().getString("result");
-                        if (result != null && "".equals(result)) {
+                        if (result != null && result.length() > 0) {
                             result = new String(Base64Coder.decodeString(result));
                         }
                         //} catch (IOException ex) {
@@ -196,12 +190,6 @@ public class ScriptengineLua extends OobdScriptengine {
                 } catch (JSONException ex) {
                     Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
-
-//                    if (btComm != null) {
-//                        result = btComm.readln(getInt(0), getBoolean(1));
-//                        //result = btComm.readln(2000, true);
-//                    }
                 callFrame.push(result.intern());
                 finishRPC(callFrame, nArguments);
                 return 1;

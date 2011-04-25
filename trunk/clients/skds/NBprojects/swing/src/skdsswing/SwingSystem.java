@@ -7,6 +7,7 @@ package skdsswing;
 import java.io.FileNotFoundException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.FileHandler;
 import java.util.HashMap;
 import org.oobd.base.*;
 import org.oobd.base.OOBDConstants;
@@ -51,6 +52,7 @@ public class SwingSystem implements IFsystem {
                     < files.length; i++) {
                 // split file name into name and extension
             	System.out.println("File, das als Klasse zu laden ist: " + files[i].getName());
+                Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File, das als Klasse zu laden ist: " + files[i].getName());
                 String name[] = files[i].getName().split("\\.");
                 // only class names without $ are taken
                 if (name.length > 1 && name[1].equals("class") && name[1].indexOf("$") == -1) {
