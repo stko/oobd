@@ -298,6 +298,7 @@ obp_uds (void *pvParameters)
   struct UdsConfig
   {
     portBASE_TYPE recvID, //!< Module ID
+      sendID, 		  //!< sender ID, used when the expected answer ID <> recvID || 8
       timeout,            //!< timeout in systemticks
       listen,             //!< listen level
       bus,                //!< id of actual used bus
@@ -310,6 +311,7 @@ obp_uds (void *pvParameters)
 
   /* Init default parameters */
   config.recvID = 0x7DF;
+  config.sendID = 0x00; // 0 disables special sendID
   config.timeout = 6;
   config.listen = 0;
   config.bus = 3;
@@ -354,7 +356,7 @@ obp_uds (void *pvParameters)
 	      }
 	      DEBUGPRINT ("Tester address %2X PCI %2X\n", dp->recv,
 			  dp->data[0]);
-	      if (dp->recv == config.recvID + 8)
+	      if ((config.sendID ==0 ? dp->recv == ( config.recvID || 8 ) : dp->recv == config.sendID ))
 		{		/* Tester Address? */
 		  if (dp->data[0] == 0x03 && dp->data[1] == 0x7f && dp->data[2] == 0x78)	//Response pending
 		    {
@@ -628,6 +630,9 @@ obp_uds (void *pvParameters)
 		  break;
 		case PARAM_RECVID:
 		  config.recvID = paramData[1];
+		  break;
+		case PARAM_SENDID:
+		  config.sendID = paramData[1];
 		  break;
 		case PARAM_TP_ON:
 		  tp_Flags[reduceID (paramData[1])] = config.tpFreq;

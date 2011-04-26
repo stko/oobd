@@ -130,6 +130,7 @@
 #define PARAM_TP_OFF                ( 13 )
 #define PARAM_TP_FREQ               ( 14 )
 #define ODB_CMD_RECV		    ( 15 )	//!< only for internal use: sets the callback routine when receiving a bus packet
+#define PARAM_SENDID  		    ( 16 )
 #define PARAM_RESET           ( 99 )
 
 /* define values of parameter */

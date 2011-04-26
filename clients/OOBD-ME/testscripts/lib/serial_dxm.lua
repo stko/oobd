@@ -78,7 +78,7 @@ udsBuffer = {}
 udslen =0
 receive = null
 setTimeout = null
-
+setSendID =null
 hardwareID =""
 
 function getStringPart(text, index)
@@ -116,7 +116,12 @@ function setTimeout_OOBD(timeout)
   echoWrite("p 7 "..timeout.."\r\n")
 end
 
-function setTimeout_DXM(timeout)
+-- set sender address - only needed for OOBD 
+function setSendID_OOBD(addr)
+  echoWrite("p 16 "..addr.."\r\n")
+end
+
+function doNothing(value)
 -- do nothing
 end
 
@@ -304,13 +309,15 @@ function identifyOOBDInterface()
 	if answ=="OOBD" then
 	  receive = receive_OOBD
 	  setTimeout = setTimeout_OOBD
+	  setSendID = setSendID_OOBD
 	  hardwareID="OOBD"
 	  -- to support older OOBD firmware, set the Module-ID to functional address
 	  echoWrite("p 11 $7DF\r\n")
 
 	else
 	  receive = receive_DXM
-	  setTimeout = setTimeout_DXM
+	  setTimeout = doNothing
+	  setSendID = doNothing
 	  hardwareID="DXM"
 	end
 	print ("Hardware found: ", hardwareID)

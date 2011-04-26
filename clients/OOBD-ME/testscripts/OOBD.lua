@@ -433,7 +433,7 @@ end
 
 function Start(oldvalue,id)
 	identifyOOBDInterface()
-	setTimeout(25)
+	setSendID("$7E8") -- set not UDS compatible sender (=answer) address for OOBD firmware
 	openPage("OOBD-ME Main")
 	addElement("Sensor Data >", "createCMD01Menu",">>>",0x1, "")
         addElement("Snapshot Data >", "createCMD02Menu",">>>",0x1, "")
