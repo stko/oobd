@@ -7,7 +7,9 @@ package org.oobd.mobile;
 
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.Hashtable;
+import java.util.TimeZone;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 import javax.microedition.lcdui.Command;
@@ -53,7 +55,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     private String actScript = scriptDefault;
     private LuaScript scriptEngine;
     //private List cellList;
-    private boolean blindMode=true; // TODO Remember to set BlindMode to "false"
+    private boolean blindMode=false; // TODO Remember to set BlindMode to "false"
     
     private Command exitCmd;
     Hashtable scriptTable;
@@ -61,13 +63,15 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     private String actPageName;
     private ScriptForm scriptWindow;
     public MobileLogger log;
+    private Calendar cal;
 
 
     public void startApp() {
 
         log = new MobileLogger(this);
+        cal=Calendar.getInstance(TimeZone.getDefault());
 
-        log.log("App started");
+        log.log("App started at: "+cal.getTime().toString());
 
         display = Display.getDisplay(this);
         if (!initialized){
@@ -90,9 +94,6 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
             } catch (RecordStoreException rse) {
             }
             
-            log.log("Prefs loaded");
-            
-            
             mainwindow = new Form("OOBD-MEv2",null);
             mainwindow.setCommandListener(this);
 
@@ -100,11 +101,11 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
             mainwindow.addCommand(confCmd);
             startCmd = new Command("Start", Command.OK,0);
             mainwindow.addCommand(startCmd);
-            infoCmd = new Command("Info", Command.HELP, 1);
+            infoCmd = new Command("Info", Command.HELP, 4);
             mainwindow.addCommand(infoCmd);
             logCmd = new Command("Show Log", Command.HELP,2);
             mainwindow.addCommand(logCmd);
-            exitCmd = new Command("Exit", Command.EXIT,0);
+            exitCmd = new Command("Exit", Command.EXIT,5);
             mainwindow.addCommand(exitCmd);
 
             Image logo=null;
@@ -134,7 +135,9 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
         } catch (RecordStoreException ex) {
             ex.printStackTrace();
         }
+        log.log("Destroy App called, trying to close BT connection");
         btComm.Closeconnection();
+        
         display.setCurrent(null);
             notifyDestroyed();
         
@@ -160,6 +163,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
 
                     System.out.println("Try to load script " + actScript);
                     scriptEngine.doScript(actScript);
+                    log.log("Script: "+actScript+" loaded!");
                     System.out.println("Script loaded!");
                     if (!actScript.equals(scriptDefault)) {
                         mPreferences.put(scriptKey, actScript);
@@ -261,7 +265,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
 
         scriptEngine.register("pageDoneCall", new JavaFunction() {
             public int call(LuaCallFrame callFrame, int nArguments) {
-                System.out.println("Lua calls pageDone");
+//                log.log("LUA calls pageDone");
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
                 scriptEngine.initRPC(callFrame, nArguments);                
                 scriptEngine.finishRPC(callFrame, nArguments);
@@ -361,11 +365,11 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
                 scriptEngine.initRPC(callFrame, nArguments);
                 scriptWindow.showMessage(scriptEngine.getString(0));
+                log.log("LUA message call: "+scriptEngine.getString(0));
                 scriptEngine.finishRPC(callFrame, nArguments);
                 return 1;
             }
         });
-
     }
 
     public String getActScript() {

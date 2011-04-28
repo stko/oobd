@@ -14,6 +14,7 @@ import javax.bluetooth.ServiceRecord;
  */
 public class BluetoothDeviceDiscovery implements DiscoveryListener{
 	//object used for waiting
+        public static LocalDevice localDevice;
 
 	public static Object lock=new Object();
 	//vector containing the devices discovered
@@ -23,7 +24,7 @@ public class BluetoothDeviceDiscovery implements DiscoveryListener{
 		//create an instance of this class
 		BluetoothDeviceDiscovery bluetoothDeviceDiscovery=new BluetoothDeviceDiscovery();
 		//display local device address and name
-		LocalDevice localDevice = LocalDevice.getLocalDevice();
+		localDevice = LocalDevice.getLocalDevice();
 		//System.out.println("Address: "+localDevice.getBluetoothAddress());
 	//	System.out.println("Name: "+localDevice.getFriendlyName());
 		//find devices

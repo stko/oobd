@@ -83,7 +83,7 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
         if (resetMessage){
             messageForm=new Form("Message");
             messageForm.setCommandListener(this);
-            backCommand = new Command("BACK", Command.BACK, 0);
+            backCommand = new Command("Back", Command.BACK, 0);
             messageForm.addCommand(backCommand);
             resetMessage=false;
         }
