@@ -47,7 +47,7 @@ public class Preferences {
                 String name = pref.substring(0, index);
                 String value = pref.substring(index + 1);
                 put(name, value);
-                log.log("Loaded: "+name+" -> "+value);
+//                log.log("Loaded: "+name+" -> "+value);
             }
         } finally {
             if (re != null) {
@@ -80,7 +80,7 @@ public class Preferences {
                 String pref = key + "|" + value;
                 byte[] raw = pref.getBytes();
                 rs.addRecord(raw, 0, raw.length);
-                log.log("Stored: "+key+" -> "+value);
+//                log.log("Stored: "+key+" -> "+value);
             }
         } finally {
             if (re != null) {
@@ -88,7 +88,7 @@ public class Preferences {
             }
             if (rs != null) {
                 rs.closeRecordStore();
-                log.log("RecordStore closed");
+//                log.log("RecordStore closed");
             }
         }
     }

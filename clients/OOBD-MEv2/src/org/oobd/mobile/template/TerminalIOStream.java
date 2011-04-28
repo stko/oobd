@@ -3,6 +3,7 @@ package org.oobd.mobile.template;
 
 import javax.microedition.io.StreamConnection;
 import java.io.*;
+import org.oobd.mobile.MobileLogger;
 
 /**
  *
@@ -16,9 +17,11 @@ public class TerminalIOStream {
     OutputStreamWriter outStreamWriter;
     StreamConnection connection;
     boolean setUp = false;
+    private MobileLogger log;
 
     /** Creates a new instance of TerminalOutputStream */
-    public TerminalIOStream(StreamConnection connection) {
+    public TerminalIOStream(StreamConnection connection, MobileLogger log) {
+        this.log = log;
         try {
             inStream = connection.openInputStream();
             inStreamReader = new InputStreamReader(inStream);
@@ -27,7 +30,7 @@ public class TerminalIOStream {
             setUp = true;
             this.connection = connection;
         } catch (IOException ex) {
-            ex.printStackTrace();
+            log.log(ex.toString());
         }
     }
 
@@ -37,7 +40,7 @@ public class TerminalIOStream {
                 outStreamWriter.write(c);
                 outStreamWriter.flush();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                log.log(ex.toString());
             }
         }
     }
@@ -48,7 +51,7 @@ public class TerminalIOStream {
                 outStreamWriter.write(s);
                 outStreamWriter.flush();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                log.log(ex.toString());
             }
         }
     }
@@ -61,8 +64,8 @@ public class TerminalIOStream {
                     inChar = inStreamReader.read();
                     return (char) inChar;
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ex) {
+                log.log(ex.toString());
             }
         }
         return (char) 0;
@@ -72,8 +75,8 @@ public class TerminalIOStream {
     public synchronized boolean isEmpty() {
         try {
             return (!(setUp && inStream.available() == 0));
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            log.log(ex.toString());
         }
         return true;
     }
@@ -83,17 +86,24 @@ public class TerminalIOStream {
             try {
                 inStreamReader.close();
                 inStreamReader = null;
+                log.log("inStreamReader closed");
+                
                 inStream.close();
                 inStream = null;
+                log.log("inStream closed");
+                
                 outStreamWriter.close();
                 outStreamWriter = null;
+                log.log("outStreamWriter closed");
+                
                 outStream.close();
                 outStream = null;
+                log.log("outStream closed");                
 
                 connection.close();
                 connection = null;
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ex) {
+                log.log("b: "+ex.toString());
             }
         }
     }

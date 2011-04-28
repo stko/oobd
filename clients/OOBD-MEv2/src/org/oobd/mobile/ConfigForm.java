@@ -69,8 +69,8 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
 
     public void commandAction(Command c, Item item) {
         if (c==btCmd){
-            Form scanning = new Form("Scanning");
-            scanning.append("Scanning for Bluetooth devices");
+            Form scanning = new Form("Scanning...");
+            scanning.append("...for Bluetooth devices");
             display.setCurrent(scanning);
             btComm.getDeviceURL(this, display);
             //TODO Improve Bluetooth choice
@@ -83,11 +83,11 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
                 fileBrowser.addCommand(FileBrowser.SELECT_FILE_COMMAND);
                 fileBrowser.addCommand(backCmd);
             }
-            else if (c==defaultCmd){
-                scriptConf.setString(mainMidlet.getScriptDefault());
-                mainMidlet.setScript(mainMidlet.getScriptDefault());
-            }
             display.setCurrent(fileBrowser);
+        }
+        else if (c==defaultCmd){
+            scriptConf.setString(mainMidlet.getScriptDefault());
+            mainMidlet.setScript(mainMidlet.getScriptDefault());
         }
     }
     
