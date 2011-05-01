@@ -78,7 +78,7 @@ udsBuffer = {}
 udslen =0
 receive = null
 setTimeout = null
-setSendID =null
+
 hardwareID =""
 
 function getStringPart(text, index)
@@ -103,6 +103,33 @@ function getStringPart(text, index)
     
 end
 
+-- translate DTC bytes into their offical notation
+-- as descripted on http://en.wikipedia.org/wiki/OBD-II_PIDs (30.4.11)
+
+function translateDTC(highByte, lowByte)
+  hNibble= (highByte -(highByte % 16)) / 16 -- tricky to do an integer devide with luas float numbers..
+  lNibble =highByte % 16
+  start = "??"
+  if hNibble ==  0 then start = "P0" end
+  if hNibble ==  1 then start = "P1" end
+  if hNibble ==  2 then start = "P2" end
+  if hNibble ==  3 then start = "P3" end
+  if hNibble ==  4 then start = "C0" end
+  if hNibble ==  5 then start = "C1" end
+  if hNibble ==  6 then start = "C2" end
+  if hNibble ==  7 then start = "C3" end
+  if hNibble ==  8 then start = "B0" end
+  if hNibble ==  9 then start = "B1" end
+  if hNibble == 10 then start = "B2" end
+  if hNibble == 11 then start = "B3" end
+  if hNibble == 12 then start = "U0" end
+  if hNibble == 13 then start = "U1" end
+  if hNibble == 14 then start = "U2" end
+  if hNibble == 15 then start = "U3" end
+  return start..string.format("%X",lNibble)..string.format("%02X",lowByte)
+end
+
+
 function notyet(oldvalue,id)
 	return "not implemented yet"
 end
@@ -116,12 +143,7 @@ function setTimeout_OOBD(timeout)
   echoWrite("p 7 "..timeout.."\r\n")
 end
 
--- set sender address - only needed for OOBD 
-function setSendID_OOBD(addr)
-  echoWrite("p 16 "..addr.."\r\n")
-end
-
-function doNothing(value)
+function setTimeout_DXM(timeout)
 -- do nothing
 end
 
@@ -309,15 +331,13 @@ function identifyOOBDInterface()
 	if answ=="OOBD" then
 	  receive = receive_OOBD
 	  setTimeout = setTimeout_OOBD
-	  setSendID = setSendID_OOBD
 	  hardwareID="OOBD"
 	  -- to support older OOBD firmware, set the Module-ID to functional address
 	  echoWrite("p 11 $7DF\r\n")
 
 	else
 	  receive = receive_DXM
-	  setTimeout = doNothing
-	  setSendID = doNothing
+	  setTimeout = setTimeout_DXM
 	  hardwareID="DXM"
 	end
 	print ("Hardware found: ", hardwareID)
