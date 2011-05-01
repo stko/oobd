@@ -26,8 +26,8 @@ public class MessagePort {
      *
      * This function is called by the core when a message for the messageport owner comes in.
      *
-     * As it need to be sure, that an unexpected system message does not wake up a task who is waiting for an answer to a message he has sented, the messages are been
-     * sorted into the reveive msq quere and the task is waked up then accourdingly.
+     * As it need to be sure, that an unexpected system message does not wake up a task who is waiting for an answer to a message he has sented, the messages with a reply ID are been
+     * sorted into the reveive msq quere as first and the task is waked up then accourdingly.
      *
      * @param thisMessage
      */
@@ -38,14 +38,15 @@ public class MessagePort {
         } catch (JSONException ex) {
             thisReplyID = -1;
         }
-        if (thisReplyID == waitingforID) { //only if this is really the message we are waiting for, otherways just delete this obviously old reply
-            synchronized (myMsgs) {
-                myMsgs.insertElementAt(thisMessage, 0); //put the message as the first one in the message quere
-                waitingforID = 0; // reset the waitingFor Flag
-                myMsgs.notify();
+        if (thisReplyID > 0) { // this is a reply for something
+            if (thisReplyID == waitingforID) { //only if this is really the message we are waiting for, otherways just forget this obviously old reply
+                synchronized (myMsgs) {
+                    myMsgs.insertElementAt(thisMessage, 0); //put the message as the first one in the message quere
+                    waitingforID = 0; // reset the waitingFor Flag
+                    myMsgs.notify();
+                }
             }
-
-        } else {
+        } else { // this is a normal, non replied msg
             synchronized (myMsgs) {
                 myMsgs.add(thisMessage);
                 if (waitingforID == 0) { //if we not just waiting for a delicated reply message
