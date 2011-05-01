@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7">
   <NonVisualComponents>
@@ -19,7 +19,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <Component id="mainToolBar" min="-2" pref="25" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="mainSplitPanel" pref="471" max="32767" attributes="0"/>
+                  <Component id="mainSplitPanel" pref="483" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -53,8 +53,8 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="scriptEngineToolbar" alignment="1" pref="793" max="32767" attributes="0"/>
-                      <Component id="mainSeTabbedPane" alignment="1" pref="793" max="32767" attributes="0"/>
+                      <Component id="scriptEngineToolbar" alignment="1" pref="854" max="32767" attributes="0"/>
+                      <Component id="mainSeTabbedPane" alignment="1" pref="854" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
@@ -62,7 +62,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="scriptEngineToolbar" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="mainSeTabbedPane" pref="419" max="32767" attributes="0"/>
+                          <Component id="mainSeTabbedPane" pref="434" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -136,10 +136,10 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <Component id="outputToolBar" min="-2" pref="410" max="-2" attributes="0"/>
-                                  <EmptySpace pref="371" max="32767" attributes="0"/>
+                                  <EmptySpace pref="439" max="32767" attributes="0"/>
                               </Group>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                  <Component id="jScrollPaneOutput" alignment="0" pref="781" max="32767" attributes="0"/>
+                                  <Component id="jScrollPaneOutput" alignment="0" pref="849" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -147,12 +147,12 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="outputToolBar" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="330" max="32767" attributes="1"/>
+                                  <EmptySpace pref="363" max="32767" attributes="1"/>
                               </Group>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
-                                      <Component id="jScrollPaneOutput" pref="310" max="32767" attributes="0"/>
+                                      <Component id="jScrollPaneOutput" pref="339" max="32767" attributes="0"/>
                                       <EmptySpace min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -245,14 +245,14 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="visualizerToolBar" alignment="1" pref="75" max="32767" attributes="0"/>
+                      <Component id="visualizerToolBar" alignment="1" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="visualizerToolBar" min="-2" pref="25" max="-2" attributes="0"/>
-                          <EmptySpace pref="446" max="32767" attributes="0"/>
+                          <EmptySpace pref="456" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -297,6 +297,15 @@
                 <Property name="name" type="java.lang.String" value="openMenu" noResource="true"/>
               </Properties>
             </Menu>
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="skdsswing.SKDSSwingView" id="showFileExplorer" methodName="showFileExplorer"/>
+                </Property>
+                <Property name="text" type="java.lang.String" resourceKey="jMenuItem1.text"/>
+                <Property name="name" type="java.lang.String" value="jMenuItem1" noResource="true"/>
+              </Properties>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="exitMenuItem">
               <Properties>
                 <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
@@ -308,6 +317,23 @@
                 <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
                 <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
               </AuxValues>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="jMenu1">
+          <Properties>
+            <Property name="text" type="java.lang.String" resourceKey="jMenu1.text"/>
+            <Property name="name" type="java.lang.String" value="jMenu1" noResource="true"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem2">
+              <Properties>
+                <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                  <action class="skdsswing.SKDSSwingView" id="showFrameUpload" methodName="showFrameUpload"/>
+                </Property>
+                <Property name="text" type="java.lang.String" resourceKey="jMenuItem2.text"/>
+                <Property name="name" type="java.lang.String" value="jMenuItem2" noResource="true"/>
+              </Properties>
             </MenuItem>
           </SubComponents>
         </Menu>
@@ -349,7 +375,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="statusMessageLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="688" max="32767" attributes="0"/>
+                  <EmptySpace pref="704" max="32767" attributes="0"/>
                   <Component id="progressBar" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="statusAnimationLabel" min="-2" max="-2" attributes="0"/>
