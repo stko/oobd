@@ -281,6 +281,36 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         jTextAreaOutput.setText("");
 
     }
+            @Action
+    public void showFileExplorer(){
+        if(SDKSSwingFileExplorer.getOpenSelected()){
+            SDKSSwingFileExplorer.setOpenSelected(false);
+            fileExplorer= null;
+        }
+
+        if(fileExplorer == null){
+            JFrame mainFrame = SKDSSwingApp.getApplication().getMainFrame();
+            fileExplorer = new SDKSSwingFileExplorer(mainFrame,true);
+            fileExplorer.setLocationRelativeTo(mainFrame);
+            
+        }
+       
+       // SKDSSwingApp.getApplication().show(fileExplorer);
+
+    }
+    @Action
+    public void showFrameUpload(){
+         if(SKDSSwingUpload.getOpenSelected()){
+            SKDSSwingUpload.setOpenSelected(false);
+            frameUpload= null;
+        }
+        if(frameUpload == null){
+            JFrame frame = SKDSSwingApp.getApplication().getMainFrame();
+            frameUpload = new SKDSSwingUpload(frame);
+            frameUpload.setLocationRelativeTo(frame);
+        }
+         SKDSSwingApp.getApplication().show(frameUpload);
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -312,7 +342,10 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         openMenu = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem2 = new javax.swing.JMenuItem();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
         statusPanel = new javax.swing.JPanel();
@@ -411,19 +444,19 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
             outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, outputPanelLayout.createSequentialGroup()
                 .addComponent(outputToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 410, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(371, Short.MAX_VALUE))
+                .addContainerGap(439, Short.MAX_VALUE))
             .addGroup(outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jScrollPaneOutput, javax.swing.GroupLayout.DEFAULT_SIZE, 781, Short.MAX_VALUE))
+                .addComponent(jScrollPaneOutput, javax.swing.GroupLayout.DEFAULT_SIZE, 849, Short.MAX_VALUE))
         );
         outputPanelLayout.setVerticalGroup(
             outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(outputPanelLayout.createSequentialGroup()
                 .addComponent(outputToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(330, Short.MAX_VALUE))
+                .addContainerGap(363, Short.MAX_VALUE))
             .addGroup(outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, outputPanelLayout.createSequentialGroup()
                     .addGap(54, 54, 54)
-                    .addComponent(jScrollPaneOutput, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
+                    .addComponent(jScrollPaneOutput, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -433,15 +466,15 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         scriptEnginePanel.setLayout(scriptEnginePanelLayout);
         scriptEnginePanelLayout.setHorizontalGroup(
             scriptEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scriptEngineToolbar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 793, Short.MAX_VALUE)
-            .addComponent(mainSeTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 793, Short.MAX_VALUE)
+            .addComponent(scriptEngineToolbar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 854, Short.MAX_VALUE)
+            .addComponent(mainSeTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 854, Short.MAX_VALUE)
         );
         scriptEnginePanelLayout.setVerticalGroup(
             scriptEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(scriptEnginePanelLayout.createSequentialGroup()
                 .addComponent(scriptEngineToolbar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(mainSeTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE))
+                .addComponent(mainSeTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE))
         );
 
         mainSplitPanel.setRightComponent(scriptEnginePanel);
@@ -455,13 +488,13 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         VisualizerPanel.setLayout(VisualizerPanelLayout);
         VisualizerPanelLayout.setHorizontalGroup(
             VisualizerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(visualizerToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
+            .addComponent(visualizerToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         VisualizerPanelLayout.setVerticalGroup(
             VisualizerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(VisualizerPanelLayout.createSequentialGroup()
                 .addComponent(visualizerToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(446, Short.MAX_VALUE))
+                .addContainerGap(456, Short.MAX_VALUE))
         );
 
         mainSplitPanel.setLeftComponent(VisualizerPanel);
@@ -478,7 +511,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addComponent(mainToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(mainSplitPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE))
+                .addComponent(mainSplitPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE))
         );
 
         menuBar.setName("menuBar"); // NOI18N
@@ -490,11 +523,26 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         openMenu.setName("openMenu"); // NOI18N
         fileMenu.add(openMenu);
 
+        jMenuItem1.setAction(actionMap.get("showFileExplorer")); // NOI18N
+        jMenuItem1.setText(resourceMap.getString("jMenuItem1.text")); // NOI18N
+        jMenuItem1.setName("jMenuItem1"); // NOI18N
+        fileMenu.add(jMenuItem1);
+
         exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
         exitMenuItem.setName("exitMenuItem"); // NOI18N
         fileMenu.add(exitMenuItem);
 
         menuBar.add(fileMenu);
+
+        jMenu1.setText(resourceMap.getString("jMenu1.text")); // NOI18N
+        jMenu1.setName("jMenu1"); // NOI18N
+
+        jMenuItem2.setAction(actionMap.get("showFrameUpload")); // NOI18N
+        jMenuItem2.setText(resourceMap.getString("jMenuItem2.text")); // NOI18N
+        jMenuItem2.setName("jMenuItem2"); // NOI18N
+        jMenu1.add(jMenuItem2);
+
+        menuBar.add(jMenu1);
 
         helpMenu.setText(resourceMap.getString("helpMenu.text")); // NOI18N
         helpMenu.setName("helpMenu"); // NOI18N
@@ -524,7 +572,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
             .addGroup(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusMessageLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 688, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 704, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel)
@@ -550,6 +598,9 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
     private javax.swing.JPanel VisualizerPanel;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JScrollPane jScrollPaneOutput;
     private javax.swing.JTextArea jTextAreaOutput;
     private javax.swing.JToggleButton jToggleButton1;
@@ -578,4 +629,6 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
     private final Icon[] busyIcons = new Icon[15];
     private int busyIconIndex = 0;
     private JDialog aboutBox;
+    private SDKSSwingFileExplorer fileExplorer;
+    private SKDSSwingUpload frameUpload;
 }
