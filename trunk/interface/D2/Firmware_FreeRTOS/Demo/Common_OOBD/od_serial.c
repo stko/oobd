@@ -182,7 +182,7 @@ createFeedbackMsg (portBASE_TYPE err)
 char
 checkValidChar (char a)
 {
-  if (a == 13)
+  if (a == 13) /* char CR carriage return */
     {
       return crEOL;
     }
@@ -198,19 +198,19 @@ checkValidChar (char a)
     {
       return crHEX;
     }
-  if (a > 47 && a < 58)
+  if (a > 47 && a < 58)  /* char 0 - 9 */
     {
       return a - 48;
     }
   else
     {
-      if (a > 64 && a < 71)
+      if (a > 64 && a < 71) /* char A, B, C, D, E, F */
 	{
 	  return a - 55;
 	}
       else
 	{
-	  if (a > 96 && a < 103)
+	  if (a > 96 && a < 103) /* char a, b, c, d, e,f */
 	    {
 	      return a - 87;
 	    }
@@ -365,18 +365,42 @@ inputParserTask (void *pvParameters)
 					printser_string (" ");
 					printser_string (BUILDDATE);
 				  }
-				  #ifdef OOBD_PLATFORM_STM32
-				  else if (cmdValue == VALUE_PARAM_INFO_CPU_INFO)
-			        sendCPUInfo();			/* send CPU Info */
-			      else if (cmdValue == VALUE_PARAM_INFO_MEM_LOC)
-			    	sendMemLoc();      		/* send Mem Location */
-			      else if (cmdValue == VALUE_PARAM_INFO_ROM_TABLE_LOC)
-			    	sendRomTable();      	/* send ROM Table */
-			      else if (cmdValue == VALUE_PARAM_INFO_FREE_HEAP_SIZE)
+			      else if (cmdValue == VALUE_PARAM_INFO_SERIALNUMBER) /* p 0 1 */
 			      {
-			    	printser_string ("\r\nFreeRTOS heap (in byte): ");
-				    printser_uint32ToHex (xPortGetFreeHeapSize());	/* send FreeRTOS free heap size */
+			    	printLF();
+			    	printser_string (BTM222_RespBuffer);
 			      }
+				  else if (cmdValue == VALUE_PARAM_INFO_PROTOCOL) /* p 0 3 */
+				  {
+					printLF();
+					printser_string ("1 - UDS (ISO14229-1)");
+				  }
+				  #ifdef OOBD_PLATFORM_STM32
+				  else if (cmdValue == VALUE_PARAM_INFO_ADC_POWER) /* p 0 6 */
+				  {
+					printLF();
+					printser_int ((readADC1(8)*(3.15/4096))*10000, 10); /* result in mV */
+					printser_string (" mV");
+				  }
+				  else if (cmdValue == VALUE_PARAM_INFO_CPU_INFO) /* p 0 10 */
+			        sendCPUInfo();			/* send CPU Info */
+			      else if (cmdValue == VALUE_PARAM_INFO_MEM_LOC) /* p 0 11 */
+			    	sendMemLoc(800000);      		/* send Mem Location */
+			      else if (cmdValue == VALUE_PARAM_INFO_ROM_TABLE_LOC) /* p 0 12 */
+			    	sendRomTable();      	/* send ROM Table */
+			      else if (cmdValue == VALUE_PARAM_INFO_FREE_HEAP_SIZE) /* p 0 13 */
+			      {
+			    	printLF();
+			    	printser_string ("Total Heap (in byte): ");
+			    	printser_int (configTOTAL_HEAP_SIZE, 10);
+			    	printLF();
+			    	printser_string ("Free Heap (in byte): ");
+			    	printser_int (xPortGetFreeHeapSize(), 10);	/* send FreeRTOS free heap size */
+			      }
+			      else {
+			        sendParam (cmdKey, cmdValue);
+			      }
+				  createFeedbackMsg (0);
 				  #endif
 				  break;
 				case PARAM_ECHO:
@@ -397,14 +421,13 @@ inputParserTask (void *pvParameters)
 					SCB->AIRCR = 0x05FA0004;	/* hard reset */
 				  }
 				  break;
- 	 	 	 	#endif
+ 	 	 	 	 #endif
 
 				default:
 				  sendParam (cmdKey, cmdValue);
 				  break;
 				}				
-			      createFeedbackMsg (0);
-			    }
+				}
 			  else
 			    {
 			      lastErr = 2;

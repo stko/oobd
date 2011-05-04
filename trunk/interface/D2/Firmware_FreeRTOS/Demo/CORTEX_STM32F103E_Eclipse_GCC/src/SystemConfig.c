@@ -30,7 +30,6 @@
 #include "FreeRTOSConfig.h"
 #include "SystemConfig.h"
 #include "stm32f10x.h"
-#include "SerialComm.h"
 #include "od_config.h"
 #include "odp_uds.h"
 
@@ -64,6 +63,9 @@ void System_Configuration(void)
 
   /* USART1 configuration */
   CAN1_Configuration(VALUE_BUS_CONFIG_11bit_500kbit); /* default initialization */
+
+  /* Analog digitial converter configuration */
+  ADC_Configuration();
 
   /* NVIC configuration */
 //  NVIC_Configuration();
@@ -276,15 +278,65 @@ void USART1_Configuration(void)
 
   /* Enable the USART1-Receive interrupt: this interrupt is generated when the
      USART1 receive data register is not empty */
-//  USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+	/*  USART_ITConfig(USART1, USART_IT_RXNE, ENABLE); */
 
   /* Enable the USART1 */
-  USART_Cmd(USART1, ENABLE);
+//  USART_Cmd(USART1, ENABLE);
+//  uint32_t nCount, nLength=500000000;
+//  uint8_t c;
+
+  /* get Bluetooth address of BTM222 before going on */
+//  uint8_t RxCounter = 0;
+//  uint8_t RxBufferSize = 8;
+  /* send request to BTM222 => Bluetooth-Serial must be disconnected at this state*/
+//  for(nCount = 0; nCount < nLength; nCount++){}; /* delay */
+/*
+  uart1_puts ("at\r\n");
+  while (!(USART1->SR & USART_FLAG_RXNE));
+  c = (uint8_t)USART1->DR;
+  if (c == 'O')
+	uart1_puts ("O received\r\n");
+  else {
+	uart1_puts ("error while receiving\r\n");
+    uart1_puts (c);
+	uart1_puts ("\r\n");
+  }
+*/
+/*
+  while (!(USART1->SR & USART_FLAG_RXNE));
+  c = (uint8_t)USART1->DR;
+  if (c == 'K')
+	uart1_puts ("K received\r\n");
+  else {
+    uart1_puts ("error while receiving\r\n");
+    uart1_puts (c);
+	uart1_puts ("\r\n");
+  }
+*/
+/*
+  uart1_puts ("atb?\r\n");
+  while(1);
+*/
+
+
+//while (RxCounter < RxBufferSize)
+//{
+  /* Loop until the USART1 Receive Data Register is not empty */
+//  BTM222_RespBuffer[RxCounter++] = uart1_getc();
+
+/*
+  if ((BTM222_RespBuffer[RxCounter++] = (USART_ReceiveData(USART1) & 0x7F)) == 13)
+    break;
+*/
+//}
+
+//  uart1_puts (BTM222_RespBuffer);
+
 #ifdef todo_autobaud
     char  ReceivedData;
     uint8_t   AutobaudControl;
     uint32_t  nCount;
-    uint8_t TxBuffer[] = "atl?\r\n";
+    uint8_t TxBuffer[] = "atl?\r";
     uint8_t RxBuffer[6];
 #define TxBufferSize   (countof(TxBuffer))
 #define countof(a)   (sizeof(a) / sizeof(*(a)))
@@ -552,3 +604,39 @@ void CAN1_Configuration(uint8_t CAN_BusConfig)
   DEBUGUARTPRINT("\r\n*** CANx_Configuration (CAN1) finished***");
 }
 /*----------------------------------------------------------------------------*/
+
+void ADC_Configuration(void)
+{
+  ADC_InitTypeDef  ADC_InitStructure;
+  /* PCLK2 is the APB2 clock */
+  /* ADCCLK = PCLK2/6 = 72/6 = 12MHz*/
+  RCC_ADCCLKConfig(RCC_PCLK2_Div6);
+
+  /* Enable ADC1 clock so that we can talk to it */
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
+  /* Put everything back to power-on defaults */
+  ADC_DeInit(ADC1);
+
+  /* ADC1 Configuration ------------------------------------------------------*/
+  /* ADC1 and ADC2 operate independently */
+  ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;
+  /* Disable the scan conversion so we do one at a time */
+  ADC_InitStructure.ADC_ScanConvMode = DISABLE;
+  /* Don't do continuous conversions - do them on demand */
+  ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;
+  /* Start conversion by software, not on external trigger */
+  ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
+  /* Conversions are 12 bit - put them in the lower 12 bits of the result */
+  ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
+  /* Say how many channels would be used by the sequencer */
+  ADC_InitStructure.ADC_NbrOfChannel = 1;  /* Now do the setup */
+
+  ADC_Init(ADC1, &ADC_InitStructure);  /* Enable ADC1 */
+  ADC_Cmd(ADC1, ENABLE);  /* Enable ADC1 reset calibaration register */
+  ADC_ResetCalibration(ADC1);  /* Check the end of ADC1 reset calibration register */
+  while(ADC_GetResetCalibrationStatus(ADC1));
+  /* Start ADC1 calibaration */
+  ADC_StartCalibration(ADC1);
+  /* Check the end of ADC1 calibration */
+  while(ADC_GetCalibrationStatus(ADC1));
+}

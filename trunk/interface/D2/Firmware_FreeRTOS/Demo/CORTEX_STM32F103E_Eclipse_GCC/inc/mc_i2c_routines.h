@@ -1,24 +1,34 @@
-/**
-  ******************************************************************************
-  * @file OptimizedI2Cexamples/inc/I2CRoutines.h
-  * @author  MCD Application Team
-  * @version  V4.0.0
-  * @date  06/18/2010
-  * @brief  Header for I2CRoutines.c
-  ******************************************************************************
-  * @copy
-  *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-  *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
-  */
+/*
+
+	This file is part of the OOBD.org distribution.
+
+	OOBD.org is free software; you can redistribute it and/or modify it
+	under the terms of the GNU General Public License (version 2) as published
+	by the Free Software Foundation and modified by the FreeRTOS exception.
+
+	OOBD.org is distributed in the hope that it will be useful, but WITHOUT
+	ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+	FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+	more details.
+
+	You should have received a copy of the GNU General Public License along
+	with FreeRTOS.org; if not, write to the Free Software Foundation, Inc., 59
+	Temple Place, Suite 330, Boston, MA  02111-1307  USA.
+
+
+	1 tab == 4 spaces!
+
+	Please ensure to read the configuration and relevant port sections of the
+	online documentation.
+
+
+	OOBD is using FreeRTOS (www.FreeRTOS.org)
+
+*/
+
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __MC_I2C_ROUTINES_H
 #define __MC_I2C_ROUTINES_H
