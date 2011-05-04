@@ -34,7 +34,6 @@
 #include "od_config.h"
 #include "od_protocols.h"
 #include "odb_can.h"
-#include "odp_uds.h"
 #include "mc_can.h"
 #include "stm32f10x.h"
 #include "SystemConfig.h"
@@ -101,6 +100,8 @@ bus_flush_can ()
 portBASE_TYPE
 bus_param_can (portBASE_TYPE param, portBASE_TYPE value)
 {
+  extern config;
+
   switch (param)
   {
     case PARAM_BUS_CONFIG:

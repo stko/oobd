@@ -314,7 +314,7 @@ obp_uds (void *pvParameters)
   config.sendID = 0x00; // 0 disables special sendID
   config.timeout = 6;
   config.listen = 0;
-  config.bus = 3;
+  config.bus = VALUE_BUS_CAN;
   config.busConfig = VALUE_BUS_CONFIG_11bit_500kbit; /* default */
   config.timeoutPending = 150;
   config.blockSize = 0;
@@ -604,9 +604,61 @@ obp_uds (void *pvParameters)
 	      paramData = (portBASE_TYPE *) msg->addr;
 	      DEBUGPRINT ("parameter received %d %d\n", paramData[0],
 			  paramData[1]);
+
 	      switch (paramData[0])
-		{
-		case PARAM_INFO:
+	      {
+	        case PARAM_INFO:
+	        if (paramData[1] == VALUE_PARAM_INFO_BUS) /* p 0 4 */
+		    {
+			  if (config.bus == VALUE_BUS_CAN)
+		      {
+				printLF();
+				printser_string("3 - CAN");
+		      }
+		    }
+	        else if (paramData[1] == VALUE_PARAM_INFO_BUS_CONFIG) /* p 0 5 */
+	        {
+	          if (config.busConfig == VALUE_BUS_CONFIG_11bit_125kbit)
+	          {
+				printLF();
+	        	printser_string("1 = ISO 15765-4, CAN 11bit ID/125kBaud");
+			  }
+			  else if (config.busConfig == VALUE_BUS_CONFIG_11bit_250kbit)
+			  {
+				printLF();
+				printser_string("2 = ISO 15765-4, CAN 11bit ID/250kBaud");
+			  }
+			  else if (config.busConfig == VALUE_BUS_CONFIG_11bit_500kbit)
+			  {
+				printLF();
+				printser_string("3 = ISO 15765-4, CAN 11bit ID/500kBaud");
+			  }
+			  else if (config.busConfig == VALUE_BUS_CONFIG_11bit_1000kbit)
+			  {
+				printLF();
+			    printser_string("4 - ISO 15765-4, CAN 11bit ID/1000kBaud");
+			  }
+			  else if (config.busConfig == VALUE_BUS_CONFIG_29bit_125kbit)
+			  {
+			    printLF();
+			    printser_string("5 - ISO 15765-4, CAN 29bit ID/125kBaud");
+			  }
+			  else if (config.busConfig == VALUE_BUS_CONFIG_29bit_250kbit)
+			  {
+			    printLF();
+			    printser_string("6 - ISO 15765-4, CAN 29bit ID/250kBaud");
+			  }
+			  else if (config.busConfig == VALUE_BUS_CONFIG_29bit_500kbit)
+			  {
+			    printLF();
+			    printser_string("7 - ISO 15765-4, CAN 29bit ID/500kBaud");
+			  }
+			  else if (config.busConfig == VALUE_BUS_CONFIG_29bit_1000kbit)
+			  {
+			    printLF();
+			    printser_string("8 - ISO 15765-4, CAN 29bit ID/1000kBaud");
+			  }
+		    }
 		  break;
 		case PARAM_ECHO:
 		  break;
@@ -644,8 +696,7 @@ obp_uds (void *pvParameters)
 		  config.tpFreq = paramData[1];
 		  break;
  		}
-
-	      actBus_param (paramData[0], paramData[1]);	/* forward the received params to the underlying bus. */
+         actBus_param (paramData[0], paramData[1]);	/* forward the received params to the underlying bus. */
 	      break;
 	    case MSG_INIT:
 	      DEBUGPRINT ("Reset Protocol\n", 'a');

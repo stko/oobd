@@ -41,6 +41,7 @@
 #include "stm32f10x.h"		/* ST Library v3.4..0 specific header files */
 #include "SystemConfig.h"	/* STM32 hardware specific header file */
 #include "mc_i2c_routines.h"
+#include "mc_misc.h"
 #endif
 
 /* Constant definition used to turn on/off the pre-emptive scheduler. */
@@ -48,6 +49,8 @@ static const short sUsingPreemption = configUSE_PREEMPTION;
 
 #define SERIAL_COMM_TASK_PRIORITY			( tskIDLE_PRIORITY + 3 )
 /*---------------------------------------------------------------------------*/
+
+static unsigned char BTM222_BTaddress[13];
 
 void
 tickTask (void *pvParameters)
@@ -72,37 +75,6 @@ tickTask (void *pvParameters)
 
     }
 }
-
-/*---------------------------------------------------------------------------*/
-#ifdef OOBD_PLATFORM_STM32
-void
-blinkLedTask (void *pvParameters)
-{
-  portTickType xLastExecutionTime;
-
-  DEBUGUARTPRINT ("\r\n*** prvBlinkLedTask entered! ***");
-
-  /* Initialise the xLastExecutionTime variable on task entry. */
-  xLastExecutionTime = xTaskGetTickCount ();
-
-  for (;;)
-    {
-      /* Simple toggle the LED periodically.  This just provides some timing
-         verification. */
-      vTaskDelayUntil (&xLastExecutionTime,
-		       (portTickType) 1000 / portTICK_RATE_MS);
-      /* Output high -> LED off for 1000ms = 1sec */
-      GPIO_SetBits (GPIOB, GPIO_Pin_4);	/* LED2 - green */
-      GPIO_SetBits (GPIOB, GPIO_Pin_5);	/* LED1 - red */
-
-      vTaskDelayUntil (&xLastExecutionTime,
-		       (portTickType) 1000 / portTICK_RATE_MS);
-      /* Output low -> LED on for 1000ms = 1sec */
-      GPIO_ResetBits (GPIOB, GPIO_Pin_4);	/* LED2 - green */
-      GPIO_ResetBits (GPIOB, GPIO_Pin_5);	/* LED1 - red */
-    }
-}
-#endif
 /*---------------------------------------------------------------------------*/
 
 int
@@ -130,6 +102,7 @@ main (void)
   initProtocols ();
   /* start the serial side */
   serial_init ();
+
   /*activate the output task */
   initOutput ();
 
@@ -144,7 +117,7 @@ main (void)
     printser_string(SVNREV);
   #endif
 
-/*
+   /*
 #ifdef OOBD_PLATFORM_STM32
     if (Success == I2C_Master_BufferRead(I2C1,Buffer_Rx1,1,Polling, 0x28))
       {
@@ -197,7 +170,6 @@ main (void)
 
   return 1;
 }
-
 /*---------------------------------------------------------------------------*/
 
 void

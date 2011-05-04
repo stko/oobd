@@ -107,30 +107,18 @@ void SerialSendStr(char const *str) {
 /*---------------------------------------------------------------------------*/
 
 void sendMemLoc(uint32_t *ptr) {
-	char sbuf[32];
-
-	strcpy(sbuf,"[0x");
-	char *pstr = sbuf + strlen(sbuf);
-	uint32ToHex(pstr, (uint32_t)ptr);
-	strcat(pstr, "] = 0x");
-	pstr = sbuf + strlen(sbuf);
-	uint32ToHex(pstr, *ptr);
-	strcat(pstr, "\r\n");
-//	SerialSendStr(sbuf);
-  uart1_puts(sbuf);
+  printLF();
+  printser_string("[0x");
+  printser_uint32ToHex((uint32_t)ptr);
+  printser_string("] = 0x");
+  printser_uint32ToHex(&ptr);
 }
 /*---------------------------------------------------------------------------*/
 
 void sendCPUInfo() {
-	char sbuf[32];
-
-	strcpy(sbuf, "\r\nCPU ID: 0x");
-	char *pstr = sbuf + strlen(sbuf);
-	uint32ToHex(pstr, SCB->CPUID);
-	pstr = sbuf + strlen(sbuf);
-	strcpy(pstr, "\r\n");
-//	SerialSendStr(sbuf);
-	uart1_puts(sbuf);
+  printLF();
+  printser_string("CPU ID: 0x");
+  printser_uint32ToHex(SCB->CPUID);
 }
 /*---------------------------------------------------------------------------*/
 

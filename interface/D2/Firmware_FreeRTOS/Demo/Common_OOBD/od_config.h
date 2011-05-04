@@ -54,13 +54,6 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
-//#include "croutine.h"
-
-//#include "partest.h"
-/* Demo file headers. */
-// #include "crflash.h"
-// #include "print.h"
-// #include "fileIO.h"
 
 #ifdef OOBD_PLATFORM_POSIX
 #include "AsyncIO/AsyncIO.h"
@@ -134,6 +127,7 @@
 #define PARAM_RESET           ( 99 )
 
 /* define values of parameter */
+#define VALUE_BUS_CAN  					( 3 )
 #define VALUE_BUS_CONFIG_11bit_125kbit  ( 1 )
 #define VALUE_BUS_CONFIG_11bit_250kbit  ( 2 )
 #define VALUE_BUS_CONFIG_11bit_500kbit  ( 3 )
@@ -143,6 +137,11 @@
 #define VALUE_BUS_CONFIG_29bit_500kbit  ( 7 )
 #define VALUE_BUS_CONFIG_29bit_1000kbit ( 8 )
 #define VALUE_PARAM_INFO_VERSION 		( 0 )
+#define VALUE_PARAM_INFO_SERIALNUMBER   ( 1 )
+#define VALUE_PARAM_INFO_PROTOCOL       ( 3 )
+#define VALUE_PARAM_INFO_BUS   			( 4 )
+#define VALUE_PARAM_INFO_BUS_CONFIG   	( 5 )
+#define VALUE_PARAM_INFO_ADC_POWER      ( 6 )
 #define VALUE_PARAM_INFO_CPU_INFO 		( 10 )
 #define VALUE_PARAM_INFO_MEM_LOC  		( 11 )
 #define VALUE_PARAM_INFO_ROM_TABLE_LOC  ( 12 )
@@ -153,7 +152,7 @@
 #define VALUE_LF_CR (2)
 
 /*-------- Global Vars --------------*/
-
+static unsigned char BTM222_RespBuffer[20] = "00:00:00:00:00:00";
 
 //! callback function for print a single char
 
