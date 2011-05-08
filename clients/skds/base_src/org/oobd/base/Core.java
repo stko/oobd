@@ -116,9 +116,11 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      *
      * @param myUserInterface reference to the View - interface, which is used to handle all visual in- and output
      * @param mySystemInterface reference to the actual application and runtime enviroment, on which OOBD is actual running on
+     * @param Name of the Plugin, just for debugging
      * 
      */
-    public Core(IFui myUserInterface, IFsystem mySystemInterface) {
+    public Core(IFui myUserInterface, IFsystem mySystemInterface, String name) {
+        super(name);
         thisInstance = this;
         userInterface = myUserInterface;
         systemInterface = mySystemInterface;
@@ -137,28 +139,27 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         props = new Properties();
         try {
             props.load(systemInterface.generateResourceStream(FT_PROPS, systemInterface.generateUIFilePath(FT_PROPS, OOBDConstants.CorePrefsFileName)));
-            System.out.println("--- OOBDCore.props geladen");
         } catch (IOException ignored) {
-            System.out.println("OOBDCore.props not found");
+            Logger.getLogger(Core.class.getName()).log(Level.INFO, "OOBDCore.props not found");
         }
 
-        history=new History();
+        history = new History();
 
 
-        File dir1 = new File(".");
+        /*        File dir1 = new File(".");
         File dir2 = new File("..");
         try {
-            System.out.println("Current dir : " + dir1.getCanonicalPath());
-            System.out.println("Parent  dir : " + dir2.getCanonicalPath());
+        System.out.println("Current dir : " + dir1.getCanonicalPath());
+        System.out.println("Parent  dir : " + dir2.getCanonicalPath());
         } catch (Exception e) {
-            e.printStackTrace();
+        e.printStackTrace();
         }
-
+         */
 
 
         // ----------- load Busses -------------------------------
         try {
-            System.out.println("Try to load: " + props.getProperty("BusClassPath", "bus"));
+            Logger.getLogger(Core.class.getName()).log(Level.CONFIG, "Try to load: " + props.getProperty("BusClassPath", "bus"));
             HashMap<String, Class<?>> classObjects = loadOobdClasses(props.getProperty("BusClassPath", "bus"), props.getProperty("BusClassPrefix", "org.oobd.base.bus."), Class.forName("org.oobd.base.bus.OobdBus"));
             for (Iterator iter = classObjects.keySet().iterator(); iter.hasNext();) {
                 String element = (String) iter.next();
@@ -167,22 +168,18 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     OobdBus thisClass = (OobdBus) value.newInstance();
                     thisClass.registerCore(this);
                     new Thread(thisClass).start();
-
                     busses.put(element, thisClass);
-                    System.out.println("Register " + element + " as bus");
-                    Debug.msg("core", DEBUG_BORING, "Register " + element + " as bus");
+                    Logger.getLogger(Core.class.getName()).log(Level.CONFIG, "Register " + element + " as bus");
                 } catch (InstantiationException ex) {
                     // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
-                    Debug.msg("core", DEBUG_ERROR, ex.getMessage());
-                    ex.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "can't create instance of " + element, ex);
+                } catch (IllegalAccessException ex) {
+                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "can't create instance of " + element, ex);
                 }
 
             }
-        } catch (ClassNotFoundException e) {
-            System.out.println("Error while trying to load bus class");
-            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "Error while trying to load class", ex);
         }
         // ----------- load Connectors -------------------------------
         try {
@@ -197,12 +194,14 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
                 } catch (InstantiationException ex) {
                     // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
-                    Debug.msg("core", DEBUG_ERROR, ex.getMessage());
-                } catch (IllegalAccessException e) {
+                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "can't create instance of " + element, ex);
+                } catch (IllegalAccessException ex) {
+                   Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "can't create instance of " + element, ex);
                 }
 
             }
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "Error while trying to load class", ex);
         }
         // ----------- load Protocols -------------------------------
         try {
@@ -217,12 +216,14 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
                 } catch (InstantiationException ex) {
                     // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
-                    Debug.msg("core", DEBUG_ERROR, ex.getMessage());
-                } catch (IllegalAccessException e) {
-                }
+                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "can't create instance of " + element);
+                } catch (IllegalAccessException ex) {
+                   Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "can't create instance of " + element, ex);
+               }
 
             }
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "Error while trying to load class", ex);
         }
         // ----------- load Scriptengines AS CLASSES, NOT AS INSTANCES!-------------------------------
         try {
@@ -242,11 +243,13 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     if (result.length() != 0) {
                         announceScriptEngine(element, result);
                     }
-                } catch (Exception e) {
-                }
+                } catch (Exception ex) {
+           Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "Error while trying to load class", ex);
+                 }
             }
-        } catch (ClassNotFoundException e) {
-        }
+        } catch (ClassNotFoundException ex) {
+           Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "Error while trying to load class", ex);
+         }
         // ------------- start the global timer ticker -----------------
         ticker = new CoreTick();
         ticker.setCoreTickListener(this);
@@ -295,7 +298,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      *
      */
     public String createScriptEngine(String id) {
-        Debug.msg("core", DEBUG_INFO, "Core should create scriptengine: " + id);
+        Logger.getLogger(Core.class.getName()).log(Level.CONFIG,  "Core should create scriptengine: " + id);
         Integer i = 1;
         while (activeEngines.containsKey(id + "." + i.toString())) { //searching for a free id
             i++;
@@ -327,7 +330,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * \ingroup visualisation
      */
     public void startScriptEngine(String id) {
-        Debug.msg("core", DEBUG_BORING, "Start scriptengine: " + id);
+        Logger.getLogger(Core.class.getName()).log(Level.CONFIG,  "Start scriptengine: " + id);
         OobdScriptengine o = activeEngines.get(id);
         Thread t1 = new Thread(o);
         t1.start();
@@ -349,7 +352,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public HashMap loadOobdClasses(String path, String classPrefix, Class classType) {
         // inspired by http://de.wikibooks.org/wiki/Java_Standard:_Class
-        System.out.println("Scanne Directory: " + path);
+         Logger.getLogger(Core.class.getName()).log(Level.CONFIG,"Scanne Directory: " + path);
 
         // TODO adapt to Android
         //HashMap<String, Class<?>> myInstances = new HashMap<String, Class<?>>();
@@ -370,7 +373,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         ex.printStackTrace();
         }
         // generate URLClassLoader for that directory
-
+        
         URLClassLoader loader = new URLClassLoader(new java.net.URL[]{sourceURL}, Thread.currentThread().getContextClassLoader());
         // For each file in dir...
         for (int i = 0; i
@@ -391,13 +394,13 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         // save unitialized class object in hashmap
         myInstances.put(name[0], source);
         }
-
+        
         } catch (ClassNotFoundException ex) {
         // Wird geworfen, wenn die Klasse nicht gefunden wurde
         Debug.msg("core", DEBUG_ERROR, ex.getMessage());
         ex.printStackTrace();
         }
-
+        
         }
         }
         }// if
@@ -432,10 +435,10 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public void actionRequest(String jsonString) {
         try {
-            Debug.msg("core", DEBUG_BORING, "required Action:" + jsonString);
+            Logger.getLogger(Core.class.getName()).log(Level.INFO,  "required Action:" + jsonString);
             actionRequest(new Onion(jsonString.replace('\'', '"')));
-        } catch (org.json.JSONException e) {
-            Debug.msg("core", DEBUG_ERROR, "could not convert JSONstring \"" + jsonString + "\" into Onion");
+        } catch (org.json.JSONException ex) {
+             Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "could not convert JSONstring \"" + jsonString + "\" into Onion",ex);
         }
     }
 
@@ -447,7 +450,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     public void handleValue(Onion value) {
         String owner = value.getOnionString("owner/name"); //who's the owner of that value?
         if (owner == null) {
-            Debug.msg("core", DEBUG_WARNING, "onion id does not contain name");
+            Logger.getLogger(Core.class.getName()).log(Level.WARNING,  "onion id does not contain name");
         } else {
             ArrayList affectedVisualizers = visualizers.get(owner); //which visualizers belong to that owner
             if (affectedVisualizers != null) {
@@ -475,7 +478,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                 handleValue(myOnion);
             }
             if (myOnion.isType(CM_UPDATE)) {
-                Debug.msg("Core", DEBUG_INFO, "forward UPDATE request to" + myOnion.getString("to"));
                 transferMsg(new Message(this, myOnion.getString("to"), myOnion));
 
             }
@@ -488,7 +490,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                 userInterface.openPageCompleted(myOnion.getOnionString("owner"), myOnion.getOnionString("name"));
             }
             if (myOnion.isType(CM_WRITESTRING)) {
-                    userInterface.sm( Base64Coder.decodeString(myOnion.getOnionString("data")));
+                userInterface.sm(Base64Coder.decodeString(myOnion.getOnionString("data")));
             }
         } catch (org.json.JSONException e) {
         }
@@ -570,7 +572,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * \ingroup core
      */
     public boolean transferMsg(Message msg) {
-        System.out.println("Core received message for " + msg.rec + " from " + msg.sender + " content:" + msg.getContent().toString());
+       Logger.getLogger(Core.class.getName()).log(Level.INFO, "Msg: " + msg.sender  +" ==> "+ msg.rec + " content:" + msg.getContent().toString());
         if (OOBDConstants.CoreMailboxName.equals(msg.rec)) { //is the core the receiver?
             this.sendMsg(msg);
             return true;
@@ -587,10 +589,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             }
             if (receiver != null) {
                 receiver.sendMsg(msg);
-                System.out.println("Core send msg to " + msg.rec);
                 return true;
             } else {
-                System.out.println("Core coudn't send msg to " + msg.rec + "Receiver not in database");
+                Logger.getLogger(Core.class.getName()).log(Level.WARNING, "Coudn't send msg to " + msg.rec + ":Receiver not in database");
                 return false;
             }
         }
@@ -604,7 +605,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public void coreTick() {
         ticker.enable(false);
-        //System.out.println("Tick..");
         updateVisualizers();
         ticker.enable(true);
     }
@@ -638,7 +638,7 @@ class CoreTick implements Runnable {
 
 
     public void run() {
-        System.out.println(" Start Core tick thread");
+        Logger.getLogger(Core.class.getName()).log(Level.CONFIG, " Start Core tick thread");
         while (keepRunning) {
             try {
                 Thread.currentThread().sleep(LONG_TIME);
@@ -649,7 +649,7 @@ class CoreTick implements Runnable {
                 ex.printStackTrace();
             }
         }
-        System.out.println("End Core tick thread");
+        Logger.getLogger(Core.class.getName()).log(Level.CONFIG, "End Core tick thread");
     }
 
     public void cancel() {

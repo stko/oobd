@@ -163,7 +163,7 @@ public class Visualizer {
     public void setValue(Onion value) {
         if (this.name.matches(value.getOnionString("to/name"))) {
             try {
-            	System.out.println("Visualizer.setValue(): update needed.");
+            	Logger.getLogger(Visualizer.class.getName()).log(Level.INFO,"Visualizer.setValue(): update needed.");
                 this.value = new Onion(value.toString());
                 updateNeeded = true;
              } catch (JSONException ex) {
@@ -208,7 +208,6 @@ public class Visualizer {
     public void doUpdate(int updateLevel) {
         if (myObject != null && updateNeeded) {
             updateNeeded = !myObject.update(updateLevel);
-            System.out.println("doUpdate(nachher): updateNeeded: " + updateNeeded);
         }
     }
 
@@ -217,9 +216,7 @@ public class Visualizer {
      * \ingroup visualisation
      */
     public void updateRequest(int type) {
-        System.out.println("Update request" + Integer.toString(type));
-        System.out.println("my ownwer is: " + ownerEngine.toString());
-        System.out.println("actual visualizer data: " + value.toString());
+        Logger.getLogger(Visualizer.class.getName()).log(Level.INFO,"Update request" + Integer.toString(type)+" my ownwer is: " + ownerEngine.toString()+"actual visualizer data: " + value.toString());
         try {
             Core.getSingleInstance().transferMsg(new Message(Core.getSingleInstance(), OOBDConstants.CoreMailboxName, new Onion(""
                     + "{"

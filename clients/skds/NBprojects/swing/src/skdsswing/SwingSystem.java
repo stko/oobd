@@ -41,8 +41,7 @@ public class SwingSystem implements IFsystem {
                 // read the path of the directory
                 sourceURL = directory.toURI().toURL();
             } catch (java.net.MalformedURLException ex) {
-                Debug.msg("core", OOBDConstants.DEBUG_WARNING, ex.getMessage());
-                ex.printStackTrace();
+                Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING,"", ex.getMessage());
             }
             // generate URLClassLoader for that directory
 
@@ -51,8 +50,7 @@ public class SwingSystem implements IFsystem {
             for (int i = 0; i
                     < files.length; i++) {
                 // split file name into name and extension
-            	System.out.println("File, das als Klasse zu laden ist: " + files[i].getName());
-                Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File, das als Klasse zu laden ist: " + files[i].getName());
+                Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "File to be load as class: " + files[i].getName());
                 String name[] = files[i].getName().split("\\.");
                 // only class names without $ are taken
                 if (name.length > 1 && name[1].equals("class") && name[1].indexOf("$") == -1) {
@@ -70,7 +68,7 @@ public class SwingSystem implements IFsystem {
 
                     } catch (ClassNotFoundException ex) {
                         // Wird geworfen, wenn die Klasse nicht gefunden wurde
-                        Debug.msg("core", OOBDConstants.DEBUG_ERROR, ex.getMessage());
+                         Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING,"couldn't load class", ex);
                         ex.printStackTrace();
                     }
 
@@ -78,7 +76,7 @@ public class SwingSystem implements IFsystem {
             }
         }// if
         else
-        	System.out.println("Directory " + directory.getName() + " does not exist. Class " + classPrefix + " could not be loaded.");
+        	 Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING,"Directory " + directory.getName() + " does not exist. Class " + classPrefix + " could not be loaded.");
         // returns Hashmap filled with classes found
 
         return myInstances;

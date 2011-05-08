@@ -80,7 +80,7 @@ public class ComReader implements Runnable {
             try {
                 //outStreamWriter.write(c);
                 outStream.write(c);
-                //outStream.flush();
+                outStream.flush();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -90,9 +90,9 @@ public class ComReader implements Runnable {
     public synchronized void write(String s) {
         if (outStream != null) {
             try {
-                System.out.println("Serial output:" + s);
+                Logger.getLogger(ComReader.class.getName()).log(Level.INFO,"Serial output:" + s);
                 outStream.write(s.getBytes(), 0, s.length());
-                //outStream.flush();
+                outStream.flush();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -129,7 +129,6 @@ public class ComReader implements Runnable {
      * the reveice can also be done as an EventListener
      */
     public void run() {
-        System.out.println(" Serial Thread has started");
         while (true) {
 
             int input;
@@ -242,7 +241,7 @@ public class ComReader implements Runnable {
                 }
             }
         }
-        System.out.println("Serial input:" + res);
+        Logger.getLogger(ComReader.class.getName()).log(Level.INFO,"Serial input:" + res);
         return res;
     }
 

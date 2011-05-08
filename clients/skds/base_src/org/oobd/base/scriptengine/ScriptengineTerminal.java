@@ -16,9 +16,9 @@ import org.oobd.base.support.Onion;
  */
 public class ScriptengineTerminal extends OobdScriptengine implements OOBDConstants {
 
-    public ScriptengineTerminal(String ID, Core myCore, IFsystem mySystem) {
-        super(ID, myCore,mySystem);
-        Debug.msg("scriptengineterminal", DEBUG_BORING, "Ich bin der ScriptengineTerminal...");
+    public ScriptengineTerminal(String id, Core myCore, IFsystem mySystem) {
+        super(id, myCore, mySystem, "ScriptengineTerminal id " + id);
+        Logger.getLogger(ScriptengineTerminal.class.getName()).log(Level.CONFIG,  "Construct ScriptengineTerminal instance "+id);
 
     }
 
@@ -71,11 +71,10 @@ public class ScriptengineTerminal extends OobdScriptengine implements OOBDConsta
         }
         int i = 0;
         while (keepRunning == true) {
-            Debug.msg("scriptengineterminal", DEBUG_BORING, "sleeping...");
             Message msg = getMsg(true);
             Onion on = msg.getContent();
             String vis = on.getOnionString("vis");
-            Debug.msg("scriptengineterminal", DEBUG_BORING, "Msg received:" + msg.getContent().toString());
+            Logger.getLogger(ScriptengineTerminal.class.getName()).log(Level.SEVERE,"Msg received:" + msg.getContent().toString());
             try {
 
                 core.transferMsg(new Message(this, CoreMailboxName, new Onion(""
@@ -89,7 +88,6 @@ public class ScriptengineTerminal extends OobdScriptengine implements OOBDConsta
                 Logger.getLogger(ScriptengineTerminal.class.getName()).log(Level.SEVERE, null, ex);
             }
             i++;
-            Debug.msg("scriptengineterminal", DEBUG_BORING, "waked up after received msg...");
 
         }
     }

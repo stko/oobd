@@ -12,4 +12,8 @@ import org.oobd.base.*;
  */
 public abstract class OobdConnector extends OobdPlugin{
 
+    public OobdConnector(String name){
+        super(name);
+    }
+
 }

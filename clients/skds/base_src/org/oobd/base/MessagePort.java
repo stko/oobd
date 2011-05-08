@@ -16,9 +16,15 @@ public class MessagePort {
     final Vector myMsgs;
     int replyID = 0;
     int waitingforID = 0;
+    String portName = "";
 
-    public MessagePort() {
+    /**
+     * setup a new message port
+     * \param name Name of the port, just for debugging
+     */
+    public MessagePort(String name) {
         myMsgs = new Vector();
+        portName = name;
     }
 
     /**
@@ -38,20 +44,31 @@ public class MessagePort {
         } catch (JSONException ex) {
             thisReplyID = -1;
         }
+        Logger.getLogger(MessagePort.class.getName()).log(Level.INFO,"Port " + portName + " Msg reply id:" + Integer.toString(thisReplyID) + " Waiting ID:" + Integer.toString(waitingforID));
         if (thisReplyID > 0) { // this is a reply for something
+            Logger.getLogger(MessagePort.class.getName()).log(Level.INFO,"A reply message " + thisReplyID);
             if (thisReplyID == waitingforID) { //only if this is really the message we are waiting for, otherways just forget this obviously old reply
                 synchronized (myMsgs) {
                     myMsgs.insertElementAt(thisMessage, 0); //put the message as the first one in the message quere
                     waitingforID = 0; // reset the waitingFor Flag
                     myMsgs.notify();
+                    Logger.getLogger(MessagePort.class.getName()).log(Level.INFO,"saved and notified");
                 }
+            } else {
+                Logger.getLogger(MessagePort.class.getName()).log(Level.WARNING,"wrong reply id (" + thisReplyID + "<>" + waitingforID + ") message deleted");
             }
         } else { // this is a normal, non replied msg
+            Logger.getLogger(MessagePort.class.getName()).log(Level.INFO,"A non reply message " + thisReplyID);
             synchronized (myMsgs) {
                 myMsgs.add(thisMessage);
+                Logger.getLogger(MessagePort.class.getName()).log(Level.INFO,"msg saved");
                 if (waitingforID == 0) { //if we not just waiting for a delicated reply message
+                    Logger.getLogger(MessagePort.class.getName()).log(Level.INFO,"msg notified");
                     myMsgs.notify();
+                } else {
+                    Logger.getLogger(MessagePort.class.getName()).log(Level.INFO,"Msg NOT notified, as we wait for " + waitingforID);
                 }
+
             }
         }
 
@@ -65,7 +82,11 @@ public class MessagePort {
      */
     protected Message getMsg(boolean wait) {
         if (wait == true) {
-            return getMsg(-1);
+            Message msg = null;
+            while (msg == null) {
+                msg = getMsg(-1);
+            }
+            return msg;
         } else {
             return getMsg(0);
         }
@@ -97,7 +118,7 @@ public class MessagePort {
         replyID = (replyID > 10000) ? 1 : replyID + 1;
         waitingforID = replyID;
         try {
-            msg.content.put("replyID", replyID);
+            msg.content.put("msgID", replyID);
         } catch (JSONException ex) {
             Logger.getLogger(MessagePort.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -138,6 +159,7 @@ public class MessagePort {
                     if (myMsgs.isEmpty()) {
                         return null;
                     } else {
+                        waitingforID = 0; // reset the waitingFor Flag
                         return (Message) myMsgs.remove(0);
                     }
                 }
