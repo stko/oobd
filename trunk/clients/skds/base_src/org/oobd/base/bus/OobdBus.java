@@ -13,5 +13,8 @@ import org.oobd.base.*;
  */
 public abstract class OobdBus extends OobdPlugin{
 
+    public OobdBus(String name){
+        super(name);
+    }
 
 }

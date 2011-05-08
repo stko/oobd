@@ -29,6 +29,8 @@ import org.oobd.base.support.Onion;
 import org.oobd.base.visualizer.*;
 import java.util.Vector;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The application's main frame.
@@ -112,7 +114,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
     }
 
     public void announceScriptengine(String id, String visibleName) {
-        System.out.println("Interface announcement: Scriptengine-ID: " + id + " visibleName:" + visibleName);
+        Logger.getLogger(SKDSSwingView.class.getName()).log(Level.CONFIG, "Interface announcement: Scriptengine-ID: " + id + " visibleName:" + visibleName);
         javax.swing.JMenuItem menuItem;
         menuItem = new javax.swing.JMenuItem(visibleName);
         menuItem.getAccessibleContext().setAccessibleDescription(
@@ -228,10 +230,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
 
     public void openPageCompleted(String seID, String name) {
         java.awt.Component oldPage = (java.awt.Component) oobdCore.getAssign(seID, org.oobd.base.OOBDConstants.CL_PANE + ":page");
-        System.out.println("Repaint Component?");
-
         if (oldPage != null) {
-            System.out.println("Repaint Component!");
             oldPage.invalidate();
             oldPage.validate();
             oldPage.repaint();
@@ -250,7 +249,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
     public void actionPerformed(ActionEvent e) {
         //...Get information from the action event...
         //...Display it in the text area...
-        System.out.println("Attempt to create ScriptEngine " + e.getActionCommand());
+         Logger.getLogger(SKDSSwingView.class.getName()).log(Level.CONFIG,"Attempt to create ScriptEngine " + e.getActionCommand());
         String seID = oobdCore.createScriptEngine(e.getActionCommand()); //first get the unique name for the new scriptEngine Canvas
         JTabbedPane newjTabPane = new JTabbedPane(); //create a inner JTabbedPane as container for the later coming scriptengine pages
         newjTabPane.setName(seID); // set the name of that canvas that it can be found again later
@@ -275,41 +274,42 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         SKDSSwingApp.getApplication().show(aboutBox);
     }
 
-
-        @Action
+    @Action
     public void clearOutputWindow() {
         jTextAreaOutput.setText("");
 
     }
-            @Action
-    public void showFileExplorer(){
-        if(SDKSSwingFileExplorer.getOpenSelected()){
+
+    @Action
+    public void showFileExplorer() {
+        if (SDKSSwingFileExplorer.getOpenSelected()) {
             SDKSSwingFileExplorer.setOpenSelected(false);
-            fileExplorer= null;
+            fileExplorer = null;
         }
 
-        if(fileExplorer == null){
+        if (fileExplorer == null) {
             JFrame mainFrame = SKDSSwingApp.getApplication().getMainFrame();
-            fileExplorer = new SDKSSwingFileExplorer(mainFrame,true);
+            fileExplorer = new SDKSSwingFileExplorer(mainFrame, true);
             fileExplorer.setLocationRelativeTo(mainFrame);
-            
+
         }
-       
-       // SKDSSwingApp.getApplication().show(fileExplorer);
+
+        // SKDSSwingApp.getApplication().show(fileExplorer);
 
     }
+
     @Action
-    public void showFrameUpload(){
-         if(SKDSSwingUpload.getOpenSelected()){
+    public void showFrameUpload() {
+        if (SKDSSwingUpload.getOpenSelected()) {
             SKDSSwingUpload.setOpenSelected(false);
-            frameUpload= null;
+            frameUpload = null;
         }
-        if(frameUpload == null){
+        if (frameUpload == null) {
             JFrame frame = SKDSSwingApp.getApplication().getMainFrame();
             frameUpload = new SKDSSwingUpload(frame);
             frameUpload.setLocationRelativeTo(frame);
         }
-         SKDSSwingApp.getApplication().show(frameUpload);
+        SKDSSwingApp.getApplication().show(frameUpload);
     }
 
     /** This method is called from within the constructor to

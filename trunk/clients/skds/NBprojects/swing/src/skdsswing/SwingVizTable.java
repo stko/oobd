@@ -79,7 +79,6 @@ public class SwingVizTable extends JTable implements IFvisualizer {
                     if (col == 0 && row > -1) {
                         Visualizer value = (Visualizer) myTable.getValueAt(row, col);
                         value.updateRequest(OOBDConstants.UR_USER);
-                        System.out.println(" double click");
                     }
                 }
             }
@@ -123,11 +122,9 @@ public class SwingVizTable extends JTable implements IFvisualizer {
     }
 
     public boolean update(int level) {
-        // System.out.println("Update level:" + Integer.toString(level));
-        switch (level) {
+         switch (level) {
             case 0: {
                 awaitingUpdate = true;
-                System.out.println("update1: return false");
                 return false;
             }
             case 2: {
@@ -136,12 +133,10 @@ public class SwingVizTable extends JTable implements IFvisualizer {
                     this.validate();
                     this.repaint();
                     awaitingUpdate = false;
-                System.out.println("update2: return true");
                     return true;
                 }
             }
             default:
-                 System.out.println("update3: return false");
                return false;
         }
     }

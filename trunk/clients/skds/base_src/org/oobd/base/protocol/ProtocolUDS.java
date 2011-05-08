@@ -13,14 +13,12 @@ import org.oobd.base.*;
 public class ProtocolUDS extends OobdProtocol implements OOBDConstants{
 
     public ProtocolUDS() {
-        Debug.msg("protocoluds",DEBUG_BORING,"Ich bin der ProtocolUDS...");
-
+        super("ProtocolUDS");
     }
 
     @Override
     public void registerCore(Core thisCore) {
         super.registerCore(thisCore);
-        Debug.msg("protocoluds",DEBUG_BORING,"Core registered...");
     }
 
     @Override public String getPluginName(){

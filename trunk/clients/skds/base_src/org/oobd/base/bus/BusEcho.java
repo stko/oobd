@@ -12,27 +12,23 @@ import org.json.JSONException;
 import org.oobd.base.*;
 import org.oobd.base.support.Onion;
 
-
-
 /**
  *
  * @author steffen
  */
-public class BusEcho extends OobdBus implements OOBDConstants{
+public class BusEcho extends OobdBus implements OOBDConstants {
 
-	protected boolean keepRunning = true;
-	
-	
-	
-    public BusEcho() {
-        Debug.msg("busecho",DEBUG_BORING,"Ich bin BusEchoAndroid...");
+    protected boolean keepRunning = true;
+
+    public BusEcho(String name) {
+        super(name);
+        Logger.getLogger(BusEcho.class.getName()).log(Level.CONFIG,  "Construct BusEchoAndroid instance "+id);
 
     }
 
     @Override
     public void registerCore(Core thisCore) {
         super.registerCore(thisCore);
-        Debug.msg("busecho",DEBUG_BORING,"Core registered...");
     }
 
     @Override
@@ -41,13 +37,11 @@ public class BusEcho extends OobdBus implements OOBDConstants{
     }
 
     public void run() {
-        
-    	// TODO	uncomment again...
-    	// throw new UnsupportedOperationException("Not supported yet.");
-    	
-    	System.out.println ("Bus Echo not supportded");
-    		
 
-        
+        throw new UnsupportedOperationException("Not supported yet.");
+
+
+
+
     }
 }

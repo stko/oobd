@@ -5,22 +5,23 @@
 package org.oobd.base.connector;
 
 import org.oobd.base.*;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author steffen
  */
 public class ConnectorLocal extends OobdConnector implements OOBDConstants {
 
-    public ConnectorLocal() {
-        Debug.msg("connectorlocal",DEBUG_BORING,"Ich bin der ConnectorLocal...");
+    public ConnectorLocal (String name) {
+        super(name);
+        Logger.getLogger(ConnectorLocal.class.getName()).log(Level.CONFIG,  "Construct ConnectorLocal instance "+id);
 
     }
 
     @Override
     public void registerCore(Core thisCore) {
         super.registerCore(thisCore);
-        Debug.msg("connectorlocal",DEBUG_BORING,"Core registered...");
     }
 
     @Override

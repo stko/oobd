@@ -5,7 +5,8 @@
 package org.oobd.base.scriptengine;
 
 import org.oobd.base.*;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  * generic abstract for the implementation of scriptengines
  * @author steffen
@@ -21,11 +22,12 @@ abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstan
         return "";
     }
 
-    public OobdScriptengine(String myID, Core myCore, IFsystem mySystem) {
+    public OobdScriptengine(String myID, Core myCore, IFsystem mySystem, String name) {
+        super(name);
         id = myID;
          core = myCore;
          UISystem=mySystem;
-        Debug.msg("oobdscriptengine",DEBUG_BORING,"Scriptengine  object created: " + id);
+        Logger.getLogger(OobdScriptengine.class.getName()).log(Level.CONFIG,"Scriptengine  object created: " + id);
 
     }
 
