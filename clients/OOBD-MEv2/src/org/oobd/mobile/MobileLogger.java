@@ -29,9 +29,11 @@ public class MobileLogger extends Form implements CommandListener{
     private RecordEnumeration re;
     private Command backCmd;
     private Command clearCmd;
+    private Command sendCmd;
     private Form parent;
     private OOBD_MEv2 mainMidlet;
     private String xtendedMessage;
+    private String completeMessage;
 
     public MobileLogger(OOBD_MEv2 mainMidlet) {
         super("Logger");
@@ -45,9 +47,11 @@ public class MobileLogger extends Form implements CommandListener{
         }
         backCmd = new Command("Back", Command.BACK, 0);
         clearCmd = new Command("Clear Logs",Command.OK,0);
+        sendCmd = new Command("Send Logs", Command.HELP,0);
 
         this.addCommand(backCmd);
         this.addCommand(clearCmd);
+        this.addCommand(sendCmd);
         this.setCommandListener(this);
 
     }
@@ -55,12 +59,14 @@ public class MobileLogger extends Form implements CommandListener{
     public void showlogs(OOBD_MEv2 mainMidlet){
 
         this.deleteAll();
+        completeMessage = "";
         String[] logs=getLogs();
         int x = logs.length;
-        System.out.println(x);
+//        System.out.println(x);
         for (int i = 0; i < x; i++) {
-            System.out.println(i + " = "+logs[i]);
+//            System.out.println(i + " = "+logs[i]);
             this.append(logs[i]);
+            completeMessage = completeMessage + logs[i];
             
         }
         mainMidlet.getDisplay().setCurrent(this);
@@ -101,8 +107,6 @@ public class MobileLogger extends Form implements CommandListener{
         return null;
     }
 
-
-
     //TODO Cleaning feature for the logger is missing
     public void cleanup(){
 
@@ -140,11 +144,10 @@ public class MobileLogger extends Form implements CommandListener{
                 this.log(ex.toString());
             }
 
+        } else if (c==sendCmd){
+            SendMMS mms = new SendMMS(completeMessage, this, mainMidlet);
+//            mainMidlet.getDisplay().setCurrent(mms);
         }
     }
     
-    
-    
-    
-
 }

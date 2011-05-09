@@ -21,7 +21,7 @@ public class ScriptCell extends CustomItem  {
     private String update="-";
     private String timer="-";
     private int  oobdElementFlags; //TODO Implement OOBD Element-Flags
-    private int minHeigth=30;
+    private int minHeigth=25;
     private int minWidth=150;
     private int prefHeight=30;
     private int prefWidth=250;
@@ -119,6 +119,9 @@ public class ScriptCell extends CustomItem  {
     }
 
     protected void paint(Graphics g, int w, int h) {
+
+        System.out.println("Width: "+ w + "  Height: "+h);
+        
 
         g.drawString(value,0,0,g.LEFT|g.TOP);
         g.drawString(title,0,h,g.LEFT|g.BOTTOM);

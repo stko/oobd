@@ -10,10 +10,12 @@ import javax.microedition.lcdui.*;
 public class ScriptForm extends Form implements CommandListener, ItemCommandListener, Runnable {
 
     private Form parent; //Where this form was started from
-    private Form mainMidlet; //Where the output routines are
+    private OOBD_MEv2 mainMidlet; //Where the output routines are
     private Form messageForm;
     private Command backCommand = null;
     private Command detailCommand = null;
+    private Command sendTextCmd;
+    private Command clearCmd;
     private Display display;
     private List cellList = null;
     private Script myEngine = null;
@@ -22,10 +24,11 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
     private Command exitCmd = new Command("Exit", Command.EXIT,0);
     private ScriptCell tempCell;
     private String tempValue="";
+    private String message;
     private boolean resetMessage=true;
 
 
-    public ScriptForm(Form mainMidlet, Script scriptEngine, Display display) {
+    public ScriptForm(OOBD_MEv2 mainMidlet, Script scriptEngine, Display display) {
         super("");
         this.myEngine = scriptEngine;
         this.display = display;
@@ -43,10 +46,11 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
         
         Enumeration e = scriptTable.keys();
         for (int i = 1; i < scriptTable.size()+1; i++) {
-            System.out.println("Current-ID: "+i);
+//            System.out.println("Current-ID: "+i);
             tempCell = (ScriptCell)scriptTable.get(Integer.toString(i));
             tempCell.addCommand(selectCmd);
             tempCell.setItemCommandListener(this);
+
             this.append(tempCell);
             
         }       
@@ -85,19 +89,32 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
             messageForm.setCommandListener(this);
             backCommand = new Command("Back", Command.BACK, 0);
             messageForm.addCommand(backCommand);
+            sendTextCmd = new Command("Send Text",Command.OK,0);
+            messageForm.addCommand(sendTextCmd);
+            clearCmd = new Command("Clear",Command.OK,0);
+            messageForm.addCommand(clearCmd);
             resetMessage=false;
+            tempValue = text;
+            message = text;
+        } else {
+        tempValue = text + "\n";
+        message = message + " \n" + text;
         }
-        tempValue = text + " \n";
         messageForm.append(tempValue);        
-        
         display.setCurrent(messageForm);
     }
 
     public void commandAction(Command c, Displayable d) {
         if (c == exitCmd){
-            display.setCurrent(mainMidlet);
+            display.setCurrent(mainMidlet.mainwindow);
         } else if (c == backCommand){
             display.setCurrent(this);
+        } else if (c == sendTextCmd){
+            SendMMS mms = new SendMMS(message, this, mainMidlet);
+//            display.setCurrent(mms);
+        } else if (c == clearCmd){
+            resetMessage = true;
+            showMessage("");
         }
     }
 
