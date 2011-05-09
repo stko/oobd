@@ -103,6 +103,10 @@ function getStringPart(text, index)
     
 end
 
+function round(num, idp)
+  return tonumber(string.format("%." .. (idp or 0) .. "f", num))
+end
+
 -- translate DTC bytes into their offical notation
 -- as descripted on http://en.wikipedia.org/wiki/OBD-II_PIDs (30.4.11)
 
@@ -304,10 +308,13 @@ end
 function interface_voltage(oldvalue,id)
   local answ=""
   if hardwareID == "OOBD" then
-    answ="not implemented yet"
+    echoWrite("p 0 6\r\n")
+    answ=serReadLn(2000, true)
+		answ=round(getStringPart(answ, 1)/1000, 2)
+		answ=answ.." Volt"
   else
     echoWrite("at!10\r\n")
-     answ=serReadLn(2000, true)
+    answ=serReadLn(2000, true)
  end
   return answ
 end
@@ -315,11 +322,11 @@ end
 function interface_bus(oldvalue,id)
   local answ=""
   if hardwareID == "OOBD" then
-    echoWrite("p 0 6\r\n")
+    echoWrite("p 0 5\r\n")
   else
-	echoWrite("0100\r\n") -- first send something to let the DXM search for a available bus
-	udsLen=receive()
-	echoWrite("atdp\r\n")
+	  echoWrite("0100\r\n") -- first send something to let the DXM search for a available bus
+	  udsLen=receive()
+	  echoWrite("atdp\r\n")
   end
     answ=serReadLn(2000, true)
   return answ
