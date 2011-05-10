@@ -18,5 +18,6 @@ public final class TransferSpecification {
     public static final byte CAN=0x18;
     public static final byte G=0x47;
     public static final byte C=0x43;
+    public static final int waitForTimeout = 500;
 
 }
