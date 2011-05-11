@@ -356,7 +356,7 @@ obp_uds (void *pvParameters)
 	      }
 	      DEBUGPRINT ("Tester address %2X PCI %2X\n", dp->recv,
 			  dp->data[0]);
-	      if ((config.sendID ==0 ? dp->recv == ( config.recvID || 8 ) : dp->recv == config.sendID ))
+	      if ((config.sendID ==0 ? dp->recv == ( config.recvID | 8 ) : dp->recv == config.sendID ))
 		{		/* Tester Address? */
 		  if (dp->data[0] == 0x03 && dp->data[1] == 0x7f && dp->data[2] == 0x78)	//Response pending
 		    {
