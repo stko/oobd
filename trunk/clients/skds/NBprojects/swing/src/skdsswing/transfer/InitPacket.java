@@ -15,7 +15,7 @@ import java.io.ByteArrayInputStream;
  * @author OOBD.org
  */
 public class InitPacket {
-   private short packetnumber;
+	private short packetnumber;
     private boolean longPacket;
     private boolean isPacketInit;
     private boolean isEnd;
@@ -27,7 +27,7 @@ public class InitPacket {
     private byte[] header;
     private byte[] crcfooter = new byte[2];
     private CRC16 crc = new CRC16();
-
+   
    public void setFilelength(int size){
 	   this.fileLength = size;
    }
@@ -76,17 +76,23 @@ public class InitPacket {
 	public void setHeader(byte[] header) {
 		this.header = header;
 	}
+	public void setData(byte[] data) {
+		this.data = data;
+	}
+	public byte[] getData() {
+		return data;
+	}
 
 	public InitPacket(){
 		header = new byte[3];
 		intForFirstUse(header);
-
-
-
-
+		
+		
+		
+		
 	}
     public void createPacket() throws Exception{
-    	if(longPacket==true){
+    	if(getIsLongPacket()==true){
     		header[0] = TransferSpecification.STX;
     		packet = new byte[1029];
     		innerdata = new byte[1024];
@@ -96,7 +102,7 @@ public class InitPacket {
     		packet = new byte[133];
     		innerdata = new byte[128];
     	}
-    	if(isPacketInit==true){
+    	if(getIsPacketInit()==true){
     		if(packetnumber!=0){
     			throw new Exception("Packet number should beginn with 0");
     		}
@@ -112,11 +118,11 @@ public class InitPacket {
     			//crcfooter = crc.update(innerdata);
     			System.arraycopy(header, 0, packet, 0, 3);
     			System.arraycopy(crcfooter, 0, packet, packet.length-2, 2);
-
+    			
     		}
     	}
-    	else if(isEnd){
-    		if(packetnumber !=0){
+    	else if(getIsEnd()){
+    		if(getPacketnumber() !=0){
     			throw new Exception("end can only have packetnum 0");
     		}
     		else{
@@ -129,7 +135,7 @@ public class InitPacket {
     			System.arraycopy(crcfooter, 0, packet, packet.length-2, 2);
     		}
     	}
-    	else if(packetnumber ==0){
+    	else if(getPacketnumber() ==0){
     		throw new Exception("data can't be in packet one");
     	}
     	else{
@@ -142,7 +148,7 @@ public class InitPacket {
 			System.arraycopy(crcfooter, 0, packet, packet.length-2, 2);
     	}
     }
-
+    
     private byte[] ConvertChartoByteArray(char[] input)
     {
         byte[] output = new byte[input.length];
@@ -157,5 +163,5 @@ public class InitPacket {
     		bytes[i] =0x00;
     	}
     }
-
+	
 }
