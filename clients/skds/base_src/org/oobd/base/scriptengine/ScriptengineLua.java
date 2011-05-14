@@ -43,8 +43,8 @@ public class ScriptengineLua extends OobdScriptengine {
 
     public ScriptengineLua(String id, Core myCore, IFsystem mySystem) {
         super(id, myCore, mySystem, "ScriptengineLua id " + id);
-          Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG,  "Construct ScriptengineLua instance "+id);
-       myself = this;
+        Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG, "Construct ScriptengineLua instance " + id);
+        myself = this;
 
 
 
@@ -70,23 +70,7 @@ public class ScriptengineLua extends OobdScriptengine {
         CoroutineLib.register(state);
 
 
-        try {
-            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG,"Try to initialize Lua engine");
-
-            //activate the following line in normal mode:
-            //InputStream resource = new FileInputStream("/sdcard/stdlib.lbc");
-
-            //activate the following line in debugging mode (not necessary for emulator):
-            //InputStream resource = OOBDApp.getInstance().getAssets().open("stdlib.lbc");
-            InputStream resource = UISystem.generateResourceStream(FT_SCRIPT, ENG_LUA_STDLIB);
-
-
-            state.call(LuaPrototype.loadByteCode(resource, state.getEnvironment()), null, null, null);
-        } catch (IOException ex) {
-            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-        }
-
+        Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG, "Try to initialize Lua engine");
         register("openPageCall", new JavaFunction() {
 
             public int call(LuaCallFrame callFrame, int nArguments) {
@@ -177,7 +161,7 @@ public class ScriptengineLua extends OobdScriptengine {
                             + "{'name':'" + myself.getId() + "'},"
                             + "'command':'serReadLn',"
                             + "'timeout':'" + getInt(0) + "',"
-                            + "'ignore':'" + Boolean.toString(getBoolean(1)) + "'}")), +(getInt(0)*12)/10);
+                            + "'ignore':'" + Boolean.toString(getBoolean(1)) + "'}")), +(getInt(0) * 12) / 10);
                     if (answer != null) {
                         result = answer.getContent().getString("result");
                         if (result != null && result.length() > 0) {
@@ -199,7 +183,7 @@ public class ScriptengineLua extends OobdScriptengine {
         register("serWaitCall", new JavaFunction() {
 
             public int call(LuaCallFrame callFrame, int nArguments) {
-                Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO,"Lua calls serWait with string data:>" + getString(0) + "<");
+                Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO, "Lua calls serWait with string data:>" + getString(0) + "<");
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
                 initRPC(callFrame, nArguments);
                 int result = 0;
@@ -211,10 +195,10 @@ public class ScriptengineLua extends OobdScriptengine {
                             + "{'name':'" + myself.getId() + "'},"
                             + "'command':'serWait',"
                             + "'timeout':'" + getInt(1) + "',"
-                            + "'data':'" + Base64Coder.encodeString(getString(0)) + "'}")), + (getInt(1)*12)/10);
+                            + "'data':'" + Base64Coder.encodeString(getString(0)) + "'}")), +(getInt(1) * 12) / 10);
 
                     if (answer != null) {
-                        Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO,"Lua calls serWait returns with onion:" + answer.getContent().toString());
+                        Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO, "Lua calls serWait returns with onion:" + answer.getContent().toString());
                         result = answer.getContent().getInt("result");
 
                     }
@@ -319,21 +303,20 @@ public class ScriptengineLua extends OobdScriptengine {
         try {
             props.load(UISystem.generateResourceStream(FT_PROPS, UISystem.generateUIFilePath(FT_PROPS, "enginelua.props")));
         } catch (Exception ignored) {
-           Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG,"couldn't load properties");
+            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG, "couldn't load properties");
         }
 
-         try{
-             doScript(props.getProperty("LuaDefaultScript", ENG_LUA_DEFAULT));
-         }
-         catch (IOException ignored) {
-            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.WARNING,"couldn't run script engine");
+        try {
+            doScript(props.getProperty("LuaDefaultScript", ENG_LUA_DEFAULT));
+        } catch (IOException ignored) {
+            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.WARNING, "couldn't run script engine");
         }
         int i = 0;
         while (keepRunning == true) {
             Message msg = getMsg(true);
             Onion on = msg.getContent();
             String vis = on.getOnionString("vis");
-            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO,"Msg received:" + msg.getContent().toString());
+            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO, "Msg received:" + msg.getContent().toString());
             try {
                 if (CM_UPDATE.equals(on.get("type"))) {
                     core.transferMsg(new Message(this, CoreMailboxName, new Onion(""
@@ -377,13 +360,13 @@ public class ScriptengineLua extends OobdScriptengine {
         InputStream resource = UISystem.generateResourceStream(FT_SCRIPT, fileName);
         LuaClosure callback = LuaPrototype.loadByteCode(resource, state.getEnvironment());
         state.call(callback, null, null, null);
-         Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG,"Start Lua Script"+fileName);
+        Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG, "Start Lua Script" + fileName);
 
     }
 
     public String callFunction(String functionName, Object[] params) {
         functionName = functionName.substring(0, functionName.lastIndexOf(':')); //removing the index behind the : seperator
-        Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO,"function to call in Lua:" + functionName);
+        Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO, "function to call in Lua:" + functionName);
         LuaClosure fObject = (LuaClosure) state.getEnvironment().rawget(functionName);
         //System.err.println(fObject.getClass().toString());
         //System.err.println(fObject.toString());
