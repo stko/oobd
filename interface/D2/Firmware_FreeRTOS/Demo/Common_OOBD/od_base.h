@@ -56,8 +56,6 @@ typedef struct data_packet
 
 typedef struct data_packet data_packet;
 
-
-
 /* generic messageTypes to put "everything" in a queue */
 typedef struct MsgData
 {
@@ -78,7 +76,6 @@ typedef struct OdMsg OdMsg;
 
 #include "od_protocols.h"
 
-
 MsgData *createDataMsg (data_packet * data);
 MsgData *createMsg (void *data, size_t size);
 void disposeMsg (MsgData * p);
@@ -89,7 +86,6 @@ portBASE_TYPE sendMsgFromISR (portBASE_TYPE msgType, xQueueHandle recv,
 			      MsgData * msg);
 portBASE_TYPE waitMsg (xQueueHandle recv, MsgData ** msg,
 		       portBASE_TYPE timeout);
-
 
 // Print functions
 
@@ -102,8 +98,6 @@ void printser_uint32ToHex (uint32_t value);
 void printser_uint16ToHex (uint16_t value);
 
 void printser_uint8ToHex (uint8_t value);
-
-
 
 void printLF();
 #endif /* INC_OD_BASE_H */

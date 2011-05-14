@@ -115,9 +115,6 @@ CAN2data (UDSBuffer * udsPtr, unsigned char *canPtr, portBASE_TYPE startFrom,
 
 }
 
-
-
-
 /*!
 \brief generates tester presents
 
@@ -170,7 +167,6 @@ generateTesterPresents (unsigned char *tpArray, unsigned char *canBuffer,
 
 
 */
-
 
 void
 printdata_Buffer (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
@@ -251,6 +247,25 @@ dumpFrame (data_packet * p, print_cbf print_data)
     }
 }
 
+void
+data2UART (data_packet * p, print_cbf print_data)
+{
+  MsgData *msg;
+  extern xQueueHandle outputQueue;
+  if (NULL != (msg = createDataMsg (p)))
+    {
+      msg->print = print_data;
+      if (pdPASS != sendMsg (MSG_BUS_RECV, outputQueue, msg))
+	{
+	  DEBUGPRINT ("FATAL ERROR: output queue is full!\n", 'a');
+	}
+    }
+  else
+    {
+      DEBUGPRINT ("FATAL ERROR: Out of Heap space!l\n", 'a');
+    }
+}
+
 /*!
 
 structure of UDS- CAN telegram taken fom http://www.canbushack.com/blog/index.php/2010/03/19/iso-15765-2-can-transport-layer-yes-it-can-be-fun
@@ -275,6 +290,7 @@ obp_uds (void *pvParameters)
   extern xQueueHandle outputQueue;
   extern xQueueHandle inputQueue;
   extern print_cbf printdata_CAN;
+
   MsgData *msg;
   MsgData *ownMsg;
   portBASE_TYPE *paramData;
@@ -293,36 +309,23 @@ obp_uds (void *pvParameters)
   /* Memory eater Nr. 2: The Tester Present Marker Flags */
   unsigned char tp_Flags[128];
   portBASE_TYPE msgType;
-
-  /* store all parameter in one single struct to maybe later store such param sets in EEPROM */
-  struct UdsConfig
-  {
-    portBASE_TYPE recvID, //!< Module ID
-      sendID, 		  //!< sender ID, used when the expected answer ID <> recvID || 8
-      timeout,            //!< timeout in systemticks
-      listen,             //!< listen level
-      bus,                //!< id of actual used bus
-      busConfig,          //!< nr of actual used bus configuration
-      timeoutPending,     //!< timeout for response pending delays in system ticks
-      blockSize,          //!< max. number of frames to send, overwrites the values received from Module, if > 0.
-      separationTime,     //!< delay between two frames,overwrites the values received from Module, if > 0
-      tpFreq              //!< time between two tester presents in systemticks
-  } config;
+  extern struct UdsConfig config;
 
   /* Init default parameters */
-  config.recvID = 0x7DF;
-  config.sendID = 0x00; // 0 disables special sendID
-  config.timeout = 6;
-  config.listen = 0;
-  config.bus = VALUE_BUS_CAN;
-  config.busConfig = VALUE_BUS_CONFIG_11bit_500kbit; /* default */
+  config.recvID 		= 0x7DF;
+  config.sendID 		= 0x00; // 0 disables special sendID
+  config.timeout 		= 6;
+  config.listen 		= 0;
+  config.bus 			= VALUE_BUS_CAN;
+  config.busConfig 		= VALUE_BUS_CONFIG_11bit_500kbit; /* default */
   config.timeoutPending = 150;
-  config.blockSize = 0;
+  config.blockSize 		= 0;
   config.separationTime = 0;
-  config.tpFreq = 250;
+  config.tpFreq 		= 250;
+
   portBASE_TYPE timeout = 0;
-  blockSize_BS = 0;
-  separationTime_ST = 0;
+  blockSize_BS 			= 0;
+  separationTime_ST 	= 0;
   /* select the can bus as output */
   odbarr[ODB_CAN] ();
   actBus_init ();
@@ -608,95 +611,44 @@ obp_uds (void *pvParameters)
 	      switch (paramData[0])
 	      {
 	        case PARAM_INFO:
-	        if (paramData[1] == VALUE_PARAM_INFO_BUS) /* p 0 4 */
-		    {
-			  if (config.bus == VALUE_BUS_CAN)
-		      {
-				printLF();
-				printser_string("3 - CAN");
-		      }
-		    }
-	        else if (paramData[1] == VALUE_PARAM_INFO_BUS_CONFIG) /* p 0 5 */
-	        {
-	          if (config.busConfig == VALUE_BUS_CONFIG_11bit_125kbit)
-	          {
-				printLF();
-	        	printser_string("1 = ISO 15765-4, CAN 11bit ID/125kBaud");
-			  }
-			  else if (config.busConfig == VALUE_BUS_CONFIG_11bit_250kbit)
-			  {
-				printLF();
-				printser_string("2 = ISO 15765-4, CAN 11bit ID/250kBaud");
-			  }
-			  else if (config.busConfig == VALUE_BUS_CONFIG_11bit_500kbit)
-			  {
-				printLF();
-				printser_string("3 = ISO 15765-4, CAN 11bit ID/500kBaud");
-			  }
-			  else if (config.busConfig == VALUE_BUS_CONFIG_11bit_1000kbit)
-			  {
-				printLF();
-			    printser_string("4 - ISO 15765-4, CAN 11bit ID/1000kBaud");
-			  }
-			  else if (config.busConfig == VALUE_BUS_CONFIG_29bit_125kbit)
-			  {
-			    printLF();
-			    printser_string("5 - ISO 15765-4, CAN 29bit ID/125kBaud");
-			  }
-			  else if (config.busConfig == VALUE_BUS_CONFIG_29bit_250kbit)
-			  {
-			    printLF();
-			    printser_string("6 - ISO 15765-4, CAN 29bit ID/250kBaud");
-			  }
-			  else if (config.busConfig == VALUE_BUS_CONFIG_29bit_500kbit)
-			  {
-			    printLF();
-			    printser_string("7 - ISO 15765-4, CAN 29bit ID/500kBaud");
-			  }
-			  else if (config.busConfig == VALUE_BUS_CONFIG_29bit_1000kbit)
-			  {
-			    printLF();
-			    printser_string("8 - ISO 15765-4, CAN 29bit ID/1000kBaud");
-			  }
-		    }
-		  break;
-		case PARAM_ECHO:
-		  break;
-		case PARAM_LISTEN:
-		  config.listen = paramData[1];
-		  break;
-		case PARAM_PROTOCOL:
-		  break;
-		case PARAM_BUS:
-		  break;
-		case PARAM_BUS_CONFIG:
-		  break;
-		case PARAM_TIMEOUT:
-		  config.timeout = paramData[1] + 1;
-		  break;
-		case PARAM_TIMEOUT_PENDING:
-		  break;
-		case PARAM_BLOCKSIZE:
-		  break;
-		case PARAM_FRAME_DELAY:
-		  break;
-		case PARAM_RECVID:
-		  config.recvID = paramData[1];
-		  break;
-		case PARAM_SENDID:
-		  config.sendID = paramData[1];
-		  break;
-		case PARAM_TP_ON:
-		  tp_Flags[reduceID (paramData[1])] = config.tpFreq;
-		  break;
-		case PARAM_TP_OFF:
-		  tp_Flags[reduceID (paramData[1])] = 0;
-		  break;
-		case PARAM_TP_FREQ:
-		  config.tpFreq = paramData[1];
-		  break;
- 		}
-         actBus_param (paramData[0], paramData[1]);	/* forward the received params to the underlying bus. */
+	       	  break;
+	        case PARAM_ECHO:
+	          break;
+	        case PARAM_LISTEN:
+		      config.listen = paramData[1];
+		      break;
+	        case PARAM_PROTOCOL:
+		      break;
+	        case PARAM_BUS:
+		      break;
+	        case PARAM_BUS_CONFIG:
+		      break;
+	        case PARAM_TIMEOUT:
+		      config.timeout = paramData[1] + 1;
+		      break;
+	        case PARAM_TIMEOUT_PENDING:
+		      break;
+	        case PARAM_BLOCKSIZE:
+		      break;
+	        case PARAM_FRAME_DELAY:
+		      break;
+	        case PARAM_RECVID:
+		      config.recvID = paramData[1];
+		      break;
+	        case PARAM_SENDID:
+		      config.sendID = paramData[1];
+		      break;
+	        case PARAM_TP_ON:
+		      tp_Flags[reduceID (paramData[1])] = config.tpFreq;
+		      break;
+	        case PARAM_TP_OFF:
+		      tp_Flags[reduceID (paramData[1])] = 0;
+		      break;
+	        case PARAM_TP_FREQ:
+	          config.tpFreq = paramData[1];
+	          break;
+	      }
+	      actBus_param (paramData[0], paramData[1]);	/* forward the received params to the underlying bus. */
 	      break;
 	    case MSG_INIT:
 	      DEBUGPRINT ("Reset Protocol\n", 'a');

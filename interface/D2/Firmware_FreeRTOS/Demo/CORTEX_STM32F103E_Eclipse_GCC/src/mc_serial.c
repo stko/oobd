@@ -108,9 +108,9 @@ void SerialSendStr(char const *str) {
 
 void sendMemLoc(uint32_t *ptr) {
   printLF();
-  printser_string("[0x");
+  printser_string("Address [0x");
   printser_uint32ToHex((uint32_t)ptr);
-  printser_string("] = 0x");
+  printser_string("] = Value 0x");
   printser_uint32ToHex(&ptr);
 }
 /*---------------------------------------------------------------------------*/
