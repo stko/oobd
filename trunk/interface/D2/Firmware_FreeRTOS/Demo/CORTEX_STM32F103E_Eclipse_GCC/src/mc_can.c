@@ -100,14 +100,12 @@ bus_flush_can ()
 portBASE_TYPE
 bus_param_can (portBASE_TYPE param, portBASE_TYPE value)
 {
-  extern config;
-
   switch (param)
   {
     case PARAM_BUS_CONFIG:
-      if (value != 0)
+	  if (value != 0)
         CAN1_Configuration(value); /* reinitialization of CAN interface */
-        CAN_BusConfig = value;
+      CAN_BusConfig = value;
       break;
 
     default:

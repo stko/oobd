@@ -160,6 +160,21 @@ static unsigned char BTM222_RespBuffer[20] = "00:00:00:00:00:00";
 //! to output a single char
 typedef void (*printChar_cbf) (char a);
 
+/* store all parameter in one single struct to maybe later store such param sets in EEPROM */
+struct UdsConfig
+{
+  portBASE_TYPE recvID, //!< Module ID
+    sendID, 		  //!< sender ID, used when the expected answer ID <> recvID || 8
+    timeout,            //!< timeout in systemticks
+    listen,             //!< listen level
+    bus,                //!< id of actual used bus
+    busConfig,          //!< nr of actual used bus configuration
+    timeoutPending,     //!< timeout for response pending delays in system ticks
+    blockSize,          //!< max. number of frames to send, overwrites the values received from Module, if > 0.
+    separationTime,     //!< delay between two frames,overwrites the values received from Module, if > 0
+    tpFreq              //!< time between two tester presents in systemticks
+} config;
+
 
 
 #endif /* INC_OD_CONFIG_H */

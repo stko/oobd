@@ -232,6 +232,7 @@ inputParserTask (void *pvParameters)
   extern xQueueHandle inputQueue;
   extern xQueueHandle protocolQueue;
   extern portBASE_TYPE lfType;
+  extern struct UdsConfig config;
 
   MsgData *incomingMsg;
   char inChar;
@@ -355,7 +356,7 @@ inputParserTask (void *pvParameters)
 			      switch (cmdKey)
 				{
 				case PARAM_INFO:
-				  if (cmdValue == VALUE_PARAM_INFO_VERSION)
+				  if (cmdValue == VALUE_PARAM_INFO_VERSION) /* p 0 0 */
 				  {
 					printLF();
 					printser_string ("OOBD ");
@@ -375,6 +376,57 @@ inputParserTask (void *pvParameters)
 					printLF();
 					printser_string ("1 - UDS (ISO14229-1)");
 				  }
+				  else if (cmdValue == VALUE_PARAM_INFO_BUS) /* p 0 4 */
+				  {
+					  if (config.bus == VALUE_BUS_CAN)
+					  {
+				 		printLF();
+				 		printser_string("3 - CAN");
+					  }
+				  }
+				  else if (cmdValue == VALUE_PARAM_INFO_BUS_CONFIG) /* p 0 5 */
+				  {
+				    if (config.busConfig == VALUE_BUS_CONFIG_11bit_125kbit)
+				    {
+				      printLF();
+				 	  printser_string("1 = ISO 15765-4, CAN 11bit ID/125kBaud");
+				 	}
+				 	else if (config.busConfig == VALUE_BUS_CONFIG_11bit_250kbit)
+				 	{
+				 	  printLF();
+				 	  printser_string("2 = ISO 15765-4, CAN 11bit ID/250kBaud");
+				 	}
+				 	else if (config.busConfig == VALUE_BUS_CONFIG_11bit_500kbit)
+				 	{
+				 	  printLF();
+				 	  printser_string("3 = ISO 15765-4, CAN 11bit ID/500kBaud");
+				 	}
+				 	else if (config.busConfig == VALUE_BUS_CONFIG_11bit_1000kbit)
+				 	{
+				 	  printLF();
+				 	  printser_string("4 - ISO 15765-4, CAN 11bit ID/1000kBaud");
+				 	}
+				 	else if (config.busConfig == VALUE_BUS_CONFIG_29bit_125kbit)
+				 	{
+				 	  printLF();
+				 	  printser_string("5 - ISO 15765-4, CAN 29bit ID/125kBaud");
+				 	}
+				 	else if (config.busConfig == VALUE_BUS_CONFIG_29bit_250kbit)
+				 	{
+				 	  printLF();
+				 	  printser_string("6 - ISO 15765-4, CAN 29bit ID/250kBaud");
+				 	}
+				 	else if (config.busConfig == VALUE_BUS_CONFIG_29bit_500kbit)
+				 	{
+				 	  printLF();
+				 	  printser_string("7 - ISO 15765-4, CAN 29bit ID/500kBaud");
+				 	}
+				 	else if (config.busConfig == VALUE_BUS_CONFIG_29bit_1000kbit)
+				 	{
+				 	  printLF();
+				 	  printser_string("8 - ISO 15765-4, CAN 29bit ID/1000kBaud");
+				 	}
+				  }
 				  #ifdef OOBD_PLATFORM_STM32
 				  else if (cmdValue == VALUE_PARAM_INFO_ADC_POWER) /* p 0 6 */
 				  {
@@ -385,7 +437,7 @@ inputParserTask (void *pvParameters)
 				  else if (cmdValue == VALUE_PARAM_INFO_CPU_INFO) /* p 0 10 */
 			        sendCPUInfo();			/* send CPU Info */
 			      else if (cmdValue == VALUE_PARAM_INFO_MEM_LOC) /* p 0 11 */
-			    	sendMemLoc(800000);      		/* send Mem Location */
+			    	sendMemLoc(0x8003000); /* send Mem Location */
 			      else if (cmdValue == VALUE_PARAM_INFO_ROM_TABLE_LOC) /* p 0 12 */
 			    	sendRomTable();      	/* send ROM Table */
 			      else if (cmdValue == VALUE_PARAM_INFO_FREE_HEAP_SIZE) /* p 0 13 */
