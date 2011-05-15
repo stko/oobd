@@ -158,17 +158,24 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
             pageObjects.add((IFvisualizer) newJComponent);
             if (((IFvisualizer) newJComponent).isGroup()) {
                 // if the component is not already placed
-                JScrollPane scrollpane = new JScrollPane(newJComponent);
-                scrollpane.setPreferredSize(new Dimension(300, 300));
+                //JScrollPane scrollpane = new JScrollPane(newJComponent);
+                JScrollPane scrollpane = new JScrollPane();
+                scrollpane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+                scrollpane.setViewportView(newJComponent);
+               // scrollpane.setPreferredSize(new Dimension(300, 300));
                 GridBagConstraints c = new GridBagConstraints();
                 JPanel panel = (JPanel) oobdCore.getAssign(
                         newVisualizer.getOwnerEngine(),
                         org.oobd.base.OOBDConstants.CL_PANE + ":page");
-                c.fill = GridBagConstraints.BOTH;
+                c.fill = GridBagConstraints.REMAINDER;
+
                 c.gridx = 0;
                 c.gridy = 0;
+                c.weightx=1;
+                c.weighty=1;
                 //panel.add(newJComponent, c);
-                panel.add(scrollpane, 0);//, c);
+                panel.add(scrollpane, java.awt.BorderLayout.CENTER);//, c);
+                //panel.add(scrollpane, c);
                 panel.validate();
             }
             ((IFvisualizer) newJComponent).initValue(newVisualizer, myOnion);
@@ -200,7 +207,8 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
                 }
                 basejTabPane.remove(oldPage);
             }
-            JPanel panel = new JPanel(new GridBagLayout());
+        //    JPanel panel = new JPanel(new GridBagLayout());
+           JPanel panel = new JPanel(new java.awt.BorderLayout());
             panel.setName(name);
             //JTabbedPane pane = new JTabbedPane();
             //pane.add(panel);
