@@ -162,7 +162,7 @@ end
 function echoWrite(text)
 	serFlush()
 	serWrite(text)
-	serWait(text,2000)
+	serWait(text,500)
 end
 
 -- the global receiving routine. Trys to read single- or multiframe answers from the dxm and stores it in udsbuffer, setting the received length in udslen
@@ -171,7 +171,7 @@ function receive_DXM()
 	udsLen=0
 	answ=""
 	print("Receive via DXM...")
-	answ=serReadLn(2000, true)
+	answ=serReadLn(500, true)
 	if answ == "" then
 		return 0
 	else
@@ -190,9 +190,9 @@ function receive_DXM()
 					end
 					if byteCount >=udsLen then
 						doLoop=false
-						serWait(">",2000)
+						serWait(">",500)
 					else
-						answ=serReadLn(2000, true)
+						answ=serReadLn(500, true)
 					end
 				else
 					if string.sub(answ,3,3) == " " then -- singleframe
@@ -209,12 +209,12 @@ function receive_DXM()
 						-- die LÃ€ngenangabe
 						udsLen=tonumber(answ,16)
 						byteCount=1
-						answ=serReadLn(2000, true)
+						answ=serReadLn(500, true)
 
 					end
 				end
 			else
-				answ=serReadLn(2000, true)
+				answ=serReadLn(500, true)
 			end
 
 		end
