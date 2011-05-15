@@ -1,3 +1,10 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package skdsswing.transfer;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -31,22 +38,22 @@ public class FileSpecification {
 	    public void setInnerData(byte[] data){
 	        this.innerdata = data;
 	    }
-	    
+
 	    public FileSpecification(String filename){
 	    	this.filename = filename;
 	    	try{
-	    		initialBinaryFile(filename);
+	    		initialBinaryFile(filename,in);
 	    	}catch(IOException ex){
-	    		
+
 	    	}
 	    }
 	    public FileSpecification(String filename,FileInputStream input){
 	    	this.filename = filename;
 	    	this.in = input;
 	    	try{
-	    		initialBinaryFile(filename);
+	    		initialBinaryFile(filename,input);
 	    	}catch(IOException ex){
-	    		
+
 	    	}
 	    }
 	    /**
@@ -54,12 +61,12 @@ public class FileSpecification {
 	     * @param filename
 	     * @throws IOException
 	     */
-	    private  void initialBinaryFile(String filename)throws IOException{
-	    	FileInputStream inz = new FileInputStream(filename);
-	    	//this.in = new FileInputStream(filename);
-			byte[] bytes = new byte[in.available()];
-			byte[] bit2= new byte[inz.available()];
+	    private  void initialBinaryFile(String filename, FileInputStream in)throws IOException{
+	    	//FileInputStream inz = new FileInputStream(filename);
+	    	//in = new FileInputStream(filename);
+		byte[] bytes = new byte[in.available()];
 			
+
 			sendBinaryFile(bytes,filename,in);
 		}
 	    /**
@@ -69,16 +76,16 @@ public class FileSpecification {
 	     */
 	    public void sendBinaryFile(byte[] bytes, String filename,FileInputStream inputstream){
 	    	byte[] cp = new byte[2];
-	    	
-	    	
-	    	
+
+
+
 	    	// evtl. noch einen Befehl to Start the download
 	    	 //  sp.Write(initpacket.packet, 0, initpacket.packet.Length);
 
             // waitforack();
              //waitfor('C');
-	    	
-	    	 
+
+
 	    	short packetnum = 0;
 	    	initpack = new InitPacket();
 	    	initpack.setIsPacketInit(true);
@@ -91,16 +98,16 @@ public class FileSpecification {
 	    	else{
 	    		initpack.setLongPacket(false);
 	    	}
-	    	
+
 	    	try {
 	    		 //  sp.Write(initpacket.packet, 0, initpacket.packet.Length);
 
 	            // waitforack();
 	             //waitfor('C');
-	    		
-	    		
+
+
 					initpack.createPacket();
-					
+
 					byte[] temparray = new byte[1024];
 					long size = inputstream.available() / 1024;
 					int rest = inputstream.available() % 1024;
@@ -108,30 +115,30 @@ public class FileSpecification {
 					 for(int m = 0; m< size;m++){
 						 sendpacket = new InitPacket();
 						 inputstream.read(temparray,0,1024);
-						 
+
 						 packetnum++;
 						 sendpacket.setPacketnumber(packetnum);
 						 sendpacket.setLongPacket(true);
 						 sendpacket.setIsPacketInit(false);
 						 sendpacket.setData(temparray);
 						 sendpacket.createPacket();
-						 
+
 					 }
-					
-					
-					
+
+
+
 			} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-			}  		
-	    	
-	    	
+			}
+
+
 	    }
 		private void waitForAck(){
 			while(ack!=true){
-				
+
 			}
-			
+
 		}
 		private void sendOfTransmission(){
 			InitPacket endPacket = new InitPacket();
@@ -149,9 +156,9 @@ public class FileSpecification {
 			}
 		}
 		private void waitForAnswer(char p){
-			
+
 		}
-    	
+
 
 
 }
