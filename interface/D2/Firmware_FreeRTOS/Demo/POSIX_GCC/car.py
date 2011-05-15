@@ -54,7 +54,10 @@ while True:
     data, addr = sock_in.recvfrom( 1024 ) # buffer size is 1024 bytes
     msg+=data
     print "0x7%02X %02X %d %02X %02X %02X %02X %02X %02X %02X %02X" % ( msg[0] , msg[1] , msg[2] , msg[3] , msg[4] , msg[5] , msg[6] , msg[7] , msg[8] , msg[9] , msg[10]) 
-    msg[0]=msg[0]+8 # changing the physical address from ECU to tester
+    if msg[0] == 0xDF:
+      msg[0]=0xE8 # changing functional address to answer address of ECU
+    else:
+      msg[0]=msg[0] | 8 # changing the physical address from ECU to tester
     frameType=(msg[3] & 0xF0 ) / 16
     print frameType
     
