@@ -5,10 +5,12 @@
 
 package org.oobd.mobile;
 
+import javax.microedition.lcdui.ChoiceGroup;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.TextField;
 import javax.microedition.rms.RecordEnumeration;
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
@@ -26,11 +28,15 @@ public class MobileLogger extends Form implements CommandListener{
     private String recordStoreName="Logging";
     private int numOfRecords2keep=30;
     private int thisID=0;
+    private int loglevel=0;
     private RecordEnumeration re;
     private Command backCmd;
     private Command clearCmd;
     private Command sendCmd;
+    private Command levelCmd;
     private Form parent;
+    private Form levelForm;
+    private ChoiceGroup level;
     private OOBD_MEv2 mainMidlet;
     private String xtendedMessage;
     private String completeMessage;
@@ -45,13 +51,15 @@ public class MobileLogger extends Form implements CommandListener{
         } catch (RecordStoreException ex) {
             ex.printStackTrace();
         }
-        backCmd = new Command("Back", Command.BACK, 0);
+        backCmd = new Command("Back", Command.BACK, 1);
         clearCmd = new Command("Clear Logs",Command.OK,0);
-        sendCmd = new Command("Send Logs", Command.HELP,0);
+        sendCmd = new Command("Send Logs", Command.HELP,2);
+        levelCmd = new Command("Set Level",Command.HELP,3);
 
         this.addCommand(backCmd);
         this.addCommand(clearCmd);
         this.addCommand(sendCmd);
+        this.addCommand(levelCmd);
         this.setCommandListener(this);
 
     }
@@ -132,7 +140,14 @@ public class MobileLogger extends Form implements CommandListener{
 
     public void commandAction(Command c, Displayable d) {
         if (c == backCmd){
-            mainMidlet.showMain();
+            if (d==this){
+                mainMidlet.showMain();
+            } else if (d==levelForm){
+
+                loglevel=level.getSelectedIndex();
+                mainMidlet.display.setCurrent(this);
+
+            }
             
         } else if (c==clearCmd){
             try {
@@ -147,6 +162,17 @@ public class MobileLogger extends Form implements CommandListener{
         } else if (c==sendCmd){
             SendMMS mms = new SendMMS(completeMessage, this, mainMidlet);
 //            mainMidlet.getDisplay().setCurrent(mms);
+        } else if (c==levelCmd){
+            levelForm = new Form("Choose log-level configuration");
+//            TextField info = new TextField("Choose log-level", "from: \t 0 = All\n\t 5 = Severe\nto:\t6 = Logging off", 100, TextField.UNEDITABLE);
+            level = new ChoiceGroup("Choose log-level:", ChoiceGroup.EXCLUSIVE);
+            level.append("All", null);
+            level.append("Debug", null);
+            level.append("Info", null);
+            level.append("Severe", null);
+            level.append("Logging off", null);
+            levelForm.append(level);
+            mainMidlet.display.setCurrent(levelForm);
         }
     }
     

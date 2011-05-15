@@ -22,6 +22,7 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
     private Command defaultCmd;
     private final ChoiceGroup choiceGroup;
     private FileBrowser fileBrowser;
+    private MobileLogger log;
 
     //TODO Store prefered BT-Device
 
@@ -30,6 +31,7 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
         this.parent = parent;
         this.mainMidlet = mainMidlet;
         this.btComm= btComm;
+        log = mainMidlet.getLog();
 
         display = Display.getDisplay(mainMidlet);
 
@@ -49,7 +51,7 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
 
         confSpacer2 = new Spacer(10,10);
 
-        choiceGroup = new ChoiceGroup("Blind Mode (for tesing)", Choice.MULTIPLE);
+        choiceGroup = new ChoiceGroup("Blind Mode (for testing)", Choice.MULTIPLE);
         choiceGroup.append("activated", null);
         choiceGroup.setSelectedFlags(new boolean[] { false });
 
@@ -77,11 +79,15 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
         }
         else if(c==scriptCmd){
             if (fileBrowser == null) {                
-                fileBrowser = new FileBrowser(display);
-                fileBrowser.setTitle("Select a script");
-                fileBrowser.setCommandListener(this);
-                fileBrowser.addCommand(FileBrowser.SELECT_FILE_COMMAND);
-                fileBrowser.addCommand(backCmd);
+                try {
+                    fileBrowser = new FileBrowser(display);              
+                    fileBrowser.setTitle("Select a script");
+                    fileBrowser.setCommandListener(this);
+                    fileBrowser.addCommand(FileBrowser.SELECT_FILE_COMMAND);
+                    fileBrowser.addCommand(backCmd);
+                } catch (Exception ex){
+                    log.log(ex.getMessage());
+                }
             }
             display.setCurrent(fileBrowser);
         }
@@ -107,8 +113,13 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
 
         }
         else if(c==FileBrowser.SELECT_FILE_COMMAND){
-            scriptConf.setString(fileBrowser.getSelectedFileURL());
-            mainMidlet.setScript(fileBrowser.getSelectedFileURL());
+            log.log ("Trying to get file from FileBrowser");
+            String file = fileBrowser.getSelectedFileURL();
+            log.log("Selected file: "+file);
+            scriptConf.setString(file);
+            log.log("Filename stored to config-menu");
+            mainMidlet.setScript(file);
+            log.log("Filename stored to main midlet");
             display.setCurrent(this);
         }
     }
@@ -119,5 +130,6 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
 
     public void setBTname(String btName){
         btConf.setString(btName);
+
     }
 }

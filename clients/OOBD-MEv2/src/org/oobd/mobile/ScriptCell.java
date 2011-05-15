@@ -120,8 +120,7 @@ public class ScriptCell extends CustomItem  {
 
     protected void paint(Graphics g, int w, int h) {
 
-        System.out.println("Width: "+ w + "  Height: "+h);
-        
+        System.out.println("Width: "+ w + "  Height: "+h);       
 
         g.drawString(value,0,0,g.LEFT|g.TOP);
         g.drawString(title,0,h,g.LEFT|g.BOTTOM);
