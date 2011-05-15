@@ -84,6 +84,7 @@ public class TerminalIOStream {
     public void close() {
         if (setUp) {
             try {
+                log.log("Trying to close inStreamReader");
                 inStreamReader.close();
                 inStreamReader = null;
                 log.log("inStreamReader closed");
@@ -105,6 +106,8 @@ public class TerminalIOStream {
             } catch (Exception ex) {
                 log.log("b: "+ex.toString());
             }
+        } else {
+            log.log("Variable 'setup' in TerminalIOStream not set");
         }
     }
 }

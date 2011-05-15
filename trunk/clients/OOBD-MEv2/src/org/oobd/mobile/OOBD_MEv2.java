@@ -19,13 +19,10 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.ImageItem;
-import javax.microedition.lcdui.Item;
-import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.Spacer;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.midlet.*;
 import javax.microedition.rms.RecordStoreException;
-import org.oobd.mobile.OOBD_MEv2;
 import se.krka.kahlua.vm.*;
 
 /**
@@ -33,7 +30,7 @@ import se.krka.kahlua.vm.*;
  */
 public class OOBD_MEv2 extends MIDlet implements CommandListener {
 
-    BTSerial btComm;
+    public BTSerial btComm;
     public Form mainwindow;
     ConfigForm configwindow;
     Spacer confSpacer;
@@ -83,6 +80,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
             try {
                 mPreferences = new Preferences("preferences",this);                
             } catch (RecordStoreException rse) {
+                showAlert("Recordstore could not be opened:\n"+rse.toString());
                 rse.printStackTrace();
             }
               
@@ -96,7 +94,8 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 btComm.deviceURL = currentURL;
             }
             
-            
+            mPreferences.put(adressbook, "Check");
+
             mainwindow = new Form("OOBD-MEv2",null);
             mainwindow.setCommandListener(this);
 
@@ -126,7 +125,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
 
     public void setScript(String script){
         actScript=script;
-//        mPreferences.put(scriptKey, script);
+        mPreferences.put(scriptpath, script);
     }
 
     public void pauseApp() {
@@ -153,7 +152,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
         }
         
         else if(c == startCmd) {
-            if (blindMode || tryToConnect()) {
+            if (tryToConnect()||blindMode) {
 //            if (blindMode) {
                 try {
                     if (scriptEngine==null){
@@ -190,7 +189,8 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     }
 
     public void showAlert(String text){
-        Alert check = new Alert("Debug Message",text,null,AlertType.WARNING);
+        Alert check = new Alert("Debug Message",text,null,AlertType.CONFIRMATION);
+        log.log("Alert shown with the Text: "+text);
         display.setCurrent(check);
     }
 
@@ -246,7 +246,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
         scriptEngine.register("addElementCall", new JavaFunction() {
             public int call(LuaCallFrame callFrame, int nArguments) {
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
-                System.out.println("Lua calls addElement with ID: "+tableID);
+//                System.out.println("Lua calls addElement with ID: "+tableID);
                 scriptEngine.initRPC(callFrame, nArguments);
                 // TODO Taken counter as scriptTable-ID. Working?
                 scriptTable.put(Integer.toString(tableID++),new ScriptCell(
@@ -364,7 +364,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
                 scriptEngine.initRPC(callFrame, nArguments);
                 scriptWindow.showMessage(scriptEngine.getString(0));
-                log.log("LUA message call: "+scriptEngine.getString(0));
+//                log.log("LUA message call: "+scriptEngine.getString(0));
                 scriptEngine.finishRPC(callFrame, nArguments);
                 return 1;
             }
