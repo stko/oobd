@@ -50,8 +50,11 @@ public class FileSpecification {
 	    public FileSpecification(String filename,FileInputStream input){
 	    	this.filename = filename;
 	    	this.in = input;
+
 	    	try{
-	    		initialBinaryFile(filename,input);
+	    		 int k = input.available();
+                        byte[] bytes = new byte[in.available()];
+                        sendBinaryFile(bytes,filename,input);
 	    	}catch(IOException ex){
 
 	    	}
@@ -109,6 +112,7 @@ public class FileSpecification {
 					initpack.createPacket();
 
 					byte[] temparray = new byte[1024];
+                                        int k = inputstream.available();
 					long size = inputstream.available() / 1024;
 					int rest = inputstream.available() % 1024;
 					 int pos = 1;
