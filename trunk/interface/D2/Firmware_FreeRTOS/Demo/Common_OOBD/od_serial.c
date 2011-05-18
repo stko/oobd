@@ -449,17 +449,29 @@ inputParserTask (void *pvParameters)
 			    	printser_string ("Free Heap (in byte): ");
 			    	printser_int (xPortGetFreeHeapSize(), 10);	/* send FreeRTOS free heap size */
 			      }
-			      else {
+			      else if (cmdValue == VALUE_PARAM_INFO_CRC32) /* p 0 14 */
+			      {
+			    	printLF();
+			    	if (CheckCrc32() == 0)
+				      printser_string ("CRC-32 application check passed!");
+			    	else
+					  printser_string ("CRC-32 application check failed");
+			      }
+			      else
+			      {
 			        sendParam (cmdKey, cmdValue);
 			      }
 				  createFeedbackMsg (0);
 				  #endif
 				  break;
+
 				case PARAM_ECHO:
 				  break;
+
 				case PARAM_LINEFEED:
 				  lfType=cmdValue;
 				  break;
+
 				#ifdef OOBD_PLATFORM_STM32
 				case PARAM_RESET:
 				  if (1 == cmdValue)
