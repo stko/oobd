@@ -74,3 +74,21 @@ uint16_t readADC1(uint8_t channel)
   /* Get the conversion value */
   return ADC_GetConversionValue(ADC1);
 }
+/*---------------------------------------------------------------------------*/
+
+extern uint32_t _edata[], _etext[], _sdata[];
+uint32_t CheckCrc32(void)
+{
+  uint32_t size;
+  uint32_t crc;
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, ENABLE);
+
+  /* size is the calculation result of the linker minus application start address offset */
+  size = (uint32_t)((uint32_t)&_etext + (uint32_t)&_edata - (uint32_t)&_sdata) - 0x8003000;
+  CRC_ResetDR();
+  /* 0x8003000 is the application start address and size = application code size */
+  crc= CRC_CalcBlockCRC((uint32_t*)0x8003000, size/4+1);
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, DISABLE);
+
+  return crc ;
+}
