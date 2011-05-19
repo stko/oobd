@@ -42,7 +42,7 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
 
         confSpacer = new Spacer(10,10);
 
-        scriptConf = new TextField("Select script:", mainMidlet.getActScript(), 32, TextField.UNEDITABLE);
+        scriptConf = new TextField("Select script:", mainMidlet.getActScript(), 100, TextField.UNEDITABLE);
         scriptCmd = new Command("Select", Command.ITEM, 0);
         scriptConf.addCommand(scriptCmd);
         defaultCmd = new Command("Default", Command.ITEM,0);
@@ -116,7 +116,11 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
             log.log ("Trying to get file from FileBrowser");
             String file = fileBrowser.getSelectedFileURL();
             log.log("Selected file: "+file);
+            String file2show = file.substring(8);
+            log.log("Anzuzeigender String: "+file2show);
+//            scriptConf.setConstraints(TextField.ANY);
             scriptConf.setString(file);
+//            scriptConf.setConstraints(TextField.UNEDITABLE);
             log.log("Filename stored to config-menu");
             mainMidlet.setScript(file);
             log.log("Filename stored to main midlet");
