@@ -6,10 +6,11 @@ import javax.microedition.rms.*;
 
 public class Preferences {
 
-    private final int btURL=1;
-    private final int scriptpath=2;
-    private final int adressbook=3;
-    private final int maxRecordID=3;
+    private final int btURLkey=1;
+    private final int scriptpathKey=2;
+    private final int adressbookKey=3;
+    private final int loglevelKey=4;
+    private final int maxRecordID=4;
     private String mRecordStoreName;
     RecordStore rs = null;
     private Hashtable mHashtable;

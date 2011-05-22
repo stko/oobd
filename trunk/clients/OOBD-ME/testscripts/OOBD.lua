@@ -407,7 +407,7 @@ end
 ---------------------- Greetings --------------------------------------
 
 function greet(oldvalue,id)
-	serDisplayWrite("Many Thanks to:")
+	serDisplayWrite("Testscript für externe Datei!!!!")
 	serDisplayWrite("")
 	serDisplayWrite("Mike Luxen")
 	serDisplayWrite("Joseph Urhahne")

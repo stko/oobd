@@ -21,6 +21,7 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.ImageItem;
 import javax.microedition.lcdui.Spacer;
 import javax.microedition.lcdui.TextField;
+import javax.microedition.lcdui.Ticker;
 import javax.microedition.midlet.*;
 import javax.microedition.rms.RecordStoreException;
 import se.krka.kahlua.vm.*;
@@ -44,9 +45,10 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     Command logCmd;
     Display display;
     Preferences mPreferences;
-    private final int btURL=1;
-    private final int scriptpath=2;
-    private final int adressbook=3;
+    private final int btURLkey=1;
+    private final int scriptpathKey=2;
+    private final int adressbookKey=3;
+    private final int loglevelKey=4;
     boolean initialized=false;
     private final String urlKey = "BTNAME";
     private String currentURL = "Not yet chosen...";
@@ -84,17 +86,21 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 rse.printStackTrace();
             }
               
-            if (!mPreferences.get(scriptpath).equals("null")) {
-                actScript = mPreferences.get(scriptpath);
+            if (!mPreferences.get(scriptpathKey).equals("null")) {
+                actScript = mPreferences.get(scriptpathKey);
             }
             
             
-            if (!mPreferences.get(btURL).equals("null")){
-                currentURL = mPreferences.get(btURL);
+            if (!mPreferences.get(btURLkey).equals("null")){
+                currentURL = mPreferences.get(btURLkey);
                 btComm.deviceURL = currentURL;
             }
+
+            if (!mPreferences.get(loglevelKey).equals("null")) {
+                log.setLoglevel(Integer.parseInt(mPreferences.get(loglevelKey)));
+            }
             
-            mPreferences.put(adressbook, "Check");
+            mPreferences.put(adressbookKey, "Check");
 
             mainwindow = new Form("OOBD-MEv2",null);
             mainwindow.setCommandListener(this);
@@ -125,7 +131,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
 
     public void setScript(String script){
         actScript=script;
-        mPreferences.put(scriptpath, script);
+        mPreferences.put(scriptpathKey, script);
     }
 
     public void pauseApp() {
@@ -152,20 +158,23 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
         }
         
         else if(c == startCmd) {
+            mainwindow.setTicker(new Ticker("Establishing Bluetooth connection..."));
             if (tryToConnect()||blindMode) {
 //            if (blindMode) {
                 try {
                     if (scriptEngine==null){
                         initiateScriptEngine();
                     }
+                    mainwindow.setTicker(new Ticker("Loading script..."));
 
                     System.out.println("Try to load script " + actScript);
                     scriptEngine.doScript(actScript);
                     log.log("Script: "+actScript+" loaded!");
                     System.out.println("Script loaded!");
                     if (!actScript.equals(scriptDefault)) {
-                        mPreferences.put(scriptpath, actScript);
+                        mPreferences.put(scriptpathKey, actScript);
                     }
+                    mainwindow.setTicker(new Ticker(""));
 
                 } catch (java.io.IOException ioe) {
                     log.log(ioe.toString());
@@ -177,7 +186,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
             destroyApp(true);
         }
         else if (c == infoCmd){
-            showAlert("Stored values: \n \t Bluetooth-URL: "+mPreferences.get(btURL)+"\n\t Script: "+mPreferences.get(scriptpath));
+            showAlert("Stored values: \n \t Bluetooth-URL: "+mPreferences.get(btURLkey)+"\n\t Script: "+mPreferences.get(scriptpathKey));
         }
         else if (c == logCmd){
             log.showlogs(this);
@@ -201,7 +210,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 showAlert("Trying to connect to: "+btComm.deviceURL);
                 btComm.Connect(btComm.deviceURL);
                 if (btComm.isConnected()) {
-                    mPreferences.put(btURL, btComm.deviceURL);
+                    mPreferences.put(btURLkey, btComm.deviceURL);
                     
 
                     return true;

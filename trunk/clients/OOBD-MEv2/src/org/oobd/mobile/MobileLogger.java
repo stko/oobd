@@ -1,6 +1,14 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ Logging class
+ *
+ * Improtent variables:
+ *      numOfRecords2keep => limits the stored logs (first in first out
+ *      loglevel => Defines which logs should be stored (0 - 4)
+ *                  0 = All
+ *                  1 = Debug
+ *                  2 = Info
+ *                  3 = Severe
+ *                  4 = Logging off
  */
 
 package org.oobd.mobile;
@@ -10,12 +18,9 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
-import javax.microedition.lcdui.TextField;
 import javax.microedition.rms.RecordEnumeration;
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
-import javax.microedition.rms.RecordStoreNotFoundException;
-import javax.microedition.rms.RecordStoreNotOpenException;
 
 /**
  *
@@ -26,9 +31,10 @@ import javax.microedition.rms.RecordStoreNotOpenException;
 public class MobileLogger extends Form implements CommandListener{
     private RecordStore rs;
     private String recordStoreName="Logging";
-    private int numOfRecords2keep=30;
+    private int numOfRecords2keep=40;
     private int thisID=0;
     private int loglevel=0;
+    private final int loglevelKey=4;
     private RecordEnumeration re;
     private Command backCmd;
     private Command clearCmd;
@@ -44,6 +50,9 @@ public class MobileLogger extends Form implements CommandListener{
     public MobileLogger(OOBD_MEv2 mainMidlet) {
         super("Logger");
         this.mainMidlet = mainMidlet;
+
+        
+
         try {
             rs = RecordStore.openRecordStore(recordStoreName, true);
             cleanup();
@@ -83,18 +92,31 @@ public class MobileLogger extends Form implements CommandListener{
     public void log(String message){
         
         try {
-//            nextID=rs.getNextRecordID();
-//            String newMessage=nextID+": "+message+"\n";
             thisID=rs.getNextRecordID()-1;
-            xtendedMessage=thisID+": "+message;
+            xtendedMessage=thisID+": "+message+"\n";
             System.out.println("LOG: "+xtendedMessage);
             byte[] byteMessage = xtendedMessage.getBytes();
             rs.addRecord(byteMessage, 0, byteMessage.length);
-//            System.out.println("Next LogID ist: "+nextID);
         } catch (RecordStoreException ex) {
             ex.printStackTrace();
         }
     }
+
+    public void log(int level,String message){
+
+        if (level>=loglevel){
+            try {
+                thisID=rs.getNextRecordID()-1;
+                xtendedMessage=thisID+": "+message+"\n";
+                System.out.println("LOG: "+xtendedMessage);
+                byte[] byteMessage = xtendedMessage.getBytes();
+                rs.addRecord(byteMessage, 0, byteMessage.length);
+            } catch (RecordStoreException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
 
     public String[] getLogs(){
         try {
@@ -114,6 +136,12 @@ public class MobileLogger extends Form implements CommandListener{
         }
         return null;
     }
+
+    public void setLoglevel(int loglevel) {
+        this.loglevel = loglevel;
+    }
+
+
 
     //TODO Cleaning feature for the logger is missing
     public void cleanup(){
@@ -145,6 +173,7 @@ public class MobileLogger extends Form implements CommandListener{
             } else if (d==levelForm){
 
                 loglevel=level.getSelectedIndex();
+                mainMidlet.storePref(loglevelKey, String.valueOf(loglevel));
                 mainMidlet.display.setCurrent(this);
 
             }
