@@ -11,6 +11,7 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
 
     private Form parent; //Where this form was started from
     private OOBD_MEv2 mainMidlet; //Where the output routines are
+    private MobileLogger log;
     private Form messageForm;
     private Command backCommand = null;
     private Command detailCommand = null;
@@ -33,6 +34,7 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
         this.myEngine = scriptEngine;
         this.display = display;
         this.mainMidlet = mainMidlet;
+        log = mainMidlet.getLog();
         new Thread(this).start();
         
     }
@@ -50,6 +52,7 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
             tempCell = (ScriptCell)scriptTable.get(Integer.toString(i));
             tempCell.addCommand(selectCmd);
             tempCell.setItemCommandListener(this);
+            tempCell.setLog(log);
 
             this.append(tempCell);
             

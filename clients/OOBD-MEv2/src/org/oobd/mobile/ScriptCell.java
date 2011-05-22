@@ -20,6 +20,8 @@ public class ScriptCell extends CustomItem  {
     private String id;
     private String update="-";
     private String timer="-";
+    private OOBD_MEv2 mainMidlet;
+    private MobileLogger log;
     private int  oobdElementFlags; //TODO Implement OOBD Element-Flags
     private int minHeigth=25;
     private int minWidth=150;
@@ -28,6 +30,7 @@ public class ScriptCell extends CustomItem  {
 
     public ScriptCell(String title, String function, String initalValue, int oobdElementFlags, String id) {
         super("");
+
         this.title = title;
         System.out.println("Title: "+title);
         this.function = function;
@@ -35,6 +38,8 @@ public class ScriptCell extends CustomItem  {
         this.oobdElementFlags = oobdElementFlags;
         this.id = id;
     }
+
+    
 
     public void setValue(String value) {
         this.value = value;
@@ -93,6 +98,10 @@ public class ScriptCell extends CustomItem  {
         this.repaint();
     }
 
+    public void setLog(MobileLogger log) {
+        this.log = log;
+    }
+
     public String toString() {
         return title + ":" + value;
     }
@@ -120,8 +129,9 @@ public class ScriptCell extends CustomItem  {
 
     protected void paint(Graphics g, int w, int h) {
 
-        System.out.println("Width: "+ w + "  Height: "+h);       
+        log.log(1,title+": Width: "+ w + "  Height: "+h); 
 
+        
         g.drawString(value,0,0,g.LEFT|g.TOP);
         g.drawString(title,0,h,g.LEFT|g.BOTTOM);
         g.drawString(update,w,0,g.RIGHT|g.TOP);
