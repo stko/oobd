@@ -18,6 +18,11 @@ public final class TransferSpecification {
     public static final byte CAN=0x18;
     public static final byte G=0x47;
     public static final byte C=0x43;
-    public static final int waitForTimeout = 500;
+    public static final int waitForBootloaderTimeout = 500;
+    public static final String FirmwareLevel ="p 0 0";
+    public static final String CupReset ="p 99 2";
+    public static final String BootloaderLetter = "f";
+
+
 
 }

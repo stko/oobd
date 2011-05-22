@@ -319,7 +319,23 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         }
         SKDSSwingApp.getApplication().show(frameUpload);
     }
+   @Action
+   public void showFramePortConfiguration(){
+       if (SKDSSwingUpload.getOpenSelected()) {
+             SKDSSwingPortConfiguration.setPortOpenSelected(false);
+             framePortconf=null;
+       }
+       if(framePortconf == null){
+            JFrame frame = SKDSSwingApp.getApplication().getMainFrame();
+            framePortconf = new SKDSSwingPortConfiguration(frame);
+            framePortconf.setLocationRelativeTo(frame);
+       }
+        SKDSSwingApp.getApplication().show(framePortconf);
+   }
 
+
+
+   
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -350,10 +366,10 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         openMenu = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
         statusPanel = new javax.swing.JPanel();
@@ -531,24 +547,26 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         openMenu.setName("openMenu"); // NOI18N
         fileMenu.add(openMenu);
 
-        jMenuItem1.setAction(actionMap.get("showFileExplorer")); // NOI18N
-        jMenuItem1.setText(resourceMap.getString("jMenuItem1.text")); // NOI18N
-        jMenuItem1.setName("jMenuItem1"); // NOI18N
-        fileMenu.add(jMenuItem1);
-
         exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
         exitMenuItem.setName("exitMenuItem"); // NOI18N
         fileMenu.add(exitMenuItem);
 
         menuBar.add(fileMenu);
 
+        jMenu1.setAction(actionMap.get("showFrameUpload")); // NOI18N
         jMenu1.setText(resourceMap.getString("jMenu1.text")); // NOI18N
         jMenu1.setName("jMenu1"); // NOI18N
 
-        jMenuItem2.setAction(actionMap.get("showFrameUpload")); // NOI18N
-        jMenuItem2.setText(resourceMap.getString("jMenuItem2.text")); // NOI18N
-        jMenuItem2.setName("jMenuItem2"); // NOI18N
-        jMenu1.add(jMenuItem2);
+        jMenuItem3.setAction(actionMap.get("showFramePortConfiguration")); // NOI18N
+        jMenuItem3.setText(resourceMap.getString("jMenuItem3.text")); // NOI18N
+        jMenuItem3.setName("jMenuItem3"); // NOI18N
+        jMenu1.add(jMenuItem3);
+
+        jMenuItem4.setAction(actionMap.get("showFrameUpload")); // NOI18N
+        jMenuItem4.setText(resourceMap.getString("jMenuItem4.text")); // NOI18N
+        jMenuItem4.setActionCommand(resourceMap.getString("jMenuItem4.actionCommand")); // NOI18N
+        jMenuItem4.setName("jMenuItem4"); // NOI18N
+        jMenu1.add(jMenuItem4);
 
         menuBar.add(jMenu1);
 
@@ -607,8 +625,8 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JScrollPane jScrollPaneOutput;
     private javax.swing.JTextArea jTextAreaOutput;
     private javax.swing.JToggleButton jToggleButton1;
@@ -639,4 +657,5 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
     private JDialog aboutBox;
     private SDKSSwingFileExplorer fileExplorer;
     private SKDSSwingUpload frameUpload;
+    private SKDSSwingPortConfiguration framePortconf;
 }
