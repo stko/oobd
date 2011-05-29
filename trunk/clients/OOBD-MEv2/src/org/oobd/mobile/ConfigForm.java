@@ -86,7 +86,7 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
                     fileBrowser.addCommand(FileBrowser.SELECT_FILE_COMMAND);
                     fileBrowser.addCommand(backCmd);
                 } catch (Exception ex){
-                    log.log(ex.getMessage());
+                    log.log(3,ex.getMessage());
                 }
             }
             display.setCurrent(fileBrowser);
@@ -113,17 +113,9 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
 
         }
         else if(c==FileBrowser.SELECT_FILE_COMMAND){
-            log.log ("Trying to get file from FileBrowser");
             String file = fileBrowser.getSelectedFileURL();
-            log.log("Selected file: "+file);
-            String file2show = file.substring(8);
-            log.log("Anzuzeigender String: "+file2show);
-//            scriptConf.setConstraints(TextField.ANY);
             scriptConf.setString(file);
-//            scriptConf.setConstraints(TextField.UNEDITABLE);
-            log.log("Filename stored to config-menu");
             mainMidlet.setScript(file);
-            log.log("Filename stored to main midlet");
             display.setCurrent(this);
         }
     }

@@ -30,7 +30,7 @@ public class TerminalIOStream {
             setUp = true;
             this.connection = connection;
         } catch (IOException ex) {
-            log.log(ex.toString());
+            log.log(3,ex.toString());
         }
     }
 
@@ -40,7 +40,7 @@ public class TerminalIOStream {
                 outStreamWriter.write(c);
                 outStreamWriter.flush();
             } catch (IOException ex) {
-                log.log(ex.toString());
+                log.log(3,ex.toString());
             }
         }
     }
@@ -51,7 +51,7 @@ public class TerminalIOStream {
                 outStreamWriter.write(s);
                 outStreamWriter.flush();
             } catch (IOException ex) {
-                log.log(ex.toString());
+                log.log(3,ex.toString());
             }
         }
     }
@@ -65,7 +65,7 @@ public class TerminalIOStream {
                     return (char) inChar;
                 }
             } catch (Exception ex) {
-                log.log(ex.toString());
+                log.log(3,ex.toString());
             }
         }
         return (char) 0;
@@ -76,7 +76,7 @@ public class TerminalIOStream {
         try {
             return (!(setUp && inStream.available() == 0));
         } catch (Exception ex) {
-            log.log(ex.toString());
+            log.log(3,ex.toString());
         }
         return true;
     }
@@ -84,30 +84,30 @@ public class TerminalIOStream {
     public void close() {
         if (setUp) {
             try {
-                log.log("Trying to close inStreamReader");
+                log.log(1,"Trying to close inStreamReader");
                 inStreamReader.close();
                 inStreamReader = null;
-                log.log("inStreamReader closed");
+                log.log(1,"inStreamReader closed");
                 
                 inStream.close();
                 inStream = null;
-                log.log("inStream closed");
+                log.log(1,"inStream closed");
                 
                 outStreamWriter.close();
                 outStreamWriter = null;
-                log.log("outStreamWriter closed");
+                log.log(1,"outStreamWriter closed");
                 
                 outStream.close();
                 outStream = null;
-                log.log("outStream closed");                
+                log.log(1,"outStream closed");                
 
                 connection.close();
                 connection = null;
             } catch (Exception ex) {
-                log.log("b: "+ex.toString());
+                log.log(3,"b: "+ex.toString());
             }
         } else {
-            log.log("Variable 'setup' in TerminalIOStream not set");
+            log.log(1,"Variable 'setup' in TerminalIOStream not set");
         }
     }
 }

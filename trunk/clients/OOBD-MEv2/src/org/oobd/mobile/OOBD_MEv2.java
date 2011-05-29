@@ -75,7 +75,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
         log = new MobileLogger(this);
         cal=Calendar.getInstance(TimeZone.getDefault());
 
-        log.log("App started at: "+cal.getTime().toString());
+        log.log(0,"App started at: "+cal.getTime().toString());
 
         display = Display.getDisplay(this);
         if (!initialized){
@@ -154,7 +154,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
 
     public void destroyApp(boolean unconditional) {
         mPreferences.closeStore();
-        log.log("Destroy App called, RecordStore closed, trying to close BT connection");
+        log.log(1,"Destroy App called, RecordStore closed, trying to close BT connection");
         btComm.Closeconnection();
         
         display.setCurrent(null);
@@ -184,7 +184,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
 
                     System.out.println("Try to load script " + actScript);
                     scriptEngine.doScript(actScript);
-                    log.log("Script: "+actScript+" loaded!");
+                    log.log(0,"Script: "+actScript+" loaded!");
                     System.out.println("Script loaded!");
                     if (!actScript.equals(scriptDefault)) {
                         mPreferences.put(scriptpathKey, actScript);
@@ -192,7 +192,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                     mainwindow.setTicker(new Ticker(""));
 
                 } catch (java.io.IOException ioe) {
-                    log.log(ioe.toString());
+                    log.log(3,ioe.toString());
                     ioe.printStackTrace();
                 }
             }
@@ -214,7 +214,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
 
     public void showAlert(String text){
         Alert check = new Alert("Debug Message",text,null,AlertType.CONFIRMATION);
-        log.log("Alert shown with the Text: "+text);
+        log.log(1,"Alert shown with the Text: "+text);
         display.setCurrent(check);
     }
 

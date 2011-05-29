@@ -89,18 +89,18 @@ public class MobileLogger extends Form implements CommandListener{
         mainMidlet.getDisplay().setCurrent(this);
     }
 
-    public void log(String message){
-        
-        try {
-            thisID=rs.getNextRecordID()-1;
-            xtendedMessage=thisID+": "+message+"\n";
-            System.out.println("LOG: "+xtendedMessage);
-            byte[] byteMessage = xtendedMessage.getBytes();
-            rs.addRecord(byteMessage, 0, byteMessage.length);
-        } catch (RecordStoreException ex) {
-            ex.printStackTrace();
-        }
-    }
+//    public void log(String message){
+//        
+//        try {
+//            thisID=rs.getNextRecordID()-1;
+//            xtendedMessage=thisID+": "+message+"\n";
+//            System.out.println("LOG: "+xtendedMessage);
+//            byte[] byteMessage = xtendedMessage.getBytes();
+//            rs.addRecord(byteMessage, 0, byteMessage.length);
+//        } catch (RecordStoreException ex) {
+//            ex.printStackTrace();
+//        }
+//    }
 
     public void log(int level,String message){
 
@@ -185,7 +185,7 @@ public class MobileLogger extends Form implements CommandListener{
                 rs= RecordStore.openRecordStore(recordStoreName, true);
                 showlogs(mainMidlet);
             } catch (RecordStoreException ex) {
-                this.log(ex.toString());
+                this.log(3,ex.toString());
             }
 
         } else if (c==sendCmd){
