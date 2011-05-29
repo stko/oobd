@@ -435,34 +435,33 @@ inputParserTask (void *pvParameters)
 					printser_string (" mV");
 				  }
 				  else if (cmdValue == VALUE_PARAM_INFO_CPU_INFO) /* p 0 10 */
-			        sendCPUInfo();			/* send CPU Info */
-			      else if (cmdValue == VALUE_PARAM_INFO_MEM_LOC) /* p 0 11 */
-			    	sendMemLoc(0x8003000); /* send Mem Location */
-			      else if (cmdValue == VALUE_PARAM_INFO_ROM_TABLE_LOC) /* p 0 12 */
-			    	sendRomTable();      	/* send ROM Table */
-			      else if (cmdValue == VALUE_PARAM_INFO_FREE_HEAP_SIZE) /* p 0 13 */
-			      {
-			    	printLF();
-			    	printser_string ("Total Heap (in byte): ");
-			    	printser_int (configTOTAL_HEAP_SIZE, 10);
-			    	printLF();
-			    	printser_string ("Free Heap (in byte): ");
-			    	printser_int (xPortGetFreeHeapSize(), 10);	/* send FreeRTOS free heap size */
-			      }
-			      else if (cmdValue == VALUE_PARAM_INFO_CRC32) /* p 0 14 */
-			      {
-			    	printLF();
-			    	if (CheckCrc32() == 0)
-				      printser_string ("CRC-32 application check passed!");
-			    	else
-					  printser_string ("CRC-32 application check failed");
-			      }
-			      else
-			      {
-			        sendParam (cmdKey, cmdValue);
-			      }
-				  createFeedbackMsg (0);
+				    sendCPUInfo();			/* send CPU Info */
+				  else if (cmdValue == VALUE_PARAM_INFO_MEM_LOC) /* p 0 11 */
+				    sendMemLoc(0x8003000); /* send Mem Location */
+				  else if (cmdValue == VALUE_PARAM_INFO_ROM_TABLE_LOC) /* p 0 12 */
+				    sendRomTable();      	/* send ROM Table */
+				  else if (cmdValue == VALUE_PARAM_INFO_FREE_HEAP_SIZE) /* p 0 13 */
+				  {
+				    printLF();
+				    printser_string ("Total Heap (in byte): ");
+				    printser_int (configTOTAL_HEAP_SIZE, 10);
+				    printLF();
+				    printser_string ("Free Heap (in byte): ");
+				    printser_int (xPortGetFreeHeapSize(), 10);	/* send FreeRTOS free heap size */
+				  }
+				  else if (cmdValue == VALUE_PARAM_INFO_CRC32) /* p 0 14 */
+				  {
+				    printLF();
+				    if (CheckCrc32() == 0)
+					  printser_string ("CRC-32 application check passed!");
+				    else
+					      printser_string ("CRC-32 application check failed");
+				  }
 				  #endif
+				  else
+				  {
+				    sendParam (cmdKey, cmdValue);
+				  }
 				  break;
 
 				case PARAM_ECHO:
@@ -491,6 +490,7 @@ inputParserTask (void *pvParameters)
 				  sendParam (cmdKey, cmdValue);
 				  break;
 				}				
+				createFeedbackMsg (0);
 				}
 			  else
 			    {
