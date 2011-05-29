@@ -34,49 +34,30 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
         this.myEngine = scriptEngine;
         this.display = display;
         this.mainMidlet = mainMidlet;
-        log = mainMidlet.getLog();
-        
+        log = mainMidlet.getLog();        
         new Thread(this).start();
-        
-        
-        
     }
 
     public void showForm(String title,Hashtable scriptTable) {
         resetMessage=true;
         this.deleteAll();
-        this.setTitle(title);
-        
-        System.out.println("Table-length: "+scriptTable.size());
-        
+        this.setTitle(title);       
         Enumeration e = scriptTable.keys();
         for (int i = 1; i < scriptTable.size()+1; i++) {
-//            System.out.println("Current-ID: "+i);
             tempCell = (ScriptCell)scriptTable.get(Integer.toString(i));
             tempCell.addCommand(selectCmd);
             tempCell.setItemCommandListener(this);
             tempCell.setLog(log);
-
-            this.append(tempCell);
-            
-        }       
-        
+            this.append(tempCell);            
+        }        
         this.addCommand(exitCmd);
         this.setCommandListener(this);
-        this.updateForm();
-        
         display.setCurrent(this);
-        this.updateForm();
-//        showAlert("Showing page: "+title);
     }
 
     public void showAlert(String text){
         Alert check = new Alert("Debug Message",text,null,AlertType.WARNING);
         display.setCurrent(check);
-    }
-    
-    public void updateForm(){
-
     }
 
     public void run() {
@@ -85,7 +66,7 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
                 Thread.sleep(100);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.log(3, e.toString());
         }
     }
 
@@ -117,7 +98,6 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
             display.setCurrent(this);
         } else if (c == sendTextCmd){
             SendMMS mms = new SendMMS(message, this, mainMidlet);
-//            display.setCurrent(mms);
         } else if (c == clearCmd){
             resetMessage = true;
             showMessage("");
@@ -126,13 +106,10 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
 
     public void commandAction(Command c, Item item) {
         if (c == selectCmd){
-            tempCell = (ScriptCell) item;
-            tempValue = myEngine.callFunction(tempCell.getFunction(),new Object[]{tempCell.getValue(),tempCell.getID()});
-//            System.out.println("Rückgabe von callFunction: " + tempValue);
-            tempCell.setValue(tempValue);
-            this.updateForm();
+            ScriptCell calledCell = (ScriptCell) item;
+            tempValue = myEngine.callFunction(calledCell.getFunction(),new Object[]{calledCell.getValue(),calledCell.getID()});
+            calledCell.setValue(tempValue);
             tempValue="";
-
         }
     }
 }

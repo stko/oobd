@@ -36,6 +36,7 @@ public class ScriptCell extends CustomItem  {
         System.out.println("Title: "+title);
         this.function = function;
         this.value = initalValue;
+        System.out.println("Value: "+value);
         this.oobdElementFlags = oobdElementFlags;
         this.id = id;
     }
@@ -139,9 +140,9 @@ public class ScriptCell extends CustomItem  {
 
     protected void paint(Graphics g, int w, int h) {
 
-        log.log(1,title+": Width: "+ w + "  Height: "+h);
+//        log.log(1,title+" "+value+": Width: "+ w + "  Height: "+h);
         Font f=g.getFont();
-        log.log(1,"Schrifthöhe: "+f.getHeight());
+//        log.log(1,"Schrifthöhe: "+f.getHeight());
         
 //        g.setFont(Font.getFont(Font.SIZE_SMALL));
 //        if((f.getHeight()*2)<h){

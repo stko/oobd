@@ -59,7 +59,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
     private String actScript = scriptDefault;
     private LuaScript scriptEngine;
     //private List cellList;
-    private boolean blindMode=false; // TODO Remember to set BlindMode to "false"
+    private boolean blindMode=true; // TODO Remember to set BlindMode to "false"
     
     private Command exitCmd;
     Hashtable scriptTable;
@@ -281,6 +281,8 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                         scriptEngine.getString(4) //String id
                         ));
                 scriptEngine.finishRPC(callFrame, nArguments);
+
+                System.out.println("Neues Element hinzugefügt -> Title: "+scriptEngine.getString(0)+" Value:"+scriptEngine.getString(2));
 
                 return 1;
             }

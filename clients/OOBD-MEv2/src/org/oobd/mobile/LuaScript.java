@@ -120,7 +120,7 @@ public class LuaScript extends Script {
     }
 
     public String getString(int index) {
-        System.out.println("Lua get string index " + Integer.toString(index));
+//        System.out.println("Lua get string index " + Integer.toString(index));
         String response = BaseLib.rawTostring(callFrame.get(index));
         // callFrame.push(response.intern());
         return response;
