@@ -34,7 +34,7 @@ public class Preferences {
         } catch (RecordStoreException ex) {
             ex.printStackTrace();
         }
-        log.log("Fetching Record-# "+key+" with the value: "+value);
+        log.log(0,"Fetching Record-# "+key+" with the value: "+value);
         return value;
 
     }
@@ -44,20 +44,20 @@ public class Preferences {
             value = "";
         }
         try {
-            log.log("Trying to store Record-# "+key+" with the value: "+value);
+            log.log(1,"Trying to store Record-# "+key+" with the value: "+value);
             rs.setRecord(key, value.getBytes(), 0, value.getBytes().length);
-            log.log("Stored Record-# "+key+" with the value: "+value);
+            log.log(1,"Stored Record-# "+key+" with the value: "+value);
         } catch (RecordStoreNotOpenException ex) {
-            log.log("Error (RSNO) while storing record: "+ex.toString());
+            log.log(3,"Error (RSNO) while storing record: "+ex.toString());
             ex.printStackTrace();
         } catch (InvalidRecordIDException ex) {
-            log.log("Error (IRID) while storing record: "+ex.toString());
+            log.log(3,"Error (IRID) while storing record: "+ex.toString());
             ex.printStackTrace();
         } catch (RecordStoreFullException ex) {
-            log.log("Error (RSF) while storing record: "+ex.toString());
+            log.log(3,"Error (RSF) while storing record: "+ex.toString());
             ex.printStackTrace();
         } catch (RecordStoreException ex) {
-            log.log("Error (RS) while storing record: "+ex.toString());
+            log.log(3,"Error (RS) while storing record: "+ex.toString());
 //            ex.printStackTrace();
         } 
 
@@ -72,7 +72,7 @@ public class Preferences {
                 for (int i = nextRecord; i <= maxRecordID; i++) {
                     try {
 //                        System.out.println("Next ID: " + rs.getNextRecordID());
-                        log.log("Checking record with the ID: " + i);
+                        log.log(0,"Checking record with the ID: " + i);
                         rs.getRecord(i);
 
 
@@ -81,13 +81,13 @@ public class Preferences {
 //                        log.log(ex.toString());
 //                        log.log(ex.getClass().getName());
 //                        ex.printStackTrace();
-                        log.log("Dummy-Wert setzen für ID:"+i);
+                        log.log(0,"Dummy-Wert setzen für ID:"+i);
                         rs.addRecord(dummy.getBytes(), 0, dummy.getBytes().length);
                     }
                 }
             }
         } catch (RecordStoreException ex) {
-            log.log("Error while checking Records!");
+            log.log(3,"Error while checking Records!");
         }
         
     }
@@ -102,65 +102,5 @@ public class Preferences {
         }
     }
 
-//    private void load() throws RecordStoreException {
-//        RecordStore rs = null;
-//        RecordEnumeration re = null;
-//
-//        try {
-//            rs = RecordStore.openRecordStore(mRecordStoreName, true);
-//            re = rs.enumerateRecords(null, null, false);
-//            while (re.hasNextElement()) {
-//                byte[] raw = re.nextRecord();
-//                String pref = new String(raw);
-//                // Parse out the name.
-//                int index = pref.indexOf('|');
-//                String name = pref.substring(0, index);
-//                String value = pref.substring(index + 1);
-//                put(name, value);
-////                log.log("Loaded: "+name+" -> "+value);
-//            }
-//        } finally {
-//            if (re != null) {
-//                re.destroy();
-//            }
-//            if (rs != null) {
-//                rs.closeRecordStore();
-//            }
-//        }
-//    }
-//
-//    public void save() throws RecordStoreException {
-//        RecordStore rs = null;
-//        RecordEnumeration re = null;
-//        try {
-//            rs = RecordStore.openRecordStore(mRecordStoreName, true);
-//            re = rs.enumerateRecords(null, null, false);
-//
-//            // First remove all records, a little clumsy.
-//            while (re.hasNextElement()) {
-//                int id = re.nextRecordId();
-//                rs.deleteRecord(id);
-//            }
-//
-//            // Now save the preferences records.
-//            Enumeration keys = mHashtable.keys();
-//            while (keys.hasMoreElements()) {
-//                String key = (String) keys.nextElement();
-//                String value = get(key);
-//                String pref = key + "|" + value;
-//                byte[] raw = pref.getBytes();
-//                rs.addRecord(raw, 0, raw.length);
-////                log.log("Stored: "+key+" -> "+value);
-//            }
-//        } finally {
-//            if (re != null) {
-//                re.destroy();
-//            }
-//            if (rs != null) {
-//                rs.closeRecordStore();
-////                log.log("RecordStore closed");
-//            }
-//        }
-//    }
-//    
+
 }
