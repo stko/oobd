@@ -383,7 +383,11 @@ public class ScriptengineLua extends OobdScriptengine {
 
         //String response = BaseLib.rawTostring(fObject.env.rawget(1));
         //fObject.push(response.intern());
-        return (String) results[1];
+        if (results.length>1){
+            return (String) results[1];
+        }else{
+            return "";
+        }
 
         //return "-";
     }
