@@ -16,7 +16,9 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Form;
+import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.ImageItem;
 import javax.microedition.lcdui.Spacer;
@@ -100,6 +102,14 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 log.setLoglevel(Integer.parseInt(mPreferences.get(loglevelKey)));
             }
             
+            
+//            ScriptCell.
+//            int fontHeight = Font.getFont(loglevelKey).getSize();
+//            int cellHeight = fontHeight*2;
+//            log.log(1,"Schriftgröße: "+fontHeight+" -> benötigte Cellhöhe: "+cellHeight);
+            
+//            ScriptCell.setHeight(cellHeight);
+            
             mPreferences.put(adressbookKey, "Check");
 
             mainwindow = new Form("OOBD-MEv2",null);
@@ -123,6 +133,11 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 ex.printStackTrace();
             }
             logoItem = new ImageItem("OODB-MEv2", logo, ImageItem.LAYOUT_CENTER, "Logo not loaded");
+            
+//            Graphics graph=logo.getGraphics();
+//            int fonthight = graph.getFont().getHeight();
+//            log.log(1,"Schriftgröße: "+fonthight);
+//            ScriptCell.setHeight(fonthight*2);
 
             mainwindow.append(logoItem);
             display.setCurrent(mainwindow);

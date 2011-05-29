@@ -35,7 +35,10 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
         this.display = display;
         this.mainMidlet = mainMidlet;
         log = mainMidlet.getLog();
+        
         new Thread(this).start();
+        
+        
         
     }
 
