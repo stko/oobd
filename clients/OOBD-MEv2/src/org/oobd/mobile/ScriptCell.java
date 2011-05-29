@@ -1,6 +1,7 @@
 package org.oobd.mobile;
 
 import javax.microedition.lcdui.CustomItem;
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 
 /*
@@ -23,10 +24,10 @@ public class ScriptCell extends CustomItem  {
     private OOBD_MEv2 mainMidlet;
     private MobileLogger log;
     private int  oobdElementFlags; //TODO Implement OOBD Element-Flags
-    private int minHeigth=25;
-    private int minWidth=150;
-    private int prefHeight=30;
-    private int prefWidth=250;
+    private static int minHeigth=50;
+    private static int minWidth=150;
+    private static int prefHeight=50;
+    private static int prefWidth=250;
 
     public ScriptCell(String title, String function, String initalValue, int oobdElementFlags, String id) {
         super("");
@@ -44,6 +45,7 @@ public class ScriptCell extends CustomItem  {
     public void setValue(String value) {
         this.value = value;
         this.repaint();
+        
     }
 
     public String getTitle() {
@@ -127,11 +129,27 @@ public class ScriptCell extends CustomItem  {
         return prefHeight;
     }
 
+    public static void setHeight(int height) {
+        ScriptCell.prefHeight = height;
+        ScriptCell.minHeigth = height;
+        
+    }
+    
+    
+
     protected void paint(Graphics g, int w, int h) {
 
-        log.log(1,title+": Width: "+ w + "  Height: "+h); 
-
+        log.log(1,title+": Width: "+ w + "  Height: "+h);
+        Font f=g.getFont();
+        log.log(1,"Schrifthöhe: "+f.getHeight());
         
+//        g.setFont(Font.getFont(Font.SIZE_SMALL));
+//        if((f.getHeight()*2)<h){
+//            log.log(1,"Höhenkorrektur erforderlich!");
+//            minHeigth=f.getHeight()*2;
+//        }
+
+        g.setColor(255, 0, 0);
         g.drawString(value,0,0,g.LEFT|g.TOP);
         g.drawString(title,0,h,g.LEFT|g.BOTTOM);
         g.drawString(update,w,0,g.RIGHT|g.TOP);
