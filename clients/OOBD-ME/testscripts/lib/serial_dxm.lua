@@ -179,7 +179,7 @@ function receive_DXM()
 		byteCount= udsLen+1 -- auf Abbruchbedingung setzen
 		while doLoop and  answ ~="" do
 			nChar = string.byte(answ)
-			if nChar >=48 and nChar <=57 then  -- an 1. Stelle steht eine Zahl-> positive Antwort
+			if (nChar >=48 and nChar <=57) or (nChar >=65 and nChar <=70) or (nChar >=97 and nChar <=102) then  -- an 1. Stelle steht eine Zahl-> positive Antwort
 				if string.sub(answ,2,2) == ":" then
 					answ = string.sub(answ,4) -- wegschneiden des Zaehlers am Anfang
 					while byteCount <=udsLen  and answ ~="" do
@@ -256,7 +256,7 @@ function receive_OOBD()
 	    firstChar=string.sub(answ,1,1)
 	    nChar = string.byte(answ)
 	    --print ("firstchar ",firstChar," charcode ",nChar)
-	    if nChar >=48 and nChar <=57 then  -- an 1. Stelle steht eine Zahl-> positive Antwort
+	    if (nChar >=48 and nChar <=57) or (nChar >=65 and nChar <=70) or (nChar >=97 and nChar <=102) then  -- an 1. Stelle steht eine Zahl-> positive Antwort
 	      while  answ ~="" do
 		      byteStr= string.sub(answ,1,2)
 		      answ = string.sub(answ,3)
