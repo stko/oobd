@@ -338,6 +338,8 @@ function identifyOOBDInterface()
 	-- Abfrage auf OOBD -interfae
 	echoWrite("p 0 0 \r\n")
 	answ=serReadLn(2000, false)
+	echoWrite("p 0 0 \r\n")
+	answ=serReadLn(2000, false)
 	print ("Busantwort:", answ)
 	-- Antwort auseinanderfiedeln und Prüfen
 	answ= getStringPart(answ, 1)
