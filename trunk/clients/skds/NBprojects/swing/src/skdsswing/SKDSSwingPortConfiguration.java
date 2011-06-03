@@ -23,10 +23,10 @@ import skdsswing.transfer.TransferSpecification;
  */
 public class SKDSSwingPortConfiguration extends javax.swing.JDialog {
 
-    private final String[] baudrate={"9600", "14400", "19200", "38400", "115200" };
-    private final String[] parity ={"None","Odd","Even"};
-    private final String[] stopbits={"One","Two"};
-    private final String[] databits={"8","7"};
+    private final String[] baudrate={"115200" };
+    private final String[] parity ={"None"};
+    private final String[] stopbits={"One"};
+    private final String[] databits={"8"};
     private final String[] handshake ={"None"};
     private final String[] portname={"COM1"};
     private static boolean portConfOpenSelected = false;
@@ -45,12 +45,13 @@ public class SKDSSwingPortConfiguration extends javax.swing.JDialog {
     public SKDSSwingPortConfiguration(java.awt.Frame parent) {
         super(parent);
         initComponents();
-        jComboBoxBaudrate.setSelectedIndex(4);
+        jComboBoxBaudrate.setSelectedIndex(0);
         jComboBoxDatabits.setSelectedIndex(0);
         jComboBoxHandshake.setSelectedIndex(0);
         jComboBoxParity.setSelectedIndex(0);
         jComboBoxstopbits.setSelectedIndex(0);
         jComboBoxBaudrate.enableInputMethods(false);
+
 
     }
     

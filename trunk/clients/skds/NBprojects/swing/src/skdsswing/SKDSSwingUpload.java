@@ -13,6 +13,7 @@ package skdsswing;
 import java.awt.event.WindowEvent;
 import javax.swing.JDialog;
 import org.jdesktop.application.Action;
+import skdsswing.bus.*;
 /**
  *
  * @author maziar
@@ -21,8 +22,8 @@ public class SKDSSwingUpload extends javax.swing.JDialog {
 
     /** Creates new form SKDSSwingUpload */
     private static boolean openSelected = false;;
-   
-
+    private ComReader comReader = new ComReader();
+    private static char[] Test = new char[]{'H','e','l','l','o',' ','O','O','B','D',' ','u','s','e','r'};
     public static boolean getOpenSelected(){
         return openSelected;
     }
@@ -34,6 +35,7 @@ public class SKDSSwingUpload extends javax.swing.JDialog {
     public SKDSSwingUpload(java.awt.Frame parent) {
         super(parent);
         initComponents();
+        setTextOnTextframe();
        
 
         if((SDKSSwingFileExplorer.getFileName()==null) ){
@@ -101,6 +103,17 @@ public class SKDSSwingUpload extends javax.swing.JDialog {
       public void resetOOBDCup(){
 
       }
+       /* Upload strings will shown on the Textboard
+      /*
+       */
+
+      public synchronized void setTextOnTextframe(){
+
+          jTextAreaNews.setText(String.valueOf(Test));
+
+       //   jTextAreaNews.setText(String.valueOf(comReader.readChar()));
+
+      }
 
 
   
@@ -124,7 +137,7 @@ public class SKDSSwingUpload extends javax.swing.JDialog {
         jRadioButton1 = new javax.swing.JRadioButton();
         jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        jTextAreaNews = new javax.swing.JTextArea();
         jButtonReset = new javax.swing.JButton();
         TFFilesize = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
@@ -171,10 +184,10 @@ public class SKDSSwingUpload extends javax.swing.JDialog {
 
         jScrollPane1.setName("jScrollPane1"); // NOI18N
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jTextArea1.setName("jTextArea1"); // NOI18N
-        jScrollPane1.setViewportView(jTextArea1);
+        jTextAreaNews.setColumns(20);
+        jTextAreaNews.setRows(5);
+        jTextAreaNews.setName("jTextAreaNews"); // NOI18N
+        jScrollPane1.setViewportView(jTextAreaNews);
 
         jButtonReset.setText(resourceMap.getString("jButtonReset.text")); // NOI18N
         jButtonReset.setName("jButtonReset"); // NOI18N
@@ -192,42 +205,41 @@ public class SKDSSwingUpload extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(ButtonSend)
+                            .addGap(262, 262, 262)
+                            .addComponent(jButtonReset)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(ButtonClose)
+                            .addContainerGap())
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(TFFilePath, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(TFFileName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE))
+                            .addGap(45, 45, 45)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel1)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel2)
+                                    .addGap(72, 72, 72)
+                                    .addComponent(jButton1)))
+                            .addGap(153, 153, 153)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(ButtonSend)
-                        .addGap(262, 262, 262)
-                        .addComponent(jButtonReset)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(ButtonClose)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 715, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(TFFilePath, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(TFFileName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE))
-                        .addGap(45, 45, 45)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(72, 72, 72)
-                                .addComponent(jButton1)))
-                        .addGap(153, 153, 153))))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 715, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jRadioButton1))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(TFFilesize, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel4)))
-                .addContainerGap(562, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jRadioButton1))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(TFFilesize, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel4)))
+                        .addContainerGap(562, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -285,7 +297,7 @@ public class SKDSSwingUpload extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea jTextAreaNews;
     // End of variables declaration//GEN-END:variables
    private SDKSSwingFileExplorer fileExplorer;
 }
