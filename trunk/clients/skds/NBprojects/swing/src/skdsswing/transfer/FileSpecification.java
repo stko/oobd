@@ -83,11 +83,13 @@ public class FileSpecification {
 
 
 	    	// evtl. noch einen Befehl to Start the download
-	    	 //  sp.Write(initpacket.packet, 0, initpacket.packet.Length);
 
-            // waitforack();
-             //waitfor('C');
+                 //  sp.Write("AT+pBINARYUPLOAD");
+           // sendNewLine();
+           // waitfor('C');
+	    	 
 
+            
 
 	    	short packetnum = 0;
 	    	initpack = new InitPacket();
@@ -103,19 +105,19 @@ public class FileSpecification {
 	    	}
 
 	    	try {
-	    		 //  sp.Write(initpacket.packet, 0, initpacket.packet.Length);
+	    		 
+                    initpack.createPacket();
+
+                    //  sp.Write(initpacket.packet, 0, initpacket.packet.Length);
 
 	            // waitforack();
 	             //waitfor('C');
 
-
-					initpack.createPacket();
-
 					byte[] temparray = new byte[1024];
-                                        int k = inputstream.available();
-					long size = inputstream.available() / 1024;
-					int rest = inputstream.available() % 1024;
-					 int pos = 1;
+                                        //int k = inputstream.available();
+					long size = Math.abs((long)inputstream.available() /(long) 1024);
+					
+					 
 					 for(int m = 0; m< size;m++){
 						 sendpacket = new InitPacket();
 						 inputstream.read(temparray,0,1024);
@@ -126,9 +128,13 @@ public class FileSpecification {
 						 sendpacket.setIsPacketInit(false);
 						 sendpacket.setData(temparray);
 						 sendpacket.createPacket();
-
+                                                  //sp.Write(sendPacket.packet, 0, sendPacket.packet.Length);
+                                                    //waitforack();
 					 }
+                                        // sendEndOftransmision();
+                                        // waitforack();
 
+                                        //  waitforline();
 
 
 			} catch (Exception e) {

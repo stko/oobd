@@ -48,8 +48,8 @@ public class CRC16 {
          0xef1f,  0xff3e,  0xcf5d,  0xdf7c,  0xaf9b,  0xbfba,  0x8fd9,  0x9ff8,
          0x6e17,  0x7e36,  0x4e55,  0x5e74,  0x2e93,  0x3eb2,  0x0ed1,  0x1ef0
     };
-    public CRC16(){
-        this.reset();
+    public CRC16(int intValue ){
+        this.reset(intValue);
     }
 
     public int getValue(){
@@ -79,11 +79,11 @@ public class CRC16 {
 
                 intValue=tbav^tsec^(Byte&0xFF);
 
-                return;
+           
 
         }
-        public void reset(){
-            this.intValue = 0;
+        public void reset(int value){
+            this.intValue = value;
         }
 
 }

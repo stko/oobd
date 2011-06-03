@@ -10,6 +10,10 @@ package skdsswing.transfer;
  * @author OOBD.org
  */
 public final class TransferSpecification {
+    public static final short poly = 0x1021;
+    public static final short initValueZero = 0;
+    public static final int initValueNonZero = 0xffff;
+    public static final int initValueNonZero2= 0x1d0f;
     public static final byte SOH=0x01;
     public static final byte STX=0x02;
     public static final byte EOT=0x04;
