@@ -85,15 +85,11 @@ public class SKDSSwingPortConfiguration extends javax.swing.JDialog {
         jTextAreaPortConf = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(skdsswing.SKDSSwingApp.class).getContext().getResourceMap(SKDSSwingPortConfiguration.class);
-        setTitle(resourceMap.getString("Form.title")); // NOI18N
         setName("Form"); // NOI18N
         setResizable(false);
 
-        jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
 
-        jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
         jLabel2.setName("jLabel2"); // NOI18N
 
         jComboBoxParity.setModel(new javax.swing.DefaultComboBoxModel(parity));
@@ -105,30 +101,29 @@ public class SKDSSwingPortConfiguration extends javax.swing.JDialog {
         jComboBoxPortname.setModel(new javax.swing.DefaultComboBoxModel(portname));
         jComboBoxPortname.setName("jComboBoxPortname");
 
-        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
         jLabel3.setName("jLabel3"); // NOI18N
 
         jComboBoxstopbits.setModel(new javax.swing.DefaultComboBoxModel(stopbits));
         jComboBoxstopbits.setName("jComboBoxstopbits");
 
-        jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
         jLabel4.setName("jLabel4"); // NOI18N
 
         jComboBoxDatabits.setModel(new javax.swing.DefaultComboBoxModel(databits));
         jComboBoxDatabits.setName("jComboBoxDatabits");
 
-        jLabel5.setText(resourceMap.getString("jLabel5.text")); // NOI18N
         jLabel5.setName("jLabel5"); // NOI18N
 
         jComboBoxHandshake.setModel(new javax.swing.DefaultComboBoxModel(handshake));
         jComboBoxHandshake.setName("jComboBoxHandshake");
 
-        jLabel6.setText(resourceMap.getString("jLabel6.text")); // NOI18N
         jLabel6.setName("jLabel6"); // NOI18N
 
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(skdsswing.SKDSSwingApp.class).getContext().getActionMap(SKDSSwingPortConfiguration.class, this);
         jButton1.setAction(actionMap.get("OkPortConfigurationDialog")); // NOI18N
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(skdsswing.SKDSSwingApp.class).getContext().getResourceMap(SKDSSwingPortConfiguration.class);
         jButton1.setText(resourceMap.getString("jButton1.text")); // NOI18N
+        jButton1.setMaximumSize(new java.awt.Dimension(53, 23));
+        jButton1.setMinimumSize(new java.awt.Dimension(53, 23));
         jButton1.setName("jButton1"); // NOI18N
 
         jButton2.setAction(actionMap.get("closePortConfigurationDialog")); // NOI18N
@@ -137,6 +132,8 @@ public class SKDSSwingPortConfiguration extends javax.swing.JDialog {
 
         jButton3.setAction(actionMap.get("TestPortConfigurationButton")); // NOI18N
         jButton3.setText(resourceMap.getString("jButton3.text")); // NOI18N
+        jButton3.setMaximumSize(new java.awt.Dimension(53, 23));
+        jButton3.setMinimumSize(new java.awt.Dimension(53, 23));
         jButton3.setName("jButton3"); // NOI18N
 
         jScrollPane1.setName("jScrollPane1"); // NOI18N
@@ -173,14 +170,16 @@ public class SKDSSwingPortConfiguration extends javax.swing.JDialog {
                             .addComponent(jLabel5)
                             .addGap(18, 18, 18)
                             .addComponent(jComboBoxHandshake, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(jButton1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 101, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 178, Short.MAX_VALUE)
-                        .addComponent(jButton2))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE))
+                        .addGap(102, 102, 102)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 177, Short.MAX_VALUE)
+                        .addComponent(jButton2)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -213,15 +212,13 @@ public class SKDSSwingPortConfiguration extends javax.swing.JDialog {
                             .addComponent(jLabel5)
                             .addComponent(jComboBoxHandshake, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton3)
-                    .addComponent(jButton2))
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(23, 23, 23))
         );
-
-        getAccessibleContext().setAccessibleName(resourceMap.getString("Form.AccessibleContext.accessibleName")); // NOI18N
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -229,12 +226,12 @@ public class SKDSSwingPortConfiguration extends javax.swing.JDialog {
     /*
      * Close the Portconfiguration dialog
      */
-        @org.jdesktop.application.Action
+                @org.jdesktop.application.Action
     public void closePortConfigurationDialog() {
        portConfOpenSelected = true;
        dispose();
     }
-                    @org.jdesktop.application.Action
+                                        @org.jdesktop.application.Action
     public void OkPortConfigurationDialog() {
        Object m = this.jComboBoxBaudrate.getSelectedItem();
        portConfOpenSelected = true;

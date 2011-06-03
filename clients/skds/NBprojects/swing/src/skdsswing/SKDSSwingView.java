@@ -564,7 +564,6 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
 
         jMenuItem4.setAction(actionMap.get("showFrameUpload")); // NOI18N
         jMenuItem4.setText(resourceMap.getString("jMenuItem4.text")); // NOI18N
-        jMenuItem4.setActionCommand(resourceMap.getString("jMenuItem4.actionCommand")); // NOI18N
         jMenuItem4.setName("jMenuItem4"); // NOI18N
         jMenu1.add(jMenuItem4);
 

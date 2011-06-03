@@ -335,7 +335,6 @@
                   <action class="skdsswing.SKDSSwingView" id="showFrameUpload" methodName="showFrameUpload"/>
                 </Property>
                 <Property name="text" type="java.lang.String" resourceKey="jMenuItem4.text"/>
-                <Property name="actionCommand" type="java.lang.String" resourceKey="jMenuItem4.actionCommand"/>
                 <Property name="name" type="java.lang.String" value="jMenuItem4" noResource="true"/>
               </Properties>
             </MenuItem>
