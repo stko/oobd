@@ -26,7 +26,8 @@ public class InitPacket {
     private byte[] innerdata;
     private byte[] header;
     private byte[] crcfooter = new byte[2];
-    private CRC16 crc = new CRC16();
+    private long checksum = 0;
+    private CRC16 crc = new CRC16(TransferSpecification.initValueZero);
    
    public void setFilelength(int size){
 	   this.fileLength = size;
@@ -115,9 +116,18 @@ public class InitPacket {
     			System.arraycopy(ConvertChartoByteArray(fileName.toCharArray()), 0, innerdata, 0, fileName.length());
     			System.arraycopy(ConvertChartoByteArray(Integer.toString(fileLength).toCharArray()), 0, innerdata, fileName.length()+1, Integer.toString(fileLength).toCharArray().length);
     			System.arraycopy(innerdata, 0, packet, 3, innerdata.length);
-    			//crcfooter = crc.update(innerdata);
+    			crc.update(innerdata);
+                        crc.update(0);
+                        crc.update(0);
+                        checksum = crc.getValue();
+                        crcfooter[0] = (byte)((checksum&0xFF00)>>8);
+    			crcfooter[1] = (byte)(checksum&0xFF);
     			System.arraycopy(header, 0, packet, 0, 3);
     			System.arraycopy(crcfooter, 0, packet, packet.length-2, 2);
+
+                        for(int i = 0; i<packet.length;i++){
+                            System.out.println(packet[i]);
+                        }
     			
     		}
     	}
@@ -129,7 +139,12 @@ public class InitPacket {
     			System.arraycopy(data, 0, innerdata, 0, data.length);
     			header[1]=(byte)packetnumber;
     			header[2]=(byte)(0xff-packetnumber);
-    			//crcfooter = crc.update(innerdata);
+    			crc.update(innerdata);
+    			crc.update(0);
+    			crc.update(0);
+    			checksum = crc.getValue();
+    			crcfooter[0] = (byte)((checksum&0xFF00)>>8);
+    			crcfooter[1] = (byte)(checksum&0xFF);
     			System.arraycopy(innerdata, 0, packet, 3, 128);
     			System.arraycopy(header, 0, packet, 0, 3);
     			System.arraycopy(crcfooter, 0, packet, packet.length-2, 2);
@@ -142,7 +157,12 @@ public class InitPacket {
     		System.arraycopy(data, 0, innerdata, 0, data.length);
     		header[1]=(byte)packetnumber;
 			header[2]=(byte)(0xff-packetnumber);
-			//crcfooter = crc.update(innerdata);
+			crc.update(innerdata);
+			crc.update(0);
+			crc.update(0);
+			checksum = crc.getValue();
+			crcfooter[0] = (byte)((checksum&0xFF00)>>8);
+			crcfooter[1] = (byte)(checksum&0xFF);
 			System.arraycopy(innerdata, 0, packet, 3, 1024);
 			System.arraycopy(header, 0, packet, 0, 3);
 			System.arraycopy(crcfooter, 0, packet, packet.length-2, 2);
