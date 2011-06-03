@@ -71,7 +71,7 @@
                               <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="651" max="32767" attributes="0"/>
+                      <EmptySpace pref="683" max="32767" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -213,19 +213,23 @@
     <Component class="javax.swing.JButton" name="jButtonReset">
       <Properties>
         <Property name="text" type="java.lang.String" resourceKey="jButtonReset.text"/>
+        <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[59, 23]"/>
+        </Property>
+        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[50, 23]"/>
+        </Property>
         <Property name="name" type="java.lang.String" value="jButtonReset" noResource="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="TFFilesize">
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
-        <Property name="text" type="java.lang.String" resourceKey="TFFilesize.text"/>
         <Property name="name" type="java.lang.String" value="TFFilesize" noResource="true"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel4">
       <Properties>
-        <Property name="text" type="java.lang.String" resourceKey="jLabel4.text"/>
         <Property name="name" type="java.lang.String" value="jLabel4" noResource="true"/>
       </Properties>
     </Component>

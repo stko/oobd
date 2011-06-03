@@ -190,13 +190,13 @@ public class SKDSSwingUpload extends javax.swing.JDialog {
         jScrollPane1.setViewportView(jTextAreaNews);
 
         jButtonReset.setText(resourceMap.getString("jButtonReset.text")); // NOI18N
+        jButtonReset.setMaximumSize(new java.awt.Dimension(59, 23));
+        jButtonReset.setMinimumSize(new java.awt.Dimension(50, 23));
         jButtonReset.setName("jButtonReset"); // NOI18N
 
         TFFilesize.setEditable(false);
-        TFFilesize.setText(resourceMap.getString("TFFilesize.text")); // NOI18N
         TFFilesize.setName("TFFilesize"); // NOI18N
 
-        jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
         jLabel4.setName("jLabel4"); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -210,7 +210,7 @@ public class SKDSSwingUpload extends javax.swing.JDialog {
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(ButtonSend)
                             .addGap(262, 262, 262)
-                            .addComponent(jButtonReset)
+                            .addComponent(jButtonReset, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(ButtonClose)
                             .addContainerGap())
@@ -239,7 +239,7 @@ public class SKDSSwingUpload extends javax.swing.JDialog {
                                 .addComponent(TFFilesize, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel4)))
-                        .addContainerGap(651, Short.MAX_VALUE))))
+                        .addContainerGap(683, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -273,7 +273,7 @@ public class SKDSSwingUpload extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ButtonSend)
                     .addComponent(ButtonClose)
-                    .addComponent(jButtonReset))
+                    .addComponent(jButtonReset, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
