@@ -3,8 +3,8 @@ package skdsswing.bus;
 import java.io.*;
 import java.util.Vector;
 //import javax.comm.*;// for SUN's serial/parallel port libraries
-import gnu.io.*;
-//import purejavacomm.*;
+//import gnu.io.*;
+import purejavacomm.*;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

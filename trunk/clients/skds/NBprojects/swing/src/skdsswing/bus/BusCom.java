@@ -13,8 +13,8 @@ import java.io.IOException;
 import java.util.*;
 //import javax.swing.Timer;
 //import javax.comm.*;// for SUN's serial/parallel port libraries
-import gnu.io.*; // for rxtxSerial library
-//import purejavacomm.*;
+//import gnu.io.*; // for rxtxSerial library
+import purejavacomm.*;
 
 public class BusCom extends OobdBus implements OOBDConstants {
 
