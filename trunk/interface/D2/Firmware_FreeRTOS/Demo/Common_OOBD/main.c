@@ -88,8 +88,8 @@ main (void)
    */
 #ifdef OOBD_PLATFORM_STM32
   /* if CRC-32 check is invalid a soft reset is generated to jump back to bootloader */
-  if (CheckCrc32() != 0)
-	SCB->AIRCR = 0x05FA0604;	/* soft reset */
+ // if (CheckCrc32() != 0)
+//	SCB->AIRCR = 0x05FA0604;	/* soft reset */
 
   /* Buffer of data to be received by I2C1 */
   /*  uint8_t Buffer_Rx1[255]; */
