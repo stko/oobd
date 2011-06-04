@@ -105,7 +105,7 @@ namespace OpenDiagX
                     if (dataType.Equals("bitmapped")) handleBitmap(iterator);
                     if (dataType.Equals("single_value"))
                     {
-                        String subDataType = getpath(iterator.Current,"SUB_FIELD/DATA_DEFINITION/DATA_TYPE");
+                        String subDataType = getpath(iterator.Current, "SUB_FIELD/DATA_DEFINITION/DATA_TYPE");
                         //textBox.Text += "Sub Data Type: " + subDataType + "\r\n";
                         if (subDataType.Equals("ascii")) handleASCII(iterator);
                         if (subDataType.Equals("unsigned")) handleUnsigned(iterator);
@@ -199,7 +199,7 @@ namespace OpenDiagX
                 addTextnode(thisDIDEntry, "HighPID", HighPid);
                 addTextnode(thisDIDEntry, "LowPID", LowPid);
                 addTextnode(thisDIDEntry, "Name", Name);
-                addTextnode(thisDIDEntry, "Len", ((Convert.ToInt16(MBit)+1) / 8).ToString());
+                addTextnode(thisDIDEntry, "Len", ((Convert.ToInt16(MBit) + 1) / 8).ToString());
             }
         }
         private void handleUnsigned(XPathNodeIterator iterator)
@@ -219,9 +219,18 @@ namespace OpenDiagX
                 addTextnode(thisDIDEntry, "LowPID", LowPid);
                 addTextnode(thisDIDEntry, "Name", Name);
                 addTextnode(thisDIDEntry, "Len", ((Convert.ToInt16(MBit)+1) / 8).ToString());
-                addTextnode(thisDIDEntry, "Resolution", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION"));
-                addTextnode(thisDIDEntry, "Offset", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET"));
-                addTextnode(thisDIDEntry, "Units", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS"));
+                if (iterator2.Current.SelectSingleNode("DATA_DEFINITION/NUMERIC_PARAMETERS") != null)
+                {
+                    addTextnode(thisDIDEntry, "Resolution", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION"));
+                    addTextnode(thisDIDEntry, "Offset", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET"));
+                    addTextnode(thisDIDEntry, "Units", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS"));
+                }
+                else
+                {
+                    addTextnode(thisDIDEntry, "Resolution", "1");
+                    addTextnode(thisDIDEntry, "Offset", "1");
+                    addTextnode(thisDIDEntry, "Units", "");
+                }
             }
         }
 
@@ -261,7 +270,7 @@ namespace OpenDiagX
             xmlNode.Value = value;
             return xmlNode;
         }
-        
+
         private void fillCombo(ComboBox cbox, String dir)
         {
             string appPath = Path.GetDirectoryName(Application.ExecutablePath);
@@ -285,11 +294,12 @@ namespace OpenDiagX
         {
             if (textBox.Text.Length > 0)
             {
-                if (saveFileDialog.ShowDialog() == DialogResult.OK){
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
                     StreamWriter writer = new StreamWriter(saveFileDialog.FileName.ToString());
                     writer.Write(textBox.Text);
                     writer.Close();
-                
+
                 }
             }
         }
