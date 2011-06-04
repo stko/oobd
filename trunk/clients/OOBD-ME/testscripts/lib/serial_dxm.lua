@@ -236,6 +236,9 @@ function setBus(bus)
     if bus == "HS-CAN" then
       echoWrite("p 6 3\r\n")
     end
+    if bus == "IMS-CAN" then
+      echoWrite("p 6 3\r\n")
+    end
     if bus == "MS-CAN" then
       echoWrite("p 6 1\r\n")
     end
