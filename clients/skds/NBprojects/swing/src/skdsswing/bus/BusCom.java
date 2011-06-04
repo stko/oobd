@@ -13,8 +13,8 @@ import java.io.IOException;
 import java.util.*;
 //import javax.swing.Timer;
 //import javax.comm.*;// for SUN's serial/parallel port libraries
-//import gnu.io.*; // for rxtxSerial library
-import purejavacomm.*;
+import gnu.io.*; // for rxtxSerial library
+//import purejavacomm.*;
 
 public class BusCom extends OobdBus implements OOBDConstants {
 
@@ -99,9 +99,12 @@ public class BusCom extends OobdBus implements OOBDConstants {
             Onion on = msg.getContent();
             String command = on.getOnionString("command");
             if ("serWrite".equalsIgnoreCase(command)) {
-                reader.write(Base64Coder.decodeString(on.getOnionString("data")));
+                String data =Base64Coder.decodeString(on.getOnionString("data"));
+                Logger.getLogger(BusCom.class.getName()).log(Level.INFO,"busCom serWrite: >" + data+"<");
+                reader.write(data);
             } else if ("serFlush".equalsIgnoreCase(command)) {
-                reader.flush();
+               Logger.getLogger(BusCom.class.getName()).log(Level.INFO,"busCom serFlush ");
+                 reader.flush();
 
             } else if ("serWait".equalsIgnoreCase(command)) {
                 try {

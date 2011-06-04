@@ -215,7 +215,7 @@ public class AndroidBusReader implements Runnable {
         return res;
     }
 
-    public int wait(String conditions, int timeout) {
+   public int wait(String conditions, int timeout) {
         boolean waitForever = timeout < 1;
         boolean doLoop = true;
         int c;
@@ -226,9 +226,10 @@ public class AndroidBusReader implements Runnable {
             c = read();
             if (c > -1) {
                 result = con.checkConditions((char) c);
-            }
-            if (result > 0) { // condition meet
-                doLoop = false;
+
+                if (result > 0) { // condition meet
+                    doLoop = false;
+                }
             } else {
                 if (waitForever) {
                     try {

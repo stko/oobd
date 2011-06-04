@@ -3,8 +3,8 @@ package skdsswing.bus;
 import java.io.*;
 import java.util.Vector;
 //import javax.comm.*;// for SUN's serial/parallel port libraries
-//import gnu.io.*;
-import purejavacomm.*;
+import gnu.io.*;
+//import purejavacomm.*;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -90,7 +90,7 @@ public class ComReader implements Runnable {
     public synchronized void write(String s) {
         if (outStream != null) {
             try {
-                Logger.getLogger(ComReader.class.getName()).log(Level.INFO,"Serial output:" + s);
+                Logger.getLogger(ComReader.class.getName()).log(Level.INFO, "Serial output:" + s);
                 outStream.write(s.getBytes(), 0, s.length());
                 outStream.flush();
             } catch (IOException ex) {
@@ -241,7 +241,7 @@ public class ComReader implements Runnable {
                 }
             }
         }
-        Logger.getLogger(ComReader.class.getName()).log(Level.INFO,"Serial input:" + res);
+        Logger.getLogger(ComReader.class.getName()).log(Level.INFO, "Serial input:" + res);
         return res;
     }
 
@@ -256,9 +256,10 @@ public class ComReader implements Runnable {
             c = read();
             if (c > -1) {
                 result = con.checkConditions((char) c);
-            }
-            if (result > 0) { // condition meet
-                doLoop = false;
+
+                if (result > 0) { // condition meet
+                    doLoop = false;
+                }
             } else {
                 if (waitForever) {
                     try {
