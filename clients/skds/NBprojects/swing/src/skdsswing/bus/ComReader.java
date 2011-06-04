@@ -139,10 +139,10 @@ public class ComReader implements Runnable {
                     if (inStream != null) {
                         n = inStream.available();
                         if (n > 0) {
-                            byte[] buffer = new byte[n];
+                           byte[] buffer = new byte[n];
                             n = inStream.read(buffer, 0, n);
                             for (int i = 0; i < n; ++i) {
-                                inBuffer.append((char) buffer[i]);
+                                 inBuffer.append((char) buffer[i]);
                             }
                         } else {
                             try {
@@ -249,7 +249,7 @@ public class ComReader implements Runnable {
         boolean waitForever = timeout < 1;
         boolean doLoop = true;
         int c;
-        int sleepTime = 50;
+        int sleepTime = 5;
         int result = 0;
         Conditions con = new Conditions(conditions);
         while (doLoop) {
