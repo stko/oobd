@@ -73,20 +73,19 @@ inputRedirectTask (void *pvParameters)
 	  if (pdTRUE ==
 	      xQueueReceive (internalSerialRxQueue, &ucRx, portMAX_DELAY))
 	    {
-	      if (ucRx != 13 && ucRx != 10)
-		{
 		  printChar (ucRx);
 #ifdef OOBD_PLATFORM_POSIX
 		  putchar (ucRx);
 #endif
-		}
+	      if (ucRx  != 13) //\bug the 13 is as a blank character not properly handled in the input handler!?
+		 {
 	      msg = createMsg (&ucRx, 1);
 	      if (pdPASS != sendMsg (MSG_SERIAL_IN, inputQueue, msg))
 		{
 		  DEBUGPRINT ("FATAL ERROR: Serial Redirect queue full!!\n",
 			      'a');
 		}
-
+	    }
 	    }
 	}
     }
@@ -150,8 +149,7 @@ printSerData (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
   err = *(portBASE_TYPE *) data;
   if (err)
     {
-      printLF();
-     printser_string (":Error: ");
+      printser_string (":Error: ");
       printser_int (err, 10);
     }
   printLF();
@@ -182,11 +180,11 @@ createFeedbackMsg (portBASE_TYPE err)
 char
 checkValidChar (char a)
 {
-  if (a == 13) /* char CR carriage return */
+  if (a == '\n') /* char LF Linefeed */
     {
       return crEOL;
     }
-  if (a == '\t' || a == ' ')
+  if (a == '\t' || a == ' ' || a == '\r')
     {
       return crBLANK;
     }
@@ -306,7 +304,6 @@ inputParserTask (void *pvParameters)
 			    {
 			      sendData (&dp);
 			      /* tells the  protocol to send the buffer */
-			      printLF();
 			      sendMsg (MSG_SEND_BUFFER, protocolQueue, NULL);
 			      actState = S_SLEEP;
 			    }
@@ -358,7 +355,6 @@ inputParserTask (void *pvParameters)
 				case PARAM_INFO:
 				  if (cmdValue == VALUE_PARAM_INFO_VERSION) /* p 0 0 */
 				  {
-					printLF();
 					printser_string ("OOBD ");
 					printser_string (OOBDDESIGN);
 					printser_string (" ");
@@ -368,19 +364,16 @@ inputParserTask (void *pvParameters)
 				  }
 			      else if (cmdValue == VALUE_PARAM_INFO_SERIALNUMBER) /* p 0 1 */
 			      {
-			    	printLF();
 			    	printser_string (BTM222_RespBuffer);
 			      }
 				  else if (cmdValue == VALUE_PARAM_INFO_PROTOCOL) /* p 0 3 */
 				  {
-					printLF();
 					printser_string ("1 - UDS (ISO14229-1)");
 				  }
 				  else if (cmdValue == VALUE_PARAM_INFO_BUS) /* p 0 4 */
 				  {
 					  if (config.bus == VALUE_BUS_CAN)
 					  {
-				 		printLF();
 				 		printser_string("3 - CAN");
 					  }
 				  }
@@ -388,49 +381,40 @@ inputParserTask (void *pvParameters)
 				  {
 				    if (config.busConfig == VALUE_BUS_CONFIG_11bit_125kbit)
 				    {
-				      printLF();
 				 	  printser_string("1 = ISO 15765-4, CAN 11bit ID/125kBaud");
 				 	}
 				 	else if (config.busConfig == VALUE_BUS_CONFIG_11bit_250kbit)
 				 	{
-				 	  printLF();
 				 	  printser_string("2 = ISO 15765-4, CAN 11bit ID/250kBaud");
 				 	}
 				 	else if (config.busConfig == VALUE_BUS_CONFIG_11bit_500kbit)
 				 	{
-				 	  printLF();
 				 	  printser_string("3 = ISO 15765-4, CAN 11bit ID/500kBaud");
 				 	}
 				 	else if (config.busConfig == VALUE_BUS_CONFIG_11bit_1000kbit)
 				 	{
-				 	  printLF();
 				 	  printser_string("4 - ISO 15765-4, CAN 11bit ID/1000kBaud");
 				 	}
 				 	else if (config.busConfig == VALUE_BUS_CONFIG_29bit_125kbit)
 				 	{
-				 	  printLF();
 				 	  printser_string("5 - ISO 15765-4, CAN 29bit ID/125kBaud");
 				 	}
 				 	else if (config.busConfig == VALUE_BUS_CONFIG_29bit_250kbit)
 				 	{
-				 	  printLF();
 				 	  printser_string("6 - ISO 15765-4, CAN 29bit ID/250kBaud");
 				 	}
 				 	else if (config.busConfig == VALUE_BUS_CONFIG_29bit_500kbit)
 				 	{
-				 	  printLF();
 				 	  printser_string("7 - ISO 15765-4, CAN 29bit ID/500kBaud");
 				 	}
 				 	else if (config.busConfig == VALUE_BUS_CONFIG_29bit_1000kbit)
 				 	{
-				 	  printLF();
 				 	  printser_string("8 - ISO 15765-4, CAN 29bit ID/1000kBaud");
 				 	}
 				  }
 				  #ifdef OOBD_PLATFORM_STM32
 				  else if (cmdValue == VALUE_PARAM_INFO_ADC_POWER) /* p 0 6 */
 				  {
-					printLF();
 					printser_int ((readADC1(8)*(3.15/4096))*10000, 10); /* result in mV */
 					printser_string (" mV");
 				  }
@@ -442,16 +426,13 @@ inputParserTask (void *pvParameters)
 				    sendRomTable();      	/* send ROM Table */
 				  else if (cmdValue == VALUE_PARAM_INFO_FREE_HEAP_SIZE) /* p 0 13 */
 				  {
-				    printLF();
 				    printser_string ("Total Heap (in byte): ");
 				    printser_int (configTOTAL_HEAP_SIZE, 10);
-				    printLF();
 				    printser_string ("Free Heap (in byte): ");
 				    printser_int (xPortGetFreeHeapSize(), 10);	/* send FreeRTOS free heap size */
 				  }
 				  else if (cmdValue == VALUE_PARAM_INFO_CRC32) /* p 0 14 */
 				  {
-				    printLF();
 				    if (CheckCrc32() == 0)
 					  printser_string ("CRC-32 application check passed!");
 				    else
@@ -490,7 +471,7 @@ inputParserTask (void *pvParameters)
 				  sendParam (cmdKey, cmdValue);
 				  break;
 				}				
-				createFeedbackMsg (0);
+				//createFeedbackMsg (0);
 				}
 			  else
 			    {

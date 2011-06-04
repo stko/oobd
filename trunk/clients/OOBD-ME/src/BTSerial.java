@@ -239,9 +239,10 @@ public class BTSerial extends Form implements ActionListener, Runnable {
             c = read();
             if (c > -1) {
                 result = con.checkConditions((char) c);
-            }
-            if (result > 0) { // condition meet
-                doLoop = false;
+
+                if (result > 0) { // condition meet
+                    doLoop = false;
+                }
             } else {
                 if (waitForever) {
                     try {
@@ -268,6 +269,7 @@ public class BTSerial extends Form implements ActionListener, Runnable {
         }
         return result;
     }
+
 }
 
 class Conditions {

@@ -616,6 +616,7 @@ obp_uds (void *pvParameters)
 	          break;
 	        case PARAM_LISTEN:
 		      config.listen = paramData[1];
+		      createFeedbackMsg (0);
 		      break;
 	        case PARAM_PROTOCOL:
 		      break;
@@ -625,6 +626,7 @@ obp_uds (void *pvParameters)
 		      break;
 	        case PARAM_TIMEOUT:
 		      config.timeout = paramData[1] + 1;
+		      createFeedbackMsg (0);
 		      break;
 	        case PARAM_TIMEOUT_PENDING:
 		      break;
@@ -637,15 +639,19 @@ obp_uds (void *pvParameters)
 		      break;
 	        case PARAM_SENDID:
 		      config.sendID = paramData[1];
+		      createFeedbackMsg (0);
 		      break;
 	        case PARAM_TP_ON:
 		      tp_Flags[reduceID (paramData[1])] = config.tpFreq;
+		      createFeedbackMsg (0);
 		      break;
 	        case PARAM_TP_OFF:
 		      tp_Flags[reduceID (paramData[1])] = 0;
+		      createFeedbackMsg (0);
 		      break;
 	        case PARAM_TP_FREQ:
 	          config.tpFreq = paramData[1];
+		      createFeedbackMsg (0);
 	          break;
 	      }
 	      actBus_param (paramData[0], paramData[1]);	/* forward the received params to the underlying bus. */

@@ -116,7 +116,6 @@ main (void)
   #ifdef OOBD_PLATFORM_POSIX
     DEBUGPRINT ("OOBD Build: %s\n", SVNREV);
   #else
-    printLF();
     printser_string("OOBD Build: ");
     printser_string(SVNREV);
   #endif
