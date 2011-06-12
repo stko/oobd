@@ -5,138 +5,136 @@
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827" moduleId="org.eclipse.cdt.core.settings" name="Debug_STM32">
-				<macros>
-					<stringMacro name="build_project" type="VALUE_TEXT" value="Debug_STM32_Build"/>
-				</macros>
-				<externalSettings/>
-				<extensions>
-					<extension id="org.eclipse.cdt.core.GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
-					<extension id="org.eclipse.cdt.core.MakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
-				</extensions>
-			</storageModule>
+<macros>
+<stringMacro name="build_project" type="VALUE_TEXT" value="Debug_STM32_Build"/>
+</macros>
+<externalSettings/>
+<extensions>
+<extension id="org.eclipse.cdt.core.GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+<extension id="org.eclipse.cdt.core.MakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+</extensions>
+</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="elf" artifactName="OOBD_DXM1" buildArtefactType="org.eclipse.cdt.cross.arm.gnu.buildArtefactType.application" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.cross.arm.gnu.buildArtefactType.application" description="Debug version of STM32 firmware" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827" name="Debug_STM32" parent="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug">
-					<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827." name="/" resourcePath="">
-						<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug.1185211871" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug">
-							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1365641232" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.default" valueType="enumerated"/>
-							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.target.thumbinterwork.1453226764" name="Thumb interwork (-mthumb-interwork)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.target.thumbinterwork" value="false" valueType="boolean"/>
-							<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug.84136198" isAbstract="false" name="Linux Platform" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug"/>
-							<builder buildPath="${workspace_loc:/DXM1_Firmware/Debug_STM32}" id="org.eclipse.cdt.cross.arm.gnu.sourcery.builder.312054442" keepEnvironmentInBuildfile="false" name="ARM Sourcery GNU Make builder" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.builder"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug.204786713" name="ARM Sourcery Linux GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug">
-								<option id="org.eclipse.cdt.cross.arm.gnu.assembler.option.include.paths.262475803" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.assembler.option.include.paths"/>
-								<option id="org.eclipse.cdt.cross.arm.gnu.assembler.option.warnings.pedantic.583806377" name="Pedantic (-pedantic)" superClass="org.eclipse.cdt.cross.arm.gnu.assembler.option.warnings.pedantic" value="true" valueType="boolean"/>
-								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input.1911653445" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input"/>
-							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug.646274676" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug">
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level.1137393046" name="Optimization level" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.optimization.level.size" valueType="enumerated"/>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths.1721390873" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;../Source/portable/GCC/ARM_CM3&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../Demo/POSIX_GCC/AsyncIO&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../Demo/Common_OOBD&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../Demo/CORTEX_STM32F103E_Eclipse_GCC/inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS/Core/CM3&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../Source/include&quot;"/>
-								</option>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def.939664628" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="SVNREV='&quot;$(shell LC_ALL=C svnversion -cn ../ | sed -e &quot;s/.*://&quot; -e &quot;s/\([0-9]*\).*/\1/&quot; | grep &quot;[0-9]&quot; )&quot;'"/>
-									<listOptionValue builtIn="false" value="BUILDDATE='&quot;$(shell date --rfc-822)&quot;' "/>
-									<listOptionValue builtIn="false" value="OOBDDESIGN='(const char *)(&quot;D2&quot;)'"/>
-									<listOptionValue builtIn="false" value="GCC_ARMCM3"/>
-									<listOptionValue builtIn="false" value="OOBD_PLATFORM_STM32"/>
-									<listOptionValue builtIn="false" value="DEBUG_CAN"/>
-									<listOptionValue builtIn="false" value="DEBUG_LED"/>
-									<listOptionValue builtIn="false" value="DEBUG_INPUT"/>
-									<listOptionValue builtIn="false" value="DEBUG_SERIAL_STM32"/>
-								</option>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.warnings.pedantic.1802075366" name="Pedantic (-pedantic)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.warnings.pedantic" value="true" valueType="boolean"/>
-								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input.812351161" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input"/>
-							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.debug.746311079" name="ARM Sourcery Linux GCC C++ Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.debug">
-								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.level.630467125" name="Optimization level" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.optimization.level.none" valueType="enumerated"/>
-							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.debug.796096990" name="ARM Sourcery Linux GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.debug">
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.scriptfile.1783447488" name="Script file (-T)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.scriptfile" value="${workspace_loc:/DXM1_Firmware/Demo/CORTEX_STM32F103E_Eclipse_GCC/stm32_link_script.ld}" valueType="string"/>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.paths.572982214" name="Library search path (-L)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value=""/>
-								</option>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.otherobjs.525660672" name="Other objects" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.otherobjs" valueType="userObjs">
-									<listOptionValue builtIn="false" value="&quot;../Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS/Core/CM3/startup/gcc/startup_stm32f10x_md.s&quot;"/>
-								</option>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.gcsections.500584255" name="Remove unused sections (-Xlinker --gc-sections)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.gcsections" value="true" valueType="boolean"/>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.nostart.1042070869" name="Do not use standard start files (-nostartfiles)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.nostart" value="true" valueType="boolean"/>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.nostdlibs.1221342773" name="No startup or default libs (-nostdlib)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.nostdlibs" value="false" valueType="boolean"/>
-								<inputType id="org.eclipse.cdt.cross.arm.gnu.c.linker.input.895989889" superClass="org.eclipse.cdt.cross.arm.gnu.c.linker.input">
-									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
-									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
-								</inputType>
-							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.debug.611602632" name="ARM Sourcery Linux GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.debug"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1336319823" name="ARM Sourcery Linux GCC Archiver" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.debug.1705717351" name="ARM Sourcery Linux GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.debug">
-								<option id="org.eclipse.cdt.cross.arm.gnu.createflash.out.choice.462377608" name="Output file format (-O)" superClass="org.eclipse.cdt.cross.arm.gnu.createflash.out.choice" value="org.eclipse.cdt.cross.arm.gnu.createflash.out.choice.binary" valueType="enumerated"/>
-							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.debug.452455537" name="ARM Sourcery Linux GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.debug"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.debug.329726973" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.debug"/>
-						</toolChain>
-					</folderInfo>
-					<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.186635418" name="/" resourcePath="Demo/POSIX_GCC">
-						<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug.1108738937" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug" unusedChildren="">
-							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1365641232.716788401" name="Debug level"/>
-							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1963233829" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.max" valueType="enumerated"/>
-							<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug" isAbstract="false" name="Linux Platform" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug.1639545029" name="ARM Sourcery Linux GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug.204786713">
-								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input.1926126843" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input"/>
-							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug.1021802275" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug.646274676">
-								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input.724602069" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input"/>
-							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.debug.1234078794" name="ARM Sourcery Linux GCC C++ Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.debug.746311079"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.debug.218847192" name="ARM Sourcery Linux GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.debug.796096990"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.debug.1100564463" name="ARM Sourcery Linux GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.debug.611602632"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.726441143" name="ARM Sourcery Linux GCC Archiver" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1336319823"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.debug.1388685525" name="ARM Sourcery Linux GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.debug.1705717351"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.debug.1358702328" name="ARM Sourcery Linux GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.debug.452455537"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.debug.106111871" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.debug.329726973"/>
-						</toolChain>
-					</folderInfo>
-					<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1874311601" name="/" resourcePath="Demo/Common_OOBD">
-						<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug.651729600" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug" unusedChildren="">
-							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1365641232.641550652" name="Debug level"/>
-							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.11267537" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.max" valueType="enumerated"/>
-							<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug" isAbstract="false" name="Linux Platform" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug.463934148" name="ARM Sourcery Linux GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug.204786713">
-								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input.1046900090" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input"/>
-							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug.1469106115" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug.646274676">
-								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input.1422199186" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input"/>
-							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.debug.823278205" name="ARM Sourcery Linux GCC C++ Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.debug.746311079"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.debug.109424363" name="ARM Sourcery Linux GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.debug.796096990"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.debug.2018457019" name="ARM Sourcery Linux GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.debug.611602632"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.55564395" name="ARM Sourcery Linux GCC Archiver" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1336319823"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.debug.1375263640" name="ARM Sourcery Linux GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.debug.1705717351"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.debug.569174219" name="ARM Sourcery Linux GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.debug.452455537"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.debug.498072263" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.debug.329726973"/>
-						</toolChain>
-					</folderInfo>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.682477229" name="od_serial.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_serial.h" toolsToInvoke=""/>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1636231891" name="odp_uds.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/odp_uds.h" toolsToInvoke=""/>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.836594031" name="od_config.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_config.h" toolsToInvoke=""/>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1146649449" name="od_base.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_base.h" toolsToInvoke=""/>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1533057448" name="od_outputTask.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_outputTask.h" toolsToInvoke=""/>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1589217893" name="od_protocols.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_protocols.h" toolsToInvoke=""/>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1599866551" name="odb_can.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/odb_can.h" toolsToInvoke=""/>
-					<sourceEntries>
-						<entry excluding="Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/startup_stm32f10x_md.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/eeprom.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c|Source/portable/MemMang/heap_1.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/main.c|Demo/POSIX_GCC|Demo/POSIX_GCC/mc_posix_can.c|Demo/POSIX_GCC/AsyncIO|Demo/POSIX_GCC/FreeRTOSConfig.h|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/can_debug.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_cec.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/can.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/can.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|Demo/Common/drivers/ST/STM32F10xFWLib/v3_0_0|Source/portable/MemMang/heap_3.c|Source/portable/GCC/Posix|OOBD_Firmware/src/can.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c|freeRTOS_CM3/Source/portable/MemMang/heap_3.c|freeRTOS_CM3/Source/portable/MemMang/heap_2.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-					</sourceEntries>
-				</configuration>
-			</storageModule>
+<configuration artifactExtension="elf" artifactName="OOBD_DXM1" buildArtefactType="org.eclipse.cdt.cross.arm.gnu.buildArtefactType.application" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.cross.arm.gnu.buildArtefactType.application" description="Debug version of STM32 firmware" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827" name="Debug_STM32" parent="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug">
+<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827." name="/" resourcePath="">
+<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug.1185211871" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug">
+<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1365641232" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.default" valueType="enumerated"/>
+<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.target.thumbinterwork.1453226764" name="Thumb interwork (-mthumb-interwork)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.target.thumbinterwork" value="false" valueType="boolean"/>
+<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug.84136198" isAbstract="false" name="Linux Platform" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug"/>
+<builder buildPath="${workspace_loc:/DXM1_Firmware/Debug_STM32}" id="org.eclipse.cdt.cross.arm.gnu.sourcery.builder.312054442" keepEnvironmentInBuildfile="false" name="ARM Sourcery GNU Make builder" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.builder"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug.204786713" name="ARM Sourcery Linux GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug">
+<option id="org.eclipse.cdt.cross.arm.gnu.assembler.option.include.paths.262475803" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.assembler.option.include.paths"/>
+<option id="org.eclipse.cdt.cross.arm.gnu.assembler.option.warnings.pedantic.583806377" name="Pedantic (-pedantic)" superClass="org.eclipse.cdt.cross.arm.gnu.assembler.option.warnings.pedantic" value="true" valueType="boolean"/>
+<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input.1911653445" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input"/>
+</tool>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug.646274676" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug">
+<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level.1137393046" name="Optimization level" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.optimization.level.size" valueType="enumerated"/>
+<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths.1721390873" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths" valueType="includePath">
+<listOptionValue builtIn="false" value="&quot;../Source/portable/GCC/ARM_CM3&quot;"/>
+<listOptionValue builtIn="false" value="&quot;../Demo/POSIX_GCC/AsyncIO&quot;"/>
+<listOptionValue builtIn="false" value="&quot;../Demo/Common_OOBD&quot;"/>
+<listOptionValue builtIn="false" value="&quot;../Demo/CORTEX_STM32F103E_Eclipse_GCC/inc&quot;"/>
+<listOptionValue builtIn="false" value="&quot;../Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/inc&quot;"/>
+<listOptionValue builtIn="false" value="&quot;../Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS/Core/CM3&quot;"/>
+<listOptionValue builtIn="false" value="&quot;../Source/include&quot;"/>
+</option>
+<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def.939664628" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def" valueType="definedSymbols">
+<listOptionValue builtIn="false" value="SVNREV='&quot;$(shell LC_ALL=C svnversion -cn ../ | sed -e &quot;s/.*://&quot; -e &quot;s/\([0-9]*\).*/\1/&quot; | grep &quot;[0-9]&quot; )&quot;'"/>
+<listOptionValue builtIn="false" value="BUILDDATE='&quot;$(shell date --rfc-822)&quot;' "/>
+<listOptionValue builtIn="false" value="OOBDDESIGN='(const char *)(&quot;D2&quot;)'"/>
+<listOptionValue builtIn="false" value="GCC_ARMCM3"/>
+<listOptionValue builtIn="false" value="OOBD_PLATFORM_STM32"/>
+<listOptionValue builtIn="false" value="DEBUG_CAN"/>
+<listOptionValue builtIn="false" value="DEBUG_LED"/>
+<listOptionValue builtIn="false" value="DEBUG_INPUT"/>
+<listOptionValue builtIn="false" value="DEBUG_SERIAL_STM32"/>
+</option>
+<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.warnings.pedantic.1802075366" name="Pedantic (-pedantic)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.warnings.pedantic" value="true" valueType="boolean"/>
+<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input.812351161" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input"/>
+</tool>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.debug.746311079" name="ARM Sourcery Linux GCC C++ Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.debug">
+<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.level.630467125" name="Optimization level" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.optimization.level.none" valueType="enumerated"/>
+</tool>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.debug.796096990" name="ARM Sourcery Linux GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.debug">
+<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.scriptfile.1783447488" name="Script file (-T)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.scriptfile" value="${workspace_loc:/DXM1_Firmware/Demo/CORTEX_STM32F103E_Eclipse_GCC/stm32_link_script.ld}" valueType="string"/>
+<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.paths.572982214" name="Library search path (-L)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.paths" valueType="libPaths">
+<listOptionValue builtIn="false" value=""/>
+</option>
+<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.otherobjs.525660672" name="Other objects" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.otherobjs" valueType="userObjs">
+<listOptionValue builtIn="false" value="&quot;../Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS/Core/CM3/startup/gcc/startup_stm32f10x_md.s&quot;"/>
+</option>
+<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.gcsections.500584255" name="Remove unused sections (-Xlinker --gc-sections)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.gcsections" value="true" valueType="boolean"/>
+<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.nostart.1042070869" name="Do not use standard start files (-nostartfiles)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.nostart" value="true" valueType="boolean"/>
+<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.nostdlibs.1221342773" name="No startup or default libs (-nostdlib)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.nostdlibs" value="false" valueType="boolean"/>
+<inputType id="org.eclipse.cdt.cross.arm.gnu.c.linker.input.895989889" superClass="org.eclipse.cdt.cross.arm.gnu.c.linker.input">
+<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+</inputType>
+</tool>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.debug.611602632" name="ARM Sourcery Linux GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.debug"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1336319823" name="ARM Sourcery Linux GCC Archiver" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.debug.1705717351" name="ARM Sourcery Linux GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.debug">
+<option id="org.eclipse.cdt.cross.arm.gnu.createflash.out.choice.462377608" name="Output file format (-O)" superClass="org.eclipse.cdt.cross.arm.gnu.createflash.out.choice" value="org.eclipse.cdt.cross.arm.gnu.createflash.out.choice.binary" valueType="enumerated"/>
+</tool>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.debug.452455537" name="ARM Sourcery Linux GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.debug"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.debug.329726973" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.debug"/>
+</toolChain>
+</folderInfo>
+<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.186635418" name="/" resourcePath="Demo/POSIX_GCC">
+<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug.1108738937" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug" unusedChildren="">
+<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1365641232.716788401" name="Debug level"/>
+<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1963233829" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.max" valueType="enumerated"/>
+<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug" isAbstract="false" name="Linux Platform" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug.1639545029" name="ARM Sourcery Linux GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug.204786713">
+<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input.1926126843" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input"/>
+</tool>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug.1021802275" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug.646274676">
+<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input.724602069" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input"/>
+</tool>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.debug.1234078794" name="ARM Sourcery Linux GCC C++ Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.debug.746311079"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.debug.218847192" name="ARM Sourcery Linux GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.debug.796096990"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.debug.1100564463" name="ARM Sourcery Linux GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.debug.611602632"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.726441143" name="ARM Sourcery Linux GCC Archiver" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1336319823"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.debug.1388685525" name="ARM Sourcery Linux GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.debug.1705717351"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.debug.1358702328" name="ARM Sourcery Linux GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.debug.452455537"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.debug.106111871" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.debug.329726973"/>
+</toolChain>
+</folderInfo>
+<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1874311601" name="/" resourcePath="Demo/Common_OOBD">
+<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug.651729600" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug" unusedChildren="">
+<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1365641232.641550652" name="Debug level"/>
+<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.11267537" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.max" valueType="enumerated"/>
+<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug" isAbstract="false" name="Linux Platform" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug.463934148" name="ARM Sourcery Linux GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug.204786713">
+<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input.1046900090" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input"/>
+</tool>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug.1469106115" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug.646274676">
+<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input.1422199186" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input"/>
+</tool>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.debug.823278205" name="ARM Sourcery Linux GCC C++ Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.debug.746311079"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.debug.109424363" name="ARM Sourcery Linux GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.debug.796096990"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.debug.2018457019" name="ARM Sourcery Linux GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.debug.611602632"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.55564395" name="ARM Sourcery Linux GCC Archiver" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1336319823"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.debug.1375263640" name="ARM Sourcery Linux GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.debug.1705717351"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.debug.569174219" name="ARM Sourcery Linux GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.debug.452455537"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.debug.498072263" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.debug.329726973"/>
+</toolChain>
+</folderInfo>
+<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.682477229" name="od_serial.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_serial.h" toolsToInvoke=""/>
+<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1636231891" name="odp_uds.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/odp_uds.h" toolsToInvoke=""/>
+<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.836594031" name="od_config.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_config.h" toolsToInvoke=""/>
+<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1146649449" name="od_base.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_base.h" toolsToInvoke=""/>
+<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1533057448" name="od_outputTask.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_outputTask.h" toolsToInvoke=""/>
+<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1589217893" name="od_protocols.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_protocols.h" toolsToInvoke=""/>
+<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1599866551" name="odb_can.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/odb_can.h" toolsToInvoke=""/>
+<sourceEntries>
+<entry excluding="Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/startup_stm32f10x_md.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/eeprom.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c|Source/portable/MemMang/heap_1.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/main.c|Demo/POSIX_GCC|Demo/POSIX_GCC/mc_posix_can.c|Demo/POSIX_GCC/AsyncIO|Demo/POSIX_GCC/FreeRTOSConfig.h|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/can_debug.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_cec.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/can.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/can.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|Demo/Common/drivers/ST/STM32F10xFWLib/v3_0_0|Source/portable/MemMang/heap_3.c|Source/portable/GCC/Posix|OOBD_Firmware/src/can.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c|freeRTOS_CM3/Source/portable/MemMang/heap_3.c|freeRTOS_CM3/Source/portable/MemMang/heap_2.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+</sourceEntries>
+</configuration>
+</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 			<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
 			<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
@@ -5125,128 +5123,126 @@
 		</cconfiguration>
 		<cconfiguration id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922" moduleId="org.eclipse.cdt.core.settings" name="Release_STM32">
-				<externalSettings/>
-				<extensions>
-					<extension id="org.eclipse.cdt.core.GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
-					<extension id="org.eclipse.cdt.core.MakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
-				</extensions>
-			</storageModule>
+<externalSettings/>
+<extensions>
+<extension id="org.eclipse.cdt.core.GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+<extension id="org.eclipse.cdt.core.MakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+</extensions>
+</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="elf" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.cross.arm.gnu.buildArtefactType.application" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.cross.arm.gnu.buildArtefactType.application" description="Release version of STM32 firmware" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922" name="Release_STM32" parent="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release" postannouncebuildStep="Generate binary and append CRC32 to binary" postbuildStep="arm-none-eabi-objcopy -O binary DXM1_Firmware.elf OOBD_Firmware.bin; ../cortex_crc OOBD_Firmware.bin ">
-					<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922." name="/" resourcePath="">
-						<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.release.24118176" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.release">
-							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.2051012287" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.none" valueType="enumerated"/>
-							<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.release.2052493908" isAbstract="false" name="Linux Platform" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.release"/>
-							<builder buildPath="${workspace_loc:/STM32_Trial1/Release}" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.builder.release.256905834" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="ARM Sourcery Linux GNU Make builder" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.builder.release"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.release.143831278" name="ARM Sourcery Linux GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.release">
-								<option id="org.eclipse.cdt.cross.arm.gnu.assembler.option.include.paths.165229608" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.assembler.option.include.paths"/>
-								<option id="org.eclipse.cdt.cross.arm.gnu.assembler.option.warnings.pedantic.1523735817" name="Pedantic (-pedantic)" superClass="org.eclipse.cdt.cross.arm.gnu.assembler.option.warnings.pedantic" value="true" valueType="boolean"/>
-								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input.1500268963" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input"/>
-							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release.1876267419" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release">
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level.121964486" name="Optimization level" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.optimization.level.size" valueType="enumerated"/>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.warnings.pedantic.700573347" name="Pedantic (-pedantic)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.warnings.pedantic" value="true" valueType="boolean"/>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def.475440251" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="GCC_ARMCM3"/>
-									<listOptionValue builtIn="false" value="BUILDDATE='&quot;$(shell date --rfc-822)&quot;' "/>
-									<listOptionValue builtIn="false" value="OOBDDESIGN='(const char *)(&quot;D2&quot;)'"/>
-									<listOptionValue builtIn="false" value="SVNREV='&quot;$(shell LC_ALL=C svnversion -cn ../ | sed -e &quot;s/.*://&quot; -e &quot;s/\([0-9]*\).*/\1/&quot; | grep &quot;[0-9]&quot; )&quot;'"/>
-									<listOptionValue builtIn="false" value="OOBD_PLATFORM_STM32"/>
-								</option>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths.793840771" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/Demo/CORTEX_STM32F103E_Eclipse_GCC/inc}"/>
-									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/Demo/Common_OOBD}"/>
-									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/inc}"/>
-									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS/Core/CM3}"/>
-									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/Source/portable/GCC/ARM_CM3}"/>
-									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/Source/include}"/>
-								</option>
-								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input.2033832188" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input"/>
-							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.release.2024970125" name="ARM Sourcery Linux GCC C++ Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.release">
-								<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.level.623033307" name="Optimization level" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.optimization.level.size" valueType="enumerated"/>
-							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.release.1951310333" name="ARM Sourcery Linux GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.release">
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.scriptfile.428616203" name="Script file (-T)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.scriptfile" value="${workspace_loc:/${ProjName}/Demo/CORTEX_STM32F103E_Eclipse_GCC/stm32_link_script.ld}" valueType="string"/>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.otherobjs.1997820130" name="Other objects" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.otherobjs" valueType="userObjs">
-									<listOptionValue builtIn="false" value="${workspace_loc:/${ProjName}/Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS/Core/CM3/startup/gcc/startup_stm32f10x_md.s}"/>
-								</option>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.gcsections.1870052511" name="Remove unused sections (-Xlinker --gc-sections)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.gcsections" value="true" valueType="boolean"/>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.nodeflibs.1779985290" name="Do not use default libraries (-nodefaultlibs)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.nodeflibs" value="true" valueType="boolean"/>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.nostdlibs.959909792" name="No startup or default libs (-nostdlib)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.nostdlibs" value="false" valueType="boolean"/>
-								<inputType id="org.eclipse.cdt.cross.arm.gnu.c.linker.input.782394597" superClass="org.eclipse.cdt.cross.arm.gnu.c.linker.input">
-									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
-									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
-								</inputType>
-							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.release.1466801912" name="ARM Sourcery Linux GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.release"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1874622871" name="ARM Sourcery Linux GCC Archiver" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.release.1297027051" name="ARM Sourcery Linux GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.release">
-								<option id="org.eclipse.cdt.cross.arm.gnu.createflash.out.choice.593934061" name="Output file format (-O)" superClass="org.eclipse.cdt.cross.arm.gnu.createflash.out.choice" value="org.eclipse.cdt.cross.arm.gnu.createflash.out.choice.ihex" valueType="enumerated"/>
-							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.release.1063852560" name="ARM Sourcery Linux GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.release"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release.1856569119" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release">
-								<option id="org.eclipse.cdt.cross.arm.gnu.printsize.general.hex.871542477" name="Hex" superClass="org.eclipse.cdt.cross.arm.gnu.printsize.general.hex" value="true" valueType="boolean"/>
-							</tool>
-						</toolChain>
-					</folderInfo>
-					<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.1976714293" name="/" resourcePath="Demo/POSIX_GCC">
-						<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.release.2018567353" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.release" unusedChildren="">
-							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.2051012287.2116441145" name="Debug level"/>
-							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1301039863" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.none" valueType="enumerated"/>
-							<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.release" isAbstract="false" name="Linux Platform" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.release"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.release.1045276920" name="ARM Sourcery Linux GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.release.143831278">
-								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input.536439248" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input"/>
-							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release.776371870" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release.1876267419">
-								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input.1507426339" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input"/>
-							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.release.403691215" name="ARM Sourcery Linux GCC C++ Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.release.2024970125"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.release.1729133110" name="ARM Sourcery Linux GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.release.1951310333"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.release.1076542274" name="ARM Sourcery Linux GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.release.1466801912"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1006485582" name="ARM Sourcery Linux GCC Archiver" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1874622871"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.release.1217753252" name="ARM Sourcery Linux GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.release.1297027051"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.release.1122351338" name="ARM Sourcery Linux GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.release.1063852560"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release.923154509" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release.1856569119"/>
-						</toolChain>
-					</folderInfo>
-					<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.829295622" name="/" resourcePath="Demo/Common_OOBD">
-						<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.release.740562843" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.release" unusedChildren="">
-							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.2051012287.274075980" name="Debug level"/>
-							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.538769408" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.none" valueType="enumerated"/>
-							<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.release" isAbstract="false" name="Linux Platform" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.release"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.release.837832093" name="ARM Sourcery Linux GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.release.143831278">
-								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input.525101382" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input"/>
-							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release.1708748554" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release.1876267419">
-								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input.875300837" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input"/>
-							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.release.196423215" name="ARM Sourcery Linux GCC C++ Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.release.2024970125"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.release.1284080546" name="ARM Sourcery Linux GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.release.1951310333"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.release.961990938" name="ARM Sourcery Linux GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.release.1466801912"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1367007211" name="ARM Sourcery Linux GCC Archiver" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1874622871"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.release.1256597" name="ARM Sourcery Linux GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.release.1297027051"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.release.568212587" name="ARM Sourcery Linux GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.release.1063852560"/>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release.455540868" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release.1856569119"/>
-						</toolChain>
-					</folderInfo>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.2013463291" name="od_serial.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_serial.h" toolsToInvoke=""/>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.1326794534" name="odp_uds.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/odp_uds.h" toolsToInvoke=""/>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.333040241" name="od_config.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_config.h" toolsToInvoke=""/>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.1030554369" name="od_base.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_base.h" toolsToInvoke=""/>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.199127096" name="od_outputTask.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_outputTask.h" toolsToInvoke=""/>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.740379721" name="od_protocols.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_protocols.h" toolsToInvoke=""/>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.1641317971" name="odb_can.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/odb_can.h" toolsToInvoke=""/>
-					<sourceEntries>
-						<entry excluding="Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/startup_stm32f10x_md.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/eeprom.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c|Source/portable/MemMang/heap_1.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/main.c|Demo/POSIX_GCC|Demo/POSIX_GCC/mc_posix_can.c|Demo/POSIX_GCC/AsyncIO|Demo/POSIX_GCC/FreeRTOSConfig.h|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/can_debug.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_i2c.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_cec.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/can.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/can.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|Demo/Common/drivers/ST/STM32F10xFWLib/v3_0_0|Source/portable/MemMang/heap_3.c|Source/portable/GCC/Posix|OOBD_Firmware/src/can.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c|STM32F10x_StdPeriph_Driver/src/misc.c|freeRTOS_CM3/Source/portable/MemMang/heap_3.c|freeRTOS_CM3/Source/portable/MemMang/heap_2.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-					</sourceEntries>
-				</configuration>
-			</storageModule>
+<configuration artifactExtension="elf" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.cross.arm.gnu.buildArtefactType.application" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.cross.arm.gnu.buildArtefactType.application" description="Release version of STM32 firmware" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922" name="Release_STM32" parent="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release" postannouncebuildStep="Generate binary and append CRC32 to binary" postbuildStep="arm-none-eabi-objcopy -O binary DXM1_Firmware.elf OOBD_Firmware.bin; ../cortex_crc OOBD_Firmware.bin ">
+<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922." name="/" resourcePath="">
+<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.release.24118176" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.release">
+<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.2051012287" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.none" valueType="enumerated"/>
+<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.release.2052493908" isAbstract="false" name="Linux Platform" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.release"/>
+<builder buildPath="${workspace_loc:/STM32_Trial1/Release}" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.builder.release.256905834" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="ARM Sourcery Linux GNU Make builder" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.builder.release"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.release.143831278" name="ARM Sourcery Linux GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.release">
+<option id="org.eclipse.cdt.cross.arm.gnu.assembler.option.include.paths.165229608" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.assembler.option.include.paths"/>
+<option id="org.eclipse.cdt.cross.arm.gnu.assembler.option.warnings.pedantic.1523735817" name="Pedantic (-pedantic)" superClass="org.eclipse.cdt.cross.arm.gnu.assembler.option.warnings.pedantic" value="true" valueType="boolean"/>
+<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input.1500268963" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input"/>
+</tool>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release.1876267419" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release">
+<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level.121964486" name="Optimization level" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.optimization.level.size" valueType="enumerated"/>
+<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.warnings.pedantic.700573347" name="Pedantic (-pedantic)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.warnings.pedantic" value="true" valueType="boolean"/>
+<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def.475440251" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def" valueType="definedSymbols">
+<listOptionValue builtIn="false" value="GCC_ARMCM3"/>
+<listOptionValue builtIn="false" value="BUILDDATE='&quot;$(shell date --rfc-822)&quot;' "/>
+<listOptionValue builtIn="false" value="OOBDDESIGN='(const char *)(&quot;D2&quot;)'"/>
+<listOptionValue builtIn="false" value="SVNREV='&quot;$(shell LC_ALL=C svnversion -cn ../ | sed -e &quot;s/.*://&quot; -e &quot;s/\([0-9]*\).*/\1/&quot; | grep &quot;[0-9]&quot; )&quot;'"/>
+<listOptionValue builtIn="false" value="OOBD_PLATFORM_STM32"/>
+</option>
+<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths.793840771" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths" valueType="includePath">
+<listOptionValue builtIn="false" value="${ProjDirPath}/Demo/CORTEX_STM32F103E_Eclipse_GCC/inc"/>
+<listOptionValue builtIn="false" value="${ProjDirPath}/Demo/Common_OOBD"/>
+<listOptionValue builtIn="false" value="${ProjDirPath}/Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/inc"/>
+<listOptionValue builtIn="false" value="${ProjDirPath}/Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS/Core/CM3"/>
+<listOptionValue builtIn="false" value="${ProjDirPath}/Source/portable/GCC/ARM_CM3"/>
+<listOptionValue builtIn="false" value="${ProjDirPath}/Source/include"/>
+</option>
+<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input.2033832188" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input"/>
+</tool>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.release.2024970125" name="ARM Sourcery Linux GCC C++ Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.release">
+<option id="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.level.623033307" name="Optimization level" superClass="org.eclipse.cdt.cross.arm.gnu.cpp.compiler.option.optimization.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.optimization.level.size" valueType="enumerated"/>
+</tool>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.release.1951310333" name="ARM Sourcery Linux GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.release">
+<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.scriptfile.428616203" name="Script file (-T)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.scriptfile" value="${ProjDirPath}/Demo/CORTEX_STM32F103E_Eclipse_GCC/stm32_link_script.ld" valueType="string"/>
+<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.otherobjs.1997820130" name="Other objects" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.otherobjs" valueType="userObjs">
+<listOptionValue builtIn="false" value="${ProjDirPath}/Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS/Core/CM3/startup/gcc/startup_stm32f10x_md.s"/>
+</option>
+<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.gcsections.1870052511" name="Remove unused sections (-Xlinker --gc-sections)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.gcsections" value="true" valueType="boolean"/>
+<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.nodeflibs.1779985290" name="Do not use default libraries (-nodefaultlibs)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.nodeflibs" value="true" valueType="boolean"/>
+<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.nostdlibs.959909792" name="No startup or default libs (-nostdlib)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.nostdlibs" value="false" valueType="boolean"/>
+<inputType id="org.eclipse.cdt.cross.arm.gnu.c.linker.input.782394597" superClass="org.eclipse.cdt.cross.arm.gnu.c.linker.input">
+<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+</inputType>
+</tool>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.release.1466801912" name="ARM Sourcery Linux GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.release"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1874622871" name="ARM Sourcery Linux GCC Archiver" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.release.1297027051" name="ARM Sourcery Linux GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.release">
+<option id="org.eclipse.cdt.cross.arm.gnu.createflash.out.choice.593934061" name="Output file format (-O)" superClass="org.eclipse.cdt.cross.arm.gnu.createflash.out.choice" value="org.eclipse.cdt.cross.arm.gnu.createflash.out.choice.ihex" valueType="enumerated"/>
+</tool>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.release.1063852560" name="ARM Sourcery Linux GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.release"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release.1856569119" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release">
+<option id="org.eclipse.cdt.cross.arm.gnu.printsize.general.hex.871542477" name="Hex" superClass="org.eclipse.cdt.cross.arm.gnu.printsize.general.hex" value="true" valueType="boolean"/>
+</tool>
+</toolChain>
+</folderInfo>
+<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.1976714293" name="/" resourcePath="Demo/POSIX_GCC">
+<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.release.2018567353" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.release" unusedChildren="">
+<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.2051012287.2116441145" name="Debug level"/>
+<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1301039863" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.none" valueType="enumerated"/>
+<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.release" isAbstract="false" name="Linux Platform" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.release"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.release.1045276920" name="ARM Sourcery Linux GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.release.143831278">
+<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input.536439248" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input"/>
+</tool>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release.776371870" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release.1876267419">
+<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input.1507426339" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input"/>
+</tool>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.release.403691215" name="ARM Sourcery Linux GCC C++ Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.release.2024970125"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.release.1729133110" name="ARM Sourcery Linux GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.release.1951310333"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.release.1076542274" name="ARM Sourcery Linux GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.release.1466801912"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1006485582" name="ARM Sourcery Linux GCC Archiver" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1874622871"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.release.1217753252" name="ARM Sourcery Linux GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.release.1297027051"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.release.1122351338" name="ARM Sourcery Linux GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.release.1063852560"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release.923154509" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release.1856569119"/>
+</toolChain>
+</folderInfo>
+<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.829295622" name="/" resourcePath="Demo/Common_OOBD">
+<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.release.740562843" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.release" unusedChildren="">
+<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.2051012287.274075980" name="Debug level"/>
+<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.538769408" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.none" valueType="enumerated"/>
+<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.release" isAbstract="false" name="Linux Platform" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.release"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.release.837832093" name="ARM Sourcery Linux GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.release.143831278">
+<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input.525101382" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input"/>
+</tool>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release.1708748554" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release.1876267419">
+<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input.875300837" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input"/>
+</tool>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.release.196423215" name="ARM Sourcery Linux GCC C++ Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.release.2024970125"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.release.1284080546" name="ARM Sourcery Linux GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.release.1951310333"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.release.961990938" name="ARM Sourcery Linux GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.release.1466801912"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1367007211" name="ARM Sourcery Linux GCC Archiver" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1874622871"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.release.1256597" name="ARM Sourcery Linux GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.release.1297027051"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.release.568212587" name="ARM Sourcery Linux GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.release.1063852560"/>
+<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release.455540868" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release.1856569119"/>
+</toolChain>
+</folderInfo>
+<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.2013463291" name="od_serial.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_serial.h" toolsToInvoke=""/>
+<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.1326794534" name="odp_uds.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/odp_uds.h" toolsToInvoke=""/>
+<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.333040241" name="od_config.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_config.h" toolsToInvoke=""/>
+<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.1030554369" name="od_base.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_base.h" toolsToInvoke=""/>
+<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.199127096" name="od_outputTask.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_outputTask.h" toolsToInvoke=""/>
+<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.740379721" name="od_protocols.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/od_protocols.h" toolsToInvoke=""/>
+<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.1641317971" name="odb_can.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/odb_can.h" toolsToInvoke=""/>
+<sourceEntries>
+<entry excluding="Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/startup_stm32f10x_md.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/eeprom.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c|Source/portable/MemMang/heap_1.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/main.c|Demo/POSIX_GCC|Demo/POSIX_GCC/mc_posix_can.c|Demo/POSIX_GCC/AsyncIO|Demo/POSIX_GCC/FreeRTOSConfig.h|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/can_debug.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_i2c.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_cec.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/can.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/can.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|Demo/Common/drivers/ST/STM32F10xFWLib/v3_0_0|Source/portable/MemMang/heap_3.c|Source/portable/GCC/Posix|OOBD_Firmware/src/can.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c|STM32F10x_StdPeriph_Driver/src/misc.c|freeRTOS_CM3/Source/portable/MemMang/heap_3.c|freeRTOS_CM3/Source/portable/MemMang/heap_2.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+</sourceEntries>
+</configuration>
+</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 			<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
 			<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
@@ -10235,46 +10231,45 @@
 		</cconfiguration>
 		<cconfiguration id="cdt.managedbuild.config.gnu.exe.debug.1870774293">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.debug.1870774293" moduleId="org.eclipse.cdt.core.settings" name="Debug_POSIX_Sim">
-				<externalSettings/>
-				<extensions>
-					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
-					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
-				</extensions>
-			</storageModule>
+<externalSettings/>
+<extensions>
+<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+<extension id="org.eclipse.cdt.core.MakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+</extensions>
+</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="Debug version of POSIX sImulation" id="cdt.managedbuild.config.gnu.exe.debug.1870774293" name="Debug_POSIX_Sim" parent="cdt.managedbuild.config.gnu.exe.debug">
-					<folderInfo id="cdt.managedbuild.config.gnu.exe.debug.1870774293." name="/" resourcePath="">
-						<toolChain id="cdt.managedbuild.toolchain.gnu.exe.debug.1758048280" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.exe.debug">
-							<targetPlatform id="cdt.managedbuild.target.gnu.platform.exe.debug.1612436766" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.exe.debug"/>
-							<builder buildPath="${workspace_loc:/DXM1_Firmware/Demo/POSIX_GCC}" id="cdt.managedbuild.target.gnu.builder.exe.debug.483687135" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.exe.debug"/>
-							<tool id="cdt.managedbuild.tool.gnu.archiver.base.863189419" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.415071056" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
-								<option id="gnu.cpp.compiler.exe.debug.option.optimization.level.1029436917" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.886280259" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.546613004" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">
-								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.exe.debug.option.optimization.level.331662857" name="Optimization Level" superClass="gnu.c.compiler.exe.debug.option.optimization.level" valueType="enumerated"/>
-								<option id="gnu.c.compiler.exe.debug.option.debugging.level.1353983587" name="Debug Level" superClass="gnu.c.compiler.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
-								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.831211590" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.1997344890" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug">
-								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.5701025" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
-									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
-									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
-								</inputType>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.328214516" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug"/>
-							<tool id="cdt.managedbuild.tool.gnu.assembler.exe.debug.697155263" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.debug">
-								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.401897277" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
-							</tool>
-						</toolChain>
-					</folderInfo>
-				</configuration>
-			</storageModule>
+<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="Debug version of POSIX sImulation" id="cdt.managedbuild.config.gnu.exe.debug.1870774293" name="Debug_POSIX_Sim" parent="cdt.managedbuild.config.gnu.exe.debug">
+<folderInfo id="cdt.managedbuild.config.gnu.exe.debug.1870774293." name="/" resourcePath="">
+<toolChain id="cdt.managedbuild.toolchain.gnu.exe.debug.1758048280" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.exe.debug">
+<targetPlatform id="cdt.managedbuild.target.gnu.platform.exe.debug.1612436766" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.exe.debug"/>
+<builder buildPath="${workspace_loc:/DXM1_Firmware/Demo/POSIX_GCC}" id="cdt.managedbuild.target.gnu.builder.exe.debug.483687135" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.exe.debug"/>
+<tool id="cdt.managedbuild.tool.gnu.archiver.base.863189419" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
+<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.415071056" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
+<option id="gnu.cpp.compiler.exe.debug.option.optimization.level.1029436917" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
+<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.886280259" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
+</tool>
+<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.546613004" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">
+<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.exe.debug.option.optimization.level.331662857" name="Optimization Level" superClass="gnu.c.compiler.exe.debug.option.optimization.level" valueType="enumerated"/>
+<option id="gnu.c.compiler.exe.debug.option.debugging.level.1353983587" name="Debug Level" superClass="gnu.c.compiler.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
+<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.831211590" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+</tool>
+<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.1997344890" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug">
+<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.5701025" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
+<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+</inputType>
+</tool>
+<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug.328214516" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug"/>
+<tool id="cdt.managedbuild.tool.gnu.assembler.exe.debug.697155263" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.debug">
+<inputType id="cdt.managedbuild.tool.gnu.assembler.input.401897277" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+</tool>
+</toolChain>
+</folderInfo>
+</configuration>
+</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 			<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 			<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
@@ -15263,46 +15258,45 @@
 		</cconfiguration>
 		<cconfiguration id="cdt.managedbuild.config.gnu.exe.release.1562554120">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.release.1562554120" moduleId="org.eclipse.cdt.core.settings" name="Release_POSIX_Sim">
-				<externalSettings/>
-				<extensions>
-					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
-					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
-				</extensions>
-			</storageModule>
+<externalSettings/>
+<extensions>
+<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+<extension id="org.eclipse.cdt.core.MakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+</extensions>
+</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="Release version of POSIX simulation" id="cdt.managedbuild.config.gnu.exe.release.1562554120" name="Release_POSIX_Sim" parent="cdt.managedbuild.config.gnu.exe.release">
-					<folderInfo id="cdt.managedbuild.config.gnu.exe.release.1562554120." name="/" resourcePath="">
-						<toolChain id="cdt.managedbuild.toolchain.gnu.exe.release.1084852508" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.exe.release">
-							<targetPlatform id="cdt.managedbuild.target.gnu.platform.exe.release.955634163" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.exe.release"/>
-							<builder buildPath="${workspace_loc:/DXM1_Firmware/Demo/POSIX_GCC}" id="cdt.managedbuild.target.gnu.builder.exe.release.1416146451" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.exe.release"/>
-							<tool id="cdt.managedbuild.tool.gnu.archiver.base.164520982" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.1570006665" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release">
-								<option id="gnu.cpp.compiler.exe.release.option.optimization.level.424806349" name="Optimization Level" superClass="gnu.cpp.compiler.exe.release.option.optimization.level" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.exe.release.option.debugging.level.1514926667" name="Debug Level" superClass="gnu.cpp.compiler.exe.release.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.release.1027680578" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.release">
-								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.exe.release.option.optimization.level.9955220" name="Optimization Level" superClass="gnu.c.compiler.exe.release.option.optimization.level" valueType="enumerated"/>
-								<option id="gnu.c.compiler.exe.release.option.debugging.level.1420953157" name="Debug Level" superClass="gnu.c.compiler.exe.release.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
-								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.679685857" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.release.1339894201" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.release">
-								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.1290331486" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
-									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
-									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
-								</inputType>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.release.870388175" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.release"/>
-							<tool id="cdt.managedbuild.tool.gnu.assembler.exe.release.366678349" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.release">
-								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1033365675" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
-							</tool>
-						</toolChain>
-					</folderInfo>
-				</configuration>
-			</storageModule>
+<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="Release version of POSIX simulation" id="cdt.managedbuild.config.gnu.exe.release.1562554120" name="Release_POSIX_Sim" parent="cdt.managedbuild.config.gnu.exe.release">
+<folderInfo id="cdt.managedbuild.config.gnu.exe.release.1562554120." name="/" resourcePath="">
+<toolChain id="cdt.managedbuild.toolchain.gnu.exe.release.1084852508" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.exe.release">
+<targetPlatform id="cdt.managedbuild.target.gnu.platform.exe.release.955634163" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.exe.release"/>
+<builder buildPath="${workspace_loc:/DXM1_Firmware/Demo/POSIX_GCC}" id="cdt.managedbuild.target.gnu.builder.exe.release.1416146451" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.exe.release"/>
+<tool id="cdt.managedbuild.tool.gnu.archiver.base.164520982" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
+<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.1570006665" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release">
+<option id="gnu.cpp.compiler.exe.release.option.optimization.level.424806349" name="Optimization Level" superClass="gnu.cpp.compiler.exe.release.option.optimization.level" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
+<option id="gnu.cpp.compiler.exe.release.option.debugging.level.1514926667" name="Debug Level" superClass="gnu.cpp.compiler.exe.release.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
+</tool>
+<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.release.1027680578" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.release">
+<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.exe.release.option.optimization.level.9955220" name="Optimization Level" superClass="gnu.c.compiler.exe.release.option.optimization.level" valueType="enumerated"/>
+<option id="gnu.c.compiler.exe.release.option.debugging.level.1420953157" name="Debug Level" superClass="gnu.c.compiler.exe.release.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
+<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.679685857" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+</tool>
+<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.release.1339894201" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.release">
+<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.1290331486" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
+<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+</inputType>
+</tool>
+<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.release.870388175" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.release"/>
+<tool id="cdt.managedbuild.tool.gnu.assembler.exe.release.366678349" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.exe.release">
+<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1033365675" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+</tool>
+</toolChain>
+</folderInfo>
+</configuration>
+</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
 			<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 			<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
@@ -20291,6 +20285,6 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="STM32_Trial1.org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.1934694787" name="ARM Linux GCC (Sourcery G++ Lite) Application" projectType="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf"/>
-	</storageModule>
+<project id="STM32_Trial1.org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.1934694787" name="ARM Linux GCC (Sourcery G++ Lite) Application" projectType="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf"/>
+</storageModule>
 </cproject>
