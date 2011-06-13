@@ -361,7 +361,7 @@
         <nb-overrideproperty name="buildsystem.baton" value="${preprocessed.dir}"/>
     </target>
     <target name="post-preprocess"/>
-    <target name="preprocess" depends="deps-jar,pre-preprocess,do-preprocess,post-preprocess" description="Preprocess project sources."/>
+    <target name="preprocess" depends="pre-preprocess,do-preprocess,post-preprocess" description="Preprocess project sources."/>
     <!--compile-->
     <target name="pre-compile"/>
     <target name="do-compile">
