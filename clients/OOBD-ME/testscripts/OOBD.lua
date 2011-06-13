@@ -10,7 +10,7 @@ OOBD.lua
 
 
 function vin(oldvalue,id)
-	echoWrite("0902\r\n")
+	echoWrite("0902\r")
 	udsLen=receive()
 	if udsLen>0 then
 		if udsBuffer[1]==73 then
@@ -34,7 +34,7 @@ end
 
 
 function clearDTC(oldvalue,id)
-	echoWrite("04\r\n")
+	echoWrite("04\r")
 	return "Codes Deleted"
 end
 
@@ -159,7 +159,7 @@ function getNumPIDs(oldvalue,id)
 	if #ascID % 2 == 1 then -- adding leading 0, if necessary
 		ascID = "0"..ascID
 	end
-	echoWrite("01"..ascID.."\r\n")
+	echoWrite("01"..ascID.."\r")
 	udsLen=receive()
         print("Nach UDSsend")
 	if udsLen>0 then
@@ -200,9 +200,9 @@ end
 
 
 function createCMD01Menu(oldvalue,id)
-	echoWrite("0100\r\n")
-      --echoWrite("0120\r\n")
-      --echoWrite("0140\r\n")
+	echoWrite("0100\r")
+      --echoWrite("0120\r")
+      --echoWrite("0140\r")
 
 	udsLen=receive()
 	if udsLen>0 then
@@ -263,8 +263,8 @@ function createCMD01Menu(oldvalue,id)
 end
 
 function createCMD02Menu(oldvalue,id)
-      echoWrite("0120\r\n")
-      --echoWrite("0140\r\n")
+      echoWrite("0120\r")
+      --echoWrite("0140\r")
 
 	udsLen=receive()
 	if udsLen>0 then
@@ -308,7 +308,7 @@ end
 
 function createCMD03Menu(oldvalue,id)
 
-     echoWrite("0140\r\n")
+     echoWrite("0140\r")
 
 	udsLen=receive()
 	if udsLen>0 then
@@ -376,7 +376,7 @@ end
 
 
 function showdtcs(oldvalue,id)
-	echoWrite("03\r\n")
+	echoWrite("03\r")
 	udsLen=receive()
 	  print ( "udsLen: ", udsLen)
 	if udsLen>0 then
