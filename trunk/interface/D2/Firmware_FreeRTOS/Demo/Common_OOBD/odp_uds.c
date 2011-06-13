@@ -188,7 +188,8 @@ printdata_Buffer (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
     }
   printLF();
   printser_string ("."); // "End of transmission" - indicator
-  /* clear the buffer */
+  printLF();
+ /* clear the buffer */
   myUDSBuffer->len = 0;
   /* release the input queue */
   if (pdPASS != sendMsg (MSG_SERIAL_RELEASE, inputQueue, NULL))

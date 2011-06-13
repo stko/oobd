@@ -144,13 +144,13 @@ end
 
 -- set response timeout in 10ms units - only needed for OOBD 
 function setTimeout_OOBD(timeout)
-  echoWrite("p 7 "..timeout.."\r\n")
+  echoWrite("p 7 "..timeout.."\r")
 end
 
 
 -- set sender address - only needed for OOBD 
 function setSendID_OOBD(addr)
-  echoWrite("p 16 "..addr.."\r\n")
+  echoWrite("p 16 "..addr.."\r")
 end
 
 function doNothing(value)
@@ -224,9 +224,9 @@ end
 
 function setModuleID(id)
   if hardwareID == "OOBD" then
-    echoWrite("p 11 $"..id.."\r\n")
+    echoWrite("p 11 $"..id.."\r")
   else
-    echoWrite("atci "..id.."\r\n")
+    echoWrite("atci "..id.."\r")
   end
 end
 
@@ -234,13 +234,13 @@ end
 function setBus(bus)
   if hardwareID == "OOBD" then
     if bus == "HS-CAN" then
-      echoWrite("p 6 3\r\n")
+      echoWrite("p 6 3\r")
     end
     if bus == "IMS-CAN" then
-      echoWrite("p 6 3\r\n")
+      echoWrite("p 6 3\r")
     end
     if bus == "MS-CAN" then
-      echoWrite("p 6 1\r\n")
+      echoWrite("p 6 1\r")
     end
   else
     
@@ -289,9 +289,9 @@ end
 function interface_version(oldvalue,id)
   local answ=""
   if hardwareID == "OOBD" then
-    echoWrite("p 0 0\r\n")
+    echoWrite("p 0 0\r")
   else
-    echoWrite("at!01\r\n")
+    echoWrite("at!01\r")
   end
     answ=serReadLn(2000, true)
   return answ
@@ -300,9 +300,9 @@ end
 function interface_serial(oldvalue,id)
   local answ=""
   if hardwareID == "OOBD" then
-    echoWrite("p 0 1\r\n")
+    echoWrite("p 0 1\r")
   else
-    echoWrite("at!00\r\n")
+    echoWrite("at!00\r")
   end
     answ=serReadLn(2000, true)
   return answ
@@ -311,12 +311,12 @@ end
 function interface_voltage(oldvalue,id)
   local answ=""
   if hardwareID == "OOBD" then
-    echoWrite("p 0 6\r\n")
+    echoWrite("p 0 6\r")
     answ=serReadLn(2000, true)
 		answ=round(getStringPart(answ, 1)/1000, 2)
 		answ=answ.." Volt"
   else
-    echoWrite("at!10\r\n")
+    echoWrite("at!10\r")
     answ=serReadLn(2000, true)
  end
   return answ
@@ -325,11 +325,11 @@ end
 function interface_bus(oldvalue,id)
   local answ=""
   if hardwareID == "OOBD" then
-    echoWrite("p 0 5\r\n")
+    echoWrite("p 0 5\r")
   else
-	  echoWrite("0100\r\n") -- first send something to let the DXM search for a available bus
+	  echoWrite("0100\r") -- first send something to let the DXM search for a available bus
 	  udsLen=receive()
-	  echoWrite("atdp\r\n")
+	  echoWrite("atdp\r")
   end
     answ=serReadLn(2000, true)
   return answ
@@ -339,9 +339,9 @@ end
 function identifyOOBDInterface()
 	local answ=""
 	-- Abfrage auf OOBD -interfae
-	echoWrite("p 0 0 \r\n")
+	echoWrite("p 0 0 \r")
 	answ=serReadLn(2000, false)
-	echoWrite("p 0 0 \r\n")
+	echoWrite("p 0 0 \r")
 	answ=serReadLn(2000, false)
 	print ("Busantwort:", answ)
 	-- Antwort auseinanderfiedeln und Prüfen
@@ -353,7 +353,7 @@ function identifyOOBDInterface()
 	  setSendID = setSendID_OOBD
 	  hardwareID="OOBD"
 	  -- to support older OOBD firmware, set the Module-ID to functional address
-	  echoWrite("p 11 $7DF\r\n")
+	  echoWrite("p 11 $7DF\r")
 
 	else
 	  receive = receive_DXM
