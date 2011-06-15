@@ -40,9 +40,7 @@ public class ScriptCell extends CustomItem  {
         this.oobdElementFlags = oobdElementFlags;
         this.id = id;
     }
-
     
-
     public void setValue(String value) {
         this.value = value;
         this.repaint();

@@ -33,13 +33,14 @@ public class MobileLogger extends Form implements CommandListener{
     private String recordStoreName="Logging";
     private int numOfRecords2keep=40;
     private int thisID=0;
-    private int loglevel=0;
+    private int loglevel=4;
     private final int loglevelKey=4;
     private RecordEnumeration re;
     private Command backCmd;
     private Command clearCmd;
     private Command sendCmd;
     private Command levelCmd;
+    private Command okCmd;
     private Form parent;
     private Form levelForm;
     private ChoiceGroup level;
@@ -50,8 +51,6 @@ public class MobileLogger extends Form implements CommandListener{
     public MobileLogger(OOBD_MEv2 mainMidlet) {
         super("Logger");
         this.mainMidlet = mainMidlet;
-
-        
 
         try {
             rs = RecordStore.openRecordStore(recordStoreName, true);
@@ -64,6 +63,7 @@ public class MobileLogger extends Form implements CommandListener{
         clearCmd = new Command("Clear Logs",Command.OK,0);
         sendCmd = new Command("Send Logs", Command.HELP,2);
         levelCmd = new Command("Set Level",Command.HELP,3);
+        okCmd = new Command("OK",Command.OK,0);
 
         this.addCommand(backCmd);
         this.addCommand(clearCmd);
@@ -121,6 +121,7 @@ public class MobileLogger extends Form implements CommandListener{
     public String[] getLogs(){
         try {
             int numOfRecords = rs.getNumRecords();
+            System.out.println("Number of Records: "+numOfRecords);
             String[] logs = new String[numOfRecords];
             int counter=0;
             re = rs.enumerateRecords(null, null, false);
@@ -141,9 +142,6 @@ public class MobileLogger extends Form implements CommandListener{
         this.loglevel = loglevel;
     }
 
-
-
-    //TODO Cleaning feature for the logger is missing
     public void cleanup(){
 
         
@@ -200,6 +198,10 @@ public class MobileLogger extends Form implements CommandListener{
             level.append("Info", null);
             level.append("Severe", null);
             level.append("Logging off", null);
+           
+            levelForm.addCommand(okCmd);
+            levelForm.addCommand(backCmd);
+            levelForm.setCommandListener(this);
             levelForm.append(level);
             mainMidlet.display.setCurrent(levelForm);
         }
