@@ -24,7 +24,7 @@ public class ConfigForm extends Form implements CommandListener,ItemCommandListe
     private FileBrowser fileBrowser;
     private MobileLogger log;
 
-    //TODO Store prefered BT-Device
+
 
     public ConfigForm(Form parent, BTSerial btComm, OOBD_MEv2 mainMidlet) {
         super("OOBD Configuration");

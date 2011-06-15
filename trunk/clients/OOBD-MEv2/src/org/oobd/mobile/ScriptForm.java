@@ -14,14 +14,14 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
     private MobileLogger log;
     private Form messageForm;
     private Command backCommand = null;
-    private Command detailCommand = null;
+    private Command detailCommand = new Command("Detail", Command.EXIT, 1);
     private Command sendTextCmd;
     private Command clearCmd;
     private Display display;
     private List cellList = null;
     private Script myEngine = null;
     private Hashtable scriptTable;
-    private Command selectCmd = new Command("Select", Command.ITEM, 0);
+    private Command selectCmd = new Command("Select", Command.OK, 2);
     private Command exitCmd = new Command("Exit", Command.EXIT,0);
     private ScriptCell tempCell;
     private String tempValue="";
@@ -46,6 +46,7 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
         for (int i = 1; i < scriptTable.size()+1; i++) {
             tempCell = (ScriptCell)scriptTable.get(Integer.toString(i));
             tempCell.addCommand(selectCmd);
+            tempCell.addCommand(detailCommand);
             tempCell.setItemCommandListener(this);
             tempCell.setLog(log);
             this.append(tempCell);            
@@ -110,6 +111,13 @@ public class ScriptForm extends Form implements CommandListener, ItemCommandList
             tempValue = myEngine.callFunction(calledCell.getFunction(),new Object[]{calledCell.getValue(),calledCell.getID()});
             calledCell.setValue(tempValue);
             tempValue="";
+        }
+        
+        if (c == detailCommand){
+            ScriptCell calledCell = (ScriptCell) item;
+            Alert check = new Alert("Detail",calledCell.getTitle()+": "+calledCell.getValue(),null,AlertType.CONFIRMATION);
+            
+            display.setCurrent(check);
         }
     }
 }

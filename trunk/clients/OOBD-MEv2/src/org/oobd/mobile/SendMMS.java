@@ -124,7 +124,7 @@ public class SendMMS extends Form implements CommandListener, ItemCommandListene
                         ex.printStackTrace();
                     }
                 }
-                mainMidlet.getDisplay().setCurrent(parent);
+                mainMidlet.getDisplay().setCurrent(this);
             } else {
                 mainMidlet.showAlert("Please enter a valid receiver");
             }

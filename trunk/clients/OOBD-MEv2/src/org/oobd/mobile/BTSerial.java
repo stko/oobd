@@ -161,7 +161,23 @@ public class BTSerial extends Form implements CommandListener, Runnable {
                     input = btConnection.inStreamReader.read();
                     if (input > 0) {
                         inBuffer.append((char) input);
+                    } else {
+                        try {
+                            Thread.sleep(10);
+                        } catch (InterruptedException e) {
+                            // the VM doesn't want us to sleep anymore,
+                            // so get back to work
+                        }
+
                     }
+                } else {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        // the VM doesn't want us to sleep anymore,
+                        // so get back to work
+                    }
+
                 }
             }
         } catch (Exception ex) {

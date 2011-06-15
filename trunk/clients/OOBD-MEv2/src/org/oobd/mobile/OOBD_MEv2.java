@@ -74,9 +74,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
 
         log = new MobileLogger(this);
         cal=Calendar.getInstance(TimeZone.getDefault());
-
-        log.log(0,"App started at: "+cal.getTime().toString());
-
+        log.log(5,"App started at: "+cal.getTime().toString());
         display = Display.getDisplay(this);
         if (!initialized){
             initialized=true;
@@ -101,15 +99,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
             if (!mPreferences.get(loglevelKey).equals("null")) {
                 log.setLoglevel(Integer.parseInt(mPreferences.get(loglevelKey)));
             }
-            
-            
-//            ScriptCell.
-//            int fontHeight = Font.getFont(loglevelKey).getSize();
-//            int cellHeight = fontHeight*2;
-//            log.log(1,"Schriftgröße: "+fontHeight+" -> benötigte Cellhöhe: "+cellHeight);
-            
-//            ScriptCell.setHeight(cellHeight);
-            
+                    
             mPreferences.put(adressbookKey, "Check");
 
             mainwindow = new Form("OOBD-MEv2",null);
@@ -132,13 +122,14 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+            
+            int fontHeight=Font.getDefaultFont().getHeight();            
+            ScriptCell.setHeight(fontHeight*2);
+            log.log(1,"Fontheight is: "+fontHeight+", cellheight set to: "+fontHeight*2);
+            
+            //TODO Bilder in verschiedener Größe je nach 
             logoItem = new ImageItem("OODB-MEv2", logo, ImageItem.LAYOUT_CENTER, "Logo not loaded");
             
-//            Graphics graph=logo.getGraphics();
-//            int fonthight = graph.getFont().getHeight();
-//            log.log(1,"Schriftgröße: "+fonthight);
-//            ScriptCell.setHeight(fonthight*2);
-
             mainwindow.append(logoItem);
             display.setCurrent(mainwindow);
         }
@@ -158,9 +149,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
         btComm.Closeconnection();
         
         display.setCurrent(null);
-            notifyDestroyed();
-        
-        
+        notifyDestroyed();  
     }
 
     public void commandAction(Command c, Displayable d) {
@@ -272,7 +261,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
 //                System.out.println("Lua calls addElement with ID: "+tableID);
                 scriptEngine.initRPC(callFrame, nArguments);
-                // TODO Taken counter as scriptTable-ID. Working?
+
                 scriptTable.put(Integer.toString(tableID++),new ScriptCell(
                         scriptEngine.getString(0), //String title
                         scriptEngine.getString(1), //String function
