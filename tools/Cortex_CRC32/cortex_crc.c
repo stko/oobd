@@ -25,7 +25,8 @@
    to compile: gcc cortex_crc.c -ocortex_crc
 
 
-   Usage: cortex_crc [file...]
+   Usage: cortex_crc [input file...] [output file...]
+
 
 */
 
@@ -111,33 +112,49 @@ uint32_t CortexCrc(uint8_t *src, int len )
 	return crc;
 }
 
-
-
 int main(int argc, char *argv[])
 {
 	int n;
-	int fd;
+	uint32_t filesize=0;
+	int fd, fdout;
 	char space= ' ';
-	if (argc != 2) {printf("Use: cortex_crc filename\n");return 1;}
-	fd= open(argv[1], O_RDONLY);
+	if (argc != 3) {printf("Use: cortex_crc <input filename> <output filename>\n");return 1;}
+
+	fd= open(argv[1], O_RDONLY); /* open input file to check if CRC is already added */
 	if(fd < 0) {printf("Can't open file for reading\n");return 2;}
 	CrcInit();
 	while(1) {
 		n= read(fd, buf, 1024);
 		if(n%4 != 0) {printf("File length must be multiple of 4 bytes ");return 3;}
 		CortexCrc((uint8_t *)buf, n);
+	  filesize = filesize + n;
 		if(n != 1024) break;
 	}
 	close(fd);
+
 	if(crc==0) {
 		printf("crc is 0, so the crc has already been appended\n");
 		return 4;
 	}
 
-	fd= open(argv[1], O_WRONLY | O_APPEND);
+	fd= open(argv[1], O_WRONLY | O_APPEND); /* open output file for adding CRC at the end of the file */
 	if(fd < 0) {printf("Can't open file for writing\n");return 5;}
 	write(fd, &crc, 4);
 	close(fd);
-	printf("crc appended to file: %x\n", crc);
+
+	/* put filesize in front of file befor appending CRC at the end. */
+	fd= open(argv[1], O_RDONLY); /* open input file for reading*/
+	fdout= open(argv[2], O_WRONLY | O_CREAT | O_TRUNC); /* open output file for writing */
+	if(fd < 0) {printf("Can't open file for reading/writing\n");return 5;}
+	write(fdout, &filesize, 4); /* add filesize (uint32 value) at the beginning of the new file */
+	while(1) {
+		n= read(fd, buf, 1024);
+		if(n%4 != 0) {printf("File length must be multiple of 4 bytes ");return 3;}
+		write(fdout, &buf, n);
+		if(n != 1024) break;
+	}
+	close(fd);
+	close(fdout);
+	
 	return 0;
 }
