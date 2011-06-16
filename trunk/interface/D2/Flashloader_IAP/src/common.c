@@ -470,6 +470,58 @@ void Main_Menu(void)
 }
 
 /**
+  * @brief  Resets the CRC Data register (DR).
+  * @param  None
+  * @retval None
+  */
+void CRC_ResetDR(void)
+{
+  /* Reset CRC generator */
+  CRC->CR = CRC_CR_RESET;
+}
+
+/**
+  * @brief  Computes the 32-bit CRC of a given buffer of data word(32-bit).
+  * @param  pBuffer: pointer to the buffer containing the data to be computed
+  * @param  BufferLength: length of the buffer to be computed
+  * @retval 32-bit CRC
+  */
+uint32_t CRC_CalcBlockCRC(uint32_t pBuffer[], uint32_t BufferLength)
+{
+  uint32_t index = 0;
+
+  for(index = 0; index < BufferLength; index++)
+  {
+    CRC->DR = pBuffer[index];
+  }
+  return (CRC->DR);
+}
+
+/**
+  * @brief  Check Flash-ROM against CRC-32 checksum
+  * @param  None
+  * @retval crc - CRC-32 checksum
+  */
+
+uint32_t CheckCrc32(void)
+{
+  uint32_t size;
+  uint32_t crc;
+
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, ENABLE);
+
+  /* application size for CRC checking is stored on flash */
+  size = *(__IO uint32_t*)(ApplicationAddress-4);
+
+  CRC_ResetDR();
+  /* 0x8003000 is the application start address and size = application code size */
+  crc= CRC_CalcBlockCRC((uint32_t*)0x8003000, size/4+1);
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, DISABLE);
+
+  return crc ;
+}
+
+/**
   * @}
   */
 

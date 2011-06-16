@@ -45,28 +45,24 @@ static void IAP_Init(void);
   */
 int main(void)
 {
-  uint32_t nCount = 1000000;
-  uint8_t  VersionString = 0;
+  uint32_t nCount, nLength = 1000000;
 
   /* Flash unlock */
   FLASH_Unlock();
   /* Execute the IAP driver in order to re-program the Flash */
   IAP_Init();
 
+  /* send OOBD-Flashloader Version string on USART1 */
+  SerialPutString("\r\nOOBD-Flashloader ");
+  SerialPutString(OOBDDESIGN);
+  SerialPutString(" ");
+  SerialPutString(SVNREV);
+  SerialPutString(" ");
+  SerialPutString(BUILDDATE);
+
   while (1)
   {
-	if (VersionString == 0)
-	{
-	  SerialPutString("\r\nOOBD-Flashloader ");
-	  SerialPutString(OOBDDESIGN);
-	  SerialPutString(" ");
-	  SerialPutString(SVNREV);
-	  SerialPutString(" ");
-	  SerialPutString(BUILDDATE);
-	  VersionString = 1;
-	}
-
-    for(; nCount != 0; nCount--) /* delay */
+    for(nCount = 0; nCount < nLength; nCount++) /* delay */
     {
       if ( USART_GetFlagStatus(USART1, USART_FLAG_RXNE) != RESET)
       {
@@ -76,11 +72,12 @@ int main(void)
    	      SerialPutString("\r\nOOBD-Flashloader>");
        	  Main_Menu ();
         }
-       }
-     };
+      }
+    }
+
     /* Keep the user application running */
     /* Test if user code is programmed starting from address "ApplicationAddress" */
-    if (((*(__IO uint32_t*)ApplicationAddress) & 0x2FFE0000 ) == 0x20000000)
+    if ((*(__IO uint32_t*)ApplicationAddress == 0x20005000) && (CheckCrc32() == 0))
     {
       /* Jump to user application */
       JumpAddress = *(__IO uint32_t*) (ApplicationAddress + 4);
@@ -88,6 +85,11 @@ int main(void)
       /* Initialize user application's Stack Pointer */
       __set_MSP(*(__IO uint32_t*) ApplicationAddress);
       Jump_To_Application();
+    }
+    else /* jump into flashloader if no valid application available */
+    {
+ 	  SerialPutString("\r\nOOBD-Flashloader>");
+ 	  Main_Menu ();
     }
   }
 }

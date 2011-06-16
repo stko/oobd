@@ -60,7 +60,8 @@ void SerialDownload(void)
     SerialPutString("\n\r Size: ");
     SerialPutString(Number);
     SerialPutString(" Bytes\r\n");
-    SerialPutString("--------------------------------\n");
+    SerialPutString("--------------------------------\n\r");
+	SerialPutString("\r\nOOBD-Flashloader>");
     GPIO_SetBits(GPIOB,GPIO_Pin_5); /* LED 1 - red OFF */
   }
   else if (Size == -1)
