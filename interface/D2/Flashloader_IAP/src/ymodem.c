@@ -32,7 +32,8 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 uint8_t file_name[FILE_NAME_LENGTH];
-uint32_t FlashDestination = ApplicationAddress; /* Flash user program offset */
+ /* Flash user program offset => -4 to  add application size at the end of Flashloader flash area*/
+uint32_t FlashDestination = ApplicationAddress - 4;
 uint16_t PageSize = PAGE_SIZE;
 uint32_t EraseCounter = 0x0;
 uint32_t NbrOfPage = 0;
@@ -147,8 +148,8 @@ int32_t Ymodem_Receive (uint8_t *buf)
   int32_t i, j, packet_length, session_done, file_done, packets_received, errors, session_begin, size = 0;
 
   /* Initialize FlashDestination variable */
-  FlashDestination = ApplicationAddress;
-
+  FlashDestination = ApplicationAddress - 4;
+	
   for (session_done = 0, errors = 0, session_begin = 0; ;)
   {
     for (packets_received = 0, file_done = 0, buf_ptr = buf; ;)
@@ -230,13 +231,13 @@ int32_t Ymodem_Receive (uint8_t *buf)
                 {
                   memcpy(buf_ptr, packet_data + PACKET_HEADER, packet_length);
                   RamSource = (uint32_t)buf;
-                  for (j = 0;(j < packet_length) && (FlashDestination <  ApplicationAddress + size);j += 4)
-                  {
+								for (j = 0;(j < packet_length) && (FlashDestination <  (ApplicationAddress-4) + size);j += 4)
+									{
                     /* Program the data received into STM32F10x Flash */
                     FLASH_ProgramWord(FlashDestination, *(uint32_t*)RamSource);
 
-                    if (*(uint32_t*)FlashDestination != *(uint32_t*)RamSource)
-                    {
+                 if (*(uint32_t*)FlashDestination != *(uint32_t*)RamSource)
+										{
                       /* End session */
                       Send_Byte(CA);
                       Send_Byte(CA);
