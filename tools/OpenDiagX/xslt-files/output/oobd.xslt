@@ -18,7 +18,7 @@ local Menu2Data = {
 }
 </xsl:template>
 
-<xsl:template match="BMP">id0x22<xsl:value-of select="./HighPID"/><xsl:value-of select="./LowPID"/> = {byteNr = <xsl:value-of select="./ByteNr"/> , bitNr = <xsl:value-of select="./BitNr"/> , title = "<xsl:value-of select="./Name"/>" , highText = "<xsl:value-of select="./LowText"/>" ,  lowText = "<xsl:value-of select="./HighText"/>"), call = "readBMPPid" },
+<xsl:template match="BMP"><xsl:variable name="corrByteNr" select="0+number(./ByteNr)"/>id0x22<xsl:value-of select="./HighPID"/><xsl:value-of select="./LowPID"/> = {byteNr = <xsl:value-of select="number($corrByteNr)"/> , bitNr = <xsl:value-of select="./BitNr"/> , title = "<xsl:value-of select="./Name"/>" , highText = "<xsl:value-of select="./LowText"/>" ,  lowText = "<xsl:value-of select="./HighText"/>"), call = "readBMPPid" },
 </xsl:template>
 
 <xsl:template match="ASCII">id0x22<xsl:value-of select="./HighPID"/><xsl:value-of select="./LowPID"/> = {title = "<xsl:value-of select="./Name"/>" , call = "readASCPid" },
