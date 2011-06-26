@@ -143,6 +143,7 @@ namespace OpenDiagX
         {
             String HighPid = getpath(iterator.Current, "NUMBER").Substring(2, 2);
             String LowPid = getpath(iterator.Current, "NUMBER").Substring(4, 2);
+            int byteSize = Convert.ToInt32(getpath(iterator.Current, "BYTE_SIZE"));
 
             XPathNodeIterator iterator2 = iterator.Current.Select("SUB_FIELD");
             while (iterator2.MoveNext())
@@ -174,7 +175,7 @@ namespace OpenDiagX
                         addTextnode(thisDIDEntry, "LowPID", LowPid);
                         addTextnode(thisDIDEntry, "Name", Name);
                         addTextnode(thisDIDEntry, "Bit", Bit);
-                        addTextnode(thisDIDEntry, "ByteNr", (Convert.ToInt16(Bit) / 8).ToString());
+                        addTextnode(thisDIDEntry, "ByteNr", (byteSize - 1 - Convert.ToInt16(Bit) / 8).ToString());
                         addTextnode(thisDIDEntry, "BitNr", (Convert.ToInt16(Bit) % 8).ToString());
                         addTextnode(thisDIDEntry, "LowText", lowText);
                         addTextnode(thisDIDEntry, "HighText", highText);
@@ -218,12 +219,15 @@ namespace OpenDiagX
                 addTextnode(thisDIDEntry, "HighPID", HighPid);
                 addTextnode(thisDIDEntry, "LowPID", LowPid);
                 addTextnode(thisDIDEntry, "Name", Name);
-                addTextnode(thisDIDEntry, "Len", ((Convert.ToInt16(MBit)+1) / 8).ToString());
+                addTextnode(thisDIDEntry, "Len", ((Convert.ToInt16(MBit) + 1) / 8).ToString());
                 if (iterator2.Current.SelectSingleNode("DATA_DEFINITION/NUMERIC_PARAMETERS") != null)
                 {
-                    addTextnode(thisDIDEntry, "Resolution", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION"));
-                    addTextnode(thisDIDEntry, "Offset", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET"));
-                    addTextnode(thisDIDEntry, "Units", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS"));
+                    //addTextnode(thisDIDEntry, "Resolution", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION"));
+                    try2addTextnode(thisDIDEntry, iterator2.Current, "Resolution", "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION", "1");
+                    //addTextnode(thisDIDEntry, "Offset", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET"));
+                    try2addTextnode(thisDIDEntry, iterator2.Current, "Offset", "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET", "1");
+                    //addTextnode(thisDIDEntry, "Units", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS"));
+                    try2addTextnode(thisDIDEntry, iterator2.Current, "Units", "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS", "");
                 }
                 else
                 {
@@ -231,6 +235,20 @@ namespace OpenDiagX
                     addTextnode(thisDIDEntry, "Offset", "1");
                     addTextnode(thisDIDEntry, "Units", "");
                 }
+            }
+        }
+
+        private Boolean try2addTextnode(XmlElement outputNode, XPathNavigator currentNode, String tagName, String path, String defaultValue)
+        {
+            if (currentNode.SelectSingleNode(path + "/text()") != null)
+            {
+                addTextnode(outputNode, tagName, getpath(currentNode, path));
+                return true;
+            }
+            else
+            {
+                addTextnode(outputNode, tagName, defaultValue);
+                return false;
             }
         }
 
