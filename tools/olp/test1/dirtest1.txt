@@ -1,0 +1,5 @@
+dir1_line1
+dir1_line2
+dofile("../test2/dirtest2.txt");
+dir1_line3
+dir1_line4
