@@ -1,0 +1,6 @@
+line 1
+line 2
+dofile("incl_1.txt")
+--  DOFILE("incl_2.txt")
+line 3
+line 4

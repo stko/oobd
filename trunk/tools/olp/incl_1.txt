@@ -1,0 +1,5 @@
+inc1_line1
+inc1_line2
+inc1_line3
+dofile("./test1/dirtest1.txt")
+inc1_line4
