@@ -308,8 +308,8 @@ public class ScriptengineLua extends OobdScriptengine {
 
         try {
             doScript(props.getProperty("LuaDefaultScript", ENG_LUA_DEFAULT));
-        } catch (IOException ignored) {
-            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.WARNING, "couldn't run script engine");
+        } catch (IOException ex) {
+            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, "couldn't run script engine",ex);
         }
         int i = 0;
         while (keepRunning == true) {
