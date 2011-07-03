@@ -25,7 +25,8 @@ namespace org.oobd.tools.olp
 
 		static void Main(string[] args)
 		{	
-		  	if (args.Length==1){
+		  	Console.OutputEncoding=System.Text.Encoding.UTF8;
+			if (args.Length==1){
 				System.Environment.Exit (doFile(args[0],args[0],0));
 			}
 			if (args.Length == 2 && args[0].Equals("-l")){
@@ -53,7 +54,7 @@ olp is part of the OOBD toolset (www.oobd.org)","$Rev$","$Date$");
 			// create reader & open file
 			try{
 				//Console.Error.Write("{0} ",incFileName);
-				TextReader tr = new StreamReader(incFileName);
+				TextReader tr = new StreamReader(incFileName,System.Text.Encoding.UTF8);
 				// no exception? Fine, then we can continue..
 				// save actual directory
 				String myCurrDir=Directory.GetCurrentDirectory();
