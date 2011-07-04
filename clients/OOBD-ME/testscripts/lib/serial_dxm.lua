@@ -1,4 +1,4 @@
--- include the basic connectivity
+﻿-- include the basic connectivity
 
 
 
@@ -206,7 +206,7 @@ function receive_DXM()
 						udsLen = udsLen - 1
 						doLoop = false
 					else -- Multiframe
-						-- die LÃ€ngenangabe
+						-- die Längenangabe
 						udsLen=tonumber(answ,16)
 						byteCount=1
 						answ=serReadLn(500, true)
