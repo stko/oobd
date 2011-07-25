@@ -238,7 +238,7 @@ public class OOBD_MEv2 extends MIDlet implements CommandListener {
 
     private void initiateScriptEngine(){
         scriptEngine = new LuaScript();
-        scriptEngine.Script();
+        scriptEngine.Script(display);
         scriptWindow = new ScriptForm(this, scriptEngine, display);
 
         scriptEngine.register("openPageCall", new JavaFunction() {           
