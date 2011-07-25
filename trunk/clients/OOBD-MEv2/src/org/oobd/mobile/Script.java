@@ -11,10 +11,11 @@ package org.oobd.mobile;
  */
 import java.io.InputStream;
 import java.io.IOException;
+import javax.microedition.lcdui.*;
 
 public abstract class Script {
 
-    public abstract int Script();
+    public abstract int Script(Display dspl);
 
     public abstract void doRun() throws IOException;
 

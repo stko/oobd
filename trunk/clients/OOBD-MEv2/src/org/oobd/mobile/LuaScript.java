@@ -4,7 +4,6 @@ package org.oobd.mobile;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author steffen
@@ -13,6 +12,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import javax.microedition.io.*;
 import javax.microedition.io.file.*;
+import javax.microedition.lcdui.*;
 import se.krka.kahlua.stdlib.BaseLib;
 import se.krka.kahlua.stdlib.CoroutineLib;
 import se.krka.kahlua.stdlib.MathLib;
@@ -28,8 +28,10 @@ public class LuaScript extends Script {
     private LuaState state;
     private LuaCallFrame callFrame;
     private int nArguments;
+    private Display display;      // Reference to display object
 
-    public int Script() {
+    public int Script(Display dspl) {
+        display = dspl;
         state = new LuaState(System.out);
         BaseLib.register(state);
         MathLib.register(state);
@@ -58,17 +60,18 @@ public class LuaScript extends Script {
 
         }
 
-        System.out.println("InputStream = "+resource.toString());
+        System.out.println("InputStream = " + resource.toString());
         LuaClosure callback = LuaPrototype.loadByteCode(resource, state.getEnvironment());
 
         state.call(callback, null, null, null);
-
+        AlertType.INFO.playSound(display);
     }
 
     public String callFunction(String functionName, Object[] params) {
         LuaClosure fObject = (LuaClosure) state.getEnvironment().rawget(functionName);
         System.err.println(fObject.getClass().toString());
         System.err.println(fObject.toString());
+        long ticks = System.currentTimeMillis();
         Object[] results = state.pcall(fObject, params);
         if (results[0] != Boolean.TRUE) {
             Object errorMessage = results[1];
@@ -79,7 +82,9 @@ public class LuaScript extends Script {
                 stacktrace.printStackTrace();
             }
         }
-
+        if (System.currentTimeMillis() > ticks + 5000) {
+            AlertType.INFO.playSound(display);
+        }
         //String response = BaseLib.rawTostring(fObject.env.rawget(1));
         //fObject.push(response.intern());
         return (String) results[1];
