@@ -23,13 +23,16 @@ public class ComReader implements Runnable {
         new Thread(this).start();
     }
 
-    public void connect(CommPortIdentifier portId) throws IOException {
+    public void connect(CommPortIdentifier portId, boolean hwFlowControl) throws IOException {
         try {
-            serialPort = (SerialPort) portId.open("SimpleReadApp", 2000);
+            serialPort = (SerialPort) portId.open("SiampleReadApp", 2000);
 
             serialPort.setSerialPortParams(115200, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
-            //serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
-            serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
+//            if (hwFlowControl == true) {
+//                serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
+//            } else {
+//                serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
+//            }
             serialPort.enableReceiveTimeout(5);
 
             inStream = serialPort.getInputStream();
@@ -80,9 +83,9 @@ public class ComReader implements Runnable {
             try {
                 //outStreamWriter.write(c);
                 outStream.write(c);
-                outStream.flush();
+                //outStream.flush();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                Logger.getLogger(ComReader.class.getName()).log(Level.WARNING, null, ex);
             }
         }
     }
@@ -92,9 +95,9 @@ public class ComReader implements Runnable {
             try {
                 Logger.getLogger(ComReader.class.getName()).log(Level.INFO, "Serial output:" + s);
                 outStream.write(s.getBytes(), 0, s.length());
-                outStream.flush();
+                //outStream.flush();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                Logger.getLogger(ComReader.class.getName()).log(Level.WARNING, null, ex);
             }
         }
     }
@@ -107,8 +110,8 @@ public class ComReader implements Runnable {
                     inChar = inStream.read();
                     return (char) inChar;
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ex) {
+                Logger.getLogger(ComReader.class.getName()).log(Level.WARNING, null, ex);
             }
         }
         return (char) 0;
@@ -118,8 +121,8 @@ public class ComReader implements Runnable {
     public synchronized boolean isEmpty() {
         try {
             return (!(inStream != null && inStream.available() == 0));
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            Logger.getLogger(ComReader.class.getName()).log(Level.WARNING, null, ex);
         }
         return true;
     }
@@ -139,25 +142,25 @@ public class ComReader implements Runnable {
                     if (inStream != null) {
                         n = inStream.available();
                         if (n > 0) {
-                           byte[] buffer = new byte[n];
+                            byte[] buffer = new byte[n];
                             n = inStream.read(buffer, 0, n);
                             for (int i = 0; i < n; ++i) {
-                                 inBuffer.append((char) buffer[i]);
+                                inBuffer.append((char) buffer[i]);
                             }
                         } else {
                             try {
                                 Thread.sleep(10);
-                            } catch (InterruptedException e) {
+                            } catch (InterruptedException ex) {
                                 // the VM doesn't want us to sleep anymore,
                                 // so get back to work
-                                e.printStackTrace();
+                                Logger.getLogger(ComReader.class.getName()).log(Level.WARNING, null, ex);
 
                             }
                         }
                     }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Exception ex) {
+                    Logger.getLogger(ComReader.class.getName()).log(Level.WARNING, null, ex);
                 }
             } else {
                 // as this thread runs in an unstopped endless loop, as long there's no serial port open, we need to slow him down here...

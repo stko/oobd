@@ -37,7 +37,6 @@ public class BluetoothInitWorker implements Runnable {
 		this.callingActivity = callingActivity;
 	}
 	
-	@Override
 	public void run() {
 		working = true;
 		System.out.println("Thread BluetoothInitWorker started");

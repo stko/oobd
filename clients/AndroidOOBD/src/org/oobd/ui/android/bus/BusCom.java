@@ -27,7 +27,7 @@ public class BusCom extends OobdBus implements OOBDConstants {
     
     
     public BusCom() {
-        Debug.msg("buscom", DEBUG_BORING, "Ich bin Android BusCom...");
+        super("Buscom");
 
     }
 
@@ -42,7 +42,6 @@ public class BusCom extends OobdBus implements OOBDConstants {
         return "b:Com";
     }
 
-    @Override
     public void run() {
 
         boolean portFound = false;

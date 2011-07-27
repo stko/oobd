@@ -34,7 +34,6 @@ public class MainActivity extends Activity {
         mDiagnoseButton = (Button)findViewById(R.id.diagnose_button);
         mDiagnoseButton.setOnClickListener(new View.OnClickListener() {
 			
-			@Override
 			public void onClick(View v) {
 				AndroidGui.getInstance().startScriptEngine();
 				startActivity(new Intent(MainActivity.this, Diagnose.class));

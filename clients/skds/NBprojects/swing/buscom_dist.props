@@ -1,6 +1,10 @@
-#OOBD BusCom Preferences
+# OOBD BusCom Preferences
 # for Linux
-#SerialPort=/dev/ttyS0
+# SerialPort=/dev/ttyS0
 # for Windows
-#SerialPort=COM1
+# SerialPort=COM1
 
+
+# Define, if the FlowControl to the serial device is hardware controlled (RTS/CTS) or not
+# default is FlowControl On (=true)
+# HardwareFlowControl=true

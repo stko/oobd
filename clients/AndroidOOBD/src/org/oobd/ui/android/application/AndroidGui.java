@@ -35,20 +35,18 @@ public class AndroidGui implements IFui {
 		return thisAndroidGui;
 	}
 	
-	@Override
 	public void sm(String msg) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void registerOobdCore(Core core) {
 		this.core = core;
 		Log.v(this.getClass().getSimpleName(), "Core registered in IFui");
 
 	}
 
-	@Override
+
 	public void announceScriptengine(String id, String visibleName) {
 		Log.v(this.getClass().getSimpleName(), "Interface announcement: Scriptengine-ID: " + id + " visibleName:" + visibleName);
 		scriptEngineMap.put(id, visibleName);
@@ -58,14 +56,12 @@ public class AndroidGui implements IFui {
 
 	}
 
-	@Override
 	public Class getVisualizerClass(String visualizerType, String theme) {
 		// TODO Auto-generated method stub
 		Log.v(this.getClass().getSimpleName(), "Jetzt sollte ich den Visualizer rausruecken");
 		return VizTable.class;
 	}
 
-	@Override
 	public void visualize(Onion myOnion) {
 		// TODO Auto-generated method stub
 		Log.v(this.getClass().getSimpleName(), "Und jetzt sollte ich visualisieren..");
@@ -94,7 +90,6 @@ public class AndroidGui implements IFui {
 		
 	}
 
-	@Override
 	public void openPage(String seID, String Name, int colcount, int rowcount) {
 		// TODO Auto-generated method stub
 		Log.v(this.getClass().getSimpleName(), "Und jetzt open page machen..");
@@ -103,7 +98,6 @@ public class AndroidGui implements IFui {
 			vizTable.clear();
 	}
 
-	@Override
 	public void openPageCompleted(String seID, String Name) {
 		// TODO Auto-generated method stub
 		//MainActivity.getMyMainActivity().startDiagnoseActivity();
