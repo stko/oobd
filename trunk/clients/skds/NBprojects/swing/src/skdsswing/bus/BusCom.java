@@ -70,7 +70,7 @@ public class BusCom extends OobdBus implements OOBDConstants {
         }
 
         defaultPort = props.getProperty("SerialPort", defaultPort);
-
+        boolean hwFlowControl=props.getProperty("HardwareFlowControl", "true").equalsIgnoreCase("true");
 
         // parse ports and if the default port is found, initialized the reader
         // first set a workaround to find special devices like ttyACM0 , accourding to https://bugs.launchpad.net/ubuntu/+source/rxtx/+bug/367833
@@ -83,7 +83,7 @@ public class BusCom extends OobdBus implements OOBDConstants {
                     Logger.getLogger(BusCom.class.getName()).log(Level.CONFIG,"Found port: " + defaultPort);
                     portFound = true;
                     try {
-                        reader.connect(portId);
+                        reader.connect(portId,hwFlowControl);
                     } catch (IOException ex) {
                         Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
                     }

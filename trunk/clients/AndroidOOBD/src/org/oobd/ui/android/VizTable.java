@@ -24,28 +24,24 @@ public class VizTable extends ArrayList<DiagnoseItem> implements IFvisualizer {
 		super();
 	}
 	
-	@Override
 	public boolean isGroup() {
 		// TODO Auto-generated method stub
 		System.out.println("Method VizTable.isGroup() not implemented.");
 		return false;
 	}
 
-	@Override
 	public void setVisualizer(Visualizer viz) {
 		// TODO Auto-generated method stub
 		System.out.println("Method Bin in VizTable.setVisualizer() not yet implemented");
 		
 	}
 
-	@Override
 	public void initValue(Visualizer viz, Onion onion) {
 		DiagnoseItem item = new DiagnoseItem (viz, onion);
 		this.add(item);
 		System.out.println("ListArray Elemente: " + this.size());
 	}
 
-	@Override
 	public boolean update(int level) {
 		System.out.println("VizTable: received update level: " + level);
 		switch (level) {
@@ -64,7 +60,6 @@ public class VizTable extends ArrayList<DiagnoseItem> implements IFvisualizer {
 		return false;
 	}
 
-	@Override
 	public void remove(String pageID) {
 		// TODO Auto-generated method stub
 		System.out.println("Method VizTable.remove() not implemented.");

@@ -82,7 +82,6 @@ public class OOBDApp extends Application implements IFsystem {
             		// inform user in Dialog Box:
             		
                     MainActivity.getMyMainActivity().runOnUiThread(new Runnable() {
-                        @Override
                         public void run() {
                         	Toast.makeText(MainActivity.getMyMainActivity().getApplicationContext(), "Skript on SDCard not found. Loading default Script.", Toast.LENGTH_LONG).show();
                         }
@@ -105,7 +104,7 @@ public class OOBDApp extends Application implements IFsystem {
         mInstance = this;
 
         androidGui = new AndroidGui();
-        new Core(androidGui, this);
+        new Core(androidGui, this,"Core");
         Log.v(this.getClass().getSimpleName(), "Core creation finalized");
     }
 
@@ -119,15 +118,14 @@ public class OOBDApp extends Application implements IFsystem {
         return new CharSequence[]{"ODB2 device", "Laptop", "Nokia 8610", "HTC Hero"};
     }
 
-    @Override
     public void registerOobdCore(Core core) {
         this.core = core;
         Log.v(this.getClass().getSimpleName(), "Core registered in IFsystem");
 
     }
 
-    @Override
-    public HashMap loadOobdClasses(String path, String classPrefix, Class<?> classType) {
+
+    public HashMap <String, Class<?>> loadOobdClasses(String path, String classPrefix, Class<?> classType) {
         HashMap<String, Class<?>> myInstances = new HashMap<String, Class<?>>();
 
         Class tempClass = null;

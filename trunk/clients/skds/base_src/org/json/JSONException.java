@@ -6,7 +6,8 @@ package org.json;
  * @version 2008-09-18
  */
 public class JSONException extends Exception {
-    private Throwable cause;
+	static final long serialVersionUID=0;
+   private Throwable cause;
 
     /**
      * Constructs a JSONException with an explanatory message.

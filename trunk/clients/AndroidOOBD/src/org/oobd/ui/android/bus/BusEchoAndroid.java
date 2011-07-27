@@ -22,8 +22,8 @@ import android.util.Log;
 public class BusEchoAndroid extends OobdBus implements OOBDConstants{
 
     public BusEchoAndroid() {
+            super("Buscom");
         Debug.msg("busecho",DEBUG_BORING,"Ich bin BusEchoAndroid...");
-
     }
 
     @Override

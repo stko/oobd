@@ -115,7 +115,6 @@ public class AndroidBusReader implements Runnable {
         return true;
     }
 
-    @Override
     public void run() {
         System.out.println("Thread has started");
         while (true) {
