@@ -86,6 +86,8 @@ namespace OpenDiagX
                 }
                 //Module Address
                 addTextnode(root, "PhysAdress", getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS"));
+                addTextnode(root, "Bus", getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/NAME"));
+                addTextnode(root, "BusSpeed", getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/DATA_RATE"));
                 addTextnode(root, "PhysAdressShort", getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS").Substring(4, 2));
                 //Module Short Name
                 addTextnode(root, "ShortName", getpath(nav, "ADMINISTRATION/SHORTNAME"));
@@ -118,6 +120,9 @@ namespace OpenDiagX
             myXslTrans.Transform(xmlDocOut, myWriter);
             myWriter.Flush();
             memstrm.Seek(0, SeekOrigin.Begin);
+
+//            textBox.Text = memrdr.ReadToEnd();
+
             //seperate the result in single lines to add it to the textbox
             String[] lines = memrdr.ReadToEnd().Split(new char[] { '\n' });
             foreach (string line in lines)
@@ -144,11 +149,15 @@ namespace OpenDiagX
             String HighPid = getpath(iterator.Current, "NUMBER").Substring(2, 2);
             String LowPid = getpath(iterator.Current, "NUMBER").Substring(4, 2);
             int byteSize = Convert.ToInt32(getpath(iterator.Current, "BYTE_SIZE"));
+            XmlElement thisDIDEntry = addSubNode(root, "BMP");
+            addTextnode(thisDIDEntry, "HighPID", HighPid);
+            addTextnode(thisDIDEntry, "LowPID", LowPid);
+            addTextnode(thisDIDEntry, "Group", getpath(iterator.Current, "NAME"));
 
             XPathNodeIterator iterator2 = iterator.Current.Select("SUB_FIELD");
             while (iterator2.MoveNext())
             {
-                String Name = getpath(iterator.Current, "NAME") + " - " + getpath(iterator2.Current, "NAME");
+                String Name = getpath(iterator2.Current, "NAME");
                 String Bit = getpath(iterator2.Current, "LEAST_SIG_BIT");
                 XPathNodeIterator iterator3 = iterator2.Current.Select("DATA_DEFINITION");
                 while (iterator3.MoveNext())
@@ -170,15 +179,13 @@ namespace OpenDiagX
                                 highText = getpath(iterator5.Current, "DESCRIPTION");
                             }
                         }
-                        XmlElement thisDIDEntry = addSubNode(root, "BMP");
-                        addTextnode(thisDIDEntry, "HighPID", HighPid);
-                        addTextnode(thisDIDEntry, "LowPID", LowPid);
-                        addTextnode(thisDIDEntry, "Name", Name);
-                        addTextnode(thisDIDEntry, "Bit", Bit);
-                        addTextnode(thisDIDEntry, "ByteNr", (byteSize - 1 - Convert.ToInt16(Bit) / 8).ToString());
-                        addTextnode(thisDIDEntry, "BitNr", (Convert.ToInt16(Bit) % 8).ToString());
-                        addTextnode(thisDIDEntry, "LowText", lowText);
-                        addTextnode(thisDIDEntry, "HighText", highText);
+                        XmlElement thisBitEntry = addSubNode(thisDIDEntry, "SingleBit");
+                        addTextnode(thisBitEntry, "Name", Name);
+                        addTextnode(thisBitEntry, "Bit", Bit);
+                        addTextnode(thisBitEntry, "ByteNr", (byteSize - 1 - Convert.ToInt16(Bit) / 8).ToString());
+                        addTextnode(thisBitEntry, "BitNr", (Convert.ToInt16(Bit) % 8).ToString());
+                        addTextnode(thisBitEntry, "LowText", lowText);
+                        addTextnode(thisBitEntry, "HighText", highText);
                     }
                 }
             }

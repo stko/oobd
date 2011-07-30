@@ -42,14 +42,19 @@ endproc;
 
 </xsl:template>
 
-<xsl:template match="BMP">
-	<xsl:variable name="corrByteNr" select="1+number(./ByteNr)"/>
-procedure PIDBMP<xsl:value-of select="./HighPID"/><xsl:value-of select="./LowPID"/>_<xsl:value-of select="number($corrByteNr)"/>_<xsl:value-of select="./BitNr"/>
-(*#menuitem "*" "U" "<xsl:value-of select="./Name"/>" "PIDBMP<xsl:value-of select="./HighPID"/><xsl:value-of select="./LowPID"/>_<xsl:value-of select="number($corrByteNr)"/>_<xsl:value-of select="./BitNr"/>" "PIDBMP" "Input"*)
-    getPIDBMP( $<xsl:value-of select="./HighPID"/> , $<xsl:value-of select="./LowPID"/> , <xsl:value-of select="number($corrByteNr)"/> , <xsl:value-of select="./BitNr"/> , "<xsl:value-of select="./LowText"/>" , "<xsl:value-of select="./HighText"/>")
+<xsl:template match="BMP"><xsl:apply-templates select="SingleBit" /></xsl:template>
+
+<xsl:template match="SingleBit">
+	<xsl:variable name="corrByteNr" select="1+number(ByteNr)"/>
+procedure PIDBMP<xsl:value-of select="../HighPID"/><xsl:value-of select="../LowPID"/>_<xsl:value-of select="number($corrByteNr)"/>_<xsl:value-of select="./BitNr"/>
+(*#menuitem "*" "U" "<xsl:value-of select="../Group"/> - <xsl:value-of select="./Name"/>" "PIDBMP<xsl:value-of select="../HighPID"/><xsl:value-of select="../LowPID"/>_<xsl:value-of select="number($corrByteNr)"/>_<xsl:value-of select="./BitNr"/>" "PIDBMP" "Input"*)
+    getPIDBMP( $<xsl:value-of select="../HighPID"/> , $<xsl:value-of select="../LowPID"/> , <xsl:value-of select="number($corrByteNr)"/> , <xsl:value-of select="./BitNr"/> , "<xsl:value-of select="./LowText"/>" , "<xsl:value-of select="./HighText"/>")
 endproc
 
 </xsl:template>
+
+
+
 
 <xsl:template match="ASCII">
 
