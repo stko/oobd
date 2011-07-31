@@ -1,4 +1,4 @@
-﻿namespace OpenDiagX
+﻿namespace org.oobd.tools.OpenDiagX
 {
     partial class Main
     {
