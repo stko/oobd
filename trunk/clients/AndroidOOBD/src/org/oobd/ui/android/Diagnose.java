@@ -1,6 +1,7 @@
 package org.oobd.ui.android;
 
 import java.util.ArrayList;
+import android.os.Handler;
 
 
 import org.oobd.base.Core;
@@ -9,6 +10,7 @@ import org.oobd.base.OOBDConstants;
 import org.oobd.base.support.Onion;
 import org.oobd.base.visualizer.IFvisualizer;
 import org.oobd.base.visualizer.Visualizer;
+import org.oobd.ui.android.application.AndroidGui;
 import org.oobd.ui.android.application.OOBDApp;
 
 import android.app.ListActivity;
@@ -17,9 +19,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
-
+import android.os.Message;
 /**
  * @author Andreas Budde, Peter Mayer
  * Core of the app. Communicates with Lua OBD Engine and displays its results in a list view that contains {@link DiagnoseItem}
@@ -30,10 +33,13 @@ public class Diagnose extends ListActivity  {
 	
 	private ListView mDiagnoseListView;
 	public static VizTable mDiagnoseItems; // diese Liste updaten
-	private DiagnoseAdapter mDiagnoseAdapter;
+	private static DiagnoseAdapter mDiagnoseAdapter;
 	public static Diagnose myDiagnoseInstance;
+	public static Handler myRefreshHandler;
 	
-	
+	public static Diagnose getInstance() {
+		return myDiagnoseInstance;
+	}
 	
 	
 	
@@ -55,6 +61,22 @@ public class Diagnose extends ListActivity  {
 		mDiagnoseListView.setAdapter(mDiagnoseAdapter);
 		
 		System.out.println("Anzahl Listenelemente: " + mDiagnoseListView.getCount());
+		
+		myRefreshHandler= new Handler(){
+			@Override
+			public void handleMessage(Message msg) {
+			switch(msg.what){
+			     case 1:
+			            /*Refresh UI*/
+			    	 try{
+			 			((DiagnoseAdapter) mDiagnoseListView.getAdapter()).notifyDataSetChanged();
+			 		}catch(Exception e){
+			 			Log.e("update list", "update ", e);
+			 		}			            break;
+			   }
+			}
+			};
+
 	}
 	
 	
@@ -75,6 +97,23 @@ public class Diagnose extends ListActivity  {
 
 	public void setmDiagnoseAdatper(DiagnoseAdapter mDiagnoseAdatper) {
 		this.mDiagnoseAdapter = mDiagnoseAdatper;
+	}
+	
+	public void setItems(VizTable data) {
+		//mDiagnoseAdapter.notifyDataSetChanged();
+		//mDiagnoseListView.postInvalidate();
+		/*
+		 * try{
+		 
+			((DiagnoseAdapter) mDiagnoseListView.getAdapter()).notifyDataSetChanged();
+		}catch(Exception e){
+			Log.e("update list", "update ", e);
+		}
+		*/
+		myRefreshHandler.sendEmptyMessage(1);
+
+		//mDiagnoseListView.setAdapter(new DiagnoseAdapter(Diagnose.this,data));
+		//mDiagnoseListView.setAdapter(mDiagnoseAdapter);
 	}
 	
 	@Override

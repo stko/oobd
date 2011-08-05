@@ -14,7 +14,7 @@ public class VizTable extends ArrayList<DiagnoseItem> implements IFvisualizer {
 	public static VizTable thisVizTable = null;;
 	boolean awaitingUpdate = false;
 	
-	public static IFvisualizer getInstance(String pageID, String vizName) {
+	public static VizTable getInstance(String pageID, String vizName) {
 		if (thisVizTable == null)
 			thisVizTable = new VizTable();
 		return thisVizTable;

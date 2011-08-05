@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
+import java.util.ArrayList;
 
 /**
  * @author Andreas Budde, Peter Mayer
@@ -30,9 +31,9 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		addPreferencesFromResource(R.xml.settings);
 
 		mListPreferenceSelectPairedOBD2Device = (ListPreference)getPreferenceScreen().findPreference(KEY_LIST_SELECT_PAIRED_OBD2_DEVICE);
-		CharSequence[] availableDevices = OOBDApp.getInstance().getAvailableBluetoothDevices();
-		mListPreferenceSelectPairedOBD2Device.setEntries(availableDevices);
-		mListPreferenceSelectPairedOBD2Device.setEntryValues(availableDevices);
+		ArrayList<String> availableDevices = OOBDApp.getInstance().getAvailableBluetoothDevices();
+		mListPreferenceSelectPairedOBD2Device.setEntries(availableDevices.toArray(new String[0]));
+		mListPreferenceSelectPairedOBD2Device.setEntryValues(availableDevices.toArray(new String[0]));
 		
 		updateSelectedOBD2Device();
 		

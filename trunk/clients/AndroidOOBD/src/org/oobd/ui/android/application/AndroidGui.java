@@ -70,6 +70,7 @@ public class AndroidGui implements IFui {
 		
 		Visualizer newVisualizer = new Visualizer(myOnion);
 		Class<IFvisualizer> visualizerClass = getVisualizerClass(myOnion.getOnionString("type"), myOnion.getOnionString("theme"));
+		String debugText= myOnion.toString();
         Class[] argsClass = new Class[2]; // first we set up an pseudo - args - array for the scriptengine- constructor
         argsClass[0] = String.class; // and fill it with the info, that the argument for the constructor will be first a String
         argsClass[1] = String.class;
@@ -100,9 +101,11 @@ public class AndroidGui implements IFui {
 
 	public void openPageCompleted(String seID, String Name) {
 		// TODO Auto-generated method stub
-		//MainActivity.getMyMainActivity().startDiagnoseActivity();
-		
-		Log.v(this.getClass().getSimpleName(), "...open page completed");
+		//MainActivity.getMyMainActivity().startActivity(new Intent(MainActivity.getMyMainActivity(), Diagnose.class));
+		//VizTable.getInstance("", "").clear();
+		System.out.println("dummy for debugging ");
+		Diagnose.getInstance().setItems(VizTable.getInstance("", ""));
+		//Log.v(this.getClass().getSimpleName(), "...open page completed");
 		
 	}
 	
