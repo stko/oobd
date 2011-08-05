@@ -35,8 +35,8 @@ public class MainActivity extends Activity {
         mDiagnoseButton.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
-				AndroidGui.getInstance().startScriptEngine();
 				startActivity(new Intent(MainActivity.this, Diagnose.class));
+				AndroidGui.getInstance().startScriptEngine();
 			}
 		});
     }

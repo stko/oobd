@@ -42,6 +42,9 @@ public class DiagnoseItem {
 	public String getFunctionFlag2() {
 		return "B";
 	}
+	public String toString() {
+		return getFunctionName();
+	}
 
 
 	public Visualizer getMyVisualizer() {

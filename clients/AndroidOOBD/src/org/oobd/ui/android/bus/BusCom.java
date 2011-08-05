@@ -60,7 +60,8 @@ public class BusCom extends OobdBus implements OOBDConstants {
 
         Thread bluetoothThread = new Thread (new BluetoothInitWorker());
         bluetoothThread.start(); 
-        
+        BluetoothSocket socket =null;
+/*        
         BluetoothSocket socket = BluetoothInitWorker.getMyInstance().getObdDeviceSocket();
         try {
         	socket.connect();
@@ -74,7 +75,7 @@ public class BusCom extends OobdBus implements OOBDConstants {
         
         reader.connect(socket);
                
-        
+ */       
         while (keepRunning == true) {
         	System.out.println ("--- naechste Runde ---");
             Debug.msg("buscom", DEBUG_BORING, "sleeping...");

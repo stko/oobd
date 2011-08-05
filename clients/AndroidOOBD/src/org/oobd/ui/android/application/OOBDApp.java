@@ -1,7 +1,9 @@
 package org.oobd.ui.android.application;
 
 import java.util.ArrayList;
+import java.util.List;  
 import java.util.HashMap;
+import java.util.Set;
 import java.io.*;
 
 import org.oobd.base.Core;
@@ -22,6 +24,9 @@ import android.content.res.Resources;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
+import android.bluetooth.*;
+import android.content.Intent;
+import 	android.widget.ArrayAdapter;
 
 /**
  * @author Andreas Budde, Peter Mayer
@@ -113,10 +118,28 @@ public class OOBDApp extends Application implements IFsystem {
         return new CharSequence[]{"test.lua", "init.lua", "ford.lua"};
     }
 
-    public CharSequence[] getAvailableBluetoothDevices() {
+    public ArrayList<String> getAvailableBluetoothDevices() {
         // TODO find out what devices are bluetooth coupled
-        return new CharSequence[]{"ODB2 device", "Laptop", "Nokia 8610", "HTC Hero"};
-    }
+    	ArrayList<String> mArrayAdapter = new ArrayList<String>();
+        return mArrayAdapter;
+ /*   	BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+             	if (mBluetoothAdapter != null) {
+   		if (!mBluetoothAdapter.isEnabled()) {
+    		    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+    		    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+    		}
+   	Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+    	// If there are paired devices
+    	if (pairedDevices.size() > 0) {
+    	    // Loop through paired devices
+    	    for (BluetoothDevice device : pairedDevices) {
+    	        // Add the name and address to an array adapter to show in a ListView
+    	        mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+    	    }
+    	}
+    	}
+        return mArrayAdapter;
+*/     }
 
     public void registerOobdCore(Core core) {
         this.core = core;
@@ -128,7 +151,7 @@ public class OOBDApp extends Application implements IFsystem {
     public HashMap <String, Class<?>> loadOobdClasses(String path, String classPrefix, Class<?> classType) {
         HashMap<String, Class<?>> myInstances = new HashMap<String, Class<?>>();
 
-        Class tempClass = null;
+        Class<?> tempClass = null;
         try {
             tempClass = Class.forName(path);
         } catch (ClassNotFoundException e) {

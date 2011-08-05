@@ -69,7 +69,7 @@ public class DiagnoseAdapter extends ArrayAdapter<DiagnoseItem> {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
-		System.out.println ("getView(): try to find list position: " + position);
+		//System.out.println ("getView(): try to find list position: " + position);
 		// optimization: reuse diagnose items
 		if (convertView == null) {
 			// if there is no old view to reuse, a new one is created based on layout diagnose_item
