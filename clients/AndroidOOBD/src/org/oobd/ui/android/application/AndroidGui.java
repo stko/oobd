@@ -12,10 +12,8 @@ import org.oobd.base.support.Onion;
 import org.oobd.base.visualizer.IFvisualizer;
 import org.oobd.base.visualizer.Visualizer;
 import org.oobd.ui.android.Diagnose;
-import org.oobd.ui.android.MainActivity;
 import org.oobd.ui.android.VizTable;
 
-import android.content.Intent;
 import android.util.Log;
 
 public class AndroidGui implements IFui {
@@ -81,10 +79,10 @@ public class AndroidGui implements IFui {
             // now call getInstance() in class VizTable
             visualComponent = (IFvisualizer)classMethod.invoke(null, args); // and finally create the object from the scriptengine class with its unique id as parameter
             // add new Visualizer object to already existing VizTable object 
-            newVisualizer.setOwner((IFvisualizer) visualComponent);
+            newVisualizer.setOwner(visualComponent);
             
             // add to internal list
-            ((IFvisualizer) visualComponent).initValue(newVisualizer, myOnion);
+            (visualComponent).initValue(newVisualizer, myOnion);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -94,18 +92,15 @@ public class AndroidGui implements IFui {
 	public void openPage(String seID, String Name, int colcount, int rowcount) {
 		// TODO Auto-generated method stub
 		Log.v(this.getClass().getSimpleName(), "Und jetzt open page machen..");
-		VizTable vizTable = (VizTable)VizTable.getInstance("", "");
+		VizTable vizTable = VizTable.getInstance("", "");
 		if (vizTable != null && !vizTable.isEmpty())
 			vizTable.clear();
 	}
 
 	public void openPageCompleted(String seID, String Name) {
-		// TODO Auto-generated method stub
-		//MainActivity.getMyMainActivity().startActivity(new Intent(MainActivity.getMyMainActivity(), Diagnose.class));
-		//VizTable.getInstance("", "").clear();
-		System.out.println("dummy for debugging ");
+
 		Diagnose.getInstance().setItems(VizTable.getInstance("", ""));
-		//Log.v(this.getClass().getSimpleName(), "...open page completed");
+		Log.v(this.getClass().getSimpleName(), "...open page completed");
 		
 	}
 	

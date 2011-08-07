@@ -31,8 +31,8 @@ public class DiagnoseItem {
 	}
 
 	public String getFunctionName() {
-		System.out.println("Function Name: " + myVisualizer.getValue("tooltip"));
-		return myVisualizer.getValue("tooltip");
+		System.out.println("Function Name: " + myVisualizer.getToolTip());
+		return myVisualizer.getToolTip();
 	}
 
 	public String getFunctionFlag1() {

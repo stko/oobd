@@ -41,12 +41,12 @@ public class BluetoothInitWorker implements Runnable {
 		working = true;
 		System.out.println("Thread BluetoothInitWorker started");
 		Looper.prepare();
-		initializeBluetoothSocket();
+		//initializeBluetoothSocket();
 		working = false;
 		System.out.println("Thread BluetoothInitWorker finished");
 	}
 	
-	public synchronized void initializeBluetoothSocket() {
+	public synchronized BluetoothSocket initializeBluetoothSocket(String BTAddress) {
     	System.out.println("Starting Bluetooth Detection and Device Pairing");
     	if (mBluetoothAdapter == null) {
 			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -57,7 +57,7 @@ public class BluetoothInitWorker implements Runnable {
 				if (!mBluetoothAdapter.isEnabled()) {
 				    // TODO Fenster einblenden, um Bluetooth zu starten
 					Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-				    //callingActivity.startActivityForResult(enableBtIntent, OOBDApp.REQUEST_ENABLE_BT);
+				    callingActivity.startActivityForResult(enableBtIntent, OOBDApp.REQUEST_ENABLE_BT);
 					Log.w(this.getClass().getSimpleName(), "Bluetooth not enabled.");
 				}
 			}
@@ -72,16 +72,15 @@ public class BluetoothInitWorker implements Runnable {
 			    // Loop through paired devices
 			    for (BluetoothDevice device : pairedDevices) {
 			        // Add the name and address to an array adapter to show in a ListView
-			        System.out.println("Found Bluetooth Device: " + device.getName());
+			        Log.d("OOBD:BluetoothIntiWorker","Found Bluetooth Device: " + device.getName()+"="+device.getAddress()+" search for "+BTAddress);
 			        // TODO delete following line once device selection is implemented
-			        if ( (device.getName().contains("Diamex")) || (device.getName().contains("Serial")) || (device.getName().contains("serial"))) {
-			        		System.out.println("Pairing Bluetooth Device: " + device.getName());
+			        if ( BTAddress.equalsIgnoreCase(device.getAddress())) {
 			        		obdDevice = device;
 			        }
 			    }
 			    Log.v(this.getClass().getSimpleName(), "MY_UUID: " + MY_UUID);
 				
-				 // Get a BluetoothSocket to connect with the given BluetoothDevice
+				if (obdDevice!=null){ // Get a BluetoothSocket to connect with the given BluetoothDevice
 		        try {
 		            // MY_UUID is the app's UUID string, also used by the server code
 		        	Log.v(this.getClass().getSimpleName(), "Device " + obdDevice.getName());
@@ -94,11 +93,13 @@ public class BluetoothInitWorker implements Runnable {
 		        		try { obdDeviceSocket.close();} catch (IOException closeEx) {};
 		        	}
 		        }
+				}
 			}
 			else
 				System.out.println("No Paired Devices Found");
 		}	
     	notify();
+		return obdDeviceSocket;
     }
 
 	public BluetoothSocket getObdDeviceSocket() {

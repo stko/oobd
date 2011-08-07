@@ -136,6 +136,7 @@ public class Visualizer {
     Onion value;
     String name;
     String optId;
+    String toolTip;
     IFvisualizer myObject;
     boolean updateNeeded = false;
 
@@ -143,7 +144,8 @@ public class Visualizer {
         ownerEngine = onion.getOnion(OOBDConstants.FN_OWNER);
         name = onion.getOnionString(OOBDConstants.FN_NAME);
         optId = onion.getOnionString(OOBDConstants.FN_OPTID);
-        value = onion;
+        toolTip = onion.getOnionString(OOBDConstants.FN_TOOLTIP);
+               value = onion;
 //        this.myObject=myObject;
         Core.getSingleInstance().addVisualizer(ownerEngine.getOnionString(OOBDConstants.FN_NAME), this);
     }
@@ -189,6 +191,10 @@ public class Visualizer {
 
     public String getName() {
         return name;
+    }
+
+    public String getToolTip() {
+        return toolTip;
     }
 
     @Override

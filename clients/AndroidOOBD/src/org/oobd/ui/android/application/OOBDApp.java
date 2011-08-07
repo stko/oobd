@@ -63,7 +63,7 @@ public class OOBDApp extends Application implements IFsystem {
     	Log.v(this.getClass().getSimpleName(), "Try to load: " + resourceName + " with path ID : " + pathID);
     	InputStream resource = null;
         if (pathID == OOBDConstants.FT_PROPS ) {  // Achtung: Hier wird der ResourceName nicht weiter beachtet, weil nur hardcoded der oobdcore verwendet wird. Ist das so richtig
-        		if (resourceName.contains("oobdcore"))
+ /*       		if (resourceName.contains("oobdcore"))
         			resource = OOBDApp.getInstance().getApplicationContext().getResources().openRawResource(R.raw.oobdcore);
         		else if (resourceName.contains("enginelua"))
         			resource = OOBDApp.getInstance().getApplicationContext().getResources().openRawResource(R.raw.enginelua);
@@ -71,7 +71,15 @@ public class OOBDApp extends Application implements IFsystem {
         			resource = OOBDApp.getInstance().getApplicationContext().getResources().openRawResource(R.raw.buscom);
         		
                 Log.v(this.getClass().getSimpleName(), "File " + resourceName + " could be loaded from /res/raw");
-                return resource;
+*/
+    		try {
+				resource = new FileInputStream("/sdcard/oobd/" + resourceName);
+   		Log.v(this.getClass().getSimpleName(), "File " + resourceName + " could be loaded from /sdcard/oobd");
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				Log.v(this.getClass().getSimpleName(), "File " + resourceName + " could not loaded from /sdcard/oobd",e);
+			}
+         	return resource;
         } else if (pathID == OOBDConstants.FT_SCRIPT) {
         	try {
         		//InputStream resource = new FileInputStream("/sdcard/stdlib.lbc");
