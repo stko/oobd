@@ -1,52 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<TableLayout android:id="@+id/TableLayout1"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:stretchColumns="0"
     android:padding="1dp">
+    <TableRow android:id="@+id/tableRow1" android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <TextView android:layout_height="wrap_content" android:id="@+id/diagnose_function_value" android:textSize="20sp" android:layout_marginLeft="10sp" android:textStyle="bold" android:layout_width="100sp" android:text="100"></TextView>
+    </TableRow>
+    <TableRow android:id="@+id/tableRow2" android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <TextView android:layout_height="wrap_content" android:id="@+id/diagnose_function_name" android:textSize="12sp" android:layout_marginLeft="10sp"  android:layout_width="100sp" android:text="RPM"></TextView>
+        <TextView android:id="@+id/diagnose_function_flag1" android:textSize="12sp"  android:layout_height="wrap_content" android:layout_marginRight="10sp" android:layout_width="10sp" android:text="ü"></TextView>
+        <TextView android:layout_height="wrap_content" android:id="@+id/diagnose_function_flag2" android:textSize="12sp"  android:layout_marginRight="10sp" android:text="1" android:layout_width="wrap_content"></TextView>
+    </TableRow>
 
-
-    <TextView
-        android:id="@+id/diagnose_function_value"
-        android:text="100"
-        android:textSize="20sp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10sp"
-        android:layout_width="100sp"
-        android:layout_alignParentLeft="true"
-        android:textStyle="bold" />
-        
-    <TextView
-        android:id="@+id/diagnose_function_name"
-        android:text="RPM"
-        android:textSize="20sp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10sp"
-        android:layout_width="100sp"
-        android:layout_below="@id/diagnose_function_value"
-        android:layout_alignParentLeft="true"
-        android:textStyle="bold" />
-        
-    <TextView
-        android:id="@+id/diagnose_function_flag1"
-        android:text="ü"
-        android:textSize="20sp"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="10sp"
-        android:layout_width="10sp"
-        android:layout_alignParentRight="true"
-        android:textStyle="bold" />
-        
-    <TextView
-        android:id="@+id/diagnose_function_flag2"
-        android:text="1"
-        android:textSize="20sp"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="10sp"
-        android:layout_width="10sp"
-        android:layout_below="@id/diagnose_function_flag1"
-        android:layout_alignParentRight="true"
-        android:textStyle="bold" />
-
-</RelativeLayout>
+</TableLayout>
 

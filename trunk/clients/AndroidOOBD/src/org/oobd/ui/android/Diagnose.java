@@ -34,7 +34,7 @@ public class Diagnose extends ListActivity  {
 	private ListView mDiagnoseListView;
 	public static VizTable mDiagnoseItems; // diese Liste updaten
 	private static DiagnoseAdapter mDiagnoseAdapter;
-	public static Diagnose myDiagnoseInstance;
+	public static Diagnose myDiagnoseInstance = null;
 	public static Handler myRefreshHandler;
 	
 	public static Diagnose getInstance() {

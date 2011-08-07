@@ -35,7 +35,14 @@ public class MainActivity extends Activity {
         mDiagnoseButton.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
-				startActivity(new Intent(MainActivity.this, Diagnose.class));
+				// the following trick avoids a recreation of the Diagnose Activity as long as the previous created one is still in memory
+				 Intent i = new Intent();
+			        i.setClass(MainActivity.this, Diagnose.class);
+			        i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+			        startActivity(i);
+
+
+				//startActivity(new Intent(MainActivity.this, Diagnose.class));
 				AndroidGui.getInstance().startScriptEngine();
 			}
 		});

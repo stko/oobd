@@ -33,6 +33,7 @@ public interface OOBDConstants {
     public static final String FN_OWNER = "owner";
     public static final String FN_OPTID = "optid";
     public static final String FN_VALUESTRING = "ValueString";
+    public static final String FN_TOOLTIP = "tooltip";
     // Types of the different visualizer update requests
     public static final Integer UR_USER = 0;
     // Path for oobdcore.props:
