@@ -66,13 +66,13 @@ public class Diagnose extends ListActivity  {
 			@Override
 			public void handleMessage(Message msg) {
 			switch(msg.what){
-			     case 1:
-			            /*Refresh UI*/
-			    	 try{
-			 			((DiagnoseAdapter) mDiagnoseListView.getAdapter()).notifyDataSetChanged();
-			 		}catch(Exception e){
-			 			Log.e("update list", "update ", e);
-			 		}			            break;
+		     case 1:
+		            /*Refresh UI*/
+		    	 ((DiagnoseAdapter) mDiagnoseListView.getAdapter()).notifyDataSetChanged();
+		            break;
+		     case 2:
+		            /*Refresh UI*/
+		    	 myDiagnoseInstance.setTitle(msg.obj.toString());
 			   }
 			}
 			};
@@ -100,21 +100,11 @@ public class Diagnose extends ListActivity  {
 	}
 	
 	public void setItems(VizTable data) {
-		//mDiagnoseAdapter.notifyDataSetChanged();
-		//mDiagnoseListView.postInvalidate();
-		/*
-		 * try{
-		 
-			((DiagnoseAdapter) mDiagnoseListView.getAdapter()).notifyDataSetChanged();
-		}catch(Exception e){
-			Log.e("update list", "update ", e);
-		}
-		*/
 		myRefreshHandler.sendEmptyMessage(1);
-
-		//mDiagnoseListView.setAdapter(new DiagnoseAdapter(Diagnose.this,data));
-		//mDiagnoseListView.setAdapter(mDiagnoseAdapter);
-	}
+		}
+	public void setMenuTitle(String title) {
+		myRefreshHandler.sendMessage( Message.obtain(myRefreshHandler, 2, title));
+		}
 	
 	@Override
 	protected void onPause() {

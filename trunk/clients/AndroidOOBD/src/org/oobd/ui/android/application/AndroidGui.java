@@ -91,6 +91,7 @@ public class AndroidGui implements IFui {
 
 	public void openPage(String seID, String Name, int colcount, int rowcount) {
 		// TODO Auto-generated method stub
+		Diagnose.getInstance().setMenuTitle(Name);
 		Log.v(this.getClass().getSimpleName(), "Und jetzt open page machen..");
 		VizTable vizTable = VizTable.getInstance("", "");
 		if (vizTable != null && !vizTable.isEmpty())
