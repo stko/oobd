@@ -514,8 +514,8 @@ uint32_t CheckCrc32(void)
   size = *(__IO uint32_t*)(ApplicationAddress-4);
 
   CRC_ResetDR();
-  /* 0x8003000 is the application start address and size = application code size */
-  crc= CRC_CalcBlockCRC((uint32_t*)0x8003000, size/4+1);
+  /* 0x8002400 is the application start address and size = application code size */
+  crc= CRC_CalcBlockCRC((uint32_t*)ApplicationAddress, size/4+1);
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, DISABLE);
 
   return crc ;

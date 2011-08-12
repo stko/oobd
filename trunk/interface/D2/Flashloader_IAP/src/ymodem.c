@@ -208,6 +208,8 @@ int32_t Ymodem_Receive (uint8_t *buf)
                     /* Erase the needed pages where the user application will be loaded */
                     /* Define the number of page to be erased */
                     NbrOfPage = FLASH_PagesMask(size);
+                    /* Erase one more page as the CRC is filesize is located at the end of the previous flash page */
+                    NbrOfPage = NbrOfPage + 1;
 
                     /* Erase the FLASH pages */
                     for (EraseCounter = 0; (EraseCounter < NbrOfPage) && (FLASHStatus == FLASH_COMPLETE); EraseCounter++)
