@@ -62,7 +62,7 @@ void System_Configuration(void)
   USART1_Configuration();
 
   /* USART1 configuration */
-  CAN1_Configuration(VALUE_BUS_CONFIG_11bit_500kbit); /* default initialization */
+  CAN1_Configuration(VALUE_BUS_CONFIG_11bit_500kbit, CAN_Mode_Silent); /* default initialization */
 
   /* Analog digitial converter configuration */
   ADC_Configuration();
@@ -81,8 +81,8 @@ void NVIC_Configuration(void)
 {
   NVIC_InitTypeDef NVIC_InitStructure;
 
-  /* Set the Vector Table base location at 0x3000 */
-  NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x3000);
+  /* Set the Vector Table base location at 0x2400 */
+  NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x2400);
 
   /* Setting the priority grouping bits length */
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
@@ -526,7 +526,7 @@ void USART1_Configuration(void)
   * @param  None
   * @retval None
   */
-void CAN1_Configuration(uint8_t CAN_BusConfig)
+void CAN1_Configuration(uint8_t CAN_BusConfig, uint8_t CAN_ModeConfig)
 {
   DEBUGUARTPRINT("\r\n*** CANx_Configuration (CAN1) entered! ***");
 
@@ -545,7 +545,9 @@ void CAN1_Configuration(uint8_t CAN_BusConfig)
   CAN_InitStructure.CAN_NART = DISABLE; /* No automatic retransmission */
   CAN_InitStructure.CAN_RFLM = DISABLE; /* Receive FIFO locked mode */
   CAN_InitStructure.CAN_TXFP = ENABLE;  /* Transmit FIFO priority */
-  CAN_InitStructure.CAN_Mode = CAN_Mode_Normal;
+  /* CAN_Mode_Normal, CAN_Mode_LoopBack, CAN_Mode_Silent, CAN_Mode_Silent_LoopBack */
+//  CAN_InitStructure.CAN_Mode = CAN_Mode_Normal;
+  CAN_InitStructure.CAN_Mode = CAN_ModeConfig;
   CAN_InitStructure.CAN_SJW  = CAN_SJW_1tq;
 
   if (CAN_BusConfig == VALUE_BUS_CONFIG_11bit_125kbit ||
