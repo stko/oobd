@@ -302,9 +302,14 @@ void inputParserTask(void *pvParameters) {
 										printser_string("1 - UDS (ISO14229-1)");
 									} else if (cmdValue == VALUE_PARAM_INFO_BUS) /* p 0 4 */
 									{
-										if (config.bus == VALUE_BUS_CAN) {
-											printser_string("3 - CAN");
-										}
+										if (config.bus == VALUE_BUS_SILENT_MODE)
+											printser_string("0 - CAN Transceiver in 'Silent Mode'");
+										else if (config.bus == VALUE_BUS_LOOP_BACK_MODE)
+											printser_string("1 - CAN Transceiver in 'Loop Back Mode'");
+										else if (config.bus == VALUE_BUS_LOOP_BACK_WITH_SILENT_MODE)
+											printser_string("2 - CAN Transceiver in 'Loop Back combined with Silent Mode'");
+										else if (config.bus == VALUE_BUS_NORMAL_MODE)
+											printser_string("3 - CAN Transceiver in 'Normal Mode'");
 									} else if (cmdValue
 											== VALUE_PARAM_INFO_BUS_CONFIG) /* p 0 5 */
 									{
@@ -354,7 +359,7 @@ void inputParserTask(void *pvParameters) {
 										sendCPUInfo(); /* send CPU Info */
 									else if (cmdValue
 											== VALUE_PARAM_INFO_MEM_LOC) /* p 0 11 */
-										sendMemLoc(0x8003000); /* send Mem Location */
+										sendMemLoc(0x8002400); /* send Mem Location */
 									else if (cmdValue
 											== VALUE_PARAM_INFO_ROM_TABLE_LOC) /* p 0 12 */
 										sendRomTable(); /* send ROM Table */
