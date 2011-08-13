@@ -12,6 +12,8 @@ import org.oobd.base.support.Onion;
 import org.oobd.base.visualizer.IFvisualizer;
 import org.oobd.base.visualizer.Visualizer;
 import org.oobd.ui.android.Diagnose;
+import org.oobd.ui.android.DiagnoseTab;
+import org.oobd.ui.android.OutputActivity;
 import org.oobd.ui.android.VizTable;
 
 import android.util.Log;
@@ -35,7 +37,9 @@ public class AndroidGui implements IFui {
 	
 	public void sm(String msg) {
 		// TODO Auto-generated method stub
-
+		OutputActivity.getInstance().addText(msg+"\n");
+		//TODO outputtofront crashes
+		//DiagnoseTab.getInstance().outputToFront();
 	}
 
 	public void registerOobdCore(Core core) {

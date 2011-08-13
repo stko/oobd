@@ -42,6 +42,8 @@ public class OOBDApp extends Application implements IFsystem {
     public IFui androidGui;
     // make it singleton
     private static OOBDApp mInstance;
+    private Toast mToast;
+
 
     public static OOBDApp getInstance() {
         return mInstance;
@@ -57,6 +59,10 @@ public class OOBDApp extends Application implements IFsystem {
         }
     }
 
+        public void displayToast(CharSequence text) {
+            mToast.setText(text);
+            mToast.show();
+        }
 
 
     public InputStream generateResourceStream(int pathID, String resourceName) throws java.util.MissingResourceException {
@@ -115,7 +121,7 @@ public class OOBDApp extends Application implements IFsystem {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
-
+        mToast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
         androidGui = new AndroidGui();
         new Core(androidGui, this,"Core");
         Log.v(this.getClass().getSimpleName(), "Core creation finalized");

@@ -35,9 +35,9 @@ public class MainActivity extends Activity {
         mDiagnoseButton.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View v) {
-				// the following trick avoids a recreation of the Diagnose Activity as long as the previous created one is still in memory
+				// the following trick avoids a recreation of the Diagnose TapActivity as long as the previous created one is still in memory
 				 Intent i = new Intent();
-			        i.setClass(MainActivity.this, Diagnose.class);
+			        i.setClass(MainActivity.this, DiagnoseTab.class);
 			        i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			        startActivity(i);
 

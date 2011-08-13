@@ -12,6 +12,7 @@ import org.json.JSONException;
 import android.bluetooth.BluetoothSocket;
 import android.os.Looper;
 import android.util.Log;
+import android.content.Context;
 import android.widget.Toast;
 
 import java.io.*;
@@ -67,7 +68,8 @@ public class BusCom extends OobdBus implements OOBDConstants {
 
 				socket.connect();
 				reader.connect(socket);
-				Log.d("OOBD:Bluetooth", "Bluetooth connected!");
+				Log.d("OOBD:Bluetooth", "Bluetooth connected");
+				OOBDApp.getInstance().displayToast("Bluetooth connected");
 			} catch (IOException ex) {
 				Log.e(this.getClass().getSimpleName(),
 						"Error: Could not connect socket.");
@@ -76,12 +78,7 @@ public class BusCom extends OobdBus implements OOBDConstants {
 			}
 		}else{
 			Log.e("OOBD:Bluetooth", "Bluetooth NOT connected!");
- /*           MainActivity.getMyMainActivity().runOnUiThread(new Runnable() {
-                public void run() {
-                	Toast.makeText(MainActivity.getMyMainActivity().getApplicationContext(), "No Bluetooth Connection", Toast.LENGTH_LONG).show();
-                }
-            });
-*/
+			OOBDApp.getInstance().displayToast("Bluetooth NOT connected!");
 		}
 
 		while (keepRunning == true) {
