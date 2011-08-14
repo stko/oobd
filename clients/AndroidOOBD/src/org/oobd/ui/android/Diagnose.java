@@ -73,6 +73,7 @@ public class Diagnose extends ListActivity  {
 		     case 2:
 		            /*Refresh UI*/
 		    	 myDiagnoseInstance.setTitle(msg.obj.toString());
+		    	 break;
 			   }
 			}
 			};

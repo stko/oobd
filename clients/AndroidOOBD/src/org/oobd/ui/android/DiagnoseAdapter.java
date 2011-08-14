@@ -2,19 +2,23 @@ package org.oobd.ui.android;
 
 import java.util.ArrayList;
 
-import org.oobd.base.visualizer.IFvisualizer;
+import org.oobd.base.OOBDConstants;
 import org.oobd.ui.android.application.OOBDApp;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ImageView;
 
 /**
  * @author Andreas Budde, Peter Mayer
@@ -26,7 +30,7 @@ public class DiagnoseAdapter extends ArrayAdapter<DiagnoseItem> {
 	
 	VizTable myVisualizer;
 	Context context;
-	
+	private Bitmap[] myIcons = new  Bitmap[6];
 	
 	public BroadcastReceiver receiver = new BroadcastReceiver() {
         
@@ -43,7 +47,13 @@ public class DiagnoseAdapter extends ArrayAdapter<DiagnoseItem> {
 		mlayoutInflater = LayoutInflater.from(context);
 		
 		myVisualizer = (VizTable)items;
-		
+
+		myIcons[0]=BitmapFactory.decodeResource(MainActivity.getMyMainActivity().getResources(),R.drawable.blank);
+		myIcons[1]=BitmapFactory.decodeResource(MainActivity.getMyMainActivity().getResources(),R.drawable.forward);
+		myIcons[2]=BitmapFactory.decodeResource(MainActivity.getMyMainActivity().getResources(),R.drawable.update);
+		myIcons[3]=BitmapFactory.decodeResource(MainActivity.getMyMainActivity().getResources(),R.drawable.timer);
+		myIcons[4]=BitmapFactory.decodeResource(MainActivity.getMyMainActivity().getResources(),R.drawable.text);
+		myIcons[5]=BitmapFactory.decodeResource(MainActivity.getMyMainActivity().getResources(),R.drawable.back);
 		this.context = context;
 		context.registerReceiver(receiver, new IntentFilter(OOBDApp.VISUALIZER_UPDATE));
 	}
@@ -89,13 +99,44 @@ public class DiagnoseAdapter extends ArrayAdapter<DiagnoseItem> {
 				.findViewById(R.id.diagnose_function_name);
 			functionName.setText(item.getFunctionName());
 			
-			TextView functionFlag1 = (TextView) convertView
-				.findViewById(R.id.diagnose_function_flag1);
-			functionFlag1.setText(item.getFunctionFlag1());
+/*			
+			backImageView
+			updateImageView
+			timerImageView
+			LogImageView
+			forwardImageView
+*/			
+			if (item.getMyVisualizer().getUpdateFlag(4)){
+				((ImageView) convertView.findViewById(R.id.backImageView)).setImageBitmap(myIcons[OOBDConstants.VE_BACK]);
+			}else{
+				((ImageView) convertView.findViewById(R.id.backImageView)).setImageBitmap(myIcons[0]);			
+			}
 			
-			TextView functionFlag2 = (TextView) convertView
-				.findViewById(R.id.diagnose_function_flag2);
-			functionFlag2.setText(item.getFunctionFlag2());
+			if (item.getMyVisualizer().getUpdateFlag(1)){
+				((ImageView) convertView.findViewById(R.id.updateImageView)).setImageBitmap(myIcons[OOBDConstants.VE_UPDATE]);
+			}else{
+				((ImageView) convertView.findViewById(R.id.updateImageView)).setImageBitmap(myIcons[0]);
+			}
+			
+			if (item.getMyVisualizer().getUpdateFlag(2)){
+				((ImageView) convertView.findViewById(R.id.timerImageView)).setImageBitmap(myIcons[OOBDConstants.VE_TIMER]);
+			}else{
+				((ImageView) convertView.findViewById(R.id.timerImageView)).setImageBitmap(myIcons[0]);
+			}
+			
+			if (item.getMyVisualizer().getUpdateFlag(3)){
+				((ImageView) convertView.findViewById(R.id.LogImageView)).setImageBitmap(myIcons[OOBDConstants.VE_LOG]);
+			}else{
+				((ImageView) convertView.findViewById(R.id.LogImageView)).setImageBitmap(myIcons[0]);
+			}
+			
+			if (item.getMyVisualizer().getUpdateFlag(0)){
+				((ImageView) convertView.findViewById(R.id.forwardImageView)).setImageBitmap(myIcons[OOBDConstants.VE_MENU]);
+			}else{
+				((ImageView) convertView.findViewById(R.id.forwardImageView)).setImageBitmap(myIcons[0]);
+			}
+			
+
 			
 		}
 		return convertView;

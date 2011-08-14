@@ -10,12 +10,11 @@
     </TableRow>
     <TableRow android:id="@+id/tableRow2" android:layout_width="wrap_content" android:layout_height="wrap_content">
         <TextView android:layout_height="wrap_content" android:id="@+id/diagnose_function_name" android:textSize="12sp" android:layout_marginLeft="10sp"  android:text="RPM" android:layout_width="fill_parent"></TextView>
-        <TextView android:id="@+id/diagnose_function_flag1" android:textSize="12sp"  android:layout_height="wrap_content" android:layout_marginRight="10sp" android:layout_width="10sp" android:text="ü"></TextView>
         <ImageView android:src="@drawable/back" android:scaleType="fitXY" android:id="@+id/backImageView" android:layout_height="16dp" android:layout_width="16dp"></ImageView>
         <ImageView android:src="@drawable/update" android:scaleType="fitXY" android:id="@+id/updateImageView" android:layout_height="16dp" android:layout_width="16dp"></ImageView>
         <ImageView android:scaleType="fitXY" android:layout_height="16dp" android:layout_width="16dp" android:id="@+id/timerImageView" android:src="@drawable/timer"></ImageView>
+        <ImageView android:layout_height="16dp" android:layout_width="16dp" android:scaleType="fitXY" android:id="@+id/LogImageView" android:src="@drawable/text"></ImageView>
         <ImageView android:scaleType="fitXY" android:layout_height="16dp" android:layout_width="16dp" android:id="@+id/forwardImageView" android:src="@drawable/forward"></ImageView>
-        <TextView android:layout_height="wrap_content" android:id="@+id/diagnose_function_flag2" android:textSize="12sp"  android:layout_marginRight="10sp" android:text="1" android:layout_width="10sp"></TextView>
     </TableRow>
 
 </TableLayout>

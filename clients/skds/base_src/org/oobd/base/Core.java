@@ -293,11 +293,12 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      *
      * Returns a unique ID which is used from now on for all communication between the core and the UI
      * @param id public name of scriptengine to be created
+     * @param onion additional params
      * @param classtype
      * @return unique id of this class, made out of its public name and counter. Needed to link UI canvas to this object
      *
      */
-    public String createScriptEngine(String id) {
+    public String createScriptEngine(String id, Onion onion) {
         Logger.getLogger(Core.class.getName()).log(Level.CONFIG,  "Core should create scriptengine: " + id);
         Integer i = 1;
         while (activeEngines.containsKey(id + "." + i.toString())) { //searching for a free id
@@ -328,10 +329,12 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      *
      * This engine is then been first created with createScriptEngine(), and when all initalisation is been done, it's started with startScriptEngine()
      * \ingroup visualisation
+     * @param onion addional param
      */
-    public void startScriptEngine(String id) {
+    public void startScriptEngine(String id, Onion onion) {
         Logger.getLogger(Core.class.getName()).log(Level.CONFIG,  "Start scriptengine: " + id);
         OobdScriptengine o = activeEngines.get(id);
+        o.setStartupParameter(onion);
         Thread t1 = new Thread(o);
         t1.start();
     }

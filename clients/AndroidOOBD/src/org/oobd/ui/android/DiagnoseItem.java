@@ -35,13 +35,6 @@ public class DiagnoseItem {
 		return myVisualizer.getToolTip();
 	}
 
-	public String getFunctionFlag1() {
-		return "A";
-	}
-
-	public String getFunctionFlag2() {
-		return "B";
-	}
 	public String toString() {
 		return getFunctionName();
 	}

@@ -3,6 +3,8 @@ package org.oobd.ui.android;
 import android.app.TabActivity;
 import android.widget.TabHost;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import 	android.content.Intent;
 import android.content.res.Resources;
 import org.oobd.ui.android.R;
@@ -10,7 +12,7 @@ import org.oobd.ui.android.R;
 public class DiagnoseTab extends TabActivity {
 	private static DiagnoseTab myDiagnoseTabInstance=null;
 	private TabHost myTabHost;
-
+	public static Handler myRefreshHandler;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -37,7 +39,29 @@ public class DiagnoseTab extends TabActivity {
 	                  .setContent(intent);
 	    myTabHost.addTab(spec);
 
+		myRefreshHandler= new Handler(){
+			@Override
+			public void handleMessage(Message msg) {
+			switch(msg.what){
+		     case 2:
+		            /*Refresh UI*/
+		    	 myDiagnoseTabInstance.setTitle("OOBD - "+msg.obj.toString());
+		    	 break;
+			   }
+			}
+			};
 
+
+	    //this fancy trick seems to be necessary to initialize the output tab
+	    // the object seems no be created until it's shown first time,
+	    // which causes a null error when trying to send some output
+	    myTabHost.setCurrentTab(1);
+	    try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	    myTabHost.setCurrentTab(0);
 	}
 	
@@ -48,5 +72,8 @@ public class DiagnoseTab extends TabActivity {
 	public static DiagnoseTab getInstance() {
 		return myDiagnoseTabInstance;
 	}
-	
+	public void setMenuTitle(String title) {
+		myRefreshHandler.sendMessage( Message.obtain(myRefreshHandler, 2, title));
+		}
+
 }

@@ -127,120 +127,136 @@ import org.oobd.base.support.Onion;
 import org.oobd.base.*;
 
 /**
- *
+ * 
  * @author steffen
  */
 public class Visualizer {
 
-    Onion ownerEngine;
-    Onion value;
-    String name;
-    String optId;
-    String toolTip;
-    IFvisualizer myObject;
-    boolean updateNeeded = false;
+	Onion ownerEngine;
+	Onion value;
+	String name;
+	String optId;
+	String toolTip;
+	int updateEvents;
+	IFvisualizer myObject;
+	boolean updateNeeded = false;
 
-    public Visualizer(Onion onion) {
-        ownerEngine = onion.getOnion(OOBDConstants.FN_OWNER);
-        name = onion.getOnionString(OOBDConstants.FN_NAME);
-        optId = onion.getOnionString(OOBDConstants.FN_OPTID);
-        toolTip = onion.getOnionString(OOBDConstants.FN_TOOLTIP);
-               value = onion;
-//        this.myObject=myObject;
-        Core.getSingleInstance().addVisualizer(ownerEngine.getOnionString(OOBDConstants.FN_NAME), this);
-    }
+	public Visualizer(Onion onion) {
+		ownerEngine = onion.getOnion(OOBDConstants.FN_OWNER);
+		name = onion.getOnionString(OOBDConstants.FN_NAME);
+		optId = onion.getOnionString(OOBDConstants.FN_OPTID);
+		toolTip = onion.getOnionString(OOBDConstants.FN_TOOLTIP);
+		try {
+			updateEvents = onion.getInt(OOBDConstants.FN_UPDATEOPS);
+		} catch (JSONException e) {
+			updateEvents = 0;
+		}
+		value = onion;
+		// this.myObject=myObject;
+		Core.getSingleInstance().addVisualizer(
+				ownerEngine.getOnionString(OOBDConstants.FN_NAME), this);
+	}
 
-    /** sets the corrosponding visual element to this visualizer
-     * 
-     * @param myObject
-     */
-    public void setOwner(IFvisualizer myObject) {
-        this.myObject = myObject;
-    }
+	/**
+	 * sets the corrosponding visual element to this visualizer
+	 * 
+	 * @param myObject
+	 */
+	public void setOwner(IFvisualizer myObject) {
+		this.myObject = myObject;
+	}
 
-    /** sets the Value for this visualizer
-     * 
-     * @param myObject
-     */
-    public void setValue(Onion value) {
-        if (this.name.matches(value.getOnionString("to/name"))) {
-            try {
-            	Logger.getLogger(Visualizer.class.getName()).log(Level.INFO,"Visualizer.setValue(): update needed.");
-                this.value = new Onion(value.toString());
-                updateNeeded = true;
-             } catch (JSONException ex) {
-            }
-        }
-    }
+	/**
+	 * sets the Value for this visualizer
+	 * 
+	 * @param myObject
+	 */
+	public void setValue(Onion value) {
+		if (this.name.matches(value.getOnionString("to/name"))) {
+			try {
+				Logger.getLogger(Visualizer.class.getName()).log(Level.INFO,
+						"Visualizer.setValue(): update needed.");
+				this.value = new Onion(value.toString());
+				updateNeeded = true;
+			} catch (JSONException ex) {
+			}
+		}
+	}
 
-    public String getValue(String name) {
-        if (value != null) {
-            return value.getOnionString(name);
-        } else {
-            return null;
-        }
-    }
+	public String getValue(String name) {
+		if (value != null) {
+			return value.getOnionString(name);
+		} else {
+			return null;
+		}
+	}
 
-    /** returns the name of the owning scriptengine
-     *
-     * @return
-     */
-    public String getOwnerEngine() {
-        return ownerEngine.getOnionString(OOBDConstants.FN_NAME);
-    }
+	public boolean getUpdateFlag(int bitNr){
+		return (updateEvents & (1 << bitNr)) !=0;
+	}
+	
+	/**
+	 * returns the name of the owning scriptengine
+	 * 
+	 * @return
+	 */
+	public String getOwnerEngine() {
+		return ownerEngine.getOnionString(OOBDConstants.FN_NAME);
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getToolTip() {
-        return toolTip;
-    }
+	public String getToolTip() {
+		return toolTip;
+	}
 
-    @Override
-    public String toString() {
-        String val = getValue("value");
-        if (val == null) {
-            return "#NA";
-        } else {
-            return val;
-        }
+	@Override
+	public String toString() {
+		String val = getValue("value");
+		if (val == null) {
+			return "#NA";
+		} else {
+			return val;
+		}
 
-    }
+	}
 
-    /** do update
-     *  0: start 1: update data 2: finish
-     */
-    public void doUpdate(int updateLevel) {
-        if (myObject != null && updateNeeded) {
-            updateNeeded = !myObject.update(updateLevel);
-        }
-    }
+	/**
+	 * do update 0: start 1: update data 2: finish
+	 */
+	public void doUpdate(int updateLevel) {
+		if (myObject != null && updateNeeded) {
+			updateNeeded = !myObject.update(updateLevel);
+		}
+	}
 
-    /** Update request from Component
-     *  \todo the information, if the user has changed any selection, needs to be addded
-     * \ingroup visualisation
-     */
-    public void updateRequest(int type) {
-        Logger.getLogger(Visualizer.class.getName()).log(Level.INFO,"Update request" + Integer.toString(type)+" my ownwer is: " + ownerEngine.toString()+"actual visualizer data: " + value.toString());
-        try {
-            Core.getSingleInstance().transferMsg(new Message(Core.getSingleInstance(), OOBDConstants.CoreMailboxName, new Onion(""
-                    + "{"
-                    + "'type':'" + OOBDConstants.CM_UPDATE
-                    + "',"
-                    + "'vis':'" + this.name
-                    + "',"
-                    + "'to':'" + getOwnerEngine()
-                    + "',"
-                    + "'optid':'" + this.optId
-                    + "',"
-                    + "'actValue':'" + getValue("value")
-                    + "',"
-                    + "'updType':" + Integer.toString(type)
-                    + "}")));
-        } catch (JSONException ex) {
-            Logger.getLogger(Visualizer.class.getName()).log(Level.SEVERE, null, ex);
-        }
+	/**
+	 * Update request from Component \todo the information, if the user has
+	 * changed any selection, needs to be addded \ingroup visualisation
+	 */
+	public void updateRequest(int type) {
+		Logger.getLogger(Visualizer.class.getName()).log(
+				Level.INFO,
+				"Update request" + Integer.toString(type) + " my ownwer is: "
+						+ ownerEngine.toString() + "actual visualizer data: "
+						+ value.toString());
+		try {
+			Core.getSingleInstance().transferMsg(
+					new Message(Core.getSingleInstance(),
+							OOBDConstants.CoreMailboxName, new Onion("" + "{"
+									+ "'type':'" + OOBDConstants.CM_UPDATE
+									+ "'," + "'vis':'" + this.name + "',"
+									+ "'to':'" + getOwnerEngine() + "',"
+									+ "'optid':'" + this.optId + "',"
+									+ "'actValue':'" + getValue("value") + "',"
+									+ "'updType':" + Integer.toString(type)
+									+ "}")));
+		} catch (JSONException ex) {
+			Logger.getLogger(Visualizer.class.getName()).log(Level.SEVERE,
+					null, ex);
+		}
 
-    }
+	}
 }
