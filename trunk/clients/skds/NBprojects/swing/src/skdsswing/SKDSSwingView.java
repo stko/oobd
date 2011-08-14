@@ -258,14 +258,14 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
         //...Get information from the action event...
         //...Display it in the text area...
          Logger.getLogger(SKDSSwingView.class.getName()).log(Level.CONFIG,"Attempt to create ScriptEngine " + e.getActionCommand());
-        String seID = oobdCore.createScriptEngine(e.getActionCommand()); //first get the unique name for the new scriptEngine Canvas
+        String seID = oobdCore.createScriptEngine(e.getActionCommand(),null); //first get the unique name for the new scriptEngine Canvas
         JTabbedPane newjTabPane = new JTabbedPane(); //create a inner JTabbedPane as container for the later coming scriptengine pages
         newjTabPane.setName(seID); // set the name of that canvas that it can be found again later
         mainSeTabbedPane.addTab(seID, newjTabPane); // and put this canvas inside the pane which belongs to that particular scriptengine
         mainSeTabbedPane.setSelectedComponent(newjTabPane); // bring the new pane to front
         // and now, after initalisation of the UI, let the games begin...
         oobdCore.setAssign(seID, org.oobd.base.OOBDConstants.CL_PANE, newjTabPane); //store the related drawing pane, the TabPane for that scriptengine
-        oobdCore.startScriptEngine(seID);
+        oobdCore.startScriptEngine(seID,null);
 
 
     }

@@ -99,7 +99,7 @@ public class ScriptengineLua extends OobdScriptengine {
                     String updevent = "";
                     int oobdElementFlags = getInt(3);
                     if (oobdElementFlags > 0) {
-                        updevent = "'updevent':" + oobdElementFlags + ",";
+                        updevent = "'"+FN_UPDATEOPS+"':" + oobdElementFlags + ",";
                     }
                     String optid = getString(4); //String id
                     // Android: String.isEmpty() not available
@@ -297,19 +297,24 @@ public class ScriptengineLua extends OobdScriptengine {
             }
         });
 
-
-
-        Properties props = new Properties();
-        try {
-            props.load(UISystem.generateResourceStream(FT_PROPS, UISystem.generateUIFilePath(FT_PROPS, "enginelua.props")));
-        } catch (Exception ignored) {
-            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG, "couldn't load properties");
+        String scriptPath = null;
+        if (myStartupParam != null) {
+            scriptPath = myStartupParam.getOnionString("scriptpath");
         }
-
+        // given filename overrides config settings
+        if (scriptPath == null) {
+            Properties props = new Properties();
+            try {
+                props.load(UISystem.generateResourceStream(FT_PROPS, UISystem.generateUIFilePath(FT_PROPS, "enginelua.props")));
+                scriptPath = props.getProperty("LuaDefaultScript", ENG_LUA_DEFAULT);
+            } catch (Exception ignored) {
+                Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG, "couldn't load properties");
+            }
+        }
         try {
-            doScript(props.getProperty("LuaDefaultScript", ENG_LUA_DEFAULT));
+            doScript(scriptPath);
         } catch (IOException ex) {
-            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, "couldn't run script engine",ex);
+            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, "couldn't run script engine", ex);
         }
         int i = 0;
         while (keepRunning == true) {
@@ -383,9 +388,9 @@ public class ScriptengineLua extends OobdScriptengine {
 
         //String response = BaseLib.rawTostring(fObject.env.rawget(1));
         //fObject.push(response.intern());
-        if (results.length>1){
+        if (results.length > 1) {
             return (String) results[1];
-        }else{
+        } else {
             return "";
         }
 

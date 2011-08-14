@@ -95,7 +95,7 @@ public class AndroidGui implements IFui {
 
 	public void openPage(String seID, String Name, int colcount, int rowcount) {
 		// TODO Auto-generated method stub
-		Diagnose.getInstance().setMenuTitle(Name);
+		DiagnoseTab.getInstance().setMenuTitle(Name);
 		Log.v(this.getClass().getSimpleName(), "Und jetzt open page machen..");
 		VizTable vizTable = VizTable.getInstance("", "");
 		if (vizTable != null && !vizTable.isEmpty())
@@ -109,17 +109,17 @@ public class AndroidGui implements IFui {
 		
 	}
 	
-	public void startScriptEngine () {
+	public void startScriptEngine (Onion onion) {
 		System.out.println("Attempt to create ScriptEngine ");
 		
-        String seID = OOBDApp.getInstance().getCore().createScriptEngine(scriptEngineID);
+        String seID = OOBDApp.getInstance().getCore().createScriptEngine(scriptEngineID,onion);
         
         //JTabbedPane newjTabPane = new JTabbedPane(); //create a inner JTabbedPane as container for the later coming scriptengine pages
         //newjTabPane.setName(seID); // set the name of that canvas that it can be found again later
         //mainSeTabbedPane.addTab(seID, newjTabPane); // and put this canvas inside the pane which belongs to that particular scriptengine
         // and now, after initalisation of the UI, let the games begin...
         OOBDApp.getInstance().getCore().setAssign(seID, org.oobd.base.OOBDConstants.CL_PANE, new Object()); //store the related drawing pane, the TabPane for that scriptengine
-        OOBDApp.getInstance().getCore().startScriptEngine(seID);
+        OOBDApp.getInstance().getCore().startScriptEngine(seID,onion);
 	}
 
 }

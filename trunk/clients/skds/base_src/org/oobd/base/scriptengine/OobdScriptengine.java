@@ -5,6 +5,7 @@
 package org.oobd.base.scriptengine;
 
 import org.oobd.base.*;
+import org.oobd.base.support.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
@@ -13,7 +14,7 @@ import java.util.logging.Logger;
  */
 abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstants {
 
-
+	protected Onion myStartupParam;
   
     public static String publicName() {
         /* the abstract class also needs to have this method, because it's also loaded during dynamic loading, and the empty return string
@@ -31,5 +32,7 @@ abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstan
 
     }
 
-    
+    public void setStartupParameter(Onion onion){
+    	myStartupParam=onion;
+    }
 }
