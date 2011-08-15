@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/diagnoseButtonLayout">
+        <ImageButton android:layout_weight="1" android:layout_width="wrap_content" android:layout_height="fill_parent" android:id="@+id/clearButton" android:src="@drawable/cancel"></ImageButton>
+        <ToggleButton android:layout_weight="1" android:text="ToggleButton" android:layout_width="wrap_content" android:id="@+id/loggingToggleButton" android:layout_height="fill_parent" android:textOff="no Log" android:textOn="Log" android:checked="true"></ToggleButton>
+        <ImageButton android:layout_weight="1" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/diskButton" android:src="@drawable/disk"></ImageButton>
+        <ImageButton android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/mailButton" android:src="@drawable/forward" android:layout_width="wrap_content"></ImageButton>
+    </LinearLayout>
+    <EditText android:layout_width="fill_parent" android:inputType="textMultiLine" android:layout_height="fill_parent" android:id="@+id/outputText" android:isScrollContainer="true" android:saveEnabled="true">
+        <requestFocus></requestFocus>
+    </EditText>
+</LinearLayout>
