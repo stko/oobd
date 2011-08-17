@@ -5,11 +5,10 @@
     android:layout_height="fill_parent">
     <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/diagnoseButtonLayout">
         <ImageButton android:layout_weight="1" android:layout_width="wrap_content" android:src="@drawable/update" android:layout_height="fill_parent" android:id="@+id/updateButton"></ImageButton>
-        <ImageButton android:layout_weight="1" android:layout_height="wrap_content" android:src="@drawable/timer" android:layout_width="wrap_content" android:id="@+id/timerButton"></ImageButton>
+        <ToggleButton android:layout_weight="1" android:layout_height="wrap_content" android:text="ToggleButton" android:layout_width="wrap_content" android:id="@+id/timerButton" android:lines="0"></ToggleButton>
     </LinearLayout>
     <ListView
-        android:id="@id/android:list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" 
-        android:layout_weight="1"/>
+        android:layout_weight="1" android:id="@+id/android:list"/>
 </LinearLayout>
