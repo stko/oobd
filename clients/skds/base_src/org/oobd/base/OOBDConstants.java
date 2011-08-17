@@ -37,17 +37,19 @@ public interface OOBDConstants {
     public static final String FN_UPDATEOPS = "updevents";
     // Types of the different visualizer update requests
     public static final Integer UR_USER = 0;
+    public static final Integer UR_UPDATE = 1;
+    public static final Integer UR_TIMER = 2;
     // Path for oobdcore.props:
      public final static String CorePrefsFileName = "oobdcore.props";
     //
     public final static String CoreMailboxName = "core";
     public final static String BusMailboxName = "BusCom";
-    // definitions of the Visual Elements Handling flags
-     public final static int VE_MENU = 0x01;
-    public final static int VE_UPDATE = 0x02;
-    public final static int VE_TIMER = 0x03;
-    public final static int VE_LOG = 0x04;
-    public final static int VE_BACK = 0x05;
+    // definitions of the Visual Elements Handling flags (=bitpositions)
+     public final static int VE_MENU = 0;
+    public final static int VE_UPDATE = 1;
+    public final static int VE_TIMER = 2;
+    public final static int VE_LOG = 3;
+    public final static int VE_BACK = 4;
     // definitions for the different directories where the UI searches standard files in
     public final static int FT_PROPS = 0;
     public final static int FT_SCRIPT = 1;

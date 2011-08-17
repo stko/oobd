@@ -107,31 +107,31 @@ public class DiagnoseAdapter extends ArrayAdapter<DiagnoseItem> {
 			forwardImageView
 */			
 			if (item.getMyVisualizer().getUpdateFlag(4)){
-				((ImageView) convertView.findViewById(R.id.backImageView)).setImageBitmap(myIcons[OOBDConstants.VE_BACK]);
+				((ImageView) convertView.findViewById(R.id.backImageView)).setImageBitmap(myIcons[OOBDConstants.VE_BACK+1]);
 			}else{
 				((ImageView) convertView.findViewById(R.id.backImageView)).setImageBitmap(myIcons[0]);			
 			}
 			
 			if (item.getMyVisualizer().getUpdateFlag(1)){
-				((ImageView) convertView.findViewById(R.id.updateImageView)).setImageBitmap(myIcons[OOBDConstants.VE_UPDATE]);
+				((ImageView) convertView.findViewById(R.id.updateImageView)).setImageBitmap(myIcons[OOBDConstants.VE_UPDATE+1]);
 			}else{
 				((ImageView) convertView.findViewById(R.id.updateImageView)).setImageBitmap(myIcons[0]);
 			}
 			
 			if (item.getMyVisualizer().getUpdateFlag(2)){
-				((ImageView) convertView.findViewById(R.id.timerImageView)).setImageBitmap(myIcons[OOBDConstants.VE_TIMER]);
+				((ImageView) convertView.findViewById(R.id.timerImageView)).setImageBitmap(myIcons[OOBDConstants.VE_TIMER+1]);
 			}else{
 				((ImageView) convertView.findViewById(R.id.timerImageView)).setImageBitmap(myIcons[0]);
 			}
 			
 			if (item.getMyVisualizer().getUpdateFlag(3)){
-				((ImageView) convertView.findViewById(R.id.LogImageView)).setImageBitmap(myIcons[OOBDConstants.VE_LOG]);
+				((ImageView) convertView.findViewById(R.id.LogImageView)).setImageBitmap(myIcons[OOBDConstants.VE_LOG+1]);
 			}else{
 				((ImageView) convertView.findViewById(R.id.LogImageView)).setImageBitmap(myIcons[0]);
 			}
 			
 			if (item.getMyVisualizer().getUpdateFlag(0)){
-				((ImageView) convertView.findViewById(R.id.forwardImageView)).setImageBitmap(myIcons[OOBDConstants.VE_MENU]);
+				((ImageView) convertView.findViewById(R.id.forwardImageView)).setImageBitmap(myIcons[OOBDConstants.VE_MENU+1]);
 			}else{
 				((ImageView) convertView.findViewById(R.id.forwardImageView)).setImageBitmap(myIcons[0]);
 			}
