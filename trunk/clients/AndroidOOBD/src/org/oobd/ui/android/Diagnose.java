@@ -44,11 +44,16 @@ public class Diagnose extends ListActivity {
 	private static DiagnoseAdapter mDiagnoseAdapter;
 	public static Diagnose myDiagnoseInstance = null;
 	public static Handler myRefreshHandler;
+	private ToggleButton myTimerButton;
 	private Handler myTimerHandler = new Handler();
 	private Runnable mUpdateTimeTask = new Runnable() {
 		public void run() {
-
-			myTimerHandler.postAtTime(this, SystemClock.uptimeMillis() + 200);
+			System.out.println("Tick:"+Integer.toString((int) SystemClock.uptimeMillis()));
+			if (myTimerButton.isChecked()) {
+				refreshView(OOBDConstants.VE_TIMER);
+				myTimerHandler.postAtTime(this,
+						SystemClock.uptimeMillis() + OOBDConstants.LV_UPDATE);
+			}
 		}
 	};
 
@@ -99,11 +104,21 @@ public class Diagnose extends ListActivity {
 						refreshView(OOBDConstants.VE_UPDATE);
 					}
 				});
+		myTimerButton = (ToggleButton) findViewById(R.id.timerButton);
+		myTimerButton.setOnClickListener(new View.OnClickListener() {
+
+			public void onClick(View v) {
+				if (((ToggleButton) v).isChecked()) {
+					myTimerHandler.removeCallbacks(mUpdateTimeTask);
+					myTimerHandler.postDelayed(mUpdateTimeTask,  OOBDConstants.LV_UPDATE);
+				}
+			}
+		});
 		Drawable d = getResources().getDrawable(R.drawable.timer);
 		d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
 		((ToggleButton) findViewById(R.id.timerButton)).setCompoundDrawables(
 				null, d, null, null);
-	    registerForContextMenu(mDiagnoseListView);
+		registerForContextMenu(mDiagnoseListView);
 
 	}
 
@@ -120,16 +135,16 @@ public class Diagnose extends ListActivity {
 			menu.add(Menu.NONE, 2, 2, "Log");
 		}
 	}
-	
+
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		super.onContextItemSelected(item);
-	  AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-	  int menuItemIndex = item.getItemId();
-	  int ListItemIndex =info.position;
-	  return true;
+		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
+				.getMenuInfo();
+		int menuItemIndex = item.getItemId();
+		int ListItemIndex = info.position;
+		return true;
 	}
-	
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
@@ -145,7 +160,7 @@ public class Diagnose extends ListActivity {
 	}
 
 	public void setmDiagnoseAdatper(DiagnoseAdapter mDiagnoseAdatper) {
-		this.mDiagnoseAdapter = mDiagnoseAdatper;
+		mDiagnoseAdapter = mDiagnoseAdatper;
 	}
 
 	public void setItems(VizTable data) {

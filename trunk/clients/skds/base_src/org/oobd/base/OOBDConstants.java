@@ -56,4 +56,6 @@ public interface OOBDConstants {
     public final static int FT_BUS = 2;
     public final static int FT_ENGINE = 3;
     public final static int FT_DATABASE = 4;
+    // loop time for timer triggered List- Updates in ms
+    public final static int LV_UPDATE = 1000;
 }
