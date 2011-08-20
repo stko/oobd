@@ -57,7 +57,7 @@ namespace org.oobd.tools.OpenDiagX
                 addTextnode(root, "PhysAdress", getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS"));
                 addTextnode(root, "Bus", getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/NAME"));
                 addTextnode(root, "BusSpeed", getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/DATA_RATE"));
-                addTextnode(root, "PhysAdressShort", getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS").Substring(4, 2));
+                addTextnode(root, "PhysAdressShort", getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS").Substring(3, 2));
                 //Module Short Name
                 addTextnode(root, "ShortName", getpath(nav, "ADMINISTRATION/SHORTNAME"));
                 //Module Name
@@ -97,9 +97,16 @@ namespace org.oobd.tools.OpenDiagX
         }
         private String getpath(XPathNavigator nav, String path)
         {
-            XPathNodeIterator iterator = (XPathNodeIterator)nav.Evaluate(path + "/text()");
-            iterator.MoveNext();
-            return iterator.Current.Value.ToString();
+            if (nav.SelectSingleNode(path + "/text()") != null)
+            {
+                XPathNodeIterator iterator = (XPathNodeIterator)nav.Evaluate(path + "/text()");
+                iterator.MoveNext();
+                return iterator.Current.Value.ToString();
+            }
+            else
+            {
+                return null;
+            }
         }
         private void handleBitmap(XPathNodeIterator iterator)
         {
@@ -127,11 +134,11 @@ namespace org.oobd.tools.OpenDiagX
                         XPathNodeIterator iterator5 = iterator4.Current.Select("ENUM_MEMBER");
                         while (iterator5.MoveNext())
                         {
-                            if (getpath(iterator5.Current, "ENUM_VALUE").Equals("0x00"))
+                            if (getpath(iterator5.Current, "ENUM_VALUE").Equals("0x00") || getpath(iterator5.Current, "ENUM_VALUE").Equals("0")) // here a correct numeric convertion would be nessecary...
                             {
                                 lowText = getpath(iterator5.Current, "DESCRIPTION");
                             }
-                            if (getpath(iterator5.Current, "ENUM_VALUE").Equals("0x01"))
+                            if (getpath(iterator5.Current, "ENUM_VALUE").Equals("0x01") || getpath(iterator5.Current, "ENUM_VALUE").Equals("1")) // here a correct numeric convertion would be nessecary...
                             {
                                 highText = getpath(iterator5.Current, "DESCRIPTION");
                             }
@@ -151,12 +158,17 @@ namespace org.oobd.tools.OpenDiagX
         {
             String HighPid = getpath(iterator.Current, "NUMBER").Substring(2, 2);
             String LowPid = getpath(iterator.Current, "NUMBER").Substring(4, 2);
+            String parentLevelName = getpath(iterator.Current, "NAME");
 
             XPathNodeIterator iterator2 = iterator.Current.Select("SUB_FIELD");
             while (iterator2.MoveNext())
             {
                 //String Name = getpath(iterator.Current, "NAME") + " - " + getpath(iterator2.Current, "NAME");
                 String Name = getpath(iterator2.Current, "NAME");
+                if (Name == null)
+                {
+                    Name = parentLevelName;
+                }
                 String LBit = getpath(iterator2.Current, "LEAST_SIG_BIT");
                 String MBit = getpath(iterator2.Current, "MOST_SIG_BIT");
                 XmlElement thisDIDEntry = addSubNode(root, "ASCII");
@@ -170,12 +182,16 @@ namespace org.oobd.tools.OpenDiagX
         {
             String HighPid = getpath(iterator.Current, "NUMBER").Substring(2, 2);
             String LowPid = getpath(iterator.Current, "NUMBER").Substring(4, 2);
-
+            String parentLevelName = getpath(iterator.Current, "NAME");
             XPathNodeIterator iterator2 = iterator.Current.Select("SUB_FIELD");
             while (iterator2.MoveNext())
             {
                 //String Name = getpath(iterator.Current, "NAME") + " - " + getpath(iterator2.Current, "NAME");
                 String Name = getpath(iterator2.Current, "NAME");
+                if (Name == null)
+                {
+                    Name = parentLevelName;
+                }
                 String LBit = getpath(iterator2.Current, "LEAST_SIG_BIT");
                 String MBit = getpath(iterator2.Current, "MOST_SIG_BIT");
                 XmlElement thisDIDEntry = addSubNode(root, "NUM");
