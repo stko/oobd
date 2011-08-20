@@ -13,9 +13,11 @@ import org.oobd.base.visualizer.IFvisualizer;
 import org.oobd.base.visualizer.Visualizer;
 import org.oobd.ui.android.Diagnose;
 import org.oobd.ui.android.DiagnoseTab;
+import org.oobd.ui.android.MainActivity;
 import org.oobd.ui.android.OutputActivity;
 import org.oobd.ui.android.VizTable;
 
+//import android.app.ProgressDialog;
 import android.util.Log;
 
 public class AndroidGui implements IFui {
@@ -95,7 +97,9 @@ public class AndroidGui implements IFui {
 
 	public void openPage(String seID, String Name, int colcount, int rowcount) {
 		// TODO Auto-generated method stub
+		Diagnose.getInstance().stopProgressDialog();
 		DiagnoseTab.getInstance().setMenuTitle(Name);
+		Diagnose.getInstance().startProgressDialog("build Page...");
 		Log.v(this.getClass().getSimpleName(), "Und jetzt open page machen..");
 		VizTable vizTable = VizTable.getInstance("", "");
 		if (vizTable != null && !vizTable.isEmpty())
@@ -105,6 +109,7 @@ public class AndroidGui implements IFui {
 	public void openPageCompleted(String seID, String Name) {
 
 		Diagnose.getInstance().setItems(VizTable.getInstance("", ""));
+		Diagnose.getInstance().stopProgressDialog();
 		Log.v(this.getClass().getSimpleName(), "...open page completed");
 		
 	}
@@ -119,7 +124,10 @@ public class AndroidGui implements IFui {
         //mainSeTabbedPane.addTab(seID, newjTabPane); // and put this canvas inside the pane which belongs to that particular scriptengine
         // and now, after initalisation of the UI, let the games begin...
         OOBDApp.getInstance().getCore().setAssign(seID, org.oobd.base.OOBDConstants.CL_PANE, new Object()); //store the related drawing pane, the TabPane for that scriptengine
+        //stop the Progress Dialog BEFORE the script starts
+        //Diagnose.getInstance().stopProgressDialog();
         OOBDApp.getInstance().getCore().startScriptEngine(seID,onion);
+
 	}
 
 }

@@ -13,6 +13,7 @@ import org.oobd.ui.android.application.AndroidGui;
 import org.oobd.ui.android.application.OOBDApp;
 
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,14 +47,17 @@ public class Diagnose extends ListActivity {
 	public static Diagnose myDiagnoseInstance = null;
 	public static Handler myRefreshHandler;
 	private ToggleButton myTimerButton;
+	private ProgressDialog myProgressDialog;
 	private Handler myTimerHandler = new Handler();
 	private Runnable mUpdateTimeTask = new Runnable() {
 		public void run() {
 			System.out.println("Tick:"+Integer.toString((int) SystemClock.uptimeMillis()));
 			if (myTimerButton.isChecked()) {
 				refreshView(OOBDConstants.VE_TIMER);
-				myTimerHandler.postAtTime(this,
-						SystemClock.uptimeMillis() + OOBDConstants.LV_UPDATE);
+				myTimerHandler.postDelayed(this,
+						OOBDConstants.LV_UPDATE);
+			}else{
+				myTimerHandler.removeCallbacks(mUpdateTimeTask);
 			}
 		}
 	};
@@ -86,20 +91,31 @@ public class Diagnose extends ListActivity {
 			public void handleMessage(Message msg) {
 				switch (msg.what) {
 				case 1:
-					/* Refresh UI */
+					/* Refresh view */
 					((DiagnoseAdapter) mDiagnoseListView.getAdapter())
 							.notifyDataSetChanged();
 					break;
 				case 2:
-					/* Refresh UI */
+					/* Set Listview Title */
 					myDiagnoseInstance.setTitle(msg.obj.toString());
+					break;
+				case 3:
+					/* Set Listview Title */
+					myProgressDialog=ProgressDialog.show(Diagnose.this, "",
+							msg.obj.toString(), true);
+					break;
+				case 4:
+					/* Stop Progress Dialog */
+					if (myProgressDialog!=null){
+						myProgressDialog.dismiss();
+					}
 					break;
 				}
 			}
 		};
 		((ImageButton) findViewById(R.id.updateButton))
 				.setOnClickListener(new View.OnClickListener() {
-
+					// mark all updateable list item as to be updated
 					public void onClick(View v) {
 						refreshView(OOBDConstants.VE_UPDATE);
 					}
@@ -108,18 +124,20 @@ public class Diagnose extends ListActivity {
 		myTimerButton.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
+				// start the regular timer tick to refresh items
 				if (((ToggleButton) v).isChecked()) {
 					myTimerHandler.removeCallbacks(mUpdateTimeTask);
 					myTimerHandler.postDelayed(mUpdateTimeTask,  OOBDConstants.LV_UPDATE);
 				}
 			}
 		});
+		// sweeze the icon into the timer- tooglebutton
 		Drawable d = getResources().getDrawable(R.drawable.timer);
 		d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
 		((ToggleButton) findViewById(R.id.timerButton)).setCompoundDrawables(
 				null, d, null, null);
 		registerForContextMenu(mDiagnoseListView);
-
+		startProgressDialog("Load Script");
 	}
 
 	@Override
@@ -133,16 +151,37 @@ public class Diagnose extends ListActivity {
 			menu.add(Menu.NONE, 0, 0, "Update");
 			menu.add(Menu.NONE, 1, 1, "Timer");
 			menu.add(Menu.NONE, 2, 2, "Log");
+			menu.add(Menu.NONE, 3, 3, "Back");
 		}
 	}
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		super.onContextItemSelected(item);
+		//super.onContextItemSelected(item);
 		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
 				.getMenuInfo();
-		int menuItemIndex = item.getItemId();
 		int ListItemIndex = info.position;
+		DiagnoseItem myItem=mDiagnoseItems.get(ListItemIndex);
+		Visualizer myVisualizer=myItem.getMyVisualizer();
+		switch (item.getItemId()){
+		case 0:
+			myVisualizer.setUpdateFlag(OOBDConstants.VE_UPDATE,!myVisualizer.getUpdateFlag(OOBDConstants.VE_UPDATE));
+			break;
+		case 1:
+			myVisualizer.setUpdateFlag(OOBDConstants.VE_TIMER,!myVisualizer.getUpdateFlag(OOBDConstants.VE_TIMER));
+			break;
+		case 2:
+			myVisualizer.setUpdateFlag(OOBDConstants.VE_LOG,!myVisualizer.getUpdateFlag(OOBDConstants.VE_LOG));
+			break;
+		case 3:
+			myVisualizer.setUpdateFlag(OOBDConstants.VE_BACK,!myVisualizer.getUpdateFlag(OOBDConstants.VE_BACK));
+			break;
+			
+		}
+		System.out.println("Sende Broadcast Event...");
+		Intent broadcast=new Intent(OOBDApp.VISUALIZER_UPDATE);
+		broadcast.putExtra(OOBDApp.UPDATE_LEVEL, 1);
+		Diagnose.myDiagnoseInstance.getApplicationContext().sendBroadcast(broadcast);
 		return true;
 	}
 
@@ -155,6 +194,27 @@ public class Diagnose extends ListActivity {
 		myVisualizer.updateRequest(OOBDConstants.UR_USER);
 	}
 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// if back- button is pressed
+	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+			synchronized (mDiagnoseItems) {
+				if (mDiagnoseItems != null) {
+					// searching for list entry which contains the "back"- Flag
+					int i;
+					for (i = 0; i < mDiagnoseItems.size() && !mDiagnoseItems.get(i).getMyVisualizer().getUpdateFlag(OOBDConstants.VE_BACK); i++) {						
+						}
+					if (i< mDiagnoseItems.size()){ // a "back"-item found
+						mDiagnoseItems.get(i).getMyVisualizer().updateRequest(OOBDConstants.UR_USER); // simulate a user selection of this list item
+						return true; // stop further handling of the back-button
+					}
+				}
+			}
+	    }
+	    return super.onKeyDown(keyCode, event);
+	}
+
+	
 	public DiagnoseAdapter getmDiagnoseAdatper() {
 		return mDiagnoseAdapter;
 	}
@@ -170,6 +230,16 @@ public class Diagnose extends ListActivity {
 	public void setMenuTitle(String title) {
 		myRefreshHandler
 				.sendMessage(Message.obtain(myRefreshHandler, 2, title));
+	}
+	
+	public void startProgressDialog(String title) {
+		myRefreshHandler
+				.sendMessage(Message.obtain(myRefreshHandler, 3, title));
+	}
+
+	public void stopProgressDialog() {
+		myRefreshHandler
+				.sendMessage(Message.obtain(myRefreshHandler, 4, null));
 	}
 
 	@Override
