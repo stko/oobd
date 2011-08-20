@@ -193,7 +193,7 @@ function createCall(availPIDs, id, title, func)
       if hasBit(availPIDs[byteNr], bitNr) then
                 idstring=string.format("%X",id)
                 print("Id-String=",idstring,id)
-		addElement(title, func,"-",0x2, "0x"..string.format("%X",id))
+		addElement(title, func,"-",0x6, "0x"..string.format("%X",id))
 
 	end
 end
@@ -247,7 +247,7 @@ function createCMD01Menu(oldvalue,id)
                                 createCall(availPIDs, 0x1F,"Run time since engine start", "getNumPIDs")
 
 				-----------------------------------------
-				addElement("<<< Main", "Start","<<<",0x1, "")
+				addElement("<<< Main", "Start","<<<",0x10, "")
 				pageDone()
 				return oldvalue
 			else
@@ -291,7 +291,7 @@ function createCMD02Menu(oldvalue,id)
                                 createCall(availPIDs, 0x28,"O2S5_WR_lambda(1): Equivalence Ratio Voltage", "getNumPIDs")
                                 createCall(availPIDs, 0x128,"O2S5_WR_lambda(1): Equivalence Ratio Voltage", "getNumPIDs")
 				-----------------------------------------
-				addElement("<<< Main", "Start","<<<",0x1, "")
+				addElement("<<< Main", "Start","<<<",0x10, "")
 				pageDone()
 				return oldvalue
 			else
@@ -355,7 +355,7 @@ function createCMD03Menu(oldvalue,id)
                                 createCall(availPIDs, 0x3E,"Catalyst Temperature Bank 1, Sensor 2", "getNumPIDs")
                                 createCall(availPIDs, 0x3F,"Catalyst Temperature Bank 2, Sensor 2", "getNumPIDs")
                         	-----------------------------------------
-				addElement("<<< Main", "Start","<<<",0x1, "")
+				addElement("<<< Main", "Start","<<<",0x10, "")
 				pageDone()
 				return oldvalue
 			else
@@ -438,16 +438,20 @@ function Start(oldvalue,id)
 	addElement("Sensor Data >", "createCMD01Menu",">>>",0x1, "")
         addElement("Snapshot Data >", "createCMD02Menu",">>>",0x1, "")
         addElement("Dynamic Menu3 >", "createCMD03Menu",">>>",0x1, "")
-	addElement("Trouble Codes", "showdtcs","-",0x1, "")
+	addElement("Trouble Codes", "showdtcs","-",0x0, "")
 	addElement("VIN Number", "vin","-",0x2, "")
 	addElement("Clear Trouble Codes", "clearDTC","-",0x0, "")
 	addElement("System Info >>>", "SysInfo_Menu",">>>",0x1, "")
-	addElement("Greetings", "greet","",0x1, "")
+	addElement("Greetings", "greet","",0x0, "")
 	pageDone()
 	return oldvalue
 end
 
 
+function CloseScript(oldvalue,id)
+	deactivateBus()
+	return oldvalue
+end
 ----------------- Do the initial settings --------------
 
 Start("","")

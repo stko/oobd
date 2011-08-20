@@ -195,6 +195,14 @@ public class Visualizer {
 		return (updateEvents & (1 << bitNr)) !=0;
 	}
 	
+	public void setUpdateFlag(int bitNr,boolean bit){
+		if (bit){
+			updateEvents |=(1 << bitNr);
+		}else{
+			updateEvents &=(~(1 << bitNr));
+		}
+	}
+	
 	/**
 	 * returns the name of the owning scriptengine
 	 * 

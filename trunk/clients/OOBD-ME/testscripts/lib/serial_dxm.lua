@@ -1,4 +1,4 @@
-﻿-- include the basic connectivity
+-- include the basic connectivity
 
 
 
@@ -230,6 +230,14 @@ function setModuleID(id)
   end
 end
 
+function deactivateBus()
+  if hardwareID == "OOBD" then
+    echoWrite("p 5 0\r")
+  else
+    
+  end
+end
+
 
 function setBus(bus)
   if hardwareID == "OOBD" then
@@ -242,6 +250,9 @@ function setBus(bus)
     if bus == "MS-CAN" then
       echoWrite("p 6 1\r")
     end
+   -- activate bus
+      echoWrite("p 5 31\r")
+
   else
     
   end
@@ -370,9 +381,9 @@ function SysInfo_Menu(oldvalue,id)
 	openPage("Sysinfo")
 	addElement("DXM Serial", "interface_serial","-",0x2, "")
 	addElement("DXM BIOS", "interface_version","-",0x2, "")
-	addElement("Power", "interface_voltage","-",0x2, "")
+	addElement("Power", "interface_voltage","-",0x6, "")
 	addElement("Which Bus?", "interface_bus","-",0x2, "")
-	addElement("<<< Main", "Start","<<<",0x1, "")
+	addElement("<<< Main", "Start","<<<",0x10, "")
 	pageDone()
 	return oldvalue
 end
