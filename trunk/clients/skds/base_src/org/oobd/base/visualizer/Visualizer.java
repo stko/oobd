@@ -125,7 +125,6 @@ import java.util.logging.Logger;
 import org.json.JSONException;
 import org.oobd.base.support.Onion;
 import org.oobd.base.*;
-
 /**
  * 
  * @author steffen
@@ -138,6 +137,8 @@ public class Visualizer {
 	String optId;
 	String toolTip;
 	int updateEvents;
+	int overflowProtection;
+	int overflowProtectionDelay = 1;
 	IFvisualizer myObject;
 	boolean updateNeeded = false;
 
@@ -178,6 +179,13 @@ public class Visualizer {
 						"Visualizer.setValue(): update needed.");
 				this.value = new Onion(value.toString());
 				updateNeeded = true;
+				// as this is an actual value, we can reset the overflow protection for now and switch the protection delay one step downwards
+				if(overflowProtectionDelay>1){
+					overflowProtectionDelay--;
+				}
+				System.out.println("reduce overflow delay to"+Integer.toString(overflowProtectionDelay));
+				overflowProtection=0;
+
 			} catch (JSONException ex) {
 			}
 		}
@@ -191,18 +199,18 @@ public class Visualizer {
 		}
 	}
 
-	public boolean getUpdateFlag(int bitNr){
-		return (updateEvents & (1 << bitNr)) !=0;
+	public boolean getUpdateFlag(int bitNr) {
+		return (updateEvents & (1 << bitNr)) != 0;
 	}
-	
-	public void setUpdateFlag(int bitNr,boolean bit){
-		if (bit){
-			updateEvents |=(1 << bitNr);
-		}else{
-			updateEvents &=(~(1 << bitNr));
+
+	public void setUpdateFlag(int bitNr, boolean bit) {
+		if (bit) {
+			updateEvents |= (1 << bitNr);
+		} else {
+			updateEvents &= (~(1 << bitNr));
 		}
 	}
-	
+
 	/**
 	 * returns the name of the owning scriptengine
 	 * 
@@ -245,26 +253,39 @@ public class Visualizer {
 	 * changed any selection, needs to be addded \ingroup visualisation
 	 */
 	public void updateRequest(int type) {
-		Logger.getLogger(Visualizer.class.getName()).log(
-				Level.INFO,
-				"Update request" + Integer.toString(type) + " my ownwer is: "
-						+ ownerEngine.toString() + "actual visualizer data: "
-						+ value.toString());
-		try {
-			Core.getSingleInstance().transferMsg(
-					new Message(Core.getSingleInstance(),
-							OOBDConstants.CoreMailboxName, new Onion("" + "{"
-									+ "'type':'" + OOBDConstants.CM_UPDATE
-									+ "'," + "'vis':'" + this.name + "',"
-									+ "'to':'" + getOwnerEngine() + "',"
-									+ "'optid':'" + this.optId + "',"
-									+ "'actValue':'" + getValue("value") + "',"
-									+ "'updType':" + Integer.toString(type)
-									+ "}")));
-		} catch (JSONException ex) {
-			Logger.getLogger(Visualizer.class.getName()).log(Level.SEVERE,
-					null, ex);
+		System.out.println("update request type "+Integer.toString(type));
+		if (type != OOBDConstants.UR_TIMER || overflowProtection == 0) {
+			Logger.getLogger(Visualizer.class.getName()).log(
+					Level.INFO,
+					"Update request" + Integer.toString(type)
+							+ " my ownwer is: " + ownerEngine.toString()
+							+ "actual visualizer data: " + value.toString());
+			try {
+				Core.getSingleInstance().transferMsg(
+						new Message(Core.getSingleInstance(),
+								OOBDConstants.CoreMailboxName, new Onion(""
+										+ "{" + "'type':'"
+										+ OOBDConstants.CM_UPDATE + "',"
+										+ "'vis':'" + this.name + "',"
+										+ "'to':'" + getOwnerEngine() + "',"
+										+ "'optid':'" + this.optId + "',"
+										+ "'actValue':'" + getValue("value")
+										+ "'," + "'updType':"
+										+ Integer.toString(type) + "}")));
+			} catch (JSONException ex) {
+				Logger.getLogger(Visualizer.class.getName()).log(Level.SEVERE,
+						null, ex);
+			}
+			if (type == OOBDConstants.UR_TIMER) {
+				// reduce the actual delay time, which is used to reduce the overall number of
+				// sended msgs in case no update message is answered at all
+					overflowProtection = overflowProtectionDelay;
+			}
+		} else {
+			//overflow delay seems not sufficent, so increase it 
+			overflowProtectionDelay ++;
+			System.out.println("increase overflow delay to"+Integer.toString(overflowProtectionDelay));
+			overflowProtection--;
 		}
-
 	}
 }

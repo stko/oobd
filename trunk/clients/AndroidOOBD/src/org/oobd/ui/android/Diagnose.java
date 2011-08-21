@@ -53,7 +53,7 @@ public class Diagnose extends ListActivity {
 		public void run() {
 			System.out.println("Tick:"+Integer.toString((int) SystemClock.uptimeMillis()));
 			if (myTimerButton.isChecked()) {
-				refreshView(OOBDConstants.VE_TIMER);
+				refreshView(OOBDConstants.VE_TIMER,OOBDConstants.VE_TIMER);
 				myTimerHandler.postDelayed(this,
 						OOBDConstants.LV_UPDATE);
 			}else{
@@ -117,7 +117,7 @@ public class Diagnose extends ListActivity {
 				.setOnClickListener(new View.OnClickListener() {
 					// mark all updateable list item as to be updated
 					public void onClick(View v) {
-						refreshView(OOBDConstants.VE_UPDATE);
+						refreshView(OOBDConstants.VE_UPDATE,OOBDConstants.VE_UPDATE);
 					}
 				});
 		myTimerButton = (ToggleButton) findViewById(R.id.timerButton);
@@ -256,7 +256,7 @@ public class Diagnose extends ListActivity {
 		mDiagnoseAdapter.guiResumed();
 	}
 
-	protected void refreshView(int bitNr) {
+	protected void refreshView(int bitNr,int updateType) {
 		synchronized (mDiagnoseItems) {
 			if (mDiagnoseItems != null) {
 
@@ -266,7 +266,7 @@ public class Diagnose extends ListActivity {
 							.getItemAtPosition(i);
 					Visualizer myVisualizer = selectedItem.getMyVisualizer();
 					if (myVisualizer.getUpdateFlag(bitNr)) {
-						myVisualizer.updateRequest(OOBDConstants.UR_UPDATE);
+						myVisualizer.updateRequest(updateType);
 					}
 				}
 			}
