@@ -29,13 +29,13 @@ public class DiagnoseTab extends TabActivity {
 	    intent = new Intent().setClass(this, Diagnose.class);
 
 	    // Initialize a TabSpec for each tab and add it to the TabHost
-	    spec = myTabHost.newTabSpec("Diagnose").setIndicator("Diagnose")
+	    spec = myTabHost.newTabSpec("Diagnose").setIndicator("Diagnose",getResources().getDrawable(R.drawable.oobd_32))
 	                  .setContent(intent);
 	    myTabHost.addTab(spec);
 
 	    // Do the same for the other tabs
 	    intent = new Intent().setClass(this, OutputActivity.class);
-	    spec = myTabHost.newTabSpec("Output").setIndicator("Output")
+	    spec = myTabHost.newTabSpec("Output").setIndicator("Output",getResources().getDrawable(R.drawable.text))
 	                  .setContent(intent);
 	    myTabHost.addTab(spec);
 
