@@ -32,6 +32,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ToggleButton;
 import android.os.Message;
+import android.os.PowerManager;
 import android.os.SystemClock;
 
 /**
@@ -49,6 +50,8 @@ public class Diagnose extends ListActivity {
 	private ToggleButton myTimerButton;
 	private ProgressDialog myProgressDialog;
 	private Handler myTimerHandler = new Handler();
+	private PowerManager.WakeLock wl;
+	 
 	private Runnable mUpdateTimeTask = new Runnable() {
 		public void run() {
 			System.out.println("Tick:"+Integer.toString((int) SystemClock.uptimeMillis()));
@@ -128,6 +131,9 @@ public class Diagnose extends ListActivity {
 				if (((ToggleButton) v).isChecked()) {
 					myTimerHandler.removeCallbacks(mUpdateTimeTask);
 					myTimerHandler.postDelayed(mUpdateTimeTask,  OOBDConstants.LV_UPDATE);
+					  wl.acquire();
+				}else{
+					 wl.release();
 				}
 			}
 		});
@@ -138,6 +144,8 @@ public class Diagnose extends ListActivity {
 				null, d, null, null);
 		registerForContextMenu(mDiagnoseListView);
 		startProgressDialog("Load Script");
+		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		  wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
 	}
 
 	@Override
@@ -246,6 +254,10 @@ public class Diagnose extends ListActivity {
 	protected void onPause() {
 		super.onPause();
 		System.out.println("Diagnose.onPause(): unregister Broadcast Receiver");
+		if (myTimerButton.isChecked()) {
+			 wl.release();
+		}
+
 		mDiagnoseAdapter.guiPaused();
 	}
 
@@ -253,6 +265,9 @@ public class Diagnose extends ListActivity {
 	protected void onResume() {
 		super.onPause();
 		System.out.println("Diagnose.onResume(): register Broadcast Receiver");
+		if (myTimerButton.isChecked()) {
+			  wl.acquire();
+		}
 		mDiagnoseAdapter.guiResumed();
 	}
 
