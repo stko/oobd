@@ -43,6 +43,7 @@ import android.os.SystemClock;
 public class Diagnose extends ListActivity {
 
 	private ListView mDiagnoseListView;
+	public static boolean showDialog = true;
 	public static VizTable mDiagnoseItems; // diese Liste updaten
 	private static DiagnoseAdapter mDiagnoseAdapter;
 	public static Diagnose myDiagnoseInstance = null;
@@ -51,15 +52,15 @@ public class Diagnose extends ListActivity {
 	private ProgressDialog myProgressDialog;
 	private Handler myTimerHandler = new Handler();
 	private PowerManager.WakeLock wl;
-	 
+
 	private Runnable mUpdateTimeTask = new Runnable() {
 		public void run() {
-			System.out.println("Tick:"+Integer.toString((int) SystemClock.uptimeMillis()));
+			System.out.println("Tick:"
+					+ Integer.toString((int) SystemClock.uptimeMillis()));
 			if (myTimerButton.isChecked()) {
-				refreshView(OOBDConstants.VE_TIMER,OOBDConstants.VE_TIMER);
-				myTimerHandler.postDelayed(this,
-						OOBDConstants.LV_UPDATE);
-			}else{
+				refreshView(OOBDConstants.VE_TIMER, OOBDConstants.VE_TIMER);
+				myTimerHandler.postDelayed(this, OOBDConstants.LV_UPDATE);
+			} else {
 				myTimerHandler.removeCallbacks(mUpdateTimeTask);
 			}
 		}
@@ -104,12 +105,12 @@ public class Diagnose extends ListActivity {
 					break;
 				case 3:
 					/* Set Listview Title */
-					myProgressDialog=ProgressDialog.show(Diagnose.this, "",
+					myProgressDialog = ProgressDialog.show(Diagnose.this, "",
 							msg.obj.toString(), true);
 					break;
 				case 4:
 					/* Stop Progress Dialog */
-					if (myProgressDialog!=null){
+					if (myProgressDialog != null) {
 						myProgressDialog.dismiss();
 					}
 					break;
@@ -120,7 +121,8 @@ public class Diagnose extends ListActivity {
 				.setOnClickListener(new View.OnClickListener() {
 					// mark all updateable list item as to be updated
 					public void onClick(View v) {
-						refreshView(OOBDConstants.VE_UPDATE,OOBDConstants.VE_UPDATE);
+						refreshView(OOBDConstants.VE_UPDATE,
+								OOBDConstants.VE_UPDATE);
 					}
 				});
 		myTimerButton = (ToggleButton) findViewById(R.id.timerButton);
@@ -130,10 +132,11 @@ public class Diagnose extends ListActivity {
 				// start the regular timer tick to refresh items
 				if (((ToggleButton) v).isChecked()) {
 					myTimerHandler.removeCallbacks(mUpdateTimeTask);
-					myTimerHandler.postDelayed(mUpdateTimeTask,  OOBDConstants.LV_UPDATE);
-					  wl.acquire();
-				}else{
-					 wl.release();
+					myTimerHandler.postDelayed(mUpdateTimeTask,
+							OOBDConstants.LV_UPDATE);
+					wl.acquire();
+				} else {
+					wl.release();
 				}
 			}
 		});
@@ -143,9 +146,12 @@ public class Diagnose extends ListActivity {
 		((ToggleButton) findViewById(R.id.timerButton)).setCompoundDrawables(
 				null, d, null, null);
 		registerForContextMenu(mDiagnoseListView);
-		startProgressDialog("Load Script");
-		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		  wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
+		if (showDialog) {
+			startProgressDialog("Load Script");
+			showDialog=false;
+		}
+			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+			wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
 	}
 
 	@Override
@@ -165,31 +171,36 @@ public class Diagnose extends ListActivity {
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		//super.onContextItemSelected(item);
+		// super.onContextItemSelected(item);
 		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
 				.getMenuInfo();
 		int ListItemIndex = info.position;
-		DiagnoseItem myItem=mDiagnoseItems.get(ListItemIndex);
-		Visualizer myVisualizer=myItem.getMyVisualizer();
-		switch (item.getItemId()){
+		DiagnoseItem myItem = mDiagnoseItems.get(ListItemIndex);
+		Visualizer myVisualizer = myItem.getMyVisualizer();
+		switch (item.getItemId()) {
 		case 0:
-			myVisualizer.setUpdateFlag(OOBDConstants.VE_UPDATE,!myVisualizer.getUpdateFlag(OOBDConstants.VE_UPDATE));
+			myVisualizer.setUpdateFlag(OOBDConstants.VE_UPDATE, !myVisualizer
+					.getUpdateFlag(OOBDConstants.VE_UPDATE));
 			break;
 		case 1:
-			myVisualizer.setUpdateFlag(OOBDConstants.VE_TIMER,!myVisualizer.getUpdateFlag(OOBDConstants.VE_TIMER));
+			myVisualizer.setUpdateFlag(OOBDConstants.VE_TIMER, !myVisualizer
+					.getUpdateFlag(OOBDConstants.VE_TIMER));
 			break;
 		case 2:
-			myVisualizer.setUpdateFlag(OOBDConstants.VE_LOG,!myVisualizer.getUpdateFlag(OOBDConstants.VE_LOG));
+			myVisualizer.setUpdateFlag(OOBDConstants.VE_LOG, !myVisualizer
+					.getUpdateFlag(OOBDConstants.VE_LOG));
 			break;
 		case 3:
-			myVisualizer.setUpdateFlag(OOBDConstants.VE_BACK,!myVisualizer.getUpdateFlag(OOBDConstants.VE_BACK));
+			myVisualizer.setUpdateFlag(OOBDConstants.VE_BACK, !myVisualizer
+					.getUpdateFlag(OOBDConstants.VE_BACK));
 			break;
-			
+
 		}
 		System.out.println("Sende Broadcast Event...");
-		Intent broadcast=new Intent(OOBDApp.VISUALIZER_UPDATE);
+		Intent broadcast = new Intent(OOBDApp.VISUALIZER_UPDATE);
 		broadcast.putExtra(OOBDApp.UPDATE_LEVEL, 1);
-		Diagnose.myDiagnoseInstance.getApplicationContext().sendBroadcast(broadcast);
+		Diagnose.myDiagnoseInstance.getApplicationContext().sendBroadcast(
+				broadcast);
 		return true;
 	}
 
@@ -205,24 +216,28 @@ public class Diagnose extends ListActivity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// if back- button is pressed
-	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
 			synchronized (mDiagnoseItems) {
 				if (mDiagnoseItems != null) {
 					// searching for list entry which contains the "back"- Flag
 					int i;
-					for (i = 0; i < mDiagnoseItems.size() && !mDiagnoseItems.get(i).getMyVisualizer().getUpdateFlag(OOBDConstants.VE_BACK); i++) {						
-						}
-					if (i< mDiagnoseItems.size()){ // a "back"-item found
-						mDiagnoseItems.get(i).getMyVisualizer().updateRequest(OOBDConstants.UR_USER); // simulate a user selection of this list item
+					for (i = 0; i < mDiagnoseItems.size()
+							&& !mDiagnoseItems.get(i).getMyVisualizer()
+									.getUpdateFlag(OOBDConstants.VE_BACK); i++) {
+					}
+					if (i < mDiagnoseItems.size()) { // a "back"-item found
+						mDiagnoseItems.get(i).getMyVisualizer().updateRequest(
+								OOBDConstants.UR_USER); // simulate a user
+														// selection of this
+														// list item
 						return true; // stop further handling of the back-button
 					}
 				}
 			}
-	    }
-	    return super.onKeyDown(keyCode, event);
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 
-	
 	public DiagnoseAdapter getmDiagnoseAdatper() {
 		return mDiagnoseAdapter;
 	}
@@ -239,15 +254,14 @@ public class Diagnose extends ListActivity {
 		myRefreshHandler
 				.sendMessage(Message.obtain(myRefreshHandler, 2, title));
 	}
-	
+
 	public void startProgressDialog(String title) {
 		myRefreshHandler
 				.sendMessage(Message.obtain(myRefreshHandler, 3, title));
 	}
 
 	public void stopProgressDialog() {
-		myRefreshHandler
-				.sendMessage(Message.obtain(myRefreshHandler, 4, null));
+		myRefreshHandler.sendMessage(Message.obtain(myRefreshHandler, 4, null));
 	}
 
 	@Override
@@ -255,7 +269,7 @@ public class Diagnose extends ListActivity {
 		super.onPause();
 		System.out.println("Diagnose.onPause(): unregister Broadcast Receiver");
 		if (myTimerButton.isChecked()) {
-			 wl.release();
+			wl.release();
 		}
 
 		mDiagnoseAdapter.guiPaused();
@@ -266,12 +280,12 @@ public class Diagnose extends ListActivity {
 		super.onPause();
 		System.out.println("Diagnose.onResume(): register Broadcast Receiver");
 		if (myTimerButton.isChecked()) {
-			  wl.acquire();
+			wl.acquire();
 		}
 		mDiagnoseAdapter.guiResumed();
 	}
 
-	protected void refreshView(int bitNr,int updateType) {
+	protected void refreshView(int bitNr, int updateType) {
 		synchronized (mDiagnoseItems) {
 			if (mDiagnoseItems != null) {
 

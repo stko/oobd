@@ -65,6 +65,8 @@ public class MainActivity extends Activity {
 
 			public void onClick(View v) {
 				if (scriptName != null) {
+					//prepare the "load Script" message
+					Diagnose.showDialog=true;
 					// the following trick avoids a recreation of the Diagnose
 					// TapActivity as long as the previous created one is still
 					// in memory
