@@ -1,5 +1,7 @@
 package org.oobd.ui.android;
 
+import java.io.File;
+
 import org.json.JSONException;
 import org.oobd.base.Base64Coder;
 import org.oobd.base.support.Onion;
@@ -7,7 +9,11 @@ import org.oobd.ui.android.application.AndroidGui;
 import org.oobd.ui.android.application.OOBDApp;
 import org.oobd.ui.android.bus.BluetoothInitWorker;
 
+import com.lamerman.FileDialog;
+
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -119,6 +125,11 @@ public class MainActivity extends Activity {
 
 	public static void setMyMainActivity(MainActivity myMainActivity) {
 		MainActivity.myMainActivity = myMainActivity;
+	}
+	public synchronized void onActivityResult(final int requestCode,
+			int resultCode, final Intent data) {
+
+
 	}
 
 }
