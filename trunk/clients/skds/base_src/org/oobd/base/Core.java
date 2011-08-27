@@ -36,11 +36,14 @@ import java.util.Iterator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Properties;
+
+import org.json.JSONException;
 import org.oobd.base.support.Onion;
 import org.oobd.base.bus.OobdBus;
 import org.oobd.base.connector.OobdConnector;
 import org.oobd.base.protocol.OobdProtocol;
 import org.oobd.base.scriptengine.OobdScriptengine;
+import org.oobd.base.scriptengine.ScriptengineLua;
 import org.oobd.base.support.OnionNoEntryException;
 import org.oobd.base.support.History;
 import org.oobd.base.visualizer.Visualizer;
@@ -600,6 +603,26 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         }
     }
 
+    /** a small help routine to output text from elements who don't have an own mailbox
+     * 
+     * @param output the output text
+     */
+    
+    public void outputText(String output){
+        try {
+            sendMsg(new Message(Core.getSingleInstance(), CoreMailboxName, new Onion("{"
+                    + "'type':'" + CM_WRITESTRING + "',"
+                    + "'owner':"
+                    + "{'name':'" + Core.getSingleInstance().getId() + "'},"
+                    + "'command':'serDisplayWrite',"
+                    + "'data':'" + Base64Coder.encodeString(output) + "'"
+                    + "}")));
+        } catch (JSONException ex) {
+            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+    
     /** 
      * The Central Timer
      *

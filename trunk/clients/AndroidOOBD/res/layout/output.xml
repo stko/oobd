@@ -7,7 +7,6 @@
         <ImageButton android:layout_weight="1" android:layout_width="wrap_content" android:layout_height="fill_parent" android:id="@+id/clearButton" android:src="@drawable/cancel"></ImageButton>
         <ToggleButton android:layout_weight="1" android:text="ToggleButton" android:layout_width="wrap_content" android:id="@+id/loggingToggleButton" android:textOff="no Log" android:textOn="Log" android:checked="true" android:layout_height="wrap_content"></ToggleButton>
         <ImageButton android:layout_weight="1" android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/diskButton" android:src="@drawable/disk"></ImageButton>
-        <ImageButton android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/mailButton" android:src="@drawable/forward" android:layout_width="wrap_content"></ImageButton>
     </LinearLayout>
     <ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/outputScrollView">
         <EditText android:isScrollContainer="true" android:layout_width="fill_parent" android:id="@+id/outputText" android:layout_height="fill_parent" android:saveEnabled="true" android:inputType="textMultiLine">

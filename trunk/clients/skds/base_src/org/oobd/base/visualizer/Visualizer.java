@@ -120,9 +120,11 @@ IFvisualiser->Core [label="updateRequest()", URL="\ref org::oobd::base::IFui.upd
  */
 package org.oobd.base.visualizer;
 
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONException;
+import org.oobd.base.scriptengine.ScriptengineLua;
 import org.oobd.base.support.Onion;
 import org.oobd.base.*;
 /**
@@ -136,6 +138,7 @@ public class Visualizer {
 	String name;
 	String optId;
 	String toolTip;
+	String lastValue="";
 	int updateEvents;
 	int overflowProtection;
 	int overflowProtectionDelay = 1;
@@ -178,6 +181,12 @@ public class Visualizer {
 				Logger.getLogger(Visualizer.class.getName()).log(Level.INFO,
 						"Visualizer.setValue(): update needed.");
 				this.value = new Onion(value.toString());
+				if (getUpdateFlag(OOBDConstants.VE_LOG) &&!lastValue.equalsIgnoreCase(this.toString())){
+					Date date=new Date();
+					Core.getSingleInstance().outputText(date.toGMTString()+"\t"+this.toString()+"\t"+this.toolTip);
+					lastValue=this.toString();
+
+				}
 				updateNeeded = true;
 				// as this is an actual value, we can reset the overflow protection for now and switch the protection delay one step downwards
 				if(overflowProtectionDelay>1){
