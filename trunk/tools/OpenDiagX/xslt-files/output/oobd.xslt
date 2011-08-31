@@ -48,7 +48,7 @@ local NumData = {
 </xsl:template>
 
 <xsl:template match="SingleBit">
-<xsl:variable name="corrByteNr" select="0+number(./ByteNr)"/>id0x<xsl:value-of select="../HighPID"/><xsl:value-of select="../LowPID"/><xsl:value-of select="number($corrByteNr)"/><xsl:value-of select="./BitNr"/> = { by = <xsl:value-of select="number($corrByteNr)"/> , bi = <xsl:value-of select="./BitNr"/> , t= "<xsl:value-of select="./Name"/>" , ht = "<xsl:value-of select="./LowText"/>" ,  lt = "<xsl:value-of select="./HighText"/>"},
+<xsl:variable name="corrByteNr" select="0+number(./ByteNr)"/>id0x<xsl:value-of select="../HighPID"/><xsl:value-of select="../LowPID"/><xsl:value-of select="number($corrByteNr)"/><xsl:value-of select="./BitNr"/> = { by = <xsl:value-of select="number($corrByteNr)"/> , bi = <xsl:value-of select="./BitNr"/> , t= "<xsl:value-of select="./Name"/>" , lt = "<xsl:value-of select="./LowText"/>" ,  ht = "<xsl:value-of select="./HighText"/>"},
 </xsl:template>
 
 <xsl:template match="ASCII">id0x22<xsl:value-of select="./HighPID"/><xsl:value-of select="./LowPID"/> = {  title = "<xsl:value-of select="./Name"/>" },
