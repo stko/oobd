@@ -54,10 +54,10 @@ namespace org.oobd.tools.OpenDiagX
                     addTextnode(root, "SecCode", SecCode);
                 }
                 //Module Address
-                addTextnode(root, "PhysAdress", getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS"));
+                addTextnode(root, "PhysAdress", strRight(getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS"),3));
                 addTextnode(root, "Bus", getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/NAME"));
                 addTextnode(root, "BusSpeed", getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/DATA_RATE"));
-                addTextnode(root, "PhysAdressShort", getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS").Substring(3, 2));
+                addTextnode(root, "PhysAdressShort", strRight(getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS"), 2));
                 //Module Short Name
                 addTextnode(root, "ShortName", getpath(nav, "ADMINISTRATION/SHORTNAME"));
                 //Module Name
@@ -95,6 +95,11 @@ namespace org.oobd.tools.OpenDiagX
             //seperate the result in single lines to add it to the textbox
             return memrdr.ReadToEnd();
         }
+        private String strRight(String text, int len){
+            return text.Substring(text.Length-len);
+        }
+
+
         private String getpath(XPathNavigator nav, String path)
         {
             if (nav.SelectSingleNode(path + "/text()") != null)
