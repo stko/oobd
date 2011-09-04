@@ -82,6 +82,27 @@ namespace org.oobd.tools.OpenDiagX
                         if (subDataType.Equals("unsigned")) handleUnsigned(iterator);
                     }
                 }
+                iterator = nav.Select("/MDX/ECU_DATA/DIAGNOSTIC_TROUBLE_CODES/DTC");
+                XmlElement subtree = xmlDocOut.CreateElement("DTCS");
+                root.AppendChild(subtree);
+                while (iterator.MoveNext())
+                {
+                    XmlNode thisDTC = xmlDocOut.CreateElement("DTC");
+                    subtree.AppendChild(thisDTC);
+                    addTextnode(thisDTC, "ID", strRight(getpath(iterator.Current, "NUMBER"), 4));
+                    addTextnode(thisDTC, "DESCRIPTION", getpath(iterator.Current, "DESCRIPTION"));
+                }
+                iterator = nav.Select("/MDX/ECU_DATA/ROUTINE_IDENTIFIERS/ROUTINE");
+                subtree = xmlDocOut.CreateElement("ROUTINES");
+                root.AppendChild(subtree);
+                while (iterator.MoveNext())
+                {
+                    XmlNode thisDTC = xmlDocOut.CreateElement("ROUTINE");
+                    subtree.AppendChild(thisDTC);
+                    addTextnode(thisDTC, "ID", strRight(getpath(iterator.Current, "NUMBER"), 4));
+                    addTextnode(thisDTC, "DESCRIPTION", getpath(iterator.Current, "NAME"));
+                    addTextnode(thisDTC, "SESSION_REFS",iterator.Current.GetAttribute("SESSION_REFS", ""));
+               }
             }
             //Perform the actual transformation
             myXslTrans.Load(outXSLTFileName);
