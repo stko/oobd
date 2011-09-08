@@ -251,7 +251,7 @@ function setBus(bus)
       echoWrite("p 6 1\r")
     end
    -- activate bus
-      echoWrite("p 5 31\r")
+      echoWrite("p 5 3\r")
 
   else
     
