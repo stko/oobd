@@ -45,6 +45,19 @@ local ACSIIData = {
 local NumData = {
 <xsl:apply-templates select="NUM" />dummy =0
 }
+
+
+-- DTC list
+local DTCs = {
+<xsl:apply-templates select="DTCS" />dummy =0
+}
+
+-- data for selfTests()
+local selftest = {
+<xsl:apply-templates select="ROUTINES" />dummy =0
+}
+
+
 </xsl:template>
 
 <xsl:template match="SingleBit">
@@ -56,6 +69,12 @@ local NumData = {
 
 
 <xsl:template match="NUM">id0x22<xsl:value-of select="./HighPID"/><xsl:value-of select="./LowPID"/> = {  mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , len = <xsl:value-of select="./Len"/> , unit = "<xsl:value-of select="./Units"/>" , title = "<xsl:value-of select="./Name"/>"} ,
+</xsl:template>
+
+<xsl:template match="DTC">id0x<xsl:value-of select="./ID"/> =  "<xsl:value-of select="./DESCRIPTION"/>" ,
+</xsl:template>
+
+<xsl:template match="ROUTINE">id0x31<xsl:value-of select="./ID"/> =  "<xsl:value-of select="./DESCRIPTION"/>" ,
 </xsl:template>
 
 
