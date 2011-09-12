@@ -127,7 +127,7 @@ namespace org.oobd.tools.OpenDiagX
             {
                 XPathNodeIterator iterator = (XPathNodeIterator)nav.Evaluate(path + "/text()");
                 iterator.MoveNext();
-                return iterator.Current.Value.ToString();
+                return iterator.Current.Value.ToString().Replace("\"","'").Trim();
             }
             else
             {
