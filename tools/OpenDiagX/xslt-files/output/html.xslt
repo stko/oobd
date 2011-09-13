@@ -11,7 +11,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <html>
 <head><title><xsl:value-of select="./ShortName"/> - <xsl:value-of select="./Name"/></title></head>
 <body>
-<a href="oobd.org">OOBD</a>-Report of the PartII Spec (MDX) of 
+<a href="http://oobd.org">OOBD</a>-Report of the PartII Spec (MDX) of 
 <h2><xsl:value-of select="./ShortName"/> - <xsl:value-of select="./Name"/></h2>
 
 <table>
@@ -24,7 +24,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <h3>Bitmapped DiDs</h3>
 
 <table border="1" width="90%">
-<tr><th>DiD</th><th>Description</th><th>---Result---</th></tr>
+<tr><th>DiD (Byte/Bit)</th><th>Description</th><th>---Result---</th></tr>
 <xsl:apply-templates select="BMP" />
 </table>
 
@@ -61,7 +61,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 <xsl:template match="SingleBit">
 <xsl:variable name="corrByteNr" select="1+number(ByteNr)"/>
-<tr><td><xsl:value-of select="../HighPID"/><xsl:value-of select="../LowPID"/>_<xsl:value-of select="number($corrByteNr)"/>_<xsl:value-of select="./BitNr"/></td><td><xsl:value-of select="../Group"/> - <xsl:value-of select="./Name"/></td><td></td></tr>
+<tr><td><xsl:value-of select="../HighPID"/><xsl:value-of select="../LowPID"/> (<xsl:value-of select="number($corrByteNr)"/> <xsl:value-of select="./BitNr"/>)</td><td><xsl:value-of select="../Group"/> - <xsl:value-of select="./Name"/></td><td></td></tr>
 </xsl:template>
 
 
