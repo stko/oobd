@@ -61,7 +61,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 <xsl:template match="SingleBit">
 <xsl:variable name="corrByteNr" select="1+number(ByteNr)"/>
-<tr><td><xsl:value-of select="../HighPID"/><xsl:value-of select="../LowPID"/> (<xsl:value-of select="number($corrByteNr)"/> <xsl:value-of select="./BitNr"/>)</td><td><xsl:value-of select="../Group"/> - <xsl:value-of select="./Name"/></td><td></td></tr>
+<tr><td><xsl:value-of select="../HighPID"/><xsl:value-of select="../LowPID"/> (<xsl:value-of select="number($corrByteNr)"/> - <xsl:value-of select="./BitNr"/>)</td><td><xsl:value-of select="../Group"/> - <xsl:value-of select="./Name"/></td><td></td></tr>
 </xsl:template>
 
 
