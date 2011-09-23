@@ -34,6 +34,8 @@
 #include "odp_uds.h"
 
 /* -------- Used Global variables --------------------------------------------*/
+xQueueHandle Led1Queue = NULL;
+xQueueHandle Led2Queue = NULL;
 
 /* Private typedef -----------------------------------------------------------*/
 
@@ -69,6 +71,20 @@ void System_Configuration(void)
 
   /* NVIC configuration */
 //  NVIC_Configuration();
+
+  // move to hardware init function as well as LEDTask
+  //xQueueCreate = xQueueCreate (2, sizeof (boolean));
+  extern xQueueHandle Led1Queue;
+
+  if (pdPASS == (Led1Queue = xQueueCreate(QUEUE_SIZE_LED,
+  	sizeof(uint16_t))))
+  	DEBUGUARTPRINT ("\r\n*** LedQueue created ***");
+
+  extern xQueueHandle Led2Queue;
+
+  if (pdPASS == (Led2Queue = xQueueCreate(QUEUE_SIZE_LED,
+  	sizeof(uint16_t))))
+  	DEBUGUARTPRINT ("\r\n*** LedQueue created ***");
 }
 
 /*----------------------------------------------------------------------------*/
@@ -283,19 +299,23 @@ void USART1_Configuration(void)
   /* Enable the USART1 */
 //  USART_Cmd(USART1, ENABLE);
 //  uint32_t nCount, nLength=500000000;
-//  uint8_t c;
+  uint8_t c;
 
   /* get Bluetooth address of BTM222 before going on */
 //  uint8_t RxCounter = 0;
 //  uint8_t RxBufferSize = 8;
   /* send request to BTM222 => Bluetooth-Serial must be disconnected at this state*/
 //  for(nCount = 0; nCount < nLength; nCount++){}; /* delay */
+
+  /* BTM EOL must be CR = '\r' = 0x0D */
 /*
-  uart1_puts ("at\r\n");
+  uart1_puts ("atb?\r");
   while (!(USART1->SR & USART_FLAG_RXNE));
   c = (uint8_t)USART1->DR;
-  if (c == 'O')
+  if (c == 'O') {
 	uart1_puts ("O received\r\n");
+	uart1_puts (c);
+  }
   else {
 	uart1_puts ("error while receiving\r\n");
     uart1_puts (c);
@@ -580,7 +600,8 @@ void CAN1_Configuration(uint8_t CAN_BusConfig, uint8_t CAN_ModeConfig)
   }
   else
   {
-    CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
+	/* default CAN bus speed is set to 500kbaud */
+	CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
     CAN_InitStructure.CAN_BS2 = CAN_BS2_5tq;
     CAN_InitStructure.CAN_Prescaler = 8; /* BRP Baudrate prescaler */
   }

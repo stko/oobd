@@ -145,12 +145,20 @@ main (void)
 
 #ifdef OOBD_PLATFORM_STM32
   if (pdPASS ==
-      xTaskCreate (blinkLedTask, (const signed portCHAR *) "blinkLed",
+      xTaskCreate (Led1Task, (const signed portCHAR *) "LED1",
 		   configMINIMAL_STACK_SIZE, (void *) NULL, TASK_PRIO_LOW,
 		   (xTaskHandle *) NULL))
-    DEBUGUARTPRINT ("\r\n*** 'blinkLed' Task created ***");
+    DEBUGUARTPRINT ("\r\n*** 'LED1' Task created ***");
   else
-    DEBUGUARTPRINT ("\r\n*** 'blinkLed' Task NOT created ***");
+    DEBUGUARTPRINT ("\r\n*** 'LED1' Task NOT created ***");
+
+  if (pdPASS ==
+      xTaskCreate (Led2Task, (const signed portCHAR *) "LED2",
+		   configMINIMAL_STACK_SIZE, (void *) NULL, TASK_PRIO_LOW,
+		   (xTaskHandle *) NULL))
+    DEBUGUARTPRINT ("\r\n*** 'LED2' Task created ***");
+  else
+    DEBUGUARTPRINT ("\r\n*** 'LED2' Task NOT created ***");
 #endif
 
 #ifdef OOBD_PLATFORM_STM32

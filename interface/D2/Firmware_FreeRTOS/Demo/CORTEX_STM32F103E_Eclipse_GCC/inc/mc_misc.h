@@ -30,6 +30,7 @@
 #ifndef __MC_MISC_H
 #define __MC_MISC_H
 
-void blinkLedTask (void *pvParameters);
+void Led1Task (void *pvParameters);
+void Led2Task (void *pvParameters);
 
 #endif  /* __MC_MISC_H */

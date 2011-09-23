@@ -36,31 +36,49 @@
 #include "SystemConfig.h"
 
 void
-blinkLedTask (void *pvParameters)
+Led1Task (void *pvParameters)
 {
-  portTickType xLastExecutionTime;
+  uint16_t LedBlinkDuration = 0;
+  uint16_t Led1Duration = 250; /* 250ms default value */
+  extern xQueueHandle Led1Queue;
 
-  DEBUGUARTPRINT ("\r\n*** prvBlinkLedTask entered! ***");
-
-  /* Initialise the xLastExecutionTime variable on task entry. */
-  xLastExecutionTime = xTaskGetTickCount ();
+  DEBUGUARTPRINT ("\r\n*** prvLedTask entered! ***");
 
   for (;;)
+  {
+	/* xQueueReceive waits for max. Led1Duration time for a new received values = LED OFF Time */
+	if( pdTRUE == xQueueReceive( Led1Queue, &LedBlinkDuration, (portTickType) Led1Duration / portTICK_RATE_MS))
     {
-      /* Simple toggle the LED periodically.  This just provides some timing
-         verification. */
-      vTaskDelayUntil (&xLastExecutionTime,
-           (portTickType) 1000 / portTICK_RATE_MS);
-      /* Output high -> LED off for 1000ms = 1sec */
-      GPIO_SetBits (GPIOB, GPIO_Pin_4); /* LED2 - green */
-      GPIO_SetBits (GPIOB, GPIO_Pin_5); /* LED1 - red */
-
-      vTaskDelayUntil (&xLastExecutionTime,
-           (portTickType) 1000 / portTICK_RATE_MS);
-      /* Output low -> LED on for 1000ms = 1sec */
-      GPIO_ResetBits (GPIOB, GPIO_Pin_4); /* LED2 - green */
-      GPIO_ResetBits (GPIOB, GPIO_Pin_5); /* LED1 - red */
+	  /* data received from queue */
+	  Led1Duration = LedBlinkDuration;
     }
+
+	GPIO_ResetBits (GPIOB, GPIO_Pin_4); /* LED1 ON - green */
+    vTaskDelay ((portTickType) Led1Duration / portTICK_RATE_MS); /* ON time */
+    GPIO_SetBits (GPIOB, GPIO_Pin_4); /* LED1 OFF - green */
+  }
+}
+/*---------------------------------------------------------------------------*/
+
+void
+Led2Task (void *pvParameters)
+{
+  uint16_t LedDuration = 0;
+  extern xQueueHandle Led2Queue;
+
+  DEBUGUARTPRINT ("\r\n*** prvLedTask entered! ***");
+
+  for (;;)
+  {
+	/* wait indefinitely till value received => depends on portMAX_DELAY */
+	if( pdTRUE == xQueueReceive( Led2Queue, &LedDuration, portMAX_DELAY ))
+    {
+      /* data received from queue */
+      GPIO_ResetBits (GPIOB, GPIO_Pin_5); /* LED1 ON - red */
+      vTaskDelay ((portTickType) LedDuration / portTICK_RATE_MS); /* ON time */
+      GPIO_SetBits (GPIOB, GPIO_Pin_5); /* LED1 OFF - red */
+    }
+  }
 }
 /*---------------------------------------------------------------------------*/
 
