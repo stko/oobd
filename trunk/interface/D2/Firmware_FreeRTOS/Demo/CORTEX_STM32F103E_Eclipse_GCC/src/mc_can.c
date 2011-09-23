@@ -157,11 +157,12 @@ busControl (portBASE_TYPE cmd, void *param)
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {
   DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler entered ***");
-
+  extern xQueueHandle Led2Queue;
+  portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
   uint8_t i;
+  uint16_t LedDuration;
   CanRxMsg RxMessage;
   static data_packet dp;
-  /* CanTxMsg TxMessage; */
 
   /* initialize RxMessage CAN frame */
   RxMessage.StdId = 0x00;
@@ -177,18 +178,31 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
   CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
 
   if (RxMessage.StdId != 0 || RxMessage.ExtId != 0)
-    {
-      /* Data received. Process it. */
-      if (RxMessage.IDE == CAN_ID_STD)
-        dp.recv = RxMessage.StdId; /* Standard CAN frame 11bit received */
-      else
-        dp.recv = RxMessage.ExtId; /* Extended CAN frame 29bit received */
-      dp.len  = RxMessage.DLC;
-      dp.err  = 0x00; /* use received value for error simulations */
-      dp.data = &RxMessage.Data[0]; /* data starts here */
-      reportReceivedData (&dp);
-    }
+  {
+	extern xQueueHandle Led2Queue;
 
+	/* switch LED2 ON to indicate CAN traffic */
+	LedDuration = 5; /* 5ms */
+	if (pdPASS == xQueueSendToBackFromISR( Led2Queue, &LedDuration, &xHigherPriorityTaskWoken ))
+	{
+	  // Switch context if necessary.
+	  if( xHigherPriorityTaskWoken )
+	    taskYIELD ();
+	}
+
+	/* Data received. Process it. */
+    if (RxMessage.IDE == CAN_ID_STD)
+      dp.recv = RxMessage.StdId; /* Standard CAN frame 11bit received */
+    else
+      dp.recv = RxMessage.ExtId; /* Extended CAN frame 29bit received */
+    /* CAN-Frame values which are independent on standard or extended identifiers */
+    dp.len  = RxMessage.DLC;
+    dp.err  = 0x00; /* use received value for error simulations */
+    dp.data = &RxMessage.Data[0]; /* data starts here */
+    reportReceivedData (&dp);
+  }
+
+  //  portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
   DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler finished ***");
 }
 /*----------------------------------------------------------------------------*/

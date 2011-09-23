@@ -91,6 +91,7 @@
 #define QUEUE_SIZE_PROTOCOL ( 5 )
 #define QUEUE_SIZE_OUTPUT   ( 5 )
 #define QUEUE_SIZE_INPUT    ( 5 )
+#define QUEUE_SIZE_LED		( 3 )
 
 
 /* define message types */
