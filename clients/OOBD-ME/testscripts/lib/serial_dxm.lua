@@ -7,6 +7,7 @@
 openPage = openPageCall
 addElement = addElementCall
 pageDone = pageDoneCall
+openChannel = openChannelCall
 --]]
 ---[[
 serFlush = serFlushCall
@@ -349,6 +350,10 @@ end
 
 function identifyOOBDInterface()
 	local answ=""
+	-- test for older software versions
+	if openChannel ~= nil then
+	  openChannel("serial")
+	end 
 	-- Abfrage auf OOBD -interfae
 	echoWrite("p 0 0 \r")
 	answ=serReadLn(2000, false)
