@@ -199,7 +199,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
                     Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "can't create instance of " + element, ex);
                 } catch (IllegalAccessException ex) {
-                   Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "can't create instance of " + element, ex);
+                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "can't create instance of " + element, ex);
                 }
 
             }
@@ -221,8 +221,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
                     Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "can't create instance of " + element);
                 } catch (IllegalAccessException ex) {
-                   Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "can't create instance of " + element, ex);
-               }
+                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "can't create instance of " + element, ex);
+                }
 
             }
         } catch (ClassNotFoundException ex) {
@@ -247,12 +247,12 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                         announceScriptEngine(element, result);
                     }
                 } catch (Exception ex) {
-           Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "Error while trying to load class", ex);
-                 }
+                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "Error while trying to load class", ex);
+                }
             }
         } catch (ClassNotFoundException ex) {
-           Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "Error while trying to load class", ex);
-         }
+            Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "Error while trying to load class", ex);
+        }
         // ------------- start the global timer ticker -----------------
         ticker = new CoreTick();
         ticker.setCoreTickListener(this);
@@ -266,6 +266,15 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public static Core getSingleInstance() {
         return thisInstance;
+    }
+
+    /**
+     * supply Objects which binds to system specific hardware
+     * @param typ
+     * @return a hardware handle of the requested type or nil
+     */
+    public Object supplyHardwareHandle(Onion typ) {
+        return systemInterface.supplyHardwareHandle(typ);
     }
 
     /**
@@ -302,7 +311,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      *
      */
     public String createScriptEngine(String id, Onion onion) {
-        Logger.getLogger(Core.class.getName()).log(Level.CONFIG,  "Core should create scriptengine: " + id);
+        Logger.getLogger(Core.class.getName()).log(Level.CONFIG, "Core should create scriptengine: " + id);
         Integer i = 1;
         while (activeEngines.containsKey(id + "." + i.toString())) { //searching for a free id
             i++;
@@ -335,7 +344,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * @param onion addional param
      */
     public void startScriptEngine(String id, Onion onion) {
-        Logger.getLogger(Core.class.getName()).log(Level.CONFIG,  "Start scriptengine: " + id);
+        Logger.getLogger(Core.class.getName()).log(Level.CONFIG, "Start scriptengine: " + id);
         OobdScriptengine o = activeEngines.get(id);
         o.setStartupParameter(onion);
         Thread t1 = new Thread(o);
@@ -358,7 +367,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public HashMap loadOobdClasses(String path, String classPrefix, Class classType) {
         // inspired by http://de.wikibooks.org/wiki/Java_Standard:_Class
-         Logger.getLogger(Core.class.getName()).log(Level.CONFIG,"Scanne Directory: " + path);
+        Logger.getLogger(Core.class.getName()).log(Level.CONFIG, "Scanne Directory: " + path);
 
         // TODO adapt to Android
         //HashMap<String, Class<?>> myInstances = new HashMap<String, Class<?>>();
@@ -438,13 +447,15 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * main entry point for all actions required by the different components. 
      * Can be called either with a onion or with an json-String containing the onion data
      * @param json string representing the onion data
+     * @return true if the message should be replied to sender
      */
-    public void actionRequest(String jsonString) {
+    public boolean actionRequest(String jsonString) {
         try {
-            Logger.getLogger(Core.class.getName()).log(Level.INFO,  "required Action:" + jsonString);
-            actionRequest(new Onion(jsonString.replace('\'', '"')));
+            Logger.getLogger(Core.class.getName()).log(Level.INFO, "required Action:" + jsonString);
+            return actionRequest(new Onion(jsonString.replace('\'', '"')));
         } catch (org.json.JSONException ex) {
-             Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "could not convert JSONstring \"" + jsonString + "\" into Onion",ex);
+            Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "could not convert JSONstring \"" + jsonString + "\" into Onion", ex);
+            return false;
         }
     }
 
@@ -456,7 +467,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     public void handleValue(Onion value) {
         String owner = value.getOnionString("owner/name"); //who's the owner of that value?
         if (owner == null) {
-            Logger.getLogger(Core.class.getName()).log(Level.WARNING,  "onion id does not contain name");
+            Logger.getLogger(Core.class.getName()).log(Level.WARNING, "onion id does not contain name");
         } else {
             ArrayList affectedVisualizers = visualizers.get(owner); //which visualizers belong to that owner
             if (affectedVisualizers != null) {
@@ -473,33 +484,52 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * main entry point for all actions required by the different components. 
      * Can be called either with a onion or with an json-String containing the onion data
      * @param json string representing the onion data
+     * @return true if the message should be replied to sender
      */
-    public void actionRequest(Onion myOnion) {
+    public boolean actionRequest(Onion myOnion) {
         try {
-
+            System.out.println("Action request:" + myOnion.getString("type"));
             if (myOnion.isType(CM_VISUALIZE)) {
                 userInterface.visualize(myOnion);
+                return false;
             }
             if (myOnion.isType(CM_VALUE)) {
                 handleValue(myOnion);
+                return false;
             }
             if (myOnion.isType(CM_UPDATE)) {
                 transferMsg(new Message(this, myOnion.getString("to"), myOnion));
 
+                return false;
+            }
+            if (myOnion.isType(CM_CHANNEL)) {
+                System.out.println("Bingo..");
+                transferMsg(new Message(this, BusMailboxName, new Onion(""
+                        + "{'type':'" + CM_BUSTEST + "',"
+                        + "'command':'connect',"
+                        + "'port':'" + myOnion.getString("channel") + "'}")));
+
+                return true;
             }
 
             if (myOnion.isType(CM_PAGE)) {
                 String dummy = myOnion.getOnionString("owner");
                 userInterface.openPage(myOnion.getOnionString("owner"), myOnion.getOnionString("name"), 1, 1);
+                return false;
             }
             if (myOnion.isType(CM_PAGEDONE)) {
                 userInterface.openPageCompleted(myOnion.getOnionString("owner"), myOnion.getOnionString("name"));
+                return false;
             }
             if (myOnion.isType(CM_WRITESTRING)) {
                 userInterface.sm(Base64Coder.decodeString(myOnion.getOnionString("data")));
+                return false;
             }
         } catch (org.json.JSONException e) {
+            System.out.println("JSON exception..");
+            return false;
         }
+        return false;
     }
 
     /**
@@ -578,7 +608,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * \ingroup core
      */
     public boolean transferMsg(Message msg) {
-       Logger.getLogger(Core.class.getName()).log(Level.INFO, "Msg: " + msg.sender  +" ==> "+ msg.rec + " content:" + msg.getContent().toString());
+        Logger.getLogger(Core.class.getName()).log(Level.INFO, "Msg: " + msg.sender + " ==> " + msg.rec + " content:" + msg.getContent().toString());
+        System.out.println("Msg: " + msg.sender + " ==> " + msg.rec + " content:" + msg.getContent().toString());
+
         if (OOBDConstants.CoreMailboxName.equals(msg.rec)) { //is the core the receiver?
             this.sendMsg(msg);
             return true;
@@ -607,8 +639,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * 
      * @param output the output text
      */
-    
-    public void outputText(String output){
+    public void outputText(String output) {
         try {
             sendMsg(new Message(Core.getSingleInstance(), CoreMailboxName, new Onion("{"
                     + "'type':'" + CM_WRITESTRING + "',"
@@ -622,7 +653,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         }
 
     }
-    
+
     /** 
      * The Central Timer
      *
@@ -642,7 +673,14 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         Message thisMsg;
         while (runCore == true) {
             while ((thisMsg = msgPort.getMsg(100)) != null) { // just waiting and handling messages
-                actionRequest(thisMsg.content);
+                if (actionRequest(thisMsg.content) == true) {
+                    try {
+                        thisMsg.content.setValue("replyID", thisMsg.content.getInt("msgID"));
+                    } catch (JSONException ex) {
+                        Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    msgPort.replyMsg(thisMsg, thisMsg.content);
+                }
 
             }
             //transferMsg(new Message(this, "ScriptengineTerminal.1", null));

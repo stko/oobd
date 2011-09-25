@@ -13,9 +13,11 @@ import org.oobd.base.*;
 import org.oobd.base.OOBDConstants;
 import java.net.URL;
 import java.net.URLClassLoader;
+import skdsswing.bus.ComPort;
 
 //import java.io.FileInputStream;
 import java.io.*;
+import org.oobd.base.support.Onion;
 
 /**
  * This class is the connection between the generic oobd system and the enviroment for e.g. IO operations
@@ -112,5 +114,9 @@ public class SwingSystem implements IFsystem {
                 throw new java.util.MissingResourceException("Resource not known", "SwingSystem", ResourceName);
             }
         }
+    }
+
+    public Object supplyHardwareHandle(Onion typ) {
+        return new ComPort();
     }
 }

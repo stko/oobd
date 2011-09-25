@@ -4,6 +4,7 @@ package org.oobd.base;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.io.InputStream;
+import org.oobd.base.support.Onion;
 
 
 
@@ -49,5 +50,13 @@ public interface IFsystem {
     */
     public InputStream generateResourceStream(int pathID, String ResourceName) throws MissingResourceException;
 
+    
+    /**
+     * \brief supplies objects to bind to system specific hardware
+     * 
+     * @param typ on
+     * @return a object which connects to the system specific hardware or nil
+     */
+    public Object supplyHardwareHandle(Onion typ);
 
 }

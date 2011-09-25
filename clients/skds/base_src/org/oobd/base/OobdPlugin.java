@@ -44,6 +44,10 @@ public abstract class OobdPlugin implements Runnable {
         return id;
     }
 
+    public Core getCore() {
+        return core;
+    }
+
     protected Message getMsg(boolean wait) {
         return (Message) msgPort.getMsg(wait);
     }
