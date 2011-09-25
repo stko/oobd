@@ -177,13 +177,14 @@ public class OutputActivity extends Activity {
 						myOutputActivityInstance).create();
 				alertDialog.setTitle("File already exist!");
 				alertDialog.setMessage("OK to overwrite?");
-				alertDialog.setButton("OK",
+				alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,"OK",
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
 								saveOutput(file);
 							}
 						});
+				alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,"Cancel", (DialogInterface.OnClickListener)null);
 				alertDialog.show();
 			} else {
 				saveOutput(file);

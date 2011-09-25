@@ -92,7 +92,7 @@ public class Onion extends JSONObject {
                 if (!actOnion.has(parts[i]) || !(actOnion.get(parts[i]) instanceof JSONObject)) { //if that key does not exist or is not a sub onion
                     throw new OnionNoEntryException();
                 } else {
-                    actOnion = new Onion(((JSONObject)actOnion.get(parts[i])).toString());
+                    actOnion = new Onion(((JSONObject) actOnion.get(parts[i])).toString());
                 }
             } catch (JSONException e) {
                 throw new OnionNoEntryException();
@@ -163,7 +163,7 @@ public class Onion extends JSONObject {
     }
 
     /**
-     * set the value at the given path.
+     * set the String value at the given path.
      *
      * path consist of an optional directory and the key name, seperated by /, like path/to/value, where the last value is used as key for the onion hash.
      * @param path
@@ -172,6 +172,31 @@ public class Onion extends JSONObject {
      */
     public Onion setValue(
             String path, String value) {
+        OnionData od = createPath(path);
+        if (od != null) {
+            try {
+                od.onion.put(od.key, value);
+            } catch (JSONException e) {
+                return null;
+            }
+
+            return od.onion;
+        } else {
+            return null;
+        }
+
+    }
+
+    /**
+     * set the int value at the given path.
+     *
+     * path consist of an optional directory and the key name, seperated by /, like path/to/value, where the last value is used as key for the onion hash.
+     * @param path
+     * @param value
+     * @return onion which contains generated key:value
+     */
+    public Onion setValue(
+            String path, int value) {
         OnionData od = createPath(path);
         if (od != null) {
             try {

@@ -71,7 +71,26 @@ public class ScriptengineLua extends OobdScriptengine {
 
 
         Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG, "Try to initialize Lua engine");
-        register("openPageCall", new JavaFunction() {
+        register("openChannelCall", new JavaFunction() {
+
+            public int call(LuaCallFrame callFrame, int nArguments) {
+                //BaseLib.luaAssert(nArguments >0, "not enough args");
+                initRPC(callFrame, nArguments);
+                // cellList = new List();
+                try {
+                    myself.getMsgPort().sendAndWait(new Message(myself, CoreMailboxName, new Onion(""
+                            + "{'type':'" + CM_CHANNEL + "',"
+                            + "'owner':'" + myself.getId() + "',"
+                             + "'command':'connect',"
+                           + "'channel':'" + getString(0) + "'}")),-1);
+                } catch (JSONException ex) {
+                    Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                //finishRPC(callFrame, nArguments);
+                return 1;
+            }
+        });        register("openPageCall", new JavaFunction() {
 
             public int call(LuaCallFrame callFrame, int nArguments) {
                 //BaseLib.luaAssert(nArguments >0, "not enough args");

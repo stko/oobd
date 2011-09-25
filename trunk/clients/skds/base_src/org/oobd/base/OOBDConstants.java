@@ -12,6 +12,7 @@ public interface OOBDConstants {
 
     public static final String CM_VISUALIZE = "VISUALIZE";
     public static final String CM_PAGE = "PAGE";
+    public static final String CM_CHANNEL="CHANNEL";
     public static final String CM_PAGEDONE = "PAGEDONE";
     public static final String CM_VALUE = "VALUE";
     public static final String CM_UPDATE = "UPDATE";

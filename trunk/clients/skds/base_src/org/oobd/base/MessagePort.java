@@ -111,7 +111,7 @@ public class MessagePort {
      * \brief send a message and waits for the answer
      * \ingroup core
      * @param msg the message
-     * @param timeout timeout in ms to wait for an answer. 0: wait forever, <0 : Don't wait (which would be a little bit senseless ;-)
+     * @param timeout timeout in ms to wait for an answer. <0: wait forever, =0 : Don't wait (which would be a little bit senseless ;-)
      * @return
      */
     public Message sendAndWait(Message msg, int timeout) {
