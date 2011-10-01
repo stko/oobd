@@ -53,7 +53,6 @@ public class BusCom extends OobdBus implements OOBDConstants {
             Message msg = getMsg(true);
             Onion on = msg.getContent();
             String command = on.getOnionString("command");
-            System.out.println("Buscom received command "+command);
             if ("serWrite".equalsIgnoreCase(command)) {
                 String data = Base64Coder.decodeString(on.getOnionString("data"));
                 Logger.getLogger(BusCom.class.getName()).log(Level.INFO, "busCom serWrite: >" + data + "<");

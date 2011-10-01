@@ -22,7 +22,7 @@ public class SKDSSwingUpload extends javax.swing.JDialog {
 
     /** Creates new form SKDSSwingUpload */
     private static boolean openSelected = false;;
-    private ComReader comReader = new ComReader();
+    private ComPort comReader = new ComPort();
     private static char[] Test = new char[]{'H','e','l','l','o',' ','O','O','B','D',' ','u','s','e','r'};
     public static boolean getOpenSelected(){
         return openSelected;
