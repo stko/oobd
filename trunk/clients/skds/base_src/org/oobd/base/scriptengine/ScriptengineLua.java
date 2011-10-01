@@ -81,8 +81,8 @@ public class ScriptengineLua extends OobdScriptengine {
                     myself.getMsgPort().sendAndWait(new Message(myself, CoreMailboxName, new Onion(""
                             + "{'type':'" + CM_CHANNEL + "',"
                             + "'owner':'" + myself.getId() + "',"
-                             + "'command':'connect',"
-                           + "'channel':'" + getString(0) + "'}")),-1);
+                            + "'command':'connect',"
+                            + "'channel':'" + getString(0) + "'}")), -1);
                 } catch (JSONException ex) {
                     Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -90,7 +90,8 @@ public class ScriptengineLua extends OobdScriptengine {
                 //finishRPC(callFrame, nArguments);
                 return 1;
             }
-        });        register("openPageCall", new JavaFunction() {
+        });
+        register("openPageCall", new JavaFunction() {
 
             public int call(LuaCallFrame callFrame, int nArguments) {
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
@@ -118,7 +119,7 @@ public class ScriptengineLua extends OobdScriptengine {
                     String updevent = "";
                     int oobdElementFlags = getInt(3);
                     if (oobdElementFlags > 0) {
-                        updevent = "'"+FN_UPDATEOPS+"':" + oobdElementFlags + ",";
+                        updevent = "'" + FN_UPDATEOPS + "':" + oobdElementFlags + ",";
                     }
                     String optid = getString(4); //String id
                     // Android: String.isEmpty() not available
@@ -361,23 +362,6 @@ public class ScriptengineLua extends OobdScriptengine {
     }
 
     public void doScript(String fileName) throws IOException {
-        /* debug code
-        try {
-        System.out.println(fileName);
-        File f = new File (fileName);
-        FileInputStream fis = new FileInputStream(f);
-        byte [] buffer = new byte [(int)f.length()];
-        fis.read(buffer);
-        for (int  i=0 ; i<f.length() ; i++)
-        System.out.print (buffer[i]);
-        System.out.println ("Ende");
-        fis.close();
-        }
-        catch (Exception e) {
-        e.printStackTrace();
-        }
-
-         */
 
 
 
@@ -397,8 +381,8 @@ public class ScriptengineLua extends OobdScriptengine {
         Object[] results = state.pcall(fObject, params);
         if (results[0] != Boolean.TRUE) {
             Object errorMessage = results[1];
-            System.out.println("Lua Crash: " + errorMessage);
-            System.out.println(results[2]);
+            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO, "Lua Crash: " + errorMessage);
+            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO, results[2].toString());
             Throwable stacktrace = (Throwable) (results[3]);
             if (stacktrace != null) {
                 stacktrace.printStackTrace();

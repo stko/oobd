@@ -175,9 +175,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     Logger.getLogger(Core.class.getName()).log(Level.CONFIG, "Register " + element + " as bus");
                 } catch (InstantiationException ex) {
                     // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
-                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "can't create instance of " + element, ex);
+                    Logger.getLogger(Core.class.getName()).log(Level.WARNING, "can't create instance of " + element);
                 } catch (IllegalAccessException ex) {
-                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "can't create instance of " + element, ex);
+                    Logger.getLogger(Core.class.getName()).log(Level.WARNING, "can't create instance of " + element);
                 }
 
             }
@@ -197,9 +197,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
                 } catch (InstantiationException ex) {
                     // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
-                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "can't create instance of " + element, ex);
+                    Logger.getLogger(Core.class.getName()).log(Level.WARNING, "can't create instance of " + element);
                 } catch (IllegalAccessException ex) {
-                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "can't create instance of " + element, ex);
+                    Logger.getLogger(Core.class.getName()).log(Level.WARNING, "can't create instance of " + element);
                 }
 
             }
@@ -219,9 +219,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
                 } catch (InstantiationException ex) {
                     // Wird geworfen, wenn die Klasse nicht "instanziert" werden kann
-                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "can't create instance of " + element);
+                    Logger.getLogger(Core.class.getName()).log(Level.WARNING, "can't create instance of " + element);
                 } catch (IllegalAccessException ex) {
-                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "can't create instance of " + element, ex);
+                    Logger.getLogger(Core.class.getName()).log(Level.WARNING, "can't create instance of " + element);
                 }
 
             }
@@ -247,7 +247,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                         announceScriptEngine(element, result);
                     }
                 } catch (Exception ex) {
-                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "Error while trying to load class", ex);
+                    Logger.getLogger(Core.class.getName()).log(Level.WARNING, "can't create instance of " + element);
                 }
             }
         } catch (ClassNotFoundException ex) {
@@ -368,62 +368,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     public HashMap loadOobdClasses(String path, String classPrefix, Class classType) {
         // inspired by http://de.wikibooks.org/wiki/Java_Standard:_Class
         Logger.getLogger(Core.class.getName()).log(Level.CONFIG, "Scanne Directory: " + path);
-
-        // TODO adapt to Android
-        //HashMap<String, Class<?>> myInstances = new HashMap<String, Class<?>>();
-
         HashMap<String, Class<?>> myInstances = systemInterface.loadOobdClasses(path, classPrefix, classType);
-
-        // TODO copy this code section to Swing / ME IFSystem implementation
-        /*
-        File directory = new File(path);
-        if (directory.exists()) {
-        File[] files = directory.listFiles();
-        URL sourceURL = null;
-        try {
-        // read the path of the directory
-        sourceURL = directory.toURI().toURL();
-        } catch (java.net.MalformedURLException ex) {
-        Debug.msg("core", DEBUG_WARNING, ex.getMessage());
-        ex.printStackTrace();
-        }
-        // generate URLClassLoader for that directory
-        
-        URLClassLoader loader = new URLClassLoader(new java.net.URL[]{sourceURL}, Thread.currentThread().getContextClassLoader());
-        // For each file in dir...
-        for (int i = 0; i
-        < files.length; i++) {
-        // split file name into name and extension
-        System.out.println("File, das als Klasse zu laden ist: " + files[i].getName());
-        String name[] = files[i].getName().split("\\.");
-        // only class names without $ are taken
-        if (name.length > 1 && name[1].equals("class") && name[1].indexOf("$") == -1) {
-        try {
-        // load the class itself
-        Class<?> source = loader.loadClass(classPrefix + name[0]);
-        // Prüfen, ob die geladene Klasse das Interface implementiert
-        // bzw. ob sie das Interface beerbt
-        // Das Interface darf dabei natürlich nicht im selben Verzeichnis liegen
-        // oder man muss prüfen, ob es sich um ein Interface handelt Class.isInterface()
-        if (classType.isAssignableFrom(source)) {
-        // save unitialized class object in hashmap
-        myInstances.put(name[0], source);
-        }
-        
-        } catch (ClassNotFoundException ex) {
-        // Wird geworfen, wenn die Klasse nicht gefunden wurde
-        Debug.msg("core", DEBUG_ERROR, ex.getMessage());
-        ex.printStackTrace();
-        }
-        
-        }
-        }
-        }// if
-        else
-        System.out.println("Directory " + directory.getName() + " does not exist. Class " + classPrefix + " could not be loaded.");
-        // returns Hashmap filled with classes found
-         * 
-         */
         return myInstances;
     }
 
@@ -488,7 +433,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public boolean actionRequest(Onion myOnion) {
         try {
-            System.out.println("Action request:" + myOnion.getString("type"));
             if (myOnion.isType(CM_VISUALIZE)) {
                 userInterface.visualize(myOnion);
                 return false;
@@ -503,7 +447,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                 return false;
             }
             if (myOnion.isType(CM_CHANNEL)) {
-                System.out.println("Bingo..");
                 transferMsg(new Message(this, BusMailboxName, new Onion(""
                         + "{'type':'" + CM_BUSTEST + "',"
                         + "'command':'connect',"
@@ -526,7 +469,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                 return false;
             }
         } catch (org.json.JSONException e) {
-            System.out.println("JSON exception..");
+            Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "JSON exception..");
             return false;
         }
         return false;
@@ -609,9 +552,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public boolean transferMsg(Message msg) {
         Logger.getLogger(Core.class.getName()).log(Level.INFO, "Msg: " + msg.sender + " ==> " + msg.rec + " content:" + msg.getContent().toString());
-        System.out.println("Msg: " + msg.sender + " ==> " + msg.rec + " content:" + msg.getContent().toString());
-
-        if (OOBDConstants.CoreMailboxName.equals(msg.rec)) { //is the core the receiver?
+         if (OOBDConstants.CoreMailboxName.equals(msg.rec)) { //is the core the receiver?
             this.sendMsg(msg);
             return true;
         } else { //find receipient

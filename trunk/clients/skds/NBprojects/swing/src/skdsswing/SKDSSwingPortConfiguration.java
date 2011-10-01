@@ -31,8 +31,7 @@ public class SKDSSwingPortConfiguration extends javax.swing.JDialog {
     private final String[] portname={"COM1"};
     private static boolean portConfOpenSelected = false;
     private static int intBaudrate;
-    private ComReader comreader;
-    private BusCom buscom;
+    private ComPort comreader;
 
    public static boolean getPortOpenSelected(){
         return portConfOpenSelected;
