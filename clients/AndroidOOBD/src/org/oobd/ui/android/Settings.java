@@ -1,92 +1,134 @@
 package org.oobd.ui.android;
 
-import org.oobd.ui.android.application.OOBDApp;
-
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
-import android.preference.PreferenceActivity;
-import java.util.ArrayList;
+import android.util.Log;
+import android.view.View;
+import android.widget.Spinner;
+import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+
+import android.app.Activity;
+
+import java.util.Set;
 
 /**
- * @author Andreas Budde, Peter Mayer
- * Settings activity that allows users to configure the app (Bluetooth OBD connection, Lua script file selection and simulation mode.
+ * @author Andreas Budde, Peter Mayer Settings activity that allows users to
+ *         configure the app (Bluetooth OBD connection, Lua script file
+ *         selection and simulation mode.
  */
-public class Settings extends PreferenceActivity implements OnSharedPreferenceChangeListener {
-	
-	public static final String KEY_LIST_SELECT_PAIRED_OBD2_DEVICE = "PREF_PAIRED_OBD2_DEVICE";
-	public static final String KEY_LIST_SELECT_LUA_SCRIPT = "PREF_LUA_SCRIPT";
-	public static final String KEY_CHECKBOX_SIMULATION_MODE = "PREF_SIMULATION_MODE";
+public class Settings extends Activity {
 
-	private ListPreference mListPreferenceSelectPairedOBD2Device;
-	private ListPreference mListPreferenceSelectLuaScript;
-	
+	public static final String KEY_LIST_SELECT_PAIRED_OBD2_DEVICE = "PREF_OOBD_BT_DEVICE";
+
+	private Spinner mDeviceSpinner;
+	private String BTDeviceName;
+	SharedPreferences preferences;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		// Load the xml preference file
-		addPreferencesFromResource(R.xml.settings);
+		setContentView(R.layout.settings);
+		mDeviceSpinner = (Spinner) findViewById(R.id.BTDeviceSpinner);
+		mDeviceSpinner
+				.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+					public void onItemSelected(AdapterView<?> parent,
+							View view, int pos, long id) {
+						BTDeviceName = ((FriendlyBTName) parent
+								.getItemAtPosition(pos)).getDevice();
+						if (BTDeviceName != null
+								&& !BTDeviceName.equalsIgnoreCase("")) {
+							preferences.edit().putString("BTDEVICE",
+									BTDeviceName).commit();
+						}
+					}
 
-		mListPreferenceSelectPairedOBD2Device = (ListPreference)getPreferenceScreen().findPreference(KEY_LIST_SELECT_PAIRED_OBD2_DEVICE);
-		ArrayList<String> availableDevices = OOBDApp.getInstance().getAvailableBluetoothDevices();
-		mListPreferenceSelectPairedOBD2Device.setEntries(availableDevices.toArray(new String[0]));
-		mListPreferenceSelectPairedOBD2Device.setEntryValues(availableDevices.toArray(new String[0]));
-		
-		updateSelectedOBD2Device();
-		
-		mListPreferenceSelectLuaScript = (ListPreference)getPreferenceScreen().findPreference(KEY_LIST_SELECT_LUA_SCRIPT);
-		CharSequence[] luaScripts = OOBDApp.getInstance().getAvailableLuaScript();
-		mListPreferenceSelectLuaScript.setEntries(luaScripts);
-		mListPreferenceSelectLuaScript.setEntryValues(luaScripts);
-		
-		updateSelectedScriptLabel();
-		
+					public void onNothingSelected(AdapterView<?> parent) {
+						preferences.edit().putString("BTDEVICE", "").commit();
+					}
+				});
+		createList();
+	}
+
+	protected void onRestart(){
+		super.onRestart();
+		createList();		
 	}
 	
-	@Override
-    protected void onResume() {
-        super.onResume();
-        
-        // Set up a listener whenever a preference changes            
-        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // Unregister the listener whenever a key changes            
-        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);    
-    }
-    
-    /**
-     * Called whenever some setting is changed
-     */
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-    	
-    	if (key.equals(KEY_LIST_SELECT_PAIRED_OBD2_DEVICE)) {
-    		// TODO do some stuff such as initialization?
-    		updateSelectedOBD2Device(); 
-    	} else if (key.equals(KEY_LIST_SELECT_LUA_SCRIPT)) {
-    		// TODO load scripts?
-   			updateSelectedScriptLabel();
-        } else if (key.equals(KEY_CHECKBOX_SIMULATION_MODE)) {
-        	// TODO do some stuff such as initialization ?
-        }
-    	
-    }
-
-	private void updateSelectedOBD2Device() {
-		String selectedOBD2Device = getPreferenceScreen().getSharedPreferences().getString(KEY_LIST_SELECT_PAIRED_OBD2_DEVICE, "none");
-		mListPreferenceSelectPairedOBD2Device.setSummary("Selected: " + selectedOBD2Device);
-	}
 	
-	private void updateSelectedScriptLabel() {
-		String selectedScript = getPreferenceScreen().getSharedPreferences().getString(KEY_LIST_SELECT_LUA_SCRIPT, "none");
-		mListPreferenceSelectLuaScript.setSummary("Selected: " + selectedScript);
+	private void createList() {
+		preferences = this.getSharedPreferences("OOBD_SETTINGS", MODE_PRIVATE);
+		if (preferences != null) {
+			BTDeviceName = preferences.getString("BTDEVICE",
+					"00:12:6F:07:27:25");
+		}
+
+		ArrayAdapter<FriendlyBTName> adapter = new ArrayAdapter<FriendlyBTName>(
+				this, android.R.layout.simple_spinner_item, getBTDevices());
+		mDeviceSpinner.setAdapter(adapter);
+		for (int i = 0; i < adapter.getCount(); i++) {
+			if (BTDeviceName.equals(adapter.getItem(i).getDevice())) {
+				mDeviceSpinner.setSelection(i);
+				break;
+			}
+		}
+
 	}
 
+	private synchronized FriendlyBTName[] getBTDevices() {
+		System.out.println("Starting Bluetooth Detection and Device Pairing");
+
+		BluetoothAdapter mBluetoothAdapter = BluetoothAdapter
+				.getDefaultAdapter();
+		if (mBluetoothAdapter == null) {
+			Log.w(this.getClass().getSimpleName(), "Bluetooth not supported.");
+			FriendlyBTName[] BTDeviceSet = new FriendlyBTName[1];
+			BTDeviceSet[0] = new FriendlyBTName("", "No Devices paired :-(");
+			return BTDeviceSet;
+		}
+		Set<BluetoothDevice> pairedDevices = mBluetoothAdapter
+				.getBondedDevices();
+		FriendlyBTName[] BTDeviceSet = new FriendlyBTName[pairedDevices.size()];
+		Log.v(this.getClass().getSimpleName(), "Anzahl paired devices: "
+				+ pairedDevices.size());
+
+		// If there are paired devices
+		if (pairedDevices.size() > 0) {
+			// Loop through paired devices
+				int i = 0;
+
+			for (BluetoothDevice device : pairedDevices) {
+				// Add the name and address to an array adapter to show in a
+				// ListView
+				Log.d("OOBD:BluetoothIntiWorker", "Found Bluetooth Device: "
+						+ device.getName() + "=" + device.getAddress());
+				BTDeviceSet[i] = new FriendlyBTName(device.getAddress(), device
+						.getName());
+				i++;
+			}
+		}
+		return BTDeviceSet;
+
+	}
+
+}
+
+class FriendlyBTName {
+	String deviceName;
+	String friendlyName;
+
+	public FriendlyBTName(String device, String name) {
+		deviceName = device;
+		friendlyName = name;
+	}
+
+	public String getDevice() {
+		return deviceName;
+	}
+
+	public String toString() {
+		return "(" + deviceName + ") " + friendlyName;
+	}
 }

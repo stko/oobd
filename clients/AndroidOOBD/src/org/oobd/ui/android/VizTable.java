@@ -51,7 +51,7 @@ public class VizTable extends ArrayList<DiagnoseItem> implements IFvisualizer {
 	        case 2: {
 				System.out.println("Sende Broadcast Event...");
 				Intent broadcast=new Intent(OOBDApp.VISUALIZER_UPDATE);
-				broadcast.putExtra(OOBDApp.UPDATE_LEVEL, Integer.toString(level));
+				broadcast.putExtra(OOBDApp.UPDATE_LEVEL, level);
 				Diagnose.myDiagnoseInstance.getApplicationContext().sendBroadcast(broadcast);
 				awaitingUpdate = false;
 				return true;

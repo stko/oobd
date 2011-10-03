@@ -50,6 +50,7 @@ public class BusCom extends OobdBus implements OOBDConstants {
         }
         reader = new ComReader();
         while (keepRunning == true) {
+        	System.out.println("BusCom waiting for msg");
             Message msg = getMsg(true);
             Onion on = msg.getContent();
             String command = on.getOnionString("command");
@@ -76,8 +77,19 @@ public class BusCom extends OobdBus implements OOBDConstants {
                     Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
                 }
            } else if ("connect".equalsIgnoreCase(command)) {
-                reader.connect((OOBDPort) getCore().supplyHardwareHandle(portType));
-
+        	   reader.close();
+                Boolean result=reader.connect((OOBDPort) getCore().supplyHardwareHandle(portType));
+                try {
+					replyMsg(msg, new Onion(""
+					        + "{'type':'" + CM_RES_BUS + "',"
+					        + "'owner':"
+					        + "{'name':'" + getPluginName() + "'},"
+					        + "'result':" + result.toString() + ","
+					        + "'replyID':" + on.getInt("msgID")
+					        + "}"));
+				} catch (JSONException ex) {
+					 Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
+				}
 
             } else if ("close".equalsIgnoreCase(command)) {
                 reader.close();
@@ -112,14 +124,16 @@ class ComReader implements Runnable {
         new Thread(this).start();
     }
 
-    public void connect(OOBDPort portHandle)  {
+    public boolean connect(OOBDPort portHandle)  {
         if (comHandle!=null){
             comHandle.close();
         }
         if(portHandle.connect(null)){
             comHandle=portHandle;
+            return true;
         }else{
             comHandle=null;
+            return false;
         }
     }
 
@@ -149,6 +163,7 @@ class ComReader implements Runnable {
             try {
                 Logger.getLogger(ComReader.class.getName()).log(Level.INFO, "Serial output:" + s);
                comHandle.getOutputStream().write(s.getBytes(), 0, s.length());
+               System.out.println("Geschrieben an outputstream:"+s);
                 //outStream.flush();
             } catch (IOException ex) {
                 Logger.getLogger(ComReader.class.getName()).log(Level.WARNING, null, ex);
@@ -162,6 +177,8 @@ class ComReader implements Runnable {
             try {
                 if (comHandle.getInputStream().available() > 0) {
                     inChar = comHandle.getInputStream().read();
+                    System.out.println("Readchar:"+(char) inChar);
+                                       
                     return (char) inChar;
                 }
             } catch (Exception ex) {
