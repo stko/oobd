@@ -8,6 +8,7 @@ import android.os.Message;
 import 	android.content.Intent;
 import android.content.res.Resources;
 import org.oobd.ui.android.R;
+import org.oobd.ui.android.application.OOBDApp;
 
 public class DiagnoseTab extends TabActivity {
 	private static DiagnoseTab myDiagnoseTabInstance=null;
@@ -76,4 +77,8 @@ public class DiagnoseTab extends TabActivity {
 		myRefreshHandler.sendMessage( Message.obtain(myRefreshHandler, 2, title));
 		}
 
+	protected void onStop(){
+		super.onStop();
+		OOBDApp.getInstance().closeHardwareHandle();
+	}
 }

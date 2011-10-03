@@ -36,7 +36,7 @@ public class DiagnoseAdapter extends ArrayAdapter<DiagnoseItem> {
         
         @Override
         public void onReceive(Context context, Intent intent) {
-                String updateLevel = intent.getStringExtra(OOBDApp.UPDATE_LEVEL);
+                int updateLevel = intent.getIntExtra(OOBDApp.UPDATE_LEVEL,0);
                 System.out.println ("DiagnoseAdapter: Received Broadcast Event Update level: " + updateLevel);
                 notifyDataSetChanged();
         }

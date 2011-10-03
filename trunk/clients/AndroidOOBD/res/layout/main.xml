@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="fill_parent"
+	android:orientation="vertical" android:layout_width="fill_parent"  android:background="#000"
 	android:layout_height="fill_parent">
 
-	<TextView android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:text="@string/app_name"
-		android:gravity="center_horizontal" android:textSize="26sp"
-		android:textColor="#000000" android:layout_marginTop="20sp"
-		android:layout_marginBottom="60sp" />
-
 	<ImageView android:layout_width="wrap_content"
-		android:layout_gravity="center_horizontal"
-		android:src="@drawable/obd2_logo" android:layout_height="wrap_content"/>
+		android:src="@drawable/obd2_logo" android:layout_height="fill_parent" android:layout_gravity="center_horizontal" android:layout_weight="0.25" />
 		
-	<Button android:id="@+id/diagnose_button" android:text="Start Diagnose"
-		android:layout_width="fill_parent" android:layout_height="wrap_content"/>
-	<TextView android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="Select your Script:" android:id="@+id/SourceTextView" android:layout_weight="10" android:gravity="center|bottom"></TextView>
-	<Spinner android:id="@+id/scriptSpinner" android:layout_height="wrap_content" android:layout_width="fill_parent"></Spinner>
+	<Button android:id="@+id/diagnose_button" 
+ android:layout_gravity="center"
+		android:layout_width="128px"
+android:layout_height="128px"
+
+android:background="@drawable/buttonhighlight"
+		/>
+		
+		
+	<TextView android:layout_width="fill_parent" android:text="Select your Script:" 
+	android:id="@+id/SourceTextView" android:gravity="center|bottom" android:textColor="#888888" android:layout_height="fill_parent" android:layout_weight="0.5" >
+	</TextView>
+	<Spinner android:id="@+id/scriptSpinner" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_gravity="bottom" ></Spinner>
 		
 </LinearLayout>

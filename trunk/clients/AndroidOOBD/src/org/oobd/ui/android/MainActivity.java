@@ -1,18 +1,20 @@
 package org.oobd.ui.android;
 
 import java.io.File;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.oobd.base.Base64Coder;
 import org.oobd.base.support.Onion;
 import org.oobd.ui.android.application.AndroidGui;
 import org.oobd.ui.android.application.OOBDApp;
-import org.oobd.ui.android.bus.BluetoothInitWorker;
 
 import com.lamerman.FileDialog;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,10 +23,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
+import android.content.SharedPreferences;
+
 
 /**
  * 
@@ -36,6 +41,7 @@ public class MainActivity extends Activity {
 	private Button mDiagnoseButton;
 	private Spinner mSourceSpinner;
 	private String scriptName;
+	private BluetoothAdapter mBluetoothAdapter;
 
 	public static MainActivity myMainActivity;
 
@@ -43,6 +49,8 @@ public class MainActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		//Remove title bar
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);
 
 		myMainActivity = this;
@@ -70,6 +78,81 @@ public class MainActivity extends Activity {
 		mDiagnoseButton.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
+				mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+				if (mBluetoothAdapter == null) {
+					AlertDialog alertDialog = new AlertDialog.Builder(
+							myMainActivity).create();
+					alertDialog.setTitle("Device Problem");
+					alertDialog.setMessage("This device does not support Bluetooth!");
+					alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,"Buy another",
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int which) {
+									dialog.cancel();
+								}
+							});
+					alertDialog.show();
+				    return;
+				}
+				else {
+					if (!mBluetoothAdapter.isEnabled()) {
+						AlertDialog alertDialog = new AlertDialog.Builder(
+								myMainActivity).create();
+						alertDialog.setTitle("Config Problem");
+						alertDialog.setMessage("Bluetooth is not switched on in settings!");
+						alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,"I'll do",
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int which) {
+										dialog.cancel();
+									}
+								});
+						alertDialog.show();
+					    return;
+					}
+				}
+
+
+				Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+				Log.v(this.getClass().getSimpleName(), "Anzahl paired devices: " + pairedDevices.size());
+				
+				// If there are paired devices
+				if (pairedDevices.size() <1) {
+					AlertDialog alertDialog = new AlertDialog.Builder(
+							myMainActivity).create();
+					alertDialog.setTitle("No Paired Devides");
+					alertDialog.setMessage("No Paired Devices found!");
+					alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,"I'll change that",
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int which) {
+									dialog.cancel();
+								}
+							});
+					alertDialog.show();
+				    return;
+				}
+				String BTDeviceName="";
+				SharedPreferences preferences = getSharedPreferences("OOBD_SETTINGS", MODE_PRIVATE);
+				if (preferences != null) {
+					BTDeviceName = preferences.getString("BTDEVICE",
+							"");
+				}
+				if (BTDeviceName.equalsIgnoreCase("")) {
+					AlertDialog alertDialog = new AlertDialog.Builder(
+							myMainActivity).create();
+					alertDialog.setTitle("Not configured yet");
+					alertDialog.setMessage("BT Device not set in Settings");
+					alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,"I'll choose one",
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int which) {
+									dialog.cancel();
+								}
+							});
+					alertDialog.show();
+				    return;
+				}
 				if (scriptName != null) {
 					//prepare the "load Script" message
 					Diagnose.showDialog=true;
@@ -94,6 +177,7 @@ public class MainActivity extends Activity {
 				}
 			}
 		});
+
 	}
 
 	/**
@@ -129,6 +213,21 @@ public class MainActivity extends Activity {
 	public synchronized void onActivityResult(final int requestCode,
 			int resultCode, final Intent data) {
 
+	}
+	
+	public void onStart(){
+		super.onStart();
+	   	if (mBluetoothAdapter == null) {
+			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+			if (mBluetoothAdapter == null) {
+			    Log.w(this.getClass().getSimpleName(), "Bluetooth not supported.");
+			}
+			else {
+				if (!mBluetoothAdapter.isEnabled()) {
+					Log.w(this.getClass().getSimpleName(), "Bluetooth not enabled.");
+				}
+			}
+		}
 
 	}
 

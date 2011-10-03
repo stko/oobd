@@ -107,7 +107,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     HashMap<String, Object> assignments;
     HashMap<String, ArrayList<Visualizer>> visualizers;///<stores all available visalizers
-    static Core thisInstance; //Class variable points to only instance
+    static Core thisInstance =null; //Class variable points to only instance
     CoreTick ticker;
     Properties props;
     History history;
@@ -124,7 +124,11 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public Core(IFui myUserInterface, IFsystem mySystemInterface, String name) {
         super(name);
+        if (thisInstance!=null){
+        	Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "Core Creator called more as once!!");
+        }
         thisInstance = this;
+        id=CoreMailboxName;
         userInterface = myUserInterface;
         systemInterface = mySystemInterface;
         busses = new HashMap<String, OobdBus>();
@@ -447,11 +451,10 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                 return false;
             }
             if (myOnion.isType(CM_CHANNEL)) {
-                transferMsg(new Message(this, BusMailboxName, new Onion(""
+            	this.getMsgPort().sendAndWait(new Message(Core.getSingleInstance(), BusMailboxName, new Onion(""
                         + "{'type':'" + CM_BUSTEST + "',"
                         + "'command':'connect',"
-                        + "'port':'" + myOnion.getString("channel") + "'}")));
-
+                        + "'port':'" + myOnion.getString("channel") + "'}")), 10000); //10 secs to connect to a device
                 return true;
             }
 

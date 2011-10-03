@@ -3,6 +3,7 @@ package org.oobd.ui.android.application;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.Set;
 import java.io.*;
 
@@ -17,6 +18,8 @@ import org.oobd.ui.android.DiagnoseItem;
 import org.oobd.ui.android.MainActivity;
 import org.oobd.ui.android.R;
 
+import org.oobd.ui.android.bus.ComPort;
+
 import android.app.AlertDialog;
 import android.app.Application;
 import android.content.DialogInterface;
@@ -27,13 +30,14 @@ import android.widget.Toast;
 import android.bluetooth.*;
 import android.content.Intent;
 import android.widget.ArrayAdapter;
+import android.content.SharedPreferences;
 
 /**
  * @author Andreas Budde, Peter Mayer Base class to maintain global application
  *         state. This activity is Initialised before all others. Store here
  *         e.g. list of bluetooth devices,...
  */
-public class OOBDApp extends Application implements IFsystem {
+public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 
 	// Constants that are global for the Android App
 	public static final String VISUALIZER_UPDATE = "OOBD Broadcast_UI_Update";
@@ -44,6 +48,7 @@ public class OOBDApp extends Application implements IFsystem {
 	// make it singleton
 	private static OOBDApp mInstance;
 	private Toast mToast;
+	private Object myComPort;
 
 	public static OOBDApp getInstance() {
 		return mInstance;
@@ -70,10 +75,10 @@ public class OOBDApp extends Application implements IFsystem {
 				+ " with path ID : " + pathID);
 		InputStream resource = null;
 		if (pathID == OOBDConstants.FT_PROPS) { // Achtung: Hier wird der
-												// ResourceName nicht weiter
-												// beachtet, weil nur hardcoded
-												// der oobdcore verwendet wird.
-												// Ist das so richtig
+			// ResourceName nicht weiter
+			// beachtet, weil nur hardcoded
+			// der oobdcore verwendet wird.
+			// Ist das so richtig
 			/*
 			 * if (resourceName.contains("oobdcore")) resource =
 			 * OOBDApp.getInstance
@@ -158,8 +163,9 @@ public class OOBDApp extends Application implements IFsystem {
 		mToast = Toast
 				.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
 		androidGui = new AndroidGui();
-		new Core(androidGui, this, "Core");
-		Log.v(this.getClass().getSimpleName(), "Core creation finalized");
+		Core thisCore = new Core(androidGui, this, "Core");
+		Log.v(this.getClass().getSimpleName(), "Core creation finalized"
+				+ thisCore.toString());
 	}
 
 	public CharSequence[] getAvailableLuaScript() {
@@ -224,5 +230,24 @@ public class OOBDApp extends Application implements IFsystem {
 
 	public Core getCore() {
 		return core;
+	}
+
+	public Object supplyHardwareHandle(Onion typ) {
+		SharedPreferences preferences;
+		String BTDeviceName = "00:12:6F:07:27:25";
+		preferences = this.getSharedPreferences("OOBD_SETTINGS", MODE_PRIVATE);
+		if (preferences != null) {
+			BTDeviceName = preferences.getString("BTDEVICE",
+					"00:12:6F:07:27:25");
+		}
+
+		return new ComPort(Diagnose.getInstance(), BTDeviceName);
+	}
+
+	public void closeHardwareHandle() {
+		if (myComPort != null) {
+			((ComPort) myComPort).close();
+			myComPort = null;
+		}
 	}
 }

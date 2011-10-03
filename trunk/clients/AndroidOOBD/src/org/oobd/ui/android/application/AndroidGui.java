@@ -18,6 +18,7 @@ import org.oobd.ui.android.OutputActivity;
 import org.oobd.ui.android.VizTable;
 
 //import android.app.ProgressDialog;
+import android.content.Intent;
 import android.util.Log;
 
 public class AndroidGui implements IFui {
@@ -61,15 +62,10 @@ public class AndroidGui implements IFui {
 	}
 
 	public Class getVisualizerClass(String visualizerType, String theme) {
-		// TODO Auto-generated method stub
-		Log.v(this.getClass().getSimpleName(), "Jetzt sollte ich den Visualizer rausruecken");
 		return VizTable.class;
 	}
 
 	public void visualize(Onion myOnion) {
-		// TODO Auto-generated method stub
-		Log.v(this.getClass().getSimpleName(), "Und jetzt sollte ich visualisieren..");
-
 		IFvisualizer visualComponent;
 		
 		Visualizer newVisualizer = new Visualizer(myOnion);
@@ -96,14 +92,20 @@ public class AndroidGui implements IFui {
 	}
 
 	public void openPage(String seID, String Name, int colcount, int rowcount) {
-		// TODO Auto-generated method stub
 		Diagnose.getInstance().stopProgressDialog();
 		DiagnoseTab.getInstance().setMenuTitle(Name);
-		Diagnose.getInstance().startProgressDialog("build Page...");
-		Log.v(this.getClass().getSimpleName(), "Und jetzt open page machen..");
+		Diagnose.getInstance().startProgressDialog("Build Page...");
+		Log.v(this.getClass().getSimpleName(), "open page ..");
 		VizTable vizTable = VizTable.getInstance("", "");
-		if (vizTable != null && !vizTable.isEmpty())
+		if (vizTable != null ){
+			if( !vizTable.isEmpty())
 			vizTable.clear();
+		Intent broadcast = new Intent(OOBDApp.VISUALIZER_UPDATE);
+		broadcast.putExtra(OOBDApp.UPDATE_LEVEL, 1);
+		Diagnose.myDiagnoseInstance.getApplicationContext().sendBroadcast(
+				broadcast);
+		}
+		
 	}
 
 	public void openPageCompleted(String seID, String Name) {
@@ -111,6 +113,10 @@ public class AndroidGui implements IFui {
 		Diagnose.getInstance().setItems(VizTable.getInstance("", ""));
 		Diagnose.getInstance().stopProgressDialog();
 		Log.v(this.getClass().getSimpleName(), "...open page completed");
+		Intent broadcast = new Intent(OOBDApp.VISUALIZER_UPDATE);
+		broadcast.putExtra(OOBDApp.UPDATE_LEVEL, 1);
+		Diagnose.myDiagnoseInstance.getApplicationContext().sendBroadcast(
+				broadcast);
 		
 	}
 	
@@ -122,7 +128,7 @@ public class AndroidGui implements IFui {
         //JTabbedPane newjTabPane = new JTabbedPane(); //create a inner JTabbedPane as container for the later coming scriptengine pages
         //newjTabPane.setName(seID); // set the name of that canvas that it can be found again later
         //mainSeTabbedPane.addTab(seID, newjTabPane); // and put this canvas inside the pane which belongs to that particular scriptengine
-        // and now, after initalisation of the UI, let the games begin...
+        // and now, after initialisation of the UI, let the games begin...
         OOBDApp.getInstance().getCore().setAssign(seID, org.oobd.base.OOBDConstants.CL_PANE, new Object()); //store the related drawing pane, the TabPane for that scriptengine
         //stop the Progress Dialog BEFORE the script starts
         //Diagnose.getInstance().stopProgressDialog();
