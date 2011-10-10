@@ -454,7 +454,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             	this.getMsgPort().sendAndWait(new Message(Core.getSingleInstance(), BusMailboxName, new Onion(""
                         + "{'type':'" + CM_BUSTEST + "',"
                         + "'command':'connect',"
-                        + "'port':'" + myOnion.getString("channel") + "'}")), 10000); //10 secs to connect to a device
+                        + "'port':'" + myOnion.getString("channel") + "'}")), 35000); //35 secs to connect to a device (BT has ~30sec Timeout)
                 return true;
             }
 
