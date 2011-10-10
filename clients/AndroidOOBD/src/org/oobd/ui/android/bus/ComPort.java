@@ -115,19 +115,22 @@ public class ComPort implements OOBDPort {
 								return true;
 							} catch (IOException ex) {
 								Log.e(this.getClass().getSimpleName(),
-										"Error: Could not connect socket.");
-								Logger.getLogger(ComPort.class.getName()).log(
-										Level.SEVERE, null, ex);
+										"Error: Could not connect to socket.",ex);
+								OOBDApp.getInstance().displayToast(
+								"Bluetooth NOT connected!");
 							}
 						} else {
 							Log.e("OOBD:Bluetooth", "Bluetooth NOT connected!");
 							OOBDApp.getInstance().displayToast(
-									"Bluetooth NOT connected!");
+							"Bluetooth NOT connected!");
 						}
 						// do not yet connect. Connect before calling the
 						// socket.
-					} catch (IOException e) {
-						e.printStackTrace();
+					} catch (IOException ex) {
+						Log.e(this.getClass().getSimpleName(),
+								"Error: Could not connect to socket.",ex);
+						OOBDApp.getInstance().displayToast(
+						"Bluetooth NOT connected!");
 						if (serialPort != null) {
 							try {
 								serialPort.close();
