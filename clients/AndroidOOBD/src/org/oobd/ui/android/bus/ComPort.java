@@ -151,24 +151,38 @@ public class ComPort implements OOBDPort {
 		try {
 			return inputStream != null && inputStream.available() > 0;
 		} catch (IOException ex) {
+			// broken socket: Close it..
+			resetConnection();
 			return false;
 		}
 	}
 
-	public boolean close() {
+	public OOBDPort close() {
 		if (serialPort != null) {
 			try {
 				inputStream.close();
 				inputStream = null;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			try {
 				outputStream.close();
 				outputStream = null;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			try {
 				serialPort.close();
 				serialPort = null;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		return true;
+		return null;
+	}
+	
+	public OOBDPort resetConnection(){
+		return close();
 	}
 
 }
