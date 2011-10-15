@@ -26,14 +26,6 @@ public class ComPort_Win implements OOBDPort {
     OutputStream outputStream;
     SerialPort serialPort;
 
-    public boolean available() {
-        try {
-            return inputStream != null && inputStream.available() > 0;
-        } catch (IOException ex) {
-            return false;
-        }
-    }
-
     public OutputStream getOutputStream() {
         return outputStream;
     }
@@ -121,19 +113,41 @@ public class ComPort_Win implements OOBDPort {
         return portFound;
     }
 
-    public boolean close() {
+    public boolean available() {
+        try {
+            return inputStream != null && inputStream.available() > 0;
+        } catch (IOException ex) {
+            // broken socket: Close it..
+            resetConnection();
+            return false;
+        }
+    }
+
+    public OOBDPort close() {
         if (serialPort != null) {
             try {
                 inputStream.close();
                 inputStream = null;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
                 outputStream.close();
                 outputStream = null;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
                 serialPort.close();
                 serialPort = null;
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        return true;
+        return null;
+    }
+
+    public OOBDPort resetConnection() {
+        return close();
     }
 }
