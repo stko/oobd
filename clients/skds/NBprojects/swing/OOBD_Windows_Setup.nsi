@@ -73,7 +73,8 @@ FunctionEnd
 Section "OOBD-Swing"
 SetOutPath $INSTDIR
 File /r  "dist/lib"
-File /r  "build/classes/skdsswing/bus"
+#File /r  "build/classes/skdsswing/bus"
+File /r  "../Base/build/classes/org/oobd/base/bus"
 File /r  "../Base/build/classes/org/oobd/base/scriptengine"
 File /r  "../Base/build/classes/org/oobd/base/protocol"
 File /oname=OOBD-Swing.jar  "dist/SKDS-Swing.jar"

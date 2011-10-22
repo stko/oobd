@@ -45,7 +45,6 @@ public class BusCom extends OobdBus implements OOBDConstants {
         }
         reader = new ComReader();
         while (keepRunning == true) {
-            System.out.println("BusCom waiting for msg");
             Message msg = getMsg(true);
             Onion on = msg.getContent();
             String command = on.getOnionString("command");
