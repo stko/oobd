@@ -70,7 +70,7 @@ endproc
 
 procedure PIDNUM<xsl:value-of select="./HighPID"/><xsl:value-of select="./LowPID"/>
 (*#menuitem "*" "U" "<xsl:value-of select="./Name"/>" "PIDNUM<xsl:value-of select="./HighPID"/><xsl:value-of select="./LowPID"/>" "PIDNUM" "Input"*)
-    getPIDNUM( $<xsl:value-of select="./HighPID"/> , $<xsl:value-of select="./LowPID"/> , <xsl:value-of select="./Resolution"/> , <xsl:value-of select="./Offset"/> , "<xsl:value-of select="./Units"/>" )
+    getNUMPID( $<xsl:value-of select="./HighPID"/> , $<xsl:value-of select="./LowPID"/> , <xsl:value-of select="./Len"/> * 8 , <xsl:value-of select="./Resolution"/> , <xsl:value-of select="./Offset"/> , "<xsl:value-of select="./Units"/>" )
 endproc
 
 </xsl:template>
