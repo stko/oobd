@@ -186,24 +186,7 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 		}
 	}
 
-	public ArrayList<String> getAvailableBluetoothDevices() {
-		// TODO find out what devices are bluetooth coupled
-		ArrayList<String> mArrayAdapter = new ArrayList<String>();
-		return mArrayAdapter;
-		/*
-		 * BluetoothAdapter mBluetoothAdapter =
-		 * BluetoothAdapter.getDefaultAdapter(); if (mBluetoothAdapter != null)
-		 * { if (!mBluetoothAdapter.isEnabled()) { Intent enableBtIntent = new
-		 * Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-		 * startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT); }
-		 * Set<BluetoothDevice> pairedDevices =
-		 * mBluetoothAdapter.getBondedDevices(); // If there are paired devices
-		 * if (pairedDevices.size() > 0) { // Loop through paired devices for
-		 * (BluetoothDevice device : pairedDevices) { // Add the name and
-		 * address to an array adapter to show in a ListView
-		 * mArrayAdapter.add(device.getName() + "\n" + device.getAddress()); } }
-		 * } return mArrayAdapter;
-		 */}
+	
 
 	public void registerOobdCore(Core core) {
 		this.core = core;

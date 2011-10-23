@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.oobd.base.port.OOBDPort;
+import org.oobd.base.port.PortInfo;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -183,6 +184,41 @@ public class ComPort implements OOBDPort {
 	
 	public OOBDPort resetConnection(){
 		return close();
+	}
+
+	public PortInfo[] getPorts() {
+			System.out.println("Starting Bluetooth Detection and Device Pairing");
+
+			BluetoothAdapter mBluetoothAdapter = BluetoothAdapter
+					.getDefaultAdapter();
+			if (mBluetoothAdapter == null) {
+				Log.w(this.getClass().getSimpleName(), "Bluetooth not supported.");
+				PortInfo[] BTDeviceSet = new PortInfo[1];
+				BTDeviceSet[0] = new PortInfo("", "No Devices paired :-(");
+				return BTDeviceSet;
+			}
+			Set<BluetoothDevice> pairedDevices = mBluetoothAdapter
+					.getBondedDevices();
+			PortInfo[] BTDeviceSet = new PortInfo[pairedDevices.size()];
+			Log.v(this.getClass().getSimpleName(), "Anzahl paired devices: "
+					+ pairedDevices.size());
+
+			// If there are paired devices
+			if (pairedDevices.size() > 0) {
+				// Loop through paired devices
+					int i = 0;
+
+				for (BluetoothDevice device : pairedDevices) {
+					// Add the name and address to an array adapter to show in a
+					// ListView
+					Log.d("OOBD:BluetoothIntiWorker", "Found Bluetooth Device: "
+							+ device.getName() + "=" + device.getAddress());
+					BTDeviceSet[i] = new PortInfo(device.getAddress(), device
+							.getName());
+					i++;
+				}
+			}
+			return BTDeviceSet;
 	}
 
 }

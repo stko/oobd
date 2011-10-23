@@ -2,14 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package skdsswing.bus;
+package org.oobd.base.port;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.oobd.base.port.OOBDPort;
+import org.oobd.base.port.PortInfo;
 import org.oobd.base.support.Onion;
-//import gnu.io.*; // for rxtxSerial library
-import purejavacomm.*;
+import gnu.io.*; // for rxtxSerial library
+//import purejavacomm.*;
 import java.io.*;
 import java.util.*;
 
@@ -17,7 +18,7 @@ import java.util.*;
  *
  * @author steffen
  */
-public class ComPort_Win implements OOBDPort {
+public class ComPort_Unix implements OOBDPort {
 
     CommPortIdentifier portId;
     CommPortIdentifier saveportId;
@@ -55,7 +56,7 @@ public class ComPort_Win implements OOBDPort {
             // mac
             defaultPort = "????";
         } else {
-            Logger.getLogger(ComPort_Win.class.getName()).log(Level.SEVERE, "OS os not supported");
+            Logger.getLogger(ComPort_Unix.class.getName()).log(Level.SEVERE, "OS os not supported");
             return false;
         }
 
@@ -70,7 +71,7 @@ public class ComPort_Win implements OOBDPort {
             portId = (CommPortIdentifier) portList.nextElement();
             if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
                 if (portId.getName().equals(defaultPort)) {
-                    Logger.getLogger(ComPort_Win.class.getName()).log(Level.CONFIG, "Found port: " + defaultPort);
+                    Logger.getLogger(ComPort_Unix.class.getName()).log(Level.CONFIG, "Found port: " + defaultPort);
                     portFound = true;
 
                     try {
@@ -91,11 +92,11 @@ public class ComPort_Win implements OOBDPort {
                         serialPort.enableReceiveTimeout(5);
                         return true;
                     } catch (UnsupportedCommOperationException ex) {
-                        Logger.getLogger(ComPort_Win.class.getName()).log(Level.SEVERE, "Unsupported serial port parameter", ex);
+                        Logger.getLogger(ComPort_Unix.class.getName()).log(Level.SEVERE, "Unsupported serial port parameter", ex);
                         return false;
 
                     } catch (PortInUseException ex) {
-                        Logger.getLogger(ComPort_Win.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(ComPort_Unix.class.getName()).log(Level.SEVERE, null, ex);
                         return false;
                     } catch (IOException ex) {
                         ex.printStackTrace();
@@ -108,7 +109,7 @@ public class ComPort_Win implements OOBDPort {
 
         }
         if (!portFound) {
-            Logger.getLogger(ComPort_Win.class.getName()).log(Level.WARNING, "serial port " + defaultPort + " not found.");
+            Logger.getLogger(ComPort_Unix.class.getName()).log(Level.WARNING, "serial port " + defaultPort + " not found.");
         }
         return portFound;
     }
@@ -149,5 +150,27 @@ public class ComPort_Win implements OOBDPort {
 
     public OOBDPort resetConnection() {
         return close();
+    }
+
+    public PortInfo[] getPorts() {
+        Vector<PortInfo> portVector = new Vector();
+
+                portList = CommPortIdentifier.getPortIdentifiers();
+                if (portList == null || !portList.hasMoreElements()){
+				PortInfo[] DeviceSet = new PortInfo[1];
+				DeviceSet[0] = new PortInfo("", "No Comports found :-(");
+				return DeviceSet;
+
+                }
+        while (portList.hasMoreElements()) {
+            portId = (CommPortIdentifier) portList.nextElement();
+            if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+                portVector.add(new PortInfo("",portId.getName()));
+            }
+
+        }
+               ArrayList<PortInfo> myList= Collections.list(portList);
+               return (PortInfo[])myList.toArray();
+
     }
 }

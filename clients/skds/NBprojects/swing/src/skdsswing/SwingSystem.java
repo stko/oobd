@@ -13,12 +13,12 @@ import org.oobd.base.*;
 import org.oobd.base.OOBDConstants;
 import java.net.URL;
 import java.net.URLClassLoader;
-import skdsswing.bus.ComPort_Win;
+import org.oobd.base.port.ComPort_Win;
 
 //import java.io.FileInputStream;
 import java.io.*;
 import org.oobd.base.support.Onion;
-import skdsswing.bus.ComPort_Unix;
+import org.oobd.base.port.ComPort_Unix;
 
 /**
  * This class is the connection between the generic oobd system and the enviroment for e.g. IO operations
@@ -120,10 +120,17 @@ public class SwingSystem implements IFsystem {
     public Object supplyHardwareHandle(Onion typ) {
          String osname = System.getProperty("os.name", "").toLowerCase();
          	 Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG,"OS detected: "+osname);
-       if (osname.startsWith("windows")) {
+       try{
+           if (osname.startsWith("windows")) {
             return new ComPort_Win();
         }else{
-              return new ComPort_Unix();
+               return new ComPort_Unix();
         }
+
+               } catch (Exception ex) {
+                    ex.printStackTrace();
+                    return null;
+                }
+
     }
 }
