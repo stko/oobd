@@ -10,10 +10,11 @@
  */
 
 package skdsswing;
+import org.oobd.base.port.ComPort_Win;
 import java.awt.event.WindowEvent;
 import javax.swing.JDialog;
 import org.jdesktop.application.Action;
-import skdsswing.bus.*;
+//import skdsswing.bus.*;
 /**
  *
  * @author maziar

@@ -12,10 +12,11 @@
 
 package skdsswing;
 
+import org.oobd.base.port.ComPort_Win;
 import javax.swing.Action;
 import javax.swing.JComboBox;
 import java.awt.event.WindowEvent;
-import skdsswing.bus.*;
+//import skdsswing.bus.*;
 import skdsswing.transfer.TransferSpecification;
 /**
  *
