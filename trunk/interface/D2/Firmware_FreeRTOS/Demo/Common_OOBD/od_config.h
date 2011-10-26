@@ -157,7 +157,10 @@
 #define VALUE_LF_CR (2)
 
 /*-------- Global Vars --------------*/
-static unsigned char BTM222_RespBuffer[20] = "00:00:00:00:00:00";
+unsigned char BTM222_RespBuffer[25];
+unsigned char BTM222_BtAddress[18];
+
+unsigned int  BufCnt, BTM222_UART_Rx_Flag;
 
 //! callback function for print a single char
 

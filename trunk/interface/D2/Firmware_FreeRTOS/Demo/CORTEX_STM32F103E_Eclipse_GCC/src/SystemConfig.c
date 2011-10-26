@@ -43,7 +43,8 @@ xQueueHandle Led2Queue = NULL;
 
 /* Private macro -------------------------------------------------------------*/
 
-/* Private variables ---------------------------------------------------------*/ 
+/* Private variables ---------------------------------------------------------*/
+DMA_InitTypeDef   sEEDMA_InitStructure;
 
 /* Private function prototypes -----------------------------------------------*/
 
@@ -267,7 +268,11 @@ void GPIO_Configuration(void)
   */
 void USART1_Configuration(void)
 {
+//  extern unsigned int BufCnt, BTM222_UART_Rx_Flag;
+  volatile unsigned long nCount, nLength = 300000;
   USART_InitTypeDef USART_InitStructure;
+
+  USART_DeInit(USART1); /* Reset Uart to default */
 
   /** USARTx configuration -----------------------------------------------------
     * USARTx configured as follow:
@@ -297,60 +302,57 @@ void USART1_Configuration(void)
 	/*  USART_ITConfig(USART1, USART_IT_RXNE, ENABLE); */
 
   /* Enable the USART1 */
-//  USART_Cmd(USART1, ENABLE);
-//  uint32_t nCount, nLength=500000000;
-  uint8_t c;
+  USART_Cmd(USART1, ENABLE);
+
+  /* Enable the USART1-Receive interrupt: this interrupt is generated when the
+     USART1 receive data register is not empty */
+  USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+  NVIC_Configuration ();
 
   /* get Bluetooth address of BTM222 before going on */
-//  uint8_t RxCounter = 0;
-//  uint8_t RxBufferSize = 8;
   /* send request to BTM222 => Bluetooth-Serial must be disconnected at this state*/
-//  for(nCount = 0; nCount < nLength; nCount++){}; /* delay */
+  /* disable local echo of BTM222 */
+//  USART_SendData(USART1, 'a');
+//  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+//  USART_SendData(USART1, 't');
+//  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+//  USART_SendData(USART1, 'e');
+//  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+//  USART_SendData(USART1, '1');
+//  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+//  USART_SendData(USART1, '\r');
+//  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
 
-  /* BTM EOL must be CR = '\r' = 0x0D */
-/*
-  uart1_puts ("atb?\r");
-  while (!(USART1->SR & USART_FLAG_RXNE));
-  c = (uint8_t)USART1->DR;
-  if (c == 'O') {
-	uart1_puts ("O received\r\n");
-	uart1_puts (c);
+//  BTM222_BtAddress = {"00:00:00:00:00:00"};
+  for (BufCnt = 0; BufCnt <=18; BufCnt ++) {
+	  if ( BufCnt == 2 || BufCnt == 5 || BufCnt == 8 || BufCnt == 11 || BufCnt == 14)
+	    BTM222_BtAddress[BufCnt] = ':';
+	  else if (BufCnt == 17)
+		BTM222_BtAddress[BufCnt] = '\0'; /* add string termination */
+	  else
+		BTM222_BtAddress[BufCnt] = '0';  /* initial default value 0 */
   }
-  else {
-	uart1_puts ("error while receiving\r\n");
-    uart1_puts (c);
-	uart1_puts ("\r\n");
-  }
-*/
-/*
-  while (!(USART1->SR & USART_FLAG_RXNE));
-  c = (uint8_t)USART1->DR;
-  if (c == 'K')
-	uart1_puts ("K received\r\n");
-  else {
-    uart1_puts ("error while receiving\r\n");
-    uart1_puts (c);
-	uart1_puts ("\r\n");
-  }
-*/
-/*
-  uart1_puts ("atb?\r\n");
-  while(1);
-*/
 
 
-//while (RxCounter < RxBufferSize)
-//{
-  /* Loop until the USART1 Receive Data Register is not empty */
-//  BTM222_RespBuffer[RxCounter++] = uart1_getc();
-
-/*
-  if ((BTM222_RespBuffer[RxCounter++] = (USART_ReceiveData(USART1) & 0x7F)) == 13)
-    break;
-*/
-//}
-
-//  uart1_puts (BTM222_RespBuffer);
+  BTM222_UART_Rx_Flag = pdFALSE;
+  BufCnt = 0;
+  /* send "atb?"-command to get Bluetooth MAC address of BTM222 */
+  USART_SendData(USART1, 'a');
+//  uart1_putc(BTM222_RespBuffer[0]);
+//  while ('a' != BTM222_RespBuffer[0]);
+  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  USART_SendData(USART1, 't');
+//  while ('t' == BTM222_RespBuffer[BufCnt-1]);
+  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  USART_SendData(USART1, 'b');
+  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  USART_SendData(USART1, '?');
+  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  USART_SendData(USART1, '\r');
+  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  for( nCount = 0; nCount < 8000000; nCount++ ) { }; /* delay */
+/* ----------- */
+  BTM222_UART_Rx_Flag = pdTRUE;
 
 #ifdef todo_autobaud
     char  ReceivedData;
@@ -361,21 +363,6 @@ void USART1_Configuration(void)
 #define TxBufferSize   (countof(TxBuffer))
 #define countof(a)   (sizeof(a) / sizeof(*(a)))
 
-    __IO uint8_t TxCounter, RxCounter;
-/*
-    TxCounter = 0;
-    RxCounter = 0;
-    while(TxCounter < TxBufferSize)
-    {
-*/
-      /* Send one byte from USARTy to USARTz */
-//      USART_SendData(USART1, TxBuffer[TxCounter++]);
-
-      /* Loop until USARTy DR register is empty */
-//      while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
-//      {
-//      }
-//    }
 
     for (AutobaudControl=0; AutobaudControl<=9; AutobaudControl++)
     {
@@ -662,4 +649,148 @@ void ADC_Configuration(void)
   ADC_StartCalibration(ADC1);
   /* Check the end of ADC1 calibration */
   while(ADC_GetCalibrationStatus(ADC1));
+}
+
+/**
+  * @brief  DeInitializes peripherals used by the I2C EEPROM driver.
+  * @param  None
+  * @retval None
+  */
+void sEE_LowLevel_DeInit(void)
+{
+  GPIO_InitTypeDef  GPIO_InitStructure;
+  NVIC_InitTypeDef NVIC_InitStructure;
+
+  /* sEE_I2C Peripheral Disable */
+  I2C_Cmd(sEE_I2C, DISABLE);
+
+  /* sEE_I2C DeInit */
+  I2C_DeInit(sEE_I2C);
+
+  /*!< sEE_I2C Periph clock disable */
+  RCC_APB1PeriphClockCmd(sEE_I2C_CLK, DISABLE);
+
+  /*!< GPIO configuration */
+  /*!< Configure sEE_I2C pins: SCL */
+  GPIO_InitStructure.GPIO_Pin = sEE_I2C_SCL_PIN;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+  GPIO_Init(sEE_I2C_SCL_GPIO_PORT, &GPIO_InitStructure);
+
+  /*!< Configure sEE_I2C pins: SDA */
+  GPIO_InitStructure.GPIO_Pin = sEE_I2C_SDA_PIN;
+  GPIO_Init(sEE_I2C_SDA_GPIO_PORT, &GPIO_InitStructure);
+
+  /* Configure and enable I2C DMA TX Channel interrupt */
+  NVIC_InitStructure.NVIC_IRQChannel = sEE_I2C_DMA_TX_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = sEE_I2C_DMA_PREPRIO;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = sEE_I2C_DMA_SUBPRIO;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
+  NVIC_Init(&NVIC_InitStructure);
+
+  /* Configure and enable I2C DMA RX Channel interrupt */
+  NVIC_InitStructure.NVIC_IRQChannel = sEE_I2C_DMA_RX_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = sEE_I2C_DMA_PREPRIO;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = sEE_I2C_DMA_SUBPRIO;
+  NVIC_Init(&NVIC_InitStructure);
+
+  /* Disable and Deinitialize the DMA channels */
+  DMA_Cmd(sEE_I2C_DMA_CHANNEL_TX, DISABLE);
+  DMA_Cmd(sEE_I2C_DMA_CHANNEL_RX, DISABLE);
+  DMA_DeInit(sEE_I2C_DMA_CHANNEL_TX);
+  DMA_DeInit(sEE_I2C_DMA_CHANNEL_RX);
+}
+
+/**
+  * @brief  Initializes peripherals used by the I2C EEPROM driver.
+  * @param  None
+  * @retval None
+  */
+void sEE_LowLevel_Init(void)
+{
+  GPIO_InitTypeDef  GPIO_InitStructure;
+  NVIC_InitTypeDef NVIC_InitStructure;
+
+  /*!< sEE_I2C_SCL_GPIO_CLK and sEE_I2C_SDA_GPIO_CLK Periph clock enable */
+  RCC_APB2PeriphClockCmd(sEE_I2C_SCL_GPIO_CLK | sEE_I2C_SDA_GPIO_CLK, ENABLE);
+
+  /*!< sEE_I2C Periph clock enable */
+  RCC_APB1PeriphClockCmd(sEE_I2C_CLK, ENABLE);
+
+  /*!< GPIO configuration */
+  /*!< Configure sEE_I2C pins: SCL */
+  GPIO_InitStructure.GPIO_Pin = sEE_I2C_SCL_PIN;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
+  GPIO_Init(sEE_I2C_SCL_GPIO_PORT, &GPIO_InitStructure);
+
+  /*!< Configure sEE_I2C pins: SDA */
+  GPIO_InitStructure.GPIO_Pin = sEE_I2C_SDA_PIN;
+  GPIO_Init(sEE_I2C_SDA_GPIO_PORT, &GPIO_InitStructure);
+
+  /* Configure and enable I2C DMA TX Channel interrupt */
+  NVIC_InitStructure.NVIC_IRQChannel = sEE_I2C_DMA_TX_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = sEE_I2C_DMA_PREPRIO;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = sEE_I2C_DMA_SUBPRIO;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+
+  /* Configure and enable I2C DMA RX Channel interrupt */
+  NVIC_InitStructure.NVIC_IRQChannel = sEE_I2C_DMA_RX_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = sEE_I2C_DMA_PREPRIO;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = sEE_I2C_DMA_SUBPRIO;
+  NVIC_Init(&NVIC_InitStructure);
+
+  /*!< I2C DMA TX and RX channels configuration */
+  /* Enable the DMA clock */
+  RCC_AHBPeriphClockCmd(sEE_I2C_DMA_CLK, ENABLE);
+
+  /* I2C TX DMA Channel configuration */
+  DMA_DeInit(sEE_I2C_DMA_CHANNEL_TX);
+  sEEDMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)sEE_I2C_DR_Address;
+  sEEDMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)0;   /* This parameter will be configured durig communication */
+  sEEDMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;    /* This parameter will be configured durig communication */
+  sEEDMA_InitStructure.DMA_BufferSize = 0xFFFF;            /* This parameter will be configured durig communication */
+  sEEDMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  sEEDMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  sEEDMA_InitStructure.DMA_PeripheralDataSize = DMA_MemoryDataSize_Byte;
+  sEEDMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+  sEEDMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
+  sEEDMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
+  sEEDMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+  DMA_Init(sEE_I2C_DMA_CHANNEL_TX, &sEEDMA_InitStructure);
+
+  /* I2C RX DMA Channel configuration */
+  DMA_DeInit(sEE_I2C_DMA_CHANNEL_RX);
+  DMA_Init(sEE_I2C_DMA_CHANNEL_RX, &sEEDMA_InitStructure);
+
+  /* Enable the DMA Channels Interrupts */
+  DMA_ITConfig(sEE_I2C_DMA_CHANNEL_TX, DMA_IT_TC, ENABLE);
+  DMA_ITConfig(sEE_I2C_DMA_CHANNEL_RX, DMA_IT_TC, ENABLE);
+}
+
+
+/**
+  * @brief  Initializes DMA channel used by the I2C EEPROM driver.
+  * @param  None
+  * @retval None
+  */
+void sEE_LowLevel_DMAConfig(uint32_t pBuffer, uint32_t BufferSize, uint32_t Direction)
+{
+  /* Initialize the DMA with the new parameters */
+  if (Direction == sEE_DIRECTION_TX)
+  {
+    /* Configure the DMA Tx Channel with the buffer address and the buffer size */
+    sEEDMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)pBuffer;
+    sEEDMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
+    sEEDMA_InitStructure.DMA_BufferSize = (uint32_t)BufferSize;
+    DMA_Init(sEE_I2C_DMA_CHANNEL_TX, &sEEDMA_InitStructure);
+  }
+  else
+  {
+    /* Configure the DMA Rx Channel with the buffer address and the buffer size */
+    sEEDMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)pBuffer;
+    sEEDMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
+    sEEDMA_InitStructure.DMA_BufferSize = (uint32_t)BufferSize;
+    DMA_Init(sEE_I2C_DMA_CHANNEL_RX, &sEEDMA_InitStructure);
+  }
 }

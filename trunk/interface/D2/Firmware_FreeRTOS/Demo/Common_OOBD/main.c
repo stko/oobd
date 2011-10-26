@@ -40,7 +40,6 @@
 #ifdef OOBD_PLATFORM_STM32
 #include "stm32f10x.h"		/* ST Library v3.4..0 specific header files */
 #include "SystemConfig.h"	/* STM32 hardware specific header file */
-#include "mc_i2c_routines.h"
 #include "mc_misc.h"
 #endif
 
@@ -50,15 +49,13 @@ static const short sUsingPreemption = configUSE_PREEMPTION;
 #define SERIAL_COMM_TASK_PRIORITY			( tskIDLE_PRIORITY + 3 )
 /*---------------------------------------------------------------------------*/
 
-static unsigned char BTM222_BTaddress[13];
-
 void
 tickTask (void *pvParameters)
 {
   DEBUGUARTPRINT ("\r\n*** tickTask entered! ***");
 
   extern xQueueHandle protocolQueue;
-  // char buffer[1024];
+
   for (;;)
     {
 /*
@@ -93,7 +90,10 @@ main (void)
   /* SystemInit(); *//* not needed as SystemInit() is called from startup */
   /* Initialize DXM1 hardware, i.e. GPIO, CAN, USART1 */
   System_Configuration ();
-/* 	I2C_LowLevel_Init(I2C1); */
+
+  /* Initialize the I2C EEPROM driver ----------------------------------------*/
+  sEE_Init();
+
 #endif
 
   /* Activate the busses */
@@ -116,17 +116,33 @@ main (void)
     printser_string(SVNREV);
   #endif
 
-   /*
-#ifdef OOBD_PLATFORM_STM32
-    if (Success == I2C_Master_BufferRead(I2C1,Buffer_Rx1,1,Polling, 0x28))
-      {
-        DEBUGUARTPRINT("*** I2C read successfully! ***");
-        DEBUGUARTPRINT(Buffer_Rx1);
-      }
-    else
-      DEBUGUARTPRINT("*** I2C read error! ***");
+
+#ifdef OOBD_PLATFORM_EEPROMpart
+    uint8_t Tx1_Buffer[] = "OOBD-Cup EEPROM Test";
+	#define sEE_WRITE_ADDRESS1        0x00
+	#define sEE_READ_ADDRESS1         0x00
+	#define countof(a) (sizeof(a) / sizeof(*(a)))
+    #define BUFFER_SIZE1             (countof(Tx1_Buffer)-1)
+    volatile uint16_t NumDataRead = 0;
+    uint8_t Rx1_Buffer[BUFFER_SIZE1];
+
+    printser_string("\r\nShow Tx1_buffer:");
+    printser_string(Tx1_Buffer);
+
+    /* First write in the memory followed by a read of the written data --------*/
+    /* Write on I2C EEPROM from sEE_WRITE_ADDRESS1 */
+    sEE_WriteBuffer(Tx1_Buffer, sEE_WRITE_ADDRESS1, BUFFER_SIZE1);
+
+    /* Set the Number of data to be read */
+    NumDataRead = BUFFER_SIZE1;
+
+    /* Read from I2C EEPROM from sEE_READ_ADDRESS1 */
+    sEE_ReadBuffer(Rx1_Buffer, sEE_READ_ADDRESS1, (uint16_t *)(&NumDataRead));
+
+    printser_string("\r\nShow Rx1_buffer:");
+    printser_string(Rx1_Buffer);
 #endif
-*/
+
 
   // starting with the first protocol in the list
   if (pdPASS == xTaskCreate (odparr[0], (const signed portCHAR *) "prot",
