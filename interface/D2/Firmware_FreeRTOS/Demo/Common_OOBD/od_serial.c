@@ -295,7 +295,7 @@ void inputParserTask(void *pvParameters) {
 									} else if (cmdValue
 											== VALUE_PARAM_INFO_SERIALNUMBER) /* p 0 1 */
 									{
-										printser_string(BTM222_RespBuffer);
+										printser_string(BTM222_BtAddress);
 									} else if (cmdValue
 											== VALUE_PARAM_INFO_PROTOCOL) /* p 0 3 */
 									{

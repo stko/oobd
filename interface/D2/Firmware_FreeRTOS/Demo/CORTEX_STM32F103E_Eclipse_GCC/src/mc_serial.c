@@ -81,9 +81,45 @@ void uart1_putc(char c) {
 	USART1->DR = (uint16_t) c;
 }
 
-int uart1_getc() {
-	return -1;
+void BTM222_Rx_getc(char c) {
+
+	if (c == '\r') /* char CR Carriage return */
+	{
+		if (BTM222_RespBuffer[BufCnt-2] == 'O' && BTM222_RespBuffer[BufCnt-1] == 'K') {
+     	  BTM222_UART_Rx_Flag = 1;
+		  /* check if response depends on request "atb?" */
+		  if (BTM222_RespBuffer[0] == 'a' &&
+			  BTM222_RespBuffer[1] == 't' &&
+			  BTM222_RespBuffer[2] == 'b' &&
+			  BTM222_RespBuffer[3] == '?')
+		  {
+			  /* create Bluetooth MAC-Address of BTM222 Response of "atb?" request */
+			  BTM222_BtAddress[0] = BTM222_RespBuffer[BufCnt-18];
+			  BTM222_BtAddress[1] = BTM222_RespBuffer[BufCnt-17];
+			  BTM222_BtAddress[2] = ':';
+			  BTM222_BtAddress[3] = BTM222_RespBuffer[BufCnt-16];
+			  BTM222_BtAddress[4] = BTM222_RespBuffer[BufCnt-15];
+			  BTM222_BtAddress[5] = ':';
+			  BTM222_BtAddress[6] = BTM222_RespBuffer[BufCnt-13];
+			  BTM222_BtAddress[7] = BTM222_RespBuffer[BufCnt-12];
+			  BTM222_BtAddress[8] = ':';
+			  BTM222_BtAddress[9] = BTM222_RespBuffer[BufCnt-10];
+			  BTM222_BtAddress[10] = BTM222_RespBuffer[BufCnt-9];
+			  BTM222_BtAddress[11] = ':';
+			  BTM222_BtAddress[12] = BTM222_RespBuffer[BufCnt-8];
+			  BTM222_BtAddress[13] = BTM222_RespBuffer[BufCnt-7];
+			  BTM222_BtAddress[14] = ':';
+			  BTM222_BtAddress[15] = BTM222_RespBuffer[BufCnt-6];
+			  BTM222_BtAddress[16] = BTM222_RespBuffer[BufCnt-5];
+			  BTM222_BtAddress[17] = '\0'; /* add termination of a string */
+		  }
+		}
+		BTM222_RespBuffer[BufCnt++] = c;
+	}
+	else
+		BTM222_RespBuffer[BufCnt++] = c;
 }
+
 /*---------------------------------------------------------------------------*/
 
 typedef enum {
@@ -91,19 +127,6 @@ typedef enum {
 	RX_STATE_CMD,
 	RX_STATE_CRLF
 } E_RX_STATE;
-/*---------------------------------------------------------------------------*/
-/*
-void SerialSendStr(char const *str) {
-  if (str) {
-    while (*str) {
-      xQueueSendToBack(hSerialTx, (void *)str, portMAX_DELAY);
-      str++;
-    }
-    // enable TXE interrupt
-    USART1->CR1 |= USART_CR1_TXEIE;
-  }
-}
-*/
 /*---------------------------------------------------------------------------*/
 
 void sendMemLoc(uint32_t *ptr) {
@@ -136,48 +159,35 @@ void USART1_IRQHandler(void) {
 	DEBUGUARTPRINT("\r\n*** USART1_IRQHandler starting ***");
 
 	extern xQueueHandle internalSerialRxQueue;
-	uint16_t sr = USART1->SR;
 	char ch;
 	static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
-	static portBASE_TYPE xTaskWokenByReceive  = pdFALSE;
 
-	// Check for received Data
-	if (sr & USART_SR_RXNE) {
+	/* Check for received Data */
+	if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
+	{
 		ch = USART_ReceiveData(USART1);
-	  if (pdPASS == xQueueSendToBackFromISR(internalSerialRxQueue, &ch, &xHigherPriorityTaskWoken))
-		  {
-			DEBUGUARTPRINT("\r\n*** internalSerialRxQueue Zeichen geschrieben ***");
-
-			// Switch context if necessary.
-			if( xHigherPriorityTaskWoken )
+		if (BTM222_UART_Rx_Flag == pdFALSE) /* check for BTM222 communication during powerup */
+		{
+			BTM222_Rx_getc(ch);
+		}
+		else {
+			if (pdPASS == xQueueSendToBackFromISR(internalSerialRxQueue, &ch, &xHigherPriorityTaskWoken))
 			{
-			  taskYIELD ();
+				DEBUGUARTPRINT("\r\n*** internalSerialRxQueue Zeichen geschrieben ***");
+
+				/* Switch context if necessary */
+				if( xHigherPriorityTaskWoken )
+				{
+					taskYIELD ();
+				}
+			}
+			else
+			{
+				DEBUGUARTPRINT("\r\n*** internalSerialRxQueue Zeichen NICHT geschrieben ***");
 			}
 		}
-		else
-		{
-			DEBUGUARTPRINT("\r\n*** internalSerialRxQueue Zeichen NICHT geschrieben ***");
-		}
 	}
 
-	/*
-	// Check if transmit buffer is empty
-	if (sr & USART_SR_TXE) {
-     	DEBUGUARTPRINT("\r\n*** USART1_IRQHandler TRANSMIT interrupt detected ***");
-		// Send character if available
-		if (pdTRUE == xQueueReceiveFromISR(hSerialTx, &ch, &xTaskWokenByReceive)) {
-				USART1->DR = ch;
-			    // Switch context if necessary.
-			    if( xTaskWokenByReceive )
-			    {
-			        taskYIELD ();
-			    }
-		} else {
-			// disable TXE interrupt
-			USART1->CR1 &= ~USART_CR1_TXEIE;
-		}
-	}
-*/
 	DEBUGUARTPRINT("\r\n*** USART1_IRQHandler finished ***");
 }
 /*---------------------------------------------------------------------------*/
