@@ -268,9 +268,9 @@ void GPIO_Configuration(void)
   */
 void USART1_Configuration(void)
 {
-//  extern unsigned int BufCnt, BTM222_UART_Rx_Flag;
   volatile unsigned long nCount, nLength = 300000;
   USART_InitTypeDef USART_InitStructure;
+  uint8_t BTM222_UartAutobaudControl;
 
   USART_DeInit(USART1); /* Reset Uart to default */
 
@@ -293,56 +293,239 @@ void USART1_Configuration(void)
   /* Configure USART1 */
   USART_Init(USART1, &USART_InitStructure);
 
+  /* Enable the USART1 */
+  USART_Cmd(USART1, ENABLE);
+
   /* Enable the USART1-Transmit interrupt: this interrupt is generated when the
      USART1 transmit data register is empty */
   /* USART_ITConfig(USART1, USART_IT_TXE, ENABLE); */
 
   /* Enable the USART1-Receive interrupt: this interrupt is generated when the
      USART1 receive data register is not empty */
-	/*  USART_ITConfig(USART1, USART_IT_RXNE, ENABLE); */
-
-  /* Enable the USART1 */
-  USART_Cmd(USART1, ENABLE);
-
-  /* Enable the USART1-Receive interrupt: this interrupt is generated when the
-     USART1 receive data register is not empty */
   USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
   NVIC_Configuration ();
+
+  /* set UartAutobaudControl to default UART value 115200kbit/s */
+  BTM222_UartAutobaudControl = 0;
+
+  while (BTM222_UartAutobaudControl != 9)
+  {
+
+	BTM222_UART_Rx_Flag = pdFALSE;
+	BufCnt = 0;
+	USART_SendData(USART1, 'a');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, 't');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, '\r');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	for( nCount = 0; nCount < 100000; nCount++ ) { }; /* delay */
+
+	BufCnt = 0;
+	USART_SendData(USART1, 'a');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, 't');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, 'l');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, '?');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, '\r');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	for( nCount = 0; nCount < 800000; nCount++ ) { }; /* delay */
+
+	/* check received response character from BTM222 */
+	switch (BTM222_UartSpeed)
+	{
+	  case '1':
+        DEBUGUARTPRINT("\r\n*** BTM222 - L1 = 9600bps detected! ***");
+        USART_SendData(USART1, 'a');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, 't');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, 'l');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, '5');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, '\r');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        BTM222_UartAutobaudControl = 6;
+        break;
+
+      case '2':
+        DEBUGUARTPRINT("\r\n*** BTM222 - L2 = 19200bps detected! ***");
+        USART_SendData(USART1, 'a');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, 't');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, 'l');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, '5');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, '\r');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        BTM222_UartAutobaudControl = 6;
+        break;
+
+      case '3':
+        DEBUGUARTPRINT("\r\n*** BTM222 - L3 = 38400bps detected! ***");
+        BTM222_UART_Rx_Flag = pdFALSE;
+        USART_SendData(USART1, 'a');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, 't');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, 'l');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, '5');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, '\r');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        BTM222_UartAutobaudControl = 6;
+        BTM222_UART_Rx_Flag = pdTRUE;
+        break;
+
+      case '4':
+        DEBUGUARTPRINT("\r\n*** BTM222 - L4 = 57600bps detected! ***");
+        USART_SendData(USART1, 'a');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, 't');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, 'l');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, '5');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, '\r');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        BTM222_UartAutobaudControl = 6;
+        break;
+
+      case '5':
+        DEBUGUARTPRINT("\r\n*** BTM222 - L5 = 115200bps detected! ***");
+        BTM222_UartAutobaudControl = 9;
+        break;
+
+      case '6':
+        DEBUGUARTPRINT("\r\n*** BTM222 - L6 = 230400bps detected! ***");
+        USART_SendData(USART1, 'a');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, 't');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, 'l');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, '5');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, '\r');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        BTM222_UartAutobaudControl = 6;
+        break;
+
+      case '7':
+        DEBUGUARTPRINT("\r\n*** BTM222 - L7 = 460800bps detected! ***");
+        USART_SendData(USART1, 'a');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, 't');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, 'l');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, '5');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        USART_SendData(USART1, '\r');
+        for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+        BTM222_UartAutobaudControl = 6;
+        break;
+
+      default:
+        DEBUGUARTPRINT("\r\n*** BTM222 - baudrate not detected! ***");
+        BTM222_UartAutobaudControl++; /* increment AutobaudControl counter */
+        break;
+    }
+
+    switch (BTM222_UartAutobaudControl)
+    {
+      case 1:
+        /* Initialize USART1 with next possible baudrate of BTM222 */
+        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_4800;
+        break;
+
+      case 2:
+        /* Initialize USART1 with next possible baudrate of BTM222 */
+        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_9600;
+        break;
+
+      case 3:
+        /* Initialize USART1 with next possible baudrate of BTM222 */
+        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_19200;
+        break;
+
+      case 4:
+        /* Initialize USART1 with next possible baudrate of BTM222 */
+        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_38400;
+        break;
+
+      case 5:
+        /* Initialize USART1 with next possible baudrate of BTM222 */
+        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_57600;
+        break;
+
+      case 6:
+        /* Initialize USART1 with next possible baudrate of BTM222 */
+        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_115200;
+        break;
+
+      case 7:
+        /* Initialize USART1 with next possible baudrate of BTM222 */
+        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_230400;
+        break;
+
+      case 8:
+        /* Initialize USART1 with next possible baudrate of BTM222 */
+        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_460800;
+        break;
+
+      case 9:
+        /* fallback to default baudrate */
+        USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_DEFAULT;
+        break;
+
+      default:
+        break;
+    }
+    USART_Init(USART1, &USART_InitStructure); /* reinitialization of USART */
+
+  } /* end of for */
+  DEBUGUARTPRINT("\r\n*** Autobaud SCAN for BTM222 finished! ***");
 
   /* get Bluetooth address of BTM222 before going on */
   /* send request to BTM222 => Bluetooth-Serial must be disconnected at this state*/
   /* disable local echo of BTM222 */
-//  USART_SendData(USART1, 'a');
-//  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
-//  USART_SendData(USART1, 't');
-//  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
-//  USART_SendData(USART1, 'e');
-//  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
-//  USART_SendData(USART1, '1');
-//  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
-//  USART_SendData(USART1, '\r');
-//  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  //  USART_SendData(USART1, 'a');
+  //  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  //  USART_SendData(USART1, 't');
+  //  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  //  USART_SendData(USART1, 'e');
+  //  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  //  USART_SendData(USART1, '1');
+  //  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  //  USART_SendData(USART1, '\r');
+  //  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
 
-//  BTM222_BtAddress = {"00:00:00:00:00:00"};
+  DEBUGUARTPRINT("\r\n*** Starting to get BTM222 BT address! ***");
+  /*  set default BTM222_BtAddress = 00:00:00:00:00:00 */
   for (BufCnt = 0; BufCnt <=18; BufCnt ++) {
-	  if ( BufCnt == 2 || BufCnt == 5 || BufCnt == 8 || BufCnt == 11 || BufCnt == 14)
-	    BTM222_BtAddress[BufCnt] = ':';
-	  else if (BufCnt == 17)
-		BTM222_BtAddress[BufCnt] = '\0'; /* add string termination */
-	  else
-		BTM222_BtAddress[BufCnt] = '0';  /* initial default value 0 */
+	if ( BufCnt == 2 || BufCnt == 5 || BufCnt == 8 || BufCnt == 11 || BufCnt == 14)
+  	  BTM222_BtAddress[BufCnt] = ':';
+  	else if (BufCnt == 17)
+  	  BTM222_BtAddress[BufCnt] = '\0'; /* add string termination */
+  	else
+  	  BTM222_BtAddress[BufCnt] = '0';  /* initial default value 0 */
   }
-
 
   BTM222_UART_Rx_Flag = pdFALSE;
   BufCnt = 0;
   /* send "atb?"-command to get Bluetooth MAC address of BTM222 */
   USART_SendData(USART1, 'a');
-//  uart1_putc(BTM222_RespBuffer[0]);
-//  while ('a' != BTM222_RespBuffer[0]);
   for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
   USART_SendData(USART1, 't');
-//  while ('t' == BTM222_RespBuffer[BufCnt-1]);
   for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
   USART_SendData(USART1, 'b');
   for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
@@ -350,183 +533,20 @@ void USART1_Configuration(void)
   for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
   USART_SendData(USART1, '\r');
   for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
-  for( nCount = 0; nCount < 8000000; nCount++ ) { }; /* delay */
-/* ----------- */
+  for( nCount = 0; nCount < 500000; nCount++ ) { }; /* delay */
   BTM222_UART_Rx_Flag = pdTRUE;
+  DEBUGUARTPRINT("\r\n*** Get BTM222 BT address finished! ***");
 
-#ifdef todo_autobaud
-    char  ReceivedData;
-    uint8_t   AutobaudControl;
-    uint32_t  nCount;
-    uint8_t TxBuffer[] = "atl?\r";
-    uint8_t RxBuffer[6];
-#define TxBufferSize   (countof(TxBuffer))
-#define countof(a)   (sizeof(a) / sizeof(*(a)))
-
-
-    for (AutobaudControl=0; AutobaudControl<=9; AutobaudControl++)
-    {
-/*
-      TxCounter = 0;
-      RxCounter = 0;
-      while(TxCounter < TxBufferSize)
-      {
-*/
-        /* Send one byte from USARTy to USARTz */
-//        USART_SendData(USART1, TxBuffer[TxCounter++]);
-
-        /* Loop until USARTy DR register is empty */
-//        while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
-//        {
-//        }
-//      }
-        uart1_puts ("atl?\r");
-
-
-      /* Loop until the USARTz Receive Data Register is not empty */
-      while(USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET)
-      {
-          RxBuffer[RxCounter++] = (USART_ReceiveData(USART1) & 0x7F);
-      }
-
-      AutobaudControl++;
-
-      switch (RxBuffer[0])
-      {
-       case '1':
-//          DEBUGUARTPRINT("\r\n*** BTM222 - L1 = 9600bps detected! ***");
-         *TxBuffer = "atl5\r\n";
-//         USART_SendData(USART1, "atl5"); /* set BTM222 to default baudrate */
-         AutobaudControl = 9;
-          break;
-
-        case '2':
-//          DEBUGUARTPRINT("\r\n*** BTM222 - L2 = 19200bps detected! ***");
-//          USART_SendData(USART1, "atl5"); /* set BTM222 to default baudrate */
-          *TxBuffer = "atl5\r\n";
-          AutobaudControl = 9;
-          break;
-
-        case '3':
-//          DEBUGUARTPRINT("\r\n*** BTM222 - L3 = 38400bps detected! ***");
-//          USART_SendData(USART1, "atl5"); /* set BTM222 to default baudrate */
-          *TxBuffer = "atl5\r\n";
-          AutobaudControl = 9;
-          break;
-
-        case '4':
-//          DEBUGUARTPRINT("\r\n*** BTM222 - L4 = 57600bps detected! ***");
-//          USART_SendData(USART1, "atl5"); /* set BTM222 to default baudrate */
-          *TxBuffer = "atl5\r\n”";
-          AutobaudControl = 9;
-          break;
-
-        case '5':
-//          DEBUGUARTPRINT("\r\n*** BTM222 - L5 = 115200bps detected! ***");
-          AutobaudControl = 9;
-          break;
-
-        case '6':
-//          DEBUGUARTPRINT("\r\n*** BTM222 - L6 = 230400bps detected! ***");
-//          USART_SendData(USART1, "atl5"); /* set BTM222 to default baudrate */
-          *TxBuffer = "atl5\r\n";
-          AutobaudControl = 9;
-          break;
-
-        case '7':
-//          DEBUGUARTPRINT("\r\n*** BTM222 - L7 = 460800bps detected! ***");
-//          USART_SendData(USART1, "atl5"); /* set BTM222 to default baudrate */
-          *TxBuffer = "atl5\r\n";
-          AutobaudControl = 9;
-          break;
-
-        default:
-//          DEBUGUARTPRINT("\r\n*** BTM222 - baudrate not detected! ***");
-          AutobaudControl++; /* increment AutobaudControl counter */
-          break;
-      }
-
-      if (AutobaudControl == 9)
-      {
-          TxCounter = 0;
-          while(TxCounter < TxBufferSize)
-          {
-            /* Send one byte from USARTy to USARTz */
-            USART_SendData(USART1, TxBuffer[TxCounter++]);
-
-            /* Loop until USARTy DR register is empty */
-            while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
-            {
-            }
-          }
-      }
-
-
-      switch (AutobaudControl)
-      {
-        case 1:
-          /* Initialize USART1 with next possible baudrate of BTM222 */
-          USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_4800;
-          break;
-
-        case 2:
-          /* Initialize USART1 with next possible baudrate of BTM222 */
-          USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_9600;
-
-          break;
-
-        case 3:
-          /* Initialize USART1 with next possible baudrate of BTM222 */
-          USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_19200;
-          break;
-
-        case 4:
-          /* Initialize USART1 with next possible baudrate of BTM222 */
-          USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_38400;
-          break;
-
-        case 5:
-          /* Initialize USART1 with next possible baudrate of BTM222 */
-          USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_57600;
-          break;
-
-        case 6:
-          /* Initialize USART1 with next possible baudrate of BTM222 */
-          USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_115200;
-          break;
-
-        case 7:
-          /* Initialize USART1 with next possible baudrate of BTM222 */
-          USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_230400;
-          break;
-
-        case 8:
-          /* Initialize USART1 with next possible baudrate of BTM222 */
-          USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_460800;
-          break;
-
-        case 9:
-          USART_SendData(USART1, "atl5"); /* set BTM222 to default baudrate */
-          /* fallback to default baudrate */
-          USART_InitStructure.USART_BaudRate = USART1_BAUDRATE_DEFAULT;
-          break;
-
-        default:
-          break;
-      }
-      USART_Init(USART1, &USART_InitStructure); /* reinitialization of USART */
-    } /* end of for */
-
-//  DEBUGUARTPRINT("\r\n*** Autobaud SCAN for BTM222 finished! ***");
-
-//  USART_Init(USART1, &USART_InitStructure);
-#endif
   /* Enable the USART1-Receive interrupt: this interrupt is generated when the
      USART1 receive data register is not empty */
-  USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+//  USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+//  NVIC_Configuration ();
 
 }
 /*----------------------------------------------------------------------------*/
+
+
+
 
 /**
   * @brief  Configures the different GPIO ports

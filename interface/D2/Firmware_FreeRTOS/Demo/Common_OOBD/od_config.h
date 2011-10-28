@@ -159,6 +159,7 @@
 /*-------- Global Vars --------------*/
 unsigned char BTM222_RespBuffer[25];
 unsigned char BTM222_BtAddress[18];
+unsigned char BTM222_UartSpeed;
 
 unsigned int  BufCnt, BTM222_UART_Rx_Flag;
 

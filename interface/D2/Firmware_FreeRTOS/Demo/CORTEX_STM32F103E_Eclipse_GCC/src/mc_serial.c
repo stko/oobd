@@ -86,7 +86,7 @@ void BTM222_Rx_getc(char c) {
 	if (c == '\r') /* char CR Carriage return */
 	{
 		if (BTM222_RespBuffer[BufCnt-2] == 'O' && BTM222_RespBuffer[BufCnt-1] == 'K') {
-     	  BTM222_UART_Rx_Flag = 1;
+     	  BTM222_UART_Rx_Flag = pdTRUE;
 		  /* check if response depends on request "atb?" */
 		  if (BTM222_RespBuffer[0] == 'a' &&
 			  BTM222_RespBuffer[1] == 't' &&
@@ -112,6 +112,13 @@ void BTM222_Rx_getc(char c) {
 			  BTM222_BtAddress[15] = BTM222_RespBuffer[BufCnt-6];
 			  BTM222_BtAddress[16] = BTM222_RespBuffer[BufCnt-5];
 			  BTM222_BtAddress[17] = '\0'; /* add termination of a string */
+		  }
+		  else if (BTM222_RespBuffer[0] == 'a' &&
+			  BTM222_RespBuffer[1] == 't' &&
+			  BTM222_RespBuffer[2] == 'l' &&
+			  BTM222_RespBuffer[3] == '?')
+		  {
+			  BTM222_UartSpeed = BTM222_RespBuffer[BufCnt-5];
 		  }
 		}
 		BTM222_RespBuffer[BufCnt++] = c;
