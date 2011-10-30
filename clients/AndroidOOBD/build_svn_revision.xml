@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="add SVN" default="foo-update-svnversion" basedir=".">
+    <description>adds SVN Revision to Android project</description>
+<target name="foo-update-svnversion">
+   <exec outputproperty="svna.version" executable="svnversion">
+        <arg value="-c" />
+        <redirector>
+            <outputfilterchain>
+                <tokenfilter>
+                    <replaceregex pattern="^[0-9]*:?" replace="" flags="g"/>
+                    <replaceregex pattern="M" replace="" flags="g"/>
+                </tokenfilter>
+            </outputfilterchain>
+        </redirector>
+    </exec>
+         <property name="match.start" value="&lt;string name=&quot;app_svnversion&quot;&gt;"/>
+        <property name="match.end" value="&lt;/string&gt;"/>
+   <replaceregexp file="res/values/strings.xml"
+                   match="${match.start}.*${match.end}"
+                   replace="${match.start}${svna.version}${match.end}">
+    </replaceregexp>
+    <echo>Revision found from SVN: ${svna.version}</echo>
+</target>
+</project>

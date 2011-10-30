@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
+import android.widget.TextView;
 import android.content.SharedPreferences;
 
 
@@ -177,7 +178,9 @@ public class MainActivity extends Activity {
 				}
 			}
 		});
-
+		TextView versionView=(TextView) findViewById(R.id.versionView);
+		versionView.setText("Build " +getResources().getString(R.string.app_svnversion));
+		
 	}
 
 	/**
