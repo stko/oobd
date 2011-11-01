@@ -100,7 +100,6 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 				Log.v(this.getClass().getSimpleName(), "File " + resourceName
 						+ " could be loaded from /sdcard/oobd");
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				Log.v(this.getClass().getSimpleName(), "File " + resourceName
 						+ " could not loaded from /sdcard/oobd", e);
 			}
@@ -201,12 +200,12 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 		Class<?> tempClass = null;
 		try {
 			tempClass = Class.forName(path);
+			myInstances.put(tempClass.getSimpleName(), tempClass);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		myInstances.put(tempClass.getSimpleName(), tempClass);
 
 		return myInstances;
 	}
