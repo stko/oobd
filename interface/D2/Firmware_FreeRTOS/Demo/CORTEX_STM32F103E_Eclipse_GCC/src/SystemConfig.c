@@ -31,6 +31,7 @@
 #include "SystemConfig.h"
 #include "stm32f10x.h"
 #include "od_config.h"
+#include "mc_serial.h"
 #include "odp_uds.h"
 
 /* -------- Used Global variables --------------------------------------------*/
@@ -310,9 +311,6 @@ void USART1_Configuration(void)
 
   while (BTM222_UartAutobaudControl != 9)
   {
-
-	BTM222_UART_Rx_Flag = pdFALSE;
-	BufCnt = 0;
 	USART_SendData(USART1, 'a');
 	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
 	USART_SendData(USART1, 't');
@@ -322,6 +320,7 @@ void USART1_Configuration(void)
 	for( nCount = 0; nCount < 100000; nCount++ ) { }; /* delay */
 
 	BufCnt = 0;
+	BTM222_UART_Rx_Flag = pdFALSE;
 	USART_SendData(USART1, 'a');
 	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
 	USART_SendData(USART1, 't');
@@ -337,6 +336,21 @@ void USART1_Configuration(void)
 	/* check received response character from BTM222 */
 	switch (BTM222_UartSpeed)
 	{
+	  case '0':
+      DEBUGUARTPRINT("\r\n*** BTM222 - L1 = 4800bps detected! ***");
+      USART_SendData(USART1, 'a');
+      for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+      USART_SendData(USART1, 't');
+      for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+      USART_SendData(USART1, 'l');
+      for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+      USART_SendData(USART1, '5');
+      for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+      USART_SendData(USART1, '\r');
+      for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+      BTM222_UartAutobaudControl = 6;
+      break;
+
 	  case '1':
         DEBUGUARTPRINT("\r\n*** BTM222 - L1 = 9600bps detected! ***");
         USART_SendData(USART1, 'a');
@@ -495,30 +509,72 @@ void USART1_Configuration(void)
   } /* end of for */
   DEBUGUARTPRINT("\r\n*** Autobaud SCAN for BTM222 finished! ***");
 
-  /* get Bluetooth address of BTM222 before going on */
-  /* send request to BTM222 => Bluetooth-Serial must be disconnected at this state*/
-  /* disable local echo of BTM222 */
-  //  USART_SendData(USART1, 'a');
-  //  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
-  //  USART_SendData(USART1, 't');
-  //  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
-  //  USART_SendData(USART1, 'e');
-  //  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
-  //  USART_SendData(USART1, '1');
-  //  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
-  //  USART_SendData(USART1, '\r');
-  //  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  DEBUGUARTPRINT("\r\n*** Get BTM222 BT device name! ***");
+  BTM222_UART_Rx_Flag = pdFALSE;
+  BufCnt = 0;
+  /* send "atn?"-command to get BTM222 device name */
+  USART_SendData(USART1, 'a');
+  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  USART_SendData(USART1, 't');
+  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  USART_SendData(USART1, 'n');
+  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  USART_SendData(USART1, '?');
+  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  USART_SendData(USART1, '\r');
+  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  for( nCount = 0; nCount < 500000; nCount++ ) { }; /* delay */
+  BTM222_UART_Rx_Flag = pdTRUE;
+  DEBUGUARTPRINT("\r\n*** Get BTM222 BT device name finished! ***");
+  /* set "OOBD-Cup" as BTM222 Bluetooth device name if needed */
+  if (BTM222_DeviceNameFlag == pdFALSE) {
+    USART_SendData(USART1, 'a');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, 't');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, 'n');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, '=');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, 'O');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, 'O');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, 'B');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, 'D');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, '-');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, 'C');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, 'u');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, 'p');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, '\r');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	for( nCount = 0; nCount < 500000; nCount++ ) { }; /* delay */
+	DEBUGUARTPRINT("\r\n*** BTM222 device name set to 'OOBD-Cup' ***");
+	BufCnt = 0;
+	BTM222_UART_Rx_Flag = pdFALSE;
+	/* send "atn?"-command to get BTM222 device name */
+	USART_SendData(USART1, 'a');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, 't');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, 'n');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, '?');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, '\r');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	for( nCount = 0; nCount < 500000; nCount++ ) { }; /* delay */
+	BTM222_UART_Rx_Flag = pdTRUE;
+  }
 
   DEBUGUARTPRINT("\r\n*** Starting to get BTM222 BT address! ***");
-  /*  set default BTM222_BtAddress = 00:00:00:00:00:00 */
-  for (BufCnt = 0; BufCnt <=18; BufCnt ++) {
-	if ( BufCnt == 2 || BufCnt == 5 || BufCnt == 8 || BufCnt == 11 || BufCnt == 14)
-  	  BTM222_BtAddress[BufCnt] = ':';
-  	else if (BufCnt == 17)
-  	  BTM222_BtAddress[BufCnt] = '\0'; /* add string termination */
-  	else
-  	  BTM222_BtAddress[BufCnt] = '0';  /* initial default value 0 */
-  }
+//  BTM222_BtAddress[18] = {'0','0',':','0','0',':','0','0',':','0','0',':','0','0',':','0','0','\0'};
 
   BTM222_UART_Rx_Flag = pdFALSE;
   BufCnt = 0;
