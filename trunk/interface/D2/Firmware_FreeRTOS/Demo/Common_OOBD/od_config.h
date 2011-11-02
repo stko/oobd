@@ -142,6 +142,7 @@
 #define VALUE_BUS_CONFIG_29bit_1000kbit 		( 8 )
 #define VALUE_PARAM_INFO_VERSION 				( 0 )
 #define VALUE_PARAM_INFO_SERIALNUMBER   		( 1 )
+
 #define VALUE_PARAM_INFO_PROTOCOL       		( 3 )
 #define VALUE_PARAM_INFO_BUS   					( 4 )
 #define VALUE_PARAM_INFO_BUS_CONFIG   			( 5 )
@@ -151,17 +152,14 @@
 #define VALUE_PARAM_INFO_ROM_TABLE_LOC  		( 12 )
 #define VALUE_PARAM_INFO_FREE_HEAP_SIZE			( 13 )
 #define VALUE_PARAM_INFO_CRC32					( 14 )
+#define VALUE_PARAM_INFO_BTM222_DEVICENAME 		( 20 )
+#define VALUE_PARAM_INFO_BTM222_UART_SPEED 		( 21 )
 
 #define VALUE_LF_CRLF (0)
 #define VALUE_LF_LF (1)
 #define VALUE_LF_CR (2)
 
 /*-------- Global Vars --------------*/
-unsigned char BTM222_RespBuffer[25];
-unsigned char BTM222_BtAddress[18];
-unsigned char BTM222_UartSpeed;
-
-unsigned int  BufCnt, BTM222_UART_Rx_Flag;
 
 //! callback function for print a single char
 

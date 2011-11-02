@@ -46,6 +46,9 @@
 /* Constant definition used to turn on/off the pre-emptive scheduler. */
 static const short sUsingPreemption = configUSE_PREEMPTION;
 
+unsigned char BTM222_BtAddress[18] = {'0','0',':','0','0',':','0','0',':','0','0',':','0','0',':','0','0','\0'};
+unsigned char BTM222_DeviceName[17] = {'n','o','t',' ','d','e','t','e','c','t','e','d','\0'};
+
 #define SERIAL_COMM_TASK_PRIORITY			( tskIDLE_PRIORITY + 3 )
 /*---------------------------------------------------------------------------*/
 

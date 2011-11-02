@@ -187,6 +187,8 @@ void inputParserTask(void *pvParameters) {
 	extern xQueueHandle protocolQueue;
 	extern portBASE_TYPE lfType;
 	extern struct UdsConfig config;
+	extern unsigned char BTM222_BtAddress[];
+	extern unsigned char BTM222_DeviceName[];
 
 	MsgData *incomingMsg;
 	char inChar;
@@ -296,7 +298,8 @@ void inputParserTask(void *pvParameters) {
 											== VALUE_PARAM_INFO_SERIALNUMBER) /* p 0 1 */
 									{
 										printser_string(BTM222_BtAddress);
-									} else if (cmdValue
+									}
+									else if (cmdValue
 											== VALUE_PARAM_INFO_PROTOCOL) /* p 0 3 */
 									{
 										printser_string("1 - UDS (ISO14229-1)");
@@ -380,6 +383,53 @@ void inputParserTask(void *pvParameters) {
 										else
 											printser_string(
 													"CRC-32 application check failed");
+									}
+									else if (cmdValue
+											== VALUE_PARAM_INFO_BTM222_DEVICENAME) /* p 0 20 */
+									{
+										printser_string(BTM222_DeviceName);
+									}
+									else if (cmdValue
+											== VALUE_PARAM_INFO_BTM222_UART_SPEED) /* p 0 21 */
+									{
+										switch (BTM222_UartSpeed)
+										{
+										  case '0':
+											printser_string ("4800 bit/s");
+											break;
+
+										  case '1':
+											printser_string ("9600 bit/s");
+											break;
+
+									      case '2':
+									    	printser_string ("19200 bit/s");
+											break;
+
+									      case '3':
+									    	printser_string ("38400 bit/s");
+											break;
+
+									      case '4':
+									    	printser_string ("57600 bit/s");
+											break;
+
+									      case '5':
+									    	printser_string ("115200 bit/s");
+											break;
+
+									      case '6':
+									    	printser_string ("230400 bit/s");
+											break;
+
+									      case '7':
+									    	printser_string ("460800 bit/s");
+											break;
+
+									      default:
+										    printser_string ("not detected");
+									    	break;
+									    }
 									}
 #endif
 									else {

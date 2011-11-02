@@ -31,7 +31,7 @@
  */
 
 /* OOBD headers. */
-#include "od_config.h"
+#include "od_serial.h"
 #include "mc_serial.h"
 #include "stm32f10x.h"
 
@@ -82,6 +82,8 @@ void uart1_putc(char c) {
 }
 
 void BTM222_Rx_getc(char c) {
+	extern unsigned char BTM222_BtAddress[];
+	extern unsigned char BTM222_DeviceName[];
 
 	if (c == '\r') /* char CR Carriage return */
 	{
@@ -120,6 +122,36 @@ void BTM222_Rx_getc(char c) {
 		  {
 			  BTM222_UartSpeed = BTM222_RespBuffer[BufCnt-5];
 		  }
+		  else if (BTM222_RespBuffer[0] == 'a' &&
+				   BTM222_RespBuffer[1] == 't' &&
+				   BTM222_RespBuffer[2] == 'n' &&
+				   BTM222_RespBuffer[3] == '?')
+		  {
+			  /* verify name */
+			  if ('O' == BTM222_RespBuffer[BufCnt-12] &&
+				  'O' == BTM222_RespBuffer[BufCnt-11] &&
+				  'B' == BTM222_RespBuffer[BufCnt-10] &&
+				  'D' == BTM222_RespBuffer[BufCnt-9] &&
+				  '-' == BTM222_RespBuffer[BufCnt-8] &&
+				  'C' == BTM222_RespBuffer[BufCnt-7] &&
+				  'u' == BTM222_RespBuffer[BufCnt-6] &&
+				  'p' == BTM222_RespBuffer[BufCnt-5])
+			  {
+				BTM222_DeviceNameFlag = pdTRUE;
+			  	BTM222_DeviceName[0] = BTM222_RespBuffer[BufCnt-12];
+			  	BTM222_DeviceName[1] = BTM222_RespBuffer[BufCnt-11];
+			  	BTM222_DeviceName[2] = BTM222_RespBuffer[BufCnt-10];
+			  	BTM222_DeviceName[3] = BTM222_RespBuffer[BufCnt-9];
+			  	BTM222_DeviceName[4] = BTM222_RespBuffer[BufCnt-8];
+			  	BTM222_DeviceName[5] = BTM222_RespBuffer[BufCnt-7];
+			  	BTM222_DeviceName[6] = BTM222_RespBuffer[BufCnt-6];
+			  	BTM222_DeviceName[7] = BTM222_RespBuffer[BufCnt-5];
+			  	BTM222_DeviceName[8] = '\0';   /* add termination of a string */
+			  }
+			  else
+				BTM222_DeviceNameFlag = pdFALSE;
+		  }
+
 		}
 		BTM222_RespBuffer[BufCnt++] = c;
 	}
