@@ -272,6 +272,7 @@ void USART1_Configuration(void)
   volatile unsigned long nCount, nLength = 300000;
   USART_InitTypeDef USART_InitStructure;
   uint8_t BTM222_UartAutobaudControl;
+  extern unsigned char BTM222_BtAddress[];
 
   USART_DeInit(USART1); /* Reset Uart to default */
 
@@ -509,6 +510,26 @@ void USART1_Configuration(void)
   } /* end of for */
   DEBUGUARTPRINT("\r\n*** Autobaud SCAN for BTM222 finished! ***");
 
+  DEBUGUARTPRINT("\r\n*** Starting to get BTM222 BT address! ***");
+//  BTM222_BtAddress[18] = {'0','0',':','0','0',':','0','0',':','0','0',':','0','0',':','0','0','\0'};
+
+  BTM222_UART_Rx_Flag = pdFALSE;
+  BufCnt = 0;
+  /* send "atb?"-command to get Bluetooth MAC address of BTM222 */
+  USART_SendData(USART1, 'a');
+  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  USART_SendData(USART1, 't');
+  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  USART_SendData(USART1, 'b');
+  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  USART_SendData(USART1, '?');
+  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  USART_SendData(USART1, '\r');
+  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+  for( nCount = 0; nCount < 500000; nCount++ ) { }; /* delay */
+  BTM222_UART_Rx_Flag = pdTRUE;
+  DEBUGUARTPRINT("\r\n*** Get BTM222 BT address finished! ***");
+
   DEBUGUARTPRINT("\r\n*** Get BTM222 BT device name! ***");
   BTM222_UART_Rx_Flag = pdFALSE;
   BufCnt = 0;
@@ -552,6 +573,20 @@ void USART1_Configuration(void)
 	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
 	USART_SendData(USART1, 'p');
 	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, ' ');
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, BTM222_BtAddress[9]);
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, BTM222_BtAddress[10]);
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, BTM222_BtAddress[12]);
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, BTM222_BtAddress[13]);
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, BTM222_BtAddress[15]);
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
+	USART_SendData(USART1, BTM222_BtAddress[16]);
+	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
 	USART_SendData(USART1, '\r');
 	for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
 	for( nCount = 0; nCount < 500000; nCount++ ) { }; /* delay */
@@ -573,25 +608,6 @@ void USART1_Configuration(void)
 	BTM222_UART_Rx_Flag = pdTRUE;
   }
 
-  DEBUGUARTPRINT("\r\n*** Starting to get BTM222 BT address! ***");
-//  BTM222_BtAddress[18] = {'0','0',':','0','0',':','0','0',':','0','0',':','0','0',':','0','0','\0'};
-
-  BTM222_UART_Rx_Flag = pdFALSE;
-  BufCnt = 0;
-  /* send "atb?"-command to get Bluetooth MAC address of BTM222 */
-  USART_SendData(USART1, 'a');
-  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
-  USART_SendData(USART1, 't');
-  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
-  USART_SendData(USART1, 'b');
-  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
-  USART_SendData(USART1, '?');
-  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
-  USART_SendData(USART1, '\r');
-  for( nCount = 0; nCount < nLength; nCount++ ) { }; /* delay */
-  for( nCount = 0; nCount < 500000; nCount++ ) { }; /* delay */
-  BTM222_UART_Rx_Flag = pdTRUE;
-  DEBUGUARTPRINT("\r\n*** Get BTM222 BT address finished! ***");
 
   /* Enable the USART1-Receive interrupt: this interrupt is generated when the
      USART1 receive data register is not empty */

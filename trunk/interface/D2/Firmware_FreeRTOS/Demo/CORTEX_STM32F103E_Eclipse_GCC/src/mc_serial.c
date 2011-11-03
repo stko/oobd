@@ -128,25 +128,40 @@ void BTM222_Rx_getc(char c) {
 				   BTM222_RespBuffer[3] == '?')
 		  {
 			  /* verify name */
-			  if ('O' == BTM222_RespBuffer[BufCnt-12] &&
-				  'O' == BTM222_RespBuffer[BufCnt-11] &&
-				  'B' == BTM222_RespBuffer[BufCnt-10] &&
-				  'D' == BTM222_RespBuffer[BufCnt-9] &&
-				  '-' == BTM222_RespBuffer[BufCnt-8] &&
-				  'C' == BTM222_RespBuffer[BufCnt-7] &&
-				  'u' == BTM222_RespBuffer[BufCnt-6] &&
-				  'p' == BTM222_RespBuffer[BufCnt-5])
+			  if (BTM222_RespBuffer[BufCnt-19] == 'O' &&
+				  BTM222_RespBuffer[BufCnt-18] == 'O' &&
+				  BTM222_RespBuffer[BufCnt-17] == 'B' &&
+				  BTM222_RespBuffer[BufCnt-16] == 'D' &&
+				  BTM222_RespBuffer[BufCnt-15] == '-' &&
+				  BTM222_RespBuffer[BufCnt-14] == 'C' &&
+				  BTM222_RespBuffer[BufCnt-13] == 'u' &&
+				  BTM222_RespBuffer[BufCnt-12] == 'p' &&
+				  BTM222_RespBuffer[BufCnt-11] == ' ' &&
+				  BTM222_RespBuffer[BufCnt-10] == BTM222_BtAddress [9]  &&
+				  BTM222_RespBuffer[BufCnt-9]  == BTM222_BtAddress [10] &&
+				  BTM222_RespBuffer[BufCnt-8]  == BTM222_BtAddress [12] &&
+				  BTM222_RespBuffer[BufCnt-7]  == BTM222_BtAddress [13] &&
+				  BTM222_RespBuffer[BufCnt-6]  == BTM222_BtAddress [15] &&
+				  BTM222_RespBuffer[BufCnt-5]  == BTM222_BtAddress [16])
 			  {
 				BTM222_DeviceNameFlag = pdTRUE;
-			  	BTM222_DeviceName[0] = BTM222_RespBuffer[BufCnt-12];
-			  	BTM222_DeviceName[1] = BTM222_RespBuffer[BufCnt-11];
-			  	BTM222_DeviceName[2] = BTM222_RespBuffer[BufCnt-10];
-			  	BTM222_DeviceName[3] = BTM222_RespBuffer[BufCnt-9];
-			  	BTM222_DeviceName[4] = BTM222_RespBuffer[BufCnt-8];
-			  	BTM222_DeviceName[5] = BTM222_RespBuffer[BufCnt-7];
-			  	BTM222_DeviceName[6] = BTM222_RespBuffer[BufCnt-6];
-			  	BTM222_DeviceName[7] = BTM222_RespBuffer[BufCnt-5];
-			  	BTM222_DeviceName[8] = '\0';   /* add termination of a string */
+				/* store BTM222 device name "OOBD-Cup xxxxxx" local */
+				BTM222_DeviceName[0] = BTM222_RespBuffer[BufCnt-19];
+			  	BTM222_DeviceName[1] = BTM222_RespBuffer[BufCnt-18];
+			  	BTM222_DeviceName[2] = BTM222_RespBuffer[BufCnt-17];
+			  	BTM222_DeviceName[3] = BTM222_RespBuffer[BufCnt-16];
+			  	BTM222_DeviceName[4] = BTM222_RespBuffer[BufCnt-15];
+			  	BTM222_DeviceName[5] = BTM222_RespBuffer[BufCnt-14];
+			  	BTM222_DeviceName[6] = BTM222_RespBuffer[BufCnt-13];
+			  	BTM222_DeviceName[7] = BTM222_RespBuffer[BufCnt-12];
+			  	BTM222_DeviceName[8] = BTM222_RespBuffer[BufCnt-11];
+			  	BTM222_DeviceName[9] = BTM222_RespBuffer[BufCnt-10];
+			  	BTM222_DeviceName[10] = BTM222_RespBuffer[BufCnt-9];
+			  	BTM222_DeviceName[11] = BTM222_RespBuffer[BufCnt-8];
+			  	BTM222_DeviceName[12] = BTM222_RespBuffer[BufCnt-7];
+			  	BTM222_DeviceName[13] = BTM222_RespBuffer[BufCnt-6];
+			  	BTM222_DeviceName[14] = BTM222_RespBuffer[BufCnt-5];
+			  	BTM222_DeviceName[15] = '\0';   /* add termination of a string */
 			  }
 			  else
 				BTM222_DeviceNameFlag = pdFALSE;
