@@ -1,31 +1,32 @@
 /**
- ******************************************************************************
- * @file      startup_stm32f10x_md.s
- * @author    MCD Application Team
- * @version   V3.4.0
- * @date      10/15/2010
- * @brief     STM32F10x Medium Density Devices vector table for RIDE7 toolchain.
- *            This module performs:
- *                - Set the initial SP
- *                - Set the initial PC == Reset_Handler,
- *                - Set the vector table entries with the exceptions ISR address
- *                - Configure the clock system 
- *                - Branches to main in the C library (which eventually
- *                  calls main()).
- *            After Reset the Cortex-M3 processor is in Thread mode,
- *            priority is Privileged, and the Stack is set to Main.
- *******************************************************************************
- * @copy
- *
- * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
- * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
- * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
- * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
- * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
- * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
- *
- * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
- */	
+  ******************************************************************************
+  * @file      startup_stm32f10x_md.s
+  * @author    MCD Application Team
+  * @version   V3.5.0
+  * @date      11-March-2011
+  * @brief     STM32F10x Medium Density Devices vector table for RIDE7 toolchain.
+  *            This module performs:
+  *                - Set the initial SP
+  *                - Set the initial PC == Reset_Handler,
+  *                - Set the vector table entries with the exceptions ISR address
+  *                - Configure the clock system 
+  *                - Branches to main in the C library (which eventually
+  *                  calls main()).
+  *            After Reset the Cortex-M3 processor is in Thread mode,
+  *            priority is Privileged, and the Stack is set to Main.
+  ******************************************************************************
+  * @attention
+  *
+  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
+  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
+  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
+  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
+  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  *
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  ******************************************************************************
+  */
     
   .syntax unified
 	.cpu cortex-m3
@@ -132,11 +133,11 @@ g_pfnVectors:
 	.word	0
 	.word	0
 	.word	0
-	.word	vPortSVCHandler
+	.word	SVC_Handler
 	.word	DebugMon_Handler
 	.word	0
-	.word	xPortPendSVHandler
-	.word	xPortSysTickHandler
+	.word	PendSV_Handler
+	.word	SysTick_Handler
 	.word	WWDG_IRQHandler
 	.word	PVD_IRQHandler
 	.word	TAMPER_IRQHandler
@@ -213,17 +214,17 @@ g_pfnVectors:
 	.weak	UsageFault_Handler
 	.thumb_set UsageFault_Handler,Default_Handler
 
-	.weak	vPortSVCHandler
-	.thumb_set vPortSVCHandler,Default_Handler
+	.weak	SVC_Handler
+	.thumb_set SVC_Handler,Default_Handler
 
 	.weak	DebugMon_Handler
 	.thumb_set DebugMon_Handler,Default_Handler
 
-	.weak	xPortPendSVHandler
-	.thumb_set xPortPendSVHandler,Default_Handler
+	.weak	PendSV_Handler
+	.thumb_set PendSV_Handler,Default_Handler
 
-	.weak	xPortSysTickHandler
-	.thumb_set xPortSysTickHandler,Default_Handler
+	.weak	SysTick_Handler
+	.thumb_set SysTick_Handler,Default_Handler
 
 	.weak	WWDG_IRQHandler
 	.thumb_set WWDG_IRQHandler,Default_Handler
@@ -354,4 +355,4 @@ g_pfnVectors:
 	.weak	USBWakeUp_IRQHandler
 	.thumb_set USBWakeUp_IRQHandler,Default_Handler
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
