@@ -272,7 +272,7 @@ void USART1_Configuration(void)
   volatile unsigned long nCount, nLength = 300000;
   USART_InitTypeDef USART_InitStructure;
   uint8_t BTM222_UartAutobaudControl;
-  extern unsigned char BTM222_BtAddress[];
+  extern uint8_t BTM222_BtAddress[];
 
   USART_DeInit(USART1); /* Reset Uart to default */
 

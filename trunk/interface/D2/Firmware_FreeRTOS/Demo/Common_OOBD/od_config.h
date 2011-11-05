@@ -142,9 +142,9 @@
 #define VALUE_BUS_CONFIG_29bit_1000kbit 		( 8 )
 #define VALUE_PARAM_INFO_VERSION 				( 0 )
 #define VALUE_PARAM_INFO_SERIALNUMBER   		( 1 )
-
+#define VALUE_PARAM_INFO_BUS   					( 2 )
 #define VALUE_PARAM_INFO_PROTOCOL       		( 3 )
-#define VALUE_PARAM_INFO_BUS   					( 4 )
+#define VALUE_PARAM_INFO_CAN_TRANSCEIVER		( 4 )
 #define VALUE_PARAM_INFO_BUS_CONFIG   			( 5 )
 #define VALUE_PARAM_INFO_ADC_POWER      		( 6 )
 #define VALUE_PARAM_INFO_CPU_INFO 				( 10 )
@@ -181,7 +181,5 @@ struct UdsConfig
     separationTime,     //!< delay between two frames,overwrites the values received from Module, if > 0
     tpFreq              //!< time between two tester presents in systemticks
 } config;
-
-
 
 #endif /* INC_OD_CONFIG_H */

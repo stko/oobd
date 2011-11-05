@@ -187,8 +187,8 @@ void inputParserTask(void *pvParameters) {
 	extern xQueueHandle protocolQueue;
 	extern portBASE_TYPE lfType;
 	extern struct UdsConfig config;
-	extern unsigned char BTM222_BtAddress[];
-	extern unsigned char BTM222_DeviceName[];
+	extern uint8_t BTM222_BtAddress[];
+	extern uint8_t BTM222_DeviceName[];
 
 	MsgData *incomingMsg;
 	char inChar;
@@ -303,7 +303,7 @@ void inputParserTask(void *pvParameters) {
 											== VALUE_PARAM_INFO_PROTOCOL) /* p 0 3 */
 									{
 										printser_string("1 - UDS (ISO14229-1)");
-									} else if (cmdValue == VALUE_PARAM_INFO_BUS) /* p 0 4 */
+									} else if (cmdValue == VALUE_PARAM_INFO_CAN_TRANSCEIVER) /* p 0 4 */
 									{
 										if (config.bus == VALUE_BUS_SILENT_MODE)
 											printser_string("0 - CAN Transceiver in 'Silent Mode'");
