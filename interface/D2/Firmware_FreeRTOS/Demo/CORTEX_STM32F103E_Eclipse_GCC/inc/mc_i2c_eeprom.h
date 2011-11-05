@@ -79,10 +79,10 @@
    
 #if !defined (sEE_M24C08) && !defined (sEE_M24C64_32)
 /* Use the defines below the choose the EEPROM type */
-//#define sEE_M24C08*/  /* Support the device: M24C08. */
+#define sEE_M24C08*/  /* Support the device: M24C08. */
 /* note: Could support: M24C01, M24C02, M24C04 and M24C16 if the blocks and 
    HW address are correctly defined*/
- #define sEE_M24C64_32  /* Support the devices: M24C32 and M24C64 */
+// #define sEE_M24C64_32  /* Support the devices: M24C32 and M24C64 */
 #endif
 
 #ifdef sEE_M24C64_32

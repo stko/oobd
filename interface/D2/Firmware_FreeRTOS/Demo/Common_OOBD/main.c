@@ -46,8 +46,8 @@
 /* Constant definition used to turn on/off the pre-emptive scheduler. */
 static const short sUsingPreemption = configUSE_PREEMPTION;
 
-unsigned char BTM222_BtAddress[18] = {'0','0',':','0','0',':','0','0',':','0','0',':','0','0',':','0','0','\0'};
-unsigned char BTM222_DeviceName[17] = {'n','o','t',' ','d','e','t','e','c','t','e','d','\0'};
+uint8_t BTM222_BtAddress[18] = "00:00:00:00:00:00";
+uint8_t BTM222_DeviceName[17] = "not detected";
 
 #define SERIAL_COMM_TASK_PRIORITY			( tskIDLE_PRIORITY + 3 )
 /*---------------------------------------------------------------------------*/
@@ -119,9 +119,9 @@ main (void)
     printser_string(SVNREV);
   #endif
 
+#ifdef EEPROM_READ_WRITE_EXAMPLE
 
-#ifdef OOBD_PLATFORM_EEPROMpart
-    uint8_t Tx1_Buffer[] = "OOBD-Cup EEPROM Test";
+    uint8_t Tx1_Buffer[] = "EEPROM Check"; /* Page Write supports max. 16 bytes */
 	#define sEE_WRITE_ADDRESS1        0x00
 	#define sEE_READ_ADDRESS1         0x00
 	#define countof(a) (sizeof(a) / sizeof(*(a)))
@@ -141,6 +141,22 @@ main (void)
 
     /* Read from I2C EEPROM from sEE_READ_ADDRESS1 */
     sEE_ReadBuffer(Rx1_Buffer, sEE_READ_ADDRESS1, (uint16_t *)(&NumDataRead));
+
+    /* Wait till DMA transfer is complete (Transfer complete interrupt handler
+      resets the variable holding the number of data to be read) */
+    while (NumDataRead > 0)
+    {
+      /* Starting from this point, if the requested number of data is higher than 1,
+         then only the DMA is managing the data transfer. Meanwhile, CPU is free to
+         perform other tasks:
+
+        // Add your code here:
+        //...
+        //...
+
+         For simplicity reasons, this example is just waiting till the end of the
+         transfer. */
+    }
 
     printser_string("\r\nShow Rx1_buffer:");
     printser_string(Rx1_Buffer);
