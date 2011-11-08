@@ -3,7 +3,8 @@
 # SerialPort=/dev/ttyS0
 # for Windows
 # SerialPort=COM1
-
+# for Mac OS X
+# SerialPort=/dev/tty.serial1
 
 # Define, if the FlowControl to the serial device is hardware controlled (RTS/CTS) or not
 # default is FlowControl On (=true)
