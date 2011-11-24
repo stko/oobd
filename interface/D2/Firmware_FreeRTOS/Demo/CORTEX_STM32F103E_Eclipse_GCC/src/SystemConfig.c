@@ -66,6 +66,9 @@ void System_Configuration(void)
   USART1_Configuration();
 
   /* USART1 configuration */
+  USART2_Configuration();
+
+  /* USART1 configuration */
   CAN1_Configuration(VALUE_BUS_CONFIG_11bit_500kbit, CAN_Mode_Silent); /* default initialization */
 
   /* Analog digitial converter configuration */
@@ -161,16 +164,16 @@ void GPIO_Configuration(void)
     * PORTA configuration
     * PA 0 = ???             = GPIO_Mode_AIN - Input floating for low power consumption
     * PA 1 = ???             = GPIO_Mode_AIN - Input floating for low power consumption
-    * PA 2 = L9637D RX, Pin1 = GPIO_Mode_AIN - currently unused
-    * PA 3 = L9637D TX, Pin4 = GPIO_Mode_AIN - currently unused
+    * PA 2 = USART2_Tx 		 = GPIO_Mode_AF_PP - Alternate Function output Push Pull (L9637D RX, Pin1)
+    * PA 3 = USART2_Rx 		 = GPIO_Mode_AIN - Input floating for low power consumption (L9637D TX, Pin4)
     * PA 4 = ???             = GPIO_Mode_AIN - Input floating for low power consumption
     * PA 5 = ???             = GPIO_Mode_AIN - Input floating for low power consumption
     * PA 6 = LM393 Out, Pin1 = GPIO_Mode_AIN - currently unused
     * PA 7 = LM393 Out, Pin7 = GPIO_Mode_AIN - currently unused
     * --------------------------------------------------------------------------
     * PA 8 = DXM1 IO Pin 21  = GPIO_Mode_AIN - Input floating for low power consumption
-    * PA 9 = USART1_TX       = GPIO_Mode_AF_PP - Alternate Function output Push Pull
-    * PA10 = USART1_RX       = GPIO_Mode_AIN - Input floating for low power consumption
+    * PA 9 = USART1_Tx       = GPIO_Mode_AF_PP - Alternate Function output Push Pull
+    * PA10 = USART1_Rx       = GPIO_Mode_AIN - Input floating for low power consumption
     * PA11 = USART1_CTS      = GPIO_Mode_AIN - currently unused
     * PA12 = USART1_RTS      = GPIO_Mode_AIN - currently unused
     * PA13 = ???             = GPIO_Mode_AIN - Input floating for low power consumption
@@ -182,7 +185,7 @@ void GPIO_Configuration(void)
   /* Enable USART1 Clock */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 
-  /* initialize USART1 on PA9 (USART1_TX) and PA10 (USART1_RX) */
+  /* initialize USART1 on PA9 (USART1_Tx) and PA10 (USART1_Rx) for RS232 interface */
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_PP;
   GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_9;
@@ -190,6 +193,16 @@ void GPIO_Configuration(void)
 
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  /* initialize USART2 on PA2 (USART2_Tx) and PA3 (USART2_Rx) for K-Line interface */
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_PP;
+  GPIO_InitStructure.GPIO_Pin   = GPIO_Pin_2;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
   /** --------------------------------------------------------------------------
@@ -617,8 +630,48 @@ void USART1_Configuration(void)
 }
 /*----------------------------------------------------------------------------*/
 
+/**
+  * @brief  Configures the different GPIO ports
+  * @param  None
+  * @retval None
+  */
+void USART2_Configuration(void)
+{
+  USART_InitTypeDef USART_InitStructure;
 
+  USART_DeInit(USART2); /* Reset Uart to default */
 
+  /** USARTx configuration -----------------------------------------------------
+    * USARTx configured as follow:
+    *      - BaudRate = 10400 baud
+    *      - Word Length = 8 Bits
+    *      - One Stop Bit
+    *      - None parity
+    *      - Hardware flow control disabled (RTS and CTS signals)
+    *      - Receive and transmit enabled
+    */
+  USART_InitStructure.USART_BaudRate            = 10400;
+  USART_InitStructure.USART_WordLength          = USART_WordLength_8b;
+  USART_InitStructure.USART_StopBits            = USART_StopBits_1;
+  USART_InitStructure.USART_Parity              = USART_Parity_No;
+  USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+  USART_InitStructure.USART_Mode                = USART_Mode_Rx | USART_Mode_Tx;
+
+  /* Configure USART2 */
+  USART_Init(USART2, &USART_InitStructure);
+
+  /* Enable the USART2 */
+  USART_Cmd(USART2, ENABLE);
+
+  /* Enable the USART2-Transmit interrupt: this interrupt is generated when the
+     USART1 transmit data register is empty */
+  /* USART_ITConfig(USART2, USART_IT_TXE, ENABLE); */
+
+  /* Enable the USART2-Receive interrupt: this interrupt is generated when the
+     USART2 receive data register is not empty */
+  USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
+  NVIC_Configuration ();
+}
 
 /**
   * @brief  Configures the different GPIO ports
