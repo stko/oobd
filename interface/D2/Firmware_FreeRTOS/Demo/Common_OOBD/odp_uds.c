@@ -317,8 +317,8 @@ obp_uds (void *pvParameters)
   config.sendID 		= 0x00; // 0 disables special sendID
   config.timeout 		= 6;
   config.listen 		= 0;
-  config.bus 			= VALUE_BUS_SILENT_MODE; /* default */
-  config.busConfig 		= VALUE_BUS_CONFIG_11bit_500kbit; /* default */
+  config.bus 			= VALUE_BUS_SILENT_MODE; 			/* default */
+  config.busConfig 		= VALUE_BUS_CONFIG_11bit_500kbit; 	/* default */
   config.timeoutPending = 150;
   config.blockSize 		= 0;
   config.separationTime = 0;
@@ -618,8 +618,6 @@ obp_uds (void *pvParameters)
 	        case PARAM_LISTEN:
 		      config.listen = paramData[1];
 		      createFeedbackMsg (0);
-		      break;
-	        case PARAM_PROTOCOL:
 		      break;
 	        case PARAM_BUS:
 		      break;

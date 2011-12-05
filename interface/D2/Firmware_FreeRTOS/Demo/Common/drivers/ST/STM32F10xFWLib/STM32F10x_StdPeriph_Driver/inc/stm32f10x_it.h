@@ -2,11 +2,11 @@
   ******************************************************************************
   * @file    Project/STM32F10x_StdPeriph_Template/stm32f10x_it.h 
   * @author  MCD Application Team
-  * @version V3.4.0
-  * @date    10/15/2010
+  * @version V3.5.0
+  * @date    08-April-2011
   * @brief   This file contains the headers of the interrupt handlers.
   ******************************************************************************
-  * @copy
+  * @attention
   *
   * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
   * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
@@ -15,7 +15,8 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  ******************************************************************************
   */ 
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -43,12 +44,6 @@ void SVC_Handler(void);
 void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
-#ifndef STM32F10X_CL
-void USB_LP_CAN1_RX0_IRQHandler(void);
-#else
-void CAN1_RX0_IRQHandler(void);
-#endif
-void USART1_IRQHandler(void);
 
 #ifdef __cplusplus
 }
@@ -56,4 +51,4 @@ void USART1_IRQHandler(void);
 
 #endif /* __STM32F10x_IT_H */
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
