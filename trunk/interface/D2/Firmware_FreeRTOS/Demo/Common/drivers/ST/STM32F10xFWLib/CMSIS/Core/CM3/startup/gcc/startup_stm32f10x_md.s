@@ -133,11 +133,11 @@ g_pfnVectors:
 	.word	0
 	.word	0
 	.word	0
-	.word	SVC_Handler
+	.word	vPortSVCHandler
 	.word	DebugMon_Handler
 	.word	0
-	.word	PendSV_Handler
-	.word	SysTick_Handler
+	.word	xPortPendSVHandler
+	.word	xPortSysTickHandler
 	.word	WWDG_IRQHandler
 	.word	PVD_IRQHandler
 	.word	TAMPER_IRQHandler
@@ -214,17 +214,17 @@ g_pfnVectors:
 	.weak	UsageFault_Handler
 	.thumb_set UsageFault_Handler,Default_Handler
 
-	.weak	SVC_Handler
-	.thumb_set SVC_Handler,Default_Handler
+	.weak	vPortSVCHandler
+	.thumb_set vPortSVCHandler,Default_Handler
 
 	.weak	DebugMon_Handler
 	.thumb_set DebugMon_Handler,Default_Handler
 
-	.weak	PendSV_Handler
-	.thumb_set PendSV_Handler,Default_Handler
+	.weak	xPortPendSVHandler
+	.thumb_set xPortPendSVHandler,Default_Handler
 
-	.weak	SysTick_Handler
-	.thumb_set SysTick_Handler,Default_Handler
+	.weak	xPortSysTickHandler
+	.thumb_set xPortSysTickHandler,Default_Handler
 
 	.weak	WWDG_IRQHandler
 	.thumb_set WWDG_IRQHandler,Default_Handler

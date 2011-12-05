@@ -162,9 +162,8 @@ main (void)
     printser_string(Rx1_Buffer);
 #endif
 
-
-  // starting with the first protocol in the list
-  if (pdPASS == xTaskCreate (odparr[0], (const signed portCHAR *) "prot",
+  /* starting with UDS protocol of the list by default */
+  if (pdPASS == xTaskCreate (odparr[1], (const signed portCHAR *) "prot",
 			     configMINIMAL_STACK_SIZE, (void *) NULL,
 			     TASK_PRIO_LOW, (xTaskHandle *) NULL))
     DEBUGUARTPRINT ("\r\n*** 'prot' Task created ***");
@@ -200,7 +199,6 @@ main (void)
   /* initialize Interrupt Vector table and activate interrupts */
   NVIC_Configuration ();
 #endif
-
   /* Set the scheduler running.  This function will not return unless a task calls vTaskEndScheduler(). */
   vTaskStartScheduler ();
 
@@ -209,7 +207,6 @@ main (void)
 #ifdef OOBD_PLATFORM_STM32
   SCB->AIRCR = 0x05FA0604;	/* soft reset */
 #endif
-
   return 1;
 }
 /*---------------------------------------------------------------------------*/

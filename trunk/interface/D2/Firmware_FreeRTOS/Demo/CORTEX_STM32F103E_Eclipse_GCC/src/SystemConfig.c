@@ -318,6 +318,7 @@ void USART1_Configuration(void)
   /* Enable the USART1-Receive interrupt: this interrupt is generated when the
      USART1 receive data register is not empty */
   USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+
   NVIC_Configuration ();
 
   /* set UartAutobaudControl to default UART value 115200kbit/s */
@@ -620,13 +621,6 @@ void USART1_Configuration(void)
 	for( nCount = 0; nCount < 500000; nCount++ ) { }; /* delay */
 	BTM222_UART_Rx_Flag = pdTRUE;
   }
-
-
-  /* Enable the USART1-Receive interrupt: this interrupt is generated when the
-     USART1 receive data register is not empty */
-//  USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
-//  NVIC_Configuration ();
-
 }
 /*----------------------------------------------------------------------------*/
 

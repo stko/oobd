@@ -456,6 +456,35 @@ void inputParserTask(void *pvParameters) {
 									}
 									break;
 #endif
+						        case PARAM_PROTOCOL:
+						        	if (VALUE_PARAM_PROTOCOL_CAN_RAW == cmdValue) /* p 4 1 */
+						        	{
+						        	  printser_string ("Protocol CAN RAW activated!");
+						        	  vTaskDelete( xTaskProtHandle );
+						        	  vTaskDelay( 100 / portTICK_RATE_MS );
+						        	  /* */
+						        	  if (pdPASS == xTaskCreate (odparr[0], (const signed portCHAR *) "prot",
+										     	    configMINIMAL_STACK_SIZE, (void *) NULL,
+												    TASK_PRIO_LOW, &xTaskProtHandle))
+									    DEBUGUARTPRINT ("\r\n*** 'prot' Task created ***");
+									  else
+									    DEBUGUARTPRINT ("\r\n*** 'prot' Task NOT created ***");
+						        	}
+						        	if (VALUE_PARAM_PROTOCOL_CAN_UDS == cmdValue) /* p 4 2 */
+						        	{
+							          printser_string ("Protocol CAN UDS activated!");
+						        	  vTaskDelete( xTaskProtHandle );
+						        	  vTaskDelay( 100 / portTICK_RATE_MS );
+						        	  /* */
+						        	  if (pdPASS == xTaskCreate (odparr[1], (const signed portCHAR *) "prot",
+										     	    configMINIMAL_STACK_SIZE, (void *) NULL,
+												    TASK_PRIO_LOW, &xTaskProtHandle))
+									    DEBUGUARTPRINT ("\r\n*** 'prot' Task created ***");
+									  else
+									    DEBUGUARTPRINT ("\r\n*** 'prot' Task NOT created ***");
+						        	}
+									break;
+
 
 								default:
 									sendParam(cmdKey, cmdValue);

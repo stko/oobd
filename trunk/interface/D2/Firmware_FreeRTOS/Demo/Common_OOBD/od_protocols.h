@@ -102,6 +102,7 @@ typedef void (*bus_close) ();
 //enumeration for identifiers for all available protocols
 enum prots
 {
+  ODP_CANRAW,
   ODP_UDS,
   // ODP_SIZE defines the number of available protocols
   ODP_SIZE
@@ -121,9 +122,11 @@ enum busses
 // define a array to store all busses
 void (*odbarr[ODB_SIZE]) ();
 
+/* Variable to holf the handle of xTaksCreate from "prot"-Task */
+xTaskHandle xTaskProtHandle;
+
 
 // function prototype for the bus interface
-
 portBASE_TYPE busControl (portBASE_TYPE cmd, void *param);
 
 
