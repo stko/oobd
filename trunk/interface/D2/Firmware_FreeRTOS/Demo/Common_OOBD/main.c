@@ -165,7 +165,7 @@ main (void)
   /* starting with UDS protocol of the list by default */
   if (pdPASS == xTaskCreate (odparr[1], (const signed portCHAR *) "prot",
 			     configMINIMAL_STACK_SIZE, (void *) NULL,
-			     TASK_PRIO_LOW, (xTaskHandle *) NULL))
+			     TASK_PRIO_LOW, &xTaskProtHandle))
     DEBUGUARTPRINT ("\r\n*** 'prot' Task created ***");
   else
     DEBUGUARTPRINT ("\r\n*** 'prot' Task NOT created ***");
