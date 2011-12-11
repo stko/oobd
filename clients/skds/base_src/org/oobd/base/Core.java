@@ -100,13 +100,13 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	IFsystem systemInterface;
 	HashMap<String, OobdBus> busses; // /<stores all available busses
 	HashMap<String, OobdConnector> connectors; // /<stores all available
-												// connectors
+	// connectors
 	HashMap<String, OobdProtocol> protocols; // /<stores all available protocols
 	HashMap<String, Class<?>> scriptengines; // /<stores all available
-												// scriptengine classes
+	// scriptengine classes
 	HashMap<String, OobdScriptengine> activeEngines; // /<stores all active
-														// (instanced)
-														// scriptengine objects
+	// (instanced)
+	// scriptengine objects
 	/**
 	 * The assingnments - hashtable works as a poor mens registry, where
 	 * everything, which needs to stored somehow, is kept as a string => object
@@ -114,7 +114,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	 */
 	HashMap<String, Object> assignments;
 	HashMap<String, ArrayList<Visualizer>> visualizers;// /<stores all available
-														// visalizers
+	// visalizers
 	static Core thisInstance = null; // Class variable points to only instance
 	CoreTick ticker;
 	Properties props;
@@ -154,9 +154,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		visualizers = new HashMap<String, ArrayList<Visualizer>>();
 
 		systemInterface.registerOobdCore(this); // Anounce itself at the
-												// Systeminterface
+		// Systeminterface
 		userInterface.registerOobdCore(this); // Anounce itself at the
-												// Userinterface
+		// Userinterface
 
 		// userInterface.sm("Moin");
 		props = new Properties();
@@ -384,40 +384,40 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 				"Core should create scriptengine: " + id);
 		Integer i = 1;
 		while (activeEngines.containsKey(id + "." + i.toString())) { // searching
-																		// for a
-																		// free
-																		// id
+			// for a
+			// free
+			// id
 			i++;
 		}
 		String seID = id + "." + i.toString();
 		OobdScriptengine o = null;
 		Class[] argsClass = new Class[3]; // first we set up an pseudo - args -
-											// array for the scriptengine-
-											// constructor
+		// array for the scriptengine-
+		// constructor
 		argsClass[0] = seID.getClass(); // and fill it with the info of the
-										// arguments classes
+		// arguments classes
 		argsClass[1] = this.getClass();
 		argsClass[2] = IFsystem.class;
 		Class classRef = scriptengines.get(id); // then we get the class of the
-												// wanted scriptengine
+		// wanted scriptengine
 		try {
 			Constructor con = classRef.getConstructor(argsClass); // and let
-																	// Java find
-																	// the
-																	// correct
-																	// constructor
-																	// matching
-																	// to the
-																	// args
-																	// classes
+			// Java find
+			// the
+			// correct
+			// constructor
+			// matching
+			// to the
+			// args
+			// classes
 			Object[] args = { seID, this, systemInterface }; // creating the
-																// args-array
+			// args-array
 			o = (OobdScriptengine) con.newInstance(args); // and finally create
-															// the object from
-															// the scriptengine
-															// class with its
-															// unique id as
-															// parameter
+			// the object from
+			// the scriptengine
+			// class with its
+			// unique id as
+			// parameter
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -529,27 +529,27 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	 * \brief Tells Value to all visualizers of a scriptengine
 	 * 
 	 * @param value
-	 *            Onoin containing value and scriptengine
+	 *            Onion containing value and scriptengine
 	 * 
 	 */
 	public void handleValue(Onion value) {
 		String owner = value.getOnionString("owner/name"); // who's the owner of
-															// that value?
+		// that value?
 		if (owner == null) {
 			Logger.getLogger(Core.class.getName()).log(Level.WARNING,
 					"onion id does not contain name");
 		} else {
 			ArrayList affectedVisualizers = visualizers.get(owner); // which
-																	// visualizers
-																	// belong to
-																	// that
-																	// owner
+			// visualizers
+			// belong to
+			// that
+			// owner
 			if (affectedVisualizers != null) {
 				Iterator visItr = affectedVisualizers.iterator();
 				while (visItr.hasNext()) {
 					Visualizer vis = (Visualizer) visItr.next();
 					vis.setValue(value); // send the value to all visualisers of
-											// that owner
+					// that owner
 				}
 			}
 		}
@@ -589,12 +589,12 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 												+ "'port':'"
 												+ myOnion.getString("channel")
 												+ "'}")), 35000); // 35 secs to
-																	// connect
-																	// to a
-																	// device
-																	// (BT has
-																	// ~30sec
-																	// Timeout)
+				// connect
+				// to a
+				// device
+				// (BT has
+				// ~30sec
+				// Timeout)
 				return true;
 			}
 
@@ -673,11 +673,10 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	 * 
 	 */
 	public void updateVisualizers() {
-
-		Collection<ArrayList<Visualizer>> c = Collections
-				.synchronizedCollection(visualizers.values());
-		// Collection<ArrayList<Visualizer>> c = visualizers.values();
-		synchronized (c) {
+		//Collection<ArrayList<Visualizer>> c = Collections
+		//		.synchronizedCollection(visualizers.values());
+		 Collection<ArrayList<Visualizer>> c = visualizers.values();
+	//	synchronized (c) {
 			// obtain an Iterator for Collection
 			Iterator<ArrayList<Visualizer>> itr;
 
@@ -688,22 +687,36 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 				itr = c.iterator();
 				while (itr.hasNext()) {
 					ArrayList<Visualizer> engineVisualizers = itr.next();
-
-					synchronized (engineVisualizers) {
+						boolean somethingToRemove=false;
 						Iterator<Visualizer> visItr = engineVisualizers
 								.iterator();
-						synchronized (visItr) {
+//						synchronized (visItr) {
 							while (visItr.hasNext()) {
 								Visualizer vis = visItr.next();
-								synchronized (vis) {
-									vis.doUpdate(i);
+//								synchronized (vis) {
+									if (vis.getRemoved()) {
+										somethingToRemove=true;
+									} else {
+										vis.doUpdate(i);
+									}
 								}
+//							}
+//						}
+					synchronized (engineVisualizers) {
+						if (somethingToRemove){
+							int del=0;
+							while (del<engineVisualizers.size()){
+								if (engineVisualizers.get(del).getRemoved()){
+									engineVisualizers.remove(del);
+								}
+								del++;
 							}
+							
 						}
 					}
 				}
 			}
-		}
+	//	}
 	}
 
 	/**
@@ -722,7 +735,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 				"Msg: " + msg.sender + " ==> " + msg.rec + " content:"
 						+ msg.getContent().toString());
 		if (OOBDConstants.CoreMailboxName.equals(msg.rec)) { // is the core the
-																// receiver?
+			// receiver?
 			this.sendMsg(msg);
 			return true;
 		} else { // find receipient
@@ -790,8 +803,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		Message thisMsg;
 		while (runCore == true) {
 			while ((thisMsg = msgPort.getMsg(100)) != null) { // just waiting
-																// and handling
-																// messages
+				// and handling
+				// messages
 				if (actionRequest(thisMsg.content) == true) {
 					try {
 						thisMsg.content.setValue("replyID", thisMsg.content

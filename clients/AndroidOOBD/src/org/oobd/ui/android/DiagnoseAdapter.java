@@ -37,7 +37,6 @@ public class DiagnoseAdapter extends ArrayAdapter<DiagnoseItem> {
         @Override
         public void onReceive(Context context, Intent intent) {
                 int updateLevel = intent.getIntExtra(OOBDApp.UPDATE_LEVEL,0);
-                System.out.println ("DiagnoseAdapter: Received Broadcast Event Update level: " + updateLevel);
                 notifyDataSetChanged();
         }
 	};
@@ -79,7 +78,6 @@ public class DiagnoseAdapter extends ArrayAdapter<DiagnoseItem> {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
-		//System.out.println ("getView(): try to find list position: " + position);
 		// optimization: reuse diagnose items
 		if (convertView == null) {
 			// if there is no old view to reuse, a new one is created based on layout diagnose_item

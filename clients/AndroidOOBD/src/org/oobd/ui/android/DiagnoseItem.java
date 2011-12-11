@@ -19,19 +19,16 @@ public class DiagnoseItem {
 
 	
 	public DiagnoseItem (Visualizer viz, Onion onion) {
-		System.out.println("Creatin new Diagnose Item...");
 		this.myVisualizer = viz;
 		this.myOnion = onion;
 	}
 	
 
 	public String getFunctionValue() {
-		System.out.println("New Function Value: " + myVisualizer.toString());
 		return myVisualizer.toString();
 	}
 
 	public String getFunctionName() {
-		System.out.println("Function Name: " + myVisualizer.getToolTip());
 		return myVisualizer.getToolTip();
 	}
 

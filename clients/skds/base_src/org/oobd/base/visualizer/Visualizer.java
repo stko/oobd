@@ -127,6 +127,7 @@ import org.json.JSONException;
 import org.oobd.base.scriptengine.ScriptengineLua;
 import org.oobd.base.support.Onion;
 import org.oobd.base.*;
+
 /**
  * 
  * @author steffen
@@ -138,12 +139,15 @@ public class Visualizer {
 	String name;
 	String optId;
 	String toolTip;
-	String lastValue="";
+	String lastValue = "";
 	int updateEvents;
-	int overflowProtection;
-	int overflowProtectionDelay = 1;
+	int overflowProtectionCounter;
+	int averageOverflowProtection = 1;
+	int thisOverflowProtection = 1;
+	int nrOfTrials=0;
 	IFvisualizer myObject;
 	boolean updateNeeded = false;
+	boolean obsulete = false;
 
 	public Visualizer(Onion onion) {
 		ownerEngine = onion.getOnion(OOBDConstants.FN_OWNER);
@@ -176,24 +180,32 @@ public class Visualizer {
 	 * @param myObject
 	 */
 	public void setValue(Onion value) {
-		if (this.name.matches(value.getOnionString("to/name"))) {
+		if (!obsulete && this.name.matches(value.getOnionString("to/name"))) {
 			try {
 				Logger.getLogger(Visualizer.class.getName()).log(Level.INFO,
 						"Visualizer.setValue(): update needed.");
 				this.value = new Onion(value.toString());
-				if (getUpdateFlag(OOBDConstants.VE_LOG) &&!lastValue.equalsIgnoreCase(this.toString())){
-					Date date=new Date();
-					Core.getSingleInstance().outputText(date.toGMTString()+"\t"+this.toString()+"\t"+this.toolTip);
-					lastValue=this.toString();
+				if (getUpdateFlag(OOBDConstants.VE_LOG)
+						&& !lastValue.equalsIgnoreCase(this.toString())) {
+					Date date = new Date();
+					Core.getSingleInstance().outputText(
+							date.toGMTString() + "\t" + this.toString() + "\t"
+									+ this.toolTip);
+					lastValue = this.toString();
 
 				}
 				updateNeeded = true;
-				// as this is an actual value, we can reset the overflow protection for now and switch the protection delay one step downwards
-				if(overflowProtectionDelay>1){
-					overflowProtectionDelay--;
-				}
-				System.out.println("reduce overflow delay to"+Integer.toString(overflowProtectionDelay));
-				overflowProtection=0;
+				// as this is an actual value, we can reset the overflow
+				// protection for now and switch the protection delay one step
+				// downwards
+				averageOverflowProtection = (averageOverflowProtection *nrOfTrials + thisOverflowProtection) / 2;
+				nrOfTrials=0;
+				if (averageOverflowProtection < 1)
+					averageOverflowProtection = 1; //otherways the average calc won't work
+				thisOverflowProtection = 0;
+				System.out.println("set overflow delay to"
+						+ Integer.toString(averageOverflowProtection));
+				overflowProtectionCounter = 0;
 
 			} catch (JSONException ex) {
 			}
@@ -252,7 +264,7 @@ public class Visualizer {
 	 * do update 0: start 1: update data 2: finish
 	 */
 	public void doUpdate(int updateLevel) {
-		if (myObject != null && updateNeeded) {
+		if (myObject != null && updateNeeded && !obsulete) {
 			updateNeeded = !myObject.update(updateLevel);
 		}
 	}
@@ -262,39 +274,68 @@ public class Visualizer {
 	 * changed any selection, needs to be addded \ingroup visualisation
 	 */
 	public void updateRequest(int type) {
-		System.out.println("update request type "+Integer.toString(type));
-		if (type != OOBDConstants.UR_TIMER || overflowProtection == 0) {
-			Logger.getLogger(Visualizer.class.getName()).log(
-					Level.INFO,
-					"Update request" + Integer.toString(type)
-							+ " my ownwer is: " + ownerEngine.toString()
-							+ "actual visualizer data: " + value.toString());
-			try {
-				Core.getSingleInstance().transferMsg(
-						new Message(Core.getSingleInstance(),
-								OOBDConstants.CoreMailboxName, new Onion(""
-										+ "{" + "'type':'"
-										+ OOBDConstants.CM_UPDATE + "',"
-										+ "'vis':'" + this.name + "',"
-										+ "'to':'" + getOwnerEngine() + "',"
-										+ "'optid':'" + this.optId + "',"
-										+ "'actValue':'" + getValue("value")
-										+ "'," + "'updType':"
-										+ Integer.toString(type) + "}")));
-			} catch (JSONException ex) {
-				Logger.getLogger(Visualizer.class.getName()).log(Level.SEVERE,
-						null, ex);
+		if (!obsulete) {
+			System.out.println("update request type " + Integer.toString(type));
+			if (type != OOBDConstants.UR_TIMER
+					|| overflowProtectionCounter == 0) {
+				Logger.getLogger(Visualizer.class.getName())
+						.log(
+								Level.INFO,
+								"Update request" + Integer.toString(type)
+										+ " my ownwer is: "
+										+ ownerEngine.toString()
+										+ "actual visualizer data: "
+										+ value.toString());
+				try {
+					Core.getSingleInstance().transferMsg(
+							new Message(Core.getSingleInstance(),
+									OOBDConstants.CoreMailboxName, new Onion(""
+											+ "{" + "'type':'"
+											+ OOBDConstants.CM_UPDATE + "',"
+											+ "'vis':'" + this.name + "',"
+											+ "'to':'" + getOwnerEngine()
+											+ "'," + "'optid':'" + this.optId
+											+ "'," + "'actValue':'"
+											+ getValue("value") + "',"
+											+ "'updType':"
+											+ Integer.toString(type) + "}")));
+				} catch (JSONException ex) {
+					Logger.getLogger(Visualizer.class.getName()).log(
+							Level.SEVERE, null, ex);
+				}
+				if (type == OOBDConstants.UR_TIMER) {
+					// reduce the actual delay time, which is used to reduce the
+					// overall number of
+					// sended msgs in case no update message is answered at all
+					overflowProtectionCounter = averageOverflowProtection;
+					nrOfTrials++;
+				}
+			} else {
+				// overflow delay seems not sufficent, so increase it
+				thisOverflowProtection++;
+				if (overflowProtectionCounter > 0)
+					overflowProtectionCounter--;
+				System.out.println("increase actual overflow delay to "
+						+ Integer.toString(thisOverflowProtection)
+						+ " overflowProtectionCounter:"
+						+ Integer.toString(overflowProtectionCounter));
 			}
-			if (type == OOBDConstants.UR_TIMER) {
-				// reduce the actual delay time, which is used to reduce the overall number of
-				// sended msgs in case no update message is answered at all
-					overflowProtection = overflowProtectionDelay;
-			}
-		} else {
-			//overflow delay seems not sufficent, so increase it 
-			overflowProtectionDelay ++;
-			System.out.println("increase overflow delay to"+Integer.toString(overflowProtectionDelay));
-			overflowProtection--;
 		}
+	}
+
+	/**
+	 * declares the visualizer as invalid, to that the core can remove it
+	 */
+	public void setRemove() {
+		obsulete = true;
+	}
+
+	/**
+	 * tells the core, if that visualizer is valid or should be removed
+	 * 
+	 * @return
+	 */
+	public boolean getRemoved() {
+		return obsulete;
 	}
 }
