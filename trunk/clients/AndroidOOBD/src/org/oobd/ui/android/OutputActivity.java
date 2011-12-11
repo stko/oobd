@@ -164,12 +164,6 @@ public class OutputActivity extends Activity {
 
 		if (resultCode == Activity.RESULT_OK) {
 
-			if (requestCode == 1) {
-				System.out.println("Saving...");
-			} else if (requestCode == 2) {
-				System.out.println("Loading...");
-			}
-
 			String filePath = data.getStringExtra(FileDialog.RESULT_PATH);
 			final File file = new File(filePath);
 			if (file.exists()) {

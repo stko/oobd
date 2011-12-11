@@ -25,9 +25,8 @@ public class VizTable extends ArrayList<DiagnoseItem> implements IFvisualizer {
 	}
 	
 	public boolean isGroup() {
-		// TODO Auto-generated method stub
-		System.out.println("Method VizTable.isGroup() not implemented.");
-		return false;
+		// as the table contains several items, it's a group
+		return true;
 	}
 
 	public void setVisualizer(Visualizer viz) {
@@ -39,17 +38,14 @@ public class VizTable extends ArrayList<DiagnoseItem> implements IFvisualizer {
 	public void initValue(Visualizer viz, Onion onion) {
 		DiagnoseItem item = new DiagnoseItem (viz, onion);
 		this.add(item);
-		System.out.println("ListArray Elemente: " + this.size());
 	}
 
 	public boolean update(int level) {
-		System.out.println("VizTable: received update level: " + level);
 		switch (level) {
 	        case 0: {
 	            awaitingUpdate = true;
 	        }
 	        case 2: {
-				System.out.println("Sende Broadcast Event...");
 				Intent broadcast=new Intent(OOBDApp.VISUALIZER_UPDATE);
 				broadcast.putExtra(OOBDApp.UPDATE_LEVEL, level);
 				Diagnose.myDiagnoseInstance.getApplicationContext().sendBroadcast(broadcast);
@@ -60,9 +56,10 @@ public class VizTable extends ArrayList<DiagnoseItem> implements IFvisualizer {
 		return false;
 	}
 
-	public void remove(String pageID) {
-		// TODO Auto-generated method stub
-		System.out.println("Method VizTable.remove() not implemented.");
+	public void setRemove(String pageID) {
+		for(DiagnoseItem item: this){
+			item.getMyVisualizer().setRemove();
+		}
 		
 	}
 

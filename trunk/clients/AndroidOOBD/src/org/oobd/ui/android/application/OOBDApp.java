@@ -48,7 +48,7 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 	// make it singleton
 	private static OOBDApp mInstance;
 	private Toast mToast;
-	private Object myComPort;
+	private ComPort myComPort;
 
 	public static OOBDApp getInstance() {
 		return mInstance;
@@ -185,8 +185,6 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 		}
 	}
 
-	
-
 	public void registerOobdCore(Core core) {
 		this.core = core;
 		Log.v(this.getClass().getSimpleName(), "Core registered in IFsystem");
@@ -206,7 +204,6 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 			e.printStackTrace();
 		}
 
-
 		return myInstances;
 	}
 
@@ -222,13 +219,21 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 			BTDeviceName = preferences.getString("BTDEVICE",
 					"00:12:6F:07:27:25");
 		}
-
-		return new ComPort(Diagnose.getInstance(), BTDeviceName);
+		myComPort = new ComPort(Diagnose.getInstance(), BTDeviceName);
+		return myComPort;
 	}
 
+	public boolean isConnected(){
+		if (myComPort==null){
+			return false;
+		}else{
+			return (myComPort.getInputStream()!=null);
+		}
+	}
+	
 	public void closeHardwareHandle() {
 		if (myComPort != null) {
-			((ComPort) myComPort).close();
+			myComPort.close();
 			myComPort = null;
 		}
 	}

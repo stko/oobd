@@ -30,6 +30,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 import android.os.Message;
 import android.os.PowerManager;
@@ -55,8 +56,6 @@ public class Diagnose extends ListActivity {
 
 	private Runnable mUpdateTimeTask = new Runnable() {
 		public void run() {
-			System.out.println("Tick:"
-					+ Integer.toString((int) SystemClock.uptimeMillis()));
 			if (myTimerButton.isChecked()) {
 				refreshView(OOBDConstants.VE_TIMER, OOBDConstants.VE_TIMER);
 				myTimerHandler.postDelayed(this, OOBDConstants.LV_UPDATE);
@@ -87,9 +86,6 @@ public class Diagnose extends ListActivity {
 		mDiagnoseAdapter = new DiagnoseAdapter(Diagnose.this, mDiagnoseItems);
 		mDiagnoseListView.setAdapter(mDiagnoseAdapter);
 
-		System.out.println("Anzahl Listenelemente: "
-				+ mDiagnoseListView.getCount());
-
 		myRefreshHandler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
@@ -98,6 +94,7 @@ public class Diagnose extends ListActivity {
 					/* Refresh view */
 					((DiagnoseAdapter) mDiagnoseListView.getAdapter())
 							.notifyDataSetChanged();
+					mDiagnoseListView.setVisibility(0); // = Visible
 					break;
 				case 2:
 					/* Set Listview Title */
@@ -113,6 +110,10 @@ public class Diagnose extends ListActivity {
 					if (myProgressDialog != null) {
 						myProgressDialog.dismiss();
 					}
+					break;
+				case 5:
+					/* Switch listview visibility off for refresh */
+					mDiagnoseListView.setVisibility(2); // = GOME
 					break;
 				}
 			}
@@ -148,10 +149,10 @@ public class Diagnose extends ListActivity {
 		registerForContextMenu(mDiagnoseListView);
 		if (showDialog) {
 			startProgressDialog("Load Script");
-			showDialog=false;
+			showDialog = false;
 		}
-			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-			wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
+		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
 	}
 
 	@Override
@@ -196,7 +197,6 @@ public class Diagnose extends ListActivity {
 			break;
 
 		}
-		System.out.println("Sende Broadcast Event...");
 		Intent broadcast = new Intent(OOBDApp.VISUALIZER_UPDATE);
 		broadcast.putExtra(OOBDApp.UPDATE_LEVEL, 1);
 		Diagnose.myDiagnoseInstance.getApplicationContext().sendBroadcast(
@@ -210,6 +210,12 @@ public class Diagnose extends ListActivity {
 		DiagnoseItem selectedItem = mDiagnoseItems.get(position);
 
 		Visualizer myVisualizer = selectedItem.getMyVisualizer();
+		if (myVisualizer.getUpdateFlag(OOBDConstants.VE_BACK)) {
+			if (myTimerButton.isChecked()) {
+				myTimerButton.toggle(); // setSelected only has no effect..
+				wl.release();
+			}
+		}
 		myVisualizer.updateRequest(OOBDConstants.UR_USER);
 	}
 
@@ -217,6 +223,11 @@ public class Diagnose extends ListActivity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// if back- button is pressed
 		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+			// stop automatic updates
+			if (myTimerButton.isChecked()) {
+				myTimerButton.toggle(); // setSelected only has no effect..
+				wl.release();
+			}
 			synchronized (mDiagnoseItems) {
 				if (mDiagnoseItems != null) {
 					// searching for list entry which contains the "back"- Flag
@@ -228,8 +239,8 @@ public class Diagnose extends ListActivity {
 					if (i < mDiagnoseItems.size()) { // a "back"-item found
 						mDiagnoseItems.get(i).getMyVisualizer().updateRequest(
 								OOBDConstants.UR_USER); // simulate a user
-														// selection of this
-														// list item
+						// selection of this
+						// list item
 						return true; // stop further handling of the back-button
 					}
 				}
@@ -244,6 +255,10 @@ public class Diagnose extends ListActivity {
 
 	public void setmDiagnoseAdatper(DiagnoseAdapter mDiagnoseAdatper) {
 		mDiagnoseAdapter = mDiagnoseAdatper;
+	}
+
+	public void stopVisibility() {
+		myRefreshHandler.sendEmptyMessage(5);
 	}
 
 	public void setItems(VizTable data) {
@@ -267,7 +282,6 @@ public class Diagnose extends ListActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		System.out.println("Diagnose.onPause(): unregister Broadcast Receiver");
 		if (myTimerButton.isChecked()) {
 			wl.release();
 		}
@@ -278,7 +292,6 @@ public class Diagnose extends ListActivity {
 	@Override
 	protected void onResume() {
 		super.onPause();
-		System.out.println("Diagnose.onResume(): register Broadcast Receiver");
 		if (myTimerButton.isChecked()) {
 			wl.acquire();
 		}
@@ -291,11 +304,19 @@ public class Diagnose extends ListActivity {
 
 				for (int i = mDiagnoseListView.getFirstVisiblePosition(); i <= mDiagnoseListView
 						.getLastVisiblePosition(); i++) {
-					DiagnoseItem selectedItem = (DiagnoseItem) mDiagnoseListView
+					if (i < mDiagnoseListView.getCount()) {
+						try {
+							DiagnoseItem selectedItem = (DiagnoseItem) mDiagnoseListView
+
 							.getItemAtPosition(i);
-					Visualizer myVisualizer = selectedItem.getMyVisualizer();
-					if (myVisualizer.getUpdateFlag(bitNr)) {
-						myVisualizer.updateRequest(updateType);
+							Visualizer myVisualizer = selectedItem
+									.getMyVisualizer();
+							if (myVisualizer.getUpdateFlag(bitNr)) {
+								myVisualizer.updateRequest(updateType);
+							}
+						} catch (Exception e) {
+
+						}
 					}
 				}
 			}

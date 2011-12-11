@@ -96,10 +96,14 @@ public class AndroidGui implements IFui {
 		DiagnoseTab.getInstance().setMenuTitle(Name);
 		Diagnose.getInstance().startProgressDialog("Build Page...");
 		Log.v(this.getClass().getSimpleName(), "open page ..");
+		Diagnose.getInstance().stopVisibility();
+
 		VizTable vizTable = VizTable.getInstance("", "");
 		if (vizTable != null ){
-			if( !vizTable.isEmpty())
-			vizTable.clear();
+			if( !vizTable.isEmpty()){
+				vizTable.setRemove("");
+				vizTable.clear();
+			}
 		Intent broadcast = new Intent(OOBDApp.VISUALIZER_UPDATE);
 		broadcast.putExtra(OOBDApp.UPDATE_LEVEL, 1);
 		Diagnose.myDiagnoseInstance.getApplicationContext().sendBroadcast(
@@ -121,7 +125,6 @@ public class AndroidGui implements IFui {
 	}
 	
 	public void startScriptEngine (Onion onion) {
-		System.out.println("Attempt to create ScriptEngine ");
 		
         String seID = OOBDApp.getInstance().getCore().createScriptEngine(scriptEngineID,onion);
         

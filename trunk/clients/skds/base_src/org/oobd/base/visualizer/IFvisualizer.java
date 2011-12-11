@@ -55,7 +55,7 @@ public interface IFvisualizer {
      * \ingroup visualisation
      * @param pageID
      */
-    public void remove(String pageID);
+    public void setRemove(String pageID);
 
 
 
