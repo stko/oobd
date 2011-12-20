@@ -7,4 +7,5 @@ OOBD_COMMON_SOURCE = $(OOBD_COMMON_DIR)/main.c \
 		$(OOBD_COMMON_DIR)/odb_can.c \
 		$(OOBD_COMMON_DIR)/od_outputTask.c \
 		$(OOBD_COMMON_DIR)/odp_uds.c \
+		$(OOBD_COMMON_DIR)/odp_canraw.c \
 		$(OOBD_COMMON_DIR)/od_serial.c

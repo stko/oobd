@@ -44,7 +44,13 @@ bus_flush actBus_flush = NULL;
 bus_param actBus_param = NULL;
 bus_close actBus_close = NULL;
 
-portBASE_TYPE lfType =0 ;
+portBASE_TYPE lfType =VALUE_LF_CR ;
+
+
+
+
+xQueueHandle outputQueue = NULL;
+xQueueHandle protocolQueue = NULL;
 
 char outputBuffer[100];
 
@@ -174,6 +180,67 @@ disposeMsg (MsgData * p)
       vPortFree (p);
     }
 }
+
+
+
+
+
+void printCommandResult(portBASE_TYPE msgType, void *data, printChar_cbf printchar) {
+	error_data eData;
+
+	eData = *(error_data *) data;
+	printLF();
+	if (eData.class) {
+		printser_string(":Error: ");
+		printser_int(eData.class, 10);
+		printser_string(" ");
+		printser_int(eData.subClass, 10);
+		printser_string(" ");
+		printser_int(eData.detail, 10);
+		if (eData.text){
+			printser_string(" ");
+			printser_string(eData.text);
+		}
+	}else{
+		printser_string(".");
+	}
+	printLF();
+	printser_string(">");
+}
+
+void createCommandResultMsg(portBASE_TYPE eClass, portBASE_TYPE eSubClass,portBASE_TYPE eDetail, char *text) {
+	MsgData *msg;
+	error_data eData;
+	eData.class=eClass;
+	eData.subClass=eSubClass;
+	eData.detail=eDetail;
+	eData.text=text;
+	msg = createMsg(&eData, sizeof(eData));
+	msg->print = printCommandResult;
+	if (pdPASS != sendMsg(MSG_INPUT_FEEDBACK, outputQueue, msg)) {
+		DEBUGPRINT ("FATAL ERROR: Output queue full!!\n", 'a');
+	}
+}
+
+void CreateParamOutputMsg(portBASE_TYPE key, portBASE_TYPE value, print_cbf printRoutine) {
+	MsgData *msg;
+	extern xQueueHandle protocolQueue;
+	portBASE_TYPE p[2];
+	p[0] = key;
+	p[1] = value;
+	if (NULL != (msg = createMsg(&p, sizeof(p)))) {
+		msg->print = printRoutine;
+		if (pdPASS != sendMsg(MSG_HANDLE_PARAM, outputQueue, msg)) {
+			DEBUGPRINT ("FATAL ERROR: protocol queue is full!\n", 'a');
+
+		}
+	} else {
+		DEBUGPRINT ("FATAL ERROR: Out of Heap space!l\n", 'a');
+	}
+
+}
+
+
 
 /*
 void

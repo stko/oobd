@@ -41,8 +41,6 @@
 /* global message queues */
 xQueueHandle internalSerialRxQueue = NULL;
 xQueueHandle inputQueue = NULL;
-xQueueHandle outputQueue = NULL;
-xQueueHandle protocolQueue = NULL;
 
 //! pointer to writeChar() function
 printChar_cbf printChar = NULL;
@@ -89,6 +87,7 @@ void inputRedirectTask(void *pvParameters) {
 /*-----------------------------------------------------------*/
 void sendData(data_packet * dp) {
 	MsgData *msg;
+	extern xQueueHandle protocolQueue;
 	int i;
 	for (i = dp->len; i < 8; i++) {
 		dp->data[i] = 0;
@@ -105,6 +104,7 @@ void sendData(data_packet * dp) {
 
 void sendParam(portBASE_TYPE key, portBASE_TYPE value) {
 	MsgData *msg;
+	extern xQueueHandle protocolQueue;
 	portBASE_TYPE p[2];
 	p[0] = key;
 	p[1] = value;
@@ -119,25 +119,6 @@ void sendParam(portBASE_TYPE key, portBASE_TYPE value) {
 
 }
 
-void printSerData(portBASE_TYPE msgType, void *data, printChar_cbf printchar) {
-	portBASE_TYPE err;
-	err = *(portBASE_TYPE *) data;
-	if (err) {
-		printser_string(":Error: ");
-		printser_int(err, 10);
-	printLF();
-	}
-	printser_string(">");
-}
-
-void createFeedbackMsg(portBASE_TYPE err) {
-	MsgData *msg;
-	msg = createMsg(&err, sizeof(err));
-	msg->print = printSerData;
-	if (pdPASS != sendMsg(MSG_INPUT_FEEDBACK, outputQueue, msg)) {
-		DEBUGPRINT ("FATAL ERROR: Output queue full!!\n", 'a');
-	}
-}
 
 /*-----------------------------------------------------------*/
 #define crEOL ( 16 )
@@ -221,7 +202,7 @@ void inputParserTask(void *pvParameters) {
 					if (actState == S_WAITEOL) { /* just waiting for an end of line */
 						if (inChar == crEOL) {
 							if (lastErr) {
-								createFeedbackMsg(1);
+								createCommandResultMsg(ERR_CODE_SERIAL_SYNTAX_ERR,0,0,ERR_CODE_SERIAL_SYNTAX_ERR_TEXT);
 							}
 							actState = S_INIT;
 						}
@@ -490,7 +471,7 @@ void inputParserTask(void *pvParameters) {
 									sendParam(cmdKey, cmdValue);
 									break;
 								}
-								createFeedbackMsg (0);
+								createCommandResultMsg (ERR_CODE_SERIAL_NO_ERR,0,0,NULL);
 							} else {
 								lastErr = 2;
 							}
@@ -552,7 +533,7 @@ void inputParserTask(void *pvParameters) {
 				break;
 			case MSG_SERIAL_RELEASE:
 				if (actState == S_SLEEP) { /* do we just waiting for an answer? */
-					createFeedbackMsg(0);
+					createCommandResultMsg (ERR_CODE_SERIAL_NO_ERR,0,0,NULL);
 					actState = S_INIT; /* start again */
 				}
 				break;
