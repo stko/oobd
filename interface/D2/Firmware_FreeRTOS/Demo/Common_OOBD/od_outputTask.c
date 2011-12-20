@@ -88,6 +88,15 @@ outputTask (void *pvParameters)
 		    printdata (msgType, msg->addr, printChar);
 		    break;
 		  }
+		case MSG_HANDLE_PARAM:
+		  {
+		    DEBUGUARTPRINT
+		      ("\r\n*** outputTask: outputQueue msgType MSG_HANDLE_PARAM ***");
+		    /* use callback function to output data */
+		    printdata = msg->print;
+		    printdata (msgType, msg->addr, printChar);
+		    break;
+		  }
 		default:
 		  {
 		    DEBUGUARTPRINT

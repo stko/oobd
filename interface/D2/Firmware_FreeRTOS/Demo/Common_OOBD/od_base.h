@@ -41,9 +41,16 @@ void initProtocols ();
 void initBusses ();
 
 
-// data packet structure
-// used to describe a generic data packet.
-// define before include busses and protocol headers, as definition is needed there
+//! Serial Input Error constants and texts
+#define ERR_CODE_SERIAL_NO_ERR 0
+#define ERR_CODE_SERIAL_SYNTAX_ERR 1
+#define ERR_CODE_SERIAL_SYNTAX_ERR_TEXT "Syntax Error"
+
+
+/* data packet structure
+* used to describe a generic data packet.
+* define before include busses and protocol headers, as definition is needed there
+*/
 typedef struct data_packet
 {
   portBASE_TYPE recv;		//!< id of the receiver
@@ -51,6 +58,58 @@ typedef struct data_packet
   portBASE_TYPE err;		//!< only when receiving data: contains ODB_ERR- Codes
   unsigned char *data;		//!< pointer to the data bytes
 };
+
+
+// first a forward declaration to keep the compiler happy ;-)
+
+typedef struct error_data error_data;
+
+/* error packet structure
+* used to send error message to output task.
+*/
+typedef struct error_data
+{
+  portBASE_TYPE class;		//!< Major Error class
+  portBASE_TYPE subClass;	//!< deeper error definition
+  portBASE_TYPE detail;		//!< detailed error definition
+   char *text;		//!< textual error description
+};
+
+
+/** callback function for error handling
+*signature of the function that will be called
+* when the output tasks wants to report an received error
+*/
+
+typedef void (*printError_cbf) (error_data * err);
+
+
+
+
+// first a forward declaration to keep the compiler happy ;-)
+
+typedef struct param_data param_data;
+
+/* parameter packet structure
+* used to let the output task make outputs about incoming parameters (or to handle them then)
+*/
+typedef struct param_data
+{
+  portBASE_TYPE key;		//!< the parameter key
+  portBASE_TYPE value; 		//!< the parameter value
+};
+
+
+/** callback function for parameter outputs (& handling)
+*signature of the function that will be called
+* when the output tasks wants to output something about parameters
+*/
+
+typedef void (*printParam_cbf) (param_data * param);
+
+
+
+
 
 // first a forward declaration to keep the compiler happy ;-)
 
@@ -75,6 +134,7 @@ typedef struct OdMsg
 typedef struct OdMsg OdMsg;
 
 #include "od_protocols.h"
+
 
 MsgData *createDataMsg (data_packet * data);
 MsgData *createMsg (void *data, size_t size);

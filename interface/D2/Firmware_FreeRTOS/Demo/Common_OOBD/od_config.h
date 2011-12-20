@@ -99,13 +99,14 @@
 #define MSG_INIT		        ( 1 )	//!< generic msg to initialize (whatever)
 #define MSG_SERIAL_IN		    ( 2 )	//!< a char coming from the serial input
 #define MSG_BUS_RECV		    ( 3 )	//!< received some data on the bus
-#define MSG_SERIAL_DATA		  ( 4 )	//!< received some data to be send from the serial input
-#define MSG_SERIAL_PARAM	  ( 5 )	//!< received a paramter set from the cmd line
-#define MSG_INPUT_FEEDBACK	( 6 )	//!< feedback to the cmd line
+#define MSG_SERIAL_DATA		 	( 4 )	//!< received some data to be send from the serial input
+#define MSG_SERIAL_PARAM	 	( 5 )	//!< received a paramter set from the cmd line
+#define MSG_INPUT_FEEDBACK		( 6 )	//!< feedback to the cmd line
 #define MSG_TICK		        ( 7 )	//!< system clock tick
-#define MSG_SERIAL_RELEASE  ( 8 )	//!< tells the serial input to listen for cmds again
-#define MSG_SEND_BUFFER		  ( 9 )	//!< tells the  protocol to send the filled input buffer
-#define MSG_DUMP_BUFFER		  ( 10 )	//!< buffer filled, request to dump
+#define MSG_SERIAL_RELEASE  	( 8 )	//!< tells the serial input to listen for cmds again
+#define MSG_SEND_BUFFER		  	( 9 )	//!< tells the  protocol to send the filled input buffer
+#define MSG_DUMP_BUFFER		  	( 10 )	//!< buffer filled, request to dump
+#define MSG_HANDLE_PARAM		( 11 )	//!< handle parameter command outputs
 
 /* define parameter types */
 #define PARAM_INFO    		    ( 0 )
