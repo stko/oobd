@@ -1,0 +1,42 @@
+Partlist
+
+Exported from OOBD - BTM182 - new.brd at 01.01.2012 22:59:49
+
+EAGLE Version 5.11.0 Copyright (c) 1988-2010 CadSoft
+
+Part     Value          Package     Library         Position (mm)         Orientation
+
+BTM182   BT             BTM182      BTM182          (46.863 67.945)       MR0
+C1       1µF            C0603       rcl             (18.3786 73.5375)     MR90
+C2       220µF/6V       A/3216-18R  rcl             (2.9995 61.3917)      MR270
+C3       47µF/35V       A/3216-18R  rcl             (5.1395 61.3709)      MR270
+C4       100nF          C0603       rcl             (27.4654 73.5947)     MR90
+C5       470pF          C0603       rcl             (9.9015 60.2886)      MR0
+D1       BAS40          SOT23       diode           (9.8066 47.8963)      MR270
+D2       B140           SMB         diode           (6.6158 68.2908)      MR180
+D3       HS / MS-CAN    DUOLED2X5   led             (41.8021 51.2157)     R0
+D4       U57X32         U57X32      led             (41.656 70.7338)      R180
+D5       1N4148DO35-7   MICROMELF-R diode           (27.6862 44.9618)     MR0
+DXM1     Controller     DMX1-MINI   DXM             (1.524 77.724)        R270
+IC1      MC34063-SO     SO8         mc34063         (16.6079 68.0924)     MR270
+JP1-OBD2 1              JP4         jumper          (0 50.292)            R90
+JP2      _              JP4Q        jumper          (15.0444 47.752)      R90
+JP2-OBD2 2              JP4         jumper          (0 60.96)             R90
+JP3-OBD2 3              JP4         jumper          (0 71.755)            R90
+K1       G6K-2F         G6K-2F      relay           (16.6127 59.7151)     MR270
+L1       220µH          SM-NE29     inductor-neosid (30.2852 73.608)      MR90
+PROGRAM                 JP4Q        jumper          (5.08 47.752)         R270
+R1       1R             R0603       rcl             (5.768 73.451)        MR90
+R2       1R             R0603       rcl             (3.5082 73.4247)      MR270
+R3       1K             R0603       rcl             (25.2283 73.5229)     MR90
+R4       1K6            R0603       rcl             (22.9527 73.5494)     MR90
+R5       100R           R0603       rcl             (36.4235 47.5814)     MR0
+R6       120R           R0603       rcl             (12.5366 73.4487)     MR90
+R7       100R           R0603       rcl             (41.0159 47.7142)     MR0
+R8       4K7            R0603       rcl             (20.6485 73.4903)     MR270
+R9       4K7            R0603       rcl             (7.9119 73.492)       MR270
+R10      180k           R0603       rcl             (9.8538 62.6452)      MR180
+R11      47k            R0603       rcl             (10.2093 73.5016)     MR90
+SG1      B/C11S         B/C11S      buzzer          (26.7667 44.6575)     R180
+T1       BC847          SOT23       transistor      (9.8434 44.4362)      MR270
+T2       BC847          SOT23       transistor      (9.7698 51.3974)      MR270
