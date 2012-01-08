@@ -1,0 +1,60 @@
+Partlist
+
+Exported from OOBD - BTM182-BTM222 - V5.brd at 08.01.2012 20:52:09
+
+EAGLE Version 5.11.0 Copyright (c) 1988-2010 CadSoft
+
+Part       Value          Package       Library         Position (mm)         Orientation
+
+BT-ANTENNA                SWRA117D_LEFT ant-planar-1    (44.1332 67.0876)     R270
+C1         1µF            C0603K        rcl             (9.0393 60.6014)      R270
+C2         220µF/6V       A/3216-18R    rcl             (37.2405 47.2201)     R180
+C3         47µ/35V        A/3216-18R    rcl             (21.1379 47.6759)     R180
+C4         100nF          C0603K        rcl             (10.4871 60.621)      R270
+C5         470pF          C0603K        rcl             (7.5896 60.5992)      R270
+D1         BAS40          SOT23         diode           (7.4789 42.4781)      MR90
+D2         B140           SMB           diode           (8.9955 46.6507)      MR180
+D3                        DUOLED2X5     led             (43.5082 47.2959)     R0
+D4         U57X32         U57X32        led             (35.98 74.3179)       R0
+D5         1N4148DO35-7   MICROMELF-W   diode           (25.8268 75.877)      R180
+DXM1                      DMX1-MINI     DXM             (13.9027 70.8258)     R270
+IC1        MC34063-SO     SO8           mc34063         (9.4867 55.6358)      R90
+IC2        BTM-222        BTM-222       btm-222         (26.7329 61.101)      MR0
+IC3        BTM-182        BTM-182       BTM182          (32.6994 58.7984)     MR90
+JP1-OBD2                  JP4           jumper          (2.921 48.006)        R90
+JP2                       JP4Q          jumper          (30.7791 42.6052)     R0
+JP2-OBD2                  JP4           jumper          (2.921 58.674)        R90
+JP3-OBD2                  JP4           jumper          (2.921 69.342)        R90
+K2         G6K-2F         G6K-2F        relay           (9.8597 45.1717)      R180
+L1         220µH          SM-NE45       inductor-neosid (16.0491 74.6144)     R180
+PROGRAM                   JP4Q          jumper          (20.3691 42.6432)     R0
+R1         1R             R0603         rcl             (12.3587 60.6222)     R270
+R2         1R             R0603         rcl             (11.6086 51.3948)     R0
+R3         1K             R0603         rcl             (6.636 60.3977)       MR0
+R4         1K6            R0603         rcl             (5.784 60.6127)       R90
+R5         100R           R0603         rcl             (34.5278 47.3678)     MR0
+R6         120R           R0603         rcl             (40.9454 73.4625)     R180
+R7         100R           R0603         rcl             (38.4219 47.3287)     MR180
+R8         4K7            R0603         rcl             (25.9173 73.5262)     R180
+R9         4K7            R0603         rcl             (21.2081 74.8721)     R180
+R10        180k           R0603         rcl             (30.7832 74.8636)     R0
+R11        47k            R0603         rcl             (9.7989 60.5323)      MR180
+SG1        B/C11S         B/C11S        buzzer          (10.5029 69.8648)     R270
+
+
+
+
+T1         BC847          SOT23         transistor      (7.0358 74.5446)      R180
+T2         BC847          SOT23         transistor      (10.5758 69.9886)     R180
+
+
+
+
+All resistors: Conrad
+capacitors: conrad example: http://www.conrad.de/ce/de/product/420974/POSCAP-TPB-10V-220F investigation if fits ongoing.
+inductor : found some at conrad
+else: http://de.farnell.com/jsp/search/browse.jsp;jsessionid=J4A3R3UIN43WECQLCIPJNFQ?N=0&Ntk=gensearch&Ntt=smd+inductor+neosid&Ntx=mode+matchallpartial&suggestions=false&ref=globalsearch&_requestid=921666#
+
+relay : http://www.conrad.de/ce/de/FastSearch.html?search=G6K-2F&initial=true&categorycode=
+
+Rest conrad.
