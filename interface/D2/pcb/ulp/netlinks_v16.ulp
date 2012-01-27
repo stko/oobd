@@ -1,0 +1,829 @@
+#usage "<b>Netzverweise</b>\n"
+       "<p>"
+       "Markierung von Netzenden mit I,O und IO - "
+       "Verweis auf gleiche Netznamen durch Angabe der Schaltplanseite."
+       "<p>"
+       "<author>Autor: Andreas Funcke</author>"
+
+// THIS PROGRAM IS PROVIDED AS IS AND WITHOUT WARRANTY OF ANY KIND, EXPRESSED OR IMPLIED
+
+//---- edit the following default values to your liking ------------------------
+int    layer_nr            = 111;             // number of the new layer
+string layer_name          = "NETLINKS";      // name of the new layer
+int    text_size           = 56;              // mil
+int    text_ratio          = 8;               // %
+int    text_distance       = 100;              // distance from net in mil
+int    text_font           = 1;               // 0=Vector 1=Proportional 2=Fixed
+int    link_same_sheets    = 1;               // 1 for yes, 0 for no
+int    link_with_direction = 0;               // 1 for yes, 0 for no
+int    link_with_name_net  = 0;               // 1 for yes, 0 for no
+int    link_with_name_bus  = 0;               // 1 for yes, 0 for no
+int    link_with_brackets  = 0;               // 1 for yes, 0 for no
+int    auto_execute_script = 1;               // 1 for yes, 0 for no
+
+
+////////////////////////////////////////////////////////////////////////////////
+// !!! do not edit anything below !!!
+////////////////////////////////////////////////////////////////////////////////
+
+string version_num  = "1.6";
+string version_date = "28.10.2002";
+
+//  Deutsche Anleitung:
+
+string dHelp = "<qt>"
+               "Version " + version_num + " (" + version_date + ")<br><br>"
+               "<b>Funktion des ULPs:</b><br>"
+               "Markierung von Netzenden mit I ,O und IO - "
+               "Verweis auf gleiche Netz- und Busnamen durch Angabe der Schaltplanseite.<p>"
+               "Für die Konfiguration stehen verschiedene Variablen zur Verfügung, "
+               "die entweder in der DialogBox oder dauerhaft im ULP verändert werden können.<p>"
+               "Hier ein Auszug aus dem ULPs:<p>"
+               "//---- edit the following default values to your liking ------------------------<br>"
+               "int    layer_nr            = 111;             // number of the new layer<br>"
+               "string layer_name          = \"NETLINKS\";      // name of the new layer<br>"
+               "int    text_size           = 70;              // mil<br>"
+               "int    text_ratio          = 8;               // %<br>"
+               "int    text_distance       = 20;              // distance from net in mil<br>"
+               "int    text_font           = 1;               // 0=Vector 1=Proportional 2=Fixed<br>"
+               "int    link_same_sheets    = 1;               // 1 for yes, 0 for no<br>"
+               "int    link_with_direction = 1;               // 1 for yes, 0 for no<br>"
+               "int    link_with_name_net  = 0;               // 1 for yes, 0 for no<br>"
+               "int    link_with_name_bus  = 0;               // 1 for yes, 0 for no<br>"
+               "int    link_with_brackets  = 0;               // 1 for yes, 0 for no<br>"
+               "int    auto_execute_script = 1;               // 1 for yes, 0 for no<p>"
+               "Es ist auch möglich das ULP über die Befehlszeile zu konfigurieren:<br>"
+               "run netlinks_v16 111 NETLINKS 70 8 20 1 1 1 0 0 0 1<br>"
+               "Falls das ULP jedoch eine INI-Datei findet werden die Optionen aus<br>"
+               "dieser Datei entnommen. Somit hat die INI-Datei die höhere Priorität.<p>"
+
+               "Erklärung der einzelnen Konfigurationsmöglichkeiten:<p>"
+
+               "<b>layer_nr, layer_name:</b><br>"
+               "Für die Erstellung der \"Links\" wird ein zusätzlicher<br>"
+               "Layer eingefügt, mit der entsprechenden Layer-Nummer<br>"
+               "und entsprechendem Layer-Namen<p>"
+
+               "<b>text_size, text_ratio, text_distance, text_font:</b><br>"
+               "Einstellung der Textoptionen für die einzufügenden \"Links\"<p>"
+
+               "<b>link_same_sheets:</b><br>"
+               "Wenn Wert auf 1 gesetzt ist, wird bei zwei verschiedenen<br>"
+               "Segmenten mit dem gleichen Namen auf einer Seite, die Seite<br>"
+               "auch angegeben<p>"
+
+               "<b>link_with_direction:</b><br>"
+               "Wenn Wert auf 1 gesetzt ist, wird die Richtung des Netzes oder<br>"
+               "des Busses angegeben (&lt;&lt;, &gt;&gt;, &lt;&lt;&gt;&gt;).<p>"
+
+               "<b>link_with_name_net und link_with_name_bus:</b><br>"
+               "Wenn Wert auf 1 gesetzt ist, wird zusätzlich zu den Seitennummern<br>"
+               "der Name des Netzes (link_with_name_net) oder Busses<br>"
+               "(link_with_name_bus) angegeben.<p>"
+
+               "<b>link_with_brackets:</b><br>"
+               "Wenn Wert auf 1 gesetzt ist, werden die zu einem Netz oder Bus<br>"
+               "zugehörigen Seitennummern in eckigen Klammern gesetzt ([]).<p>"
+
+               "<b>auto_execute_script:</b><br>"
+               "Wenn Wert auf 1 gesetzt ist, wird das erstellte Script automatisch<br>"
+               "nach Ende des ULPs ausgeführt."
+               "</qt>";
+
+string Fonts[] = { "Vector", "Proportional", "Fixed" };
+
+// global variables
+string netsheets[];
+string netnames[];
+int number_of_nets;
+int number_of_sheets;
+string busnames[];
+string busnetnames[];
+int number_of_busses;
+int start_time;
+string status_ulp              = "Ready";
+string status_number_of_nets   = "-";
+string status_number_of_busses = "-";
+string status_sheets           = "-";
+
+// delete the NETLINKS-Layer
+void delete_all_text (UL_SCHEMATIC S)
+{
+  S.sheets(SH) {
+    printf("EDIT .S%d;\n", SH.number);
+    SH.texts(T)
+      if (T.layer == layer_nr)
+        printf("delete (%5.3f %5.3f);\n", u2mil(T.x), u2mil(T.y));
+  }
+}
+
+// check if the net has no conntact
+int is_XY_alone_on_segment(UL_SEGMENT SEG, int cnt, int X, int Y) {
+  int wire_cnt=0;
+
+  SEG.wires(W) {
+    wire_cnt++;
+    if (wire_cnt != cnt) 
+      if ( (W.x1==X && W.y1==Y) || (W.x2==X && W.y2==Y) )
+        return 0;
+  }
+
+  SEG.junctions(J)
+    if (J.x==X && J.y==Y)
+      return 0;
+
+  SEG.pinrefs(P)
+    if (P.pin.x==X && P.pin.y==Y)
+      return 0;
+
+  return 1;
+}
+
+// add link at the left side
+string get_left_link(string link, string name, int direction) {
+  if (name != "")
+    name = " " + name;
+
+  if (!link_with_direction)
+    direction = 0;
+
+  if (link_with_brackets)
+    link = "[" + link + "]";
+
+  switch (direction) {
+    case 1:  link = link + name + " >>";   break;
+    case 2:  link = link + name + " <<";   break;
+    case 3:  link = link + name + " <<>>"; break;
+    default: link = link + name;
+  }
+
+  return link;
+}
+
+// add link at the right side
+string get_right_link(string link, string name, int direction) {
+  if (name != "")
+    name = name + " ";
+
+  if (!link_with_direction)
+    direction = 0;
+
+  if (link_with_brackets)
+    link = "[" + link + "]";
+
+  switch (direction) {
+    case 1:  link = "<< "   + name + link; break;
+    case 2:  link = ">> "   + name + link; break;
+    case 3:  link = "<<>> " + name + link; break;
+    default: link =           name + link;
+  }
+  return link;
+}
+
+// mark the net with text (direction and sheetnumbers)
+void mark_open_nets(string link, string name, int direction, int x1, int y1, int x2, int y2) {
+  real angle;
+
+  real x = u2mil(x1);
+  real y = u2mil(y1);
+
+  if (y1 == y2) {
+    if (x1 < x2) {
+      angle = 180;
+      x = x - text_distance;
+//      y = y + text_size/2;
+      y = y + text_size;
+      link = get_left_link(link, name, direction);
+    }
+    else {
+      angle = 0;
+      x = x + text_distance;
+//      y = y - text_size/2;
+      link = get_right_link(link, name, direction);
+    }
+  }
+  else { 
+    if (x1 == x2) {
+      if (y1 < y2) {
+        angle = 270;
+        x = x - text_size/2;
+        y = y - text_distance;
+        link = get_left_link(link, name, direction);
+      }
+      else {
+        angle = 90;
+        x = x + text_size/2;
+        y = y + text_distance;
+        link = get_right_link(link, name, direction);
+      }
+    }
+    else {
+      // bus-connection - do not mark
+      return;
+    }
+  }
+
+  if (link != "")
+    printf("text '%s' R%1.0f (%5.3f %5.3f);\n", link, angle, x, y);
+}
+
+
+// check if segment is I,O or IO
+int get_direction_of_segment(UL_SEGMENT SEG) {
+  int I_O_IO=0;  // nothing=0, I=1, O=2, IO=3
+
+  SEG.pinrefs(P) {
+    if (   (P.pin.direction == PIN_DIRECTION_OUT)
+        || (P.pin.direction == PIN_DIRECTION_OC)
+        || (P.pin.direction == PIN_DIRECTION_HIZ) ) {
+      I_O_IO = 2;
+      break;
+    }
+    else
+      if (   (P.pin.direction == PIN_DIRECTION_IO)
+          || (P.pin.direction == PIN_DIRECTION_NC) 
+          || (P.pin.direction == PIN_DIRECTION_PAS) )
+        I_O_IO = 3;
+      else
+        if ( (I_O_IO == 0) && (P.pin.direction == PIN_DIRECTION_IN) )
+          I_O_IO = 1;
+  }
+  return I_O_IO;
+}
+
+// look for the coresponding index in netnames
+int get_netname_index(string netname) {
+  for (int i=0; i<number_of_nets; i++)
+    if (netnames[i] == netname)
+      return i;
+  return -1;
+}
+
+// look for the coresponding index in busnames
+int get_busname_index(string busname) {
+  for (int i=0; i<number_of_busses; i++)
+    if (busnames[i] == busname)
+      return i;
+  return -1;
+}
+
+// create netlink with number of sheets
+string create_netlink(int index, int number_of_sheet) {
+  string link="";
+  string netname;
+  string dummy;
+
+  for (int i=1; i<=number_of_sheets; i++)
+    if (netsheets[index][i] > 0)
+      if (link_same_sheets || number_of_sheet!=i)
+        if (number_of_sheet!=i || netsheets[index][i] > 1) {
+          sprintf(dummy,"%d",i);
+          link += dummy;
+          link += ",";
+        }
+
+  // clear last ','
+  link = strsub(link,0,strlen(link)-1);
+
+  return link;
+}
+
+// create buslink with number of sheets
+string create_buslink(int index, int sch_number) {
+  string link="";
+  
+  int i,j;
+  string bus_sheet;
+  string dummy;
+
+  for (i=0; i<=number_of_sheets; i++)
+    bus_sheet[i] = 0;
+
+  for (i=0; i<number_of_nets; i++)
+    if (netsheets[i][0]==index+1)
+      for(j=1; j<=number_of_sheets; j++)
+        if (netsheets[i][j] > bus_sheet[j])
+          bus_sheet[j] = netsheets[i][j];
+
+  for (i=1; i<=number_of_sheets; i++)
+    if (bus_sheet[i] > 0)
+      if (link_same_sheets || sch_number!=i)
+        if (sch_number!=i || bus_sheet[i] > 1) {
+          sprintf(dummy,"%d",i);
+          link += dummy;
+          link += ",";
+        }
+
+  // clear last ','
+  link = strsub(link,0,strlen(link)-1);
+
+  return link;
+}
+
+// fill array netnames and array netsheets
+void fill_netnames_and_netsheets(UL_SCHEMATIC S) {
+  int index;
+
+  number_of_sheets = 0;
+  number_of_nets   = 0;
+
+  // count number of sheets
+  S.sheets(SCH)
+    number_of_sheets++;
+
+  // count number of nets and fill netnames
+  S.nets(N)
+    netnames[number_of_nets++] = N.name;
+
+  // clear netsheets
+  for (int i=0; i<number_of_nets; i++)
+    for (int j=0; j<=number_of_sheets; j++)
+      netsheets[i][j]=0;
+
+  // fill netsheets
+  S.sheets(SCH)
+    SCH.nets(N) {
+      index = get_netname_index(N.name);
+      N.segments(SEG)
+        netsheets[index][SCH.number]++;
+    }
+}
+
+// exctract alle the netnames from the bus
+int extract_netnames_from_bus(string bus_name) {
+  string arr[];
+  string name,dummy;
+  int n;
+  int i,j;
+  int pos1, pos2;
+  int cnt;
+  int start,end;
+  int pos;
+  
+  // cut synonym
+  pos = strchr(bus_name, ':');
+  if (pos >= 0)
+    bus_name = strsub(bus_name, pos+1);
+
+  n = strsplit(arr, bus_name, ',');  // split bus_name to array
+
+  cnt=0;
+  for(i=0; i<n; i++) {
+    pos1 = strchr(arr[i],'[');
+    if (pos1 >= 0) {
+      name = strsub(arr[i],0,pos1);
+      pos2 = strchr(arr[i],'.');
+      pos1 += 1;
+      dummy = strsub(arr[i],pos1,pos2-pos1);
+      start = strtol(dummy);
+      pos1 = pos2 + 2;
+      pos2 = strchr(arr[i],']');
+      dummy = strsub(arr[i],pos1,pos2-pos1);
+      end = strtol(dummy);
+      for(j=start;j<=end;j++) {
+        sprintf(dummy,"%d",j);
+        busnetnames[cnt++]=name+dummy;
+      }
+    }
+    else
+      busnetnames[cnt++]=arr[i];
+  }
+  return cnt;
+}
+
+// tie the busses with the netsheets
+void tie_busses_to_netsheets(UL_SCHEMATIC S) {
+  int n;
+  int i,j;
+  int index;
+
+  number_of_busses = 0;
+
+  S.sheets(SCH)
+    SCH.busses(B) {
+      if (get_busname_index(B.name) == -1) {
+        busnames[number_of_busses++] = B.name;
+        n = extract_netnames_from_bus(B.name);
+        for(i=0; i<n; i++) {
+          index = get_netname_index(busnetnames[i]);
+          if (index != -1)
+            netsheets[index][0] = number_of_busses;
+        }
+      }
+    }
+}
+
+// look for the end of a bus
+int is_XY_bus_alone(UL_SHEET SCH, int x, int y) {
+  SCH.nets(N)
+    N.segments(SEG)
+      SEG.wires(W)
+        if ( (W.x1==x && W.y1==y) || (W.x2==x && W.y2==y) )
+          return 0;
+
+  return 1;
+}
+
+// check if a segment is connected directly to a bus
+int is_seg_connected_with_bus_seg(UL_SEGMENT SEG, UL_SEGMENT BUS_SEG) {
+  int bx1, bx2, by1, by2;
+
+  // get wires of BUS segments
+  BUS_SEG.wires(BW) {
+    if (BW.x1 == BW.x2) {
+      // wire in y direction
+      if (BW.y1 < BW.y2) {
+        by1 = BW.y1;
+        by2 = BW.y2;
+      }
+      else {
+        by1 = BW.y2;
+        by2 = BW.y1;
+      }
+      SEG.wires(SW) {
+        if (  (SW.x1 == BW.x1 && SW.y1 >= by1 && SW.y1 <= by2)
+            ||(SW.x2 == BW.x1 && SW.y2 >= by1 && SW.y2 <= by2) )
+          return 1;
+      }
+    }
+    else {
+      // wire in x direction
+      if (BW.x1 < BW.x2) {
+        bx1 = BW.x1;
+        bx2 = BW.x2;
+      }
+      else {
+        bx1 = BW.x2;
+        bx2 = BW.x1;
+      }
+      SEG.wires(SW) {
+        if (  (SW.y1 == BW.y1 && SW.x1 >= bx1 && SW.x1 <= bx2)
+            ||(SW.y2 == BW.y1 && SW.x2 >= bx1 && SW.x2 <= bx2) )
+          return 1;
+      }
+    }
+  }
+
+  return 0;
+}
+
+// check the direction of the bus
+int get_direction_of_bus(int index, UL_SEGMENT BUS_SEG, UL_SHEET SCH) {
+  int I_O_IO=0;  // nothing=0, I=1, O=2, IO=3
+  int i,n,direction;
+
+  n = extract_netnames_from_bus(busnames[index]);
+  for(i=0; i<n; i++) {
+    SCH.nets(N) {
+      if (N.name == busnetnames[i]) {
+        N.segments(SEG) {
+          if (is_seg_connected_with_bus_seg(SEG, BUS_SEG)) {
+            direction = get_direction_of_segment(SEG);
+            if (direction == 2)
+              return 2;
+            if (direction == 3)
+              I_O_IO = 3;
+            else
+              if (direction == 1)
+                I_O_IO = 1;
+          }
+        }
+      }
+    }
+  }
+
+  return I_O_IO;
+}
+
+// main-Programm
+void start(void) {
+  // def. variables
+  string fileName;
+  string cmd;
+  string name;
+  int cnt;
+  string text;
+  int direction;
+  int index;
+  int end_time;
+  int pos;
+
+  // main schematic
+  schematic(S) {
+    fileName = filesetext(S.name, "_netlinks.scr");
+  
+    output(fileName) {
+      start_time=time();   
+      printf("# This file is generated by %s %s, exported from;\n", filename(argv[0]), version_num);
+      printf("# %s at %s;\n", S.name, t2string(start_time));
+      printf("# %s;\n\n", EAGLE_SIGNATURE);
+ 
+      status_ulp = "Create Database ...";
+      dlgRedisplay();
+
+      fill_netnames_and_netsheets(S);
+      tie_busses_to_netsheets(S);
+
+      sprintf(status_number_of_nets,"%d",number_of_nets);
+      sprintf(status_number_of_busses,"%d",number_of_busses);
+      sprintf(status_sheets,"- / %d",number_of_sheets);
+
+      status_ulp = "Generating Script ...";
+      dlgRedisplay();
+
+      printf("grid mil\n\n");
+
+      // set text-options
+      printf("change size %d;\n", text_size);
+      printf("change ratio %d;\n", text_ratio);
+      printf("change font '%s';\n", Fonts[text_font]);
+
+      // def. new Layer
+      printf("layer %d %s;\n", layer_nr, layer_name);
+      printf("set color_layer %d LGray;\n", layer_nr);
+
+      printf("display none '%s';\n", layer_name);
+
+      // delete all NETLINK
+      delete_all_text(S);
+
+      // check all sheets
+      S.sheets(SCH) {
+        sprintf(status_sheets,"%d / %d",SCH.number,number_of_sheets); 
+        dlgRedisplay();
+
+        // edit sheet by sheet
+        printf("EDIT .S%d;\n", SCH.number);
+
+        SCH.nets(N)
+          N.segments(SEG) {
+            cnt=0;
+            SEG.wires(W) {
+              cnt++;
+              if (is_XY_alone_on_segment(SEG, cnt, W.x1, W.y1)) {
+                direction = get_direction_of_segment(SEG);
+                index = get_netname_index(N.name);
+                text = create_netlink(index, SCH.number);
+                if (link_with_name_net)
+                  name = netnames[index];
+                else
+                  name = "";
+                mark_open_nets(text, name, direction, W.x1, W.y1, W.x2, W.y2);
+              }
+              if (is_XY_alone_on_segment(SEG, cnt, W.x2, W.y2)) {
+                direction = get_direction_of_segment(SEG);
+                index = get_netname_index(N.name);
+                text = create_netlink(index, SCH.number);
+                if (link_with_name_net)
+                  name = netnames[index];
+                else
+                  name = "";
+                mark_open_nets(text, name, direction, W.x2, W.y2, W.x1, W.y1);
+              }
+            } // wires
+          } // segments
+  
+        SCH.busses(B)
+          B.segments(SEG) {
+            cnt=0;
+            SEG.wires(W) {
+              cnt++;
+              // check if the net has no conntact 
+              if (is_XY_alone_on_segment(SEG, cnt, W.x1, W.y1))
+                // look for the end of a bus
+                if (is_XY_bus_alone(SCH, W.x1, W.y1)) {
+                  index = get_busname_index(B.name);
+                  direction = get_direction_of_bus(index, SEG, SCH);
+                  text = create_buslink(index, SCH.number);
+
+                  if (link_with_name_bus) {
+                    // cut synonym
+                    pos = strchr(busnames[index], ':');
+                    if (pos >= 0)
+                      name = strsub(busnames[index], 0, pos);
+                    else
+                      name = busnames[index];
+                  }
+                  else
+                    name = "";
+
+                  mark_open_nets(text, name, direction, W.x1, W.y1, W.x2, W.y2);
+                }
+              if (is_XY_alone_on_segment(SEG, cnt, W.x2, W.y2))
+                if (is_XY_bus_alone(SCH, W.x2, W.y2)) {
+                  index = get_busname_index(B.name);
+                  direction = get_direction_of_bus(index, SEG, SCH);
+                  text = create_buslink(index, SCH.number);
+
+                  if (link_with_name_bus) {
+                    // cut synonym
+                    pos = strchr(busnames[index], ':');
+                    if (pos >= 0)
+                      name = strsub(busnames[index], 0, pos);
+                    else
+                      name = busnames[index];
+                  }
+                  else
+                    name = "";
+
+                  mark_open_nets(text, name, direction, W.x2, W.y2, W.x1, W.y1);
+                }
+            } // wires
+          } // segments
+      } // sheets
+
+      // back to first sheet
+      printf("EDIT .S1;\n");
+
+      // last grid and layers
+      printf("grid last\n");
+      printf("display all -Pins\n");
+  
+      end_time=time()-start_time;
+      printf("\n");
+      printf("# This file is generated by %s %s, exported from;\n", filename(argv[0]), version_num);
+      printf("# %s at %s;\n", S.name, t2string(end_time));
+      printf("# time delay: %dm %ds\n", t2minute(end_time), t2second(end_time));
+      printf("# %s;\n\n", EAGLE_SIGNATURE);
+    } // output
+
+    // save options to file
+    fileName = filesetext(S.name, "_netlinks.ini");
+    output(fileName, "wt") {
+      printf("# INI-File for netlinks ULP\n");
+      printf("# This file is generated by %s\n", filename(argv[0]));
+
+      printf("%d\n", layer_nr);            // number of the new layer
+      printf("%s\n", layer_name);          // name of the new layer
+      printf("%d\n", text_size);           // mil
+      printf("%d\n", text_ratio);          // %
+      printf("%d\n", text_distance);       // distance from net in mil
+      printf("%d\n", text_font);           // 0=Vector 1=Proportional 2=Fixed
+      printf("%d\n", link_same_sheets);    // 1 for yes, 0 for no
+      printf("%d\n", link_with_direction); // 1 for yes, 0 for no
+      printf("%d\n", link_with_name_net);  // 1 for yes, 0 for no
+      printf("%d\n", link_with_name_bus);  // 1 for yes, 0 for no
+      printf("%d\n", link_with_brackets);  // 1 for yes, 0 for no
+      printf("%d\n", auto_execute_script); // 1 for yes, 0 for no
+
+      printf("# End of INI-File\n");
+    }
+
+    status_ulp = "Finished";
+    dlgRedisplay();
+
+    if (auto_execute_script) {
+      // execute script after ULP
+      fileName = filesetext(S.name, "_netlinks.scr");
+      sprintf(cmd, "script '%s'", fileName);
+      exit(cmd);
+    }
+    else
+      dlgMessageBox("Netlinks finished!", "&OK");
+      exit(0);
+  } // schematic
+}
+
+// Display Help-Text
+void DisplayHelp(void)
+{
+  dlgDialog("Netlinks Hilfe") {
+    dlgHBoxLayout dlgSpacing(400);
+    dlgHBoxLayout {
+      dlgVBoxLayout dlgSpacing(300);
+      dlgTextView(dHelp);
+      }
+    dlgHBoxLayout {
+      dlgStretch(1);
+      dlgPushButton("&Close") dlgReject();
+      }
+    };
+}
+
+// Display Dialog
+void DisplayDialog(void) {
+  int Result = dlgDialog("Netlinks V" + version_num) {
+    dlgHBoxLayout {
+      dlgVBoxLayout {
+        dlgGroup("Layer") {
+          dlgGridLayout {
+            dlgCell(0,0) dlgLabel("&Name: ");
+            dlgCell(0,1) dlgStringEdit(layer_name);
+            dlgCell(1,0) dlgLabel("N&umber: ");
+            dlgCell(1,1) dlgIntEdit(layer_nr, 100, 254);
+          }
+        }
+        dlgGroup("Links") {
+          dlgCheckBox("Sa&me Sheets",link_same_sheets);
+          dlgCheckBox("With Direc&tion",link_with_direction);
+          dlgCheckBox("With Name for &Net",link_with_name_net);
+          dlgCheckBox("With Name for &Bus",link_with_name_bus);
+          dlgCheckBox("With Bra&ckets []", link_with_brackets);
+        }
+      }
+      dlgVBoxLayout {
+        dlgGroup("Text") {
+          dlgGridLayout {
+            dlgCell(0,0) dlgLabel("S&ize: ");
+            dlgCell(0,1) dlgSpinBox(text_size, 10, 100);
+            dlgCell(0,2) dlgLabel(" mil");
+            dlgCell(1,0) dlgLabel("&Ratio: ");
+            dlgCell(1,1) dlgSpinBox(text_ratio, 0, 30);
+            dlgCell(1,2) dlgLabel(" %");
+            dlgCell(2,0) dlgLabel("&Distance: ");
+            dlgCell(2,1) dlgSpinBox(text_distance, 0, 1000);
+            dlgCell(2,2) dlgLabel(" mil");
+            dlgCell(3,0) dlgLabel("&Font-Name: ");
+            dlgCell(3,1) dlgComboBox(Fonts, text_font);
+          }
+        }
+        dlgGroup("Script") {
+          dlgSpacing(15);
+          dlgCheckBox("&Auto Execute",auto_execute_script);
+        }
+      }
+    }
+    dlgSpacing(15);
+    dlgHBoxLayout {
+      dlgGroup("Status") {
+        dlgGridLayout {
+          dlgCell(0,0) dlgLabel(status_ulp, 1);
+          dlgCell(0,1) dlgLabel(" ");
+          dlgCell(0,2) dlgLabel("Nets:   ");
+          dlgCell(0,3) dlgLabel(status_number_of_nets, 1);
+          dlgCell(0,4) dlgLabel("Busses: ");
+          dlgCell(0,5) dlgLabel(status_number_of_busses, 1);
+          dlgCell(0,6) dlgLabel("Sheet: ");
+          dlgCell(0,7) dlgLabel(status_sheets, 1);
+        }
+      }
+    }
+    dlgSpacing(15);
+    dlgHBoxLayout {
+      dlgPushButton("+&Start") { status_ulp = "Running...";
+                                 dlgRedisplay();
+                                 start(); }
+      dlgPushButton("-&Quit") dlgReject();
+      dlgSpacing(30);
+      dlgPushButton("&Help")  DisplayHelp();
+    }
+  };
+  if (!Result) exit(-1);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// main
+////////////////////////////////////////////////////////////////////////////////
+void main(void) {
+  string lines[];
+  string fileName;
+  string a[];
+  int nLines;
+
+  if (!schematic) {
+    dlgMessageBox("This program can only work in the schematic editor.", "OK");
+    exit (0);
+  }
+
+  if (!argv[1]) {
+    // check for INI-File
+    schematic(S) { fileName = filesetext(S.name, "_netlinks.ini"); }
+    if (fileglob(a, fileName)) {
+      // get options from INI-File
+      nLines = fileread(lines, fileName);
+
+      layer_nr            = strtol(lines[2]);  // number of the new layer
+      layer_name          = lines[3];          // name of the new layer
+      text_size           = strtol(lines[4]);  // mil
+      text_ratio          = strtol(lines[5]);  // %
+      text_distance       = strtol(lines[6]);  // distance from net in mil
+      text_font           = strtol(lines[7]);  // 0=Vector 1=Proportional 2=Fixed
+      link_same_sheets    = strtol(lines[8]);  // 1 for yes, 0 for no
+      link_with_direction = strtol(lines[9]);  // 1 for yes, 0 for no
+      link_with_name_net  = strtol(lines[10]); // 1 for yes, 0 for no
+      link_with_name_bus  = strtol(lines[11]); // 1 for yes, 0 for no
+      link_with_brackets  = strtol(lines[12]); // 1 for yes, 0 for no
+      auto_execute_script = strtol(lines[13]); // 1 for yes, 0 for no
+    }
+
+    DisplayDialog();
+  }
+  else {
+    // get options from command line
+    layer_nr            = strtol(argv[1]);  // number of the new layer
+    layer_name          = argv[2];          // name of the new layer
+    text_size           = strtol(argv[3]);  // mil
+    text_ratio          = strtol(argv[4]);  // %
+    text_distance       = strtol(argv[5]);  // distance from net in mil
+    text_font           = strtol(argv[6]);  // 0=Vector 1=Proportional 2=Fixed
+    link_same_sheets    = strtol(argv[7]);  // 1 for yes, 0 for no
+    link_with_direction = strtol(argv[8]);  // 1 for yes, 0 for no
+    link_with_name_net  = strtol(argv[9]);  // 1 for yes, 0 for no
+    link_with_name_bus  = strtol(argv[10]); // 1 for yes, 0 for no
+    link_with_brackets  = strtol(argv[11]); // 1 for yes, 0 for no
+    auto_execute_script = strtol(argv[12]); // 1 for yes, 0 for no
+
+    DisplayDialog();
+  }
+}
+

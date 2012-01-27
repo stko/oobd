@@ -1,0 +1,484 @@
+#usage "<qt><b>Find elements in schematic/board and zoom in</b>\n"
+       "<p>"
+       "Centers the object and zooms into the drawing."
+       "<p>"
+       "Usage: RUN find [ <i>name</i> [ count | all ] [ pin | pad ]]"
+       "<p>"
+       "<h3>You can also run this ULP from the command line:</h3><p>"
+       "RUN find<br>"
+       "RUN find name<br>"
+       "RUN find name counter<br>"
+       "RUN find name all PIN | PAD <b>***</b><br>"
+       "Search string is the <b>name</b> of the Device/Package/Net/Bus/Pin/Signal/Value<p>"
+       "<b>counter</b> specifies the number of elements that should be found before ending the search, "
+       "<b>all</b> sets the counter to 1000. PIN | PAD search also for Pin- and Pad-Name<p>"
+       "<hr> "
+       "Searching order:<p>"
+       "<table>"
+       "<tr><td><u>Schematic</u>:</td><td><u>Board</u>:</td></tr>"
+       "<tr><td>1. Device name</td><td>1. Element</td></tr>"
+       "<tr><td>2. Net name</td><td>2. Signal/Wires/Vias</td><tr>"
+       "<tr><td>3. Bus name</td><td>3. Pads</td></tr>"
+       "<tr><td>4.&nbsp;Pin/Pad&nbsp;name&nbsp;if&nbsp;option&nbsp;PIN&nbsp;|&nbsp;PAD&nbsp;<b>***</b>&nbsp;is&nbsp;given.</td><td>4.&nbsp;Value</td></tr>"
+       "<tr><td>5. Value</td><td> Searching for values is not case sensitive.</td></tr>"
+       "</table>"
+       "<b>Restriction:</b> Due to the bus name convention it is not possible"
+       "to search for bus members like address or data nets named, for example, D0, D1, D3."
+       "The net name does not occur in a bus name like D[0..n], so we can't search for it.<br>"
+       "<author>Author: support@cadsoft.de</author></qt>"
+
+// THIS PROGRAM IS PROVIDED AS IS AND WITHOUT WARRANTY OF ANY KIND, EXPRESSED OR IMPLIED
+
+/*
+string  Hilfe =  "<qt><h3>Starten Sie dieses ULP auch aus der Kommandozeile mit:</h3><p>" +
+                 "RUN find<p>" +
+                 "RUN find name<p>" +
+                 "RUN find name Z&auml;hler<p>" +
+                 "RUN find name all PIN|PAD<b> ***</b><p>" +
+                 "Suchbegriff ist der <b>name</b> des Device/Package/Net/Bus/Pin/Pad/Signal/Value<p>" +
+                 "<b>Z&auml;hler</b> ist die Anzahl der gefundenen Elemente, nach der die Suche beendet wird.<p>"
+                 "<b>all</b> setzt den Z&auml;hler im Programm auf 1000.<p>" +
+                 "<b>PIN</b> | <b>PAD</b> sucht zus&auml;tzlich nach PIN oder PAD Namen.<p>" +
+                 " <hr> " +
+                 "Find sucht in der Reihenfolge:<p>" +
+                 "<table>" +
+                 "<tr><td><u>Schaltplan</u>:</td><td><u>Board</u>:</td></tr>" +
+                 "<tr><td>1. Device-Name</td><td>1. Element</td></tr>" +
+                 "<tr><td>2. Netz-Name</td><td>2. Signal/Wires</td><tr>" +
+                 "<tr><td>3. Bus-Name</td><td>3. Pads</td><tr>" +
+                 "<tr><td>4.&nbsp;Pin/Pad-Name&nbsp;falls&nbsp;PIN&nbsp;|&nbsp;PAD&nbsp;<b>***</b>&nbsp;gesetzt&nbsp;ist.</td><td>4. Value</td></tr>" +
+                 "<tr><td>5. Value </td><td>In Values, wird in der Schreibweise, so wie mit Gro&szlig;schreibung gesucht. </td></tr>" +
+                 "</table>" +
+                 "<b>Einschr&auml;nkung:</b> Netznamen von Daten- und Adressbussen wie D0, D1, D3..." +
+                 "werden innerhalb des Busses in der Schreibweise D[0..n] abgelegt. " +
+                 "Somit kann das Netz D1 innerhalb eines Busses nicht gefunden werden.</qt>";
+*/
+
+string find;
+string vfind;
+string again;
+string fpin;
+string fndpin = "Element";
+string foundelement = "";
+string fPinPad[] = { "", "PIN", "PAD" };
+int    fcnt = 0;
+int    all;
+int    cnt;
+int    Result;
+int    mx, my;
+real   lastZoom = 0;
+int    lastSheet = 0;
+
+int test = 0;
+
+string fileName = argv[0];
+string scriptfile = filesetext(fileName, "$$$.scr");
+
+int gridunit;
+string unit[] = { "Micron", "mm", "Mil", "Inch" };
+
+real u2u(int val) {
+  switch (gridunit) {
+     case GRID_UNIT_MIC  : return u2mic(val);
+     case GRID_UNIT_MM   : return u2mm(val);
+     case GRID_UNIT_MIL  : return u2mil(val);
+     case GRID_UNIT_INCH : return u2inch(val);
+     }
+}
+
+string dpbacksl(string fs) {
+  int l = 0;
+  do {
+    if (fs[l] == '\\') {
+      string fs1 = strsub(fs, 0 , l + 1);
+      string fs2 = strsub(fs, l + 1 );
+      fs = fs1 + "\\" + fs2;
+      l += 2;
+      }
+    l++;
+  } while (fs[l]);
+  return fs;
+}
+
+
+void showrepeat(string text) {
+  dlgDialog("FIND.ULP") {
+    dlgHBoxLayout dlgSpacing(600);
+    dlgHBoxLayout {
+      dlgVBoxLayout dlgSpacing(300);
+      dlgTextEdit(text);
+    }
+    dlgHBoxLayout {
+      dlgPushButton("+&OK") dlgAccept();
+      dlgStretch(1);
+    }
+  };
+  return;
+}
+
+string returnfind(void) {
+   string rs;
+   if (!fpin) fndpin = "Element";
+   sprintf(rs, "run ulpmessage.ulp '%d %s(s) %s found!' '%s';\n", fcnt, fndpin, find, foundelement );
+   return dpbacksl(rs);
+   }
+
+void check(string repeat) {
+   repeat += returnfind();
+   if (test) showrepeat(repeat);
+   exit (repeat);
+   }
+
+void helpENG(void) {
+   dlgMessageBox(usage, "OK");
+   }
+
+string getfind() {
+   string f;
+   all = 1;
+   int pin = 0;
+   Result = dlgDialog("Find element"){
+      dlgHBoxLayout {
+         dlgVBoxLayout {
+            dlgHBoxLayout {
+               dlgStretch(0);
+               dlgLabel("&Name");
+               dlgStretch(2);
+               dlgStringEdit(f);
+               dlgStretch(1);
+               }
+            dlgHBoxLayout {
+               dlgStretch(0);
+               dlgLabel("&Counts");
+               dlgStretch(2);
+               dlgIntEdit(all, 0, 999);
+               dlgStretch(1);
+               }
+            dlgGroup("Find PIN | PAD name in SCH") {
+               dlgRadioButton("n&o", pin);
+               dlgRadioButton("P&IN", pin);
+               dlgRadioButton("P&AD", pin);
+               }
+            dlgStretch(0);
+            dlgHBoxLayout {
+               dlgStretch(0);
+               dlgPushButton("+&Find") {
+                  dlgAccept(1);
+                  fpin = fPinPad[pin];
+                  all--;
+                  }
+               dlgStretch(1);
+               }
+            dlgStretch(1);
+            }
+         dlgStretch(0);
+         dlgVBoxLayout {
+            dlgStretch(0);
+            dlgPushButton("&Help") helpENG();
+            dlgStretch(1);
+            dlgPushButton("-Cancel") dlgReject();
+            dlgStretch(0);
+            }
+         dlgStretch(1);
+         }
+      };
+   if (Result && !f) {
+      dlgMessageBox("No search string!", "OK");
+      f = "";
+      }
+   return f;
+   }
+
+string show_B(real x, real y, real zoom1, real zoom2, string findb, int fist) {
+   fcnt++;
+   string cmd = "";
+   if (lastZoom) {
+      sprintf(cmd, "\n;WINDOW (%.6f %.6f) (%.6f %.6f) (%.6f %.6f);\n"
+                   "SHOW '%s';\n",
+                   x, y,
+                   x, y,
+                   x, y,
+                   findb
+                   );
+      }
+   else {
+      sprintf(cmd, "WINDOW FIT;\n"
+                "WINDOW (%.6f %.6f) (%.6f %.6f) (%.6f %.6f);\n"
+                "SHOW '%s';\n",
+                x, y,
+                x + zoom1, y,
+                x + zoom2, y,
+                findb
+                );
+      lastZoom = zoom2;
+      }
+   return cmd;
+   }
+
+string show_S(int s, real x, real y, real zoom1, real zoom2, string finds) {
+   fcnt++;
+   string cmd = "";
+   if (s != lastSheet) {
+      lastSheet = s;
+      sprintf(cmd, "EDIT .s%d;\nWINDOW (%.6f %.6f) (%.6f %.6f) (%.6f %.6f);\nSHOW '%s';\n", s,
+           x, y,
+           x + zoom1, y,
+           x + zoom2, y,
+           finds
+           );
+      }
+   else {
+      sprintf(cmd, "WINDOW (%.6f %.6f) (%.6f %.6f) (%.6f %.6f);\nSHOW '%s';\n",
+           x, y,
+           x, y,
+           x, y,
+           finds
+           );
+      }
+   return cmd;
+  }
+
+real zfactor(real x1, real y1, real x2, real y2) {
+  return sqrt( pow(x2 - x1, 2) + pow(y2 - y1, 2) );
+  }
+
+int findBus(string name, string sfind) {
+  string bn[];
+  int b = strsplit(bn, name, ',');
+  for (int x = 0; x <= b; x++) {
+    if(bn[x] == sfind) return 1;
+  }
+  return 0;
+  }
+
+// Main
+find = strupr(argv[1]);
+again =  strupr(argv[2]);
+if ( strupr(argv[2]) == "PAD" || strupr(argv[3]) == "PAD") fpin = "PAD";
+if ( strupr(argv[2]) == "PIN" || strupr(argv[3]) == "PIN") fpin = "PIN";
+
+if (again == "ALL")    all = 1000;
+else  all = strtol(again) - 1;
+
+if (!find) find = strupr(getfind());
+if (!find) exit (0);
+cnt = all + 1;
+
+string repeat = "";
+
+vfind = find;
+
+
+// *** Board coord. ***
+if (board) {
+   board(B) {
+      gridunit = (B.grid.unit);
+
+      mx = B.area.x2 + (B.area.x1 * -1);
+      my = B.area.y2 + (B.area.y1 * -1);
+      B.elements(E) {
+         if (E.name == find) {
+            repeat += show_B(u2u(E.x), u2u(E.y), 2, 5, find, all);
+            sprintf(foundelement, "Element %s on (%.3f %.3f)", E.name ,u2u(E.x), u2u(E.y) );
+            check (repeat);
+            }
+         }
+      B.signals(S) {
+         if (S.name == find) {
+            S.contactrefs(C) {
+               repeat += show_B(u2u(C.contact.x), u2u(C.contact.y), 2, 5, find, all);
+               if (all <= 0) check (repeat);
+               all--;
+               }
+            }
+         }
+      B.signals(S) {
+         if (S.name == find ) {
+            S.wires(W) {
+               real z = zfactor(u2u(W.x1), u2u(W.y1), u2u(W.x2), u2u(W.y2) );
+               repeat += show_B( u2u((W.x1 + W.x2)/2), u2u((W.y1 + W.y2)/2), z/(z/2) , z/(z/5), find, all);
+               if (all <= 0) check(repeat);
+               all--;
+               }
+            }
+         }
+      B.signals(S) {
+         if (S.name == find ) {
+            S.vias(V) {
+               repeat += show_B(u2u(V.x), u2u(V.y), 1, 5, find, all);
+               fndpin = "VIA";
+               sprintf(foundelement, "Element on (%.3f %.3f) %s<br><b>VIA</b><br><table><tr><td>Layer</td><td>Diameter</td><td>Restring</td></tr><tr><td>Top</td><td>%.3f</td><td>%.3f</td></tr><tr><td>Inner</td><td>%.3f</td><td>%.3f</td></tr><tr><td>Bottom</td><td>%.3f</td><td>%.3f</td></tr><tr><td>Drill</td><td>%.3f</td></tr></table>",
+                                                    u2u(V.x), u2u(V.y),
+                                                    unit[gridunit],
+                                                    u2u(V.diameter[1]),
+                                                    u2u( (V.diameter[1] - V.drill) / 2),
+                                                    u2u(V.diameter[2]),
+                                                    u2u( (V.diameter[2] - V.drill) / 2),
+                                                    u2u(V.diameter[16]),
+                                                    u2u( (V.diameter[16] - V.drill) / 2),
+                                                    u2u(V.drill)
+                                                    );
+               if (all <= 0) check(repeat);
+               all--;
+               }
+            }
+         }
+      B.elements(E) {
+         if (E.value == vfind || E.value == find) {
+            repeat += show_B(u2u(E.x), u2u(E.y), 2, 5, E.name, all);
+            sprintf(foundelement, "Element %s on (%.3f %.3f)", E.name ,u2u(E.x), u2u(E.y) );
+            if (all <= 0) check(repeat);
+            all--;
+            }
+         }
+      B.elements(E) {
+         if (fpin == "PAD") {
+            E.package.contacts(C) {
+               if (C.pad) {
+                  if (C.pad.name == find) {
+                     fndpin = "PAD";
+                     repeat += show_B(u2u(C.pad.x), u2u(C.pad.y), 2, 5, E.name, all);
+                     sprintf(foundelement, "<br>PAD <b>%s</b> on (%.3f %.3f) %s [Element %s]<br><table><tr><td>Layer</td><td>Diameter</td><td>Restring</td></tr><tr><td>Top</td><td>%.3f</td><td>%.3f</td></tr><tr><td>Inner</td><td>%.3f</td><td>%.3f</td></tr><tr><td>Bottom</td><td>%.3f</td><td>%.3f</td></tr><tr><td>Drill</td><td>%.3f</td></tr></table>",
+                                                    C.pad.name,
+                                                    u2u(C.pad.x), u2u(C.pad.y),
+                                                    unit[gridunit],
+                                                    E.name,
+                                                    u2u(C.pad.diameter[1]),
+                                                    u2u( (C.pad.diameter[1] - C.pad.drill) / 2),
+                                                    u2u(C.pad.diameter[2]),
+                                                    u2u( (C.pad.diameter[2] - C.pad.drill) / 2),
+                                                    u2u(C.pad.diameter[16]),
+                                                    u2u( (C.pad.diameter[16] - C.pad.drill) / 2),
+                                                    u2u(C.pad.drill)
+                                                    );
+                     if (all <= 0) check(repeat);
+                     all--;
+                     }
+                  }
+               if (C.smd) {
+                  if (C.smd.name == find) {
+                     fndpin = "SMD";
+                     repeat += show_B(u2u(C.smd.x), u2u(C.smd.y), 2, 5, E.name, all);
+                     sprintf(foundelement, "<br>SMD <b>%s</b> on  (%.3f %.3f)  %s [Element %s]",
+                                                  C.smd.name,
+                                                  u2u(C.smd.x), u2u(C.smd.y),
+                                                  unit[gridunit],
+                                                  E.name
+                                                  );
+                     if (all <= 0) check(repeat);
+                     all--;
+                     }
+                  }
+               }
+            }
+         }
+      }
+   if (repeat) check (repeat);
+   dlgMessageBox("<b>" + dpbacksl(find) + "</b> not found!", "OK");
+   exit (0);
+   }
+
+// *** Schematic coord. ***
+if (schematic) {
+   lastSheet = 0;
+   schematic(S) {
+      gridunit = (S.grid.unit);
+      S.sheets(SH) {
+         mx = SH.area.x2 + (SH.area.x1 * -1);
+         my = SH.area.y2 + (SH.area.y1 * -1);
+         if (fpin == "PIN") {
+            SH.parts(PA) {
+               PA.instances(IN) {
+                  IN.gate.symbol.pins(P) {  // Pin
+                     if (P.name == find) {
+                        fndpin = "Pin";
+                        real sym = zfactor( u2u(IN.gate.symbol.area.x1), u2u(IN.gate.symbol.area.y1), u2u(IN.gate.symbol.area.x2), u2u(IN.gate.symbol.area.y2) );
+                        real z = zfactor( u2u(mx), u2u(my), 1.0, 1.0 );
+                        sprintf(foundelement, "PIN %s in sheet %d on (%.3f %.3f)", P.name , IN.sheet, u2u(P.x), u2u(P.y) );
+                        repeat += show_S(IN.sheet, u2u(P.x), u2u(P.y),  sym , z, PA.name);
+                        if (all <= 0) check(repeat);
+                        all--;
+                        }
+                     }
+                  }
+               }
+            }
+         if (fpin == "PAD") {
+            SH.parts(PA) {
+               PA.instances(IN) {
+                  IN.gate.symbol.pins(P) {
+                     if (P.contact) {
+                        if (P.contact.name == find) {
+                           fndpin = "Pad";
+                           real sym = zfactor( u2u(IN.gate.symbol.area.x1), u2u(IN.gate.symbol.area.y1), u2u(IN.gate.symbol.area.x2), u2u(IN.gate.symbol.area.y2) );
+                           real z = zfactor( u2u(mx), u2u(my), 1.0, 1.0 );
+                           sprintf(foundelement, "PAD %s (PIN %s) in sheet %d on (%.3f %.3f)", PA.name, P.name , IN.sheet, u2u(IN.x), u2u(IN.y) );
+                           repeat += show_S(IN.sheet, u2u(P.x), u2u(P.y), sym, z, PA.name);
+                           if (all <= 0) check(repeat);
+                           all--;
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         SH.parts(PA) {
+            if (PA.name == find) {
+               PA.instances(IN) {  // Gate
+                  if (IN.sheet) {
+                     real sym = zfactor( u2u(IN.gate.symbol.area.x1), u2u(IN.gate.symbol.area.y1), u2u(IN.gate.symbol.area.x2), u2u(IN.gate.symbol.area.y2) );
+                     real z = zfactor( u2u(mx), u2u(my), 1.0, 1.0 );
+                     sprintf(foundelement, "Device %s in sheet %d on (%.3f %.3f)", PA.name , IN.sheet, u2u(IN.x), u2u(IN.y) );
+                     repeat += show_S(IN.sheet, u2u(IN.x), u2u(IN.y),  sym , z, PA.name);
+                     if (all <= 0) check(repeat);
+                     all--;
+                     }
+                  }
+               }
+            }
+         SH.nets(N) {
+            if (N.name == find) {
+               N.segments(SEG) {
+                  SEG.wires(W) {
+                     fndpin = "NET";
+                     real z = zfactor(u2u(W.x1), u2u(W.y1), u2u(W.x2), u2u(W.y2) );
+                     repeat += show_S(SH.number, u2u((W.x1 + W.x2) /2), u2u((W.y1 + W.y2) / 2), z, u2u(mx), find);
+                     if (all <= 0) check(repeat);
+                     all--;
+                     }
+                  }
+               }
+            }
+         SH.busses(B) {
+            if (findBus(B.name, find)) {
+               B.segments(SEG) {
+                  SEG.wires(W) {
+                     fndpin = "BUS";
+                     real z = zfactor(u2u(W.x1), u2u(W.y1), u2u(W.x2), u2u(W.y2) );
+                     repeat += show_S(SH.number, u2u((W.x1 + W.x2) /2), u2u((W.y1 + W.y2) / 2), z, u2u(mx), B.name);
+                     if (all <= 0) check(repeat);
+                     all--;
+                     }
+                  }
+               }
+            }
+         SH.parts(PA) {
+            PA.instances(IN) {             // Gate
+               if (PA.value == vfind || PA.value == find) {
+                  real sym = zfactor( u2u(IN.gate.symbol.area.x1), u2u(IN.gate.symbol.area.y1), u2u(IN.gate.symbol.area.x2), u2u(IN.gate.symbol.area.y2) );
+                  real z = zfactor( u2u(mx), u2u(my), 1.0, 1.0 );
+                  sprintf(foundelement, "Device %s in sheet %d on (%.3f %.3f)", PA.name , IN.sheet, u2u(IN.x), u2u(IN.y) );
+                  repeat += show_S(IN.sheet, u2u(IN.x), u2u(IN.y), sym, z, PA.name);
+                  if (all <= 0) check(repeat);
+                  all--;
+                  }
+               }
+            }
+         }
+      }
+   check(repeat);
+   }
+else {
+   dlgMessageBox("Start this ULP from schematic or board!", "OK");
+   exit (0);
+   }
