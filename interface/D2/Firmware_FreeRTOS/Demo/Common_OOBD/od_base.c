@@ -189,12 +189,11 @@ void printCommandResult(portBASE_TYPE msgType, void *data, printChar_cbf printch
 	error_data eData;
 
 	eData = *(error_data *) data;
-	printLF();
-	if (eData.class) {
+	if (eData.errType) {
 		printser_string(":Error: ");
-		printser_int(eData.class, 10);
+		printser_int(eData.source, 10);
 		printser_string(" ");
-		printser_int(eData.subClass, 10);
+		printser_int(eData.errType, 10);
 		printser_string(" ");
 		printser_int(eData.detail, 10);
 		if (eData.text){
@@ -208,16 +207,32 @@ void printCommandResult(portBASE_TYPE msgType, void *data, printChar_cbf printch
 	printser_string(">");
 }
 
-void createCommandResultMsg(portBASE_TYPE eClass, portBASE_TYPE eSubClass,portBASE_TYPE eDetail, char *text) {
+void createCommandResultMsg(portBASE_TYPE eSource, portBASE_TYPE eType,portBASE_TYPE eDetail, char *text) {
 	MsgData *msg;
 	error_data eData;
-	eData.class=eClass;
-	eData.subClass=eSubClass;
+	eData.source=eSource;
+	eData.errType=eType;
 	eData.detail=eDetail;
 	eData.text=text;
 	msg = createMsg(&eData, sizeof(eData));
 	msg->print = printCommandResult;
 	if (pdPASS != sendMsg(MSG_INPUT_FEEDBACK, outputQueue, msg)) {
+		DEBUGPRINT ("FATAL ERROR: Output queue full!!\n", 'a');
+	}
+}
+
+
+
+void createCommandResultMsgFromISR(portBASE_TYPE eSource, portBASE_TYPE eType,portBASE_TYPE eDetail, char *text) {
+	MsgData *msg;
+	error_data eData;
+	eData.source=eSource;
+	eData.errType=eType;
+	eData.detail=eDetail;
+	eData.text=text;
+	msg = createMsg(&eData, sizeof(eData));
+	msg->print = printCommandResult;
+	if (pdPASS != sendMsgFromISR(MSG_INPUT_FEEDBACK, outputQueue, msg)) {
 		DEBUGPRINT ("FATAL ERROR: Output queue full!!\n", 'a');
 	}
 }

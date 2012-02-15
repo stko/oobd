@@ -64,16 +64,25 @@ typedef struct data_packet
 
 typedef struct error_data error_data;
 
-/* error packet structure
+/** error packet structure
 * used to send error message to output task.
 */
 typedef struct error_data
 {
-  portBASE_TYPE class;		//!< Major Error class
-  portBASE_TYPE subClass;	//!< deeper error definition
+  portBASE_TYPE source;		//!< Source task or handler, which throws the error
+  portBASE_TYPE errType;	//!< classification of error type
   portBASE_TYPE detail;		//!< detailed error definition
    char *text;		//!< textual error description
 };
+
+
+//! Error Source task constants
+#define ERR_CODE_NO_ERR 0 	//!<generic falue for No Error
+#define ERR_CODE_SOURCE_OS 1 		//!<basic OS Error
+#define ERR_CODE_SOURCE_SERIALIN 2	//!<Serial Input Task Error
+#define ERR_CODE_SOURCE_SERIALOUT 3	//!<Serial Output Task Error
+#define ERR_CODE_SOURCE_PROTOCOL 4	//!<SProtocol Task Error
+#define ERR_CODE_SOURCE_BUS 5		//!<Bus Handler Error
 
 
 /** callback function for error handling

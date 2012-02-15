@@ -471,7 +471,7 @@ void inputParserTask(void *pvParameters) {
 									sendParam(cmdKey, cmdValue);
 									break;
 								}
-								createCommandResultMsg (ERR_CODE_SERIAL_NO_ERR,0,0,NULL);
+								createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_NO_ERR,0,NULL);
 							} else {
 								lastErr = 2;
 							}
@@ -533,7 +533,7 @@ void inputParserTask(void *pvParameters) {
 				break;
 			case MSG_SERIAL_RELEASE:
 				if (actState == S_SLEEP) { /* do we just waiting for an answer? */
-					createCommandResultMsg (ERR_CODE_SERIAL_NO_ERR,0,0,NULL);
+					createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_NO_ERR,0,NULL);
 					actState = S_INIT; /* start again */
 				}
 				break;
