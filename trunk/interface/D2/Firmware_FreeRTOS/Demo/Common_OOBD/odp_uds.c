@@ -404,7 +404,7 @@ obp_uds (void *pvParameters)
 			    {	/* wrong answer */
 			      stateMachine_state = SM_UDS_STANDBY;
 			      udsBuffer->len = 0;
-			      //! \bug error message missing
+			      createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_UDS_MISSING_FLOW_CONTROL,(dp->data[0] & 0xF0),ERR_CODE_UDS_MISSING_FLOW_CONTROL_TEXT);
 			    }
 
 			}
@@ -494,7 +494,7 @@ obp_uds (void *pvParameters)
 				  {	/* sequence error! */
 				    stateMachine_state =
 				      SM_UDS_STANDBY;
-				    //! \bug errormessage for sequence error is needed here!
+				    createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_UDS_WRONG_SEQUENCE_COUNT,(dp->data[0] & 0x0F),ERR_CODE_UDS_WRONG_SEQUENCE_COUNT_TEXT);
 				    DEBUGPRINT("Sequence Error! Received %d , expected %d\n",dp->data[0] & 0x0F,sequenceCounter);
 				    timeout = 0;
 				    if (pdPASS !=
@@ -512,6 +512,7 @@ obp_uds (void *pvParameters)
 				  stateMachine_state =
 				    SM_UDS_STANDBY;
 				  //! \bug errormessage for wrong error is needed here!
+				    createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_UDS_MISSING_FIRST_FRAME,(dp->data[0] & 0xF0),ERR_CODE_UDS_MISSING_FIRST_FRAME_TEXT);
 				  DEBUGPRINT("Wrong Frame Error! Received %d , expected 0x2x\n",dp->data[0] );
 				  timeout = 0;
 				  if (pdPASS !=
@@ -600,7 +601,7 @@ obp_uds (void *pvParameters)
 		    }
 		  else
 		    {
-		      //! \bug overlong telegram data need an error message!
+		      createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_UDS_DATA_TOO_LONG_ERR,(udsBuffer->len) + dp->len,ERR_CODE_UDS_DATA_TOO_LONG_ERR_TEXT);
 		    }
 		}
 	      break;
@@ -617,7 +618,7 @@ obp_uds (void *pvParameters)
 	          break;
 	        case PARAM_LISTEN:
 		      config.listen = paramData[1];
-		      createCommandResultMsg (ERR_CODE_SERIAL_NO_ERR,0,0,NULL);
+		      createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_NO_ERR,0,NULL);
 		      break;
 	        case PARAM_BUS:
 		      break;
@@ -625,7 +626,7 @@ obp_uds (void *pvParameters)
 		      break;
 	        case PARAM_TIMEOUT:
 		      config.timeout = paramData[1] + 1;
-		      createCommandResultMsg (ERR_CODE_SERIAL_NO_ERR,0,0,NULL);
+		      createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_NO_ERR,0,NULL);
 		      break;
 	        case PARAM_TIMEOUT_PENDING:
 		      break;
@@ -638,19 +639,19 @@ obp_uds (void *pvParameters)
 		      break;
 	        case PARAM_SENDID:
 		      config.sendID = paramData[1];
-		      createCommandResultMsg (ERR_CODE_SERIAL_NO_ERR,0,0,NULL);
+		      createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_NO_ERR,0,NULL);
 		      break;
 	        case PARAM_TP_ON:
 		      tp_Flags[reduceID (paramData[1])] = config.tpFreq;
-		      createCommandResultMsg (ERR_CODE_SERIAL_NO_ERR,0,0,NULL);
+		      createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_NO_ERR,0,NULL);
 		      break;
 	        case PARAM_TP_OFF:
 		      tp_Flags[reduceID (paramData[1])] = 0;
-		      createCommandResultMsg (ERR_CODE_SERIAL_NO_ERR,0,0,NULL);
+		      createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_NO_ERR,0,NULL);
 		      break;
 	        case PARAM_TP_FREQ:
 	          config.tpFreq = paramData[1];
-		      createCommandResultMsg (ERR_CODE_SERIAL_NO_ERR,0,0,NULL);
+		      createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_NO_ERR,0,NULL);
 	          break;
 	      }
 	      actBus_param (paramData[0], paramData[1]);	/* forward the received params to the underlying bus. */
@@ -716,6 +717,7 @@ obp_uds (void *pvParameters)
 		    {		/* time's gone... */
 		      udsBuffer->len = 0;
 		      DEBUGPRINT ("Timeout!\n", 'a');
+		      createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_UDS_TIMEOUT,0,ERR_CODE_UDS_TIMEOUT_TEXT);
 		      stateMachine_state = SM_UDS_STANDBY;
 		      if (pdPASS !=
 			  sendMsg (MSG_SERIAL_RELEASE, inputQueue, NULL))
