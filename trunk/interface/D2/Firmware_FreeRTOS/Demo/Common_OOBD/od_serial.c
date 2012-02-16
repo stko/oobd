@@ -203,6 +203,8 @@ void inputParserTask(void *pvParameters) {
 						if (inChar == crEOL) {
 							if (lastErr) {
 								createCommandResultMsg(ERR_CODE_SERIAL_SYNTAX_ERR,0,0,ERR_CODE_SERIAL_SYNTAX_ERR_TEXT);
+							}else{
+							  createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_NO_ERR,0,NULL);
 							}
 							actState = S_INIT;
 						}
@@ -222,6 +224,7 @@ void inputParserTask(void *pvParameters) {
 							processFurther = 0;
 						}
 						if (inChar == crEOL) { /* in case we filled the buffer already previously */
+							createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_NO_ERR,0,NULL);
 							sendMsg(MSG_SEND_BUFFER, protocolQueue, NULL);
 							actState = S_SLEEP;
 						}
@@ -234,6 +237,7 @@ void inputParserTask(void *pvParameters) {
 								sendMsg(MSG_SEND_BUFFER, protocolQueue, NULL);
 								actState = S_SLEEP;
 							} else {
+								createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_NO_ERR,0,NULL);
 								actState = S_INIT;
 							}
 						} else { /* check for valid input */
@@ -266,212 +270,229 @@ void inputParserTask(void *pvParameters) {
 						if (inChar == crEOL) {
 							if (totalInCount == 3 || totalInCount == 4) {
 								switch (cmdKey) {
-								case PARAM_INFO:
-									if (cmdValue == VALUE_PARAM_INFO_VERSION) /* p 0 0 */
-									{
-										printser_string("OOBD ");
-										printser_string(OOBDDESIGN);
-										printser_string(" ");
-										printser_string(SVNREV);
-										printser_string(" ");
-										printser_string(BUILDDATE);
-									} else if (cmdValue
-											== VALUE_PARAM_INFO_SERIALNUMBER) /* p 0 1 */
-									{
-										printser_string(BTM222_BtAddress);
-									}
-									else if (cmdValue
-											== VALUE_PARAM_INFO_PROTOCOL) /* p 0 3 */
-									{
-										printser_string("1 - UDS (ISO14229-1)");
-									} else if (cmdValue == VALUE_PARAM_INFO_CAN_TRANSCEIVER) /* p 0 4 */
-									{
-										if (config.bus == VALUE_BUS_SILENT_MODE)
-											printser_string("0 - CAN Transceiver in 'Silent Mode'");
-										else if (config.bus == VALUE_BUS_LOOP_BACK_MODE)
-											printser_string("1 - CAN Transceiver in 'Loop Back Mode'");
-										else if (config.bus == VALUE_BUS_LOOP_BACK_WITH_SILENT_MODE)
-											printser_string("2 - CAN Transceiver in 'Loop Back combined with Silent Mode'");
-										else if (config.bus == VALUE_BUS_NORMAL_MODE)
-											printser_string("3 - CAN Transceiver in 'Normal Mode'");
-									} else if (cmdValue
-											== VALUE_PARAM_INFO_BUS_CONFIG) /* p 0 5 */
-									{
-										if (config.busConfig
-												== VALUE_BUS_CONFIG_11bit_125kbit) {
-											printser_string(
-													"1 = ISO 15765-4, CAN 11bit ID/125kBaud");
-										} else if (config.busConfig
-												== VALUE_BUS_CONFIG_11bit_250kbit) {
-											printser_string(
-													"2 = ISO 15765-4, CAN 11bit ID/250kBaud");
-										} else if (config.busConfig
-												== VALUE_BUS_CONFIG_11bit_500kbit) {
-											printser_string(
-													"3 = ISO 15765-4, CAN 11bit ID/500kBaud");
-										} else if (config.busConfig
-												== VALUE_BUS_CONFIG_11bit_1000kbit) {
-											printser_string(
-													"4 - ISO 15765-4, CAN 11bit ID/1000kBaud");
-										} else if (config.busConfig
-												== VALUE_BUS_CONFIG_29bit_125kbit) {
-											printser_string(
-													"5 - ISO 15765-4, CAN 29bit ID/125kBaud");
-										} else if (config.busConfig
-												== VALUE_BUS_CONFIG_29bit_250kbit) {
-											printser_string(
-													"6 - ISO 15765-4, CAN 29bit ID/250kBaud");
-										} else if (config.busConfig
-												== VALUE_BUS_CONFIG_29bit_500kbit) {
-											printser_string(
-													"7 - ISO 15765-4, CAN 29bit ID/500kBaud");
-										} else if (config.busConfig
-												== VALUE_BUS_CONFIG_29bit_1000kbit) {
-											printser_string(
-													"8 - ISO 15765-4, CAN 29bit ID/1000kBaud");
-										}
-									}
-#ifdef OOBD_PLATFORM_STM32
-									else if (cmdValue
-											== VALUE_PARAM_INFO_ADC_POWER) /* p 0 6 */
-									{
-										printser_int((readADC1(8) * (3.15
-												/ 4096)) * 10000, 10); /* result in mV */
-										printser_string(" mV");
-									} else if (cmdValue
-											== VALUE_PARAM_INFO_CPU_INFO) /* p 0 10 */
-										sendCPUInfo(); /* send CPU Info */
-									else if (cmdValue
-											== VALUE_PARAM_INFO_MEM_LOC) /* p 0 11 */
-										sendMemLoc(0x8002400); /* send Mem Location */
-									else if (cmdValue
-											== VALUE_PARAM_INFO_ROM_TABLE_LOC) /* p 0 12 */
-										sendRomTable(); /* send ROM Table */
-									else if (cmdValue
-											== VALUE_PARAM_INFO_FREE_HEAP_SIZE) /* p 0 13 */
-									{
-										printser_string(
-												"Total Heap (in byte): ");
-										printser_int(configTOTAL_HEAP_SIZE, 10);
-										printser_string("Free Heap (in byte): ");
-										printser_int(xPortGetFreeHeapSize(), 10); /* send FreeRTOS free heap size */
-									} else if (cmdValue
-											== VALUE_PARAM_INFO_CRC32) /* p 0 14 */
-									{
-										if (CheckCrc32() == 0)
-											printser_string(
-													"CRC-32 application check passed!");
-										else
-											printser_string(
-													"CRC-32 application check failed");
-									}
-									else if (cmdValue
-											== VALUE_PARAM_INFO_BTM222_DEVICENAME) /* p 0 20 */
-									{
-										printser_string(BTM222_DeviceName);
-									}
-									else if (cmdValue
-											== VALUE_PARAM_INFO_BTM222_UART_SPEED) /* p 0 21 */
-									{
-										switch (BTM222_UartSpeed)
-										{
-										  case '0':
-											printser_string ("4800 bit/s");
-											break;
+								  case PARAM_INFO:
+									  // \bug Clean up!
+									  /*
+									  *  case statt elseif -ketten
+									  * Ausgaben syncronisiert statt printser
+									  *  can- Ausgaben in den CAN-Handler verschieben
+									  *  Mc-spezische Ausgaben in mc-spezifischen Code verschieben
+									  */
+									  if (cmdValue == VALUE_PARAM_INFO_VERSION) /* p 0 0 */
+									  {
+										  printser_string("OOBD ");
+										  printser_string(OOBDDESIGN);
+										  printser_string(" ");
+										  printser_string(SVNREV);
+										  printser_string(" ");
+										  printser_string(BUILDDATE);
+									  } else if (cmdValue
+											  == VALUE_PARAM_INFO_SERIALNUMBER) /* p 0 1 */
+									  {
+										  printser_string(BTM222_BtAddress);
+									  }
+									  else if (cmdValue
+											  == VALUE_PARAM_INFO_PROTOCOL) /* p 0 3 */
+									  {
+										  printser_string("1 - UDS (ISO14229-1)");
+									  } else if (cmdValue == VALUE_PARAM_INFO_CAN_TRANSCEIVER) /* p 0 4 */
+									  {
+										  if (config.bus == VALUE_BUS_SILENT_MODE)
+											  printser_string("0 - CAN Transceiver in 'Silent Mode'");
+										  else if (config.bus == VALUE_BUS_LOOP_BACK_MODE)
+											  printser_string("1 - CAN Transceiver in 'Loop Back Mode'");
+										  else if (config.bus == VALUE_BUS_LOOP_BACK_WITH_SILENT_MODE)
+											  printser_string("2 - CAN Transceiver in 'Loop Back combined with Silent Mode'");
+										  else if (config.bus == VALUE_BUS_NORMAL_MODE)
+											  printser_string("3 - CAN Transceiver in 'Normal Mode'");
+									  } else if (cmdValue
+											  == VALUE_PARAM_INFO_BUS_CONFIG) /* p 0 5 */
+									  {
+										  if (config.busConfig
+												  == VALUE_BUS_CONFIG_11bit_125kbit) {
+											  printser_string(
+													  "1 = ISO 15765-4, CAN 11bit ID/125kBaud");
+										  } else if (config.busConfig
+												  == VALUE_BUS_CONFIG_11bit_250kbit) {
+											  printser_string(
+													  "2 = ISO 15765-4, CAN 11bit ID/250kBaud");
+										  } else if (config.busConfig
+												  == VALUE_BUS_CONFIG_11bit_500kbit) {
+											  printser_string(
+													  "3 = ISO 15765-4, CAN 11bit ID/500kBaud");
+										  } else if (config.busConfig
+												  == VALUE_BUS_CONFIG_11bit_1000kbit) {
+											  printser_string(
+													  "4 - ISO 15765-4, CAN 11bit ID/1000kBaud");
+										  } else if (config.busConfig
+												  == VALUE_BUS_CONFIG_29bit_125kbit) {
+											  printser_string(
+													  "5 - ISO 15765-4, CAN 29bit ID/125kBaud");
+										  } else if (config.busConfig
+												  == VALUE_BUS_CONFIG_29bit_250kbit) {
+											  printser_string(
+													  "6 - ISO 15765-4, CAN 29bit ID/250kBaud");
+										  } else if (config.busConfig
+												  == VALUE_BUS_CONFIG_29bit_500kbit) {
+											  printser_string(
+													  "7 - ISO 15765-4, CAN 29bit ID/500kBaud");
+										  } else if (config.busConfig
+												  == VALUE_BUS_CONFIG_29bit_1000kbit) {
+											  printser_string(
+													  "8 - ISO 15765-4, CAN 29bit ID/1000kBaud");
+										  }
+									  }
+  #ifdef OOBD_PLATFORM_STM32
+									  else if (cmdValue
+											  == VALUE_PARAM_INFO_ADC_POWER) /* p 0 6 */
+									  {
+										  printser_int((readADC1(8) * (3.15
+												  / 4096)) * 10000, 10); /* result in mV */
+										  printser_string(" mV");
+									  } else if (cmdValue
+											  == VALUE_PARAM_INFO_CPU_INFO) /* p 0 10 */
+										  sendCPUInfo(); /* send CPU Info */
+									  else if (cmdValue
+											  == VALUE_PARAM_INFO_MEM_LOC) /* p 0 11 */
+										  sendMemLoc(0x8002400); /* send Mem Location */
+									  else if (cmdValue
+											  == VALUE_PARAM_INFO_ROM_TABLE_LOC) /* p 0 12 */
+										  sendRomTable(); /* send ROM Table */
+									  else if (cmdValue
+											  == VALUE_PARAM_INFO_FREE_HEAP_SIZE) /* p 0 13 */
+									  {
+										  printser_string(
+												  "Total Heap (in byte): ");
+										  printser_int(configTOTAL_HEAP_SIZE, 10);
+										  printser_string("Free Heap (in byte): ");
+										  printser_int(xPortGetFreeHeapSize(), 10); /* send FreeRTOS free heap size */
+									  } else if (cmdValue
+											  == VALUE_PARAM_INFO_CRC32) /* p 0 14 */
+									  {
+										  if (CheckCrc32() == 0)
+											  printser_string(
+													  "CRC-32 application check passed!");
+										  else
+											  printser_string(
+													  "CRC-32 application check failed");
+									  }
+									  else if (cmdValue
+											  == VALUE_PARAM_INFO_BTM222_DEVICENAME) /* p 0 20 */
+									  {
+										  printser_string(BTM222_DeviceName);
+									  }
+									  else if (cmdValue
+											  == VALUE_PARAM_INFO_BTM222_UART_SPEED) /* p 0 21 */
+									  {
+										  switch (BTM222_UartSpeed)
+										  {
+										    case '0':
+											  printser_string ("4800 bit/s");
+											  break;
 
-										  case '1':
-											printser_string ("9600 bit/s");
-											break;
+										    case '1':
+											  printser_string ("9600 bit/s");
+											  break;
 
-									      case '2':
-									    	printser_string ("19200 bit/s");
-											break;
+										case '2':
+										  printser_string ("19200 bit/s");
+											  break;
 
-									      case '3':
-									    	printser_string ("38400 bit/s");
-											break;
+										case '3':
+										  printser_string ("38400 bit/s");
+											  break;
 
-									      case '4':
-									    	printser_string ("57600 bit/s");
-											break;
+										case '4':
+										  printser_string ("57600 bit/s");
+											  break;
 
-									      case '5':
-									    	printser_string ("115200 bit/s");
-											break;
+										case '5':
+										  printser_string ("115200 bit/s");
+											  break;
 
-									      case '6':
-									    	printser_string ("230400 bit/s");
-											break;
+										case '6':
+										  printser_string ("230400 bit/s");
+											  break;
 
-									      case '7':
-									    	printser_string ("460800 bit/s");
-											break;
+										case '7':
+										  printser_string ("460800 bit/s");
+											  break;
 
-									      default:
-										    printser_string ("not detected");
-									    	break;
-									    }
-									}
-#endif
-									else {
-										sendParam(cmdKey, cmdValue);
-									}
-									break;
+										default:
+										      printser_string ("not detected");
+										  break;
+									      }
+									  }
+  #endif
+									  else {
+										  sendParam(cmdKey, cmdValue);
+									  }
+									  break;
 
-								case PARAM_ECHO:
-									break;
+								  case PARAM_ECHO:
+									  createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_NO_ERR,0,NULL);
+									  break;
 
 								case PARAM_LINEFEED:
-									lfType = cmdValue;
-									break;
+									  lfType = cmdValue;
+									  createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_NO_ERR,0,NULL);
+									  break;
 
-#ifdef OOBD_PLATFORM_STM32
+  #ifdef OOBD_PLATFORM_STM32
+								// \todo to be moved into mc specific file
 								case PARAM_RESET:
-									if (1 == cmdValue) {
-										DEBUGUARTPRINT ("\r\n*** Softreset performed !!!");
-										SCB->AIRCR = 0x05FA0604; /* soft reset */
-									}
-									if (2 == cmdValue) {
-										DEBUGUARTPRINT ("\r\n*** Hardreset performed !!!");
-										SCB->AIRCR = 0x05FA0004; /* hard reset */
-									}
-									break;
-#endif
-						        case PARAM_PROTOCOL:
-						        	if (VALUE_PARAM_PROTOCOL_CAN_RAW == cmdValue) /* p 4 1 */
-						        	{
-						        	  printser_string ("Protocol CAN RAW activated!");
-						        	  vTaskDelete( xTaskProtHandle );
-						        	  vTaskDelay( 100 / portTICK_RATE_MS );
-						        	  /* */
-						        	  if (pdPASS == xTaskCreate (odparr[0], (const signed portCHAR *) "prot",
-										     	    configMINIMAL_STACK_SIZE, (void *) NULL,
-												    TASK_PRIO_LOW, &xTaskProtHandle))
-									    DEBUGUARTPRINT ("\r\n*** 'prot' Task created ***");
-									  else
-									    DEBUGUARTPRINT ("\r\n*** 'prot' Task NOT created ***");
-						        	}
-						        	if (VALUE_PARAM_PROTOCOL_CAN_UDS == cmdValue) /* p 4 2 */
-						        	{
-							          printser_string ("Protocol CAN UDS activated!");
-						        	  vTaskDelete( xTaskProtHandle );
-						        	  vTaskDelay( 100 / portTICK_RATE_MS );
-						        	  /* */
-						        	  if (pdPASS == xTaskCreate (odparr[1], (const signed portCHAR *) "prot",
-										     	    configMINIMAL_STACK_SIZE, (void *) NULL,
-												    TASK_PRIO_LOW, &xTaskProtHandle))
-									    DEBUGUARTPRINT ("\r\n*** 'prot' Task created ***");
-									  else
-									    DEBUGUARTPRINT ("\r\n*** 'prot' Task NOT created ***");
-						        	}
-									break;
+									  if (1 == cmdValue) {
+										  DEBUGUARTPRINT ("\r\n*** Softreset performed !!!");
+										  SCB->AIRCR = 0x05FA0604; /* soft reset */
+									  }
+									  if (2 == cmdValue) {
+										  DEBUGUARTPRINT ("\r\n*** Hardreset performed !!!");
+										  SCB->AIRCR = 0x05FA0004; /* hard reset */
+									  }
+									  break;
+  #endif
+								case PARAM_PROTOCOL:
+								  // \todo this kind of task switching is not design intent
+								  // \todo no use of protocol table, its hardcoded instead
+								if (VALUE_PARAM_PROTOCOL_CAN_RAW == cmdValue) /* p 4 1 */
+								{
+								    printser_string ("Protocol CAN RAW activated!");
+								    vTaskDelete( xTaskProtHandle );
+								    vTaskDelay( 100 / portTICK_RATE_MS );
+								    /* */
+								    if (pdPASS == xTaskCreate (odparr[0], (const signed portCHAR *) "prot",
+											      configMINIMAL_STACK_SIZE, (void *) NULL,
+												      TASK_PRIO_LOW, &xTaskProtHandle))
+									      DEBUGUARTPRINT ("\r\n*** 'prot' Task created ***");
+									    else
+									      DEBUGUARTPRINT ("\r\n*** 'prot' Task NOT created ***");
+								  }
+								  if (VALUE_PARAM_PROTOCOL_CAN_UDS == cmdValue) /* p 4 2 */
+								  {
+								    printser_string ("Protocol CAN UDS activated!");
+								    vTaskDelete( xTaskProtHandle );
+								    vTaskDelay( 100 / portTICK_RATE_MS );
+								    /* */
+								    if (pdPASS == xTaskCreate (odparr[1], (const signed portCHAR *) "prot",
+								      configMINIMAL_STACK_SIZE, (void *) NULL,
+								      TASK_PRIO_LOW, &xTaskProtHandle))
+								    {
+								      DEBUGUARTPRINT ("\r\n*** 'prot' Task created ***");
+								      createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_NO_ERR,0,NULL);
+								    }
+								    else
+								    {
+									createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_OS_NO_PROTOCOL_TASK,0,ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT);
+									DEBUGUARTPRINT ("\r\n*** 'prot' Task NOT created ***");
+								    }
+								  }
+								break;
 
-
-								default:
-									sendParam(cmdKey, cmdValue);
-									break;
+								    
+								  default:
+									  sendParam(cmdKey, cmdValue);
+									  break;
 								}
-								createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_NO_ERR,0,NULL);
 							} else {
 								lastErr = 2;
 							}
@@ -533,7 +554,10 @@ void inputParserTask(void *pvParameters) {
 				break;
 			case MSG_SERIAL_RELEASE:
 				if (actState == S_SLEEP) { /* do we just waiting for an answer? */
-					createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_NO_ERR,0,NULL);
+					// no answer here, this needs to come from the protocol task
+					// or the bus handler when receiving parameter commands
+					// or transfer data
+					// createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_NO_ERR,0,NULL);
 					actState = S_INIT; /* start again */
 				}
 				break;

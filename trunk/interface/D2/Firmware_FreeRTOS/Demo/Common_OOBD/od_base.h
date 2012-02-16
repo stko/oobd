@@ -81,8 +81,12 @@ typedef struct error_data
 #define ERR_CODE_SOURCE_OS 1 		//!<basic OS Error
 #define ERR_CODE_SOURCE_SERIALIN 2	//!<Serial Input Task Error
 #define ERR_CODE_SOURCE_SERIALOUT 3	//!<Serial Output Task Error
-#define ERR_CODE_SOURCE_PROTOCOL 4	//!<SProtocol Task Error
+#define ERR_CODE_SOURCE_PROTOCOL 4	//!<Protocol Task Error
 #define ERR_CODE_SOURCE_BUS 5		//!<Bus Handler Error
+
+//! Error OS constants
+#define ERR_CODE_OS_NO_PROTOCOL_TASK 1 		//!<basic OS Error
+#define ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT "can't generate protocol task" 		//!<basic OS Error
 
 
 /** callback function for error handling
