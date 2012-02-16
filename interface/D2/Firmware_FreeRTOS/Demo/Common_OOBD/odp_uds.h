@@ -46,7 +46,7 @@ void obd_uds_init ();
 #define ERR_CODE_UDS_MISSING_FIRST_FRAME 4
 #define ERR_CODE_UDS_MISSING_FIRST_FRAME_TEXT "<- received instead expected First Frame PCI 0x20"
 #define ERR_CODE_UDS_TIMEOUT 5
-#define ERR_CODE_UDS_TIMEOUT_TEXT "Answer time eceeded"
+#define ERR_CODE_UDS_TIMEOUT_TEXT "Answer time exeeded"
 
 
 #endif /* INC_ODP_UDS_H */
