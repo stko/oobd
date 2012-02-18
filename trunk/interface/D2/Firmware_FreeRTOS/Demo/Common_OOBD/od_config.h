@@ -183,7 +183,7 @@ struct UdsConfig
     timeoutPending,     //!< timeout for response pending delays in system ticks
     blockSize,          //!< max. number of frames to send, overwrites the values received from Module, if > 0.
     separationTime,     //!< delay between two frames,overwrites the values received from Module, if > 0
-    tpFreq              //!< time between two tester presents in systemticks
+    tpFreq;              //!< time between two tester presents in systemticks
 } config;
 
 #endif /* INC_OD_CONFIG_H */

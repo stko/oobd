@@ -82,13 +82,6 @@
 typedef void (*recv_cbf) (data_packet * p);
 
 
-//! callback function for print data
-
-//! signature of the print function that will be called 
-//! if data has been received or an bus error occured
-typedef void (*print_cbf) (portBASE_TYPE msgType, void *data,
-			   printChar_cbf printchar);
-
 
 //! function pointer prototypes to enable bus driver switching
 

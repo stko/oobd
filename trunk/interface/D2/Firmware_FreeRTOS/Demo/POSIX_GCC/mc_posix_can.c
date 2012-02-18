@@ -148,7 +148,7 @@ void ParamPrint (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 	param_data pData;
 
 	pData = *(param_data *) data;
-	 DEBUGPRINT ("Bus Parameter received via Outputtask param %d value %d\n", pData.key,pData.value);
+	 DEBUGPRINT ("Bus Parameter received via Outputtask param %ld value %ld\n", pData.key,pData.value);
 
 }
 
@@ -157,7 +157,7 @@ void ParamPrint (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 portBASE_TYPE
 bus_param_can (portBASE_TYPE param, portBASE_TYPE value)
 {
-  DEBUGPRINT ("Bus Parameter received param %d value %d\n", param,value);
+  DEBUGPRINT ("Bus Parameter received param %ld value %ld\n", param,value);
   CreateParamOutputMsg(param, value, ParamPrint);
   return pdPASS;
 }

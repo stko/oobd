@@ -40,11 +40,14 @@
 void initProtocols ();
 void initBusses ();
 
+//! callback function for print data
 
-//! Serial Input Error constants and texts
-#define ERR_CODE_SERIAL_NO_ERR 0
-#define ERR_CODE_SERIAL_SYNTAX_ERR 1
-#define ERR_CODE_SERIAL_SYNTAX_ERR_TEXT "Syntax Error"
+//! signature of the print function that will be called 
+//! if data has been received or an bus error occured
+typedef void (*print_cbf) (portBASE_TYPE msgType, void *data,
+			   printChar_cbf printchar);
+
+
 
 
 /* data packet structure
@@ -57,7 +60,7 @@ typedef struct data_packet
   portBASE_TYPE len;		//!< data length
   portBASE_TYPE err;		//!< only when receiving data: contains ODB_ERR- Codes
   unsigned char *data;		//!< pointer to the data bytes
-};
+} DATA_PACKET;
 
 
 // first a forward declaration to keep the compiler happy ;-)
@@ -73,7 +76,7 @@ typedef struct error_data
   portBASE_TYPE errType;	//!< classification of error type
   portBASE_TYPE detail;		//!< detailed error definition
    char *text;		//!< textual error description
-};
+} ERROR_DATA;
 
 
 //! Error Source task constants
@@ -110,16 +113,7 @@ typedef struct param_data
 {
   portBASE_TYPE key;		//!< the parameter key
   portBASE_TYPE value; 		//!< the parameter value
-};
-
-
-/** callback function for parameter outputs (& handling)
-*signature of the function that will be called
-* when the output tasks wants to output something about parameters
-*/
-
-typedef void (*printParam_cbf) (param_data * param);
-
+} PARAM_DATA;
 
 
 
@@ -134,7 +128,7 @@ typedef struct MsgData
   portBASE_TYPE len;
   void *addr;
   void *print;			//!< callback function to output the data or error
-};
+} MSGDATA;
 
 typedef struct MsgData MsgData;
 
@@ -142,7 +136,7 @@ typedef struct OdMsg
 {
   portBASE_TYPE msgType;
   MsgData *msgPtr;
-};
+} ODMSG;
 
 typedef struct OdMsg OdMsg;
 
@@ -160,6 +154,11 @@ portBASE_TYPE sendMsgFromISR (portBASE_TYPE msgType, xQueueHandle recv,
 portBASE_TYPE waitMsg (xQueueHandle recv, MsgData ** msg,
 		       portBASE_TYPE timeout);
 
+		       
+void createCommandResultMsg(portBASE_TYPE eSource, portBASE_TYPE eType,portBASE_TYPE eDetail, char *text);
+void createCommandResultMsgFromISR(portBASE_TYPE eSource, portBASE_TYPE eType,portBASE_TYPE eDetail, char *text);
+void CreateParamOutputMsg(portBASE_TYPE key, portBASE_TYPE value, print_cbf printRoutine);		       
+		       
 // Print functions
 
 void printser_string (char const *str);

@@ -1,5 +1,5 @@
 /*
-
+	
 	This file is part of the OOBD.org distribution.
 
 	OOBD.org is free software; you can redistribute it and/or modify it
@@ -26,11 +26,19 @@
 
 */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MC_MISC_H
-#define __MC_MISC_H
+/**
+ * MC specific System header
+ */
 
-void Led1Task (void *pvParameters);
-void Led2Task (void *pvParameters);
 
-#endif  /* __MC_MISC_H */
+#ifndef INC_MC_SYS_H
+#define INC_MC_SYS_H
+
+
+void mc_init_sys_boot ();
+void mc_init_sys_tasks ();
+void mc_init_sys_shutdown ();
+void mc_sys_idlehook ();
+portBASE_TYPE bus_param_sys (portBASE_TYPE param, portBASE_TYPE value);
+portBASE_TYPE sysIoCtrl (portBASE_TYPE pinID, portBASE_TYPE lowerValue,portBASE_TYPE upperValue, portBASE_TYPE duration, portBASE_TYPE waveType);
+#endif /* INC_MC_SYS_H */

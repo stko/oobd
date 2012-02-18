@@ -37,6 +37,12 @@
 #include "od_config.h"
 
 
+//! Serial Input Error constants and texts
+
+#define ERR_CODE_SERIAL_SYNTAX_ERR 1
+#define ERR_CODE_SERIAL_SYNTAX_ERR_TEXT "Syntax Error"
+
+
 portBASE_TYPE serial_init ();
 
 void initOutput ();
