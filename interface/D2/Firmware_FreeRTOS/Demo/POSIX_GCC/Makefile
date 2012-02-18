@@ -93,7 +93,8 @@ CFLAGS=-I . \
 
 # Source files
 SOURCE=	mc_posix_can.c \
-		mc_posix_serial.c 
+		mc_posix_serial.c \
+		mc_posix_sys.c
 
 
 

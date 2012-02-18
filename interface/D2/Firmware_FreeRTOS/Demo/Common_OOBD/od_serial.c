@@ -278,6 +278,7 @@ void inputParserTask(void *pvParameters) {
 									  *  can- Ausgaben in den CAN-Handler verschieben
 									  *  Mc-spezische Ausgaben in mc-spezifischen Code verschieben
 									  */
+									  bus_param_sys (cmdKey, cmdValue);
 									  if (cmdValue == VALUE_PARAM_INFO_VERSION) /* p 0 0 */
 									  {
 										  printser_string("OOBD ");

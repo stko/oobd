@@ -182,29 +182,35 @@ disposeMsg (MsgData * p)
 }
 
 
+void printEOT(){
+  evalResult(0,0,0,NULL);
+}
 
-
-
-void printCommandResult(portBASE_TYPE msgType, void *data, printChar_cbf printchar) {
-	error_data eData;
-
-	eData = *(error_data *) data;
-	if (eData.errType) {
+void evalResult(portBASE_TYPE source, portBASE_TYPE errType,portBASE_TYPE detail,char * text){
+	if (errType) {
 		printser_string(":Error: ");
-		printser_int(eData.source, 10);
+		printser_int(source, 10);
 		printser_string(" ");
-		printser_int(eData.errType, 10);
+		printser_int(errType, 10);
 		printser_string(" ");
-		printser_int(eData.detail, 10);
-		if (eData.text){
+		printser_int(detail, 10);
+		if (text){
 			printser_string(" ");
-			printser_string(eData.text);
+			printser_string(text);
 		}
 	}else{
 		printser_string(".");
 	}
 	printLF();
 	printser_string(">");
+  
+}
+
+
+void printCommandResult(portBASE_TYPE msgType, void *data, printChar_cbf printchar) {
+	error_data eData;
+	eData = *(error_data *) data;
+	evalResult(eData.source,eData.errType,eData.detail,eData.text);
 }
 
 void createCommandResultMsg(portBASE_TYPE eSource, portBASE_TYPE eType,portBASE_TYPE eDetail, char *text) {
@@ -240,9 +246,9 @@ void createCommandResultMsgFromISR(portBASE_TYPE eSource, portBASE_TYPE eType,po
 void CreateParamOutputMsg(portBASE_TYPE key, portBASE_TYPE value, print_cbf printRoutine) {
 	MsgData *msg;
 	extern xQueueHandle protocolQueue;
-	portBASE_TYPE p[2];
-	p[0] = key;
-	p[1] = value;
+	param_data p;
+	p.key = key;
+	p.value = value;
 	if (NULL != (msg = createMsg(&p, sizeof(p)))) {
 		msg->print = printRoutine;
 		if (pdPASS != sendMsg(MSG_HANDLE_PARAM, outputQueue, msg)) {
