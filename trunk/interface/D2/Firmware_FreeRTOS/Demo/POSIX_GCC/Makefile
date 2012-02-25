@@ -151,6 +151,7 @@ define COMPILE_C_TEMPLATE
 $(OUTDIR)/$(notdir $(basename $(1))).o : $(1)
 ##	@echo
 	@echo $$< "->" $$@
+	indent $$< -kr
 	$(CC) -c  $$(CFLAGS) $$< -o $$@
 endef
 $(foreach src, $(SOURCE), $(eval $(call COMPILE_C_TEMPLATE, $(src))))

@@ -48,6 +48,13 @@ typedef void (*print_cbf) (portBASE_TYPE msgType, void *data,
 			   printChar_cbf printchar);
 
 
+//! callback function for handle parameter commands
+
+//! signature of the  function that will be called in protocol or bus handler
+//! when a parameter command is given
+typedef portBASE_TYPE (*param_cbf) (portBASE_TYPE param, portBASE_TYPE value);
+
+
 
 
 /* data packet structure
@@ -172,4 +179,7 @@ void printser_uint16ToHex (uint16_t value);
 void printser_uint8ToHex (uint8_t value);
 
 void printLF();
+
+void printEOT();
+
 #endif /* INC_OD_BASE_H */

@@ -4,7 +4,7 @@ BUILDDATE=$(warning get actual date)'(const char *)("$(shell date --rfc-822)")'
 # OOBD common  source files.
 OOBD_COMMON_SOURCE = $(OOBD_COMMON_DIR)/main.c \
 		$(OOBD_COMMON_DIR)/od_base.c \
-		$(OOBD_COMMON_DIR)/odb_can.c \
+		$(OOBD_COMMON_DIR)/odb_can_generic.c \
 		$(OOBD_COMMON_DIR)/od_outputTask.c \
 		$(OOBD_COMMON_DIR)/odp_uds.c \
 		$(OOBD_COMMON_DIR)/odp_canraw.c \
