@@ -48,5 +48,17 @@ void obd_uds_init ();
 #define ERR_CODE_UDS_TIMEOUT 5
 #define ERR_CODE_UDS_TIMEOUT_TEXT "Answer time exeeded"
 
+/* store all parameter in one single struct to maybe later store such param sets in EEPROM */
+struct UDSConfig
+{
+  portBASE_TYPE recvID, //!< Module ID
+    sendID, 		  //!< sender ID, used when the expected answer ID <> recvID || 8
+    timeout,            //!< timeout in systemticks
+    listen,             //!< listen level
+    timeoutPending,     //!< timeout for response pending delays in system ticks
+    blockSize,          //!< max. number of frames to send, overwrites the values received from Module, if > 0.
+    separationTime,     //!< delay between two frames,overwrites the values received from Module, if > 0
+    tpFreq;              //!< time between two tester presents in systemticks
+} udsConfig;
 
 #endif /* INC_ODP_UDS_H */

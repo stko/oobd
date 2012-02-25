@@ -129,23 +129,11 @@
 #define PARAM_RESET           ( 99 )
 
 /* define values of parameter */
-#define VALUE_BUS_SILENT_MODE					( 0 )
-#define VALUE_BUS_LOOP_BACK_MODE				( 1 )
-#define VALUE_BUS_LOOP_BACK_WITH_SILENT_MODE	( 2 )
-#define VALUE_BUS_NORMAL_MODE					( 3 )
-#define VALUE_BUS_CONFIG_11bit_125kbit  		( 1 )
-#define VALUE_BUS_CONFIG_11bit_250kbit  		( 2 )
-#define VALUE_BUS_CONFIG_11bit_500kbit  		( 3 )
-#define VALUE_BUS_CONFIG_11bit_1000kbit 		( 4 )
-#define VALUE_BUS_CONFIG_29bit_125kbit  		( 5 )
-#define VALUE_BUS_CONFIG_29bit_250kbit  		( 6 )
-#define VALUE_BUS_CONFIG_29bit_500kbit  		( 7 )
-#define VALUE_BUS_CONFIG_29bit_1000kbit 		( 8 )
 #define VALUE_PARAM_INFO_VERSION 				( 0 )
 #define VALUE_PARAM_INFO_SERIALNUMBER   		( 1 )
 #define VALUE_PARAM_INFO_BUS   					( 2 )
 #define VALUE_PARAM_INFO_PROTOCOL       		( 3 )
-#define VALUE_PARAM_INFO_CAN_TRANSCEIVER		( 4 )
+#define VALUE_PARAM_INFO_BUS_MODE		( 4 )
 #define VALUE_PARAM_INFO_BUS_CONFIG   			( 5 )
 #define VALUE_PARAM_INFO_ADC_POWER      		( 6 )
 #define VALUE_PARAM_INFO_CPU_INFO 				( 10 )
@@ -172,18 +160,12 @@
 typedef void (*printChar_cbf) (char a);
 
 /* store all parameter in one single struct to maybe later store such param sets in EEPROM */
-struct UdsConfig
+struct GlobalConfig
 {
   portBASE_TYPE recvID, //!< Module ID
     sendID, 		  //!< sender ID, used when the expected answer ID <> recvID || 8
     timeout,            //!< timeout in systemticks
-    listen,             //!< listen level
-    bus,                //!< id of actual used bus
-    busConfig,          //!< nr of actual used bus configuration
-    timeoutPending,     //!< timeout for response pending delays in system ticks
-    blockSize,          //!< max. number of frames to send, overwrites the values received from Module, if > 0.
-    separationTime,     //!< delay between two frames,overwrites the values received from Module, if > 0
-    tpFreq;              //!< time between two tester presents in systemticks
-} config;
+    listen             //!< listen level
+} globalConfig;
 
 #endif /* INC_OD_CONFIG_H */

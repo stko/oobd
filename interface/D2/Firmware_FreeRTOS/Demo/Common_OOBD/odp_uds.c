@@ -50,10 +50,9 @@
 
 #define UDSSIZE ( 4095 )
 
-typedef struct UDSBUFFER
-{
-  portBASE_TYPE len;
-  unsigned char data[UDSSIZE];
+typedef struct UDSBUFFER {
+    portBASE_TYPE len;
+    unsigned char data[UDSSIZE];
 } UDSBuffer;
 
 /*!
@@ -65,10 +64,9 @@ but as half of the address range is reserved for the tester answer IDs, we can s
 
 */
 
-portBASE_TYPE
-reduceID (portBASE_TYPE id)
+portBASE_TYPE odp_uds_reduceID(portBASE_TYPE id)
 {
-  return ((id & 0xF0) >> 1) + ((id & 0xFF) & 0x07);	// remove bit 3 (=8) out of the id
+    return ((id & 0xF0) >> 1) + ((id & 0xFF) & 0x07);	// remove bit 3 (=8) out of the id
 
 }
 
@@ -79,20 +77,18 @@ reduceID (portBASE_TYPE id)
 */
 
 void
-data2CAN (unsigned char *dataPtr, unsigned char *canPtr, portBASE_TYPE len,
-	  portBASE_TYPE start)
+odp_uds_data2CAN(unsigned char *dataPtr, unsigned char *canPtr,
+		 portBASE_TYPE len, portBASE_TYPE start)
 {
-  portBASE_TYPE i;
+    portBASE_TYPE i;
 
-  // fill unused bytes first
-  for (i = start; i < 8; i++)
-    {
-      canPtr[i] = 0;
+    // fill unused bytes first
+    for (i = start; i < 8; i++) {
+	canPtr[i] = 0;
     }
-  canPtr = &canPtr[start];
-  for (; len > 0; len--)
-    {
-      *canPtr++ = *dataPtr++;
+    canPtr = &canPtr[start];
+    for (; len > 0; len--) {
+	*canPtr++ = *dataPtr++;
     }
 
 }
@@ -103,14 +99,14 @@ data2CAN (unsigned char *dataPtr, unsigned char *canPtr, portBASE_TYPE len,
 */
 
 void
-CAN2data (UDSBuffer * udsPtr, unsigned char *canPtr, portBASE_TYPE startFrom,
-	  portBASE_TYPE len)
+udp_uds_CAN2data(UDSBuffer * udsPtr, unsigned char *canPtr,
+		 portBASE_TYPE startFrom, portBASE_TYPE len)
 {
-  int i;
-  DEBUGPRINT ("Fill Input Buffer at pos. %d with len %d\n", startFrom, len);
-  for (i = 0; i < len; i++)
-    {
-      udsPtr->data[startFrom + i] = *canPtr++;
+    int i;
+    DEBUGPRINT("Fill Input Buffer at pos. %ld with len %ld\n", startFrom,
+	       len);
+    for (i = 0; i < len; i++) {
+	udsPtr->data[startFrom + i] = *canPtr++;
     }
 
 }
@@ -125,36 +121,33 @@ important variables instead to allow subroutines, otherways these subroutines wo
 */
 
 void
-generateTesterPresents (unsigned char *tpArray, unsigned char *canBuffer,
-			bus_send actBus_send, portBASE_TYPE actTPFreq)
+odp_uds_generateTesterPresents(unsigned char *tpArray,
+			       unsigned char *canBuffer,
+			       bus_send actBus_send,
+			       portBASE_TYPE actTPFreq)
 {
-  data_packet dp;
-  portBASE_TYPE i;
-  int actAddr;
-  // first we fill the telegram with the tester present data
-  dp.len = 8;             /* Tester present message must be 8 bytes */
-  dp.data = canBuffer;
-  canBuffer[0] = 2;
-  canBuffer[1] = 0x3E;		// Service Tester Present
+    data_packet dp;
+    portBASE_TYPE i;
+    int actAddr;
+    // first we fill the telegram with the tester present data
+    dp.len = 8;			/* Tester present message must be 8 bytes */
+    dp.data = canBuffer;
+    canBuffer[0] = 2;
+    canBuffer[1] = 0x3E;	// Service Tester Present
 
-  // fill with padding zeros
-  for (i = 2; i < 8; i++)
-    {
-      canBuffer[i] = 0;
+    // fill with padding zeros
+    for (i = 2; i < 8; i++) {
+	canBuffer[i] = 0;
     }
-  for (i = 0; i < 256; i++)
-    {
-      if ((i & 8) == 0)
-	{			// if it is not just a tester address
-	  actAddr = reduceID (i);
-	  if (tpArray[actAddr] > 0)
-	    {			/* marked for receive TPs */
-	      tpArray[actAddr]--;
-	      if (tpArray[actAddr] == 0)
-		{
-		  dp.recv = i +0x700;
-		  actBus_send (&dp);
-		  tpArray[actAddr] = actTPFreq;
+    for (i = 0; i < 256; i++) {
+	if ((i & 8) == 0) {	// if it is not just a tester address
+	    actAddr = odp_uds_reduceID(i);
+	    if (tpArray[actAddr] > 0) {	/* marked for receive TPs */
+		tpArray[actAddr]--;
+		if (tpArray[actAddr] == 0) {
+		    dp.recv = i + 0x700;
+		    actBus_send(&dp);
+		    tpArray[actAddr] = actTPFreq;
 		}
 	    }
 	}
@@ -169,34 +162,49 @@ generateTesterPresents (unsigned char *tpArray, unsigned char *canBuffer,
 */
 
 void
-printdata_Buffer (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
+odp_uds_printdata_Buffer(portBASE_TYPE msgType, void *data,
+			 printChar_cbf printchar)
 {
-  extern xQueueHandle inputQueue;
+    extern xQueueHandle inputQueue;
 
-  UDSBuffer **doublePtr;
-  UDSBuffer *myUDSBuffer;
-  doublePtr = data;
-  myUDSBuffer = *doublePtr;
-  int i;
-  for (i = 0; i < myUDSBuffer->len; i++)
-    {
-      printser_uint8ToHex (myUDSBuffer->data[i]);
-      if ((i % 8) == 0 && i > 0 && i < myUDSBuffer->len-1)
-	{
-	  printLF();
+    UDSBuffer **doublePtr;
+    UDSBuffer *myUDSBuffer;
+    doublePtr = data;
+    myUDSBuffer = *doublePtr;
+    int i;
+    for (i = 0; i < myUDSBuffer->len; i++) {
+	printser_uint8ToHex(myUDSBuffer->data[i]);
+	if ((i % 8) == 0 && i > 0 && i < myUDSBuffer->len - 1) {
+	    printLF();
 	}
     }
-  printLF();
-  printser_string ("."); // "End of transmission" - indicator
-  printLF();
- /* clear the buffer */
-  myUDSBuffer->len = 0;
-  /* release the input queue */
-  if (pdPASS != sendMsg (MSG_SERIAL_RELEASE, inputQueue, NULL))
-    {
-      DEBUGPRINT ("FATAL ERROR: input queue is full!\n", 'a');
+    printLF();
+    printser_string(".");	// "End of transmission" - indicator
+    printLF();
+    /* clear the buffer */
+    myUDSBuffer->len = 0;
+    /* release the input queue */
+    if (pdPASS != sendMsg(MSG_SERIAL_RELEASE, inputQueue, NULL)) {
+	DEBUGPRINT("FATAL ERROR: input queue is full!\n", "a");
     }
 
+}
+
+
+void odp_uds_printParam(portBASE_TYPE msgType, void *data,
+			printChar_cbf printchar)
+{
+    extern bus_param actBus_param;
+    static param_data *pd;
+    pd = data;
+    portBASE_TYPE cmdKey = pd->key, cmdValue = pd->value;	/* the both possible params */
+    switch (cmdKey) {
+    case VALUE_PARAM_INFO_PROTOCOL:	/* p 0 3 */
+	printser_string("1 - UDS (ISO14229-1)");
+	break;
+    default:
+	actBus_param(cmdKey, cmdValue);	/* forward the received params to the underlying bus. */
+    }
 }
 
 
@@ -206,64 +214,48 @@ printdata_Buffer (portBASE_TYPE msgType, void *data, printChar_cbf printchar)
  *  transfers received telegrams into Msgqueue
  */
 
-void
-recvdata (data_packet * p)
+void odp_uds_recvdata(data_packet * p)
 {
-  MsgData *msg;
-  extern xQueueHandle protocolQueue;
-  if (NULL != (msg = createDataMsg (p)))
-    {
-      if (pdPASS != sendMsg (MSG_BUS_RECV, protocolQueue, msg))
-	{
-	  DEBUGPRINT ("FATAL ERROR: protocol queue is full!\n", 'a');
+    MsgData *msg;
+    extern xQueueHandle protocolQueue;
+    if (NULL != (msg = createDataMsg(p))) {
+	if (pdPASS != sendMsg(MSG_BUS_RECV, protocolQueue, msg)) {
+	    DEBUGPRINT("FATAL ERROR: protocol queue is full!\n", 'a');
+	} else {
+	    DEBUGUARTPRINT
+		("\r\n*** odp_uds_recvdata: sendMsg - protocolQueue ***");
 	}
-      else
-	{
-	  DEBUGUARTPRINT ("\r\n*** recvdata: sendMsg - protocolQueue ***");
-	}
-    }
-  else
-    {
-      DEBUGPRINT ("FATAL ERROR: Out of Heap space!l\n", 'a');
+    } else {
+	DEBUGPRINT("FATAL ERROR: Out of Heap space!l\n", 'a');
     }
 }
 
 
-void
-dumpFrame (data_packet * p, print_cbf print_data)
+void odp_uds_dumpFrame(data_packet * p, print_cbf print_data)
 {
-  MsgData *msg;
-  extern xQueueHandle outputQueue;
-  if (NULL != (msg = createDataMsg (p)))
-    {
-      msg->print = print_data;
-      if (pdPASS != sendMsg (MSG_BUS_RECV, outputQueue, msg))
-	{
-	  DEBUGPRINT ("FATAL ERROR: output queue is full!\n", 'a');
+    MsgData *msg;
+    extern xQueueHandle outputQueue;
+    if (NULL != (msg = createDataMsg(p))) {
+	msg->print = print_data;
+	if (pdPASS != sendMsg(MSG_BUS_RECV, outputQueue, msg)) {
+	    DEBUGPRINT("FATAL ERROR: output queue is full!\n", 'a');
 	}
-    }
-  else
-    {
-      DEBUGPRINT ("FATAL ERROR: Out of Heap space!l\n", 'a');
+    } else {
+	DEBUGPRINT("FATAL ERROR: Out of Heap space!l\n", 'a');
     }
 }
 
-void
-data2UART (data_packet * p, print_cbf print_data)
+void odp_uds_data2UART(data_packet * p, print_cbf print_data)
 {
-  MsgData *msg;
-  extern xQueueHandle outputQueue;
-  if (NULL != (msg = createDataMsg (p)))
-    {
-      msg->print = print_data;
-      if (pdPASS != sendMsg (MSG_BUS_RECV, outputQueue, msg))
-	{
-	  DEBUGPRINT ("FATAL ERROR: output queue is full!\n", 'a');
+    MsgData *msg;
+    extern xQueueHandle outputQueue;
+    if (NULL != (msg = createDataMsg(p))) {
+	msg->print = print_data;
+	if (pdPASS != sendMsg(MSG_BUS_RECV, outputQueue, msg)) {
+	    DEBUGPRINT("FATAL ERROR: output queue is full!\n", 'a');
 	}
-    }
-  else
-    {
-      DEBUGPRINT ("FATAL ERROR: Out of Heap space!l\n", 'a');
+    } else {
+	DEBUGPRINT("FATAL ERROR: Out of Heap space!l\n", 'a');
     }
 }
 
@@ -274,478 +266,466 @@ structure of UDS- CAN telegram taken fom http://www.canbushack.com/blog/index.ph
 */
 
 
-void
-obp_uds (void *pvParameters)
+void obp_uds(void *pvParameters)
 {
-  int keeprunning = 1;
-  data_packet *dp;
-  data_packet actDataPacket;
+    int keeprunning = 1;
+    data_packet *dp;
+    data_packet actDataPacket;
 
 /* function pointers to the bus interface */
-  extern bus_init actBus_init;
-  extern bus_send actBus_send;
-  extern bus_flush actBus_flush;
-  extern bus_param actBus_param;
-  extern bus_close actBus_close;
-  extern xQueueHandle protocolQueue;
-  extern xQueueHandle outputQueue;
-  extern xQueueHandle inputQueue;
-  extern print_cbf printdata_CAN;
+    extern bus_init actBus_init;
+    extern bus_send actBus_send;
+    extern bus_flush actBus_flush;
+    extern bus_param actBus_param;
+    extern bus_close actBus_close;
+    extern xQueueHandle protocolQueue;
+    extern xQueueHandle outputQueue;
+    extern xQueueHandle inputQueue;
+    extern print_cbf printdata_CAN;
 
-  MsgData *msg;
-  MsgData *ownMsg;
-  portBASE_TYPE *paramData;
-  portBASE_TYPE sequenceCounter;
-  portBASE_TYPE remainingBytes;
-  portBASE_TYPE actBufferPos;
-  portBASE_TYPE actFrameLen;
-  portBASE_TYPE blockSize_BS;
-  portBASE_TYPE separationTime_ST;
+    MsgData *msg;
+    MsgData *ownMsg;
+    portBASE_TYPE *paramData;
+    portBASE_TYPE sequenceCounter;
+    portBASE_TYPE remainingBytes;
+    portBASE_TYPE actBufferPos;
+    portBASE_TYPE actFrameLen;
+    portBASE_TYPE blockSize_BS;
+    portBASE_TYPE separationTime_ST;
 
-  portBASE_TYPE stateMachine_state = 0;
-  int i;
-  unsigned char telegram[8];
-  /* Memory eater Nr. 1: The UDS message buffer */
-  UDSBuffer *udsBuffer;
-  /* Memory eater Nr. 2: The Tester Present Marker Flags */
-  unsigned char tp_Flags[128];
-  portBASE_TYPE msgType;
-  extern struct UdsConfig config;
+    portBASE_TYPE stateMachine_state = 0;
+    int i;
+    unsigned char telegram[8];
+    /* Memory eater Nr. 1: The UDS message buffer */
+    UDSBuffer *udsBuffer;
+    /* Memory eater Nr. 2: The Tester Present Marker Flags */
+    unsigned char tp_Flags[128];
+    portBASE_TYPE msgType;
+    extern struct UdsConfig config;
 
-  /* Init default parameters */
-  config.recvID 		= 0x7DF;
-  config.sendID 		= 0x00; // 0 disables special sendID
-  config.timeout 		= 6;
-  config.listen 		= 0;
-  config.bus 			= VALUE_BUS_SILENT_MODE; 			/* default */
-  config.busConfig 		= VALUE_BUS_CONFIG_11bit_500kbit; 	/* default */
-  config.timeoutPending = 150;
-  config.blockSize 		= 0;
-  config.separationTime = 0;
-  config.tpFreq 		= 250;
+    /* Init default parameters */
+    udsConfig.recvID = 0x7DF;
+    udsConfig.sendID = 0x00;	// 0 disables special sendID
+    udsConfig.timeout = 6;
+    udsConfig.listen = 0;
+    //! \bug was hat das Protokoll mit dem CAN-Bus zu tun?
+    // canConfig.bus                      = VALUE_BUS_SILENT_MODE;                        /* default */
+    // canConfig.busConfig                = VALUE_BUS_CONFIG_11bit_500kbit;       /* default */
+    udsConfig.timeoutPending = 150;
+    udsConfig.blockSize = 0;
+    udsConfig.separationTime = 0;
+    udsConfig.tpFreq = 250;
 
-  portBASE_TYPE timeout = 0;
-  blockSize_BS 			= 0;
-  separationTime_ST 	= 0;
-  /* select the can bus as output */
-  odbarr[ODB_CAN] ();
-  actBus_init ();
-  /* tell the Rx-ISR about the function to use for received data */
-  busControl (ODB_CMD_RECV, recvdata);
-  udsBuffer = pvPortMalloc (sizeof (struct UDSBUFFER));
-  udsBuffer->len = 0;
-  if (udsBuffer == NULL)
-    {
-      keeprunning = 0;
-      DEBUGPRINT ("Fatal error: Not enough heap to allocate UDSBuffer!\n",
-		  'a');
+    portBASE_TYPE timeout = 0;
+    blockSize_BS = 0;
+    separationTime_ST = 0;
+    /* select the can bus as output */
+    odbarr[ODB_CAN] ();
+    actBus_init();
+    /* tell the Rx-ISR about the function to use for received data */
+    busControl(ODB_CMD_RECV, odp_uds_recvdata);
+    udsBuffer = pvPortMalloc(sizeof(struct UDSBUFFER));
+    udsBuffer->len = 0;
+    if (udsBuffer == NULL) {
+	keeprunning = 0;
+	DEBUGPRINT("Fatal error: Not enough heap to allocate UDSBuffer!\n",
+		   'a');
     }
-  /* reset the Tester Present Array */
-  for (i = 0; i < 128; i++)
-    {
-      tp_Flags[i] = 0;
+    /* reset the Tester Present Array */
+    for (i = 0; i < 128; i++) {
+	tp_Flags[i] = 0;
     }
-  for (; keeprunning;)
-    {
+    for (; keeprunning;) {
 
-      if (MSG_NONE != (msgType = waitMsg (protocolQueue, &msg, portMAX_DELAY)))	// portMAX_DELAY
-	/* handle message */
+	if (MSG_NONE != (msgType = waitMsg(protocolQueue, &msg, portMAX_DELAY)))	// portMAX_DELAY
+	    /* handle message */
 	{
-	  switch (msgType)
-	    {
+	    switch (msgType) {
 	    case MSG_BUS_RECV:
-	      dp = msg->addr;
-	      if (config.listen>0){
-		dumpFrame (dp, printdata_CAN);
-	      }
-	      DEBUGPRINT ("Tester address %2X PCI %2X\n", dp->recv,
-			  dp->data[0]);
-	      if ((config.sendID ==0 ? dp->recv == ( config.recvID | 8 ) : dp->recv == config.sendID ))
-		{		/* Tester Address? */
-		  if (dp->data[0] == 0x03 && dp->data[1] == 0x7f && dp->data[3] == 0x78)	//Response pending
+		dp = msg->addr;
+		if (udsConfig.listen > 0) {
+		    odp_uds_dumpFrame(dp, printdata_CAN);
+		}
+		DEBUGPRINT("Tester address %2X PCI %2X\n", dp->recv,
+			   dp->data[0]);
+		if ((udsConfig.sendID == 0 ? dp->recv == (udsConfig.recvID | 8) : dp->recv == udsConfig.sendID)) {	/* Tester Address? */
+		    if (dp->data[0] == 0x03 && dp->data[1] == 0x7f && dp->data[3] == 0x78)	//Response pending
 		    {
-		      timeout = config.timeoutPending;
-		    }
-		  else
-		    {
-		      if (stateMachine_state == SM_UDS_WAIT_FOR_FC)
-			{
-			  if ((dp->data[0] & 0xF0) == 0x30)
-			    {	/* FlowControl */
-			      DEBUGPRINT ("FlowControl received", 'a');
-			      //! \todo how to correctly support "wait" if LowNibble of PCI is 1?
-			      if (config.blockSize == 0)
-				{
-				  blockSize_BS = dp->data[1];	/* take the block size out of the FC block */
+			timeout = udsConfig.timeoutPending;
+		    } else {
+			if (stateMachine_state == SM_UDS_WAIT_FOR_FC) {
+			    if ((dp->data[0] & 0xF0) == 0x30) {	/* FlowControl */
+				DEBUGPRINT("FlowControl received", 'a');
+				//! \todo how to correctly support "wait" if LowNibble of PCI is 1?
+				if (udsConfig.blockSize == 0) {
+				    blockSize_BS = dp->data[1];	/* take the block size out of the FC block */
+				} else {
+				    blockSize_BS = udsConfig.blockSize;	/* use the config value instead the one from FC */
 				}
-			      else
-				{
-				  blockSize_BS = config.blockSize;	/* use the config value instead the one from FC */
+				if (blockSize_BS > 0) {	/* add 1, if set, which is needed, as  the countdown routine counts down only to 1, not to 0 */
+				    blockSize_BS++;
 				}
-			      if (blockSize_BS > 0)
-				{	/* add 1, if set, which is needed, as  the countdown routine counts down only to 1, not to 0 */
-				  blockSize_BS++;
+				if (udsConfig.separationTime == 0) {
+				    separationTime_ST = dp->data[2];	/* take the separation time out of the FC block */
+				} else {
+				    separationTime_ST = udsConfig.separationTime;	/* use the config value instead the one from FC */
 				}
-			      if (config.separationTime == 0)
-				{
-				  separationTime_ST = dp->data[2];	/* take the separation time out of the FC block */
+				if (separationTime_ST > 0) {	/* add 1, if set, which is needed, as  the countdown routine counts down only to 1, not to 0 */
+				    separationTime_ST++;
 				}
-			      else
-				{
-				  separationTime_ST = config.separationTime;	/* use the config value instead the one from FC */
-				}
-			      if (separationTime_ST > 0)
-				{	/* add 1, if set, which is needed, as  the countdown routine counts down only to 1, not to 0 */
-				  separationTime_ST++;
-				}
-			      stateMachine_state = SM_UDS_SEND_CF;
-			    }
-			  else
-			    {	/* wrong answer */
-			      stateMachine_state = SM_UDS_STANDBY;
-			      udsBuffer->len = 0;
-			      createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_UDS_MISSING_FLOW_CONTROL,(dp->data[0] & 0xF0),ERR_CODE_UDS_MISSING_FLOW_CONTROL_TEXT);
+				stateMachine_state = SM_UDS_SEND_CF;
+			    } else {	/* wrong answer */
+				stateMachine_state = SM_UDS_STANDBY;
+				udsBuffer->len = 0;
+				createCommandResultMsg
+				    (ERR_CODE_SOURCE_PROTOCOL,
+				     ERR_CODE_UDS_MISSING_FLOW_CONTROL,
+				     (dp->data[0] & 0xF0),
+				     ERR_CODE_UDS_MISSING_FLOW_CONTROL_TEXT);
 			    }
 
 			}
-		      if (stateMachine_state == SM_UDS_SEND_CF)
-			{
-			  /* Caution: This "if state" needs to be straight after
-			     the Flow Control handling above, so that when the state 
-			     SM_UDS_SEND_CF is reached, the state machine starts straight to send
-			   */
+			if (stateMachine_state == SM_UDS_SEND_CF) {
+			    /* Caution: This "if state" needs to be straight after
+			       the Flow Control handling above, so that when the state 
+			       SM_UDS_SEND_CF is reached, the state machine starts straight to send
+			     */
 
-			  //! \todo delayed, block wise sending of Consecutive frame still needs to be implemented
-			  while (remainingBytes > 0)
-			    {
-			      DEBUGPRINT ("Remaining bytes: %d\n",
-					  remainingBytes);
-			      actFrameLen =
-				remainingBytes > 7 ? 7 : remainingBytes;
-			      data2CAN (&udsBuffer->data[actBufferPos],
-					&telegram, actFrameLen, 1);
-			      sequenceCounter =
-				sequenceCounter <
-				14 ? sequenceCounter + 1 : 0;
-			      actBufferPos += actFrameLen;
-			      remainingBytes -= actFrameLen;
-			      actDataPacket.data[0] = 0x20 + sequenceCounter;	// prepare CF
-			      if (config.listen>0){
-				dumpFrame (&actDataPacket, printdata_CAN);
-			      }
-			      actBus_send (&actDataPacket);
-			    }
-			  stateMachine_state = SM_UDS_WAIT_FOR_ANSWER;
-			  timeout = config.timeout;
-			}
-		      if (stateMachine_state == SM_UDS_WAIT_FOR_CF)
-			{			
-			    if ((dp->data[0] & 0xF0) == 0x20)
-			      {	/* consecutive Frame */
-				DEBUGPRINT
-				  ("Consecutive Frame seq. %d\n",
-				    sequenceCounter);
+			    //! \todo delayed, block wise sending of Consecutive frame still needs to be implemented
+			    while (remainingBytes > 0) {
+				DEBUGPRINT("Remaining bytes: %d\n",
+					   remainingBytes);
+				actFrameLen =
+				    remainingBytes >
+				    7 ? 7 : remainingBytes;
+				odp_uds_data2CAN(&udsBuffer->data
+						 [actBufferPos], &telegram,
+						 actFrameLen, 1);
 				sequenceCounter =
-				  sequenceCounter >
-				  14 ? 0 : sequenceCounter + 1;
+				    sequenceCounter <
+				    14 ? sequenceCounter + 1 : 0;
+				actBufferPos += actFrameLen;
+				remainingBytes -= actFrameLen;
+				actDataPacket.data[0] = 0x20 + sequenceCounter;	// prepare CF
+				if (udsConfig.listen > 0) {
+				    odp_uds_dumpFrame(&actDataPacket,
+						      printdata_CAN);
+				}
+				actBus_send(&actDataPacket);
+			    }
+			    stateMachine_state = SM_UDS_WAIT_FOR_ANSWER;
+			    timeout = udsConfig.timeout;
+			}
+			if (stateMachine_state == SM_UDS_WAIT_FOR_CF) {
+			    if ((dp->data[0] & 0xF0) == 0x20) {	/* consecutive Frame */
+				DEBUGPRINT
+				    ("Consecutive Frame seq. %d\n",
+				     sequenceCounter);
+				sequenceCounter =
+				    sequenceCounter >
+				    14 ? 0 : sequenceCounter + 1;
 				if ((dp->data[0] & 0x0F) ==
-				    sequenceCounter)
-				  {
-				    DEBUGPRINT ("Sequence ok seq. %d\n",
-						sequenceCounter);
+				    sequenceCounter) {
+				    DEBUGPRINT("Sequence ok seq. %d\n",
+					       sequenceCounter);
 				    actFrameLen =
-				      remainingBytes >
-				      7 ? 7 : remainingBytes;
-				    CAN2data (udsBuffer, &(dp->data[1]),
-					      actBufferPos,
-					      actFrameLen);
+					remainingBytes >
+					7 ? 7 : remainingBytes;
+				    udp_uds_CAN2data(udsBuffer,
+						     &(dp->data[1]),
+						     actBufferPos,
+						     actFrameLen);
 				    actBufferPos += actFrameLen;
 				    remainingBytes -= actFrameLen;
-				    timeout=config.timeout;
+				    timeout = udsConfig.timeout;
 				    DEBUGPRINT
-				      ("actualBufferPos %d remaining Bytes %d\n",
-					actBufferPos, remainingBytes);
-				    if (remainingBytes == 0)
-				      {	/* finished */
+					("actualBufferPos %d remaining Bytes %d\n",
+					 actBufferPos, remainingBytes);
+				    if (remainingBytes == 0) {	/* finished */
 					stateMachine_state =
-					  SM_UDS_STANDBY;
+					    SM_UDS_STANDBY;
 					timeout = 0;
 					/* to dump the  buffer, we send the address of the udsbuffer to the print routine */
 					ownMsg =
-					  createMsg (&udsBuffer,
-						      sizeof
-						      (udsBuffer));
+					    createMsg(&udsBuffer,
+						      sizeof(udsBuffer));
 					/* add correct print routine; */
 					ownMsg->print =
-					  printdata_Buffer;
+					    odp_uds_printdata_Buffer;
 					/* forward data to the output task */
 					if (pdPASS !=
-					    sendMsg (MSG_DUMP_BUFFER,
-						      outputQueue,
-						      ownMsg))
-					  {
+					    sendMsg(MSG_DUMP_BUFFER,
+						    outputQueue, ownMsg)) {
 					    DEBUGPRINT
-					      ("FATAL ERROR: output queue is full!\n",
-						'a');
-					  }
-				      }
-				  }
-				else
-				  {	/* sequence error! */
-				    stateMachine_state =
-				      SM_UDS_STANDBY;
-				    createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_UDS_WRONG_SEQUENCE_COUNT,(dp->data[0] & 0x0F),ERR_CODE_UDS_WRONG_SEQUENCE_COUNT_TEXT);
-				    DEBUGPRINT("Sequence Error! Received %d , expected %d\n",dp->data[0] & 0x0F,sequenceCounter);
+						("FATAL ERROR: output queue is full!\n",
+						 'a');
+					}
+				    }
+				} else {	/* sequence error! */
+				    stateMachine_state = SM_UDS_STANDBY;
+				    createCommandResultMsg
+					(ERR_CODE_SOURCE_PROTOCOL,
+					 ERR_CODE_UDS_WRONG_SEQUENCE_COUNT,
+					 (dp->data[0] & 0x0F),
+					 ERR_CODE_UDS_WRONG_SEQUENCE_COUNT_TEXT);
+				    DEBUGPRINT
+					("Sequence Error! Received %d , expected %d\n",
+					 dp->data[0] & 0x0F,
+					 sequenceCounter);
 				    timeout = 0;
 				    if (pdPASS !=
-					sendMsg (MSG_SERIAL_RELEASE,
-						  inputQueue, NULL))
-				      {
+					sendMsg(MSG_SERIAL_RELEASE,
+						inputQueue, NULL)) {
 					DEBUGPRINT
-					  ("FATAL ERROR: input queue is full!\n",
-					    'a');
-
-				      }
-				  }
-				  
-				}else{
-				  stateMachine_state =
-				    SM_UDS_STANDBY;
-				  //! \bug errormessage for wrong error is needed here!
-				    createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_UDS_MISSING_FIRST_FRAME,(dp->data[0] & 0xF0),ERR_CODE_UDS_MISSING_FIRST_FRAME_TEXT);
-				  DEBUGPRINT("Wrong Frame Error! Received %d , expected 0x2x\n",dp->data[0] );
-				  timeout = 0;
-				  if (pdPASS !=
-				      sendMsg (MSG_SERIAL_RELEASE,
-						inputQueue, NULL))
-				    {
-				      DEBUGPRINT
-					("FATAL ERROR: input queue is full!\n",
-					  'a');
+					    ("FATAL ERROR: input queue is full!\n",
+					     'a');
 
 				    }
 				}
-			    }
-		      if (stateMachine_state == SM_UDS_WAIT_FOR_ANSWER)
-			{
-			  if ((dp->data[0] & 0xF0) == 0x10)
-			    {	/* FirstFrame */
-			      sequenceCounter = 0;	//first Frame counts as sequence 0 already
-			      remainingBytes =
-				(dp->data[0] & 0xF) * 256 + dp->data[1];
-			      actBufferPos = 6;
-			      DEBUGPRINT ("First Frame with %d Bytes\n",
-					  remainingBytes);
-			      udsBuffer->len = remainingBytes;	/* set the buffer size alredy inhope, that all goes well ;-) */
-			      remainingBytes -= 6;	/* the first 6 bytes are already in the FF */
-			      CAN2data (udsBuffer, &(dp->data[2]), 0, 6);
-			      actDataPacket.recv = config.recvID;
-			      actDataPacket.data = &telegram;
-			      actDataPacket.len = 8;
-			      for (i = 0; i < 8; i++)
-				{	/* just fill the telegram with 0 */
-				  telegram[i] = 0;
-				}
-			      telegram[0] = 0x30; /* 0x30 = 3=>FlowControl, 0=>CTS = ContinoueToSend */
-			      stateMachine_state = SM_UDS_WAIT_FOR_CF;
-			      timeout = config.timeout;
-			      if (config.listen>0){
-				dumpFrame (&actDataPacket, printdata_CAN);
-			      }
-			      actBus_send (&actDataPacket);
-			    }
-			  else
-			    {
-			      if ((dp->data[0] & 0xF0) == 0x00)
-				{	/*Single Frame */
-			      DEBUGPRINT ("Single Frame with %d Bytes\n",
-					  dp->data[0]);
-				  udsBuffer->len = dp->data[0];
-				  CAN2data (udsBuffer, &(dp->data[1]), 0,
-					    dp->data[0]);
-				  stateMachine_state = SM_UDS_STANDBY;
-				  timeout = 0;
-				  /* to dump the  buffer, we send the address of the udsbuffer to the print routine */
-				  ownMsg =
-				    createMsg (&udsBuffer,
-					       sizeof (udsBuffer));
-				  /* add correct print routine; */
-				  ownMsg->print = printdata_Buffer;
-				  /* forward data to the output task */
-				  if (pdPASS !=
-				      sendMsg (MSG_DUMP_BUFFER, outputQueue,
-					       ownMsg))
-				    {
-				      DEBUGPRINT
-					("FATAL ERROR: output queue is full!\n",
+
+			    } else {
+				stateMachine_state = SM_UDS_STANDBY;
+				createCommandResultMsg
+				    (ERR_CODE_SOURCE_PROTOCOL,
+				     ERR_CODE_UDS_MISSING_FIRST_FRAME,
+				     (dp->data[0] & 0xF0),
+				     ERR_CODE_UDS_MISSING_FIRST_FRAME_TEXT);
+				DEBUGPRINT
+				    ("Wrong Frame Error! Received %d , expected 0x2x\n",
+				     dp->data[0]);
+				timeout = 0;
+				if (pdPASS !=
+				    sendMsg(MSG_SERIAL_RELEASE,
+					    inputQueue, NULL)) {
+				    DEBUGPRINT
+					("FATAL ERROR: input queue is full!\n",
 					 'a');
 
+				}
+			    }
+			}
+			if (stateMachine_state == SM_UDS_WAIT_FOR_ANSWER) {
+			    if ((dp->data[0] & 0xF0) == 0x10) {	/* FirstFrame */
+				sequenceCounter = 0;	//first Frame counts as sequence 0 already
+				remainingBytes =
+				    (dp->data[0] & 0xF) * 256 +
+				    dp->data[1];
+				actBufferPos = 6;
+				DEBUGPRINT("First Frame with %d Bytes\n",
+					   remainingBytes);
+				udsBuffer->len = remainingBytes;	/* set the buffer size alredy inhope, that all goes well ;-) */
+				remainingBytes -= 6;	/* the first 6 bytes are already in the FF */
+				udp_uds_CAN2data(udsBuffer, &(dp->data[2]),
+						 0, 6);
+				actDataPacket.recv = udsConfig.recvID;
+				actDataPacket.data = &telegram;
+				actDataPacket.len = 8;
+				for (i = 0; i < 8; i++) {	/* just fill the telegram with 0 */
+				    telegram[i] = 0;
+				}
+				telegram[0] = 0x30;	/* 0x30 = 3=>FlowControl, 0=>CTS = ContinoueToSend */
+				stateMachine_state = SM_UDS_WAIT_FOR_CF;
+				timeout = udsConfig.timeout;
+				if (udsConfig.listen > 0) {
+				    odp_uds_dumpFrame(&actDataPacket,
+						      printdata_CAN);
+				}
+				actBus_send(&actDataPacket);
+			    } else {
+				if ((dp->data[0] & 0xF0) == 0x00) {	/*Single Frame */
+				    DEBUGPRINT
+					("Single Frame with %d Bytes\n",
+					 dp->data[0]);
+				    udsBuffer->len = dp->data[0];
+				    udp_uds_CAN2data(udsBuffer,
+						     &(dp->data[1]), 0,
+						     dp->data[0]);
+				    stateMachine_state = SM_UDS_STANDBY;
+				    timeout = 0;
+				    /* to dump the  buffer, we send the address of the udsbuffer to the print routine */
+				    ownMsg =
+					createMsg(&udsBuffer,
+						  sizeof(udsBuffer));
+				    /* add correct print routine; */
+				    ownMsg->print =
+					odp_uds_printdata_Buffer;
+				    /* forward data to the output task */
+				    if (pdPASS !=
+					sendMsg(MSG_DUMP_BUFFER,
+						outputQueue, ownMsg)) {
+					DEBUGPRINT
+					    ("FATAL ERROR: output queue is full!\n",
+					     'a');
+
 				    }
 				}
 			    }
 			}
 		    }
 		}
-	      break;
+		break;
 	    case MSG_SERIAL_DATA:
-	      if (stateMachine_state == SM_UDS_STANDBY)
-		{		/* only if just nothing to do */
-		  dp = (data_packet *) msg->addr;
-		  if (((udsBuffer->len) + dp->len) <= UDSSIZE)
-		    {
-		      /* copy the data into the uds- buffer */
-		      for (i = 0; i < dp->len; i++)
-			{
-			  udsBuffer->data[udsBuffer->len++] = dp->data[i];
+		if (stateMachine_state == SM_UDS_STANDBY) {	/* only if just nothing to do */
+		    dp = (data_packet *) msg->addr;
+		    if (((udsBuffer->len) + dp->len) <= UDSSIZE) {
+			/* copy the data into the uds- buffer */
+			for (i = 0; i < dp->len; i++) {
+			    udsBuffer->data[udsBuffer->len++] =
+				dp->data[i];
 			}
-		    }
-		  else
-		    {
-		      createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_UDS_DATA_TOO_LONG_ERR,(udsBuffer->len) + dp->len,ERR_CODE_UDS_DATA_TOO_LONG_ERR_TEXT);
+		    } else {
+			createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
+					       ERR_CODE_UDS_DATA_TOO_LONG_ERR,
+					       (udsBuffer->len) + dp->len,
+					       ERR_CODE_UDS_DATA_TOO_LONG_ERR_TEXT);
 		    }
 		}
-	      break;
+		break;
 	    case MSG_SERIAL_PARAM:
-	      paramData = (portBASE_TYPE *) msg->addr;
-	      DEBUGPRINT ("parameter received %d %d\n", paramData[0],
-			  paramData[1]);
+		paramData = (portBASE_TYPE *) msg->addr;
+		DEBUGPRINT("parameter received %d %d\n", paramData[0],
+			   paramData[1]);
 
-	      switch (paramData[0])
-	      {
-	        case PARAM_INFO:
-	       	  break;
-	        case PARAM_ECHO:
-	          break;
-	        case PARAM_LISTEN:
-		      config.listen = paramData[1];
-		      createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_NO_ERR,0,NULL);
-		      break;
-	        case PARAM_BUS:
-		      break;
-	        case PARAM_BUS_CONFIG:
-		      break;
-	        case PARAM_TIMEOUT:
-		      config.timeout = paramData[1] + 1;
-		      createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_NO_ERR,0,NULL);
-		      break;
-	        case PARAM_TIMEOUT_PENDING:
-		      break;
-	        case PARAM_BLOCKSIZE:
-		      break;
-	        case PARAM_FRAME_DELAY:
-		      break;
-	        case PARAM_RECVID:
-		      config.recvID = paramData[1];
-		      break;
-	        case PARAM_SENDID:
-		      config.sendID = paramData[1];
-		      createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_NO_ERR,0,NULL);
-		      break;
-	        case PARAM_TP_ON:
-		      tp_Flags[reduceID (paramData[1])] = config.tpFreq;
-		      createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_NO_ERR,0,NULL);
-		      break;
-	        case PARAM_TP_OFF:
-		      tp_Flags[reduceID (paramData[1])] = 0;
-		      createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_NO_ERR,0,NULL);
-		      break;
-	        case PARAM_TP_FREQ:
-	          config.tpFreq = paramData[1];
-		      createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_NO_ERR,0,NULL);
-	          break;
-	      }
-	      actBus_param (paramData[0], paramData[1]);	/* forward the received params to the underlying bus. */
-	      break;
+		switch (paramData[0]) {
+		case PARAM_INFO:
+		    break;
+		case PARAM_ECHO:
+		    break;
+		case PARAM_LISTEN:
+		    udsConfig.listen = paramData[1];
+		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
+					   ERR_CODE_NO_ERR, 0, NULL);
+		    break;
+		case PARAM_BUS:
+		    break;
+		case PARAM_BUS_CONFIG:
+		    break;
+		case PARAM_TIMEOUT:
+		    udsConfig.timeout = paramData[1] + 1;
+		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
+					   ERR_CODE_NO_ERR, 0, NULL);
+		    break;
+		case PARAM_TIMEOUT_PENDING:
+		    break;
+		case PARAM_BLOCKSIZE:
+		    break;
+		case PARAM_FRAME_DELAY:
+		    break;
+		case PARAM_RECVID:
+		    udsConfig.recvID = paramData[1];
+		    break;
+		case PARAM_SENDID:
+		    udsConfig.sendID = paramData[1];
+		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
+					   ERR_CODE_NO_ERR, 0, NULL);
+		    break;
+		case PARAM_TP_ON:
+		    tp_Flags[odp_uds_reduceID(paramData[1])] =
+			udsConfig.tpFreq;
+		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
+					   ERR_CODE_NO_ERR, 0, NULL);
+		    break;
+		case PARAM_TP_OFF:
+		    tp_Flags[odp_uds_reduceID(paramData[1])] = 0;
+		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
+					   ERR_CODE_NO_ERR, 0, NULL);
+		    break;
+		case PARAM_TP_FREQ:
+		    udsConfig.tpFreq = paramData[1];
+		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
+					   ERR_CODE_NO_ERR, 0, NULL);
+		    break;
+		}
+		actBus_param(paramData[0], paramData[1]);	/* forward the received params to the underlying bus. */
+		break;
 	    case MSG_INIT:
-	      DEBUGPRINT ("Reset Protocol\n", 'a');
-	      udsBuffer->len = 0;
-	      break;
+		DEBUGPRINT("Reset Protocol\n", 'a');
+		udsBuffer->len = 0;
+		break;
 	    case MSG_SEND_BUFFER:
-	      /* let's Dance: Starting the transfer protocol */
-	      if (udsBuffer->len > 0)
-		{
-		  DEBUGPRINT ("Send Buffer\n", 'a');
-		  actDataPacket.recv = config.recvID;
-		  actDataPacket.data = &telegram;
-		  actDataPacket.len = 8;
-		  if (udsBuffer->len < 8)
-		    {		/* its just single frame */
-		      data2CAN (&udsBuffer->data[0], &telegram,
-				udsBuffer->len, 1);
-		      actDataPacket.data[0] = udsBuffer->len;
-		      udsBuffer->len = 0;	/* prepare buffer to receive */
-		      actBufferPos = 0;
-		      if (config.listen>0){
-			dumpFrame (&actDataPacket, printdata_CAN);
-		      }
-		      actBus_send (&actDataPacket);
-		      stateMachine_state = SM_UDS_WAIT_FOR_ANSWER;
-		      timeout = config.timeout;
-		    }
-		  else
-		    {		/* we have to send multiframes */
-		      data2CAN (&udsBuffer->data[0], &telegram, 6, 2);
-		      actDataPacket.data[0] = 0x10 + (udsBuffer->len / 256);	/* prepare FF */
-		      actDataPacket.data[1] = udsBuffer->len % 256;
-		      sequenceCounter = 0;
-		      remainingBytes = udsBuffer->len - 6;
-		      actBufferPos = 0;
-		      udsBuffer->len = 0;	/* prepare buffer to receive */
-		      if (config.listen>0){
-			dumpFrame (&actDataPacket, printdata_CAN);
-		      }
-		      actBus_send (&actDataPacket);
-		      stateMachine_state = SM_UDS_WAIT_FOR_FC;
-		      timeout = config.timeout;
+		/* let's Dance: Starting the transfer protocol */
+		if (udsBuffer->len > 0) {
+		    DEBUGPRINT("Send Buffer\n", 'a');
+		    actDataPacket.recv = udsConfig.recvID;
+		    actDataPacket.data = &telegram;
+		    actDataPacket.len = 8;
+		    if (udsBuffer->len < 8) {	/* its just single frame */
+			odp_uds_data2CAN(&udsBuffer->data[0], &telegram,
+					 udsBuffer->len, 1);
+			actDataPacket.data[0] = udsBuffer->len;
+			udsBuffer->len = 0;	/* prepare buffer to receive */
+			actBufferPos = 0;
+			if (udsConfig.listen > 0) {
+			    odp_uds_dumpFrame(&actDataPacket,
+					      printdata_CAN);
+			}
+			actBus_send(&actDataPacket);
+			stateMachine_state = SM_UDS_WAIT_FOR_ANSWER;
+			timeout = udsConfig.timeout;
+		    } else {	/* we have to send multiframes */
+			odp_uds_data2CAN(&udsBuffer->data[0], &telegram, 6,
+					 2);
+			actDataPacket.data[0] = 0x10 + (udsBuffer->len / 256);	/* prepare FF */
+			actDataPacket.data[1] = udsBuffer->len % 256;
+			sequenceCounter = 0;
+			remainingBytes = udsBuffer->len - 6;
+			actBufferPos = 0;
+			udsBuffer->len = 0;	/* prepare buffer to receive */
+			if (udsConfig.listen > 0) {
+			    odp_uds_dumpFrame(&actDataPacket,
+					      printdata_CAN);
+			}
+			actBus_send(&actDataPacket);
+			stateMachine_state = SM_UDS_WAIT_FOR_FC;
+			timeout = udsConfig.timeout;
 		    }
 
-		}
-	      else
-		{		/* no data to send? */
-		  /* just release the input again */
-		  if (pdPASS !=
-		      sendMsg (MSG_SERIAL_RELEASE, inputQueue, NULL))
-		    {
-		      DEBUGPRINT ("FATAL ERROR: input queue is full!\n", 'a');
+		} else {	/* no data to send? */
+		    /* just release the input again */
+		    if (pdPASS !=
+			sendMsg(MSG_SERIAL_RELEASE, inputQueue, NULL)) {
+			DEBUGPRINT("FATAL ERROR: input queue is full!\n",
+				   'a');
 		    }
 		}
-	      break;
+		break;
 	    case MSG_TICK:
-	      if (timeout > 0)
-		{		/* we just waiting for an answer */
-		  if (timeout == 1)
-		    {		/* time's gone... */
-		      udsBuffer->len = 0;
-		      DEBUGPRINT ("Timeout!\n", 'a');
-		      createCommandResultMsg (ERR_CODE_SOURCE_PROTOCOL,ERR_CODE_UDS_TIMEOUT,0,ERR_CODE_UDS_TIMEOUT_TEXT);
-		      stateMachine_state = SM_UDS_STANDBY;
-		      if (pdPASS !=
-			  sendMsg (MSG_SERIAL_RELEASE, inputQueue, NULL))
+		if (timeout > 0) {	/* we just waiting for an answer */
+		    if (timeout == 1) {	/* time's gone... */
+			udsBuffer->len = 0;
+			DEBUGPRINT("Timeout!\n", 'a');
+			createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
+					       ERR_CODE_UDS_TIMEOUT, 0,
+					       ERR_CODE_UDS_TIMEOUT_TEXT);
+			stateMachine_state = SM_UDS_STANDBY;
+			if (pdPASS !=
+			    sendMsg(MSG_SERIAL_RELEASE, inputQueue, NULL))
 			{
-			  DEBUGPRINT ("FATAL ERROR: input queue is full!\n",
-				      'a');
+			    DEBUGPRINT
+				("FATAL ERROR: input queue is full!\n",
+				 'a');
 
 			}
 		    }
-		  timeout--;
+		    timeout--;
 		}
-	      /* Start generating tester present messages */
-	      generateTesterPresents (&tp_Flags, &telegram, actBus_send,
-				      config.tpFreq);
-	      break;
+		/* Start generating tester present messages */
+		odp_uds_generateTesterPresents(&tp_Flags, &telegram,
+					       actBus_send,
+					       udsConfig.tpFreq);
+		break;
 	    }
-	  disposeMsg (msg);
+	    disposeMsg(msg);
 	}
-      /* vTaskDelay (5000 / portTICK_RATE_MS); */
+	/* vTaskDelay (5000 / portTICK_RATE_MS); */
 
     }
 
-  /* Do all cleanup here to finish task */
-  vTaskDelete (NULL);
+    /* Do all cleanup here to finish task */
+    vTaskDelete(NULL);
 }
 
-void
-obd_uds_init ()
+void obd_uds_init()
 {
-  odparr[ODP_UDS] = obp_uds;
+    odparr[ODP_UDS] = obp_uds;
 }

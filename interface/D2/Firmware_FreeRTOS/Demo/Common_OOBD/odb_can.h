@@ -43,4 +43,29 @@ void bus_close_can ();
 
 void odb_can_init ();
 
+
+/* define values of CAN specific parameter */
+#define VALUE_BUS_SILENT_MODE					( 0 )
+#define VALUE_BUS_LOOP_BACK_MODE				( 1 )
+#define VALUE_BUS_LOOP_BACK_WITH_SILENT_MODE	( 2 )
+#define VALUE_BUS_NORMAL_MODE					( 3 )
+#define VALUE_BUS_CONFIG_11bit_125kbit  		( 1 )
+#define VALUE_BUS_CONFIG_11bit_250kbit  		( 2 )
+#define VALUE_BUS_CONFIG_11bit_500kbit  		( 3 )
+#define VALUE_BUS_CONFIG_11bit_1000kbit 		( 4 )
+#define VALUE_BUS_CONFIG_29bit_125kbit  		( 5 )
+#define VALUE_BUS_CONFIG_29bit_250kbit  		( 6 )
+#define VALUE_BUS_CONFIG_29bit_500kbit  		( 7 )
+#define VALUE_BUS_CONFIG_29bit_1000kbit 		( 8 )
+
+/* store all parameter in one single struct to maybe later store such param sets in EEPROM */
+struct CanConfig
+{
+  portBASE_TYPE recvID, //!< Module ID
+    bus,                //!< id of actual used bus
+    mode,                //!< id of actual used Tranceiver mode
+    busConfig          //!< nr of actual used bus configuration
+} canConfig;
+
+
 #endif /* INC_ODB_CAN_H */
