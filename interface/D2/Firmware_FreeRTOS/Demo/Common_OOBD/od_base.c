@@ -160,11 +160,6 @@ void disposeMsg(MsgData * p)
 }
 
 
-void printEOT()
-{
-    evalResult(0, 0, 0, NULL);
-}
-
 void evalResult(portBASE_TYPE source, portBASE_TYPE errType,
 		portBASE_TYPE detail, char *text)
 {
@@ -186,6 +181,12 @@ void evalResult(portBASE_TYPE source, portBASE_TYPE errType,
     printser_string(">");
 
 }
+
+void printEOT()
+{
+    evalResult(0, 0, 0, NULL);
+}
+
 
 
 void printCommandResult(portBASE_TYPE msgType, void *data,

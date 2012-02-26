@@ -131,7 +131,8 @@ void sendParam(portBASE_TYPE key, portBASE_TYPE value)
 
 char checkValidChar(char a)
 {
-    if (a == '\r') {		/* char CR Carriage return */
+  DEBUGPRINT("char: %d\n",a);  
+  if (a == '\r') {		/* char CR Carriage return */
 	return crEOL;
     }
     if (a == '\t' || a == ' ' || a == '\n') {
@@ -185,6 +186,8 @@ void inputParserTask(void *pvParameters)
     };
     portBASE_TYPE actState = S_INIT, totalInCount = 0;
     dp.data = &buffer;
+    			      DEBUGPRINT("Start input task. STATE_INIT=%d\n",S_INIT);
+
     for (;;) {
 	DEBUGUARTPRINT("\r\n*** inputParserTask is running! ***");
 
@@ -192,15 +195,16 @@ void inputParserTask(void *pvParameters)
 					   portMAX_DELAY))) {
 	    switch (msgType) {
 	    case MSG_SERIAL_IN:
-		DEBUGUARTPRINT("\r\n*** something received! ***");
+		DEBUGPRINT("*** something received! ***\n",'a');
 		processFurther = 1;
 		if (actState != S_SLEEP) {	/* if we not actual ignore any input */
 		    inChar = checkValidChar(*(char *) incomingMsg->addr);
+		DEBUGPRINT("decoded input value:%d\n",inChar);
 		    if (actState == S_WAITEOL) {	/* just waiting for an end of line */
 			if (inChar == crEOL) {
 			    if (lastErr) {
 				createCommandResultMsg
-				    (ERR_CODE_SERIAL_SYNTAX_ERR, 0, 0,
+				    (0, ERR_CODE_SOURCE_SERIALIN, lastErr,
 				     ERR_CODE_SERIAL_SYNTAX_ERR_TEXT);
 			    } else {
 				createCommandResultMsg
@@ -220,7 +224,7 @@ void inputParserTask(void *pvParameters)
 			if (inChar < 16) {	/* first char is a valid hex char (0-F), so we switch into data line mode */
 			    actState = S_DATA;
 			}
-			if (inChar == crCMD) {	/* first char is a valid hex char (0-F), so we switch into data line mode */
+			if (inChar == crCMD) {	/* first char is command char, so we switch into parameter input mode */
 			    actState = S_PARAM;
 			    processFurther = 0;
 			}
@@ -229,8 +233,10 @@ void inputParserTask(void *pvParameters)
 				(ERR_CODE_SOURCE_SERIALIN, ERR_CODE_NO_ERR,
 				 0, NULL);
 			    sendMsg(MSG_SEND_BUFFER, protocolQueue, NULL);
-			    actState = S_SLEEP;
+			    //actState = S_SLEEP;
 			}
+			DEBUGPRINT("leaving S_INIT:actstate: %ld procFuther: %d\n",actState,processFurther);
+
 		    }
 		    if (actState == S_DATA) {
 			if (inChar == crEOL) {
@@ -271,8 +277,10 @@ void inputParserTask(void *pvParameters)
 			    }
 			}
 		    }
+			      DEBUGPRINT("actstate: %ld procFuther: %d\n",actState,processFurther);
 
 		    if (actState == S_PARAM && processFurther) {
+			      DEBUGPRINT("<ret>\n",'a');
 			if (inChar == crEOL) {
 			    if (totalInCount == 3 || totalInCount == 4) {
 			      DEBUGPRINT("noch geht's",'a');
