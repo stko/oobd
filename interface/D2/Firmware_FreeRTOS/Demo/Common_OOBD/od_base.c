@@ -42,6 +42,7 @@ bus_init actBus_init = NULL;
 bus_send actBus_send = NULL;
 bus_flush actBus_flush = NULL;
 bus_param actBus_param = NULL;
+bus_param actBus_paramPrint = NULL;
 bus_close actBus_close = NULL;
 
 portBASE_TYPE lfType = VALUE_LF_CR;
@@ -295,6 +296,7 @@ waitMsg(xQueueHandle recv, MsgData ** msgdata, portBASE_TYPE timeout)
 
 }
 
+//! \todo extend the todays printser_string in that way, that the standard \\n LF in the input string is replaced by the configured type pf LFCR. Also don't use printLF() in normal source anymore..
 void printLF()
 {
     switch (lfType) {

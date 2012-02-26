@@ -34,10 +34,7 @@
 #ifndef INC_MC_SERIAL_H
 #define INC_MC_SERIAL_H
 
-portBASE_TYPE serial_init_mc ();
-
-unsigned char BTM222_RespBuffer[25];
-unsigned char BTM222_UartSpeed;
-unsigned int  BufCnt, BTM222_UART_Rx_Flag, BTM222_DeviceNameFlag;
+#include "mc_serial_generic.h"
+#include "mc_serial.h"
 
 #endif /* INC_MC_SERIAL_H */

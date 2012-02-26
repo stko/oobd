@@ -32,6 +32,7 @@
 
 /* OOBD headers. */
 #include "od_config.h"
+#include "mc_serial_generic.h"
 #include "mc_serial.h"
 
 xTaskHandle hSerialTask;
@@ -41,32 +42,29 @@ static int oobdIOHandle = 0;
 
 //callback routine to write a char to the output
 
-void
-writeChar (char a)
+void writeChar(char a)
 {
-  /* Echo it back to the sender. */
-  (void) write (oobdIOHandle, &a, 1);
+    /* Echo it back to the sender. */
+    (void) write(oobdIOHandle, &a, 1);
 }
 
 
 
 
-portBASE_TYPE
-serial_init_mc ()
+portBASE_TYPE serial_init_mc()
 {
 
-  extern printChar_cbf printChar;
-  extern xQueueHandle internalSerialRxQueue;
-  printChar = writeChar;
+    extern printChar_cbf printChar;
+    extern xQueueHandle internalSerialRxQueue;
+    printChar = writeChar;
 
-  // Set-up the Serial Console Echo task
-  if (pdTRUE == lAsyncIOSerialOpen ("/tmp/OOBD", &oobdIOHandle))
-    {
-      internalSerialRxQueue = xQueueCreate (2, sizeof (unsigned char));
-      (void) lAsyncIORegisterCallback (oobdIOHandle,
-				       vAsyncSerialIODataAvailableISR,
-				       internalSerialRxQueue);
+    // Set-up the Serial Console Echo task
+    if (pdTRUE == lAsyncIOSerialOpen("/tmp/OOBD", &oobdIOHandle)) {
+	internalSerialRxQueue = xQueueCreate(2, sizeof(unsigned char));
+	(void) lAsyncIORegisterCallback(oobdIOHandle,
+					vAsyncSerialIODataAvailableISR,
+					internalSerialRxQueue);
     }
-  return pdPASS;
+    return pdPASS;
 
 }

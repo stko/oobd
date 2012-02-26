@@ -27,21 +27,15 @@
 */
 
 /**
- * MC generic System header
+ * .
  */
 
 
-#ifndef INC_MC_SYS_H
-#define INC_MC_SYS_H
+#ifndef INC_MC_SERIAL_H
+#define INC_MC_SERIAL_H
 
+unsigned char BTM222_RespBuffer[25];
+unsigned char BTM222_UartSpeed;
+unsigned int  BufCnt, BTM222_UART_Rx_Flag, BTM222_DeviceNameFlag;
 
-void mc_init_sys_boot ();
-void mc_init_sys_tasks ();
-void mc_init_sys_shutdown ();
-void mc_sys_idlehook ();
-/** \brief handles system parameter commans
-* \return <>0 if parameter handled by sys, so no more handling is needed
-*/
-portBASE_TYPE eval_param_sys (portBASE_TYPE param, portBASE_TYPE value);
-portBASE_TYPE sysIoCtrl (portBASE_TYPE pinID, portBASE_TYPE lowerValue,portBASE_TYPE upperValue, portBASE_TYPE duration, portBASE_TYPE waveType);
-#endif /* INC_MC_SYS_H */
+#endif /* INC_MC_SERIAL_H */

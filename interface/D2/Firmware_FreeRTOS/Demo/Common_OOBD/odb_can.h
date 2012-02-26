@@ -65,7 +65,7 @@ struct CanConfig
     bus,                //!< id of actual used bus
     mode,                //!< id of actual used Tranceiver mode
     busConfig          //!< nr of actual used bus configuration
-} canConfig;
+} ;
 
 
 #endif /* INC_ODB_CAN_H */
