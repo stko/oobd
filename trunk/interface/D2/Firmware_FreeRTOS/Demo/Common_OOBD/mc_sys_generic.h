@@ -39,9 +39,16 @@ void mc_init_sys_boot ();
 void mc_init_sys_tasks ();
 void mc_init_sys_shutdown ();
 void mc_sys_idlehook ();
-/** \brief handles system parameter commans
-* \return <>0 if parameter handled by sys, so no more handling is needed
+
+void mc_init_sys_boot_specific();
+void mc_init_sys_tasks_specific();
+void mc_init_sys_shutdown_specific();
+
+
+/** \brief handles input parameters
+* \return pdTrue, if parameter was known and no futher handling is wanted ; pdFalse, if parameter is not not known and needs futher handling in other areas
 */
+
 portBASE_TYPE eval_param_sys (portBASE_TYPE param, portBASE_TYPE value);
 portBASE_TYPE sysIoCtrl (portBASE_TYPE pinID, portBASE_TYPE lowerValue,portBASE_TYPE upperValue, portBASE_TYPE duration, portBASE_TYPE waveType);
 #endif /* INC_MC_SYS_H */

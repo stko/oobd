@@ -31,7 +31,7 @@
  */
 
 /* OOBD headers. */
-#include "od_serial.h"
+#include "mc_serial_generic.h"
 #include "mc_serial.h"
 #include "stm32f10x.h"
 

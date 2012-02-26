@@ -35,7 +35,8 @@
 #include "od_config.h"
 #include "od_protocols.h"
 #include "od_base.h"
-#include "od_serial.h"
+#include "mc_serial_generic.h"
+#include "mc_serial.h"
 #include "od_outputTask.h"
 
 
@@ -46,90 +47,87 @@ static const short sUsingPreemption = configUSE_PREEMPTION;
 #define SERIAL_COMM_TASK_PRIORITY			( tskIDLE_PRIORITY + 3 )
 /*---------------------------------------------------------------------------*/
 
-void
-tickTask (void *pvParameters)
+void tickTask(void *pvParameters)
 {
-  DEBUGUARTPRINT ("\r\n*** tickTask entered! ***");
+    DEBUGUARTPRINT("\r\n*** tickTask entered! ***");
 
-  extern xQueueHandle protocolQueue;
+    extern xQueueHandle protocolQueue;
 
-  for (;;)
-    {
+    for (;;) {
 /*
       vTaskList (buffer);
       DEBUGPRINT ("%s", buffer);
       vTaskGetRunTimeStats (buffer);
       DEBUGPRINT ("%s", buffer);
 */
-      if (pdPASS != sendMsg (MSG_TICK, protocolQueue, NULL))
-	{
-	  DEBUGPRINT ("FATAL ERROR: protocol queue is full!\n", 'a');
+	if (pdPASS != sendMsg(MSG_TICK, protocolQueue, NULL)) {
+	    DEBUGPRINT("FATAL ERROR: protocol queue is full!\n", 'a');
 	}
-      vTaskDelay (10 / portTICK_RATE_MS);	// 10ms tick time
+	vTaskDelay(10 / portTICK_RATE_MS);	// 10ms tick time
 
     }
 }
+
 /*---------------------------------------------------------------------------*/
 
-int
-main (void)
+int main(void)
 {
-  /* set up the controller */
-  mc_init_sys_boot ();
+    /* set up the controller */
+    mc_init_sys_boot();
 
-  /* Activate the busses */
-  initBusses ();
-  /* Activate the protocols */
-  initProtocols ();
-  /* start the serial side */
-  serial_init ();
+    /* Activate the busses */
+    initBusses();
+    /* Activate the protocols */
+    initProtocols();
+    /* start the serial side */
+    serial_init();
 
-  /*activate the output task */
-  initOutput ();
+    /*activate the output task */
+    initOutput();
 
-  DEBUGUARTPRINT ("\r\n*** Starting FreeRTOS ***");
+    DEBUGUARTPRINT("\r\n*** Starting FreeRTOS ***");
 
-  // Version String
-  #ifdef OOBD_PLATFORM_POSIX
-    DEBUGPRINT ("OOBD Build: %s\n", SVNREV);
-  #else
+    // Version String
+#ifdef OOBD_PLATFORM_POSIX
+    DEBUGPRINT("OOBD Build: %s\n", SVNREV);
+#else
     printser_string("OOBD Build: ");
     printser_string(SVNREV);
-  #endif
+#endif
 
 
 
-  /* starting with UDS protocol of the list by default */
-  if (pdPASS == xTaskCreate (odparr[1], (const signed portCHAR *) "prot",
-			     configMINIMAL_STACK_SIZE, (void *) NULL,
-			     TASK_PRIO_LOW, &xTaskProtHandle))
-    DEBUGUARTPRINT ("\r\n*** 'prot' Task created ***");
-  else
-    DEBUGUARTPRINT ("\r\n*** 'prot' Task NOT created ***");
+    /* starting with UDS protocol of the list by default */
+    if (pdPASS == xTaskCreate(odparr[1], (const signed portCHAR *) "prot",
+			      configMINIMAL_STACK_SIZE, (void *) NULL,
+			      TASK_PRIO_LOW, &xTaskProtHandle))
+	DEBUGUARTPRINT("\r\n*** 'prot' Task created ***");
+    else
+	DEBUGUARTPRINT("\r\n*** 'prot' Task NOT created ***");
 
-  if (pdPASS == xTaskCreate (tickTask, (const signed portCHAR *) "Tick",
-			     configMINIMAL_STACK_SIZE, (void *) NULL,
-			     TASK_PRIO_LOW, (xTaskHandle *) NULL))
-    DEBUGUARTPRINT ("\r\n*** 'Tick' Task created ***");
-  else
-    DEBUGUARTPRINT ("\r\n*** 'Tick' Task NOT created ***");
+    if (pdPASS == xTaskCreate(tickTask, (const signed portCHAR *) "Tick",
+			      configMINIMAL_STACK_SIZE, (void *) NULL,
+			      TASK_PRIO_LOW, (xTaskHandle *) NULL))
+	DEBUGUARTPRINT("\r\n*** 'Tick' Task created ***");
+    else
+	DEBUGUARTPRINT("\r\n*** 'Tick' Task NOT created ***");
 
-  mc_init_sys_tasks ();
+    mc_init_sys_tasks();
 
 
-  /* Set the scheduler running.  This function will not return unless a task calls vTaskEndScheduler(). */
-  vTaskStartScheduler ();
+    /* Set the scheduler running.  This function will not return unless a task calls vTaskEndScheduler(). */
+    vTaskStartScheduler();
 
-  DEBUGUARTPRINT ("\r\nSomething got wrong, RTOS terminated !!!");
-  mc_init_sys_shutdown ();
-  return 1;
+    DEBUGUARTPRINT("\r\nSomething got wrong, RTOS terminated !!!");
+    mc_init_sys_shutdown();
+    return 1;
 }
+
 /*---------------------------------------------------------------------------*/
 
-void
-vApplicationIdleHook (void)
+void vApplicationIdleHook(void)
 {
-  mc_sys_idlehook();
+    mc_sys_idlehook();
 }
 
 /*---------------------------------------------------------------------------*/

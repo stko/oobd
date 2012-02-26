@@ -89,6 +89,7 @@ typedef portBASE_TYPE (*bus_init) ();
 typedef portBASE_TYPE (*bus_send) (data_packet * data);
 typedef void (*bus_flush) ();
 typedef portBASE_TYPE (*bus_param) (portBASE_TYPE param, portBASE_TYPE value);
+typedef portBASE_TYPE (*bus_paramPrint) (portBASE_TYPE param, portBASE_TYPE value);
 typedef void (*bus_close) ();
 
 

@@ -194,16 +194,15 @@ odp_uds_printdata_Buffer(portBASE_TYPE msgType, void *data,
 void odp_uds_printParam(portBASE_TYPE msgType, void *data,
 			printChar_cbf printchar)
 {
-    extern bus_param actBus_param;
+    extern bus_paramPrint actBus_paramPrint;
     static param_data *pd;
     pd = data;
-    portBASE_TYPE cmdKey = pd->key, cmdValue = pd->value;	/* the both possible params */
-    switch (cmdKey) {
+     switch (pd->key) {
     case VALUE_PARAM_INFO_PROTOCOL:	/* p 0 3 */
 	printser_string("1 - UDS (ISO14229-1)");
 	break;
     default:
-	actBus_param(cmdKey, cmdValue);	/* forward the received params to the underlying bus. */
+	actBus_paramPrint(pd->key, pd->value);	/* forward the received params to the underlying bus. */
     }
 }
 
@@ -301,16 +300,13 @@ void obp_uds(void *pvParameters)
     /* Memory eater Nr. 2: The Tester Present Marker Flags */
     unsigned char tp_Flags[128];
     portBASE_TYPE msgType;
-    extern struct UdsConfig config;
+    struct UdsConfig udsConfig;
 
     /* Init default parameters */
     udsConfig.recvID = 0x7DF;
     udsConfig.sendID = 0x00;	// 0 disables special sendID
     udsConfig.timeout = 6;
     udsConfig.listen = 0;
-    //! \bug was hat das Protokoll mit dem CAN-Bus zu tun?
-    // canConfig.bus                      = VALUE_BUS_SILENT_MODE;                        /* default */
-    // canConfig.busConfig                = VALUE_BUS_CONFIG_11bit_500kbit;       /* default */
     udsConfig.timeoutPending = 150;
     udsConfig.blockSize = 0;
     udsConfig.separationTime = 0;
@@ -587,29 +583,40 @@ void obp_uds(void *pvParameters)
 			   paramData[1]);
 
 		switch (paramData[0]) {
-		case PARAM_INFO:
-		    break;
+		  // first we commend out all parameters  which are not used to generate the right "unknown parameter" message in the default - area
+		  /*
 		case PARAM_ECHO:
-		    break;
-		case PARAM_LISTEN:
-		    udsConfig.listen = paramData[1];
-		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
-					   ERR_CODE_NO_ERR, 0, NULL);
-		    break;
-		case PARAM_BUS:
-		    break;
-		case PARAM_BUS_CONFIG:
-		    break;
-		case PARAM_TIMEOUT:
-		    udsConfig.timeout = paramData[1] + 1;
-		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
-					   ERR_CODE_NO_ERR, 0, NULL);
 		    break;
 		case PARAM_TIMEOUT_PENDING:
 		    break;
 		case PARAM_BLOCKSIZE:
 		    break;
 		case PARAM_FRAME_DELAY:
+		    break;
+		  */
+		// the next parameters needs to handled by the bus
+		case PARAM_BUS_MODE:
+		case PARAM_BUS_CONFIG:
+		    actBus_param(paramData[0], paramData[1]);	/* forward the received params to the underlying bus. */
+		    break;		
+		case PARAM_BUS:
+		    //! \todo bus switching needs to be implemented
+		    createCommandResultMsg(ERR_CODE_SOURCE_OS,
+					   ERR_CODE_OS_UNKNOWN_COMMAND, 0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+		    break;
+		case PARAM_INFO:
+		    CreateParamOutputMsg(paramData[0],paramData[1],odp_uds_printParam);
+		    break;
+		   // and here we proceed all command parameters
+		case PARAM_LISTEN:
+		    udsConfig.listen = paramData[1];
+		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
+					   ERR_CODE_NO_ERR, 0, NULL);
+		    break;
+		case PARAM_TIMEOUT:
+		    udsConfig.timeout = paramData[1] + 1;
+		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
+					   ERR_CODE_NO_ERR, 0, NULL);
 		    break;
 		case PARAM_RECVID:
 		    udsConfig.recvID = paramData[1];
@@ -635,8 +642,13 @@ void obp_uds(void *pvParameters)
 		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
 					   ERR_CODE_NO_ERR, 0, NULL);
 		    break;
+		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
+					   ERR_CODE_NO_ERR, 0, NULL);
+		default:
+		    createCommandResultMsg(ERR_CODE_SOURCE_OS,
+					   ERR_CODE_OS_UNKNOWN_COMMAND, 0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+		  break;
 		}
-		actBus_param(paramData[0], paramData[1]);	/* forward the received params to the underlying bus. */
 		break;
 	    case MSG_INIT:
 		DEBUGPRINT("Reset Protocol\n", 'a');
@@ -722,6 +734,8 @@ void obp_uds(void *pvParameters)
     }
 
     /* Do all cleanup here to finish task */
+    actBus_close();
+    free(udsBuffer);
     vTaskDelete(NULL);
 }
 

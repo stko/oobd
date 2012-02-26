@@ -97,6 +97,8 @@ typedef struct error_data
 //! Error OS constants
 #define ERR_CODE_OS_NO_PROTOCOL_TASK 1 		//!<basic OS Error
 #define ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT "can't generate protocol task" 		//!<basic OS Error
+#define ERR_CODE_OS_UNKNOWN_COMMAND 2 		//!< OS couldn't resolve command
+#define ERR_CODE_OS_UNKNOWN_COMMAND_TEXT "Unknown command" 		//!<unknown command
 
 
 /** callback function for error handling

@@ -31,8 +31,8 @@
  */
 
 
-#ifndef INC_OD_SERIAL_H
-#define INC_OD_SERIAL_H
+#ifndef INC_MC_SERIAL_GENERIC_H
+#define INC_MC_SERIAL_GENERIC_H
 
 #include "od_config.h"
 
@@ -42,6 +42,7 @@
 #define ERR_CODE_SERIAL_SYNTAX_ERR 1
 #define ERR_CODE_SERIAL_SYNTAX_ERR_TEXT "Syntax Error"
 
+portBASE_TYPE serial_init_mc ();
 
 portBASE_TYPE serial_init ();
 
@@ -49,4 +50,4 @@ void initOutput ();
 
 
 
-#endif /* INC_OD_SERIAL_H */
+#endif /* INC_MC_SERIAL_GENERIC_H */

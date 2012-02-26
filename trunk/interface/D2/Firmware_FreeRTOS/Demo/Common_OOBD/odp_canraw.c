@@ -39,21 +39,18 @@
 #include "stm32f10x.h"
 #endif
 
-void
-obp_canraw (void *pvParameters)
+void obp_canraw(void *pvParameters)
 {
-	for( ;; )
-	{
-		/* for debug purposes only => must be deleted with next release */
-		vTaskDelay( 100 / portTICK_RATE_MS );
-		printser_string ("CAN_Raw Task running!");
-	}
-	/* Do all cleanup here to finish task */
-	vTaskDelete (NULL);
+    for (;;) {
+	/* for debug purposes only => must be deleted with next release */
+	vTaskDelay(100 / portTICK_RATE_MS);
+	printser_string("CAN_Raw Task running!");
+    }
+    /* Do all cleanup here to finish task */
+    vTaskDelete(NULL);
 }
 
-void
-obd_canraw_init ()
+void obd_canraw_init()
 {
-	odparr[ODP_CANRAW] = obp_canraw;
+    odparr[ODP_CANRAW] = obp_canraw;
 }

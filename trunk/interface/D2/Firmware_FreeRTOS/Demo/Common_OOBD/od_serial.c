@@ -31,12 +31,9 @@
  */
 
 /* OOBD headers. */
-#include "od_serial.h"
-#include "mc_serial.h"
 #include "od_base.h"
-#ifdef OOBD_PLATFORM_STM32
-#include "stm32f10x.h"
-#endif
+#include "mc_sys_generic.h"
+#include "mc_serial_generic.h"
 
 /* global message queues */
 xQueueHandle internalSerialRxQueue = NULL;
@@ -170,9 +167,6 @@ void inputParserTask(void *pvParameters)
     extern xQueueHandle inputQueue;
     extern xQueueHandle protocolQueue;
     extern portBASE_TYPE lfType;
-    extern struct UdsConfig config;
-    extern uint8_t BTM222_BtAddress[];
-    extern uint8_t BTM222_DeviceName[];
 
     MsgData *incomingMsg;
     char inChar;
@@ -281,6 +275,7 @@ void inputParserTask(void *pvParameters)
 		    if (actState == S_PARAM && processFurther) {
 			if (inChar == crEOL) {
 			    if (totalInCount == 3 || totalInCount == 4) {
+			      DEBUGPRINT("noch geht's",'a');
 				switch (cmdKey) {
 
 
@@ -301,7 +296,7 @@ void inputParserTask(void *pvParameters)
 
 
 				default:
-				    if (!eval_param_sys(cmdKey, cmdValue)) {	// parameter not known to the system ?
+				    if (eval_param_sys(cmdKey, cmdValue)==pdFALSE) {	// parameter not known to the system ?
 					sendParam(cmdKey, cmdValue);	//then forward it to the protocol task, maybe he knows :-)
 				    }
 				    break;
@@ -396,12 +391,12 @@ portBASE_TYPE serial_init()
 
     extern xQueueHandle protocolQueue;
     extern xQueueHandle inputQueue;
-
-    if (pdPASS == (protocolQueue = xQueueCreate(QUEUE_SIZE_PROTOCOL,
+      //! \todo die Abfragen auf erfolgreiche Queue- Erzeugung sind falsch (Pointer statt 
+    if (NULL != (protocolQueue = xQueueCreate(QUEUE_SIZE_PROTOCOL,
 						sizeof(struct OdMsg))))
 	DEBUGUARTPRINT("\r\n*** protocolQueue created ***");
 
-    if (pdPASS == (inputQueue = xQueueCreate(QUEUE_SIZE_INPUT,
+    if (NULL != (inputQueue = xQueueCreate(QUEUE_SIZE_INPUT,
 					     sizeof(struct OdMsg))))
 	DEBUGUARTPRINT("\r\n*** inputQueue created ***");
 

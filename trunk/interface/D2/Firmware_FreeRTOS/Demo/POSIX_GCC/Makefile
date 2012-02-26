@@ -92,9 +92,9 @@ CFLAGS=-I . \
 
 
 # Source files
-SOURCE=	mc_posix_can.c \
-		mc_posix_serial.c \
-		mc_posix_sys.c
+SOURCE=	mc_can.c \
+		mc_serial.c \
+		mc_sys.c
 
 
 
@@ -146,12 +146,14 @@ $(OUTDIR)/$(PROJECT_NAME).bin : $(OBJS)  Makefile
 	$(CC) $(OBJS)  $(LIBS) $(LINKER_FLAGS)
 
 
+# beautify own C source files.
+$(foreach src, $(OOBD_COMMON_SOURCE),  $(indent  $(src) -kr))
+
 # Compile: create object files from C source files.
 define COMPILE_C_TEMPLATE
 $(OUTDIR)/$(notdir $(basename $(1))).o : $(1)
 ##	@echo
 	@echo $$< "->" $$@
-	indent $$< -kr
 	$(CC) -c  $$(CFLAGS) $$< -o $$@
 endef
 $(foreach src, $(SOURCE), $(eval $(call COMPILE_C_TEMPLATE, $(src))))

@@ -27,21 +27,43 @@
 */
 
 /**
- * MC generic System header
+ * MC specific system routines
  */
 
+/* OOBD headers. */
+#include "od_config.h"
+#include "od_base.h"
+#include "mc_sys_generic.h"
 
-#ifndef INC_MC_SYS_H
-#define INC_MC_SYS_H
+
+void mc_init_sys_boot_specific()
+{
+    DEBUGPRINT("boot the MC specific system\n", 'a');
+}
 
 
-void mc_init_sys_boot ();
-void mc_init_sys_tasks ();
-void mc_init_sys_shutdown ();
-void mc_sys_idlehook ();
-/** \brief handles system parameter commans
-* \return <>0 if parameter handled by sys, so no more handling is needed
-*/
-portBASE_TYPE eval_param_sys (portBASE_TYPE param, portBASE_TYPE value);
-portBASE_TYPE sysIoCtrl (portBASE_TYPE pinID, portBASE_TYPE lowerValue,portBASE_TYPE upperValue, portBASE_TYPE duration, portBASE_TYPE waveType);
-#endif /* INC_MC_SYS_H */
+void mc_init_sys_tasks_specific()
+{
+    DEBUGPRINT("init the MC specific system tasks\n", 'a');
+}
+
+void mc_init_sys_shutdown_specific()
+{
+    DEBUGPRINT("shutdown the MC specific systems\n", 'a');
+}
+
+
+void mc_sys_idlehook()
+{
+    /* The co-routines are executed in the idle task using the idle task hook. */
+//  vCoRoutineSchedule();        /* Comment this out if not using Co-routines. */
+
+#ifdef __GCC_POSIX__
+  struct timespec xTimeToSleep, xTimeSlept;
+    /* Makes the process more agreeable when using the Posix simulator. */
+  xTimeToSleep.tv_sec = 1;
+  xTimeToSleep.tv_nsec = 0;
+  nanosleep (&xTimeToSleep, &xTimeSlept);
+#endif
+}
+
