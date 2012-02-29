@@ -65,15 +65,18 @@ void inputRedirectTask(void *pvParameters)
 	    if (pdTRUE
 		== xQueueReceive(internalSerialRxQueue, &ucRx,
 				 portMAX_DELAY)) {
+		//! \todo Warum wird hier unabhängig vom Echo-Status das Zeichen ausgegeben
 		printChar(ucRx);
 #ifdef OOBD_PLATFORM_POSIX
 		putchar(ucRx);
 #endif
-		msg = createMsg(&ucRx, 1);
+		if (ucRx!='\n'){ // suppress \n, as this char is not wanted
+		  msg = createMsg(&ucRx, 1);
 		if (pdPASS != sendMsg(MSG_SERIAL_IN, inputQueue, msg)) {
-		    DEBUGPRINT
-			("FATAL ERROR: Serial Redirect queue full!!\n",
-			 'a');
+		      DEBUGPRINT
+			  ("FATAL ERROR: Serial Redirect queue full!!\n",
+			  'a');
+		  }
 		}
 	    }
 	}
