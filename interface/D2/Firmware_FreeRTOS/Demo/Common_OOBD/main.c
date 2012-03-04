@@ -85,26 +85,26 @@ int main(void)
     /*activate the output task */
     initOutput();
 
-    DEBUGPRINT("*** Starting FreeRTOS ***\n",'a');
+    DEBUGPRINT("*** Starting FreeRTOS ***\n", 'a');
 
     // Version String
     DEBUGPRINT("OOBD Build: %s\n", SVNREV);
 
-  //! \todo move the task generation into the mc_sys_generic.c file
+    //! \todo move the task generation into the mc_sys_generic.c file
     /* starting with UDS protocol of the list by default */
     if (pdPASS == xTaskCreate(odparr[1], (const signed portCHAR *) "prot",
 			      configMINIMAL_STACK_SIZE, (void *) NULL,
 			      TASK_PRIO_LOW, &xTaskProtHandle))
-	DEBUGPRINT("*** 'prot' Task created ***\n",'a');
+	DEBUGPRINT("*** 'prot' Task created ***\n", 'a');
     else
-	DEBUGPRINT("*** 'prot' Task NOT created ***\n",'a');
+	DEBUGPRINT("*** 'prot' Task NOT created ***\n", 'a');
 
     if (pdPASS == xTaskCreate(tickTask, (const signed portCHAR *) "Tick",
 			      configMINIMAL_STACK_SIZE, (void *) NULL,
 			      TASK_PRIO_LOW, (xTaskHandle *) NULL))
-	DEBUGPRINT("*** 'Tick' Task created ***\n",'a');
+	DEBUGPRINT("*** 'Tick' Task created ***\n", 'a');
     else
-	DEBUGPRINT("*** 'Tick' Task NOT created ***\n",'a');
+	DEBUGPRINT("*** 'Tick' Task NOT created ***\n", 'a');
 
     mc_init_sys_tasks();
 
@@ -112,7 +112,7 @@ int main(void)
     /* Set the scheduler running.  This function will not return unless a task calls vTaskEndScheduler(). */
     vTaskStartScheduler();
 
-    DEBUGPRINT("Something got wrong, RTOS terminated !!!\n",'a');
+    DEBUGPRINT("Something got wrong, RTOS terminated !!!\n", 'a');
     mc_init_sys_shutdown();
     return 1;
 }

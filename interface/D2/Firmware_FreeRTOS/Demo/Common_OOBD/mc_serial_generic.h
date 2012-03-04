@@ -42,12 +42,12 @@
 #define ERR_CODE_SERIAL_SYNTAX_ERR 1
 #define ERR_CODE_SERIAL_SYNTAX_ERR_TEXT "Syntax Error"
 
-portBASE_TYPE serial_init_mc ();
+portBASE_TYPE serial_init_mc();
 
-portBASE_TYPE serial_init ();
+portBASE_TYPE serial_init();
 
-void initOutput ();
+void initOutput();
 
 
 
-#endif /* INC_MC_SERIAL_GENERIC_H */
+#endif				/* INC_MC_SERIAL_GENERIC_H */

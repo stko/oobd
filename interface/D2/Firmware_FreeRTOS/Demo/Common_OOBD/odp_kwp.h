@@ -34,6 +34,6 @@
 #ifndef INC_ODP_KWP_H
 #define INC_ODP_KWP_H
 
-void obd_kwp_init ();
+void obd_kwp_init();
 
-#endif /* INC_ODP_KWP_H */
+#endif				/* INC_ODP_KWP_H */

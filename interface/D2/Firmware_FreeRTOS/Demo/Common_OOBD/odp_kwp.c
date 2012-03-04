@@ -40,8 +40,7 @@
 #endif
 
 
-void
-obd_kwp_init ()
+void obd_kwp_init()
 {
 //  odparr[ODP_KWP] = obp_kwp;
-} 
+}

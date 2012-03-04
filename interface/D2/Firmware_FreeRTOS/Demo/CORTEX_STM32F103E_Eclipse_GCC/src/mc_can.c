@@ -52,14 +52,16 @@ bus_init_can ()
 portBASE_TYPE
 bus_send_can (data_packet * data)
 {
+    extern struct CanConfig *canConfig;
+
   DEBUGUARTPRINT("\r\n*** bus_send_can entered! ***");
 
   CanTxMsg TxMessage;
 
-  if (config.busConfig == VALUE_BUS_CONFIG_29bit_125kbit ||
-	  config.busConfig == VALUE_BUS_CONFIG_29bit_250kbit ||
-	  config.busConfig == VALUE_BUS_CONFIG_29bit_500kbit ||
-	  config.busConfig == VALUE_BUS_CONFIG_29bit_1000kbit)
+  if (canConfig->busConfig == VALUE_BUS_CONFIG_29bit_125kbit ||
+	  canConfig->busConfig == VALUE_BUS_CONFIG_29bit_250kbit ||
+	  canConfig->busConfig == VALUE_BUS_CONFIG_29bit_500kbit ||
+	  canConfig->busConfig == VALUE_BUS_CONFIG_29bit_1000kbit)
   {
     TxMessage.ExtId = data->recv;   /* Extended CAN identifier 29bit */
     TxMessage.IDE   = CAN_ID_EXT;   /* IDE=1 for Extended CAN identifier 29 bit */
@@ -100,27 +102,28 @@ bus_flush_can ()
 portBASE_TYPE
 bus_param_can (portBASE_TYPE param, portBASE_TYPE value)
 {
+    extern struct CanConfig *canConfig;
   switch (param)
   {
     case PARAM_BUS_CONFIG:
 	  if (value != 0)
         CAN1_Configuration(value, CAN_Mode_Silent); /* reinitialization of CAN interface */
-      config.busConfig = value;
+      canConfig->busConfig = value;
       break;
 
     case PARAM_BUS:
   	  if (value == 0)
-        CAN1_Configuration(config.busConfig, CAN_Mode_Silent); /* set CAN interface to silent mode */
+        CAN1_Configuration(canConfig->busConfig, CAN_Mode_Silent); /* set CAN interface to silent mode */
   	  else if (value == 1)
-        CAN1_Configuration(config.busConfig, CAN_Mode_LoopBack); /* set CAN interface to loop back mode */
+        CAN1_Configuration(canConfig->busConfig, CAN_Mode_LoopBack); /* set CAN interface to loop back mode */
       else if (value == 2)
-        CAN1_Configuration(config.busConfig, CAN_Mode_Silent_LoopBack); /* set CAN interface to loop back combined with silent mode */
+        CAN1_Configuration(canConfig->busConfig, CAN_Mode_Silent_LoopBack); /* set CAN interface to loop back combined with silent mode */
       else if (value == 3)
-        CAN1_Configuration(config.busConfig, CAN_Mode_Normal); /* set CAN interface to normal mode */
+        CAN1_Configuration(canConfig->busConfig, CAN_Mode_Normal); /* set CAN interface to normal mode */
       else
-        CAN1_Configuration(config.busConfig, CAN_Mode_Silent); /* set CAN interface to default mode */
+        CAN1_Configuration(canConfig->busConfig, CAN_Mode_Silent); /* set CAN interface to default mode */
 
-  	  config.bus = value;	/* set config.bus to current value of Paramter 'P 5 x' */
+  	  canConfig->bus = value;	/* set config.bus to current value of Paramter 'P 5 x' */
       break;
 
     default:

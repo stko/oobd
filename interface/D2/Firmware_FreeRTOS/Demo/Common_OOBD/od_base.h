@@ -37,8 +37,8 @@
 #include <stdint.h>
 #include "od_config.h"
 
-void initProtocols ();
-void initBusses ();
+void initProtocols();
+void initBusses();
 
 //! callback function for print data
 
@@ -52,7 +52,8 @@ typedef void (*print_cbf) (portBASE_TYPE msgType, void *data,
 
 //! signature of the  function that will be called in protocol or bus handler
 //! when a parameter command is given
-typedef portBASE_TYPE (*param_cbf) (portBASE_TYPE param, portBASE_TYPE value);
+typedef portBASE_TYPE(*param_cbf) (portBASE_TYPE param,
+				   portBASE_TYPE value);
 
 
 
@@ -61,12 +62,11 @@ typedef portBASE_TYPE (*param_cbf) (portBASE_TYPE param, portBASE_TYPE value);
 * used to describe a generic data packet.
 * define before include busses and protocol headers, as definition is needed there
 */
-typedef struct data_packet
-{
-  portBASE_TYPE recv;		//!< id of the receiver
-  portBASE_TYPE len;		//!< data length
-  portBASE_TYPE err;		//!< only when receiving data: contains ODB_ERR- Codes
-  unsigned char *data;		//!< pointer to the data bytes
+typedef struct data_packet {
+    portBASE_TYPE recv;		//!< id of the receiver
+    portBASE_TYPE len;		//!< data length
+    portBASE_TYPE err;		//!< only when receiving data: contains ODB_ERR- Codes
+    unsigned char *data;	//!< pointer to the data bytes
 } DATA_PACKET;
 
 
@@ -77,28 +77,27 @@ typedef struct error_data error_data;
 /** error packet structure
 * used to send error message to output task.
 */
-typedef struct error_data
-{
-  portBASE_TYPE source;		//!< Source task or handler, which throws the error
-  portBASE_TYPE errType;	//!< classification of error type
-  portBASE_TYPE detail;		//!< detailed error definition
-   char *text;		//!< textual error description
+typedef struct error_data {
+    portBASE_TYPE source;	//!< Source task or handler, which throws the error
+    portBASE_TYPE errType;	//!< classification of error type
+    portBASE_TYPE detail;	//!< detailed error definition
+    char *text;			//!< textual error description
 } ERROR_DATA;
 
 
 //! Error Source task constants
-#define ERR_CODE_NO_ERR 0 	//!<generic falue for No Error
-#define ERR_CODE_SOURCE_OS 1 		//!<basic OS Error
+#define ERR_CODE_NO_ERR 0	//!<generic falue for No Error
+#define ERR_CODE_SOURCE_OS 1	//!<basic OS Error
 #define ERR_CODE_SOURCE_SERIALIN 2	//!<Serial Input Task Error
 #define ERR_CODE_SOURCE_SERIALOUT 3	//!<Serial Output Task Error
 #define ERR_CODE_SOURCE_PROTOCOL 4	//!<Protocol Task Error
-#define ERR_CODE_SOURCE_BUS 5		//!<Bus Handler Error
+#define ERR_CODE_SOURCE_BUS 5	//!<Bus Handler Error
 
 //! Error OS constants
-#define ERR_CODE_OS_NO_PROTOCOL_TASK 1 		//!<basic OS Error
-#define ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT "can't generate protocol task" 		//!<basic OS Error
-#define ERR_CODE_OS_UNKNOWN_COMMAND 2 		//!< OS couldn't resolve command
-#define ERR_CODE_OS_UNKNOWN_COMMAND_TEXT "Unknown command" 		//!<unknown command
+#define ERR_CODE_OS_NO_PROTOCOL_TASK 1	//!<basic OS Error
+#define ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT "can't generate protocol task"	//!<basic OS Error
+#define ERR_CODE_OS_UNKNOWN_COMMAND 2	//!< OS couldn't resolve command
+#define ERR_CODE_OS_UNKNOWN_COMMAND_TEXT "Unknown command"	//!<unknown command
 
 
 /** callback function for error handling
@@ -118,10 +117,9 @@ typedef struct param_data param_data;
 /* parameter packet structure
 * used to let the output task make outputs about incoming parameters (or to handle them then)
 */
-typedef struct param_data
-{
-  portBASE_TYPE key;		//!< the parameter key
-  portBASE_TYPE value; 		//!< the parameter value
+typedef struct param_data {
+    portBASE_TYPE key;		//!< the parameter key
+    portBASE_TYPE value;	//!< the parameter value
 } PARAM_DATA;
 
 
@@ -132,19 +130,17 @@ typedef struct param_data
 typedef struct data_packet data_packet;
 
 /* generic messageTypes to put "everything" in a queue */
-typedef struct MsgData
-{
-  portBASE_TYPE len;
-  void *addr;
-  void *print;			//!< callback function to output the data or error
+typedef struct MsgData {
+    portBASE_TYPE len;
+    void *addr;
+    void *print;		//!< callback function to output the data or error
 } MSGDATA;
 
 typedef struct MsgData MsgData;
 
-typedef struct OdMsg
-{
-  portBASE_TYPE msgType;
-  MsgData *msgPtr;
+typedef struct OdMsg {
+    portBASE_TYPE msgType;
+    MsgData *msgPtr;
 } ODMSG;
 
 typedef struct OdMsg OdMsg;
@@ -152,36 +148,40 @@ typedef struct OdMsg OdMsg;
 #include "od_protocols.h"
 
 
-MsgData *createDataMsg (data_packet * data);
-MsgData *createMsg (void *data, size_t size);
-void disposeMsg (MsgData * p);
-void disposeDataMsg (MsgData * p);
-portBASE_TYPE sendMsg (portBASE_TYPE msgType, xQueueHandle recv,
-		       MsgData * msg);
-portBASE_TYPE sendMsgFromISR (portBASE_TYPE msgType, xQueueHandle recv,
-			      MsgData * msg);
-portBASE_TYPE waitMsg (xQueueHandle recv, MsgData ** msg,
-		       portBASE_TYPE timeout);
+MsgData *createDataMsg(data_packet * data);
+MsgData *createMsg(void *data, size_t size);
+void disposeMsg(MsgData * p);
+void disposeDataMsg(MsgData * p);
+portBASE_TYPE sendMsg(portBASE_TYPE msgType, xQueueHandle recv,
+		      MsgData * msg);
+portBASE_TYPE sendMsgFromISR(portBASE_TYPE msgType, xQueueHandle recv,
+			     MsgData * msg);
+portBASE_TYPE waitMsg(xQueueHandle recv, MsgData ** msg,
+		      portBASE_TYPE timeout);
 
-		       
-void createCommandResultMsg(portBASE_TYPE eSource, portBASE_TYPE eType,portBASE_TYPE eDetail, char *text);
-void createCommandResultMsgFromISR(portBASE_TYPE eSource, portBASE_TYPE eType,portBASE_TYPE eDetail, char *text);
-void CreateParamOutputMsg(portBASE_TYPE key, portBASE_TYPE value, print_cbf printRoutine);		       
-		       
+
+void createCommandResultMsg(portBASE_TYPE eSource, portBASE_TYPE eType,
+			    portBASE_TYPE eDetail, char *text);
+void createCommandResultMsgFromISR(portBASE_TYPE eSource,
+				   portBASE_TYPE eType,
+				   portBASE_TYPE eDetail, char *text);
+void CreateParamOutputMsg(portBASE_TYPE key, portBASE_TYPE value,
+			  print_cbf printRoutine);
+
 // Print functions
 
-void printser_string (char const *str);
+void printser_string(char const *str);
 
-void printser_int (int value, int base);
+void printser_int(int value, int base);
 
-void printser_uint32ToHex (uint32_t value);
+void printser_uint32ToHex(uint32_t value);
 
-void printser_uint16ToHex (uint16_t value);
+void printser_uint16ToHex(uint16_t value);
 
-void printser_uint8ToHex (uint8_t value);
+void printser_uint8ToHex(uint8_t value);
 
 void printLF();
 
 void printEOT();
 
-#endif /* INC_OD_BASE_H */
+#endif				/* INC_OD_BASE_H */

@@ -34,7 +34,7 @@
 #ifndef INC_ODP_UDS_H
 #define INC_ODP_UDS_H
 
-void obd_uds_init ();
+void obd_uds_init();
 
 //! UDS protocol Error constants and texts
 #define ERR_CODE_UDS_DATA_TOO_LONG_ERR 1
@@ -49,16 +49,15 @@ void obd_uds_init ();
 #define ERR_CODE_UDS_TIMEOUT_TEXT "Answer time exeeded"
 
 /* store all parameter in one single struct to maybe later store such param sets in EEPROM */
-struct UdsConfig
-{
-  portBASE_TYPE recvID, //!< Module ID
-    sendID, 		  //!< sender ID, used when the expected answer ID <> recvID || 8
-    timeout,            //!< timeout in systemticks
-    listen,             //!< listen level
-    timeoutPending,     //!< timeout for response pending delays in system ticks
-    blockSize,          //!< max. number of frames to send, overwrites the values received from Module, if > 0.
-    separationTime,     //!< delay between two frames,overwrites the values received from Module, if > 0
-    tpFreq;              //!< time between two tester presents in systemticks
-} ;
+struct UdsConfig {
+    portBASE_TYPE recvID,	//!< Module ID
+     sendID,			//!< sender ID, used when the expected answer ID <> recvID || 8
+     timeout,			//!< timeout in systemticks
+     listen,			//!< listen level
+     timeoutPending,		//!< timeout for response pending delays in system ticks
+     blockSize,			//!< max. number of frames to send, overwrites the values received from Module, if > 0.
+     separationTime,		//!< delay between two frames,overwrites the values received from Module, if > 0
+     tpFreq;			//!< time between two tester presents in systemticks
+};
 
-#endif /* INC_ODP_UDS_H */
+#endif				/* INC_ODP_UDS_H */

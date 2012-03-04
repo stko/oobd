@@ -34,6 +34,6 @@
 #ifndef INC_ODP_CANRAW_H
 #define INC_ODP_CANRAW_H
 
-void obd_canraw_init ();
+void obd_canraw_init();
 
-#endif /* INC_ODP_CANRAW_H */
+#endif				/* INC_ODP_CANRAW_H */
