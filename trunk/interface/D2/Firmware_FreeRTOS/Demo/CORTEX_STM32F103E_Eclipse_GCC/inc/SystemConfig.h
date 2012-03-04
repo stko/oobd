@@ -34,9 +34,6 @@ void Led1Task (void *pvParameters);
 void Led2Task (void *pvParameters);
 
 
-uint8_t BTM222_BtAddress[18] = "00:00:00:00:00:00";
-uint8_t BTM222_DeviceName[17] = "not detected";
-
 /* -------- Create Global variables ---------------------------------------------------*/
 void 		System_Configuration(void);
 void        RCC_Configuration(void);

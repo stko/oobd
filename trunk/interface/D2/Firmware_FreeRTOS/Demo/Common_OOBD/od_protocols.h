@@ -85,32 +85,32 @@ typedef void (*recv_cbf) (data_packet * p);
 
 //! function pointer prototypes to enable bus driver switching
 
-typedef portBASE_TYPE (*bus_init) ();
-typedef portBASE_TYPE (*bus_send) (data_packet * data);
+typedef portBASE_TYPE(*bus_init) ();
+typedef portBASE_TYPE(*bus_send) (data_packet * data);
 typedef void (*bus_flush) ();
-typedef portBASE_TYPE (*bus_param) (portBASE_TYPE param, portBASE_TYPE value);
-typedef portBASE_TYPE (*bus_paramPrint) (portBASE_TYPE param, portBASE_TYPE value);
+typedef portBASE_TYPE(*bus_param) (portBASE_TYPE param,
+				   portBASE_TYPE value);
+typedef portBASE_TYPE(*bus_paramPrint) (portBASE_TYPE param,
+					portBASE_TYPE value);
 typedef void (*bus_close) ();
 
 
 //enumeration for identifiers for all available protocols
-enum prots
-{
-  ODP_CANRAW,
-  ODP_UDS,
-  // ODP_SIZE defines the number of available protocols
-  ODP_SIZE
+enum prots {
+    ODP_CANRAW,
+    ODP_UDS,
+    // ODP_SIZE defines the number of available protocols
+    ODP_SIZE
 };
 
 // define a array to store all protocols
 void (*odparr[ODP_SIZE]) (void *pvParameters);
 
 //enumeration for identifiers for all available busses
-enum busses
-{
-  ODB_CAN,
-  // ODB_SIZE defines the number of available busses
-  ODB_SIZE
+enum busses {
+    ODB_CAN,
+    // ODB_SIZE defines the number of available busses
+    ODB_SIZE
 };
 
 // define a array to store all busses
@@ -121,7 +121,7 @@ xTaskHandle xTaskProtHandle;
 
 
 // function prototype for the bus interface
-portBASE_TYPE busControl (portBASE_TYPE cmd, void *param);
+portBASE_TYPE busControl(portBASE_TYPE cmd, void *param);
 
 
-#endif /* INC_OD_PROTOCOLS_H */
+#endif				/* INC_OD_PROTOCOLS_H */

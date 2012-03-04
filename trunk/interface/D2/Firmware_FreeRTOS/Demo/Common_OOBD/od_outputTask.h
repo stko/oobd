@@ -35,7 +35,7 @@
 #define INC_OD_OUTPUTTASK_H
 
 /* output data on serial port */
-void outputTask (void *pvParameters);
+void outputTask(void *pvParameters);
 
 
-#endif /* INC_OD_OUTPUTTASK_H */
+#endif				/* INC_OD_OUTPUTTASK_H */

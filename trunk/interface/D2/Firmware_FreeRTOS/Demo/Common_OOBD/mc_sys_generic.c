@@ -50,10 +50,9 @@ printParam_sys(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
     static param_data *pd;
     pd = data;
     portBASE_TYPE cmdKey = pd->key, cmdValue = pd->value;	/* the both possible params */
-    DEBUGPRINT("sys parameter received: %ld / %ld\n",cmdKey, cmdValue);
+    DEBUGPRINT("sys parameter received: %ld / %ld\n", cmdKey, cmdValue);
     switch (cmdKey) {
     case PARAM_INFO:
-	eval_param_sys(cmdKey, cmdValue);
 	switch (cmdValue) {
 
 	case VALUE_PARAM_INFO_VERSION:	/* p 0 0 */
@@ -63,11 +62,20 @@ printParam_sys(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 	    printser_string(SVNREV);
 	    printser_string(" ");
 	    printser_string(BUILDDATE);
+	    printLF();
+	    printEOT();
 	    break;
 	case VALUE_PARAM_INFO_SERIALNUMBER:	/* p 0 1 */
 	    printser_string("000");
+	    printLF();
+	    printEOT();
 	    break;
+	default:
+	    evalResult
+		(ERR_CODE_SOURCE_OS, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT, 0,
+		 ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 	}
+	break;
     case PARAM_PROTOCOL:
 	// \todo this kind of task switching is not design intent
 	// \todo no use of protocol table, its hardcoded instead
@@ -81,9 +89,9 @@ printParam_sys(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 				      configMINIMAL_STACK_SIZE,
 				      (void *) NULL,
 				      TASK_PRIO_LOW, &xTaskProtHandle))
-		DEBUGPRINT("\r\n*** 'prot' Task created ***",'a');
+		DEBUGPRINT("\r\n*** 'prot' Task created ***", 'a');
 	    else
-		DEBUGPRINT("\r\n*** 'prot' Task NOT created ***",'a');
+		DEBUGPRINT("\r\n*** 'prot' Task NOT created ***", 'a');
 	}
 	if (VALUE_PARAM_PROTOCOL_CAN_UDS == cmdValue) {	/* p 4 2 */
 	    printser_string("Protocol CAN UDS activated!");
@@ -95,15 +103,14 @@ printParam_sys(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 				      configMINIMAL_STACK_SIZE,
 				      (void *) NULL,
 				      TASK_PRIO_LOW, &xTaskProtHandle)) {
-		DEBUGPRINT("\r\n*** 'prot' Task created ***",'a');
-		createCommandResultMsg
-		    (ERR_CODE_SOURCE_SERIALIN, ERR_CODE_NO_ERR, 0, NULL);
+		DEBUGPRINT("\r\n*** 'prot' Task created ***", 'a');
+		evalResult(ERR_CODE_SOURCE_OS, ERR_CODE_NO_ERR, 0, NULL);
 	    } else {
-		createCommandResultMsg
-		    (ERR_CODE_SOURCE_SERIALIN,
+		evalResult
+		    (ERR_CODE_SOURCE_OS,
 		     ERR_CODE_OS_NO_PROTOCOL_TASK,
 		     0, ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT);
-		DEBUGPRINT("\r\n*** 'prot' Task NOT created ***",'a');
+		DEBUGPRINT("\r\n*** 'prot' Task NOT created ***", 'a');
 	    }
 	}
 	break;
@@ -113,14 +120,25 @@ printParam_sys(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 	//sendParam(cmdKey, cmdValue);
 	break;
     }
-
-    printLF();
-    printEOT();
 }
 
 portBASE_TYPE eval_param_sys(portBASE_TYPE param, portBASE_TYPE value)
 {
-    CreateParamOutputMsg(param, value, printParam_sys);
+    switch (param) {
+    case PARAM_INFO:
+	switch (value) {
+	case VALUE_PARAM_INFO_VERSION:
+	case VALUE_PARAM_INFO_SERIALNUMBER:
+	    CreateParamOutputMsg(param, value, printParam_sys);
+	    return pdTRUE;
+	    break;
+	default:
+	    return pdFALSE;
+	}
+	break;
+    default:
+	return pdFALSE;
+    }
 }
 
 void mc_init_sys_tasks()

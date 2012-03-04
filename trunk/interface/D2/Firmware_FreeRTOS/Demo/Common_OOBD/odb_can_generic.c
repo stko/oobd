@@ -61,58 +61,95 @@ print_telegram(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 }
 
 /*-----------------------------------------------------------*/
-void bus_param_canPrint(portBASE_TYPE cmdKey, portBASE_TYPE cmdValue){
-    switch (cmdKey) {
-    case VALUE_PARAM_INFO_BUS_MODE:	/* p 0 4 */
-	switch (canConfig->mode) {
-	case VALUE_BUS_SILENT_MODE:
-	    printser_string("0 - CAN Transceiver in 'Silent Mode'");
+void bus_param_canPrint(portBASE_TYPE cmdKey, portBASE_TYPE cmdValue)
+{
+    DEBUGPRINT("can Parameter receiced %d-%d\n", cmdKey, cmdValue);
+    if (cmdKey == PARAM_INFO) {
+	switch (cmdValue) {
+	case VALUE_PARAM_INFO_BUS:	/* p 0 2 */
+	    printser_string("CAN Bus");
+	    printLF();
+	    printEOT();
 	    break;
-	case VALUE_BUS_LOOP_BACK_MODE:
-	    printser_string("1 - CAN Transceiver in 'Loop Back Mode'");
+	case VALUE_PARAM_INFO_BUS_MODE:	/* p 0 4 */
+	    switch (canConfig->mode) {
+	    case VALUE_BUS_SILENT_MODE:
+		printser_string("0 - CAN Transceiver in 'Silent Mode'");
+		printLF();
+		printEOT();
+		break;
+	    case VALUE_BUS_LOOP_BACK_MODE:
+		printser_string("1 - CAN Transceiver in 'Loop Back Mode'");
+		printLF();
+		printEOT();
+		break;
+	    case VALUE_BUS_LOOP_BACK_WITH_SILENT_MODE:
+		printser_string
+		    ("2 - CAN Transceiver in 'Loop Back combined with Silent Mode'");
+		printLF();
+		printEOT();
+		break;
+	    case VALUE_BUS_NORMAL_MODE:
+		printser_string("3 - CAN Transceiver in 'Normal Mode'");
+		printLF();
+		printEOT();
+		break;
+	    }
 	    break;
-	case VALUE_BUS_LOOP_BACK_WITH_SILENT_MODE:
-	    printser_string
-		("2 - CAN Transceiver in 'Loop Back combined with Silent Mode'");
-	    break;
-	case VALUE_BUS_NORMAL_MODE:
-	    printser_string("3 - CAN Transceiver in 'Normal Mode'");
+	case VALUE_PARAM_INFO_BUS_CONFIG:	/* p 0 5 */
+	    switch (canConfig->busConfig) {
+	    case VALUE_BUS_CONFIG_11bit_125kbit:
+		printser_string("1 = ISO 15765-4, CAN 11bit ID/125kBaud");
+		printLF();
+		printEOT();
+		break;
+	    case VALUE_BUS_CONFIG_11bit_250kbit:
+		printser_string("2 = ISO 15765-4, CAN 11bit ID/250kBaud");
+		printLF();
+		printEOT();
+		break;
+	    case VALUE_BUS_CONFIG_11bit_500kbit:
+		printser_string("3 = ISO 15765-4, CAN 11bit ID/500kBaud");
+		printLF();
+		printEOT();
+		break;
+	    case VALUE_BUS_CONFIG_11bit_1000kbit:
+		printser_string("4 - ISO 15765-4, CAN 11bit ID/1000kBaud");
+		printLF();
+		printEOT();
+		break;
+	    case VALUE_BUS_CONFIG_29bit_125kbit:
+		printser_string("5 - ISO 15765-4, CAN 29bit ID/125kBaud");
+		printLF();
+		printEOT();
+		break;
+	    case VALUE_BUS_CONFIG_29bit_250kbit:
+		printser_string("6 - ISO 15765-4, CAN 29bit ID/250kBaud");
+		printLF();
+		printEOT();
+		break;
+	    case VALUE_BUS_CONFIG_29bit_500kbit:
+		printser_string("7 - ISO 15765-4, CAN 29bit ID/500kBaud");
+		printLF();
+		printEOT();
+		break;
+	    case VALUE_BUS_CONFIG_29bit_1000kbit:
+		printser_string("8 - ISO 15765-4, CAN 29bit ID/1000kBaud");
+		printLF();
+		printEOT();
+		break;
+	    }
+	default:
+	    createCommandResultMsg(ERR_CODE_SOURCE_OS,
+				   ERR_CODE_OS_UNKNOWN_COMMAND, 0,
+				   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+
 	    break;
 	}
-	break;
-    case VALUE_PARAM_INFO_BUS_CONFIG:	/* p 0 5 */
-	switch (canConfig->busConfig) {
-	case VALUE_BUS_CONFIG_11bit_125kbit:
-	    printser_string("1 = ISO 15765-4, CAN 11bit ID/125kBaud");
-	    break;
-	case VALUE_BUS_CONFIG_11bit_250kbit:
-	    printser_string("2 = ISO 15765-4, CAN 11bit ID/250kBaud");
-	    break;
-	case VALUE_BUS_CONFIG_11bit_500kbit:
-	    printser_string("3 = ISO 15765-4, CAN 11bit ID/500kBaud");
-	    break;
-	case VALUE_BUS_CONFIG_11bit_1000kbit:
-	    printser_string("4 - ISO 15765-4, CAN 11bit ID/1000kBaud");
-	    break;
-	case VALUE_BUS_CONFIG_29bit_125kbit:
-	    printser_string("5 - ISO 15765-4, CAN 29bit ID/125kBaud");
-	    break;
-	case VALUE_BUS_CONFIG_29bit_250kbit:
-	    printser_string("6 - ISO 15765-4, CAN 29bit ID/250kBaud");
-	    break;
-	case VALUE_BUS_CONFIG_29bit_500kbit:
-	    printser_string("7 - ISO 15765-4, CAN 29bit ID/500kBaud");
-	    break;
-	case VALUE_BUS_CONFIG_29bit_1000kbit:
-	    printser_string("8 - ISO 15765-4, CAN 29bit ID/1000kBaud");
-	    break;
-	}
- 	default:
-	  		    createCommandResultMsg(ERR_CODE_SOURCE_OS,
-					   ERR_CODE_OS_UNKNOWN_COMMAND, 0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
-
-	  break;
-
+    } else {
+	createCommandResultMsg(ERR_CODE_SOURCE_OS,
+			       ERR_CODE_OS_UNKNOWN_COMMAND, 0,
+			       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 
     }
 }

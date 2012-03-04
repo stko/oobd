@@ -34,9 +34,9 @@
 #ifndef INC_MC_CAN_H
 #define INC_MC_CAN_H
 
-portBASE_TYPE bus_init_can ();
-portBASE_TYPE bus_send_can (data_packet * data);
-void bus_flush_can ();
-void bus_close_can ();
+portBASE_TYPE bus_init_can();
+portBASE_TYPE bus_send_can(data_packet * data);
+void bus_flush_can();
+void bus_close_can();
 
-#endif /* INC_MC_CAN_H */
+#endif				/* INC_MC_CAN_H */

@@ -70,13 +70,13 @@ void inputRedirectTask(void *pvParameters)
 #ifdef OOBD_PLATFORM_POSIX
 		putchar(ucRx);
 #endif
-		if (ucRx!='\n'){ // suppress \n, as this char is not wanted
-		  msg = createMsg(&ucRx, 1);
-		if (pdPASS != sendMsg(MSG_SERIAL_IN, inputQueue, msg)) {
-		      DEBUGPRINT
-			  ("FATAL ERROR: Serial Redirect queue full!!\n",
-			  'a');
-		  }
+		if (ucRx != '\n') {	// suppress \n, as this char is not wanted
+		    msg = createMsg(&ucRx, 1);
+		    if (pdPASS != sendMsg(MSG_SERIAL_IN, inputQueue, msg)) {
+			DEBUGPRINT
+			    ("FATAL ERROR: Serial Redirect queue full!!\n",
+			     'a');
+		    }
 		}
 	    }
 	}
@@ -134,8 +134,7 @@ void sendParam(portBASE_TYPE key, portBASE_TYPE value)
 
 char checkValidChar(char a)
 {
-  DEBUGPRINT("char: %d\n",a);  
-  if (a == '\r') {		/* char CR Carriage return */
+    if (a == '\r') {		/* char CR Carriage return */
 	return crEOL;
     }
     if (a == '\t' || a == ' ' || a == '\n') {
@@ -189,8 +188,6 @@ void inputParserTask(void *pvParameters)
     };
     portBASE_TYPE actState = S_INIT, totalInCount = 0;
     dp.data = &buffer;
-    			      DEBUGPRINT("Start input task. STATE_INIT=%d\n",S_INIT);
-
     for (;;) {
 	DEBUGUARTPRINT("\r\n*** inputParserTask is running! ***");
 
@@ -198,11 +195,9 @@ void inputParserTask(void *pvParameters)
 					   portMAX_DELAY))) {
 	    switch (msgType) {
 	    case MSG_SERIAL_IN:
-		DEBUGPRINT("*** something received! ***\n",'a');
 		processFurther = 1;
 		if (actState != S_SLEEP) {	/* if we not actual ignore any input */
 		    inChar = checkValidChar(*(char *) incomingMsg->addr);
-		DEBUGPRINT("decoded input value:%d\n",inChar);
 		    if (actState == S_WAITEOL) {	/* just waiting for an end of line */
 			if (inChar == crEOL) {
 			    if (lastErr) {
@@ -232,14 +227,10 @@ void inputParserTask(void *pvParameters)
 			    processFurther = 0;
 			}
 			if (inChar == crEOL) {	/* in case we filled the buffer already previously */
-			    createCommandResultMsg
-				(ERR_CODE_SOURCE_SERIALIN, ERR_CODE_NO_ERR,
-				 0, NULL);
 			    sendMsg(MSG_SEND_BUFFER, protocolQueue, NULL);
-			    //actState = S_SLEEP;
+			    actState = S_SLEEP;
+			    processFurther = 0;	// no more input evaluation, just waiting for wake up from the protocol task
 			}
-			DEBUGPRINT("leaving S_INIT:actstate: %ld procFuther: %d\n",actState,processFurther);
-
 		    }
 		    if (actState == S_DATA) {
 			if (inChar == crEOL) {
@@ -280,94 +271,97 @@ void inputParserTask(void *pvParameters)
 			    }
 			}
 		    }
-			      DEBUGPRINT("actstate: %ld procFuther: %d\n",actState,processFurther);
-
-		    if (actState == S_PARAM && processFurther) {
-			      DEBUGPRINT("<ret>\n",'a');
-			if (inChar == crEOL) {
-			    if (totalInCount == 3 || totalInCount == 4) {
-			      DEBUGPRINT("noch geht's",'a');
-				switch (cmdKey) {
+		    if (processFurther) {
+			if (actState == S_PARAM) {
+			    if (inChar == crEOL) {
+				if (totalInCount == 3 || totalInCount == 4) {
+				    switch (cmdKey) {
 
 
 
-				case PARAM_ECHO:
-				    createCommandResultMsg
-					(ERR_CODE_SOURCE_SERIALIN,
-					 ERR_CODE_NO_ERR, 0, NULL);
-				    break;
+				    case PARAM_ECHO:
+					createCommandResultMsg
+					    (ERR_CODE_SOURCE_SERIALIN,
+					     ERR_CODE_NO_ERR, 0, NULL);
+					break;
 
-				case PARAM_LINEFEED:
-				    lfType = cmdValue;
-				    createCommandResultMsg
-					(ERR_CODE_SOURCE_SERIALIN,
-					 ERR_CODE_NO_ERR, 0, NULL);
-				    break;
+				    case PARAM_LINEFEED:
+					lfType = cmdValue;
+					createCommandResultMsg
+					    (ERR_CODE_SOURCE_SERIALIN,
+					     ERR_CODE_NO_ERR, 0, NULL);
+					break;
 
 
 
-				default:
-				    if (eval_param_sys(cmdKey, cmdValue)==pdFALSE) {	// parameter not known to the system ?
-					sendParam(cmdKey, cmdValue);	//then forward it to the protocol task, maybe he knows :-)
+				    default:
+					if (eval_param_sys(cmdKey, cmdValue) == pdFALSE) {	// parameter not known to the system ?
+					    DEBUGPRINT
+						("Parameter not known by system - forward to protocol\n",
+						 'a');
+					    sendParam(cmdKey, cmdValue);	//then forward it to the protocol task, maybe he knows :-)
+					}
+					break;
 				    }
-				    break;
+				} else {
+				    lastErr = 2;
 				}
-			    }
-			} else {
-			    lastErr = 2;
-			}
-			actState = S_INIT;
-		    } else {
-			/*check for valid input
-			 * totalInCount is used to define where we are in the input line:
-			 * 0: at the beginning
-			 * 1: just reading the first parameter
-			 * 2: between the two numbers
-			 * 3: reading the second parameter
-			 * 4: input done, just waiting for EOL
-			 *
-			 */
-
-			if (inChar == crHEX) {
-			    if (totalInCount == 0 || totalInCount == 2) {	/* we are before the 2 numbers */
-				hexInput = 1;
-				totalInCount++;	/* starting to input a number */
-			    } else {	/* forbitten char, just waiting for end of line */
-				actState = S_WAITEOL;
-				lastErr = 2;
-			    }
-			} else {
-			    if (inChar == crBLANK) {
-				if (totalInCount == 1 || totalInCount == 3) {	/* finish the input of a param */
-				    hexInput = 0;	/* reset the number format */
-				    totalInCount++;
-				}
+				actState = S_INIT;
 			    } else {
-				if (inChar < 16) {	/* valid char, already as it's hex value */
-				    if (inChar > 10 && !hexInput) {	/* wrong number format */
+				/*check for valid input
+				 * totalInCount is used to define where we are in the input line:
+				 * 0: at the beginning
+				 * 1: just reading the first parameter
+				 * 2: between the two numbers
+				 * 3: reading the second parameter
+				 * 4: input done, just waiting for EOL
+				 *
+				 */
+
+				if (inChar == crHEX) {
+				    if (totalInCount == 0 || totalInCount == 2) {	/* we are before the 2 numbers */
+					hexInput = 1;
+					totalInCount++;	/* starting to input a number */
+				    } else {	/* forbitten char, just waiting for end of line */
 					actState = S_WAITEOL;
 					lastErr = 2;
-				    } else {
-					if (totalInCount == 0
-					    || totalInCount == 1) {
-					    cmdKey = cmdKey * (10 + (6
-								     *
-								     hexInput))
-						+ inChar;
-					    totalInCount = 1;	/* in case we were on 0 before */
+				    }
+				} else {
+				    if (inChar == crBLANK) {
+					if (totalInCount == 1 || totalInCount == 3) {	/* finish the input of a param */
+					    hexInput = 0;	/* reset the number format */
+					    totalInCount++;
 					}
-					if (totalInCount == 2
-					    || totalInCount == 3) {
-					    cmdValue =
-						cmdValue * (10 +
-							    (6 * hexInput))
-						+ inChar;
-					    totalInCount = 3;	/* in case we were on 2 before */
+				    } else {
+					if (inChar < 16) {	/* valid char, already as it's hex value */
+					    if (inChar > 10 && !hexInput) {	/* wrong number format */
+						actState = S_WAITEOL;
+						lastErr = 2;
+					    } else {
+						if (totalInCount == 0
+						    || totalInCount == 1) {
+						    cmdKey =
+							cmdKey * (10 +
+								  (6 *
+								   hexInput))
+							+ inChar;
+						    totalInCount = 1;	/* in case we were on 0 before */
+						}
+						if (totalInCount == 2
+						    || totalInCount == 3) {
+						    cmdValue =
+							cmdValue * (10 +
+								    (6 *
+								     hexInput))
+							+ inChar;
+						    totalInCount = 3;	/* in case we were on 2 before */
+						}
+					    }
+					} else {	/* forbitten char, just waiting for end of line */
+					    actState = S_WAITEOL;
+					    lastErr = 1;
 					}
 				    }
-				} else {	/* forbitten char, just waiting for end of line */
-				    actState = S_WAITEOL;
-				    lastErr = 1;
 				}
 			    }
 			}
@@ -382,7 +376,12 @@ void inputParserTask(void *pvParameters)
 		    // or the bus handler when receiving parameter commands
 		    // or transfer data
 		    // createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_NO_ERR,0,NULL);
+
 		    actState = S_INIT;	/* start again */
+		    DEBUGPRINT("Wakeup again input task. STATE_INIT=%d\n",
+			       S_INIT);
+		} else {
+		    DEBUGPRINT("Error; I do not sleep...%d\n", actState);
 		}
 		break;
 	    default:
@@ -402,13 +401,13 @@ portBASE_TYPE serial_init()
 
     extern xQueueHandle protocolQueue;
     extern xQueueHandle inputQueue;
-      //! \todo die Abfragen auf erfolgreiche Queue- Erzeugung sind falsch (Pointer statt 
+    //! \todo die Abfragen auf erfolgreiche Queue- Erzeugung sind falsch (Pointer statt 
     if (NULL != (protocolQueue = xQueueCreate(QUEUE_SIZE_PROTOCOL,
-						sizeof(struct OdMsg))))
+					      sizeof(struct OdMsg))))
 	DEBUGUARTPRINT("\r\n*** protocolQueue created ***");
 
     if (NULL != (inputQueue = xQueueCreate(QUEUE_SIZE_INPUT,
-					     sizeof(struct OdMsg))))
+					   sizeof(struct OdMsg))))
 	DEBUGUARTPRINT("\r\n*** inputQueue created ***");
 
     serial_init_mc();

@@ -178,9 +178,11 @@ odp_uds_printdata_Buffer(portBASE_TYPE msgType, void *data,
 	    printLF();
 	}
     }
-    printLF();
-    printser_string(".");	// "End of transmission" - indicator
-    printLF();
+	if (!((i % 8) == 0 && i > 0 && i < myUDSBuffer->len - 1)) {
+	    printLF();
+	}
+
+    printEOT();
     /* clear the buffer */
     myUDSBuffer->len = 0;
     /* release the input queue */
@@ -197,11 +199,12 @@ void odp_uds_printParam(portBASE_TYPE msgType, void *data,
     extern bus_paramPrint actBus_paramPrint;
     static param_data *pd;
     pd = data;
-     switch (pd->key) {
-    case VALUE_PARAM_INFO_PROTOCOL:	/* p 0 3 */
+    if (pd->key == PARAM_INFO && pd->value == VALUE_PARAM_INFO_PROTOCOL) {
 	printser_string("1 - UDS (ISO14229-1)");
-	break;
-    default:
+	printLF();
+	printEOT();
+    } else {
+	DEBUGPRINT("Parameter not known by uds - forward to bus\n", 'a');
 	actBus_paramPrint(pd->key, pd->value);	/* forward the received params to the underlying bus. */
     }
 }
@@ -215,7 +218,8 @@ void odp_uds_printParam(portBASE_TYPE msgType, void *data,
 
 void odp_uds_recvdata(data_packet * p)
 {
-    MsgData *msg;
+ 	    DEBUGPRINT("packet receivedl!\n", 'a');
+   MsgData *msg;
     extern xQueueHandle protocolQueue;
     if (NULL != (msg = createDataMsg(p))) {
 	if (pdPASS != sendMsg(MSG_BUS_RECV, protocolQueue, msg)) {
@@ -244,19 +248,7 @@ void odp_uds_dumpFrame(data_packet * p, print_cbf print_data)
     }
 }
 
-void odp_uds_data2UART(data_packet * p, print_cbf print_data)
-{
-    MsgData *msg;
-    extern xQueueHandle outputQueue;
-    if (NULL != (msg = createDataMsg(p))) {
-	msg->print = print_data;
-	if (pdPASS != sendMsg(MSG_BUS_RECV, outputQueue, msg)) {
-	    DEBUGPRINT("FATAL ERROR: output queue is full!\n", 'a');
-	}
-    } else {
-	DEBUGPRINT("FATAL ERROR: Out of Heap space!l\n", 'a');
-    }
-}
+
 
 /*!
 
@@ -342,9 +334,11 @@ void obp_uds(void *pvParameters)
 		if (udsConfig.listen > 0) {
 		    odp_uds_dumpFrame(dp, printdata_CAN);
 		}
-		DEBUGPRINT("Tester address %2X PCI %2X\n", dp->recv,
-			   dp->data[0]);
-		if ((udsConfig.sendID == 0 ? dp->recv == (udsConfig.recvID | 8) : dp->recv == udsConfig.sendID)) {	/* Tester Address? */
+		DEBUGPRINT("Tester address %2X PCI %2X actual state: %d \n", dp->recv,
+			   dp->data[0],stateMachine_state);
+		DEBUGPRINT("module addresses configured: receiving ID %2X sending ID %2X\n", udsConfig.sendID,udsConfig.recvID );
+		if (((udsConfig.sendID == 0 ? dp->recv == (udsConfig.recvID | 8) : dp->recv == udsConfig.sendID))||udsConfig.recvID ==0x7DF) {	/* Tester Address correct / we sendes a broadcast (udsConfig.recvID==0x7DF)? */
+		    DEBUGPRINT("Answer address valid..",'a');
 		    if (dp->data[0] == 0x03 && dp->data[1] == 0x7f && dp->data[3] == 0x78)	//Response pending
 		    {
 			timeout = udsConfig.timeoutPending;
@@ -583,31 +577,33 @@ void obp_uds(void *pvParameters)
 			   paramData[1]);
 
 		switch (paramData[0]) {
-		  // first we commend out all parameters  which are not used to generate the right "unknown parameter" message in the default - area
-		  /*
-		case PARAM_ECHO:
-		    break;
-		case PARAM_TIMEOUT_PENDING:
-		    break;
-		case PARAM_BLOCKSIZE:
-		    break;
-		case PARAM_FRAME_DELAY:
-		    break;
-		  */
-		// the next parameters needs to handled by the bus
+		    // first we commend out all parameters  which are not used to generate the right "unknown parameter" message in the default - area
+		    /*
+		       case PARAM_ECHO:
+		       break;
+		       case PARAM_TIMEOUT_PENDING:
+		       break;
+		       case PARAM_BLOCKSIZE:
+		       break;
+		       case PARAM_FRAME_DELAY:
+		       break;
+		     */
+		    // the next parameters needs to handled by the bus
 		case PARAM_BUS_MODE:
 		case PARAM_BUS_CONFIG:
 		    actBus_param(paramData[0], paramData[1]);	/* forward the received params to the underlying bus. */
-		    break;		
+		    break;
 		case PARAM_BUS:
 		    //! \todo bus switching needs to be implemented
 		    createCommandResultMsg(ERR_CODE_SOURCE_OS,
-					   ERR_CODE_OS_UNKNOWN_COMMAND, 0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+					   ERR_CODE_OS_UNKNOWN_COMMAND, 0,
+					   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 		    break;
 		case PARAM_INFO:
-		    CreateParamOutputMsg(paramData[0],paramData[1],odp_uds_printParam);
+		    CreateParamOutputMsg(paramData[0], paramData[1],
+					 odp_uds_printParam);
 		    break;
-		   // and here we proceed all command parameters
+		    // and here we proceed all command parameters
 		case PARAM_LISTEN:
 		    udsConfig.listen = paramData[1];
 		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
@@ -646,8 +642,9 @@ void obp_uds(void *pvParameters)
 					   ERR_CODE_NO_ERR, 0, NULL);
 		default:
 		    createCommandResultMsg(ERR_CODE_SOURCE_OS,
-					   ERR_CODE_OS_UNKNOWN_COMMAND, 0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
-		  break;
+					   ERR_CODE_OS_UNKNOWN_COMMAND, 0,
+					   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+		    break;
 		}
 		break;
 	    case MSG_INIT:
@@ -693,6 +690,11 @@ void obp_uds(void *pvParameters)
 		    }
 
 		} else {	/* no data to send? */
+		    createCommandResultMsg
+			(ERR_CODE_SOURCE_SERIALIN, ERR_CODE_NO_ERR,
+			 0, NULL);
+		    DEBUGPRINT("Send input task release msg\n", 'a');
+
 		    /* just release the input again */
 		    if (pdPASS !=
 			sendMsg(MSG_SERIAL_RELEASE, inputQueue, NULL)) {

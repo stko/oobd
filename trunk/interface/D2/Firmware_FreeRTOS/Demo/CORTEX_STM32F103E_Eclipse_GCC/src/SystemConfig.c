@@ -33,10 +33,14 @@
 #include "od_config.h"
 #include "mc_serial.h"
 #include "odp_uds.h"
+#include "odb_can.h"
 
 /* -------- Used Global variables --------------------------------------------*/
 xQueueHandle Led1Queue = NULL;
 xQueueHandle Led2Queue = NULL;
+uint8_t BTM222_BtAddress[18] = "00:00:00:00:00:00";
+uint8_t BTM222_DeviceName[17] = "not detected";
+
 
 /* Private typedef -----------------------------------------------------------*/
 

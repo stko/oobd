@@ -161,12 +161,11 @@
 typedef void (*printChar_cbf) (char a);
 
 /* store all parameter in one single struct to maybe later store such param sets in EEPROM */
-struct GlobalConfig
-{
-  portBASE_TYPE recvID, //!< Module ID
-    sendID, 		  //!< sender ID, used when the expected answer ID <> recvID || 8
-    timeout,            //!< timeout in systemticks
-    listen             //!< listen level
+struct GlobalConfig {
+    portBASE_TYPE recvID,	//!< Module ID
+     sendID,			//!< sender ID, used when the expected answer ID <> recvID || 8
+     timeout,			//!< timeout in systemticks
+     listen			//!< listen level
 } globalConfig;
 
-#endif /* INC_OD_CONFIG_H */
+#endif				/* INC_OD_CONFIG_H */

@@ -35,13 +35,13 @@
 #define INC_ODB_CAN_H
 #include "od_base.h"
 
-portBASE_TYPE bus_init_can ();
-portBASE_TYPE bus_send_can (data_packet * data);
-void bus_flush_can ();
-portBASE_TYPE bus_param_can (portBASE_TYPE param, portBASE_TYPE value);
-void bus_close_can ();
+portBASE_TYPE bus_init_can();
+portBASE_TYPE bus_send_can(data_packet * data);
+void bus_flush_can();
+portBASE_TYPE bus_param_can(portBASE_TYPE param, portBASE_TYPE value);
+void bus_close_can();
 
-void odb_can_init ();
+void odb_can_init();
 
 
 /* define values of CAN specific parameter */
@@ -59,13 +59,12 @@ void odb_can_init ();
 #define VALUE_BUS_CONFIG_29bit_1000kbit 		( 8 )
 
 /* store all parameter in one single struct to maybe later store such param sets in EEPROM */
-struct CanConfig
-{
-  portBASE_TYPE recvID, //!< Module ID
-    bus,                //!< id of actual used bus
-    mode,                //!< id of actual used Tranceiver mode
-    busConfig          //!< nr of actual used bus configuration
-} ;
+struct CanConfig {
+    portBASE_TYPE recvID,	//!< Module ID
+     bus,			//!< id of actual used bus
+     mode,			//!< id of actual used Tranceiver mode
+     busConfig			//!< nr of actual used bus configuration
+};
 
 
-#endif /* INC_ODB_CAN_H */
+#endif				/* INC_ODB_CAN_H */
