@@ -33,6 +33,14 @@
 #include <stdio.h>
 #include <stdint.h>	
 #include <fcntl.h>
+#ifdef __unix__
+      #include <unistd.h>
+      #include <sys/stat.h>
+      #include <sys/types.h>
+#elif __MSDOS__ || __WIN32__ || _MSC_VER
+      #include <io.h>
+      #include <sys\stat.h>
+#endif
 
 uint32_t crc;
 uint32_t buf[256];
@@ -144,7 +152,11 @@ int main(int argc, char *argv[])
 
 	/* put filesize in front of file befor appending CRC at the end. */
 	fd= open(argv[1], O_RDONLY); /* open input file for reading*/
-	fdout= open(argv[2], O_WRONLY | O_CREAT | O_TRUNC); /* open output file for writing */
+	#ifdef __unix__
+ 	fdout= open(argv[2], O_WRONLY | O_CREAT | O_TRUNC |S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH); /* open output file for writing */
+	#elif __MSDOS__ || __WIN32__ || _MSC_VER
+ 	fdout= open(argv[2], O_WRONLY | O_CREAT | O_TRUNC |S_IREAD| S_IWRITE ); /* open output file for writing */
+	#endif
 	if(fd < 0) {printf("Can't open file for reading/writing\n");return 5;}
 	write(fdout, &filesize, 4); /* add filesize (uint32 value) at the beginning of the new file */
 	while(1) {
