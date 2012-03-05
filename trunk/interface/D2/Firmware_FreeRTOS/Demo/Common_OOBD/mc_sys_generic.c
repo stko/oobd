@@ -44,6 +44,7 @@ void mc_init_sys_boot()
 
 
 
+
 void
 printParam_sys(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 {
@@ -115,7 +116,7 @@ printParam_sys(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 	}
 	break;
 
-
+	
     default:
 	//sendParam(cmdKey, cmdValue);
 	break;
@@ -124,6 +125,7 @@ printParam_sys(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 
 portBASE_TYPE eval_param_sys(portBASE_TYPE param, portBASE_TYPE value)
 {
+  int i;
     switch (param) {
     case PARAM_INFO:
 	switch (value) {
@@ -136,6 +138,21 @@ portBASE_TYPE eval_param_sys(portBASE_TYPE param, portBASE_TYPE value)
 	    return pdFALSE;
 	}
 	break;
+	//! \todo remove dirty IO implementation
+//-----------------------------------------------------------
+// QUICK AND DIRTY IMPLEMENTATION of IO control
+//-----------------------------------------------------------
+	case 98:
+	  for( i=0; i<6 ;i++){
+	    sysIoCtrl(i, 0,
+			(value &(1 << i))==0?0:1, 0,
+			0);
+	  }
+	  break;
+//-----------------------------------------------------------
+//-----------------------------------------------------------
+	  
+	
     default:
 	return pdFALSE;
     }

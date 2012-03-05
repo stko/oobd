@@ -52,6 +52,52 @@ void mc_init_sys_shutdown_specific()
     DEBUGPRINT("shutdown the MC specific systems\n", 'a');
 }
 
+portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
+			portBASE_TYPE upperValue, portBASE_TYPE duration,
+			portBASE_TYPE waveType){
+    DEBUGPRINT("Pin: %ld to value %ld\n" ,pinID, upperValue);
+switch(pinID){
+  case IO_LED_WHITE :
+    DEBUGPRINT("IO_LED_WHITE set to %ld\n", upperValue);
+    createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_NO_ERR,0,NULL);
+    return pdTRUE;
+    break;
+  case IO_LED_GREEN:
+    DEBUGPRINT("IO_LED_GREEN set to %ld\n", upperValue);
+    createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_NO_ERR,0,NULL);
+    return pdTRUE;
+    return pdTRUE;
+    break;
+  case IO_LED_RED:
+    DEBUGPRINT("IO_LED_RED set to %ld\n", upperValue);
+    createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_NO_ERR,0,NULL);
+    return pdTRUE;
+    break;
+  case IO_BUS_0:
+    DEBUGPRINT("IO_BUS_0 set to %ld\n", upperValue);
+   createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_NO_ERR,0,NULL);
+    return pdTRUE;
+    break;
+  case IO_BUS_1:
+    DEBUGPRINT("IO_BUS_1 set to %ld\n", upperValue);
+    createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_NO_ERR,0,NULL);
+    return pdTRUE;
+    break;
+  case IP_BUZZER:
+    DEBUGPRINT("IP_BUZZER set to %ld\n", upperValue);
+    createCommandResultMsg (ERR_CODE_SOURCE_SERIALIN,ERR_CODE_NO_ERR,0,NULL);
+    return pdTRUE;
+    break;    
+  default:
+    DEBUGPRINT("unknown output pin\n", upperValue);
+	    createCommandResultMsg(ERR_CODE_SOURCE_OS,
+				   ERR_CODE_OS_UNKNOWN_COMMAND, 0,
+				   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+    return pdFALSE;
+    break;
+}
+}
+
 
 void mc_sys_idlehook()
 {
