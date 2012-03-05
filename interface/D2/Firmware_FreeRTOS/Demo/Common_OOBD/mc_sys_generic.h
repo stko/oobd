@@ -34,6 +34,14 @@
 #ifndef INC_MC_SYS_H
 #define INC_MC_SYS_H
 
+//! Global Names for standard IO-Pins
+#define IO_LED_WHITE (0)
+#define IO_LED_GREEN (1)
+#define IO_LED_RED (2)
+#define IO_BUS_0 	(3)
+#define IO_BUS_1 	(4)
+#define IP_BUZZER 	(5)
+
 
 void mc_init_sys_boot();
 void mc_init_sys_tasks();
