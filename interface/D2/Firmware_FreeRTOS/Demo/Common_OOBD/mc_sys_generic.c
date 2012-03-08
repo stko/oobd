@@ -53,87 +53,64 @@ printParam_sys(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
     portBASE_TYPE cmdKey = pd->key, cmdValue = pd->value;	/* the both possible params */
     DEBUGPRINT("sys parameter received: %ld / %ld\n", cmdKey, cmdValue);
     switch (cmdKey) {
-    case PARAM_INFO:
-	switch (cmdValue) {
 
-	case VALUE_PARAM_INFO_VERSION:	/* p 0 0 */
-	    printser_string("OOBD ");
-	    printser_string(OOBDDESIGN);
-	    printser_string(" ");
-	    printser_string(SVNREV);
-	    printser_string(" ");
-	    printser_string(BUILDDATE);
-	    printLF();
-	    printEOT();
-	    break;
-	case VALUE_PARAM_INFO_SERIALNUMBER:	/* p 0 1 */
-	    printser_string("000");
-	    printLF();
-	    printEOT();
-	    break;
-	default:
-	    evalResult
-		(ERR_CODE_SOURCE_OS, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT, 0,
-		 ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
-	}
-	break;
-    case PARAM_PROTOCOL:
-	// \todo this kind of task switching is not design intent
-	// \todo no use of protocol table, its hardcoded instead
-	if (VALUE_PARAM_PROTOCOL_CAN_RAW == cmdValue) {	/* p 4 1 */
-	    printser_string("Protocol CAN RAW activated!");
-	    vTaskDelete(xTaskProtHandle);
-	    vTaskDelay(100 / portTICK_RATE_MS);
-	    /* */
-	    if (pdPASS == xTaskCreate(odparr[0], (const signed portCHAR *)
-				      "prot",
-				      configMINIMAL_STACK_SIZE,
-				      (void *) NULL,
-				      TASK_PRIO_LOW, &xTaskProtHandle))
-		DEBUGPRINT("\r\n*** 'prot' Task created ***", 'a');
-	    else
-		DEBUGPRINT("\r\n*** 'prot' Task NOT created ***", 'a');
-	}
-	if (VALUE_PARAM_PROTOCOL_CAN_UDS == cmdValue) {	/* p 4 2 */
-	    printser_string("Protocol CAN UDS activated!");
-	    vTaskDelete(xTaskProtHandle);
-	    vTaskDelay(100 / portTICK_RATE_MS);
-	    /* */
-	    if (pdPASS == xTaskCreate(odparr[1], (const signed portCHAR *)
-				      "prot",
-				      configMINIMAL_STACK_SIZE,
-				      (void *) NULL,
-				      TASK_PRIO_LOW, &xTaskProtHandle)) {
-		DEBUGPRINT("\r\n*** 'prot' Task created ***", 'a');
-		evalResult(ERR_CODE_SOURCE_OS, ERR_CODE_NO_ERR, 0, NULL);
-	    } else {
-		evalResult
-		    (ERR_CODE_SOURCE_OS,
-		     ERR_CODE_OS_NO_PROTOCOL_TASK,
-		     0, ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT);
-		DEBUGPRINT("\r\n*** 'prot' Task NOT created ***", 'a');
-	    }
-	}
-	break;
-
-	
     default:
-	//sendParam(cmdKey, cmdValue);
+	printParam_sys_specific(pd, printchar);
 	break;
     }
 }
 
-portBASE_TYPE eval_param_sys(portBASE_TYPE param, portBASE_TYPE value)
+portBASE_TYPE eval_param_sys(portBASE_TYPE cmdKey, portBASE_TYPE cmdValue)
 {
-  int i;
-    switch (param) {
+    int i;
+    switch (cmdKey) {
     case PARAM_INFO:
-	switch (value) {
+	switch (cmdValue) {
 	case VALUE_PARAM_INFO_VERSION:
 	case VALUE_PARAM_INFO_SERIALNUMBER:
-	    CreateParamOutputMsg(param, value, printParam_sys);
+	    CreateParamOutputMsg(cmdKey, cmdValue, printParam_sys);
 	    return pdTRUE;
 	    break;
+	case PARAM_PROTOCOL:
+	    //! \todo this kind of task switching is not design intent
+	    //! \todo no use of protocol table, its hardcoded instead
+	    if (VALUE_PARAM_PROTOCOL_CAN_RAW == cmdValue) {	/* p 4 1 */
+		printser_string("Protocol CAN RAW activated!");
+		vTaskDelete(xTaskProtHandle);
+		vTaskDelay(100 / portTICK_RATE_MS);
+		/* */
+		if (pdPASS ==
+		    xTaskCreate(odparr[0], (const signed portCHAR *)
+				"prot", configMINIMAL_STACK_SIZE,
+				(void *) NULL, TASK_PRIO_LOW,
+				&xTaskProtHandle))
+		    DEBUGPRINT("\r\n*** 'prot' Task created ***", 'a');
+		else
+		    DEBUGPRINT("\r\n*** 'prot' Task NOT created ***", 'a');
+	    }
+	    if (VALUE_PARAM_PROTOCOL_CAN_UDS == cmdValue) {	/* p 4 2 */
+		printser_string("Protocol CAN UDS activated!");
+		vTaskDelete(xTaskProtHandle);
+		vTaskDelay(100 / portTICK_RATE_MS);
+		/* */
+		if (pdPASS ==
+		    xTaskCreate(odparr[1], (const signed portCHAR *)
+				"prot", configMINIMAL_STACK_SIZE,
+				(void *) NULL, TASK_PRIO_LOW,
+				&xTaskProtHandle)) {
+		    DEBUGPRINT("\r\n*** 'prot' Task created ***", 'a');
+		    evalResult(ERR_CODE_SOURCE_OS, ERR_CODE_NO_ERR, 0,
+			       NULL);
+		} else {
+		    evalResult
+			(ERR_CODE_SOURCE_OS,
+			 ERR_CODE_OS_NO_PROTOCOL_TASK,
+			 0, ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT);
+		    DEBUGPRINT("\r\n*** 'prot' Task NOT created ***", 'a');
+		}
+	    }
+	    break;
+
 	default:
 	    return pdFALSE;
 	}
@@ -142,17 +119,15 @@ portBASE_TYPE eval_param_sys(portBASE_TYPE param, portBASE_TYPE value)
 //-----------------------------------------------------------
 // QUICK AND DIRTY IMPLEMENTATION of IO control
 //-----------------------------------------------------------
-	case 98:
-	  for( i=0; i<6 ;i++){
-	    sysIoCtrl(i, 0,
-			(value &(1 << i))==0?0:1, 0,
-			0);
-	  }
-	  break;
+    case 98:
+	for (i = 0; i < 6; i++) {
+	    sysIoCtrl(i, 0, (cmdValue & (1 << i)) == 0 ? 0 : 1, 0, 0);
+	}
+	break;
 //-----------------------------------------------------------
 //-----------------------------------------------------------
-	  
-	
+
+
     default:
 	return pdFALSE;
     }

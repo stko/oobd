@@ -27,14 +27,26 @@
 */
 
 /**
- * .
+ * MC generic System header
  */
 
 
-#ifndef INC_MC_SERIAL_H
-#define INC_MC_SERIAL_H
+#ifndef INC_MC_SYS_H
+#define INC_MC_SYS_H
 
-#include "mc_serial_generic.h"
-#include "mc_serial.h"
+#define VALUE_PARAM_INFO_ADC_POWER      		( 6 )
+#define VALUE_PARAM_INFO_CPU_INFO 				( 10 )
+#define VALUE_PARAM_INFO_MEM_LOC  				( 11 )
+#define VALUE_PARAM_INFO_ROM_TABLE_LOC  		( 12 )
+#define VALUE_PARAM_INFO_FREE_HEAP_SIZE			( 13 )
+#define VALUE_PARAM_INFO_CRC32					( 14 )
+#define VALUE_PARAM_INFO_BTM222_DEVICENAME 		( 20 )
+#define VALUE_PARAM_INFO_BTM222_UART_SPEED 		( 21 )
 
-#endif				/* INC_MC_SERIAL_H */
+uint16_t readADC1(uint8_t channel);
+uint32_t CheckCrc32(void);
+
+
+
+#endif
+/* INC_MC_SYS_H */

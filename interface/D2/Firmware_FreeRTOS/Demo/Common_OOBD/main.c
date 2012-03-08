@@ -27,6 +27,30 @@
 */
 
 /**
+ * \mainpage Welcome to the OOBD Firmware Programming Manual
+ * 
+ * \section Introduction
+ *
+ * This documentation is made for two purposes: First explain the firmware functionality, and second of course the general concept of how the
+ * different components work together.
+ *
+ *
+ *
+ * \section The Concept
+ *
+ * The OOBD firmware should be a framework for as most as possible hardware platforms and communication protocols and bus systems.
+ *
+ * When looking more in detail into this basic requierement, you'll find five tasks which are nessecary to fulfill this.
+ *
+ * Each of these tasks build its own chapter. If you want to understand and program your own user interface, you've only to read and implement the chapter about \ref visualisation,
+ * how to create a own \ref scriptengine can be found there etc.
+ *
+ * \li coordination: Something inside must handle the fundamental things (dynamic module handling, message transfer, file i/o etc.). This is done by the \ref core
+ * \li visualisation: Finally somebody wants to see results or wants to do some user input. This is handled by the \ref visualisation
+ * 
+ */
+
+/**
  * Creates all the application tasks, then starts the
  * scheduler.
  */

@@ -62,11 +62,11 @@ portBASE_TYPE bus_init_can()
     extern struct CanConfig *canConfig;
 
     canConfig = pvPortMalloc(sizeof(struct CanConfig));
-        if (canConfig == NULL) {
+    if (canConfig == NULL) {
 	DEBUGPRINT("Fatal error: Not enough heap to allocate CanConfig!\n",
 		   'a');
-		   return pdFAIL;
-	}
+	return pdFAIL;
+    }
     canConfig->bus = VALUE_BUS_SILENT_MODE;	/* default */
     canConfig->busConfig = VALUE_BUS_CONFIG_11bit_500kbit;	/* default */
 // Initialise Receives sockets. 

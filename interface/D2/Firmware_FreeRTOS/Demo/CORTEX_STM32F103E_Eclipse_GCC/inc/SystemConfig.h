@@ -30,17 +30,17 @@
 #ifndef __SystemConfig_H
 #define __SystemConfig_H
 
-void Led1Task (void *pvParameters);
-void Led2Task (void *pvParameters);
+void Led1Task(void *pvParameters);
+void Led2Task(void *pvParameters);
 
 
 /* -------- Create Global variables ---------------------------------------------------*/
-void 		System_Configuration(void);
-void        RCC_Configuration(void);
-void        GPIO_Configuration(void);
-void        NVIC_Configuration(void);
-void        SysTick_Configuration(void);
-void        ADC_Configuration(void);
+void System_Configuration(void);
+void RCC_Configuration(void);
+void GPIO_Configuration(void);
+void NVIC_Configuration(void);
+void SysTick_Configuration(void);
+void ADC_Configuration(void);
 /* void        SPI_Configuration(void);  */
 
 #define USART1_BAUDRATE_DEFAULT USART1_BAUDRATE_115200
@@ -65,11 +65,11 @@ void        ADC_Configuration(void);
   */
 #define sEE_I2C                          I2C1
 #define sEE_I2C_CLK                      RCC_APB1Periph_I2C1
-#define sEE_I2C_SCL_PIN                  GPIO_Pin_6                  /* PB.06 */
-#define sEE_I2C_SCL_GPIO_PORT            GPIOB                       /* GPIOB */
+#define sEE_I2C_SCL_PIN                  GPIO_Pin_6	/* PB.06 */
+#define sEE_I2C_SCL_GPIO_PORT            GPIOB	/* GPIOB */
 #define sEE_I2C_SCL_GPIO_CLK             RCC_APB2Periph_GPIOB
-#define sEE_I2C_SDA_PIN                  GPIO_Pin_7                  /* PB.07 */
-#define sEE_I2C_SDA_GPIO_PORT            GPIOB                       /* GPIOB */
+#define sEE_I2C_SDA_PIN                  GPIO_Pin_7	/* PB.07 */
+#define sEE_I2C_SDA_GPIO_PORT            GPIOB	/* GPIOB */
 #define sEE_I2C_SDA_GPIO_CLK             RCC_APB2Periph_GPIOB
 #define sEE_M24C64_32
 
@@ -100,4 +100,4 @@ void        ADC_Configuration(void);
 #define sEE_TIME_CONST                   72
 
 
-#endif  /* __SystemConfig_H */
+#endif				/* __SystemConfig_H */

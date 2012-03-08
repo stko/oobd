@@ -178,9 +178,9 @@ odp_uds_printdata_Buffer(portBASE_TYPE msgType, void *data,
 	    printLF();
 	}
     }
-	if (!((i % 8) == 0 && i > 0 && i < myUDSBuffer->len - 1)) {
-	    printLF();
-	}
+    if (!((i % 8) == 0 && i > 0 && i < myUDSBuffer->len - 1)) {
+	printLF();
+    }
 
     printEOT();
     /* clear the buffer */
@@ -218,8 +218,8 @@ void odp_uds_printParam(portBASE_TYPE msgType, void *data,
 
 void odp_uds_recvdata(data_packet * p)
 {
- 	    DEBUGPRINT("packet receivedl!\n", 'a');
-   MsgData *msg;
+    DEBUGPRINT("packet receivedl!\n", 'a');
+    MsgData *msg;
     extern xQueueHandle protocolQueue;
     if (NULL != (msg = createDataMsg(p))) {
 	if (pdPASS != sendMsg(MSG_BUS_RECV, protocolQueue, msg)) {
@@ -334,11 +334,14 @@ void obp_uds(void *pvParameters)
 		if (udsConfig.listen > 0) {
 		    odp_uds_dumpFrame(dp, printdata_CAN);
 		}
-		DEBUGPRINT("Tester address %2X PCI %2X actual state: %d \n", dp->recv,
-			   dp->data[0],stateMachine_state);
-		DEBUGPRINT("module addresses configured: receiving ID %2X sending ID %2X\n", udsConfig.sendID,udsConfig.recvID );
-		if (((udsConfig.sendID == 0 ? dp->recv == (udsConfig.recvID | 8) : dp->recv == udsConfig.sendID))||udsConfig.recvID ==0x7DF) {	/* Tester Address correct / we sendes a broadcast (udsConfig.recvID==0x7DF)? */
-		    DEBUGPRINT("Answer address valid..",'a');
+		DEBUGPRINT
+		    ("Tester address %2X PCI %2X actual state: %d \n",
+		     dp->recv, dp->data[0], stateMachine_state);
+		DEBUGPRINT
+		    ("module addresses configured: receiving ID %2X sending ID %2X\n",
+		     udsConfig.sendID, udsConfig.recvID);
+		if (((udsConfig.sendID == 0 ? dp->recv == (udsConfig.recvID | 8) : dp->recv == udsConfig.sendID)) || udsConfig.recvID == 0x7DF) {	/* Tester Address correct / we sendes a broadcast (udsConfig.recvID==0x7DF)? */
+		    DEBUGPRINT("Answer address valid..", 'a');
 		    if (dp->data[0] == 0x03 && dp->data[1] == 0x7f && dp->data[3] == 0x78)	//Response pending
 		    {
 			timeout = udsConfig.timeoutPending;
