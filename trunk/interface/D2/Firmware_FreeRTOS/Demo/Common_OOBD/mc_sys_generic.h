@@ -31,8 +31,8 @@
  */
 
 
-#ifndef INC_MC_SYS_H
-#define INC_MC_SYS_H
+#ifndef INC_MC_SYS_GENERIC_H
+#define INC_MC_SYS_GENERIC_H
 
 //! Global Names for standard IO-Pins
 #define IO_LED_WHITE (0)
@@ -42,15 +42,18 @@
 #define IO_BUS_1 	(4)
 #define IP_BUZZER 	(5)
 
-
+void printParam_sys(portBASE_TYPE msgType, void *data,
+		    printChar_cbf printchar);
 void mc_init_sys_boot();
 void mc_init_sys_tasks();
 void mc_init_sys_shutdown();
 void mc_sys_idlehook();
 
+void printParam_sys_specific(param_data * pd, printChar_cbf printchar);
 void mc_init_sys_boot_specific();
 void mc_init_sys_tasks_specific();
 void mc_init_sys_shutdown_specific();
+
 
 
 /** \brief handles input parameters
@@ -61,4 +64,5 @@ portBASE_TYPE eval_param_sys(portBASE_TYPE param, portBASE_TYPE value);
 portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 			portBASE_TYPE upperValue, portBASE_TYPE duration,
 			portBASE_TYPE waveType);
-#endif				/* INC_MC_SYS_H */
+#endif
+/* INC_MC_SYS_GENERIC_H */

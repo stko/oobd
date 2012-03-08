@@ -48,10 +48,10 @@
 	http://www.OpenRTOS.com - Commercial support, development, porting,
 	licensing and training services.
 */  
-  
+    
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
-  
+    
 /*-----------------------------------------------------------
  * Application specific definitions.
  *
@@ -63,7 +63,7 @@
  *
  * See http://www.freertos.org/a00110.html.
  *----------------------------------------------------------*/ 
-  
+    
 #define configUSE_PREEMPTION			1
 #define configUSE_IDLE_HOOK				1
 #define configUSE_TICK_HOOK				0
@@ -83,13 +83,13 @@
 #define configUSE_APPLICATION_TASK_TAG	1
 #define configQUEUE_REGISTRY_SIZE		0
 #define configMAX_SYSCALL_INTERRUPT_PRIORITY	1
-  
+    
 #define configMAX_PRIORITIES		( ( unsigned portBASE_TYPE ) 10 )
 #define configMAX_CO_ROUTINE_PRIORITIES ( 2 )
-  
+    
 /* Set the following definitions to 1 to include the API function, or zero
 to exclude the API function. */ 
-  
+    
 #define INCLUDE_vTaskPrioritySet        	1
 #define INCLUDE_uxTaskPriorityGet       	1
 #define INCLUDE_vTaskDelete             	1
@@ -99,11 +99,11 @@ to exclude the API function. */
 #define INCLUDE_vTaskDelay					1
 #define INCLUDE_uxTaskGetStackHighWaterMark 0 /* Do not use this option on the PC port. */
 #define INCLUDE_xTaskGetSchedulerState		1
-  
+    
 // uncomment if queue hook is needed
 // extern void vMainQueueSendPassed (void);
 // #define traceQUEUE_SEND( pxQueue ) vMainQueueSendPassed()
-  
+    
 #define configGENERATE_RUN_TIME_STATS		1
-  
+    
 #endif	/* FREERTOS_CONFIG_H */
