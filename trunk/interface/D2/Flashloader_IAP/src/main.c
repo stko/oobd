@@ -124,55 +124,48 @@ void IAP_Init(void) {
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	/* configure PA8/PB1 as Input for Hardwareidentifikaton */
-	/* PA8 = 1, PB1 = 0 - Original DXM1
-	 * PA8 = 1, PB1 = 1 - OOBD-Cup v5
-	 * PA8 = 0, PB1 = 1 - OOBD-Cup ??? reserved for further development
-	 * PA8 = 0, PB1 = 0 - OOBD-Cup ??? reserved for further development
+	/* configure DXM1-Output (open drain) of LED1 - green (PB5) and LED2 - red (PB4) */
+	GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE); /* release alternative GPIO function of PB4 */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	/* set LED 1 and LED 2 to default = OFF */
+	GPIO_SetBits(GPIOB, GPIO_Pin_4); /* LED 2 - green OFF */
+	GPIO_SetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red OFF */
+
+	/* configure OOBD-Cup v5 Output (push pull) of Duo-LED2 (green - PC14, red - PC15) */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14 | GPIO_Pin_15;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	/* set Duo-LED 2 to default = OFF */
+	GPIO_ResetBits(GPIOC, GPIO_Pin_14); /* Duo-LED2 - OFF, green */
+	GPIO_ResetBits(GPIOC, GPIO_Pin_15); /* Duo-LED2 - OFF, red */
+
+	/* configure PA8 as Input for Hardwareidentifikaton
+	 * PA8 = 1 - Original DXM1
+	 * PA8 = 0 - OOBD-Cup v5
 	 */
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-	if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET)
-			&& (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1) == Bit_SET))
+	/* identify on which hardware the flashloader is running */
+	if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_RESET)
 		HardwareIdent = 2; /* OOBD-Cup v5 */
-	else if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET)
-			&& (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1) == Bit_RESET))
+	else if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET)
 		HardwareIdent = 1; /* Original DXM1 */
 	else
 		HardwareIdent = 0;
 
-	if (HardwareIdent == 2) {
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14 | GPIO_Pin_15;
-		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-		GPIO_Init(GPIOC, &GPIO_InitStructure);
-		GPIO_ResetBits(GPIOC, GPIO_Pin_14); /* Duo-LED2 - OFF, green */
-		GPIO_ResetBits(GPIOC, GPIO_Pin_15); /* Duo-LED2 - OFF, red */
-
-		GPIO_SetBits(GPIOC, GPIO_Pin_14); /* Duo-LED2 - ON, green */
-	}
-
-	if (HardwareIdent == 1) {
-		/* configure DXM1-Output (open drain) of LED1 - green (PB5) and LED2 - red (PB4) */
-		GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE); /* release alternative GPIO function of PB4 */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
-		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
-		GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-		/* set LED 1 and LED 2 to default = OFF */
-		GPIO_SetBits(GPIOB, GPIO_Pin_4); /* LED 2 - green OFF */
-		GPIO_SetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red OFF */
-
+	if (HardwareIdent == 1) /* Original DXM1 */
 		GPIO_ResetBits(GPIOB, GPIO_Pin_4); /* LED 2 - green ON */
+	if (HardwareIdent == 2) { /* OOBD-Cup v5 */
+		GPIO_SetBits(GPIOC, GPIO_Pin_14); /* Duo-LED2 - ON, green */
+		GPIO_ResetBits(GPIOB, GPIO_Pin_4); /* LED 2 - green ON = disable buzzer*/
+		GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red ON = disable relay */
 	}
-
 	/* USART resources configuration (Clock, GPIO pins and USART registers) ----*/
 	/* USART configured as follow:
 	 - BaudRate = 115200 baud
