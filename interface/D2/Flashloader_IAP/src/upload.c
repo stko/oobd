@@ -46,9 +46,10 @@ void SerialUpload(void) {
 	SerialPutString("\n\n\rSelect Receive File ... (press any key to abort)\n\r");
 	if (HardwareIdent == 1) /* Original DXM1 */
 		GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red ON */
-	if (HardwareIdent == 2) { /* OOBD-Cup2 */
-		GPIO_SetBits(GPIOC, GPIO_Pin_15); /* Duo-LED2 - ON, red */
-		GPIO_ResetBits(GPIOC, GPIO_Pin_14); /* Duo-LED2 - OFF, green */
+	if (HardwareIdent == 2) /* OOBD-Cup2 */
+	{
+		GPIO_SetBits(GPIOB, GPIO_Pin_5); /* Duo-LED 2 - red ON */
+		GPIO_ResetBits(GPIOB, GPIO_Pin_4); /* Duo-LED 2 - green OFF */
 	}
 
 	if (GetKey() == CRC16) {
@@ -59,26 +60,29 @@ void SerialUpload(void) {
 			SerialPutString("\n\rError Occured while Transmitting File\n\r");
 			if (HardwareIdent == 1) /* Original DXM1 */
 				GPIO_SetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red OFF */
-			if (HardwareIdent == 2) { /* OOBD-Cup2 */
-				GPIO_SetBits(GPIOC, GPIO_Pin_14); /* Duo-LED2 - OFF, red */
-				GPIO_ResetBits(GPIOC, GPIO_Pin_15); /* Duo-LED2 - ON, green */
+			if (HardwareIdent == 2) /* OOBD-Cup2 */
+			{
+				GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* Duo-LED2 - red OFF */
+				GPIO_SetBits(GPIOB, GPIO_Pin_4); /* Duo-LED2 - green ON */
 			}
 		} else {
 			SerialPutString("\n\rFile Trasmitted Successfully \n\r");
 			if (HardwareIdent == 1) /* Original DXM1 */
 				GPIO_SetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red OFF */
-			if (HardwareIdent == 2) { /* OOBD-Cup2 */
-				GPIO_SetBits(GPIOC, GPIO_Pin_14); /* Duo-LED2 - OFF, red */
-				GPIO_ResetBits(GPIOC, GPIO_Pin_15); /* Duo-LED2 - ON, green */
+			if (HardwareIdent == 2) /* OOBD-Cup2 */
+			{
+				GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* Duo-LED2 - red OFF */
+				GPIO_SetBits(GPIOB, GPIO_Pin_4); /* Duo-LED2 - green ON */
 			}
 		}
 	} else {
 		SerialPutString("\r\n\nAborted by user.\n\r");
 		if (HardwareIdent == 1) /* Original DXM1 */
 			GPIO_SetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red OFF */
-		if (HardwareIdent == 2) { /* OOBD-Cup2 */
-			GPIO_SetBits(GPIOC, GPIO_Pin_14); /* Duo-LED2 - OFF, red */
-			GPIO_ResetBits(GPIOC, GPIO_Pin_15); /* Duo-LED2 - ON, green */
+		if (HardwareIdent == 2) /* OOBD-Cup2 */
+		{
+			GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* Duo-LED2 - red OFF */
+			GPIO_SetBits(GPIOB, GPIO_Pin_4); /* Duo-LED2 - green ON */
 		}
 	}
 }
