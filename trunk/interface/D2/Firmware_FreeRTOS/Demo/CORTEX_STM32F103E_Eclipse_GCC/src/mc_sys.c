@@ -40,17 +40,18 @@
 #include "stm32f10x.h"		/* ST Library v3.4..0 specific header files */
 #include "SystemConfig.h"	/* STM32 hardware specific header file */
 
-printParam_sys_specific(param_data * pd, printChar_cbf printchar)
+void printParam_sys_specific(param_data * args, printChar_cbf printchar)
 {
     extern uint8_t BTM222_BtAddress[];
     extern unsigned char BTM222_DeviceName[];
     extern unsigned char BTM222_UartSpeed;
-    portBASE_TYPE cmdKey = pd->key, cmdValue = pd->value;	/* the both possible params */
-    DEBUGPRINT("sys specific parameter received: %ld / %ld\n", cmdKey,
-	       cmdValue);
-    switch (cmdKey) {
+
+
+    DEBUGPRINT("sys specific parameter received: %ld / %ld\n",
+	       args->args[ARG_CMD], args->args[ARG_VALUE_1]);
+    switch (args->args[ARG_CMD]) {
     case PARAM_INFO:
-	switch (cmdValue) {
+	switch (args->args[ARG_VALUE_1]) {
 
 	case VALUE_PARAM_INFO_VERSION:	/* p 0 0 */
 	    printser_string("OOBD ");
@@ -136,13 +137,12 @@ printParam_sys_specific(param_data * pd, printChar_cbf printchar)
 	    break;
 
 	default:
-	    evalResult(ERR_CODE_SOURCE_OS,
+	    evalResult(FBID_SYS_SPEC,
 		       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT, 0,
 		       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 	}
 	break;
     default:
-	//sendParam(cmdKey, cmdValue);
 	break;
     }
 }
@@ -249,44 +249,38 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
     switch (pinID) {
     case IO_LED_WHITE:
 	DEBUGPRINT("IO_LED_WHITE set to %ld\n", upperValue);
-	createCommandResultMsg(ERR_CODE_SOURCE_SERIALIN, ERR_CODE_NO_ERR,
-			       0, NULL);
+	createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	return pdTRUE;
 	break;
     case IO_LED_GREEN:
 	DEBUGPRINT("IO_LED_GREEN set to %ld\n", upperValue);
-	createCommandResultMsg(ERR_CODE_SOURCE_SERIALIN, ERR_CODE_NO_ERR,
-			       0, NULL);
+	createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	return pdTRUE;
 	return pdTRUE;
 	break;
     case IO_LED_RED:
 	DEBUGPRINT("IO_LED_RED set to %ld\n", upperValue);
-	createCommandResultMsg(ERR_CODE_SOURCE_SERIALIN, ERR_CODE_NO_ERR,
-			       0, NULL);
+	createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	return pdTRUE;
 	break;
     case IO_BUS_0:
 	DEBUGPRINT("IO_BUS_0 set to %ld\n", upperValue);
-	createCommandResultMsg(ERR_CODE_SOURCE_SERIALIN, ERR_CODE_NO_ERR,
-			       0, NULL);
+	createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	return pdTRUE;
 	break;
     case IO_BUS_1:
 	DEBUGPRINT("IO_BUS_1 set to %ld\n", upperValue);
-	createCommandResultMsg(ERR_CODE_SOURCE_SERIALIN, ERR_CODE_NO_ERR,
-			       0, NULL);
+	createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	return pdTRUE;
 	break;
     case IP_BUZZER:
 	DEBUGPRINT("IP_BUZZER set to %ld\n", upperValue);
-	createCommandResultMsg(ERR_CODE_SOURCE_SERIALIN, ERR_CODE_NO_ERR,
-			       0, NULL);
+	createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	return pdTRUE;
 	break;
     default:
 	DEBUGPRINT("unknown output pin\n", upperValue);
-	createCommandResultMsg(ERR_CODE_SOURCE_OS,
+	createCommandResultMsg(FBID_SYS_SPEC,
 			       ERR_CODE_OS_UNKNOWN_COMMAND, 0,
 			       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 	return pdFALSE;

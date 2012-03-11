@@ -46,6 +46,7 @@ void writeChar(char a)
 {
     /* Echo it back to the sender. */
     (void) write(oobdIOHandle, &a, 1);
+    putchar(a);
 }
 
 

@@ -67,9 +67,6 @@ void inputRedirectTask(void *pvParameters)
 				 portMAX_DELAY)) {
 		//! \todo Warum wird hier unabhängig vom Echo-Status das Zeichen ausgegeben
 		printChar(ucRx);
-#ifdef OOBD_PLATFORM_POSIX
-		putchar(ucRx);
-#endif
 		if (ucRx != '\n') {	// suppress \n, as this char is not wanted
 		    msg = createMsg(&ucRx, 1);
 		    if (pdPASS != sendMsg(MSG_SERIAL_IN, inputQueue, msg)) {
@@ -106,14 +103,11 @@ void sendData(data_packet * dp)
     }
 }
 
-void sendParam(portBASE_TYPE key, portBASE_TYPE value)
+void sendParam(param_data * args)
 {
     MsgData *msg;
     extern xQueueHandle protocolQueue;
-    portBASE_TYPE p[2];
-    p[0] = key;
-    p[1] = value;
-    if (NULL != (msg = createMsg(&p, sizeof(p)))) {
+    if (NULL != (msg = createMsg(args, sizeof(param_data)))) {
 	if (pdPASS != sendMsg(MSG_SERIAL_PARAM, protocolQueue, msg)) {
 	    DEBUGPRINT("FATAL ERROR: protocol queue is full!\n", 'a');
 
@@ -161,6 +155,22 @@ char checkValidChar(char a)
     }
 }
 
+/**! a little help function
+  \return pdRTUE if value is odd
+*/
+inline portBASE_TYPE odd(portBASE_TYPE value)
+{
+    return (value & 1) ? pdTRUE : pdFALSE;
+}
+
+/**! a little help function
+  \return pdRTUE if value is even
+*/
+inline portBASE_TYPE even(portBASE_TYPE value)
+{
+    return (value & 1) ? pdFALSE : pdTRUE;
+}
+
 /*-----------------------------------------------------------*/
 
 void inputParserTask(void *pvParameters)
@@ -175,7 +185,7 @@ void inputParserTask(void *pvParameters)
     char inChar;
     portBASE_TYPE msgType = 0, lastErr = 0, processFurther = 1, hexInput =
 	0;
-    portBASE_TYPE cmdKey = 0, cmdValue = 0;	/* the both possible params */
+    param_data args;		/* !< containts the arguments given as command */
     static data_packet dp;
     static unsigned char buffer[8];
     enum states {		/* !< the possible states of the input parser state machine */
@@ -186,8 +196,9 @@ void inputParserTask(void *pvParameters)
 	S_INIT
 	    /* !< initial state, waiting for input */
     };
-    portBASE_TYPE actState = S_INIT, totalInCount = 0;
+    portBASE_TYPE actState = S_INIT, totalInCount = 0, argCount = 0;
     dp.data = &buffer;
+    int i;
     for (;;) {
 	DEBUGUARTPRINT("\r\n*** inputParserTask is running! ***");
 
@@ -202,22 +213,25 @@ void inputParserTask(void *pvParameters)
 			if (inChar == crEOL) {
 			    if (lastErr) {
 				createCommandResultMsg
-				    (0, ERR_CODE_SOURCE_SERIALIN, lastErr,
+				    (0, FBID_SERIALIN, lastErr,
 				     ERR_CODE_SERIAL_SYNTAX_ERR_TEXT);
 			    } else {
 				createCommandResultMsg
-				    (ERR_CODE_SOURCE_SERIALIN,
+				    (FBID_SERIALIN,
 				     ERR_CODE_NO_ERR, 0, NULL);
 			    }
 			    actState = S_INIT;
 			}
 		    }
 		    if (actState == S_INIT) {
-			cmdKey = 0;
-			cmdValue = 0;
+			for (i = 0; i < MAX_NUM_OF_ARGS; i++) {
+			    args.args[i] = 0;
+			}
+			args.argv = 0;
 			lastErr = 0;
 			hexInput = 0;
 			totalInCount = 0;
+			argCount = 0;
 			dp.len = 0;
 			if (inChar < 16) {	/* first char is a valid hex char (0-F), so we switch into data line mode */
 			    actState = S_DATA;
@@ -242,7 +256,7 @@ void inputParserTask(void *pvParameters)
 				actState = S_SLEEP;
 			    } else {
 				createCommandResultMsg
-				    (ERR_CODE_SOURCE_SERIALIN,
+				    (FBID_SERIALIN,
 				     ERR_CODE_NO_ERR, 0, NULL);
 				actState = S_INIT;
 			    }
@@ -274,33 +288,47 @@ void inputParserTask(void *pvParameters)
 		    if (processFurther) {
 			if (actState == S_PARAM) {
 			    if (inChar == crEOL) {
-				if (totalInCount == 3 || totalInCount == 4) {
-				    switch (cmdKey) {
-
-
-
-				    case PARAM_ECHO:
-					createCommandResultMsg
-					    (ERR_CODE_SOURCE_SERIALIN,
-					     ERR_CODE_NO_ERR, 0, NULL);
-					break;
-
-				    case PARAM_LINEFEED:
-					lfType = cmdValue;
-					createCommandResultMsg
-					    (ERR_CODE_SOURCE_SERIALIN,
-					     ERR_CODE_NO_ERR, 0, NULL);
-					break;
-
-
-
-				    default:
-					if (eval_param_sys(cmdKey, cmdValue) == pdFALSE) {	// parameter not known to the system ?
-					    DEBUGPRINT
-						("Parameter not known by system - forward to protocol\n",
-						 'a');
-					    sendParam(cmdKey, cmdValue);	//then forward it to the protocol task, maybe he knows :-)
+				if (args.argv > 0) {
+				    switch (args.args[ARG_RECV]) {
+				    case FBID_SERIALIN:
+					switch (args.args[ARG_CMD]) {
+					case PARAM_ECHO:
+					    createCommandResultMsg
+						(FBID_SERIALIN,
+						 ERR_CODE_NO_ERR, 0, NULL);
+					    break;
+					case PARAM_LINEFEED:
+					    lfType =
+						args.args[ARG_VALUE_1];
+					    createCommandResultMsg
+						(FBID_SERIALIN,
+						 ERR_CODE_NO_ERR, 0, NULL);
+					    break;
+					default:
+					    createCommandResultMsg
+						(FBID_SERIALIN,
+						 ERR_CODE_OS_UNKNOWN_COMMAND,
+						 0,
+						 ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+					    break;
 					}
+					break;
+				    case FBID_SYS_GENERIC:
+				    case FBID_SYS_SPEC:
+					eval_param_sys(&args);
+					break;
+				    case FBID_PROTOCOL_GENERIC:
+				    case FBID_PROTOCOL_SPEC:
+				    case FBID_BUS_GENERIC:
+				    case FBID_BUS_SPEC:
+					sendParam(&args);	//then forward it to the protocol task, maybe he knows :-)
+					break;
+				    default:
+					createCommandResultMsg
+					    (FBID_SERIALIN,
+					     ERR_CODE_OS_UNKNOWN_COMMAND,
+					     0,
+					     ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 					break;
 				    }
 				} else {
@@ -309,7 +337,7 @@ void inputParserTask(void *pvParameters)
 				actState = S_INIT;
 			    } else {
 				/*check for valid input
-				 * totalInCount is used to define where we are in the input line:
+				 * totalInCount is used here to define where we are in the input line:
 				 * 0: at the beginning
 				 * 1: just reading the first parameter
 				 * 2: between the two numbers
@@ -317,9 +345,8 @@ void inputParserTask(void *pvParameters)
 				 * 4: input done, just waiting for EOL
 				 *
 				 */
-
 				if (inChar == crHEX) {
-				    if (totalInCount == 0 || totalInCount == 2) {	/* we are before the 2 numbers */
+				    if (even(totalInCount)) {	/* totalInCount is even, so we are at the start of a number */
 					hexInput = 1;
 					totalInCount++;	/* starting to input a number */
 				    } else {	/* forbitten char, just waiting for end of line */
@@ -328,7 +355,7 @@ void inputParserTask(void *pvParameters)
 				    }
 				} else {
 				    if (inChar == crBLANK) {
-					if (totalInCount == 1 || totalInCount == 3) {	/* finish the input of a param */
+					if (odd(totalInCount)) {	/* if totalInCount is odd, then we've just input a number */
 					    hexInput = 0;	/* reset the number format */
 					    totalInCount++;
 					}
@@ -338,29 +365,28 @@ void inputParserTask(void *pvParameters)
 						actState = S_WAITEOL;
 						lastErr = 2;
 					    } else {
-						if (totalInCount == 0
-						    || totalInCount == 1) {
-						    cmdKey =
-							cmdKey * (10 +
-								  (6 *
-								   hexInput))
-							+ inChar;
-						    totalInCount = 1;	/* in case we were on 0 before */
+
+						args.args[totalInCount /
+							  2] =
+						    args.args[totalInCount
+							      / 2] * (10 +
+								      (6 *
+								       hexInput))
+						    + inChar;
+						args.argv = totalInCount / 2 + 1;	//remember the latest index as number of args
+						if (even(totalInCount)) {
+						    totalInCount++;	/* in case we were just at the beginning  before, then we now giving in a number */
 						}
-						if (totalInCount == 2
-						    || totalInCount == 3) {
-						    cmdValue =
-							cmdValue * (10 +
-								    (6 *
-								     hexInput))
-							+ inChar;
-						    totalInCount = 3;	/* in case we were on 2 before */
-						}
+
 					    }
 					} else {	/* forbitten char, just waiting for end of line */
 					    actState = S_WAITEOL;
 					    lastErr = 1;
 					}
+				    }
+				    if (totalInCount / 2 > MAX_NUM_OF_ARGS) {	// max. number of arguments exceeded, just wait for end of line 
+					actState = S_WAITEOL;
+					lastErr = 1;
 				    }
 				}
 			    }
@@ -381,7 +407,7 @@ void inputParserTask(void *pvParameters)
 		    DEBUGPRINT("Wakeup again input task. STATE_INIT=%d\n",
 			       S_INIT);
 		} else {
-		    DEBUGPRINT("Error; I do not sleep...%d\n", actState);
+		    DEBUGPRINT("Error; I do not sleep...%ld\n", actState);
 		}
 		break;
 	    default:

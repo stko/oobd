@@ -34,22 +34,6 @@
 #ifndef INC_MC_CAN_H
 #define INC_MC_CAN_H
 
-#define VALUE_BUS_SILENT_MODE					( 0 )
-#define VALUE_BUS_LOOP_BACK_MODE				( 1 )
-#define VALUE_BUS_LOOP_BACK_WITH_SILENT_MODE	( 2 )
-#define VALUE_BUS_NORMAL_MODE					( 3 )
-#define VALUE_BUS_CONFIG_11bit_125kbit  		( 1 )
-#define VALUE_BUS_CONFIG_11bit_250kbit  		( 2 )
-#define VALUE_BUS_CONFIG_11bit_500kbit  		( 3 )
-#define VALUE_BUS_CONFIG_11bit_1000kbit 		( 4 )
-#define VALUE_BUS_CONFIG_29bit_125kbit  		( 5 )
-#define VALUE_BUS_CONFIG_29bit_250kbit  		( 6 )
-#define VALUE_BUS_CONFIG_29bit_500kbit  		( 7 )
-#define VALUE_BUS_CONFIG_29bit_1000kbit 		( 8 )
 
-portBASE_TYPE bus_init_can();
-portBASE_TYPE bus_send_can(data_packet * data);
-void bus_flush_can();
-void bus_close_can();
 
 #endif				/* INC_MC_CAN_H */

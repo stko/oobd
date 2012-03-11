@@ -27,7 +27,7 @@
 #ifdef __cplusplus
 extern "C" {
     
-#endif	/*  */
+#endif				/*  */
     
 /* Includes ------------------------------------------------------------------*/ 
 //#include "stm32_eval.h"
@@ -84,7 +84,7 @@ extern "C" {
 /* note: Could support: M24C01, M24C02, M24C04 and M24C16 if the blocks and 
    HW address are correctly defined*/ 
 // #define sEE_M24C64_32  /* Support the devices: M24C32 and M24C64 */
-#endif	/*  */
+#endif				/*  */
     
 #ifdef sEE_M24C64_32
 /* For M24C32 and M24C64 devices, E0,E1 and E2 pins are all used for device 
@@ -110,7 +110,7 @@ extern "C" {
 #define sEE_PAGESIZE           16
 #elif defined (sEE_M24C64_32)
 #define sEE_PAGESIZE           32
-#endif	/*  */
+#endif				/*  */
     
 /* Maximum Timeout values for flags and events waiting loops. These timeouts are
    not based on accurate values, they just guarantee that the application will 
@@ -153,7 +153,7 @@ extern "C" {
 			    uint8_t * NumByteToWrite);
     void sEE_WriteBuffer(uint8_t * pBuffer, uint16_t WriteAddr,
 			  uint16_t NumByteToWrite);
-     uint32_t sEE_WaitEepromStandbyState(void);
+    uint32_t sEE_WaitEepromStandbyState(void);
     
 /* USER Callbacks: These are functions for which prototypes only are declared in
    EEPROM driver and that should be implemented into user applicaiton. */ 
@@ -177,7 +177,7 @@ extern "C" {
     
 #ifdef __cplusplus
 } 
-#endif	/*  */
+#endif				/*  */
 
 #endif	/* __STM32_EVAL_I2C_EE_H */
 /**

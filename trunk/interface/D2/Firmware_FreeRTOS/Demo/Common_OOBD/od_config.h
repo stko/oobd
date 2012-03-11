@@ -41,13 +41,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
-#ifdef OOBD_PLATFORM_POSIX
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <sys/stat.h>
-#include <mqueue.h>
-#endif
 #include <errno.h>
 #include <unistd.h>
 
@@ -55,28 +48,8 @@
 #include "task.h"
 #include "queue.h"
 
-#ifdef OOBD_PLATFORM_POSIX
-#include "AsyncIO/AsyncIO.h"
-#include "AsyncIO/AsyncIOSocket.h"
-#include "AsyncIO/PosixMessageQueueIPC.h"
-#include "AsyncIO/AsyncIOSerial.h"
-#endif
 
-// debugging macros so we can pin down message origin at a glance
-#ifdef OOBD_PLATFORM_POSIX	// switch debug messages on or off
-#define WHERESTR  "[file %s, line %d]: "
-#define WHEREARG  __FILE__, __LINE__
-#define DEBUGPRINT2(...)       fprintf(stderr, __VA_ARGS__)
-#define DEBUGPRINT3(...)       printf(__VA_ARGS__)
-#define DEBUGPRINT(_fmt, ...)  DEBUGPRINT2(WHERESTR _fmt, WHEREARG, __VA_ARGS__)
-#define DEBUGUARTPRINT(...)
-#elif DEBUG_SERIAL_STM32
-#define DEBUGPRINT(_fmt, ...) DEBUGUARTPRINT(__VA_ARGS__)
-#define DEBUGUARTPRINT(...)  uart1_puts(__VA_ARGS__)
-#else
-#define DEBUGPRINT(_fmt, ...)
-#define DEBUGUARTPRINT(...)
-#endif
+
 
 /* Priority definitions for the tasks . */
 #define TASK_PRIO_LOW		( tskIDLE_PRIORITY + 1 )
@@ -144,6 +117,9 @@
 #define VALUE_LF_CRLF (0)
 #define VALUE_LF_LF (1)
 #define VALUE_LF_CR (2)
+
+//! Number of allowed arguments per command
+#define MAX_NUM_OF_ARGS (5)
 
 /*-------- Global Vars --------------*/
 

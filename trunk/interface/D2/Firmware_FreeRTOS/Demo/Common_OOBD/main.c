@@ -26,7 +26,7 @@
 
 */
 
-/**
+/*!
  * \mainpage Welcome to the OOBD Firmware Programming Manual
  * 
  * \section Introduction
