@@ -35,9 +35,11 @@
 #include "od_base.h"
 #include "od_protocols.h"
 #include "odp_uds.h"
+/*
 #ifdef OOBD_PLATFORM_STM32
 #include "stm32f10x.h"
 #endif
+*/
 
 /* some defines only need internally */
 #define SM_UDS_STANDBY 			( 0 )
@@ -103,8 +105,6 @@ udp_uds_CAN2data(UDSBuffer * udsPtr, unsigned char *canPtr,
 		 portBASE_TYPE startFrom, portBASE_TYPE len)
 {
     int i;
-    DEBUGPRINT("Fill Input Buffer at pos. %ld with len %ld\n", startFrom,
-	       len);
     for (i = 0; i < len; i++) {
 	udsPtr->data[startFrom + i] = *canPtr++;
     }
@@ -196,16 +196,16 @@ odp_uds_printdata_Buffer(portBASE_TYPE msgType, void *data,
 void odp_uds_printParam(portBASE_TYPE msgType, void *data,
 			printChar_cbf printchar)
 {
+    param_data *args = data;
     extern bus_paramPrint actBus_paramPrint;
-    static param_data *pd;
-    pd = data;
-    if (pd->key == PARAM_INFO && pd->value == VALUE_PARAM_INFO_PROTOCOL) {
+    if (args->args[ARG_CMD] == PARAM_INFO
+	&& args->args[ARG_VALUE_1] == VALUE_PARAM_INFO_PROTOCOL) {
 	printser_string("1 - UDS (ISO14229-1)");
 	printLF();
 	printEOT();
     } else {
 	DEBUGPRINT("Parameter not known by uds - forward to bus\n", 'a');
-	actBus_paramPrint(pd->key, pd->value);	/* forward the received params to the underlying bus. */
+	actBus_paramPrint(args);	/* forward the received params to the underlying bus. */
     }
 }
 
@@ -276,7 +276,7 @@ void obp_uds(void *pvParameters)
 
     MsgData *msg;
     MsgData *ownMsg;
-    portBASE_TYPE *paramData;
+    param_data *args;
     portBASE_TYPE sequenceCounter;
     portBASE_TYPE remainingBytes;
     portBASE_TYPE actBufferPos;
@@ -334,14 +334,7 @@ void obp_uds(void *pvParameters)
 		if (udsConfig.listen > 0) {
 		    odp_uds_dumpFrame(dp, printdata_CAN);
 		}
-		DEBUGPRINT
-		    ("Tester address %2X PCI %2X actual state: %d \n",
-		     dp->recv, dp->data[0], stateMachine_state);
-		DEBUGPRINT
-		    ("module addresses configured: receiving ID %2X sending ID %2X\n",
-		     udsConfig.sendID, udsConfig.recvID);
 		if (((udsConfig.sendID == 0 ? dp->recv == (udsConfig.recvID | 8) : dp->recv == udsConfig.sendID)) || udsConfig.recvID == 0x7DF) {	/* Tester Address correct / we sendes a broadcast (udsConfig.recvID==0x7DF)? */
-		    DEBUGPRINT("Answer address valid..", 'a');
 		    if (dp->data[0] == 0x03 && dp->data[1] == 0x7f && dp->data[3] == 0x78)	//Response pending
 		    {
 			timeout = udsConfig.timeoutPending;
@@ -371,7 +364,7 @@ void obp_uds(void *pvParameters)
 				stateMachine_state = SM_UDS_STANDBY;
 				udsBuffer->len = 0;
 				createCommandResultMsg
-				    (ERR_CODE_SOURCE_PROTOCOL,
+				    (FBID_PROTOCOL_GENERIC,
 				     ERR_CODE_UDS_MISSING_FLOW_CONTROL,
 				     (dp->data[0] & 0xF0),
 				     ERR_CODE_UDS_MISSING_FLOW_CONTROL_TEXT);
@@ -386,7 +379,7 @@ void obp_uds(void *pvParameters)
 
 			    //! \todo delayed, block wise sending of Consecutive frame still needs to be implemented
 			    while (remainingBytes > 0) {
-				DEBUGPRINT("Remaining bytes: %d\n",
+				DEBUGPRINT("Remaining bytes: %ld\n",
 					   remainingBytes);
 				actFrameLen =
 				    remainingBytes >
@@ -412,14 +405,14 @@ void obp_uds(void *pvParameters)
 			if (stateMachine_state == SM_UDS_WAIT_FOR_CF) {
 			    if ((dp->data[0] & 0xF0) == 0x20) {	/* consecutive Frame */
 				DEBUGPRINT
-				    ("Consecutive Frame seq. %d\n",
+				    ("Consecutive Frame seq. %ld\n",
 				     sequenceCounter);
 				sequenceCounter =
 				    sequenceCounter >
 				    14 ? 0 : sequenceCounter + 1;
 				if ((dp->data[0] & 0x0F) ==
 				    sequenceCounter) {
-				    DEBUGPRINT("Sequence ok seq. %d\n",
+				    DEBUGPRINT("Sequence ok seq. %ld\n",
 					       sequenceCounter);
 				    actFrameLen =
 					remainingBytes >
@@ -432,7 +425,7 @@ void obp_uds(void *pvParameters)
 				    remainingBytes -= actFrameLen;
 				    timeout = udsConfig.timeout;
 				    DEBUGPRINT
-					("actualBufferPos %d remaining Bytes %d\n",
+					("actualBufferPos %ld remaining Bytes %ld\n",
 					 actBufferPos, remainingBytes);
 				    if (remainingBytes == 0) {	/* finished */
 					stateMachine_state =
@@ -457,12 +450,12 @@ void obp_uds(void *pvParameters)
 				} else {	/* sequence error! */
 				    stateMachine_state = SM_UDS_STANDBY;
 				    createCommandResultMsg
-					(ERR_CODE_SOURCE_PROTOCOL,
+					(FBID_PROTOCOL_GENERIC,
 					 ERR_CODE_UDS_WRONG_SEQUENCE_COUNT,
 					 (dp->data[0] & 0x0F),
 					 ERR_CODE_UDS_WRONG_SEQUENCE_COUNT_TEXT);
 				    DEBUGPRINT
-					("Sequence Error! Received %d , expected %d\n",
+					("Sequence Error! Received %d , expected %ld\n",
 					 dp->data[0] & 0x0F,
 					 sequenceCounter);
 				    timeout = 0;
@@ -479,7 +472,7 @@ void obp_uds(void *pvParameters)
 			    } else {
 				stateMachine_state = SM_UDS_STANDBY;
 				createCommandResultMsg
-				    (ERR_CODE_SOURCE_PROTOCOL,
+				    (FBID_PROTOCOL_GENERIC,
 				     ERR_CODE_UDS_MISSING_FIRST_FRAME,
 				     (dp->data[0] & 0xF0),
 				     ERR_CODE_UDS_MISSING_FIRST_FRAME_TEXT);
@@ -504,7 +497,7 @@ void obp_uds(void *pvParameters)
 				    (dp->data[0] & 0xF) * 256 +
 				    dp->data[1];
 				actBufferPos = 6;
-				DEBUGPRINT("First Frame with %d Bytes\n",
+				DEBUGPRINT("First Frame with %ld Bytes\n",
 					   remainingBytes);
 				udsBuffer->len = remainingBytes;	/* set the buffer size alredy inhope, that all goes well ;-) */
 				remainingBytes -= 6;	/* the first 6 bytes are already in the FF */
@@ -567,7 +560,7 @@ void obp_uds(void *pvParameters)
 				dp->data[i];
 			}
 		    } else {
-			createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
+			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
 					       ERR_CODE_UDS_DATA_TOO_LONG_ERR,
 					       (udsBuffer->len) + dp->len,
 					       ERR_CODE_UDS_DATA_TOO_LONG_ERR_TEXT);
@@ -575,81 +568,82 @@ void obp_uds(void *pvParameters)
 		}
 		break;
 	    case MSG_SERIAL_PARAM:
-		paramData = (portBASE_TYPE *) msg->addr;
-		DEBUGPRINT("parameter received %d %d\n", paramData[0],
-			   paramData[1]);
+		args = (portBASE_TYPE *) msg->addr;
+		DEBUGPRINT("parameter received %ld %ld\n",
+			   args->args[ARG_CMD], args->args[ARG_VALUE_1]);
 
-		switch (paramData[0]) {
-		    // first we commend out all parameters  which are not used to generate the right "unknown parameter" message in the default - area
-		    /*
-		       case PARAM_ECHO:
-		       break;
-		       case PARAM_TIMEOUT_PENDING:
-		       break;
-		       case PARAM_BLOCKSIZE:
-		       break;
-		       case PARAM_FRAME_DELAY:
-		       break;
-		     */
-		    // the next parameters needs to handled by the bus
-		case PARAM_BUS_MODE:
-		case PARAM_BUS_CONFIG:
-		    actBus_param(paramData[0], paramData[1]);	/* forward the received params to the underlying bus. */
+		switch (args->args[ARG_RECV]) {
+		case FBID_PROTOCOL_GENERIC:
+		    switch (args->args[ARG_CMD]) {
+			// first we commend out all parameters  which are not used to generate the right "unknown parameter" message in the default - area
+			/*
+			   case PARAM_ECHO:
+			   break;
+			   case PARAM_TIMEOUT_PENDING:
+			   break;
+			   case PARAM_BLOCKSIZE:
+			   break;
+			   case PARAM_FRAME_DELAY:
+			   break;
+			 */
+		    case PARAM_INFO:
+			CreateParamOutputMsg(args, odp_uds_printParam);
+			break;
+			// and here we proceed all command parameters
+		    case PARAM_LISTEN:
+			udsConfig.listen = args->args[ARG_VALUE_1];
+			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+					       ERR_CODE_NO_ERR, 0, NULL);
+			break;
+		    case PARAM_TIMEOUT:
+			udsConfig.timeout = args->args[ARG_VALUE_1] + 1;
+			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+					       ERR_CODE_NO_ERR, 0, NULL);
+			break;
+		    case PARAM_RECVID:
+			udsConfig.recvID = args->args[ARG_VALUE_1];
+			break;
+		    case PARAM_SENDID:
+			udsConfig.sendID = args->args[ARG_VALUE_1];
+			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+					       ERR_CODE_NO_ERR, 0, NULL);
+			break;
+		    case PARAM_TP_ON:
+			tp_Flags[odp_uds_reduceID(args->args[ARG_VALUE_1])]
+			    = udsConfig.tpFreq;
+			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+					       ERR_CODE_NO_ERR, 0, NULL);
+			break;
+		    case PARAM_TP_OFF:
+			tp_Flags[odp_uds_reduceID(args->args[ARG_VALUE_1])]
+			    = 0;
+			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+					       ERR_CODE_NO_ERR, 0, NULL);
+			break;
+		    case PARAM_TP_FREQ:
+			udsConfig.tpFreq = args->args[ARG_VALUE_1];
+			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+					       ERR_CODE_NO_ERR, 0, NULL);
+			break;
+			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+					       ERR_CODE_NO_ERR, 0, NULL);
+		    default:
+			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+					       FBID_PROTOCOL_GENERIC, 0,
+					       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+			break;
+		    }
 		    break;
-		case PARAM_BUS:
-		    //! \todo bus switching needs to be implemented
-		    createCommandResultMsg(ERR_CODE_SOURCE_OS,
-					   ERR_CODE_OS_UNKNOWN_COMMAND, 0,
-					   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+		case FBID_BUS_GENERIC:
+		case FBID_BUS_SPEC:
+		    actBus_param(args);	/* forward the received params to the underlying bus. */
 		    break;
-		case PARAM_INFO:
-		    CreateParamOutputMsg(paramData[0], paramData[1],
-					 odp_uds_printParam);
-		    break;
-		    // and here we proceed all command parameters
-		case PARAM_LISTEN:
-		    udsConfig.listen = paramData[1];
-		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
-					   ERR_CODE_NO_ERR, 0, NULL);
-		    break;
-		case PARAM_TIMEOUT:
-		    udsConfig.timeout = paramData[1] + 1;
-		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
-					   ERR_CODE_NO_ERR, 0, NULL);
-		    break;
-		case PARAM_RECVID:
-		    udsConfig.recvID = paramData[1];
-		    break;
-		case PARAM_SENDID:
-		    udsConfig.sendID = paramData[1];
-		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
-					   ERR_CODE_NO_ERR, 0, NULL);
-		    break;
-		case PARAM_TP_ON:
-		    tp_Flags[odp_uds_reduceID(paramData[1])] =
-			udsConfig.tpFreq;
-		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
-					   ERR_CODE_NO_ERR, 0, NULL);
-		    break;
-		case PARAM_TP_OFF:
-		    tp_Flags[odp_uds_reduceID(paramData[1])] = 0;
-		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
-					   ERR_CODE_NO_ERR, 0, NULL);
-		    break;
-		case PARAM_TP_FREQ:
-		    udsConfig.tpFreq = paramData[1];
-		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
-					   ERR_CODE_NO_ERR, 0, NULL);
-		    break;
-		    createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
-					   ERR_CODE_NO_ERR, 0, NULL);
 		default:
-		    createCommandResultMsg(ERR_CODE_SOURCE_OS,
-					   ERR_CODE_OS_UNKNOWN_COMMAND, 0,
+		    createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+					   FBID_PROTOCOL_GENERIC, 0,
 					   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 		    break;
 		}
-		break;
 	    case MSG_INIT:
 		DEBUGPRINT("Reset Protocol\n", 'a');
 		udsBuffer->len = 0;
@@ -657,7 +651,6 @@ void obp_uds(void *pvParameters)
 	    case MSG_SEND_BUFFER:
 		/* let's Dance: Starting the transfer protocol */
 		if (udsBuffer->len > 0) {
-		    DEBUGPRINT("Send Buffer\n", 'a');
 		    actDataPacket.recv = udsConfig.recvID;
 		    actDataPacket.data = &telegram;
 		    actDataPacket.len = 8;
@@ -694,8 +687,7 @@ void obp_uds(void *pvParameters)
 
 		} else {	/* no data to send? */
 		    createCommandResultMsg
-			(ERR_CODE_SOURCE_SERIALIN, ERR_CODE_NO_ERR,
-			 0, NULL);
+			(FBID_PROTOCOL_GENERIC, ERR_CODE_NO_ERR, 0, NULL);
 		    DEBUGPRINT("Send input task release msg\n", 'a');
 
 		    /* just release the input again */
@@ -711,7 +703,7 @@ void obp_uds(void *pvParameters)
 		    if (timeout == 1) {	/* time's gone... */
 			udsBuffer->len = 0;
 			DEBUGPRINT("Timeout!\n", 'a');
-			createCommandResultMsg(ERR_CODE_SOURCE_PROTOCOL,
+			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
 					       ERR_CODE_UDS_TIMEOUT, 0,
 					       ERR_CODE_UDS_TIMEOUT_TEXT);
 			stateMachine_state = SM_UDS_STANDBY;

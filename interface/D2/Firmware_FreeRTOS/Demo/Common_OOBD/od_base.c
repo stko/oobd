@@ -34,10 +34,11 @@
 #include "od_config.h"
 #include "od_base.h"
 #include "od_protocols.h"
+/*
 #ifdef OOBD_PLATFORM_STM32
 #include "stm32f10x.h"
 #endif
-
+*/
 bus_init actBus_init = NULL;
 bus_send actBus_send = NULL;
 bus_flush actBus_flush = NULL;
@@ -232,15 +233,11 @@ void createCommandResultMsgFromISR(portBASE_TYPE eSource,
     }
 }
 
-void CreateParamOutputMsg(portBASE_TYPE key, portBASE_TYPE value,
-			  print_cbf printRoutine)
+void CreateParamOutputMsg(param_data * args, print_cbf printRoutine)
 {
     MsgData *msg;
     extern xQueueHandle protocolQueue;
-    param_data p;
-    p.key = key;
-    p.value = value;
-    if (NULL != (msg = createMsg(&p, sizeof(p)))) {
+    if (NULL != (msg = createMsg(args, sizeof(param_data)))) {
 	msg->print = printRoutine;
 	if (pdPASS != sendMsg(MSG_HANDLE_PARAM, outputQueue, msg)) {
 	    DEBUGPRINT("FATAL ERROR: protocol queue is full!\n", 'a');
@@ -396,9 +393,6 @@ void printser_string(char const *str)
 	/* transmit characters until 0 character */
 	while (*str) {
 	    /* write character to buffer and increment pointer */
-#ifdef OOBD_PLATFORM_POSIX
-	    putchar(*str);
-#endif
 	    printChar(*str++);
 	}
     }

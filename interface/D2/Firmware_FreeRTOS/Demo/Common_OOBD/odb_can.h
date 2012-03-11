@@ -38,7 +38,7 @@
 portBASE_TYPE bus_init_can();
 portBASE_TYPE bus_send_can(data_packet * data);
 void bus_flush_can();
-portBASE_TYPE bus_param_can(portBASE_TYPE param, portBASE_TYPE value);
+portBASE_TYPE bus_param_can(param_data * args);
 void bus_close_can();
 
 void odb_can_init();

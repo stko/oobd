@@ -61,11 +61,12 @@ print_telegram(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 }
 
 /*-----------------------------------------------------------*/
-void bus_param_canPrint(portBASE_TYPE cmdKey, portBASE_TYPE cmdValue)
+void bus_param_canPrint(param_data * args)
 {
-    DEBUGPRINT("can Parameter receiced %d-%d\n", cmdKey, cmdValue);
-    if (cmdKey == PARAM_INFO) {
-	switch (cmdValue) {
+    DEBUGPRINT("can Parameter receiced %ld-%ld\n", args->args[ARG_RECV],
+	       args->args[ARG_CMD]);
+    if (args->args[ARG_CMD] == PARAM_INFO) {
+	switch (args->args[ARG_CMD]) {
 	case VALUE_PARAM_INFO_BUS:	/* p 0 2 */
 	    printser_string("CAN Bus");
 	    printLF();
@@ -140,14 +141,14 @@ void bus_param_canPrint(portBASE_TYPE cmdKey, portBASE_TYPE cmdValue)
 		break;
 	    }
 	default:
-	    createCommandResultMsg(ERR_CODE_SOURCE_OS,
+	    createCommandResultMsg(FBID_BUS_GENERIC,
 				   ERR_CODE_OS_UNKNOWN_COMMAND, 0,
 				   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 
 	    break;
 	}
     } else {
-	createCommandResultMsg(ERR_CODE_SOURCE_OS,
+	createCommandResultMsg(FBID_BUS_GENERIC,
 			       ERR_CODE_OS_UNKNOWN_COMMAND, 0,
 			       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 
@@ -157,12 +158,10 @@ void bus_param_canPrint(portBASE_TYPE cmdKey, portBASE_TYPE cmdValue)
 
 /*-----------------------------------------------------------*/
 
-void odb_can_printParam(portBASE_TYPE msgType, void *data,
+void odb_can_printParam(portBASE_TYPE msgType, param_data * args,
 			printChar_cbf printchar)
 {
-    static param_data *pd;
-    pd = data;
-    bus_param_canPrint(pd->key, pd->value);
+    bus_param_canPrint(args);
 }
 
 /*-----------------------------------------------------------*/

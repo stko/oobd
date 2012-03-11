@@ -35,10 +35,11 @@
 #include "od_base.h"
 #include "od_protocols.h"
 #include "odp_kwp.h"
+/*
 #ifdef OOBD_PLATFORM_STM32
 #include "stm32f10x.h"
 #endif
-
+*/
 
 void obd_kwp_init()
 {

@@ -27,7 +27,7 @@
 */
 
 /**
- * .
+ * 
  */
 
 
@@ -36,6 +36,7 @@
 
 #include <stdint.h>
 #include "od_config.h"
+#include "mc_sys.h"
 
 void initProtocols();
 void initBusses();
@@ -52,8 +53,7 @@ typedef void (*print_cbf) (portBASE_TYPE msgType, void *data,
 
 //! signature of the  function that will be called in protocol or bus handler
 //! when a parameter command is given
-typedef portBASE_TYPE(*param_cbf) (portBASE_TYPE param,
-				   portBASE_TYPE value);
+typedef portBASE_TYPE(*param_cbf) (void *param);
 
 
 
@@ -85,19 +85,32 @@ typedef struct error_data {
 } ERROR_DATA;
 
 
-//! Error Source task constants
-#define ERR_CODE_NO_ERR 0	//!<generic falue for No Error
-#define ERR_CODE_SOURCE_OS 1	//!<basic OS Error
-#define ERR_CODE_SOURCE_SERIALIN 2	//!<Serial Input Task Error
-#define ERR_CODE_SOURCE_SERIALOUT 3	//!<Serial Output Task Error
-#define ERR_CODE_SOURCE_PROTOCOL 4	//!<Protocol Task Error
-#define ERR_CODE_SOURCE_BUS 5	//!<Bus Handler Error
+//! Function block Identifier
+#define FBID_SYS_GENERIC 0	//!<The generic part of the system
+#define FBID_SYS_SPEC 1		//!<The mc specific part of the system
+#define FBID_SERIALIN 2		//!<The serial in process
+#define FBID_SERIALOUT 3	//!<The serial out process
+#define FBID_PROTOCOL_GENERIC 4	//!<The generic part of the actual protocol
+#define FBID_PROTOCOL_SPEC 5	//!<The implementation specific part of the actual protocol
+#define FBID_BUS_GENERIC 6	//!<The generic part of the actual bus
+#define FBID_BUS_SPEC 7		//!<The implementation specific part of the actual bus
 
+//! Error constants
+#define ERR_CODE_NO_ERR 0	//!<generic value for No Error
+
+//! \todo the text constants needs to be replaced against a function, otherways we fill the program code with repeating error texts
 //! Error OS constants
 #define ERR_CODE_OS_NO_PROTOCOL_TASK 1	//!<basic OS Error
 #define ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT "can't generate protocol task"	//!<basic OS Error
 #define ERR_CODE_OS_UNKNOWN_COMMAND 2	//!< OS couldn't resolve command
 #define ERR_CODE_OS_UNKNOWN_COMMAND_TEXT "Unknown command"	//!<unknown command
+
+
+//! help constants to address the parameter array 
+#define ARG_RECV (0)		//!<receiver of the parameter
+#define ARG_CMD (1)		//!<index of command
+#define ARG_VALUE_1 (2)		//!<index of 1. value
+#define ARG_VALUE_2 (3)		//!<index of 2. value
 
 
 /** callback function for error handling
@@ -118,8 +131,8 @@ typedef struct param_data param_data;
 * used to let the output task make outputs about incoming parameters (or to handle them then)
 */
 typedef struct param_data {
-    portBASE_TYPE key;		//!< the parameter key
-    portBASE_TYPE value;	//!< the parameter value
+    portBASE_TYPE argv;		//!< Nr of Args
+    portBASE_TYPE args[MAX_NUM_OF_ARGS];	//!< Array of Args
 } PARAM_DATA;
 
 
@@ -165,8 +178,7 @@ void createCommandResultMsg(portBASE_TYPE eSource, portBASE_TYPE eType,
 void createCommandResultMsgFromISR(portBASE_TYPE eSource,
 				   portBASE_TYPE eType,
 				   portBASE_TYPE eDetail, char *text);
-void CreateParamOutputMsg(portBASE_TYPE key, portBASE_TYPE value,
-			  print_cbf printRoutine);
+void CreateParamOutputMsg(param_data * args, print_cbf printRoutine);
 
 // Print functions
 
@@ -181,6 +193,9 @@ void printser_uint16ToHex(uint16_t value);
 void printser_uint8ToHex(uint8_t value);
 
 void printLF();
+
+void evalResult(portBASE_TYPE source, portBASE_TYPE errType,
+		portBASE_TYPE detail, char *text);
 
 void printEOT();
 

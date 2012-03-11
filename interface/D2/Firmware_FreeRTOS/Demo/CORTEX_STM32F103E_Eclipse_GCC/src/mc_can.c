@@ -96,29 +96,30 @@ void bus_flush_can()
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_param_can(portBASE_TYPE param, portBASE_TYPE value)
+portBASE_TYPE bus_param_can(param_data * args)
 {
+
     extern struct CanConfig *canConfig;
-    switch (param) {
+    switch (args->args[ARG_CMD]) {
     case PARAM_BUS_CONFIG:
-	if (value != 0)
-	    CAN1_Configuration(value, CAN_Mode_Silent);	/* reinitialization of CAN interface */
-	canConfig->busConfig = value;
+	if (args->args[ARG_VALUE_1] != 0)
+	    CAN1_Configuration(args->args[ARG_VALUE_1], CAN_Mode_Silent);	/* reinitialization of CAN interface */
+	canConfig->busConfig = args->args[ARG_VALUE_1];
 	break;
 
     case PARAM_BUS:
-	if (value == 0)
+	if (args->args[ARG_VALUE_1] == 0)
 	    CAN1_Configuration(canConfig->busConfig, CAN_Mode_Silent);	/* set CAN interface to silent mode */
-	else if (value == 1)
+	else if (args->args[ARG_VALUE_1] == 1)
 	    CAN1_Configuration(canConfig->busConfig, CAN_Mode_LoopBack);	/* set CAN interface to loop back mode */
-	else if (value == 2)
+	else if (args->args[ARG_VALUE_1] == 2)
 	    CAN1_Configuration(canConfig->busConfig, CAN_Mode_Silent_LoopBack);	/* set CAN interface to loop back combined with silent mode */
-	else if (value == 3)
+	else if (args->args[ARG_VALUE_1] == 3)
 	    CAN1_Configuration(canConfig->busConfig, CAN_Mode_Normal);	/* set CAN interface to normal mode */
 	else
 	    CAN1_Configuration(canConfig->busConfig, CAN_Mode_Silent);	/* set CAN interface to default mode */
 
-	canConfig->bus = value;	/* set config.bus to current value of Paramter 'P 5 x' */
+	canConfig->bus = args->args[ARG_VALUE_1];	/* set config.bus to current value of Paramter 'P 5 x' */
 	break;
 
     default:

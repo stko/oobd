@@ -35,9 +35,11 @@
 #include "od_base.h"
 #include "od_protocols.h"
 #include "odp_canraw.h"
+/*
 #ifdef OOBD_PLATFORM_STM32
 #include "stm32f10x.h"
 #endif
+*/
 
 void obp_canraw(void *pvParameters)
 {

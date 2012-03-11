@@ -116,6 +116,14 @@ portBASE_TYPE bus_init_can()
 
 portBASE_TYPE bus_send_can(data_packet * data)
 {
+    int i;
+    DEBUGPRINT("CAN- Send Buffer with len %ld\n", data->len);
+    //++++++++++++++++++++
+    for (i = 0; i < data->len; i++) {
+	printser_uint8ToHex(data->data[i]);
+	printser_string(" ");
+    }
+    printser_string("\n");
     static xUDPPacket xPacket;
     xPacket.ucPacket[0] = data->recv & 0xFF;	//just use the LByte
     xPacket.ucPacket[1] = data->len;
@@ -148,22 +156,21 @@ void bus_flush_can()
 
 void ParamPrint(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 {
-    param_data pData;
-
-    pData = *(param_data *) data;
+    param_data *args;
+    args = data;
     DEBUGPRINT
 	("Bus Parameter received via Outputtask param %ld value %ld\n",
-	 pData.key, pData.value);
+	 args->args[ARG_RECV], args->args[ARG_CMD]);
 
 }
 
 
 /*-----------------------------------------------------------*/
-portBASE_TYPE bus_param_can(portBASE_TYPE param, portBASE_TYPE value)
+portBASE_TYPE bus_param_can(param_data * args)
 {
-    DEBUGPRINT("Bus Parameter received param %ld value %ld\n", param,
-	       value);
-    CreateParamOutputMsg(param, value, ParamPrint);
+    DEBUGPRINT("Bus Parameter received param %ld value %ld\n",
+	       args->args[ARG_RECV], args->args[ARG_CMD]);
+    CreateParamOutputMsg(args, ParamPrint);
     return pdPASS;
 }
 
