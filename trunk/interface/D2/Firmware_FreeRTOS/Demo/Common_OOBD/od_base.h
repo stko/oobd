@@ -85,6 +85,12 @@ typedef struct error_data {
 } ERROR_DATA;
 
 
+/*! \addtogroup param
+   *  Additional documentation for group 'param'
+   *  @{
+   */
+
+
 //! Function block Identifier
 #define FBID_SYS_GENERIC 0	//!<The generic part of the system
 #define FBID_SYS_SPEC 1		//!<The mc specific part of the system
@@ -95,6 +101,10 @@ typedef struct error_data {
 #define FBID_BUS_GENERIC 6	//!<The generic part of the actual bus
 #define FBID_BUS_SPEC 7		//!<The implementation specific part of the actual bus
 
+/*! @} */
+  
+  
+  
 //! Error constants
 #define ERR_CODE_NO_ERR 0	//!<generic value for No Error
 

@@ -40,8 +40,10 @@
 #include "stm32f10x.h"		/* ST Library v3.4..0 specific header files */
 #include "SystemConfig.h"	/* STM32 hardware specific header file */
 
-void printParam_sys_specific(param_data * args, printChar_cbf printchar)
+void printParam_sys_specific(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 {
+    param_data *args;
+    args = data;
     extern uint8_t BTM222_BtAddress[];
     extern unsigned char BTM222_DeviceName[];
     extern unsigned char BTM222_UartSpeed;
@@ -146,6 +148,30 @@ void printParam_sys_specific(param_data * args, printChar_cbf printchar)
 	break;
     }
 }
+
+portBASE_TYPE eval_param_sys_specific(param_data * args)
+{
+    int i;
+    switch (args->args[ARG_CMD]) {
+    case PARAM_INFO:
+	switch (args->args[ARG_VALUE_1]) {
+	case VALUE_PARAM_INFO_VERSION:
+	case VALUE_PARAM_INFO_SERIALNUMBER:
+	    CreateParamOutputMsg(args, printParam_sys_specific);
+	    return pdTRUE;
+	    break;
+	default:
+	    return pdFALSE;
+	}
+	break;
+
+
+    default:
+	return pdFALSE;
+    }
+}
+
+
 
 void mc_init_sys_boot_specific()
 {

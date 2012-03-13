@@ -55,7 +55,7 @@ printParam_sys(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
     switch (args->args[ARG_CMD]) {
 
     default:
-	printParam_sys_specific(args, printchar);
+//	printParam_sys_specific(args, printchar);
 	break;
     }
 }
@@ -66,12 +66,14 @@ portBASE_TYPE eval_param_sys(param_data * args)
     switch (args->args[ARG_CMD]) {
     case PARAM_INFO:
 	switch (args->args[ARG_VALUE_1]) {
-	case VALUE_PARAM_INFO_VERSION:
+/*
+case VALUE_PARAM_INFO_VERSION:
 	case VALUE_PARAM_INFO_SERIALNUMBER:
 	    CreateParamOutputMsg(args, printParam_sys);
 	    return pdTRUE;
 	    break;
-	case PARAM_PROTOCOL:
+*/
+	  case PARAM_PROTOCOL:
 	    //! \todo this kind of task switching is not design intent
 	    //! \todo no use of protocol table, its hardcoded instead
 	    if (VALUE_PARAM_PROTOCOL_CAN_RAW == args->args[ARG_VALUE_1]) {	/* p 4 1 */
@@ -108,10 +110,16 @@ portBASE_TYPE eval_param_sys(param_data * args)
 		    DEBUGPRINT("\r\n*** 'prot' Task NOT created ***", 'a');
 		}
 	    }
+	    return pdTRUE;
 	    break;
 
 	default:
-	    return pdFALSE;
+	createCommandResultMsg
+					    (FBID_SYS_GENERIC,
+					     ERR_CODE_OS_UNKNOWN_COMMAND,
+					     0,
+					     ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+		return pdFALSE;
 	}
 	break;
 	//! \todo remove dirty IO implementation
@@ -124,6 +132,8 @@ portBASE_TYPE eval_param_sys(param_data * args)
 		      (args->args[ARG_VALUE_1] & (1 << i)) == 0 ? 0 : 1, 0,
 		      0);
 	}
+	evalResult(FBID_SYS_GENERIC, ERR_CODE_NO_ERR, 0, NULL);
+	return pdTRUE;
 	break;
 //-----------------------------------------------------------
 //-----------------------------------------------------------
