@@ -314,8 +314,10 @@ void inputParserTask(void *pvParameters)
 					}
 					break;
 				    case FBID_SYS_GENERIC:
-				    case FBID_SYS_SPEC:
 					eval_param_sys(&args);
+					break;
+				    case FBID_SYS_SPEC:
+					eval_param_sys_specific(&args);
 					break;
 				    case FBID_PROTOCOL_GENERIC:
 				    case FBID_PROTOCOL_SPEC:

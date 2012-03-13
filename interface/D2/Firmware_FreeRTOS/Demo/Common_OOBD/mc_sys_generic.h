@@ -49,7 +49,7 @@ void mc_init_sys_tasks();
 void mc_init_sys_shutdown();
 void mc_sys_idlehook();
 
-void printParam_sys_specific(param_data * args, printChar_cbf printchar);
+void printParam_sys_specific(portBASE_TYPE msgType, void *data, printChar_cbf printchar);
 void mc_init_sys_boot_specific();
 void mc_init_sys_tasks_specific();
 void mc_init_sys_shutdown_specific();
@@ -61,6 +61,7 @@ void mc_init_sys_shutdown_specific();
 */
 
 portBASE_TYPE eval_param_sys(param_data * args);
+portBASE_TYPE eval_param_sys_specific(param_data * args);
 portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 			portBASE_TYPE upperValue, portBASE_TYPE duration,
 			portBASE_TYPE waveType);

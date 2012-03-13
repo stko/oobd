@@ -35,6 +35,10 @@
 #define INC_MC_SYS_H
 
 #include "od_base.h"
+  /*! \addtogroup param
+   *  Additional documentation for group 'param'
+   *  @{
+   */
 
 #define VALUE_PARAM_INFO_ADC_POWER      		( 6 )
 #define VALUE_PARAM_INFO_CPU_INFO 				( 10 )
@@ -44,7 +48,7 @@
 #define VALUE_PARAM_INFO_CRC32					( 14 )
 #define VALUE_PARAM_INFO_BTM222_DEVICENAME 		( 20 )
 #define VALUE_PARAM_INFO_BTM222_UART_SPEED 		( 21 )
-
+  /*! @} */
 // debugging macros so we can pin down message origin at a glance
 #ifdef  DEBUG_SERIAL_STM32
 #define DEBUGPRINT(_fmt, ...) DEBUGUARTPRINT(__VA_ARGS__)

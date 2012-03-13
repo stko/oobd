@@ -52,8 +52,10 @@ void mc_init_sys_shutdown_specific()
     DEBUGPRINT("shutdown the MC specific systems\n", 'a');
 }
 
-void printParam_sys_specific(param_data * args, printChar_cbf printchar)
+void printParam_sys_specific(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 {
+    param_data *args;
+    args = data;
     DEBUGPRINT("sys specific parameter received: %ld / %ld\n",
 	       args->args[ARG_RECV], args->args[ARG_CMD]);
     switch (args->args[ARG_CMD]) {
@@ -83,6 +85,28 @@ void printParam_sys_specific(param_data * args, printChar_cbf printchar)
 	break;
     default:
 	break;
+    }
+}
+
+portBASE_TYPE eval_param_sys_specific(param_data * args)
+{
+    int i;
+    switch (args->args[ARG_CMD]) {
+    case PARAM_INFO:
+	switch (args->args[ARG_VALUE_1]) {
+	case VALUE_PARAM_INFO_VERSION:
+	case VALUE_PARAM_INFO_SERIALNUMBER:
+	    CreateParamOutputMsg(args, printParam_sys_specific);
+	    return pdTRUE;
+	    break;
+	default:
+	    return pdFALSE;
+	}
+	break;
+
+
+    default:
+	return pdFALSE;
     }
 }
 
