@@ -36,11 +36,11 @@
 
 #include "od_base.h"
   /*! \addtogroup param
-   *  Additional documentation for group 'param'
+   * \section STM32 spezific System Commands
    *  @{
    */
 
-#define VALUE_PARAM_INFO_ADC_POWER      		( 6 )
+#define VALUE_PARAM_INFO_ADC_POWER      		( 6 ) //!< Outputs the actual device power supply voltage
 #define VALUE_PARAM_INFO_CPU_INFO 				( 10 )
 #define VALUE_PARAM_INFO_MEM_LOC  				( 11 )
 #define VALUE_PARAM_INFO_ROM_TABLE_LOC  		( 12 )

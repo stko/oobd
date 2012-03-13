@@ -40,7 +40,8 @@
 #include "stm32f10x.h"		/* ST Library v3.4..0 specific header files */
 #include "SystemConfig.h"	/* STM32 hardware specific header file */
 
-void printParam_sys_specific(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
+void printParam_sys_specific(portBASE_TYPE msgType, void *data,
+			     printChar_cbf printchar)
 {
     param_data *args;
     args = data;
@@ -73,21 +74,31 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data, printChar_cbf pr
 	case VALUE_PARAM_INFO_ADC_POWER:	/* p 0 6 */
 	    printser_int((readADC1(8) * (3.15 / 4096)) * 10000, 10);	/* result in mV */
 	    printser_string(" mV");
+	    printLF();
+	    printEOT();
 	    break;
 	case VALUE_PARAM_INFO_CPU_INFO:	/* p 0 10 */
 	    sendCPUInfo();	/* send CPU Info */
+	    printLF();
+	    printEOT();
 	    break;
 	case VALUE_PARAM_INFO_MEM_LOC:	/* p 0 11 */
 	    sendMemLoc(0x8002400);	/* send Mem Location */
+	    printLF();
+	    printEOT();
 	    break;
 	case VALUE_PARAM_INFO_ROM_TABLE_LOC:	/* p 0 12 */
 	    sendRomTable();	/* send ROM Table */
+	    printLF();
+	    printEOT();
 	    break;
 	case VALUE_PARAM_INFO_FREE_HEAP_SIZE:	/* p 0 13 */
 	    printser_string("Total Heap (in byte): ");
 	    printser_int(configTOTAL_HEAP_SIZE, 10);
 	    printser_string("Free Heap (in byte): ");
 	    printser_int(xPortGetFreeHeapSize(), 10);	/* send FreeRTOS free heap size */
+	    printLF();
+	    printEOT();
 	    break;
 	case VALUE_PARAM_INFO_CRC32:	/* p 0 14 */
 	    if (CheckCrc32() == 0) {
@@ -95,8 +106,12 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data, printChar_cbf pr
 	    } else {
 		printser_string("CRC-32 application check failed");
 	    }
+	    printLF();
+	    printEOT();
 	case VALUE_PARAM_INFO_BTM222_DEVICENAME:	/* p 0 20 */
 	    printser_string(BTM222_DeviceName);
+	    printLF();
+	    printEOT();
 	    break;
 	case VALUE_PARAM_INFO_BTM222_UART_SPEED:	/* p 0 21 */
 	    switch (BTM222_UartSpeed) {
@@ -136,8 +151,9 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data, printChar_cbf pr
 		printser_string("not detected");
 		break;
 	    }
+	    printLF();
+	    printEOT();
 	    break;
-
 	default:
 	    evalResult(FBID_SYS_SPEC,
 		       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT, 0,
@@ -151,22 +167,15 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data, printChar_cbf pr
 
 portBASE_TYPE eval_param_sys_specific(param_data * args)
 {
-    int i;
     switch (args->args[ARG_CMD]) {
     case PARAM_INFO:
-	switch (args->args[ARG_VALUE_1]) {
-	case VALUE_PARAM_INFO_VERSION:
-	case VALUE_PARAM_INFO_SERIALNUMBER:
-	    CreateParamOutputMsg(args, printParam_sys_specific);
-	    return pdTRUE;
-	    break;
-	default:
-	    return pdFALSE;
-	}
+	CreateParamOutputMsg(args, printParam_sys_specific);
+	return pdTRUE;
 	break;
-
-
     default:
+	evalResult(FBID_SYS_SPEC,
+		   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT, 0,
+		   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 	return pdFALSE;
     }
 }

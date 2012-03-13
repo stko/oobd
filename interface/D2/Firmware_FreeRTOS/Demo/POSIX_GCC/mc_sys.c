@@ -52,7 +52,8 @@ void mc_init_sys_shutdown_specific()
     DEBUGPRINT("shutdown the MC specific systems\n", 'a');
 }
 
-void printParam_sys_specific(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
+void printParam_sys_specific(portBASE_TYPE msgType, void *data,
+			     printChar_cbf printchar)
 {
     param_data *args;
     args = data;

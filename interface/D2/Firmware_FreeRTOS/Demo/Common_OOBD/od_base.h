@@ -85,26 +85,27 @@ typedef struct error_data {
 } ERROR_DATA;
 
 
-/*! \addtogroup param
-   *  Additional documentation for group 'param'
+
+/*! \defgroup param Command Line Parameter 
+   *  \section Function Block Identifiers
    *  @{
    */
 
 
 //! Function block Identifier
-#define FBID_SYS_GENERIC 0	//!<The generic part of the system
-#define FBID_SYS_SPEC 1		//!<The mc specific part of the system
+#define FBID_SYS_SPEC 0		//!<The mc specific part of the system
+#define FBID_SYS_GENERIC 1	//!<The generic part of the system
 #define FBID_SERIALIN 2		//!<The serial in process
 #define FBID_SERIALOUT 3	//!<The serial out process
-#define FBID_PROTOCOL_GENERIC 4	//!<The generic part of the actual protocol
-#define FBID_PROTOCOL_SPEC 5	//!<The implementation specific part of the actual protocol
-#define FBID_BUS_GENERIC 6	//!<The generic part of the actual bus
-#define FBID_BUS_SPEC 7		//!<The implementation specific part of the actual bus
+#define FBID_PROTOCOL_SPEC 4	//!<The implementation specific part of the actual protocol
+#define FBID_PROTOCOL_GENERIC 5	//!<The generic part of the actual protocol
+#define FBID_BUS_SPEC 6		//!<The implementation specific part of the actual bus
+#define FBID_BUS_GENERIC 7	//!<The generic part of the actual bus
 
 /*! @} */
-  
-  
-  
+
+
+
 //! Error constants
 #define ERR_CODE_NO_ERR 0	//!<generic value for No Error
 
