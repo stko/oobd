@@ -55,7 +55,7 @@ printParam_sys(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
     switch (args->args[ARG_CMD]) {
 
     default:
-//	printParam_sys_specific(args, printchar);
+//      printParam_sys_specific(args, printchar);
 	break;
     }
 }
@@ -73,7 +73,7 @@ case VALUE_PARAM_INFO_VERSION:
 	    return pdTRUE;
 	    break;
 */
-	  case PARAM_PROTOCOL:
+	case PARAM_PROTOCOL:
 	    //! \todo this kind of task switching is not design intent
 	    //! \todo no use of protocol table, its hardcoded instead
 	    if (VALUE_PARAM_PROTOCOL_CAN_RAW == args->args[ARG_VALUE_1]) {	/* p 4 1 */
@@ -114,12 +114,11 @@ case VALUE_PARAM_INFO_VERSION:
 	    break;
 
 	default:
-	createCommandResultMsg
-					    (FBID_SYS_GENERIC,
-					     ERR_CODE_OS_UNKNOWN_COMMAND,
-					     0,
-					     ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
-		return pdFALSE;
+	    createCommandResultMsg
+		(FBID_SYS_GENERIC,
+		 ERR_CODE_OS_UNKNOWN_COMMAND,
+		 0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+	    return pdFALSE;
 	}
 	break;
 	//! \todo remove dirty IO implementation
