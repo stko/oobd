@@ -1,8 +1,7 @@
 <?php
 require("oodbCreate_inc.php");
-$inFp = fopen('CCC.csv', 'r');
+$inFp = fopen( $argv[1], 'r');
 if (!$inFp) {
     echo 'Konnte Datei  nicht öffnen';
-}
-createDB($inFp, STDOUT);
+}else createDB($inFp, STDOUT);
 ?>

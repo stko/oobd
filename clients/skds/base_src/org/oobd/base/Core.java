@@ -40,6 +40,7 @@ import java.util.Properties;
 import org.json.JSONException;
 import org.oobd.base.support.Onion;
 import org.oobd.base.bus.OobdBus;
+import org.oobd.base.db.OobdDB;
 import org.oobd.base.connector.OobdConnector;
 import org.oobd.base.protocol.OobdProtocol;
 import org.oobd.base.scriptengine.OobdScriptengine;
@@ -104,6 +105,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	HashMap<String, OobdProtocol> protocols; // /<stores all available protocols
 	HashMap<String, Class<?>> scriptengines; // /<stores all available
 	// scriptengine classes
+	HashMap<String, OobdDB> databases; // /<stores all available
+	// database classes
 	HashMap<String, OobdScriptengine> activeEngines; // /<stores all active
 	// (instanced)
 	// scriptengine objects
@@ -152,7 +155,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		activeEngines = new HashMap<String, OobdScriptengine>();
 		assignments = new HashMap<String, Object>();
 		visualizers = new HashMap<String, ArrayList<Visualizer>>();
-
+                databases = new HashMap<String, OobdDB>();
 		systemInterface.registerOobdCore(this); // Anounce itself at the
 		// Systeminterface
 		userInterface.registerOobdCore(this); // Anounce itself at the
@@ -259,6 +262,36 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 					OobdProtocol thisClass = (OobdProtocol) value.newInstance();
 					thisClass.registerCore(this);
 					protocols.put(element, thisClass);
+
+				} catch (InstantiationException ex) {
+					// Wird geworfen, wenn die Klasse nicht "instanziert" werden
+					// kann
+					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
+							"can't create instance of " + element);
+				} catch (IllegalAccessException ex) {
+					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
+							"can't create instance of " + element);
+				}
+
+			}
+		} catch (ClassNotFoundException ex) {
+			Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
+					"Error while trying to load class", ex);
+		}
+		// ----------- load Databases -------------------------------
+		try {
+			HashMap<String, Class<?>> classObjects = loadOobdClasses(props
+					.getProperty("DatabaseClassPath", "db"),
+					"org.oobd.base.db.", Class
+							.forName("org.oobd.base.db.OobdDB"));
+			for (Iterator iter = classObjects.keySet().iterator(); iter
+					.hasNext();) {
+				String element = (String) iter.next();
+				Class<?> value = (Class<?>) classObjects.get(element);
+				try {
+					OobdDB thisClass = (OobdDB) value.newInstance();
+					thisClass.registerCore(this);
+					databases.put(element, thisClass);
 
 				} catch (InstantiationException ex) {
 					// Wird geworfen, wenn die Klasse nicht "instanziert" werden

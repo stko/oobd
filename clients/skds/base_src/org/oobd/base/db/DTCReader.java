@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.oobd.db;
+package org.oobd.base.db;
 
 import java.io.BufferedReader;
 import java.io.File;

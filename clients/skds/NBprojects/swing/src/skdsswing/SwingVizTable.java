@@ -52,7 +52,7 @@ public class SwingVizTable extends JTable implements IFvisualizer {
         return newInst;
     }
 
-    public void remove(String pageID) {
+    public void setRemove(String pageID) {
         singleInstance.remove(pageID);
     }
 
