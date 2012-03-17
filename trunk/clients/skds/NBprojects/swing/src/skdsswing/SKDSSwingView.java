@@ -202,7 +202,7 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
 
                     Iterator<IFvisualizer> itr = pageObjects.iterator();
                     while (itr.hasNext()) {
-                        itr.next().remove(seID);
+                        itr.next().setRemove(seID);
                     }
                 }
                 basejTabPane.remove(oldPage);

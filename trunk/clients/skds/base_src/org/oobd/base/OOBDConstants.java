@@ -17,6 +17,7 @@ public interface OOBDConstants {
     public static final String CM_VALUE = "VALUE";
     public static final String CM_UPDATE = "UPDATE";
     public static final String CM_RES_BUS = "RESULT_BUS";
+    public static final String CM_RES_LOOKUP = "RESULT_LOOKUP";
     public static final String CM_BUSTEST = "BUSTEST";
     public static final String CM_WRITESTRING = "WRITESTRING";
     // IDs used for internal core list handling

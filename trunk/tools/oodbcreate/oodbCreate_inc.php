@@ -1,36 +1,95 @@
 <?php
+/**
+oobdCreate_inc.php
 
+part of the OOBD tool set (www.oobd.org)
+
+this file contains the functionality to convert a presorted csv file into a binary format, which allows a key->value(s) list search in this file in one direction from the beginning to the end
+
+The file format of the input file must be as follow:
+
+HeaderLine \n
+Line 1 \n
+..
+Line n \n
+
+HeaderLine = (colum_name 0) \t (colum_name 1) \t (.. colum_name n)
+Line = Key \t Values 
+Values = (Value_of_Colum 0) \t (Value_of_Colum 1) \t (..Value_of_Colum n)
+
+
+The input file must be sorted ascending by its keys
+
+If there are more as one Value per key, the Values must sorted in the sequence as they should be used later
+
+
+The generated output format will be as follows:
+
+HeaderLine 0x0
+Entry 1
+..
+Entry n
+
+Entry = Key 0x0 (FilePosition of greater Key) (FilePosition of smaller Key) Values 1  0x0 [..Values n  0x0] 0x0
+
+Fileposition = binary unsigned 32-Bit Big Endian
+
+
+How to read this file:
+
+1 - Read Headerline (from the file beginning until the first 0x0). Store this data for later naming of the found columns.
+2 - read key value (string until the next 0x0) and the next 4 Byte long file positions for greater and smaller key values. If they are 0 (zero), there's no more smaller or greater key available
+3 - compare key with search string:
+    - if equal, read attached values in an array. This array then contains the search result(s). Return this and the header line as positive search result.
+    - if smaller:
+	  if smaller file position is 0 (zero), then return from search with empty result array.
+	  if smaller file position is not 0, set file Seek pointer to file postion and continue again with step 2
+    - if bigger:
+	  if bigger file position is 0 (zero), then return from search with empty result array.
+	  if bigger file position is not 0, set file Seek pointer to file postion and continue again with step 2
+
+
+
+*/
 class dbEntry
 {
   public $next;
   public $prev;
+  public $lt;
+  public $gt;
   public $index;
-  public $contents=array();
+  public $start;
+  public $contents;
 
+
+// creates one index element with an initial first value and links this object to the previous one, if exist
   function __construct($prev,$index,$content){
     $this->prev=$prev;
     $this->index=$index;
     if ($prev!=null){
 	$prev->next=$this;
     }
-    $contents[] = $content;
+    $this->contents=array();
+    $this->contents[] = $content;
    }
 
-
+// adds another line of value to this index
   public function addContent($content){
-    $contents[] = $content;   
+    $this->contents[] = $content;   
   }
   
-  public function findFirst($list){
-    $res=$list;
+ //finds the first object in the linked object list
+  public function findFirst(){
+    $res=$this;
     while ($res->prev!=null){
       $res=$res->prev;
     }
     return $res;
   }
 
-  public function findMiddle($list){
-    $res=$list;
+// finds the middle element in the list of linked objects
+  public function findMiddle(){
+    $res=$this;
     while ($res->next!=null){ // first go to end of list
       $res=$res->next;
     }
@@ -40,16 +99,94 @@ class dbEntry
       $len++;
     }
     $len= $len / 2; 
-    while ($res->next!=null && $len > 0){ // first go to end of list
+    while ($res->next!=null && $len > 0){ // go to the middle of the list
       $res=$res->next;
       $len--;
     }
     return $res;
   }
 
+// takes a linear sorted list and split it in the middle, by making the left and right side to childs of the middle element.
+//by doing this recursively, we'll finally have a balanced AVL-tree structure 
+  public function split($level){
+     if ($this->prev!=null){
+      $p=$this->prev;
+      $p->next=null;
+      $p=$p->findMiddle();
+      $p->split($level+1);
+      $this->lt=$p;
+    }
+    if ($this->next!=null){
+      $p=$this->next;
+      $p->prev=null;
+      $p=$p->findMiddle();
+      $p->split($level+1);
+      $this->gt=$p;
+    }
+  }
+
+//to know the file positions of the related child elements during saving the result, this routine goes recursively through the tree and calculates the final
+// filenposition of each element as a kind of file-saving-dryrun
+
+  public function calculateSizes($start){
+    $this->start=$start;
+    $start+=(strlen($this->index)+1+4+4); // the index string length + 1 Zero (0) - Byte + 4 byte seek address for smaller leaf + 4  byte seek address for bigger leaf
+    foreach ($this->contents as $content){
+      $start+=strlen($content)+1; // len of each content entry + 1 Zero (0) - Byte
+    }
+    $start++; // and the final Zero (0) - Byte
+    if ($this->gt!=null){
+      $start=$this->gt->calculateSizes($start); // recursivelly calculate 
+    }
+    if ($this->lt!=null){
+      $start=$this->lt->calculateSizes($start);
+    }
+    return $start;
+  }
+
+// just a help routine to save a number as 32-bit byte sequence 
+  static function printBinaryValue($outFp,$value){
+    fwrite($outFp,chr($value / (256 * 256 * 256)));
+    $value %= (256 * 256 * 256);
+    fwrite($outFp,chr($value / (256 * 256 )));
+    $value %= (256 * 256 );
+    fwrite($outFp,chr($value / (256 )));
+    $value %= (256 );
+    fwrite($outFp,chr($value ));
+  }
+
+
+//going through the tree recursively to save each element to the output file handle
+  public function printElement($outFp){
+    fwrite($outFp,$this->index);
+    fwrite($outFp,chr(0));
+    if ($this->lt!=null){
+	self::printBinaryValue($outFp, $this->lt->start);
+    }else{
+	self::printBinaryValue($outFp, 0);
+    }
+    if ($this->gt!=null){
+	self::printBinaryValue($outFp, $this->gt->start);
+    }else{
+	self::printBinaryValue($outFp, 0);
+    }
+    foreach ($this->contents as $content){
+      fwrite($outFp,$content);
+      fwrite($outFp,chr(0));
+    }
+    fwrite($outFp,chr(0));
+    if ($this->gt!=null){
+      $start=$this->gt->printElement($outFp); // recursive print 
+    }
+    if ($this->lt!=null){
+      $start=$this->lt->printElement($outFp);// recursive print 
+    }
+  }
 
 }
 
+
+// help function to read a complete text line from the input file stream
 function freadLine($inFp){
   $line="";
   $eof=FALSE;
@@ -69,26 +206,34 @@ function freadLine($inFp){
   }else{
     return $line;
   }
+
 }
 
-
+// main function: reading the input file from the input file stream and write the result to the output file stream
 function createDB($inFp, $outFp){
   $headerLine=null;
   $firstEntry=null;
-  while (false !== ($line = freadLine($inFp))) {
+  $actLine=null;
+  $lastIndex=null;
+  while (false !== ($line = freadLine($inFp))) { // reading the input
     if($headerLine==null){
-      $headerLine=$line;
+      $headerLine=$line; // store the headerLine which contains the colum names at the beginning
     }else{
-      list($index,$content)=split("\t",$line,2);
-      $actLine= new dbEntry($actLine,$index,$content);
-      if ($firstEntry==null) $firstEntry=$actLine;
+      list($index,$content)=split("\t",$line,2); //split each line into key and value
+      if ($lastIndex == $index){ // line belongs to previous key
+	$actLine->addContent($content); //add content to previous key
+      }else{
+	$actLine= new dbEntry($actLine,$index,$content); //create a new key object
+	$lastIndex=$index;
+      }
     }
-    fwrite($outFp,$line);
-    fwrite($outFp,"\n");
   }
-  while ($firstEntry!=null){
-    print $firstEntry->index;
-    $firstEntry=$firstEntry->next;
-  }
+//  $actLine=$actLine->findFirst();
+  $actLine=$actLine->findMiddle();
+  $actLine->split(0);
+  fwrite($outFp,$headerLine); // first saving the headerline
+  fwrite($outFp,chr(0));  //headerLine limiter
+  $actLine->calculateSizes(strlen($headerLine)+1);//start after the headerline
+  $actLine->printElement($outFp);
 }
 ?>
