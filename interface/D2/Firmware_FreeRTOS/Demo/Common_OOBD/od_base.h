@@ -86,7 +86,7 @@ typedef struct error_data {
 
 
 
-/*! \defgroup param Command Line Parameter 
+/*! \page param Command Line Parameter 
    *  \section Function Block Identifiers
    *  @{
    */
@@ -102,7 +102,14 @@ typedef struct error_data {
 #define FBID_BUS_SPEC 6		//!<The implementation specific part of the actual bus
 #define FBID_BUS_GENERIC 7	//!<The generic part of the actual bus
 
-/*! @} */
+/*! 
+
+The 
+
+\subpage system_generic_parm 
+
+
+@} */
 
 
 

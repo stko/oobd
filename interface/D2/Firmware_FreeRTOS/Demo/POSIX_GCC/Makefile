@@ -163,6 +163,18 @@ clean :
 	-$(RM) $(OBJS)
 
 
+# generate doxygen docs
+docs:
+	cd .. ; doxygen
+#	$(shell cd .. ; doxygen)
+
+
+# generate doxygen docs
+publish:
+	cd .. ; sitecopy -u oobd-firmware
+#	$(shell cd .. ; doxygen)
+
+
 # Eye candy.
 begin:
 ##	@echo

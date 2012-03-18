@@ -35,7 +35,7 @@
 #define INC_MC_SYS_H
 
 #include "od_base.h"
-  /*! \addtogroup param
+  /*! \page system_generic_parm 
    * \section STM32 spezific System Commands
    *  @{
    */

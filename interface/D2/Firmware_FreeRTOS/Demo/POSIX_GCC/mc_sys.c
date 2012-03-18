@@ -101,6 +101,11 @@ portBASE_TYPE eval_param_sys_specific(param_data * args)
 	    return pdTRUE;
 	    break;
 	default:
+	  createCommandResultMsg
+	      (FBID_SYS_SPEC,
+		ERR_CODE_OS_UNKNOWN_COMMAND,
+		0,
+		ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 	    return pdFALSE;
 	}
 	break;
