@@ -26,6 +26,24 @@
 
 */
 
+
+/*!
+ * \defgroup serial The serial Communication with the Application
+ 
+  \section Introduction
+  
+  The OOBD acts like a transmitter between a application, normal connected via a serial I/O stream, and a module network, connected to the bus
+  
+  The serial routines couple the firmware to the serial I/O stream.
+  
+  
+\todo der serielle Teil muß noch sauber getrennt werden in das reine Handling des I/O- Streams und die Verarbeitung der Eingabe...
+
+
+
+ */
+
+
 /**
  * generic part of the serial line
  */

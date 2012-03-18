@@ -27,27 +27,38 @@
 */
 
 /*!
- * \mainpage Welcome to the OOBD Firmware Programming Manual
+ * \mainpage Welcome to the OOBD Firmware Documentation
  * 
  * \section Introduction
  *
- * This documentation is made for two purposes: First explain the firmware functionality, and second of course the general concept of how the
+ * This documentation explains the firmware functionality and the general concept of how the
  * different components work together.
  *
  *
  *
  * \section The Concept
  *
- * The OOBD firmware should be a framework for as most as possible hardware platforms and communication protocols and bus systems.
+ * The OOBD firmware, as running with the popular RealTime-OS FreeRTOS, should be a framework for as most as possible hardware platforms and communication protocols and bus systems.
+ 
+ To archive this, the source code is strictly seperated into
+   \li generic, controller indepented areas
+   \li controller specific sources
+   
+   and also into 
+   
+   \li system functions
+   \li protocol function
+   \li bus functions (=hardware layer)
+   
+   
  *
- * When looking more in detail into this basic requierement, you'll find five tasks which are nessecary to fulfill this.
- *
- * Each of these tasks build its own chapter. If you want to understand and program your own user interface, you've only to read and implement the chapter about \ref visualisation,
- * how to create a own \ref scriptengine can be found there etc.
- *
- * \li coordination: Something inside must handle the fundamental things (dynamic module handling, message transfer, file i/o etc.). This is done by the \ref core
- * \li visualisation: Finally somebody wants to see results or wants to do some user input. This is handled by the \ref visualisation
- * 
+ * \image html Firmware_Structure.svg
+ 
+ 
+ By this it's possible to add new protocols or busses just by adding the sources to the pack, or port the whole application onto another controller by adding another controller dirextory and
+ re-write the hardware specific source without the need to touch the rest
+ 
+
  */
 
 /**
