@@ -16,7 +16,7 @@
  Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
- 1 tab == 2 spaces!
+ 1 tab == 4 spaces!
 
  Please ensure to read the configuration and relevant port sections of the
  online documentation.
@@ -125,11 +125,8 @@ void NVIC_Configuration(void) {
 	/* NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; */
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
 			= (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
-
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-
 	NVIC_Init(&NVIC_InitStructure);
 
 	/* Enable CAN1 interrupt */
@@ -138,34 +135,21 @@ void NVIC_Configuration(void) {
 	/* NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; */
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
 			= (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
-
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-
 	NVIC_Init(&NVIC_InitStructure);
 
 	NVIC_InitStructure.NVIC_IRQChannel = I2C1_EV_IRQn;
-
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-	;
-
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-
 	NVIC_Init(&NVIC_InitStructure);
 
 	NVIC_InitStructure.NVIC_IRQChannel = I2C1_ER_IRQn;
-
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-
 	NVIC_Init(&NVIC_InitStructure);
-
 }
 
 /*----------------------------------------------------------------------------*/
@@ -179,7 +163,7 @@ void GPIO_Configuration(void) {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
 	/* TIM2 clock enable */
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 
 	/* GPIOx clocks enable */
 	RCC_APB2PeriphClockCmd(
@@ -276,9 +260,10 @@ void GPIO_Configuration(void) {
 
 	/* Identify on which hardware the firmware is running */
 	if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_RESET) { /* OOBD-Cup v5 */
-		/* configure DXM1-Output (push pull) of Duo-LED1 - green (PB5) and LED2 - red (PB4) */
+		/* configure DXM1-Output (push pull) of Duo-LED2 - green (PB5) and LED2 - red (PB4)
+		 * and LED2 - yellow (PB10) */
 		GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE); /* release alternative GPIO function of PB4 */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_10;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 		GPIO_Init(GPIOB, &GPIO_InitStructure);
 	} else if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET) { /* Original DXM1 */
@@ -1282,7 +1267,7 @@ void TIM2_Configuration(void) {
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef TIM_OCInitStructure;
 	uint16_t PrescalerValue = 0;
-	uint16_t CCR1_Val = 322; /* TIM2 Channel1 duty cycle = (TIM2_CCR1/ TIM2_ARR)* 100 = 50% */
+	uint16_t CCR4_Val = 322; /* TIM2 Channel1 duty cycle = (TIM2_CCR4/ TIM2_ARR)* 100 = 50% */
 
 	/* Compute the prescaler value, set TIM2CLK to 2MHz */
 	PrescalerValue = (uint16_t) (SystemCoreClock / 2000000) - 1;
@@ -1294,18 +1279,17 @@ void TIM2_Configuration(void) {
 
 	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
 
-	/* PWM1 Mode configuration: Channel1 */
+	/* PWM1 Mode configuration: Channel4 */
 	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-	TIM_OCInitStructure.TIM_Pulse = CCR1_Val;
+	TIM_OCInitStructure.TIM_Pulse = CCR4_Val;
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+	TIM_OC4Init(TIM2, &TIM_OCInitStructure);
 
-	TIM_OC1Init(TIM2, &TIM_OCInitStructure);
-
-	TIM_OC1PreloadConfig(TIM2, TIM_OCPreload_Enable);
+	TIM_OC4PreloadConfig(TIM2, TIM_OCPreload_Enable);
 
 	/* TIM2 enable counter */
-	TIM_Cmd(TIM2, ENABLE);
+	TIM_Cmd(TIM2, DISABLE); /* default */
 }
 
 /**
@@ -1433,16 +1417,13 @@ void sEE_LowLevel_Init(void) {
 void sEE_LowLevel_DMAConfig(uint32_t pBuffer, uint32_t BufferSize,
 		uint32_t Direction) {
 	/* Initialize the DMA with the new parameters */
-	if (Direction == sEE_DIRECTION_TX)
-	{
+	if (Direction == sEE_DIRECTION_TX) {
 		/* Configure the DMA Tx Channel with the buffer address and the buffer size */
 		sEEDMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t) pBuffer;
 		sEEDMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
 		sEEDMA_InitStructure.DMA_BufferSize = (uint32_t) BufferSize;
 		DMA_Init(sEE_I2C_DMA_CHANNEL_TX, &sEEDMA_InitStructure);
-	}
-	else
-	{
+	} else {
 		/* Configure the DMA Rx Channel with the buffer address and the buffer size */
 		sEEDMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t) pBuffer;
 		sEEDMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;
