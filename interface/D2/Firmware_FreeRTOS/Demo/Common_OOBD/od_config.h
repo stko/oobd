@@ -1,30 +1,30 @@
 /*
-	
-	This file is part of the OOBD.org distribution.
 
-	OOBD.org is free software; you can redistribute it and/or modify it
-	under the terms of the GNU General Public License (version 2) as published
-	by the Free Software Foundation and modified by the FreeRTOS exception.
+ This file is part of the OOBD.org distribution.
 
-	OOBD.org is distributed in the hope that it will be useful, but WITHOUT
-	ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-	FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-	more details.
+ OOBD.org is free software; you can redistribute it and/or modify it
+ under the terms of the GNU General Public License (version 2) as published
+ by the Free Software Foundation and modified by the FreeRTOS exception.
 
-	You should have received a copy of the GNU General Public License along
-	with FreeRTOS.org; if not, write to the Free Software Foundation, Inc., 59
-	Temple Place, Suite 330, Boston, MA  02111-1307  USA.
+ OOBD.org is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ more details.
 
-
-	1 tab == 4 spaces!
-
-	Please ensure to read the configuration and relevant port sections of the
-	online documentation.
+ You should have received a copy of the GNU General Public License along
+ with FreeRTOS.org; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
-	OOBD is using FreeRTOS (www.FreeRTOS.org)
+ 1 tab == 4 spaces!
 
-*/
+ Please ensure to read the configuration and relevant port sections of the
+ online documentation.
+
+
+ OOBD is using FreeRTOS (www.FreeRTOS.org)
+
+ */
 
 /**
  * OOBD Firmware config 
@@ -32,7 +32,6 @@
 
 #ifndef INC_OD_CONFIG_H
 #define INC_OD_CONFIG_H
-
 
 /* System headers. */
 #include <stdio.h>
@@ -47,9 +46,6 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
-
-
-
 
 /* Priority definitions for the tasks . */
 #define TASK_PRIO_LOW		( tskIDLE_PRIORITY + 1 )
@@ -66,7 +62,6 @@
 #define QUEUE_SIZE_INPUT    ( 5 )
 #define QUEUE_SIZE_LED		( 3 )
 
-
 /* define message types */
 #define MSG_NONE		        ( 0 )
 #define MSG_INIT		        ( 1 )	//!< generic msg to initialize (whatever)
@@ -80,7 +75,6 @@
 #define MSG_SEND_BUFFER		  	( 9 )	//!< tells the  protocol to send the filled input buffer
 #define MSG_DUMP_BUFFER		  	( 10 )	//!< buffer filled, request to dump
 #define MSG_HANDLE_PARAM		( 11 )	//!< handle parameter command outputs
-
 /* define parameter types */
 #define PARAM_INFO    		    ( 0 )
 #define PARAM_ECHO    		    ( 1 )
@@ -100,6 +94,9 @@
 #define ODB_CMD_RECV		    ( 15 )	//!< only for internal use: sets the callback routine when receiving a bus packet
 #define PARAM_SENDID  		    ( 16 )
 #define PARAM_BUS 		    ( 17 )
+#define PARAM_LED               ( 20 )
+#define PARAM_RELAIS			( 21 )
+#define PARAM_BUZZER			( 22 )
 #define PARAM_RESET           ( 99 )
 
 /* define values of parameter */
@@ -127,14 +124,15 @@
 
 //! signature of the printChar function that will be called 
 //! to output a single char
-typedef void (*printChar_cbf) (char a);
+typedef void (*printChar_cbf)(char a);
 
 /* store all parameter in one single struct to maybe later store such param sets in EEPROM */
 struct GlobalConfig {
-    portBASE_TYPE recvID,	//!< Module ID
-     sendID,			//!< sender ID, used when the expected answer ID <> recvID || 8
-     timeout,			//!< timeout in systemticks
-     listen			//!< listen level
+	portBASE_TYPE recvID, //!< Module ID
+			sendID, //!< sender ID, used when the expected answer ID <> recvID || 8
+			timeout, //!< timeout in systemticks
+			listen
+//!< listen level
 } globalConfig;
 
 #endif				/* INC_OD_CONFIG_H */
