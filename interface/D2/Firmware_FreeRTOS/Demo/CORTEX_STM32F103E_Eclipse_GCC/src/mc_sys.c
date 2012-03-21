@@ -220,10 +220,10 @@ portBASE_TYPE eval_param_sys_specific(param_data * args) {
 
 	case PARAM_BUZZER:
 		if (VALUE_PARAM_BUZZER_OOBD_CUPv5_SGx_ON == args->args[ARG_VALUE_1]) /* p 22 1 */
-			GPIO_ResetBits(GPIOB, GPIO_Pin_11); /* Buzzer - ON*/
+			TIM_Cmd(TIM2, ENABLE); /* Buzzer - ON*/
 		else if (VALUE_PARAM_BUZZER_OOBD_CUPv5_SGx_OFF
 				== args->args[ARG_VALUE_1]) /* p 22 0 */
-			GPIO_SetBits(GPIOB, GPIO_Pin_11); /* Buzzer - OFF */
+			TIM_Cmd(TIM2, DISABLE); /* Buzzer - OFF */
 		else
 			DEBUGPRINT ("Parameter for Buzzer on/off missing!!\n", 'a');
 		break;
