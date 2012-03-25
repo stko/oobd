@@ -57,6 +57,9 @@ typedef struct UDSBUFFER {
     unsigned char data[UDSSIZE];
 } UDSBuffer;
 
+extern char *oobd_Error_Text_OS;
+
+
 /*!
 \brief shorten a 11-bit ID to save some Tester-Present -Memory
 
@@ -738,5 +741,5 @@ void obp_uds(void *pvParameters)
 
 void obd_uds_init()
 {
-    odparr[ODP_UDS] = obp_uds;
+    odparr[VALUE_PARAM_PROTOCOL_CAN_UDS] = obp_uds;
 }

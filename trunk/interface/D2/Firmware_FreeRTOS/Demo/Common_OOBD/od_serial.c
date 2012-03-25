@@ -35,6 +35,9 @@
 #include "mc_sys_generic.h"
 #include "mc_serial_generic.h"
 
+extern char *oobd_Error_Text_OS;
+
+
 /* global message queues */
 xQueueHandle internalSerialRxQueue = NULL;
 xQueueHandle inputQueue = NULL;
@@ -213,11 +216,11 @@ void inputParserTask(void *pvParameters)
 			if (inChar == crEOL) {
 			    if (lastErr) {
 				createCommandResultMsg
-				    (0, FBID_SERIALIN, lastErr,
+				    (0, FBID_SERIALIN_GENERIC, lastErr,
 				     ERR_CODE_SERIAL_SYNTAX_ERR_TEXT);
 			    } else {
 				createCommandResultMsg
-				    (FBID_SERIALIN,
+				    (FBID_SERIALIN_GENERIC,
 				     ERR_CODE_NO_ERR, 0, NULL);
 			    }
 			    actState = S_INIT;
@@ -256,7 +259,7 @@ void inputParserTask(void *pvParameters)
 				actState = S_SLEEP;
 			    } else {
 				createCommandResultMsg
-				    (FBID_SERIALIN,
+				    (FBID_SERIALIN_GENERIC,
 				     ERR_CODE_NO_ERR, 0, NULL);
 				actState = S_INIT;
 			    }
@@ -290,23 +293,23 @@ void inputParserTask(void *pvParameters)
 			    if (inChar == crEOL) {
 				if (args.argv > 0) {
 				    switch (args.args[ARG_RECV]) {
-				    case FBID_SERIALIN:
+				    case FBID_SERIALIN_GENERIC:
 					switch (args.args[ARG_CMD]) {
 					case PARAM_ECHO:
 					    createCommandResultMsg
-						(FBID_SERIALIN,
+						(FBID_SERIALIN_GENERIC,
 						 ERR_CODE_NO_ERR, 0, NULL);
 					    break;
 					case PARAM_LINEFEED:
 					    lfType =
 						args.args[ARG_VALUE_1];
 					    createCommandResultMsg
-						(FBID_SERIALIN,
+						(FBID_SERIALIN_GENERIC,
 						 ERR_CODE_NO_ERR, 0, NULL);
 					    break;
 					default:
 					    createCommandResultMsg
-						(FBID_SERIALIN,
+						(FBID_SERIALIN_GENERIC,
 						 ERR_CODE_OS_UNKNOWN_COMMAND,
 						 0,
 						 ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
@@ -327,7 +330,7 @@ void inputParserTask(void *pvParameters)
 					break;
 				    default:
 					createCommandResultMsg
-					    (FBID_SERIALIN,
+					    (FBID_SERIALIN_GENERIC,
 					     ERR_CODE_OS_UNKNOWN_COMMAND,
 					     0,
 					     ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);

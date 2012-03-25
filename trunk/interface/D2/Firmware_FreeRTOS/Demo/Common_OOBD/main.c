@@ -87,6 +87,7 @@ void tickTask(void *pvParameters)
     DEBUGUARTPRINT("\r\n*** tickTask entered! ***");
 
     extern xQueueHandle protocolQueue;
+    extern xQueueHandle ilmQueue;
 
     for (;;) {
 /*
@@ -97,6 +98,9 @@ void tickTask(void *pvParameters)
 */
 	if (pdPASS != sendMsg(MSG_TICK, protocolQueue, NULL)) {
 	    DEBUGPRINT("FATAL ERROR: protocol queue is full!\n", 'a');
+	}
+	if (pdPASS != sendMsg(MSG_TICK, ilmQueue, NULL)) {
+	    DEBUGPRINT("FATAL ERROR: ilm queue is full!\n", 'a');
 	}
 	vTaskDelay(10 / portTICK_RATE_MS);	// 10ms tick time
 
@@ -119,6 +123,9 @@ int main(void)
 
     /*activate the output task */
     initOutput();
+
+    /*activate the ILM task */
+    initILM();
 
     DEBUGPRINT("*** Starting FreeRTOS ***\n", 'a');
 

@@ -53,6 +53,7 @@ portBASE_TYPE lfType = VALUE_LF_CR;
 
 xQueueHandle outputQueue = NULL;
 xQueueHandle protocolQueue = NULL;
+xQueueHandle ilmQueue = NULL;
 
 char outputBuffer[100];
 

@@ -36,6 +36,8 @@
 #include "od_protocols.h"
 #include "odb_can.h"
 
+extern char *oobd_Error_Text_OS;
+
 print_cbf printdata_CAN = NULL;
 struct CanConfig *canConfig;
 /*-----------------------------------------------------------*/

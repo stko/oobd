@@ -60,43 +60,12 @@
 #define QUEUE_SIZE_PROTOCOL ( 5 )
 #define QUEUE_SIZE_OUTPUT   ( 5 )
 #define QUEUE_SIZE_INPUT    ( 5 )
-#define QUEUE_SIZE_LED		( 3 )
+#define QUEUE_SIZE_ILM    ( 5 )
 
-/* define message types */
-#define MSG_NONE		        ( 0 )
-#define MSG_INIT		        ( 1 )	//!< generic msg to initialize (whatever)
-#define MSG_SERIAL_IN		    ( 2 )	//!< a char coming from the serial input
-#define MSG_BUS_RECV		    ( 3 )	//!< received some data on the bus
-#define MSG_SERIAL_DATA		 	( 4 )	//!< received some data to be send from the serial input
-#define MSG_SERIAL_PARAM	 	( 5 )	//!< received a paramter set from the cmd line
-#define MSG_INPUT_FEEDBACK		( 6 )	//!< feedback to the cmd line
-#define MSG_TICK		        ( 7 )	//!< system clock tick
-#define MSG_SERIAL_RELEASE  	( 8 )	//!< tells the serial input to listen for cmds again
-#define MSG_SEND_BUFFER		  	( 9 )	//!< tells the  protocol to send the filled input buffer
-#define MSG_DUMP_BUFFER		  	( 10 )	//!< buffer filled, request to dump
-#define MSG_HANDLE_PARAM		( 11 )	//!< handle parameter command outputs
-/* define parameter types */
+
+/* define overall system parameter types */
 #define PARAM_INFO    		    ( 0 )
-#define PARAM_ECHO    		    ( 1 )
-#define PARAM_LINEFEED    	    ( 2 )
-#define PARAM_LISTEN    	    ( 3 )
-#define PARAM_PROTOCOL 		    ( 4 )
-#define PARAM_BUS_MODE 		    ( 5 )
-#define PARAM_BUS_CONFIG 	    ( 6 )
-#define PARAM_TIMEOUT 		    ( 7 )
-#define PARAM_TIMEOUT_PENDING       ( 8 )
-#define PARAM_BLOCKSIZE 	    ( 9 )
-#define PARAM_FRAME_DELAY 	    ( 10 )
-#define PARAM_RECVID  		    ( 11 )
-#define PARAM_TP_ON                 ( 12 )
-#define PARAM_TP_OFF                ( 13 )
-#define PARAM_TP_FREQ               ( 14 )
 #define ODB_CMD_RECV		    ( 15 )	//!< only for internal use: sets the callback routine when receiving a bus packet
-#define PARAM_SENDID  		    ( 16 )
-#define PARAM_BUS 		    ( 17 )
-#define PARAM_LED               ( 20 )
-#define PARAM_RELAIS			( 21 )
-#define PARAM_BUZZER			( 22 )
 #define PARAM_RESET           ( 99 )
 
 /* define values of parameter */
@@ -107,13 +76,25 @@
 #define VALUE_PARAM_INFO_BUS_MODE		( 4 )
 #define VALUE_PARAM_INFO_BUS_CONFIG   			( 5 )
 
-#define VALUE_PARAM_PROTOCOL_CAN_RAW			(1)
-#define VALUE_PARAM_PROTOCOL_CAN_UDS			(2)
-#define VALUE_PARAM_PROTOCOL_KLINE_FASTINIT		(10)
+//! \todo wir brauchen noch eine äquivalente Deklaration aller Busse wie hier für alle Protokolle
 
-#define VALUE_LF_CRLF (0)
-#define VALUE_LF_LF (1)
-#define VALUE_LF_CR (2)
+  /*! \defgroup protocol_table Available Protocols: Overview
+    To make sure each application will get the same protocol now and in the future when requesting one, the available protocols are numbered here globaly
+    
+    x is as :
+  *  @{
+   */
+
+  // number of all OOBD globally known Protocols 
+#define SYS_NR_OF_PROTOCOLS 				(2)
+#define VALUE_PARAM_PROTOCOL_CAN_RAW			(0)
+#define VALUE_PARAM_PROTOCOL_CAN_UDS			(1)
+#define VALUE_PARAM_PROTOCOL_KLINE_FASTINIT		(2)
+//#define VALUE_PARAM_PROTOCOL_xxx		(11) //please add new protocols here - this declaration becomes then globally valid for all OOBD firmware implementations
+
+  /*! @} */
+
+
 
 //! Number of allowed arguments per command
 #define MAX_NUM_OF_ARGS (5)

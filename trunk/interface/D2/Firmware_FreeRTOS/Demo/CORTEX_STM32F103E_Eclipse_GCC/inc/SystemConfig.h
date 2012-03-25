@@ -30,6 +30,9 @@
 #ifndef __SystemConfig_H
 #define __SystemConfig_H
 
+
+#include "portmacro.h"
+
 void Led1Task(void *pvParameters);
 void Led2Task(void *pvParameters);
 
@@ -41,6 +44,8 @@ void GPIO_Configuration(void);
 void NVIC_Configuration(void);
 void SysTick_Configuration(void);
 void ADC_Configuration(void);
+portBASE_TYPE GPIO_HardwareLevel(void);
+
 /* void        SPI_Configuration(void);  */
 
 #define USART1_BAUDRATE_DEFAULT USART1_BAUDRATE_115200

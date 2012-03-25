@@ -35,6 +35,15 @@
 #include "od_base.h"
 #include "mc_sys_generic.h"
 
+//! All Errormessages of the OS Function Block
+char *oobd_Error_Text_OS[4]={
+		"", // indox 0 is no error
+		"can't generate protocol task",
+		"Unknown command",
+		"Command not supported"
+};
+
+
 
 void mc_init_sys_boot()
 {
@@ -64,15 +73,12 @@ portBASE_TYPE eval_param_sys(param_data * args)
 {
     int i;
     switch (args->args[ARG_CMD]) {
-    case PARAM_INFO:
-	switch (args->args[ARG_VALUE_1]) {
-/*
-case VALUE_PARAM_INFO_VERSION:
-	case VALUE_PARAM_INFO_SERIALNUMBER:
-	    CreateParamOutputMsg(args, printParam_sys);
+ 	case PARAM_SET_OUTPUT:
+		sysIoCtrl(args->args[ARG_VALUE_1], 0,
+				args->args[ARG_VALUE_2], 0,
+				0);
 	    return pdTRUE;
-	    break;
-*/
+		break;
 	case PARAM_PROTOCOL:
 	    //! \todo this kind of task switching is not design intent
 	    //! \todo no use of protocol table, its hardcoded instead
@@ -113,14 +119,6 @@ case VALUE_PARAM_INFO_VERSION:
 	    return pdTRUE;
 	    break;
 
-	default:
-	    createCommandResultMsg
-		(FBID_SYS_GENERIC,
-		 ERR_CODE_OS_UNKNOWN_COMMAND,
-		 0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
-	    return pdFALSE;
-	}
-	break;
 	//! \todo remove dirty IO implementation
 //-----------------------------------------------------------
 // QUICK AND DIRTY IMPLEMENTATION of IO control
@@ -138,9 +136,14 @@ case VALUE_PARAM_INFO_VERSION:
 //-----------------------------------------------------------
 
 
-    default:
-	return pdFALSE;
-    }
+
+	default:
+	    createCommandResultMsg
+		(FBID_SYS_GENERIC,
+		 ERR_CODE_OS_UNKNOWN_COMMAND,
+		 0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+	    return pdFALSE;
+   }
 }
 
 void mc_init_sys_tasks()

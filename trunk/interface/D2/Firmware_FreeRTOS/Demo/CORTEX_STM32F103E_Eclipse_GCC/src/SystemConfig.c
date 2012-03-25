@@ -36,9 +36,7 @@
 #include "odb_can.h"
 
 /* -------- Used Global variables --------------------------------------------*/
-xQueueHandle Led1Queue = NULL;
 
-xQueueHandle Led2Queue = NULL;
 
 uint8_t BTM222_BtAddress[18] = "00:00:00:00:00:00";
 
@@ -91,15 +89,9 @@ void System_Configuration(void) {
 	//xQueueCreate = xQueueCreate (2, sizeof (boolean));
 	extern xQueueHandle Led1Queue;
 
-	if (pdPASS == (Led1Queue = xQueueCreate(QUEUE_SIZE_LED, sizeof(uint16_t))))
-
-		DEBUGUARTPRINT("\r\n*** LedQueue created ***");
 
 	extern xQueueHandle Led2Queue;
 
-	if (pdPASS == (Led2Queue = xQueueCreate(QUEUE_SIZE_LED, sizeof(uint16_t))))
-
-		DEBUGUARTPRINT("\r\n*** LedQueue created ***");
 
 }
 
@@ -151,6 +143,17 @@ void NVIC_Configuration(void) {
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 }
+
+/*----------------------------------------------------------------------------*/
+/**
+ * @brief  returns peripherals hardware ID
+ * @param  None
+ * @retval 0 = standard DXM, 1 OOBD D2-V6
+ */
+portBASE_TYPE GPIO_HardwareLevel(void) {
+  return GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_RESET?1:0;
+}
+
 
 /*----------------------------------------------------------------------------*/
 /**
@@ -287,7 +290,7 @@ void GPIO_Configuration(void) {
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
 	/* Identify on which hardware the firmware is running */
-	if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_RESET) {
+	if ( GPIO_HardwareLevel() == 1) {
 		/* configure PB11 PWM output for buzzer, TIM2 source for OOBD-Cup v5 */
 		GPIO_PinRemapConfig(GPIO_PartialRemap2_TIM2, ENABLE); /* OOBD-Cup v5, map TIM2 to PB11 */
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP; /* OOBD-Cup v5 */

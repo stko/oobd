@@ -93,16 +93,10 @@ typedef portBASE_TYPE(*bus_paramPrint) (param_data * args);
 typedef void (*bus_close) ();
 
 
-//enumeration for identifiers for all available protocols
-enum prots {
-    ODP_CANRAW,
-    ODP_UDS,
-    // ODP_SIZE defines the number of available protocols
-    ODP_SIZE
-};
+
 
 // define a array to store all protocols
-void (*odparr[ODP_SIZE]) (void *pvParameters);
+void (*odparr[SYS_NR_OF_PROTOCOLS]) (void *pvParameters);
 
 //enumeration for identifiers for all available busses
 enum busses {
