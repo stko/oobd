@@ -1,5 +1,5 @@
 /*
-
+	
 	This file is part of the OOBD.org distribution.
 
 	OOBD.org is free software; you can redistribute it and/or modify it
@@ -16,7 +16,7 @@
 	Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
-	1 tab == 2 spaces!
+	1 tab == 4 spaces!
 
 	Please ensure to read the configuration and relevant port sections of the
 	online documentation.
@@ -27,32 +27,15 @@
 */
 
 /**
- * implementation of the UDS protocol
+ * manage LEDs and Buzzer
  */
 
-/* OOBD headers. */
-#include "od_config.h"
-#include "od_base.h"
-#include "od_protocols.h"
-#include "odp_canraw.h"
-/*
-#ifdef OOBD_PLATFORM_STM32
-#include "stm32f10x.h"
-#endif
-*/
 
-void obp_canraw(void *pvParameters)
-{
-    for (;;) {
-	/* for debug purposes only => must be deleted with next release */
-	vTaskDelay(100 / portTICK_RATE_MS);
-	printser_string("CAN_Raw Task running!");
-    }
-    /* Do all cleanup here to finish task */
-    vTaskDelete(NULL);
-}
+#ifndef INC_OD_ILM_H
+#define INC_OD_ILM_H
 
-void obd_canraw_init()
-{
-    odparr[VALUE_PARAM_PROTOCOL_CAN_RAW] = obp_canraw;
-}
+/* manage LEDs and Buzzer */
+void ilmTask(void *pvParameters);
+
+
+#endif				/* INC_OD_ILM_H */

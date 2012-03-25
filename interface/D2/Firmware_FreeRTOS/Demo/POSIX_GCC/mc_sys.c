@@ -35,6 +35,8 @@
 #include "od_base.h"
 #include "mc_sys_generic.h"
 
+extern char *oobd_Error_Text_OS[];
+
 
 void mc_init_sys_boot_specific()
 {
@@ -91,7 +93,6 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 
 portBASE_TYPE eval_param_sys_specific(param_data * args)
 {
-    int i;
     switch (args->args[ARG_CMD]) {
     case PARAM_INFO:
 	switch (args->args[ARG_VALUE_1]) {
@@ -109,10 +110,22 @@ portBASE_TYPE eval_param_sys_specific(param_data * args)
 	    return pdFALSE;
 	}
 	break;
+ 	case PARAM_SET_OUTPUT:
+		sysIoCtrl(args->args[ARG_VALUE_1], 0,
+				args->args[ARG_VALUE_2], 0,
+				0);
+	    return pdTRUE;
+		break;
 
 
-    default:
-	return pdFALSE;
+	default:
+	  createCommandResultMsg
+	      (FBID_SYS_SPEC,
+		ERR_CODE_OS_UNKNOWN_COMMAND,
+		0,
+		ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+	    return pdFALSE;
+	break;
     }
 }
 
@@ -139,17 +152,7 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 	createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	return pdTRUE;
 	break;
-    case IO_BUS_0:
-	DEBUGPRINT("IO_BUS_0 set to %ld\n", upperValue);
-	createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
-	return pdTRUE;
-	break;
-    case IO_BUS_1:
-	DEBUGPRINT("IO_BUS_1 set to %ld\n", upperValue);
-	createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
-	return pdTRUE;
-	break;
-    case IP_BUZZER:
+     case IO_BUZZER:
 	DEBUGPRINT("IP_BUZZER set to %ld\n", upperValue);
 	createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	return pdTRUE;

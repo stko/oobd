@@ -38,10 +38,23 @@
 #define IO_LED_WHITE (0)
 #define IO_LED_GREEN (1)
 #define IO_LED_RED (2)
-#define IO_BUS_0 	(3)
-#define IO_BUS_1 	(4)
-#define IP_BUZZER 	(5)
+#define IO_BUZZER 	(3)
+/*!
+To seperate between OOBD standard IOs and implementation specific IOs, the identifiers for system specific IOs starts with the offset SYS_SPECIFIC_IO_OFFSET
+*/
+#define SYS_SPECIFIC_IO_OFFSET	(10000) 
+  /*! \defgroup system_generic_parm Command Line Parameter: Generic System Commands
+    Generic (implementation independent) system commands, where the command is as P 1 x ...
+    
+    x is as :
+  *  @{
+   */
 
+/* define parameter types */
+#define PARAM_PROTOCOL 		    ( 0 ) //! < switch to protocol y, accourding to the available protocol table \ref protocol_table
+#define PARAM_SET_OUTPUT 		    ( 1 ) //! < switch to protocol y, accourding to the available protocol table \ref protocol_table
+
+  /*! @} */
 void printParam_sys(portBASE_TYPE msgType, void *data,
 		    printChar_cbf printchar);
 void mc_init_sys_boot();
@@ -66,5 +79,6 @@ portBASE_TYPE eval_param_sys_specific(param_data * args);
 portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 			portBASE_TYPE upperValue, portBASE_TYPE duration,
 			portBASE_TYPE waveType);
+portBASE_TYPE sysSound(portBASE_TYPE frequency, portBASE_TYPE volume);
 #endif
 /* INC_MC_SYS_GENERIC_H */

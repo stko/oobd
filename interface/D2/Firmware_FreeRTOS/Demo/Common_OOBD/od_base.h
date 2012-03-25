@@ -86,31 +86,44 @@ typedef struct error_data {
 
 
 
-/*! \page param Command Line Parameter 
-   *  \section Function Block Identifiers
+/*! \defgroup functionblocks Command Line Parameter: Addressing the different Function Blocks
+
+As descripted on \ref index , the functionality is splitted  into  up to 9 functional blocks. To adress command to this different blocks,
+the first value x of a parameter command (p x ...) adresses the functional block 
+
+
    *  @{
    */
 
 
-//! Function block Identifier
 #define FBID_SYS_SPEC 0		//!<The mc specific part of the system
 #define FBID_SYS_GENERIC 1	//!<The generic part of the system
-#define FBID_SERIALIN 2		//!<The serial in process
-#define FBID_SERIALOUT 3	//!<The serial out process
-#define FBID_PROTOCOL_SPEC 4	//!<The implementation specific part of the actual protocol
-#define FBID_PROTOCOL_GENERIC 5	//!<The generic part of the actual protocol
-#define FBID_BUS_SPEC 6		//!<The implementation specific part of the actual bus
-#define FBID_BUS_GENERIC 7	//!<The generic part of the actual bus
+#define FBID_SERIALIN_SPEC 2		//!< The implementation specific part of the serial_in process
+#define FBID_SERIALIN_GENERIC 3		//!< The generic part of the serial_in process
+#define FBID_SERIALOUT_SPEC 4	//!< The implementation specific part of the serial_out process
+#define FBID_SERIALOUT_GENERIC 5	//!< The generic part of the serial_out process
+#define FBID_PROTOCOL_SPEC 6	//!<The implementation specific part of the actual protocol -but up to now a protocol is planned as always generic, but not implementation speicif
+#define FBID_PROTOCOL_GENERIC 7	//!<The generic part of the actual protocol
+#define FBID_BUS_SPEC 8		//!<The implementation specific part of the actual bus
+#define FBID_BUS_GENERIC 9	//!<The generic part of the actual bus
 
 /*! 
 
-The 
-
-\subpage system_generic_parm 
-
-
 @} */
 
+/* define message types */
+#define MSG_NONE		        ( 0 )
+#define MSG_INIT		        ( 1 )	//!< generic msg to initialize (whatever)
+#define MSG_SERIAL_IN		    ( 2 )	//!< a char coming from the serial input
+#define MSG_BUS_RECV		    ( 3 )	//!< received some data on the bus
+#define MSG_SERIAL_DATA		 	( 4 )	//!< received some data to be send from the serial input
+#define MSG_SERIAL_PARAM	 	( 5 )	//!< received a paramter set from the cmd line
+#define MSG_INPUT_FEEDBACK		( 6 )	//!< feedback to the cmd line
+#define MSG_TICK		        ( 7 )	//!< system clock tick
+#define MSG_SERIAL_RELEASE  	( 8 )	//!< tells the serial input to listen for cmds again
+#define MSG_SEND_BUFFER		  	( 9 )	//!< tells the  protocol to send the filled input buffer
+#define MSG_DUMP_BUFFER		  	( 10 )	//!< buffer filled, request to dump
+#define MSG_HANDLE_PARAM		( 11 )	//!< handle parameter command outputs
 
 
 //! Error constants
@@ -119,9 +132,14 @@ The
 //! \todo the text constants needs to be replaced against a function, otherways we fill the program code with repeating error texts
 //! Error OS constants
 #define ERR_CODE_OS_NO_PROTOCOL_TASK 1	//!<basic OS Error
-#define ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT "can't generate protocol task"	//!<basic OS Error
+//#define ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT "can't generate protocol task"	//!<basic OS Error
+#define ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT oobd_Error_Text_OS[ERR_CODE_OS_NO_PROTOCOL_TASK]	//!<basic OS Error
 #define ERR_CODE_OS_UNKNOWN_COMMAND 2	//!< OS couldn't resolve command
-#define ERR_CODE_OS_UNKNOWN_COMMAND_TEXT "Unknown command"	//!<unknown command
+//#define ERR_CODE_OS_UNKNOWN_COMMAND_TEXT "Unknown command"	//!<unknown command
+#define ERR_CODE_OS_UNKNOWN_COMMAND_TEXT oobd_Error_Text_OS[ERR_CODE_OS_UNKNOWN_COMMAND]	//!<unknown command
+#define ERR_CODE_OS_COMMAND_NOT_SUPPORTED 3	//!< OS couldn't resolve command
+//#define ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT "Command not supported"	//!<unknown command
+#define ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT oobd_Error_Text_OS[ERR_CODE_OS_COMMAND_NOT_SUPPORTED]	//!<unknown command
 
 
 //! help constants to address the parameter array 
@@ -129,6 +147,19 @@ The
 #define ARG_CMD (1)		//!<index of command
 #define ARG_VALUE_1 (2)		//!<index of 1. value
 #define ARG_VALUE_2 (3)		//!<index of 2. value
+
+
+  /*! \addtogroup serial_generic_parm 
+ 
+  *  @{
+   */
+
+
+#define VALUE_LF_CRLF (0) //!< set Linefeed to CRLF
+#define VALUE_LF_LF (1) //!< set Linefeed to LF
+#define VALUE_LF_CR (2) //!< set Linefeed to CR
+  /*! @} */
+
 
 
 /** callback function for error handling
@@ -178,6 +209,8 @@ typedef struct OdMsg OdMsg;
 
 #include "od_protocols.h"
 
+
+void initILM();
 
 MsgData *createDataMsg(data_packet * data);
 MsgData *createMsg(void *data, size_t size);

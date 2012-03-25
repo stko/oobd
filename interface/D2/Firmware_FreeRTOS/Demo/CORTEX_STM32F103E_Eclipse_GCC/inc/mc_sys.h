@@ -35,9 +35,11 @@
 #define INC_MC_SYS_H
 
 #include "od_base.h"
-  /*! \page system_generic_parm 
-   * \section STM32 spezific System Commands
-   *  @{
+  /*! \defgroup system_specific_parm_D2 Command Line Parameter: D2 (STM32) spezific System Commands
+    The D2 (STM32) implementation specific commands are as follows, where the command is as P 0 x ...
+    
+    x is as :
+  *  @{
    */
 
 /* Values for PARAM_INFO - P 0 0 x */
@@ -49,24 +51,11 @@
 #define VALUE_PARAM_INFO_CRC32					( 14 )
 #define VALUE_PARAM_INFO_BTM222_DEVICENAME 		( 20 )
 #define VALUE_PARAM_INFO_BTM222_UART_SPEED 		( 21 )
-/* Values for PARAM_LED - P 20 x */
-#define VALUE_PARAM_LED_DXM1_LED1_ON            ( 1 )
-#define VALUE_PARAM_LED_DXM1_LED1_OFF           ( 2 )
-#define VALUE_PARAM_LED_DXM1_LED2_ON            ( 3 )
-#define VALUE_PARAM_LED_DXM1_LED2_OFF           ( 4 )
-#define VALUE_PARAM_LED_OOBD_CUPv5_LED1_ON      ( 5 )
-#define VALUE_PARAM_LED_OOBD_CUPv5_LED1_OFF     ( 6 )
-#define VALUE_PARAM_LED_OOBD_CUPv5_LED2gr_ON    ( 7 )
-#define VALUE_PARAM_LED_OOBD_CUPv5_LED2gr_OFF   ( 8 )
-#define VALUE_PARAM_LED_OOBD_CUPv5_LED1rd_ON    ( 9 )
-#define VALUE_PARAM_LED_OOBD_CUPv5_LED1rd_OFF   ( 10 )
-/* Values for PARAM_RELAIS - P 21 x */
-#define VALUE_PARAM_RELAIS_OOBD_CUPv5_REL1_OFF  ( 0 )
-#define VALUE_PARAM_RELAIS_OOBD_CUPv5_REL1_ON   ( 1 )
-#define VALUE_PARAM_RELAIS_OOBD_CUPv5_REL1_FB   ( 2 )
-/* Values for PARAM_BUZZER - P 22 x */
-#define VALUE_PARAM_BUZZER_OOBD_CUPv5_SGx_OFF   ( 0 )
-#define VALUE_PARAM_BUZZER_OOBD_CUPv5_SGx_ON    ( 1 )
+
+/*System specific IO- Pins */
+#define IO_REL1 	(0) + SYS_SPECIFIC_IO_OFFSET
+#define IO_REL2 	(1) + SYS_SPECIFIC_IO_OFFSET
+
 
   /*! @} */
 // debugging macros so we can pin down message origin at a glance

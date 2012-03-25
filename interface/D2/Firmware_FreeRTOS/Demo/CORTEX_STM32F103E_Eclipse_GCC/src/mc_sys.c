@@ -40,6 +40,9 @@
 #include "stm32f10x.h"		/* ST Library v3.4..0 specific header files */
 #include "SystemConfig.h"	/* STM32 hardware specific header file */
 
+extern char *oobd_Error_Text_OS;
+
+
 void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 		printChar_cbf printchar) {
 	param_data *args;
@@ -57,6 +60,12 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 		case VALUE_PARAM_INFO_VERSION: /* p 0 0 */
 			printser_string("OOBD ");
 			printser_string(OOBDDESIGN);
+			printser_string(" ");
+			if (GPIO_HardwareLevel()>0){
+				printser_string("Lux-Wolf");
+			}else{
+				printser_string("dxm");
+			}
 			printser_string(" ");
 			printser_string(SVNREV);
 			printser_string(" ");
@@ -106,6 +115,7 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 			}
 			printLF();
 			printEOT();
+			break;
 		case VALUE_PARAM_INFO_BTM222_DEVICENAME: /* p 0 20 */
 			printser_string(BTM222_DeviceName);
 			printLF();
@@ -156,6 +166,7 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 		default:
 			evalResult(FBID_SYS_SPEC, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT, 0,
 					ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+			break;
 		}
 		break;
 
@@ -171,65 +182,16 @@ portBASE_TYPE eval_param_sys_specific(param_data * args) {
 		return pdTRUE;
 		break;
 
-	case PARAM_LED:
-		if (VALUE_PARAM_LED_DXM1_LED1_ON == args->args[ARG_VALUE_1]) /* p 20 1 */
-			GPIO_ResetBits(GPIOC, GPIO_Pin_5); /* LED1 ON - red */
-		else if (VALUE_PARAM_LED_DXM1_LED1_OFF == args->args[ARG_VALUE_1]) /* p 20 2 */
-			GPIO_SetBits(GPIOB, GPIO_Pin_5); /* LED1 OFF - red */
-		else if (VALUE_PARAM_LED_DXM1_LED2_ON == args->args[ARG_VALUE_1]) /* p 20 3 */
-			GPIO_ResetBits(GPIOB, GPIO_Pin_4); /* LED2 ON - green */
-		else if (VALUE_PARAM_LED_DXM1_LED2_OFF == args->args[ARG_VALUE_1]) /* p 20 4 */
-			GPIO_SetBits(GPIOB, GPIO_Pin_4); /* LED2 OFF - green */
-		else if (VALUE_PARAM_LED_OOBD_CUPv5_LED1_ON == args->args[ARG_VALUE_1]) /* p 20 5 */
-			GPIO_SetBits(GPIOB, GPIO_Pin_10); /* LED1 ON - yellow */
-		else if (VALUE_PARAM_LED_OOBD_CUPv5_LED1_OFF == args->args[ARG_VALUE_1]) /* p 20 6 */
-			GPIO_ResetBits(GPIOB, GPIO_Pin_10); /* LED1 OFF - yellow */
-		else if (VALUE_PARAM_LED_OOBD_CUPv5_LED2gr_ON
-				== args->args[ARG_VALUE_1]) /* p 20 7 */
-			GPIO_SetBits(GPIOB, GPIO_Pin_4); /* Duo-LED2gr ON - green */
-		else if (VALUE_PARAM_LED_OOBD_CUPv5_LED2gr_OFF
-				== args->args[ARG_VALUE_1]) /* p 20 8 */
-			GPIO_ResetBits(GPIOB, GPIO_Pin_4); /* Duo-LED2gr OFF - green */
-		else if (VALUE_PARAM_LED_OOBD_CUPv5_LED1rd_ON
-				== args->args[ARG_VALUE_1]) /* p 20 9 */
-			GPIO_SetBits(GPIOB, GPIO_Pin_5); /* Duo-LED2rd ON - red */
-		else if (VALUE_PARAM_LED_OOBD_CUPv5_LED1rd_OFF
-				== args->args[ARG_VALUE_1]) /* p 20 10 */
-			GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* Duo-LED2rd OFF - red */
-		else
-			DEBUGPRINT ("Parameter for LED on/off missing!!\n", 'a');
-
+	case PARAM_SET_OUTPUT:
+		sysIoCtrl(args->args[ARG_VALUE_1], 0,
+				args->args[ARG_VALUE_2], 0,
+				0);
+		return pdTRUE;
 		break;
 
-	case PARAM_RELAIS:
-		if (VALUE_PARAM_RELAIS_OOBD_CUPv5_REL1_ON == args->args[ARG_VALUE_1]) /* p 21 1 */
-			GPIO_SetBits(GPIOC, GPIO_Pin_15); /* REL1 - ON*/
-		else if (VALUE_PARAM_RELAIS_OOBD_CUPv5_REL1_OFF
-				== args->args[ARG_VALUE_1]) /* p 21 0 */
-			GPIO_ResetBits(GPIOC, GPIO_Pin_15); /* REL1 - OFF */
-		else if (VALUE_PARAM_RELAIS_OOBD_CUPv5_REL1_FB
-				== args->args[ARG_VALUE_1]) /* p 21 2 */
-		{
-			if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET)
-				printser_string("\r\nPA8 is HIGH!");
-			else
-				printser_string("\r\nPA8 is LOW!");
-		} else
-			DEBUGPRINT ("Parameter for REL1 on/off missing!!\n", 'a');
-		break;
-
-	case PARAM_BUZZER:
-		if (VALUE_PARAM_BUZZER_OOBD_CUPv5_SGx_ON == args->args[ARG_VALUE_1]) /* p 22 1 */
-			TIM_Cmd(TIM2, ENABLE); /* Buzzer - ON*/
-		else if (VALUE_PARAM_BUZZER_OOBD_CUPv5_SGx_OFF
-				== args->args[ARG_VALUE_1]) /* p 22 0 */
-			TIM_Cmd(TIM2, DISABLE); /* Buzzer - OFF */
-		else
-			DEBUGPRINT ("Parameter for Buzzer on/off missing!!\n", 'a');
-		break;
 
 	default:
-		evalResult(FBID_SYS_SPEC, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT, 0,
+		evalResult(FBID_SYS_SPEC, ERR_CODE_OS_UNKNOWN_COMMAND, 0,
 				ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 		return pdFALSE;
 	}
@@ -302,19 +264,6 @@ void mc_init_sys_tasks_specific() {
 	printser_string(Rx1_Buffer);
 #endif
 
-	if (pdPASS == xTaskCreate(Led1Task, (const signed portCHAR *) "LED1",
-			configMINIMAL_STACK_SIZE, (void *) NULL,
-			TASK_PRIO_LOW, (xTaskHandle *) NULL))
-		DEBUGUARTPRINT("\r\n*** 'LED1' Task created ***");
-	else
-		DEBUGUARTPRINT("\r\n*** 'LED1' Task NOT created ***");
-
-	if (pdPASS == xTaskCreate(Led2Task, (const signed portCHAR *) "LED2",
-			configMINIMAL_STACK_SIZE, (void *) NULL,
-			TASK_PRIO_LOW, (xTaskHandle *) NULL))
-		DEBUGUARTPRINT("\r\n*** 'LED2' Task created ***");
-	else
-		DEBUGUARTPRINT("\r\n*** 'LED2' Task NOT created ***");
 
 	/* initialize Interrupt Vector table and activate interrupts */
 	NVIC_Configuration();
@@ -326,6 +275,8 @@ void mc_init_sys_shutdown_specific() {
 	SCB->AIRCR = 0x05FA0604; /* soft reset */
 }
 
+
+
 portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 		portBASE_TYPE upperValue, portBASE_TYPE duration,
 		portBASE_TYPE waveType) {
@@ -333,35 +284,60 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 	switch (pinID) {
 	case IO_LED_WHITE:
 		DEBUGPRINT("IO_LED_WHITE set to %ld\n", upperValue);
+		if ( GPIO_HardwareLevel() == 1){
+				upperValue?GPIO_SetBits(GPIOB, GPIO_Pin_10):GPIO_ResetBits(GPIOC, GPIO_Pin_10); /* LED1 - yellow  */
+			}else{
+				upperValue?GPIO_SetBits(GPIOB, GPIO_Pin_4):GPIO_ResetBits(GPIOC, GPIO_Pin_4); /* LED2 - green */
+		}
 		createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 		return pdTRUE;
 		break;
 	case IO_LED_GREEN:
 		DEBUGPRINT("IO_LED_GREEN set to %ld\n", upperValue);
+		if ( GPIO_HardwareLevel() == 1){
+				upperValue?GPIO_SetBits(GPIOB, GPIO_Pin_4):GPIO_ResetBits(GPIOC, GPIO_Pin_4); /* Duo-LED2gr - green */
+			}else{
+				upperValue?GPIO_SetBits(GPIOB, GPIO_Pin_4):GPIO_ResetBits(GPIOC, GPIO_Pin_4); /* LED2 - green */
+		}
 		createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
-		return pdTRUE;
 		return pdTRUE;
 		break;
 	case IO_LED_RED:
 		DEBUGPRINT("IO_LED_RED set to %ld\n", upperValue);
+		if ( GPIO_HardwareLevel() == 1){
+				upperValue?GPIO_SetBits(GPIOB, GPIO_Pin_5):GPIO_ResetBits(GPIOC, GPIO_Pin_5); /* Duo-LED2rd - red */
+			}else{
+				upperValue?GPIO_SetBits(GPIOB, GPIO_Pin_5):GPIO_ResetBits(GPIOC, GPIO_Pin_5); /* LED1 - red */
+		}
 		createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 		return pdTRUE;
 		break;
-	case IO_BUS_0:
-		DEBUGPRINT("IO_BUS_0 set to %ld\n", upperValue);
-		createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
-		return pdTRUE;
+
+
+	case IO_REL1:
+		if ( GPIO_HardwareLevel() == 1){
+				upperValue?GPIO_SetBits(GPIOC, GPIO_Pin_15):GPIO_ResetBits(GPIOC, GPIO_Pin_15); /* Rel1 */
+				DEBUGPRINT("IO_REL1 set to %ld\n", upperValue);
+				createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
+				return pdTRUE;
+			}else{
+				createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_OS_COMMAND_NOT_SUPPORTED, 0,
+						ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
+				return pdFALSE;
+		}
 		break;
-	case IO_BUS_1:
-		DEBUGPRINT("IO_BUS_1 set to %ld\n", upperValue);
-		createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
-		return pdTRUE;
-		break;
-	case IP_BUZZER:
-		DEBUGPRINT("IP_BUZZER set to %ld\n", upperValue);
-		createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
-		return pdTRUE;
-		break;
+
+	case IO_BUZZER:
+		if ( GPIO_HardwareLevel() == 1){
+			sysSound(upperValue, portMAX_DELAY); /* Buzzer, full volume */
+				DEBUGPRINT("Buzzer set to frequency of %ld\n", upperValue);
+				createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
+				return pdTRUE;
+			}else{
+				createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_OS_COMMAND_NOT_SUPPORTED, 0,
+						ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
+				return pdFALSE;
+		}
 	default:
 		DEBUGPRINT("unknown output pin\n", upperValue);
 		createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_OS_UNKNOWN_COMMAND, 0,
@@ -371,46 +347,12 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 	}
 }
 
-void Led1Task(void *pvParameters) {
-	uint16_t LedBlinkDuration = 0;
-	uint16_t Led1Duration = 250; /* 250ms default value */
-	extern xQueueHandle Led1Queue;
 
-	DEBUGUARTPRINT("\r\n*** prvLedTask entered! ***");
-
-	for (;;) {
-		/* xQueueReceive waits for max. Led1Duration time for a new received values = LED OFF Time */
-		if (pdTRUE == xQueueReceive(Led1Queue, &LedBlinkDuration,
-				(portTickType) Led1Duration /
-				portTICK_RATE_MS)) {
-			/* data received from queue */
-			Led1Duration = LedBlinkDuration;
-		}
-
-		GPIO_ResetBits(GPIOB, GPIO_Pin_4); /* LED1 ON - green */
-		vTaskDelay((portTickType) Led1Duration / portTICK_RATE_MS); /* ON time */
-		GPIO_SetBits(GPIOB, GPIO_Pin_4); /* LED1 OFF - green */
-	}
+portBASE_TYPE sysSound(portBASE_TYPE frequency, portBASE_TYPE volume){
+	frequency?TIM_Cmd(TIM2, ENABLE):TIM_Cmd(TIM2, DISABLE); /* Buzzer */
 }
 
-/*---------------------------------------------------------------------------*/
 
-void Led2Task(void *pvParameters) {
-	uint16_t LedDuration = 0;
-	extern xQueueHandle Led2Queue;
-
-	DEBUGUARTPRINT("\r\n*** prvLedTask entered! ***");
-
-	for (;;) {
-		/* wait indefinitely till value received => depends on portMAX_DELAY */
-		if (pdTRUE == xQueueReceive(Led2Queue, &LedDuration, portMAX_DELAY)) {
-			/* data received from queue */
-			GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* LED1 ON - red */
-			vTaskDelay((portTickType) LedDuration / portTICK_RATE_MS); /* ON time */
-			GPIO_SetBits(GPIOB, GPIO_Pin_5); /* LED1 OFF - red */
-		}
-	}
-}
 
 /*---------------------------------------------------------------------------*/
 

@@ -53,8 +53,32 @@
 #define INC_MC_SERIAL_GENERIC_H
 
 #include "od_config.h"
+  /*! \defgroup serial_generic_parm Command Line Parameter: Generic Serial Input Commands
+    The serial input commands are as follows, where the command is as P 2 value ...
+    
+    x is as :
+  *  @{
+   */
 
+/* define parameter types */
+/*! \brief switch serial echo on or off
 
+Default: Echo on
+
+  \param value 0= echo off, !=0 Echo on 
+*/
+#define PARAM_ECHO    		    ( 1 )
+/*! \brief set type of EndOfLile
+
+Default: Carriage Return CR hex. 0x0D dec. 10
+
+  \param value see VALUE - defs
+*/
+#define PARAM_LINEFEED    	    ( 2 )
+
+  /*! @} */
+
+  
 //! Serial Input Error constants and texts
 
 #define ERR_CODE_SERIAL_SYNTAX_ERR 1

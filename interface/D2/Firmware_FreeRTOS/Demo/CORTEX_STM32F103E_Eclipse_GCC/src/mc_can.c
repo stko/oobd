@@ -38,6 +38,9 @@
 #include "stm32f10x.h"
 #include "SystemConfig.h"
 
+extern char *oobd_Error_Text_OS;
+
+
 /* callback function for received data */
 recv_cbf reportReceivedData = NULL;
 /* uint8_t   CAN_BusConfig; */
@@ -149,6 +152,7 @@ portBASE_TYPE busControl(portBASE_TYPE cmd, void *param)
 	return pdFAIL;
 	break;
     }
+    return pdFAIL;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -156,8 +160,7 @@ portBASE_TYPE busControl(portBASE_TYPE cmd, void *param)
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {
     DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler entered ***");
-    extern xQueueHandle Led2Queue;
-    portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+     portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
     uint8_t i;
     uint16_t LedDuration;
     CanRxMsg RxMessage;
@@ -176,18 +179,6 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
     CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
 
     if (RxMessage.StdId != 0 || RxMessage.ExtId != 0) {
-	extern xQueueHandle Led2Queue;
-
-	/* switch LED2 ON to indicate CAN traffic */
-	LedDuration = 5;	/* 5ms */
-	if (pdPASS ==
-	    xQueueSendToBackFromISR(Led2Queue, &LedDuration,
-				    &xHigherPriorityTaskWoken)) {
-	    // Switch context if necessary.
-	    if (xHigherPriorityTaskWoken)
-		taskYIELD();
-	}
-
 	/* Data received. Process it. */
 	if (RxMessage.IDE == CAN_ID_STD)
 	    dp.recv = RxMessage.StdId;	/* Standard CAN frame 11bit received */
