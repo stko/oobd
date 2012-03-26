@@ -60,13 +60,13 @@ void ilmTask(void *pvParameters)
 			    if (ledTick>100){
 			      ledTick=0;
 			      ledStatus=ledStatus?0:1;
-			  sysIoCtrl(IO_LED_RED, 0,
+/*			  sysIoCtrl(IO_LED_RED, 0,
 				ledStatus, 0,
 				0);
 			  sysIoCtrl(IO_LED_GREEN, 0,
 				ledStatus, 0,
 				0);
-			  sysIoCtrl(IO_LED_WHITE, 0,
+*/			  sysIoCtrl(IO_LED_WHITE, 0,
 				ledStatus, 0,
 				0);
 			    }
