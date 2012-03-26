@@ -183,9 +183,20 @@ portBASE_TYPE eval_param_sys_specific(param_data * args) {
 		break;
 
 	case PARAM_SET_OUTPUT:
-		sysIoCtrl(args->args[ARG_VALUE_1], 0,
+		if ( sysIoCtrl(args->args[ARG_VALUE_1], 0,
 				args->args[ARG_VALUE_2], 0,
-				0);
+				0)== pdTRUE){
+				createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
+				return pdTRUE;
+			}else{
+				createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_OS_COMMAND_NOT_SUPPORTED, 0,
+						ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
+				return pdFALSE;
+		}
+		return pdTRUE;
+		break;
+	case PARAM_RESET:
+		mc_init_sys_shutdown_specific(); // Reset
 		return pdTRUE;
 		break;
 
@@ -285,31 +296,28 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 	case IO_LED_WHITE:
 		DEBUGPRINT("IO_LED_WHITE set to %ld\n", upperValue);
 		if ( GPIO_HardwareLevel() == 1){
-				upperValue?GPIO_SetBits(GPIOB, GPIO_Pin_10):GPIO_ResetBits(GPIOC, GPIO_Pin_10); /* LED1 - yellow  */
+				upperValue?GPIO_SetBits(GPIOB, GPIO_Pin_10):GPIO_ResetBits(GPIOB, GPIO_Pin_10); /* LED1 - yellow  */
 			}else{
-				upperValue?GPIO_SetBits(GPIOB, GPIO_Pin_4):GPIO_ResetBits(GPIOC, GPIO_Pin_4); /* LED2 - green */
+				upperValue?GPIO_SetBits(GPIOB, GPIO_Pin_4):GPIO_ResetBits(GPIOB, GPIO_Pin_4); /* LED2 - green */
 		}
-		createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 		return pdTRUE;
 		break;
 	case IO_LED_GREEN:
 		DEBUGPRINT("IO_LED_GREEN set to %ld\n", upperValue);
 		if ( GPIO_HardwareLevel() == 1){
-				upperValue?GPIO_SetBits(GPIOB, GPIO_Pin_4):GPIO_ResetBits(GPIOC, GPIO_Pin_4); /* Duo-LED2gr - green */
+				upperValue?GPIO_SetBits(GPIOB, GPIO_Pin_4):GPIO_ResetBits(GPIOB, GPIO_Pin_4); /* Duo-LED2gr - green */
 			}else{
-				upperValue?GPIO_SetBits(GPIOB, GPIO_Pin_4):GPIO_ResetBits(GPIOC, GPIO_Pin_4); /* LED2 - green */
+				upperValue?GPIO_SetBits(GPIOB, GPIO_Pin_4):GPIO_ResetBits(GPIOB, GPIO_Pin_4); /* LED2 - green */
 		}
-		createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 		return pdTRUE;
 		break;
 	case IO_LED_RED:
 		DEBUGPRINT("IO_LED_RED set to %ld\n", upperValue);
 		if ( GPIO_HardwareLevel() == 1){
-				upperValue?GPIO_SetBits(GPIOB, GPIO_Pin_5):GPIO_ResetBits(GPIOC, GPIO_Pin_5); /* Duo-LED2rd - red */
+				upperValue?GPIO_SetBits(GPIOB, GPIO_Pin_5):GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* Duo-LED2rd - red */
 			}else{
-				upperValue?GPIO_SetBits(GPIOB, GPIO_Pin_5):GPIO_ResetBits(GPIOC, GPIO_Pin_5); /* LED1 - red */
+				upperValue?GPIO_SetBits(GPIOB, GPIO_Pin_5):GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* LED1 - red */
 		}
-		createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 		return pdTRUE;
 		break;
 
@@ -318,11 +326,8 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 		if ( GPIO_HardwareLevel() == 1){
 				upperValue?GPIO_SetBits(GPIOC, GPIO_Pin_15):GPIO_ResetBits(GPIOC, GPIO_Pin_15); /* Rel1 */
 				DEBUGPRINT("IO_REL1 set to %ld\n", upperValue);
-				createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 				return pdTRUE;
 			}else{
-				createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_OS_COMMAND_NOT_SUPPORTED, 0,
-						ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
 				return pdFALSE;
 		}
 		break;
@@ -331,17 +336,12 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 		if ( GPIO_HardwareLevel() == 1){
 			sysSound(upperValue, portMAX_DELAY); /* Buzzer, full volume */
 				DEBUGPRINT("Buzzer set to frequency of %ld\n", upperValue);
-				createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 				return pdTRUE;
 			}else{
-				createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_OS_COMMAND_NOT_SUPPORTED, 0,
-						ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
 				return pdFALSE;
 		}
 	default:
 		DEBUGPRINT("unknown output pin\n", upperValue);
-		createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_OS_UNKNOWN_COMMAND, 0,
-				ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 		return pdFALSE;
 		break;
 	}
