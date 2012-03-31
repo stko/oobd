@@ -15,13 +15,15 @@
  * @param pvContext A caller supplied parameter for the pvFunction.
  * @return TRUE iff there is a valid pvFunction to register.
  */
-long lAsyncIORegisterCallback( int iFileDescriptor, void (*pvFunction)(int,void*), void *pvContext );
+long lAsyncIORegisterCallback(int iFileDescriptor,
+			      void (*pvFunction) (int, void *),
+			      void *pvContext);
 
 /**
  * Removes the registered call back from the list.
  * @param iFileDescriptor The file descriptor for an already closed file handle.
  */
-void vAsyncIOUnregisterCallback( int iFileDescriptor );
+void vAsyncIOUnregisterCallback(int iFileDescriptor);
 
 
-#endif /* ASYNCIO_H_ */
+#endif				/* ASYNCIO_H_ */

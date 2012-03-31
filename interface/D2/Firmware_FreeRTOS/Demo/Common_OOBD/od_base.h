@@ -16,8 +16,11 @@
 	Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
-	1 tab == 4 spaces!
-
+	OOBD C source files requirement:
+	Unix EOL file format 
+	UTF-8
+	formated with "indent -kr"
+	  
 	Please ensure to read the configuration and relevant port sections of the
 	online documentation.
 
@@ -98,8 +101,8 @@ the first value x of a parameter command (p x ...) adresses the functional block
 
 #define FBID_SYS_SPEC 0		//!<The mc specific part of the system
 #define FBID_SYS_GENERIC 1	//!<The generic part of the system
-#define FBID_SERIALIN_SPEC 2		//!< The implementation specific part of the serial_in process
-#define FBID_SERIALIN_GENERIC 3		//!< The generic part of the serial_in process
+#define FBID_SERIALIN_SPEC 2	//!< The implementation specific part of the serial_in process
+#define FBID_SERIALIN_GENERIC 3	//!< The generic part of the serial_in process
 #define FBID_SERIALOUT_SPEC 4	//!< The implementation specific part of the serial_out process
 #define FBID_SERIALOUT_GENERIC 5	//!< The generic part of the serial_out process
 #define FBID_PROTOCOL_SPEC 6	//!<The implementation specific part of the actual protocol -but up to now a protocol is planned as always generic, but not implementation speicif
@@ -132,13 +135,13 @@ the first value x of a parameter command (p x ...) adresses the functional block
 //! \todo the text constants needs to be replaced against a function, otherways we fill the program code with repeating error texts
 //! Error OS constants
 #define ERR_CODE_OS_NO_PROTOCOL_TASK 1	//!<basic OS Error
-//#define ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT "can't generate protocol task"	//!<basic OS Error
+//#define ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT "can't generate protocol task"      //!<basic OS Error
 #define ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT oobd_Error_Text_OS[ERR_CODE_OS_NO_PROTOCOL_TASK]	//!<basic OS Error
 #define ERR_CODE_OS_UNKNOWN_COMMAND 2	//!< OS couldn't resolve command
-//#define ERR_CODE_OS_UNKNOWN_COMMAND_TEXT "Unknown command"	//!<unknown command
+//#define ERR_CODE_OS_UNKNOWN_COMMAND_TEXT "Unknown command"    //!<unknown command
 #define ERR_CODE_OS_UNKNOWN_COMMAND_TEXT oobd_Error_Text_OS[ERR_CODE_OS_UNKNOWN_COMMAND]	//!<unknown command
 #define ERR_CODE_OS_COMMAND_NOT_SUPPORTED 3	//!< OS couldn't resolve command
-//#define ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT "Command not supported"	//!<unknown command
+//#define ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT "Command not supported"        //!<unknown command
 #define ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT oobd_Error_Text_OS[ERR_CODE_OS_COMMAND_NOT_SUPPORTED]	//!<unknown command
 
 
@@ -150,14 +153,14 @@ the first value x of a parameter command (p x ...) adresses the functional block
 
 
   /*! \addtogroup serial_generic_parm 
- 
-  *  @{
+
+   *  @{
    */
 
 
-#define VALUE_LF_CRLF (0) //!< set Linefeed to CRLF
-#define VALUE_LF_LF (1) //!< set Linefeed to LF
-#define VALUE_LF_CR (2) //!< set Linefeed to CR
+#define VALUE_LF_CRLF (0)	//!< set Linefeed to CRLF
+#define VALUE_LF_LF (1)		//!< set Linefeed to LF
+#define VALUE_LF_CR (2)		//!< set Linefeed to CR
   /*! @} */
 
 

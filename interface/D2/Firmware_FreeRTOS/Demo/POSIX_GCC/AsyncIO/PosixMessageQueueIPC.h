@@ -23,9 +23,8 @@
 /**
  * This is an example of Message object that is used for IPC.
  */
-typedef struct MESSAGE_OBJECT
-{
-	portCHAR cMesssageBytes[ 512 ];
+typedef struct MESSAGE_OBJECT {
+    portCHAR cMesssageBytes[512];
 } xMessageObject;
 
 /**
@@ -35,14 +34,17 @@ typedef struct MESSAGE_OBJECT
  * @param pvContext A caller specifed context value that is passed to the callback function.
  * @return A handle to the opened Posix Message Queue.
  */
-mqd_t xPosixIPCOpen( const portCHAR *pcPipeName, void (*vMessageInterruptHandler)(xMessageObject,void*), void *pvContext );
+mqd_t xPosixIPCOpen(const portCHAR * pcPipeName,
+		    void (*vMessageInterruptHandler) (xMessageObject,
+						      void *),
+		    void *pvContext);
 
 /**
  * Closes the specified Message Queue.
  * @param hPipeHandle A handle to the pipe so it can be closed.
  * @param pcPipeName The name of the pipe so that it can be unlinked and messages dumped.
  */
-void vPosixIPCClose( mqd_t hPipeHandle, const portCHAR *pcPipeName );
+void vPosixIPCClose(mqd_t hPipeHandle, const portCHAR * pcPipeName);
 
 /**
  * Sends a messages to the specified pipe.
@@ -52,7 +54,7 @@ void vPosixIPCClose( mqd_t hPipeHandle, const portCHAR *pcPipeName );
  * on the maximum number of messages on the queue even if the total memory for the
  * queue hasn't been exceeded. (See 'man mq_overview').
  */
-portLONG lPosixIPCSendMessage( mqd_t hPipeHandle, xMessageObject xMessage );
+portLONG lPosixIPCSendMessage(mqd_t hPipeHandle, xMessageObject xMessage);
 
 /**
  * Non-blocking call to receive a message from a message queue. This function can be
@@ -62,13 +64,14 @@ portLONG lPosixIPCSendMessage( mqd_t hPipeHandle, xMessageObject xMessage );
  * @param pxMessage A pointer to a message object that is set to the received message.
  * @return TRUE iff a message of the correct number of bytes was received.
  */
-portLONG lPosixIPCReceiveMessage( mqd_t hPipeHandle, xMessageObject *pxMessage );
+portLONG lPosixIPCReceiveMessage(mqd_t hPipeHandle,
+				 xMessageObject * pxMessage);
 
 /**
  * Remove all of the messages already sent to a queue. Useful if there are outstanding
  * messages since the last run of the application.
  * @param hPipeHandle The handle to the pipe that needs to be emptied.
  */
-void vPosixIPCEmpty( mqd_t hPipeHandle );
+void vPosixIPCEmpty(mqd_t hPipeHandle);
 
-#endif /* POSIXIPC_H_ */
+#endif				/* POSIXIPC_H_ */
