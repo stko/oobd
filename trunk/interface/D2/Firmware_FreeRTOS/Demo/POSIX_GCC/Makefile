@@ -146,8 +146,6 @@ $(OUTDIR)/$(PROJECT_NAME).bin : $(OBJS)  Makefile
 	$(CC) $(OBJS)  $(LIBS) $(LINKER_FLAGS)
 
 
-# beautify own C source files.
-$(foreach src, $(OOBD_COMMON_SOURCE),  $(indent  $(src) -kr))
 
 # Compile: create object files from C source files.
 define COMPILE_C_TEMPLATE
@@ -159,7 +157,7 @@ endef
 $(foreach src, $(SOURCE), $(eval $(call COMPILE_C_TEMPLATE, $(src))))
 
 
-clean :
+clean :  format
 	-$(RM) $(OBJS)
 
 
@@ -173,6 +171,24 @@ docs:
 publish:
 	cd .. ; sitecopy -u oobd-firmware
 #	$(shell cd .. ; doxygen)
+
+
+# text formating
+format:
+
+	cd .. ; for src in `find   \( -name "*.c" -o -name "*.h" \)   -type f  -print0  | grep -FzZ --invert-match "Common/" - | xargs -0 ` ; do \
+	echo $$src ; \
+	fromdos $$src ; \
+	indent $$src -kr ; \
+	done 
+#define TEXTFORMAT
+#@echo $(1)
+#endef
+#$(foreach src, $(OOBD_COMMON_SOURCE), $(eval $(call TEXTFORMAT, $(src))))
+#
+#	for number in $(SOURCE) ; do \
+#	echo $$number ; \
+#	done
 
 
 # Eye candy.

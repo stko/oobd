@@ -16,8 +16,11 @@
 	Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
-	1 tab == 4 spaces!
-
+	OOBD C source files requirement:
+	Unix EOL file format 
+	UTF-8
+	formated with "indent -kr"
+	  
 	Please ensure to read the configuration and relevant port sections of the
 	online documentation.
 
@@ -36,14 +39,14 @@
 
 #include "od_base.h"
   /*! \defgroup system_specific_parm_D2 Command Line Parameter: D2 (STM32) spezific System Commands
-    The D2 (STM32) implementation specific commands are as follows, where the command is as P 0 x ...
-    
-    x is as :
-  *  @{
+     The D2 (STM32) implementation specific commands are as follows, where the command is as P 0 x ...
+
+     x is as :
+     *  @{
    */
 
 /* Values for PARAM_INFO - P 0 0 x */
-#define VALUE_PARAM_INFO_ADC_POWER      		( 6 ) //!< Outputs the actual device power supply voltage
+#define VALUE_PARAM_INFO_ADC_POWER      		( 6 )	//!< Outputs the actual device power supply voltage
 #define VALUE_PARAM_INFO_CPU_INFO 				( 10 )
 #define VALUE_PARAM_INFO_MEM_LOC  				( 11 )
 #define VALUE_PARAM_INFO_ROM_TABLE_LOC  		( 12 )

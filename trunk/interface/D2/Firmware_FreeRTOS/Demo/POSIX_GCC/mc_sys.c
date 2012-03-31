@@ -16,8 +16,11 @@
 	Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
-	1 tab == 4 spaces!
-
+	OOBD C source files requirement:
+	Unix EOL file format 
+	UTF-8
+	formated with "indent -kr"
+	  
 	Please ensure to read the configuration and relevant port sections of the
 	online documentation.
 
@@ -102,29 +105,26 @@ portBASE_TYPE eval_param_sys_specific(param_data * args)
 	    return pdTRUE;
 	    break;
 	default:
-	  createCommandResultMsg
-	      (FBID_SYS_SPEC,
-		ERR_CODE_OS_UNKNOWN_COMMAND,
-		0,
-		ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+	    createCommandResultMsg
+		(FBID_SYS_SPEC,
+		 ERR_CODE_OS_UNKNOWN_COMMAND,
+		 0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 	    return pdFALSE;
 	}
 	break;
- 	case PARAM_SET_OUTPUT:
-		sysIoCtrl(args->args[ARG_VALUE_1], 0,
-				args->args[ARG_VALUE_2], 0,
-				0);
-	    return pdTRUE;
-		break;
+    case PARAM_SET_OUTPUT:
+	sysIoCtrl(args->args[ARG_VALUE_1], 0,
+		  args->args[ARG_VALUE_2], 0, 0);
+	return pdTRUE;
+	break;
 
 
-	default:
-	  createCommandResultMsg
-	      (FBID_SYS_SPEC,
-		ERR_CODE_OS_UNKNOWN_COMMAND,
-		0,
-		ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
-	    return pdFALSE;
+    default:
+	createCommandResultMsg
+	    (FBID_SYS_SPEC,
+	     ERR_CODE_OS_UNKNOWN_COMMAND,
+	     0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+	return pdFALSE;
 	break;
     }
 }
@@ -152,7 +152,7 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 	createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	return pdTRUE;
 	break;
-     case IO_BUZZER:
+    case IO_BUZZER:
 	DEBUGPRINT("IP_BUZZER set to %ld\n", upperValue);
 	createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	return pdTRUE;

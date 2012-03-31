@@ -16,8 +16,11 @@
 	Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
-	1 tab == 4 spaces!
-
+	OOBD C source files requirement:
+	Unix EOL file format 
+	UTF-8
+	formated with "indent -kr"
+	  
 	Please ensure to read the configuration and relevant port sections of the
 	online documentation.
 
@@ -44,10 +47,10 @@ void bus_close_can();
 void odb_can_init();
 
   /*! \defgroup prot_can_generic_parm Command Line Parameter: Generic CAN Commands
-    The generic CAN commands are as follows, where the command is as P 7 value ...
-    
-    x is as :
-  *  @{
+     The generic CAN commands are as follows, where the command is as P 7 value ...
+
+     x is as :
+     *  @{
    */
 
 
@@ -84,18 +87,18 @@ Default: 11bit 500kb
 #define PARAM_BUS 		    ( 17 )
 
 /* define values of CAN specific parameter */
-#define VALUE_BUS_SILENT_MODE					( 0 ) //!< set CAN bus into silent mode
-#define VALUE_BUS_LOOP_BACK_MODE				( 1 ) //!< set CAN bus into loopback mode
-#define VALUE_BUS_LOOP_BACK_WITH_SILENT_MODE	( 2 ) //!< set CAN bus into loopback/silent mode
-#define VALUE_BUS_NORMAL_MODE					( 3 ) //!< set CAN bus into normal mode
-#define VALUE_BUS_CONFIG_11bit_125kbit  		( 1 ) //!< set CAN bus speed to 11bit with 125kbit
-#define VALUE_BUS_CONFIG_11bit_250kbit  		( 2 ) //!< set CAN bus speed to 11bit with 250kbit
-#define VALUE_BUS_CONFIG_11bit_500kbit  		( 3 ) //!< set CAN bus speed to 11bit with 500kbit
-#define VALUE_BUS_CONFIG_11bit_1000kbit 		( 4 ) //!< set CAN bus speed to 11bit with 1000kbit
-#define VALUE_BUS_CONFIG_29bit_125kbit  		( 5 ) //!< set CAN bus speed to 29bit with 125kbit
-#define VALUE_BUS_CONFIG_29bit_250kbit  		( 6 ) //!< set CAN bus speed to 29bit with 250kbit
-#define VALUE_BUS_CONFIG_29bit_500kbit  		( 7 ) //!< set CAN bus speed to 29bit with 500kbit
-#define VALUE_BUS_CONFIG_29bit_1000kbit 		( 8 ) //!< set CAN bus speed to 29bit with 1000kbit
+#define VALUE_BUS_SILENT_MODE					( 0 )	//!< set CAN bus into silent mode
+#define VALUE_BUS_LOOP_BACK_MODE				( 1 )	//!< set CAN bus into loopback mode
+#define VALUE_BUS_LOOP_BACK_WITH_SILENT_MODE	( 2 )	//!< set CAN bus into loopback/silent mode
+#define VALUE_BUS_NORMAL_MODE					( 3 )	//!< set CAN bus into normal mode
+#define VALUE_BUS_CONFIG_11bit_125kbit  		( 1 )	//!< set CAN bus speed to 11bit with 125kbit
+#define VALUE_BUS_CONFIG_11bit_250kbit  		( 2 )	//!< set CAN bus speed to 11bit with 250kbit
+#define VALUE_BUS_CONFIG_11bit_500kbit  		( 3 )	//!< set CAN bus speed to 11bit with 500kbit
+#define VALUE_BUS_CONFIG_11bit_1000kbit 		( 4 )	//!< set CAN bus speed to 11bit with 1000kbit
+#define VALUE_BUS_CONFIG_29bit_125kbit  		( 5 )	//!< set CAN bus speed to 29bit with 125kbit
+#define VALUE_BUS_CONFIG_29bit_250kbit  		( 6 )	//!< set CAN bus speed to 29bit with 250kbit
+#define VALUE_BUS_CONFIG_29bit_500kbit  		( 7 )	//!< set CAN bus speed to 29bit with 500kbit
+#define VALUE_BUS_CONFIG_29bit_1000kbit 		( 8 )	//!< set CAN bus speed to 29bit with 1000kbit
 
 
   /*! @} */

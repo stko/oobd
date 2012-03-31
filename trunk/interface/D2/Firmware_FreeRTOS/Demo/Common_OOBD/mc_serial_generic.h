@@ -16,8 +16,11 @@
 	Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
-	1 tab == 4 spaces!
-
+	OOBD C source files requirement:
+	Unix EOL file format 
+	UTF-8
+	formated with "indent -kr"
+	  
 	Please ensure to read the configuration and relevant port sections of the
 	online documentation.
 
@@ -54,10 +57,10 @@
 
 #include "od_config.h"
   /*! \defgroup serial_generic_parm Command Line Parameter: Generic Serial Input Commands
-    The serial input commands are as follows, where the command is as P 2 value ...
-    
-    x is as :
-  *  @{
+     The serial input commands are as follows, where the command is as P 2 value ...
+
+     x is as :
+     *  @{
    */
 
 /* define parameter types */
@@ -78,7 +81,7 @@ Default: Carriage Return CR hex. 0x0D dec. 10
 
   /*! @} */
 
-  
+
 //! Serial Input Error constants and texts
 
 #define ERR_CODE_SERIAL_SYNTAX_ERR 1

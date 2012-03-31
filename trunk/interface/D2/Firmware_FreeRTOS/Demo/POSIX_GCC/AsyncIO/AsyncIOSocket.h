@@ -10,10 +10,9 @@
 
 #define UDP_PACKET_SIZE		( 1023UL )
 
-typedef struct UDP_PACKET
-{
-	unsigned portCHAR ucPacket[ UDP_PACKET_SIZE ];
-	unsigned portCHAR ucNull;
+typedef struct UDP_PACKET {
+    unsigned portCHAR ucPacket[UDP_PACKET_SIZE];
+    unsigned portCHAR ucNull;
 } xUDPPacket;
 
 /**
@@ -27,13 +26,14 @@ typedef struct UDP_PACKET
  * to accept packets from.
  * @return The newly opened socket.
  */
-int iSocketOpenUDP( void (*vSocketCallback)( int, void * ), void *pvContext, struct sockaddr_in *pxBindAddress );
+int iSocketOpenUDP(void (*vSocketCallback) (int, void *), void *pvContext,
+		   struct sockaddr_in *pxBindAddress);
 
 /**
  * Closes the socket and removes the call back function.
  * @param iSocket The socket to close.
  */
-void vSocketClose( int iSocket );
+void vSocketClose(int iSocket);
 
 /**
  * Send a packet to the given address.
@@ -42,7 +42,8 @@ void vSocketClose( int iSocket );
  * @param pxSendAddress A pointer to a sockaddr_in structure that already contains the address and port for sending the data.
  * @return The number of bytes transmitted.
  */
-int iSocketUDPSendTo( int iSocket, xUDPPacket *pxPacket, struct sockaddr_in *pxSendAddress );
+int iSocketUDPSendTo(int iSocket, xUDPPacket * pxPacket,
+		     struct sockaddr_in *pxSendAddress);
 
 /**
  * ISR only UDP Receive packet call.
@@ -51,7 +52,8 @@ int iSocketUDPSendTo( int iSocket, xUDPPacket *pxPacket, struct sockaddr_in *pxS
  * @param pxReceiveAddress A pointer to a structure describing valid addresses to receive from.
  * @return The number of bytes received.
  */
-int iSocketUDPReceiveISR( int iSocket, xUDPPacket *pxPacket, struct sockaddr_in *pxReceiveAddress );
+int iSocketUDPReceiveISR(int iSocket, xUDPPacket * pxPacket,
+			 struct sockaddr_in *pxReceiveAddress);
 
 /**
  * Non-ISR UDP Receive packet call.
@@ -60,13 +62,14 @@ int iSocketUDPReceiveISR( int iSocket, xUDPPacket *pxPacket, struct sockaddr_in 
  * @param pxReceiveAddress A pointer to a structure describing valid addresses to receive from.
  * @return The number of bytes received.
  */
-int iSocketUDPReceiveFrom( int iSocket, xUDPPacket *pxPacket, struct sockaddr_in *pxReceiveAddress );
+int iSocketUDPReceiveFrom(int iSocket, xUDPPacket * pxPacket,
+			  struct sockaddr_in *pxReceiveAddress);
 
 /**
  * Typical implementation of a call back function which simply delivers the received packet to a Queue which it is passed.
  * @param iSocket A socket desicriptor to receive the packet from.
  * @param pvQueueHandle An xQueueHandle which is waiting to receive the just received packet.
  */
-void vUDPReceiveAndDeliverCallback( int iSocket, void *pvQueueHandle );
+void vUDPReceiveAndDeliverCallback(int iSocket, void *pvQueueHandle);
 
-#endif /* ASYNCIOSOCKET_H_ */
+#endif				/* ASYNCIOSOCKET_H_ */

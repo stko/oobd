@@ -16,8 +16,11 @@
 	Temple Place, Suite 330, Boston, MA  02111-1307  USA.
 
 
-	1 tab == 4 spaces!
-
+	OOBD C source files requirement:
+	Unix EOL file format 
+	UTF-8
+	formated with "indent -kr"
+	  
 	Please ensure to read the configuration and relevant port sections of the
 	online documentation.
 
@@ -36,11 +39,11 @@
 #include "mc_sys_generic.h"
 
 //! All Errormessages of the OS Function Block
-char *oobd_Error_Text_OS[4]={
-		"", // indox 0 is no error
-		"can't generate protocol task",
-		"Unknown command",
-		"Command not supported"
+char *oobd_Error_Text_OS[4] = {
+    "",				// indox 0 is no error
+    "can't generate protocol task",
+    "Unknown command",
+    "Command not supported"
 };
 
 
@@ -73,51 +76,48 @@ portBASE_TYPE eval_param_sys(param_data * args)
 {
     int i;
     switch (args->args[ARG_CMD]) {
- 	case PARAM_SET_OUTPUT:
-		sysIoCtrl(args->args[ARG_VALUE_1], 0,
-				args->args[ARG_VALUE_2], 0,
-				0);
-	    return pdTRUE;
-		break;
-	case PARAM_PROTOCOL:
-	    //! \todo this kind of task switching is not design intent
-	    //! \todo no use of protocol table, its hardcoded instead
-	    if (VALUE_PARAM_PROTOCOL_CAN_RAW == args->args[ARG_VALUE_1]) {	/* p 4 1 */
-		printser_string("Protocol CAN RAW activated!");
-		vTaskDelete(xTaskProtHandle);
-		vTaskDelay(100 / portTICK_RATE_MS);
-		/* */
-		if (pdPASS ==
-		    xTaskCreate(odparr[0], (const signed portCHAR *)
-				"prot", configMINIMAL_STACK_SIZE,
-				(void *) NULL, TASK_PRIO_LOW,
-				&xTaskProtHandle))
-		    DEBUGPRINT("\r\n*** 'prot' Task created ***", 'a');
-		else
-		    DEBUGPRINT("\r\n*** 'prot' Task NOT created ***", 'a');
+    case PARAM_SET_OUTPUT:
+	sysIoCtrl(args->args[ARG_VALUE_1], 0,
+		  args->args[ARG_VALUE_2], 0, 0);
+	return pdTRUE;
+	break;
+    case PARAM_PROTOCOL:
+	//! \todo this kind of task switching is not design intent
+	//! \todo no use of protocol table, its hardcoded instead
+	if (VALUE_PARAM_PROTOCOL_CAN_RAW == args->args[ARG_VALUE_1]) {	/* p 4 1 */
+	    printser_string("Protocol CAN RAW activated!");
+	    vTaskDelete(xTaskProtHandle);
+	    vTaskDelay(100 / portTICK_RATE_MS);
+	    /* */
+	    if (pdPASS == xTaskCreate(odparr[0], (const signed portCHAR *)
+				      "prot", configMINIMAL_STACK_SIZE,
+				      (void *) NULL, TASK_PRIO_LOW,
+				      &xTaskProtHandle))
+		DEBUGPRINT("\r\n*** 'prot' Task created ***", 'a');
+	    else
+		DEBUGPRINT("\r\n*** 'prot' Task NOT created ***", 'a');
+	}
+	if (VALUE_PARAM_PROTOCOL_CAN_UDS == args->args[ARG_VALUE_1]) {	/* p 4 2 */
+	    printser_string("Protocol CAN UDS activated!");
+	    vTaskDelete(xTaskProtHandle);
+	    vTaskDelay(100 / portTICK_RATE_MS);
+	    /* */
+	    if (pdPASS == xTaskCreate(odparr[1], (const signed portCHAR *)
+				      "prot", configMINIMAL_STACK_SIZE,
+				      (void *) NULL, TASK_PRIO_LOW,
+				      &xTaskProtHandle)) {
+		DEBUGPRINT("\r\n*** 'prot' Task created ***", 'a');
+		evalResult(FBID_SYS_GENERIC, ERR_CODE_NO_ERR, 0, NULL);
+	    } else {
+		evalResult
+		    (FBID_SYS_GENERIC,
+		     ERR_CODE_OS_NO_PROTOCOL_TASK,
+		     0, ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT);
+		DEBUGPRINT("\r\n*** 'prot' Task NOT created ***", 'a');
 	    }
-	    if (VALUE_PARAM_PROTOCOL_CAN_UDS == args->args[ARG_VALUE_1]) {	/* p 4 2 */
-		printser_string("Protocol CAN UDS activated!");
-		vTaskDelete(xTaskProtHandle);
-		vTaskDelay(100 / portTICK_RATE_MS);
-		/* */
-		if (pdPASS ==
-		    xTaskCreate(odparr[1], (const signed portCHAR *)
-				"prot", configMINIMAL_STACK_SIZE,
-				(void *) NULL, TASK_PRIO_LOW,
-				&xTaskProtHandle)) {
-		    DEBUGPRINT("\r\n*** 'prot' Task created ***", 'a');
-		    evalResult(FBID_SYS_GENERIC, ERR_CODE_NO_ERR, 0, NULL);
-		} else {
-		    evalResult
-			(FBID_SYS_GENERIC,
-			 ERR_CODE_OS_NO_PROTOCOL_TASK,
-			 0, ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT);
-		    DEBUGPRINT("\r\n*** 'prot' Task NOT created ***", 'a');
-		}
-	    }
-	    return pdTRUE;
-	    break;
+	}
+	return pdTRUE;
+	break;
 
 	//! \todo remove dirty IO implementation
 //-----------------------------------------------------------
@@ -137,13 +137,13 @@ portBASE_TYPE eval_param_sys(param_data * args)
 
 
 
-	default:
-	    createCommandResultMsg
-		(FBID_SYS_GENERIC,
-		 ERR_CODE_OS_UNKNOWN_COMMAND,
-		 0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
-	    return pdFALSE;
-   }
+    default:
+	createCommandResultMsg
+	    (FBID_SYS_GENERIC,
+	     ERR_CODE_OS_UNKNOWN_COMMAND,
+	     0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+	return pdFALSE;
+    }
 }
 
 void mc_init_sys_tasks()

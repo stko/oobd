@@ -15,7 +15,7 @@
  * @param piDeviceDescriptor A pointer to an int which is set to the file descriptor for the opened device.
  * @return TRUE iff the device was successfully opened and configured.
  */
-long lAsyncIOSerialOpen( const char *pcDevice, int *piDeviceDescriptor );
+long lAsyncIOSerialOpen(const char *pcDevice, int *piDeviceDescriptor);
 
 /**
  * The 'ISR' callback function that is triggered when there is data waiting.
@@ -25,6 +25,6 @@ long lAsyncIOSerialOpen( const char *pcDevice, int *piDeviceDescriptor );
  * @param iFileDescriptor The file descriptor for the serial port.
  * @param pContext A Handle to a queue. Cast to xQueueHandle.
  */
-void vAsyncSerialIODataAvailableISR( int iFileDescriptor, void *pContext );
+void vAsyncSerialIODataAvailableISR(int iFileDescriptor, void *pContext);
 
-#endif /* ASYNCIOSERIAL_H_ */
+#endif				/* ASYNCIOSERIAL_H_ */
