@@ -217,6 +217,8 @@ void inputParserTask(void *pvParameters)
 		    inChar = checkValidChar(*(char *) incomingMsg->addr);
 		    if (actState == S_WAITEOL) {	/* just waiting for an end of line */
 			if (inChar == crEOL) {
+			    // send event information to the ILM task
+			    CreateEventMsg(MSG_EVENT_CMDLINE, 0);
 			    if (lastErr) {
 				createCommandResultMsg
 				    (0, FBID_SERIALIN_GENERIC, lastErr,
@@ -247,6 +249,8 @@ void inputParserTask(void *pvParameters)
 			    processFurther = 0;
 			}
 			if (inChar == crEOL) {	/* in case we filled the buffer already previously */
+			    // send event information to the ILM task
+			    CreateEventMsg(MSG_EVENT_CMDLINE, 0);
 			    sendMsg(MSG_SEND_BUFFER, protocolQueue, NULL);
 			    actState = S_SLEEP;
 			    processFurther = 0;	// no more input evaluation, just waiting for wake up from the protocol task
@@ -254,6 +258,8 @@ void inputParserTask(void *pvParameters)
 		    }
 		    if (actState == S_DATA) {
 			if (inChar == crEOL) {
+			    // send event information to the ILM task
+			    CreateEventMsg(MSG_EVENT_CMDLINE, 0);
 			    if (dp.len > 0) {
 				sendData(&dp);
 				/* tells the  protocol to send the buffer */
@@ -294,6 +300,8 @@ void inputParserTask(void *pvParameters)
 		    if (processFurther) {
 			if (actState == S_PARAM) {
 			    if (inChar == crEOL) {
+				// send event information to the ILM task
+				CreateEventMsg(MSG_EVENT_CMDLINE, 0);
 				if (args.argv > 0) {
 				    switch (args.args[ARG_RECV]) {
 				    case FBID_SERIALIN_GENERIC:

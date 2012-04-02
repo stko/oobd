@@ -47,6 +47,15 @@
  */
 
 
+/*! \page parameters Parameter Overview
+
+
+lalala
+
+\copydoc system_generic_parm
+*/
+
+
 /**
  * generic part of the serial line
  */

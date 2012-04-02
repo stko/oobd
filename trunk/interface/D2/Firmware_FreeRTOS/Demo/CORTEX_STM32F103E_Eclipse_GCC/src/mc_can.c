@@ -114,17 +114,33 @@ portBASE_TYPE bus_param_can(param_data * args)
 	break;
 
     case PARAM_BUS:
-	if (args->args[ARG_VALUE_1] == 0)
+	switch (ARG_VALUE_1) {
+	case VALUE_BUS_SILENT_MODE:
 	    CAN1_Configuration(canConfig->busConfig, CAN_Mode_Silent);	/* set CAN interface to silent mode */
-	else if (args->args[ARG_VALUE_1] == 1)
+	    // send event information to the ILM task
+	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_OFF);
+	    break;
+	case VALUE_BUS_LOOP_BACK_MODE:
 	    CAN1_Configuration(canConfig->busConfig, CAN_Mode_LoopBack);	/* set CAN interface to loop back mode */
-	else if (args->args[ARG_VALUE_1] == 2)
+	    // send event information to the ILM task
+	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
+	    break;
+	case VALUE_BUS_LOOP_BACK_WITH_SILENT_MODE:
 	    CAN1_Configuration(canConfig->busConfig, CAN_Mode_Silent_LoopBack);	/* set CAN interface to loop back combined with silent mode */
-	else if (args->args[ARG_VALUE_1] == 3)
+	    // send event information to the ILM task
+	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
+	    break;
+	case VALUE_BUS_NORMAL_MODE:
 	    CAN1_Configuration(canConfig->busConfig, CAN_Mode_Normal);	/* set CAN interface to normal mode */
-	else
+	    // send event information to the ILM task
+	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
+	    break;
+	default:
 	    CAN1_Configuration(canConfig->busConfig, CAN_Mode_Silent);	/* set CAN interface to default mode */
-
+	    // send event information to the ILM task
+	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_OFF);
+	    break;
+	}
 	canConfig->bus = args->args[ARG_VALUE_1];	/* set config.bus to current value of Paramter 'P 5 x' */
 	break;
 

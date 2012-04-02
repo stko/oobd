@@ -254,6 +254,22 @@ void CreateParamOutputMsg(param_data * args, print_cbf printRoutine)
 }
 
 
+void CreateEventMsg(portBASE_TYPE event, portBASE_TYPE value)
+{
+    MsgData *msg;
+    extern xQueueHandle protocolQueue;
+    if (NULL != (msg = createMsg(&value, sizeof(portBASE_TYPE)))) {
+	if (pdPASS != sendMsg(event, ilmQueue, msg)) {
+	    DEBUGPRINT("FATAL ERROR: ilm queue is full!\n", 'a');
+
+	}
+    } else {
+	DEBUGPRINT("FATAL ERROR: Out of Heap space!l\n", 'a');
+    }
+
+}
+
+
 
 /*
 void
