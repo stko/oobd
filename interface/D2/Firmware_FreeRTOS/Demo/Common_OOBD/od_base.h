@@ -114,7 +114,7 @@ the first value x of a parameter command (p x ...) adresses the functional block
 
 @} */
 
-/* define message types */
+/* Global message types */
 #define MSG_NONE		        ( 0 )
 #define MSG_INIT		        ( 1 )	//!< generic msg to initialize (whatever)
 #define MSG_SERIAL_IN		    ( 2 )	//!< a char coming from the serial input
@@ -127,7 +127,14 @@ the first value x of a parameter command (p x ...) adresses the functional block
 #define MSG_SEND_BUFFER		  	( 9 )	//!< tells the  protocol to send the filled input buffer
 #define MSG_DUMP_BUFFER		  	( 10 )	//!< buffer filled, request to dump
 #define MSG_HANDLE_PARAM		( 11 )	//!< handle parameter command outputs
+#define MSG_EVENT_PROTOCOL_RECEIVED	( 12 )	//!< message to ilm handler: protocol telegram received
+#define MSG_EVENT_BUS_MODE		( 13 )	//!< message to ilm handler: bus mode has changed
+#define MSG_EVENT_BUS_CHANNEL		( 14 )	//!< message to ilm handler: bus channel has changed. value= selected channel
+#define MSG_EVENT_CMDLINE		( 15 )	//!< message to ilm handler: serial input line received
 
+//! Global Event values
+#define MSG_EVENT_BUS_MODE_OFF		( 0 )	//!< message value of MSG_EVENT_BUS_MODE: Bus is offline
+#define MSG_EVENT_BUS_MODE_ON		( 1 )	//!< message value of MSG_EVENT_BUS_MODE: Bus is online
 
 //! Error constants
 #define ERR_CODE_NO_ERR 0	//!<generic value for No Error

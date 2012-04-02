@@ -444,6 +444,10 @@ void obp_uds(void *pvParameters)
 					/* add correct print routine; */
 					ownMsg->print =
 					    odp_uds_printdata_Buffer;
+					// send event information to the ILM task
+					CreateEventMsg
+					    (MSG_EVENT_PROTOCOL_RECEIVED,
+					     0);
 					/* forward data to the output task */
 					if (pdPASS !=
 					    sendMsg(MSG_DUMP_BUFFER,
@@ -541,6 +545,9 @@ void obp_uds(void *pvParameters)
 				    /* add correct print routine; */
 				    ownMsg->print =
 					odp_uds_printdata_Buffer;
+				    // send event information to the ILM task
+				    CreateEventMsg
+					(MSG_EVENT_PROTOCOL_RECEIVED, 0);
 				    /* forward data to the output task */
 				    if (pdPASS !=
 					sendMsg(MSG_DUMP_BUFFER,

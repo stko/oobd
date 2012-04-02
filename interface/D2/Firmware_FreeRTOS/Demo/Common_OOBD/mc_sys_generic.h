@@ -54,8 +54,8 @@ To seperate between OOBD standard IOs and implementation specific IOs, the ident
    */
 
 /* define parameter types */
-#define PARAM_PROTOCOL 		    ( 0 )	//! < switch to protocol y, accourding to the available protocol table \ref protocol_table
-#define PARAM_SET_OUTPUT 		    ( 1 )	//! < switch to protocol y, accourding to the available protocol table \ref protocol_table
+#define PARAM_PROTOCOL 		    ( 0 )	//!< switch to protocol y, accourding to the available protocol table \ref protocol_table
+#define PARAM_SET_OUTPUT 		    ( 1 )	//!< switch to protocol y, accourding to the available protocol table \ref protocol_table
 
   /*! @} */
 void printParam_sys(portBASE_TYPE msgType, void *data,

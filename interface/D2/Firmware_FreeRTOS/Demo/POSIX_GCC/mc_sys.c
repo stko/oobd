@@ -138,30 +138,23 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
     switch (pinID) {
     case IO_LED_WHITE:
 	DEBUGPRINT("IO_LED_WHITE set to %ld\n", upperValue);
-	createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	return pdTRUE;
 	break;
     case IO_LED_GREEN:
 	DEBUGPRINT("IO_LED_GREEN set to %ld\n", upperValue);
-	createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	return pdTRUE;
 	return pdTRUE;
 	break;
     case IO_LED_RED:
 	DEBUGPRINT("IO_LED_RED set to %ld\n", upperValue);
-	createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	return pdTRUE;
 	break;
     case IO_BUZZER:
 	DEBUGPRINT("IP_BUZZER set to %ld\n", upperValue);
-	createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	return pdTRUE;
 	break;
     default:
 	DEBUGPRINT("unknown output pin\n", upperValue);
-	createCommandResultMsg(FBID_SYS_SPEC,
-			       ERR_CODE_OS_UNKNOWN_COMMAND, 0,
-			       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 	return pdFALSE;
 	break;
     }

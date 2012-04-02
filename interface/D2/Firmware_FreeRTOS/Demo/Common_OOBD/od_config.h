@@ -102,6 +102,11 @@
 //! Number of allowed arguments per command
 #define MAX_NUM_OF_ARGS (5)
 
+
+#define LEDFLASHTIME (100)	//!< LED long flash period time in ticks
+#define LEDFLASHTIMESHORT (20)	//!< LED short flash period time in ticks
+#define LED_SERIAL_TIMEOUT (1000)	//!< LED timeout for the serial input
+
 /*-------- Global Vars --------------*/
 
 //! callback function for print a single char
