@@ -32,7 +32,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "FreeRTOSConfig.h"
 #include "SystemConfig.h"
-#include "stm32f10x.h"
+//#include "stm32f10x.h"
 #include "od_config.h"
 #include "mc_serial.h"
 #include "odp_uds.h"
