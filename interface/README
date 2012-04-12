@@ -1,8 +1,51 @@
-The interface structure
+The OOBD firmware directory structure
 
-OOBD might have many different hardware realisations (Designs), but always a common software core. To handle them all in one repository, they are seperated into different Design- Folders (Dxx). To make it simple, these designs just get a different number.
+The OOBD firmware has several hardware realisations (Designs), but always a common software core. To handle them all in one repository,
+they are seperated into different Design Folders
 
-These designs contains both the hardware description files (Schematics, PCB, etc) and also the software abstraction layers, which connects the abstract functions to the real hardware and do also all the low level data handling like e.g.  the CAN -Bus
+`-- Designs
+    |-- CORTEX
+    |   `-- STM32F103E_Eclipse_GCC
+    |       `-- D2
+    `-- POSIX
+        `-- GCC
+            `-- D3
+
+first sorted by the microcontroller platform, then by its particular controller itself and finally by the hardware design (Dxx), on which
+that controller is used on.
 
 
-The core functions are all hardware independend and so not bounded to the design folders. They are also splitted into the protocol- specific protocol handlers (proto), the runtime system (os) and the client-interface (oobd), which handles the data exchange with the connected client.
+The designs contains both the hardware description files (Schematics, PCB, etc) and also the software abstraction layers,
+which connects the abstract functions to the real hardware and do also all the low level data handling like e.g.  the CAN -Bus
+
+
+
+To make it simple, these designs just get a different number. Actual we have:
+
+D1: the first, never realized protoype with an Atmel controller
+D2: DXM hardware, optional combined with our own bus switching unit
+D3: A pure simulator environment, emulating FreeRTOS and OOBD firmware as normal Unix pogramm. paired with a virtual serial port and a CAN-Bus
+    simulator, written in python
+
+
+
+
+The OOBD firmware core is hardware independend and so not bounded to the design folders.
+
+It can be found in the OOBD folder, followed by a version folder for later extensions
+
+`-- OOBD
+    `-- v1
+
+Finally the OS itself (we are using FreeRTOS) has is own indepenting directory structure, alligned to the standard structure of the FreeRTOS project.
+
+
+`-- OS
+    `-- FreeRTOSV6.1.0
+        |-- Demo
+        |   |-- Common
+        |-- License
+        `-- Source
+            |-- include
+            `-- portable
+

@@ -22,11 +22,16 @@ PROJECT_NAME=OOBD_POSIX
 OOBD_PLATFORM=OOBD_PLATFORM_POSIX
 OOBD_DESIGN='(const char *)("POSIX")'
 
+#version settings
+OS_VERSION=FreeRTOSV6.1.0
+OOBD_VERSION=v1
+
+
 # Directory definition.
-RTOS_SOURCE_DIR=../../Source
+RTOS_SOURCE_DIR=../../../../../OS/$(OS_VERSION)/Source
 RTOS_PORT_DIR=$(RTOS_SOURCE_DIR)/portable/GCC/Posix
-OOBD_COMMON_DIR=../Common_OOBD
-DEMO_INCLUDE_DIR=../Common/include
+OOBD_COMMON_DIR=../../../../../OOBD/$(OOBD_VERSION)
+DEMO_INCLUDE_DIR=../../../../../OS/$(OS_VERSION)/Demo/Common/include
 PORT_INCLUDE_DIR=./AsyncIO
 
 # Directory for output files (lst, obj, dep, elf, sym, map, hex, bin etc.).
@@ -163,13 +168,13 @@ clean :  format
 
 # generate doxygen docs
 docs:
-	cd .. ; doxygen
+	cd ../../../../.. ; doxygen
 #	$(shell cd .. ; doxygen)
 
 
 # generate doxygen docs
 publish:
-	cd .. ; sitecopy -u oobd-firmware
+	cd ../../../../.. ; sitecopy -u oobd-firmware
 #	$(shell cd .. ; doxygen)
 
 
