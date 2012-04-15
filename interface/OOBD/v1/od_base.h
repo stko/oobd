@@ -89,9 +89,9 @@ typedef struct error_data {
 
 
 
-/*! \defgroup functionblocks Command Line Parameter: Addressing the different Function Blocks
+/*! \defgroup functionblocks Commands: Addressing the different Function Blocks
 
-As descripted on \ref index , the functionality is splitted  into  up to 9 functional blocks. To adress command to this different blocks,
+As descripted on \ref index , the functionality is splitted  into  up to 10 functional blocks. To adress command to this different blocks,
 the first value x of a parameter command (p x ...) adresses the functional block 
 
 
@@ -99,20 +99,48 @@ the first value x of a parameter command (p x ...) adresses the functional block
    */
 
 
-#define FBID_SYS_SPEC 0		//!<The mc specific part of the system
-#define FBID_SYS_GENERIC 1	//!<The generic part of the system
-#define FBID_SERIALIN_SPEC 2	//!< The implementation specific part of the serial_in process
-#define FBID_SERIALIN_GENERIC 3	//!< The generic part of the serial_in process
-#define FBID_SERIALOUT_SPEC 4	//!< The implementation specific part of the serial_out process
-#define FBID_SERIALOUT_GENERIC 5	//!< The generic part of the serial_out process
-#define FBID_PROTOCOL_SPEC 6	//!<The implementation specific part of the actual protocol -but up to now a protocol is planned as always generic, but not implementation speicif
-#define FBID_PROTOCOL_GENERIC 7	//!<The generic part of the actual protocol
-#define FBID_BUS_SPEC 8		//!<The implementation specific part of the actual bus
-#define FBID_BUS_GENERIC 9	//!<The generic part of the actual bus
+#define FBID_SYS_GENERIC 0	//!<The generic part of the system
+#define FBID_SYS_SPEC 1		//!<The mc specific part of the system
+#define FBID_SERIALIN_GENERIC 2	//!< The generic part of the serial_in process
+#define FBID_SERIALIN_SPEC 3	//!< The implementation specific part of the serial_in process
+#define FBID_SERIALOUT_GENERIC 4	//!< The generic part of the serial_out process
+#define FBID_SERIALOUT_SPEC 5	//!< The implementation specific part of the serial_out process
+#define FBID_PROTOCOL_GENERIC 6	//!<The generic part of the actual protocol
+#define FBID_PROTOCOL_SPEC 7	//!<The implementation specific part of the actual protocol -but up to now a protocol is planned as always generic, but not implementation speicif
+#define FBID_BUS_GENERIC 8	//!<The generic part of the actual bus
+#define FBID_BUS_SPEC 9		//!<The implementation specific part of the actual bus
 
 /*! 
 
 @} */
+
+
+
+  /*! \addtogroup system_generic_parm 
+   *  @{
+   */
+
+#define PARAM_INFO    		    ( 0 )	//!< Displays system infos
+
+/*! 
+
+@} */
+
+
+
+/* define internal commands */
+#define ODB_CMD_RECV		    ( 15 )	//!< only for internal use: sets the callback routine when receiving a bus packet
+
+
+
+/* define values of parameter */
+#define VALUE_PARAM_INFO_VERSION 				( 0 )
+#define VALUE_PARAM_INFO_SERIALNUMBER   		( 1 )
+#define VALUE_PARAM_INFO_BUS   					( 2 )
+#define VALUE_PARAM_INFO_PROTOCOL       		( 3 )
+#define VALUE_PARAM_INFO_BUS_MODE		( 4 )
+#define VALUE_PARAM_INFO_BUS_CONFIG   			( 5 )
+
 
 /* Global message types */
 #define MSG_NONE		        ( 0 )

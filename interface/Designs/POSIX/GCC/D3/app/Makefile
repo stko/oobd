@@ -186,6 +186,11 @@ format:
 	fromdos $$src ; \
 	indent $$src -kr ; \
 	done 
+	cd ../../../../../OOBD ; for src in `find   \( -name "*.c" -o -name "*.h" \)   -type f  -print0  | grep -FzZ --invert-match "Common/" - | xargs -0 ` ; do \
+	echo $$src ; \
+	fromdos $$src ; \
+	indent $$src -kr ; \
+	done 
 #define TEXTFORMAT
 #@echo $(1)
 #endef

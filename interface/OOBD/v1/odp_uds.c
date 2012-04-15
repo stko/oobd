@@ -239,7 +239,7 @@ void odp_uds_recvdata(data_packet * p)
     }
 }
 
-
+//! \bug Sachlich falsch: Das Bus- Listening muß im Bus erfolgen, nicht im Protocoll, sonst sieht man evt. Busprobleme nicht
 void odp_uds_dumpFrame(data_packet * p, print_cbf print_data)
 {
     MsgData *msg;
@@ -608,9 +608,29 @@ void obp_uds(void *pvParameters)
 			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
+		    default:
+			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+					       FBID_PROTOCOL_GENERIC, 0,
+					       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+			break;
+		    }
+		    break;
+		case FBID_PROTOCOL_SPEC:
+		    switch (args->args[ARG_CMD]) {
+			// first we commend out all parameters  which are not used to generate the right "unknown parameter" message in the default - area
+			/*
+			   case PARAM_ECHO:
+			   break;
+			   case PARAM_TIMEOUT_PENDING:
+			   break;
+			   case PARAM_BLOCKSIZE:
+			   break;
+			   case PARAM_FRAME_DELAY:
+			   break;
+			 */
 		    case PARAM_TIMEOUT:
 			udsConfig.timeout = args->args[ARG_VALUE_1] + 1;
-			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
 		    case PARAM_RECVID:
@@ -618,31 +638,31 @@ void obp_uds(void *pvParameters)
 			break;
 		    case PARAM_SENDID:
 			udsConfig.sendID = args->args[ARG_VALUE_1];
-			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
 		    case PARAM_TP_ON:
 			tp_Flags[odp_uds_reduceID(args->args[ARG_VALUE_1])]
 			    = udsConfig.tpFreq;
-			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
 		    case PARAM_TP_OFF:
 			tp_Flags[odp_uds_reduceID(args->args[ARG_VALUE_1])]
 			    = 0;
-			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
 		    case PARAM_TP_FREQ:
 			udsConfig.tpFreq = args->args[ARG_VALUE_1];
-			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
 			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 		    default:
-			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
-					       FBID_PROTOCOL_GENERIC, 0,
+			createCommandResultMsg(FBID_PROTOCOL_SPEC,
+					       FBID_PROTOCOL_SPEC, 0,
 					       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 			break;
 		    }

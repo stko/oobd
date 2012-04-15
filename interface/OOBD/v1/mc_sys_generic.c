@@ -81,14 +81,14 @@ portBASE_TYPE eval_param_sys(param_data * args)
 		  args->args[ARG_VALUE_2], 0, 0);
 	return pdTRUE;
 	break;
-    case PARAM_PROTOCOL:
+/*    case PARAM_PROTOCOL:
 	//! \todo this kind of task switching is not design intent
 	//! \todo no use of protocol table, its hardcoded instead
-	if (VALUE_PARAM_PROTOCOL_CAN_RAW == args->args[ARG_VALUE_1]) {	/* p 4 1 */
+	if (VALUE_PARAM_PROTOCOL_CAN_RAW == args->args[ARG_VALUE_1]) {	
 	    printser_string("Protocol CAN RAW activated!");
 	    vTaskDelete(xTaskProtHandle);
 	    vTaskDelay(100 / portTICK_RATE_MS);
-	    /* */
+	   
 	    if (pdPASS == xTaskCreate(odparr[0], (const signed portCHAR *)
 				      "prot", configMINIMAL_STACK_SIZE,
 				      (void *) NULL, TASK_PRIO_LOW,
@@ -97,19 +97,20 @@ portBASE_TYPE eval_param_sys(param_data * args)
 	    else
 		DEBUGPRINT("\r\n*** 'prot' Task NOT created ***", 'a');
 	}
-	if (VALUE_PARAM_PROTOCOL_CAN_UDS == args->args[ARG_VALUE_1]) {	/* p 4 2 */
+	if (VALUE_PARAM_PROTOCOL_CAN_UDS == args->args[ARG_VALUE_1]) {	
 	    printser_string("Protocol CAN UDS activated!");
 	    vTaskDelete(xTaskProtHandle);
 	    vTaskDelay(100 / portTICK_RATE_MS);
-	    /* */
+	   
 	    if (pdPASS == xTaskCreate(odparr[1], (const signed portCHAR *)
 				      "prot", configMINIMAL_STACK_SIZE,
 				      (void *) NULL, TASK_PRIO_LOW,
 				      &xTaskProtHandle)) {
 		DEBUGPRINT("\r\n*** 'prot' Task created ***", 'a');
-		evalResult(FBID_SYS_GENERIC, ERR_CODE_NO_ERR, 0, NULL);
+		createCommandResultMsg(FBID_SYS_GENERIC, ERR_CODE_NO_ERR,
+				       0, NULL);
 	    } else {
-		evalResult
+		createCommandResultMsg
 		    (FBID_SYS_GENERIC,
 		     ERR_CODE_OS_NO_PROTOCOL_TASK,
 		     0, ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT);
@@ -119,30 +120,19 @@ portBASE_TYPE eval_param_sys(param_data * args)
 	return pdTRUE;
 	break;
 
-	//! \todo remove dirty IO implementation
-//-----------------------------------------------------------
-// QUICK AND DIRTY IMPLEMENTATION of IO control
-//-----------------------------------------------------------
-    case 98:
-	for (i = 0; i < 6; i++) {
-	    sysIoCtrl(i, 0,
-		      (args->args[ARG_VALUE_1] & (1 << i)) == 0 ? 0 : 1, 0,
-		      0);
-	}
-	evalResult(FBID_SYS_GENERIC, ERR_CODE_NO_ERR, 0, NULL);
-	return pdTRUE;
-	break;
-//-----------------------------------------------------------
-//-----------------------------------------------------------
-
+*/
 
 
     default:
-	createCommandResultMsg
-	    (FBID_SYS_GENERIC,
-	     ERR_CODE_OS_UNKNOWN_COMMAND,
-	     0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
-	return pdFALSE;
+	if (eval_param_sys_specific(args) == pdTRUE) {
+	    return pdTRUE;
+	} else {
+	    createCommandResultMsg
+		(FBID_SYS_GENERIC,
+		 ERR_CODE_OS_UNKNOWN_COMMAND,
+		 0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+	    return pdFALSE;
+	}
     }
 }
 

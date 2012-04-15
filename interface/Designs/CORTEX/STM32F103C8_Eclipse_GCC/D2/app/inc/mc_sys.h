@@ -38,22 +38,22 @@
 #define INC_MC_SYS_H
 
 #include "od_base.h"
-  /*! \defgroup system_specific_parm_D2 Command Line Parameter: D2 (STM32) spezific System Commands
-     The D2 (STM32) implementation specific commands are as follows, where the command is as P 0 x ...
+  /*! \defgroup system_specific_parm_D2 Commands: D2 (STM32) spezific System Commands
+     The D2 (STM32) implementation specific commands are as follows, where the command is as P 1 x ...
 
      x is as :
      *  @{
    */
 
 /* Values for PARAM_INFO - P 0 0 x */
-#define VALUE_PARAM_INFO_ADC_POWER      		( 6 )	//!< Outputs the actual device power supply voltage
-#define VALUE_PARAM_INFO_CPU_INFO 				( 10 )
-#define VALUE_PARAM_INFO_MEM_LOC  				( 11 )
-#define VALUE_PARAM_INFO_ROM_TABLE_LOC  		( 12 )
-#define VALUE_PARAM_INFO_FREE_HEAP_SIZE			( 13 )
-#define VALUE_PARAM_INFO_CRC32					( 14 )
-#define VALUE_PARAM_INFO_BTM222_DEVICENAME 		( 20 )
-#define VALUE_PARAM_INFO_BTM222_UART_SPEED 		( 21 )
+#define VALUE_PARAM_INFO_ADC_POWER      		( 0 )	//!< Outputs the actual device power supply voltage
+#define VALUE_PARAM_INFO_CPU_INFO 				( 1 )	//!< Outputs the actual CPU type
+#define VALUE_PARAM_INFO_MEM_LOC  				( 2 )	//!< Outputs the Mem Loc
+#define VALUE_PARAM_INFO_ROM_TABLE_LOC  		( 3 )	//!< Outputs the ROM Table Location
+#define VALUE_PARAM_INFO_FREE_HEAP_SIZE			( 4 )	//!< Outputs the free Heap
+#define VALUE_PARAM_INFO_CRC32					( 5 )	//!< Outputs the firmware CRC checksum result
+#define VALUE_PARAM_INFO_BTM222_DEVICENAME 		( 6 )	//!< Outputs the BT Devicename
+#define VALUE_PARAM_INFO_BTM222_UART_SPEED 		( 7 )	//!< Outputs the BT UART Speed
 
 /*System specific IO- Pins */
 #define IO_REL1 	(0) + SYS_SPECIFIC_IO_OFFSET

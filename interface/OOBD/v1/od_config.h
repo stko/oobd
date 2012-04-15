@@ -66,19 +66,6 @@
 #define QUEUE_SIZE_ILM    ( 5 )
 
 
-/* define overall system parameter types */
-#define PARAM_INFO    		    ( 0 )
-#define ODB_CMD_RECV		    ( 15 )	//!< only for internal use: sets the callback routine when receiving a bus packet
-#define PARAM_RESET           ( 99 )
-
-/* define values of parameter */
-#define VALUE_PARAM_INFO_VERSION 				( 0 )
-#define VALUE_PARAM_INFO_SERIALNUMBER   		( 1 )
-#define VALUE_PARAM_INFO_BUS   					( 2 )
-#define VALUE_PARAM_INFO_PROTOCOL       		( 3 )
-#define VALUE_PARAM_INFO_BUS_MODE		( 4 )
-#define VALUE_PARAM_INFO_BUS_CONFIG   			( 5 )
-
 //! \todo wir brauchen noch eine äquivalente Deklaration aller Busse wie hier für alle Protokolle
 
   /*! \defgroup protocol_table Available Protocols: Overview

@@ -47,15 +47,6 @@
  */
 
 
-/*! \page parameters Parameter Overview
-
-
-lalala
-
-\copydoc system_generic_parm
-*/
-
-
 /**
  * generic part of the serial line
  */
@@ -65,7 +56,7 @@ lalala
 #define INC_MC_SERIAL_GENERIC_H
 
 #include "od_config.h"
-  /*! \defgroup serial_generic_parm Command Line Parameter: Generic Serial Input Commands
+  /*! \defgroup serial_generic_parm Commands: Generic Serial Input Commands
      The serial input commands are as follows, where the command is as P 2 value ...
 
      x is as :
@@ -79,14 +70,14 @@ Default: Echo on
 
   \param value 0= echo off, !=0 Echo on 
 */
-#define PARAM_ECHO    		    ( 1 )
+#define PARAM_ECHO    		    ( 0 )
 /*! \brief set type of EndOfLile
 
 Default: Carriage Return CR hex. 0x0D dec. 10
 
   \param value see VALUE - defs
 */
-#define PARAM_LINEFEED    	    ( 2 )
+#define PARAM_LINEFEED    	    ( 1 )
 
   /*! @} */
 
