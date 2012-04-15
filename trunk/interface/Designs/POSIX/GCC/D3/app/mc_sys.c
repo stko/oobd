@@ -74,6 +74,8 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 	    printser_string(" ");
 	    printser_string(SVNREV);
 	    printser_string(" ");
+	    printser_string("POSIX");
+	    printser_string(" ");
 	    printser_string(BUILDDATE);
 	    printLF();
 	    printEOT();

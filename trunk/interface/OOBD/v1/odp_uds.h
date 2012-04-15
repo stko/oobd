@@ -51,7 +51,10 @@ void obd_uds_init();
 #define ERR_CODE_UDS_TIMEOUT 5
 #define ERR_CODE_UDS_TIMEOUT_TEXT "Answer time exeeded"
 
-/*! \defgroup param_protocol_uds Command Line Parameter: Commands of the UDS Protocol
+/*! \defgroup param_protocol_uds Commands: Commands of the UDS Protocol
+     The generic CAN commands are as follows, where the command is as P 7 value ...
+
+     x is as :
 
 
 *  @{
@@ -59,15 +62,15 @@ void obd_uds_init();
 
 
 /* define parameter types */
-#define PARAM_TIMEOUT 		    ( 7 )
-#define PARAM_TIMEOUT_PENDING       ( 8 )
-#define PARAM_BLOCKSIZE 	    ( 9 )
-#define PARAM_FRAME_DELAY 	    ( 10 )
-#define PARAM_RECVID  		    ( 11 )
-#define PARAM_TP_ON                 ( 12 )
-#define PARAM_TP_OFF                ( 13 )
-#define PARAM_TP_FREQ               ( 14 )
-#define PARAM_SENDID  		    ( 16 )
+#define PARAM_TIMEOUT 		    ( 0 )
+#define PARAM_TIMEOUT_PENDING       ( 1 )
+#define PARAM_BLOCKSIZE 	    ( 2 )
+#define PARAM_FRAME_DELAY 	    ( 3 )
+#define PARAM_RECVID  		    ( 4 )
+#define PARAM_TP_ON                 ( 5 )
+#define PARAM_TP_OFF                ( 6 )
+#define PARAM_TP_FREQ               ( 7 )
+#define PARAM_SENDID  		    ( 8 )
 /*! 
 
 

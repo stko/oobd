@@ -46,8 +46,8 @@ void bus_close_can();
 
 void odb_can_init();
 
-  /*! \defgroup prot_can_generic_parm Command Line Parameter: Generic CAN Commands
-     The generic CAN commands are as follows, where the command is as P 7 value ...
+  /*! \defgroup prot_can_generic_parm Commands: Generic CAN Commands
+     The generic CAN commands are as follows, where the command is as P 8 value ...
 
      x is as :
      *  @{
@@ -61,21 +61,21 @@ Default: off
 
   \param value 0 = off !=0 = on
 */
-#define PARAM_LISTEN    	    ( 3 )
+#define PARAM_LISTEN    	    ( 1 )
 /*! \brief set bus mode
 
 Default: VALUE_BUS_SILENT_MODE
 
   \param value see VALUE_BUS defs
 */
-#define PARAM_BUS_MODE 		    ( 5 )
+#define PARAM_BUS_MODE 		    ( 2 )
 /*! \brief set bus bit and speed
 
 Default: 11bit 500kb
 
   \param value see VALUE_BUS_CONFIG_ defs
 */
-#define PARAM_BUS_CONFIG 	    ( 6 )
+#define PARAM_BUS_CONFIG 	    ( 3 )
 /*! \brief set ??
 
 \todo was war das nochmal gleich?
@@ -84,7 +84,7 @@ Default: 11bit 500kb
 
   \param value see VALUE - defs
 */
-#define PARAM_BUS 		    ( 17 )
+#define PARAM_BUS 		    ( 3 )
 
 /* define values of CAN specific parameter */
 #define VALUE_BUS_SILENT_MODE					( 0 )	//!< set CAN bus into silent mode

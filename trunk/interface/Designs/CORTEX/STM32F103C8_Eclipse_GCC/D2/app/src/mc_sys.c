@@ -57,13 +57,17 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 
     DEBUGPRINT("sys specific parameter received: %ld / %ld\n",
 	       args->args[ARG_CMD], args->args[ARG_VALUE_1]);
+    switch (args->args[ARG_RCV]) {
+    case FBID_SYS_GENERIC:
     switch (args->args[ARG_CMD]) {
     case PARAM_INFO:
 	switch (args->args[ARG_VALUE_1]) {
 
-	case VALUE_PARAM_INFO_VERSION:	/* p 0 0 */
+	case VALUE_PARAM_INFO_VERSION:	
 	    printser_string("OOBD ");
 	    printser_string(OOBDDESIGN);
+	    printser_string(" ");
+	    printser_string(SVNREV);
 	    printser_string(" ");
 	    if (GPIO_HardwareLevel() > 0) {
 		printser_string("Lux-Wolf");
@@ -71,39 +75,53 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 		printser_string("dxm");
 	    }
 	    printser_string(" ");
-	    printser_string(SVNREV);
-	    printser_string(" ");
 	    printser_string(BUILDDATE);
 	    printLF();
 	    printEOT();
 	    break;
-	case VALUE_PARAM_INFO_SERIALNUMBER:	/* p 0 1 */
+	case VALUE_PARAM_INFO_SERIALNUMBER:	
 	    printser_string(BTM222_BtAddress);
 	    printLF();
 	    printEOT();
 	    break;
-	case VALUE_PARAM_INFO_ADC_POWER:	/* p 0 6 */
+	default:
+	    evalResult(FBID_SYS_SPEC, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT, 0,
+		       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+	    break;
+	}
+	break;
+
+    default:
+	break;
+    }
+    break;
+    case FBID_SYS_SPEC:
+    switch (args->args[ARG_CMD]) {
+    case PARAM_INFO:
+	switch (args->args[ARG_VALUE_1]) {
+
+	case VALUE_PARAM_INFO_ADC_POWER:	
 	    printser_int((readADC1(8) * (3.15 / 4096)) * 10000, 10);	/* result in mV */
 	    printser_string(" mV");
 	    printLF();
 	    printEOT();
 	    break;
-	case VALUE_PARAM_INFO_CPU_INFO:	/* p 0 10 */
+	case VALUE_PARAM_INFO_CPU_INFO:	
 	    sendCPUInfo();	/* send CPU Info */
 	    printLF();
 	    printEOT();
 	    break;
-	case VALUE_PARAM_INFO_MEM_LOC:	/* p 0 11 */
+	case VALUE_PARAM_INFO_MEM_LOC:	
 	    sendMemLoc(0x8002400);	/* send Mem Location */
 	    printLF();
 	    printEOT();
 	    break;
-	case VALUE_PARAM_INFO_ROM_TABLE_LOC:	/* p 0 12 */
+	case VALUE_PARAM_INFO_ROM_TABLE_LOC:	
 	    sendRomTable();	/* send ROM Table */
 	    printLF();
 	    printEOT();
 	    break;
-	case VALUE_PARAM_INFO_FREE_HEAP_SIZE:	/* p 0 13 */
+	case VALUE_PARAM_INFO_FREE_HEAP_SIZE:	
 	    printser_string("Total Heap (in byte): ");
 	    printser_int(configTOTAL_HEAP_SIZE, 10);
 	    printser_string("Free Heap (in byte): ");
@@ -111,7 +129,7 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 	    printLF();
 	    printEOT();
 	    break;
-	case VALUE_PARAM_INFO_CRC32:	/* p 0 14 */
+	case VALUE_PARAM_INFO_CRC32:	
 	    if (CheckCrc32() == 0) {
 		printser_string("CRC-32 application check passed!");
 	    } else {
@@ -120,12 +138,12 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 	    printLF();
 	    printEOT();
 	    break;
-	case VALUE_PARAM_INFO_BTM222_DEVICENAME:	/* p 0 20 */
+	case VALUE_PARAM_INFO_BTM222_DEVICENAME:	
 	    printser_string(BTM222_DeviceName);
 	    printLF();
 	    printEOT();
 	    break;
-	case VALUE_PARAM_INFO_BTM222_UART_SPEED:	/* p 0 21 */
+	case VALUE_PARAM_INFO_BTM222_UART_SPEED:	
 	    switch (BTM222_UartSpeed) {
 	    case '0':
 		printser_string("4800 bit/s");
@@ -177,6 +195,10 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
     default:
 	break;
     }
+    break;
+    default:
+	break;
+    }
 }
 
 portBASE_TYPE eval_param_sys_specific(param_data * args)
@@ -208,7 +230,7 @@ portBASE_TYPE eval_param_sys_specific(param_data * args)
 
 
     default:
-	evalResult(FBID_SYS_SPEC, ERR_CODE_OS_UNKNOWN_COMMAND, 0,
+	createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_OS_UNKNOWN_COMMAND, 0,
 		   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 	return pdFALSE;
     }

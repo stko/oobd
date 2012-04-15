@@ -46,16 +46,18 @@
 To seperate between OOBD standard IOs and implementation specific IOs, the identifiers for system specific IOs starts with the offset SYS_SPECIFIC_IO_OFFSET
 */
 #define SYS_SPECIFIC_IO_OFFSET	(10000)
-  /*! \defgroup system_generic_parm Command Line Parameter: Generic System Commands
-     Generic (implementation independent) system commands, where the command is as P 1 x ...
+  /*! \defgroup system_generic_parm Commands: Generic System Commands
+     Generic (implementation independent) system commands, where the command is as P 0 x ...
 
      x is as :
      *  @{
    */
 
 /* define parameter types */
-#define PARAM_PROTOCOL 		    ( 0 )	//!< switch to protocol y, accourding to the available protocol table \ref protocol_table
-#define PARAM_SET_OUTPUT 		    ( 1 )	//!< switch to protocol y, accourding to the available protocol table \ref protocol_table
+
+#define PARAM_PROTOCOL 		    ( 1 )	//!< switch to protocol y, accourding to the available protocol table \ref protocol_table
+#define PARAM_SET_OUTPUT 		    ( 2 )	//!< switch to protocol y, accourding to the available protocol table \ref protocol_table
+#define PARAM_RESET           ( 99 )	//!<  performs a soft reset
 
   /*! @} */
 void printParam_sys(portBASE_TYPE msgType, void *data,
