@@ -84,7 +84,7 @@ Default: 11bit 500kb
 
   \param value see VALUE - defs
 */
-#define PARAM_BUS 		    ( 3 )
+#define PARAM_BUS 		    ( 6 )
 
 /* define values of CAN specific parameter */
 #define VALUE_BUS_SILENT_MODE					( 0 )	//!< set CAN bus into silent mode

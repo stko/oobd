@@ -1,9 +1,9 @@
 /*
 *****************************************************************************
 **
-**  File        : stm32_link_script.ld
+**  File        : stm32_flash.ld
 **
-**  Abstract    : Linker script for STM32F103C8 Device with
+**  Abstract    : Linker script for STM32F103VB Device with
 **                64KByte FLASH, 20KByte RAM
 **
 **                Set heap size, stack size and stack location according
@@ -15,7 +15,7 @@
 **
 **  Environment : Atollic TrueSTUDIO(R)
 **
-**  Distribution: The file is distributed ï¿½as is,ï¿½ without any warranty
+**  Distribution: The file is distributed “as is,” without any warranty
 **                of any kind.
 **
 **  (c)Copyright Atollic AB.
@@ -42,8 +42,7 @@ _Min_Stack_Size = 0x100; /* required amount of stack */
 /* Specify the memory areas */
 MEMORY
 {
-/*  FLASH (rx)      : ORIGIN = 0x08000000, LENGTH = 64K */
-  FLASH (rx)      : ORIGIN = 0x08002400, LENGTH = 64K - 0x2400
+  FLASH (rx)      : ORIGIN = 0x08000000, LENGTH = 64K
   RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 20K
   MEMORY_B1 (rx)  : ORIGIN = 0x60000000, LENGTH = 0K
 }
@@ -69,7 +68,6 @@ SECTIONS
     *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
     *(.glue_7)         /* glue arm to thumb code */
     *(.glue_7t)        /* glue thumb to arm code */
-	*(.eh_frame)
 
     KEEP (*(.init))
     KEEP (*(.fini))
@@ -85,6 +83,8 @@ SECTIONS
       *(.ARM.exidx*)
       __exidx_end = .;
     } >FLASH
+
+  .ARM.attributes : { *(.ARM.attributes) } > FLASH
 
   .preinit_array     :
   {
@@ -167,6 +167,4 @@ SECTIONS
     libm.a ( * )
     libgcc.a ( * )
   }
-
-  .ARM.attributes 0 : { *(.ARM.attributes) }
 }

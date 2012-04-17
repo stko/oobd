@@ -40,7 +40,7 @@
 #include "mc_sys.h"
 
 // STM headers
-#include "stm32f10x.h"		/* ST Library v3.4..0 specific header files */
+#include "stm32f10x.h"		/* ST Library v3.5.0 specific header files */
 #include "SystemConfig.h"	/* STM32 hardware specific header file */
 
 extern char *oobd_Error_Text_OS;
@@ -57,7 +57,7 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 
     DEBUGPRINT("sys specific parameter received: %ld / %ld\n",
 	       args->args[ARG_CMD], args->args[ARG_VALUE_1]);
-    switch (args->args[ARG_RCV]) {
+    switch (args->args[ARG_RECV]) {
     case FBID_SYS_GENERIC:
     switch (args->args[ARG_CMD]) {
     case PARAM_INFO:
@@ -67,7 +67,7 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 	    printser_string("OOBD ");
 	    printser_string(OOBDDESIGN);
 	    printser_string(" ");
-	    printser_string(SVNREV);
+//	    printser_string(SVNREV);
 	    printser_string(" ");
 	    if (GPIO_HardwareLevel() > 0) {
 		printser_string("Lux-Wolf");
