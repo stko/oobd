@@ -31,7 +31,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildLocation</key>
-					<value>${workspace_loc:/DXM1_Firmware_IAP/Debug}</value>
+					<value>${workspace_loc:/DXM1_Firmware_IAP/Release}</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.cleanBuildTarget</key>
@@ -79,4 +79,16 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>CMSIS</name>
+			<type>2</type>
+			<location>/mnt/drive_v/OOBD/interface/OS/FreeRTOSV6.1.0/Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS</location>
+		</link>
+		<link>
+			<name>STM32F10x_StdPeriph_Driver</name>
+			<type>2</type>
+			<location>/mnt/drive_v/OOBD/interface/OS/FreeRTOSV6.1.0/Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver</location>
+		</link>
+	</linkedResources>
 </projectDescription>
