@@ -124,7 +124,7 @@ void IAP_Init(void) {
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	/* configure PA8 as Input for Hardwareidentifikaton
+	/* configure PA8 as Input for Hardwareidentification
 	 * PA8 = 1 - Original DXM1
 	 * PA8 = 0 - OOBD-Cup v5
 	 */

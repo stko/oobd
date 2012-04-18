@@ -48,7 +48,7 @@ void SerialUpload(void) {
 		GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red ON */
 	if (HardwareIdent == 2) /* OOBD-Cup2 */
 	{
-		GPIO_SetBits(GPIOB, GPIO_Pin_5); /* Duo-LED 2 - red ON */
+		GPIO_SetBits(GPIOB, GPIO_Pin_5);   /* Duo-LED 2 - red ON */
 		GPIO_ResetBits(GPIOB, GPIO_Pin_4); /* Duo-LED 2 - green OFF */
 	}
 
@@ -59,30 +59,30 @@ void SerialUpload(void) {
 		if (status != 0) {
 			SerialPutString("\n\rError Occured while Transmitting File\n\r");
 			if (HardwareIdent == 1) /* Original DXM1 */
-				GPIO_SetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red OFF */
+				GPIO_SetBits(GPIOB, GPIO_Pin_5);   /* LED 1 - red OFF */
 			if (HardwareIdent == 2) /* OOBD-Cup2 */
 			{
 				GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* Duo-LED2 - red OFF */
-				GPIO_SetBits(GPIOB, GPIO_Pin_4); /* Duo-LED2 - green ON */
+				GPIO_SetBits(GPIOB, GPIO_Pin_4);   /* Duo-LED2 - green ON */
 			}
 		} else {
 			SerialPutString("\n\rFile Trasmitted Successfully \n\r");
 			if (HardwareIdent == 1) /* Original DXM1 */
-				GPIO_SetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red OFF */
+				GPIO_SetBits(GPIOB, GPIO_Pin_5);   /* LED 1 - red OFF */
 			if (HardwareIdent == 2) /* OOBD-Cup2 */
 			{
 				GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* Duo-LED2 - red OFF */
-				GPIO_SetBits(GPIOB, GPIO_Pin_4); /* Duo-LED2 - green ON */
+				GPIO_SetBits(GPIOB, GPIO_Pin_4);   /* Duo-LED2 - green ON */
 			}
 		}
 	} else {
 		SerialPutString("\r\n\nAborted by user.\n\r");
 		if (HardwareIdent == 1) /* Original DXM1 */
-			GPIO_SetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red OFF */
+			GPIO_SetBits(GPIOB, GPIO_Pin_5);   /* LED 1 - red OFF */
 		if (HardwareIdent == 2) /* OOBD-Cup2 */
 		{
 			GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* Duo-LED2 - red OFF */
-			GPIO_SetBits(GPIOB, GPIO_Pin_4); /* Duo-LED2 - green ON */
+			GPIO_SetBits(GPIOB, GPIO_Pin_4);   /* Duo-LED2 - green ON */
 		}
 	}
 }

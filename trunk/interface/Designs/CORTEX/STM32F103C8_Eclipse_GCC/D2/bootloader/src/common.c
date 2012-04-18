@@ -66,7 +66,7 @@ void Int2Str(uint8_t* str, int32_t intnum) {
 /**
  * @brief  Convert a string to an integer
  * @param  inputstr: The string to be converted
- * @param  intnum: The intger value
+ * @param  intnum: The integer value
  * @retval 1: Correct
  *         0: Error
  */
@@ -134,7 +134,7 @@ uint32_t Str2Int(uint8_t *inputstr, int32_t *intnum) {
 
 /**
  * @brief  Get an integer from the HyperTerminal
- * @param  num: The inetger
+ * @param  num: The integer
  * @retval 1: Correct
  *         0: Error
  */
