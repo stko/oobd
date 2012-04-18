@@ -114,7 +114,7 @@ portBASE_TYPE bus_param_can(param_data * args)
 	break;
 
     case PARAM_BUS:
-	switch (ARG_VALUE_1) {
+	switch (args->args[ARG_VALUE_1]) {
 	case VALUE_BUS_SILENT_MODE:
 	    CAN1_Configuration(canConfig->busConfig, CAN_Mode_Silent);	/* set CAN interface to silent mode */
 	    // send event information to the ILM task
