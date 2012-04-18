@@ -464,7 +464,7 @@ uint8_t Ymodem_Transmit(uint8_t *buf, const uint8_t* sendFileName,
 	blkNumber = 0x01;
 	/* Here 1024 bytes package is used to send the packets */
 
-	/* Resend packet if NAK  for a count of 10 else end of commuincation */
+	/* Resend packet if NAK  for a count of 10 else end of communication */
 	while (size) {
 		/* Prepare next packet */
 		Ymodem_PreparePacket(buf_ptr, &packet_data[0], blkNumber, size);
@@ -511,7 +511,7 @@ uint8_t Ymodem_Transmit(uint8_t *buf, const uint8_t* sendFileName,
 				errors++;
 			}
 		} while (!ackReceived && (errors < 0x0A));
-		/* Resend packet if NAK  for a count of 10 else end of commuincation */
+		/* Resend packet if NAK  for a count of 10 else end of communication */
 
 		if (errors >= 0x0A) {
 			return errors;
@@ -568,7 +568,7 @@ uint8_t Ymodem_Transmit(uint8_t *buf, const uint8_t* sendFileName,
 		}
 
 	} while (!ackReceived && (errors < 0x0A));
-	/* Resend packet if NAK  for a count of 10  else end of commuincation */
+	/* Resend packet if NAK  for a count of 10  else end of communication */
 	if (errors >= 0x0A) {
 		return errors;
 	}

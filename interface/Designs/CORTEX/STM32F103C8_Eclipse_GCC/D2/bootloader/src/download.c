@@ -51,7 +51,7 @@ void SerialDownload(void) {
 		GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red ON */
 	if (HardwareIdent == 2) /* OOBD-Cup2 */
 	{
-		GPIO_SetBits(GPIOB, GPIO_Pin_5); /* Duo-LED 2 - red ON */
+		GPIO_SetBits(GPIOB, GPIO_Pin_5);   /* Duo-LED 2 - red ON */
 		GPIO_ResetBits(GPIOB, GPIO_Pin_4); /* Duo-LED 2 - green OFF */
 	}
 
@@ -66,47 +66,47 @@ void SerialDownload(void) {
 		SerialPutString("--------------------------------\n\r");
 		SerialPutString("\r\nOOBD-Flashloader>");
 		if (HardwareIdent == 1) /* Original DXM1 */
-			GPIO_SetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red OFF */
+			GPIO_SetBits(GPIOB, GPIO_Pin_5);   /* LED 1 - red OFF */
 		if (HardwareIdent == 2) /* OOBD-Cup2 */
 		{
 			GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* Duo-LED2 - red OFF */
-			GPIO_SetBits(GPIOB, GPIO_Pin_4); /* Duo-LED2 - green ON */
+			GPIO_SetBits(GPIOB, GPIO_Pin_4);   /* Duo-LED2 - green ON */
 		}
 	} else if (Size == -1) {
 		SerialPutString("\n\n\rThe image size is higher than the allowed space memory!\n\r");
 		if (HardwareIdent == 1) /* Original DXM1 */
-			GPIO_SetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red OFF */
+			GPIO_SetBits(GPIOB, GPIO_Pin_5);   /* LED 1 - red OFF */
 		if (HardwareIdent == 2) /* OOBD-Cup2 */
 		{
 			GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* Duo-LED2 - red OFF */
-			GPIO_SetBits(GPIOB, GPIO_Pin_4); /* Duo-LED2 - green ON */
+			GPIO_SetBits(GPIOB, GPIO_Pin_4);   /* Duo-LED2 - green ON */
 		}
 	} else if (Size == -2) {
 		SerialPutString("\n\n\rVerification failed!\n\r");
 		if (HardwareIdent == 1) /* Original DXM1 */
-			GPIO_SetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red OFF */
+			GPIO_SetBits(GPIOB, GPIO_Pin_5);   /* LED 1 - red OFF */
 		if (HardwareIdent == 2) /* OOBD-Cup2 */
 		{
 			GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* Duo-LED2 - red OFF */
-			GPIO_SetBits(GPIOB, GPIO_Pin_4); /* Duo-LED2 - green ON */
+			GPIO_SetBits(GPIOB, GPIO_Pin_4);   /* Duo-LED2 - green ON */
 		}
 	} else if (Size == -3) {
 		SerialPutString("\r\n\nAborted by user.\n\r");
 		if (HardwareIdent == 1) /* Original DXM1 */
-			GPIO_SetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red OFF */
+			GPIO_SetBits(GPIOB, GPIO_Pin_5);   /* LED 1 - red OFF */
 		if (HardwareIdent == 2) /* OOBD-Cup2 */
 		{
 			GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* Duo-LED2 - red OFF */
-			GPIO_SetBits(GPIOB, GPIO_Pin_4); /* Duo-LED2 - green ON */
+			GPIO_SetBits(GPIOB, GPIO_Pin_4);   /* Duo-LED2 - green ON */
 		}
 	} else {
 		SerialPutString("\n\rFailed to receive the file!\n\r");
 		if (HardwareIdent == 1) /* Original DXM1 */
-			GPIO_SetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red OFF */
+			GPIO_SetBits(GPIOB, GPIO_Pin_5);   /* LED 1 - red OFF */
 		if (HardwareIdent == 2) /* OOBD-Cup2 */
 		{
 			GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* Duo-LED2 - red OFF */
-			GPIO_SetBits(GPIOB, GPIO_Pin_4); /* Duo-LED2 - green ON */
+			GPIO_SetBits(GPIOB, GPIO_Pin_4);   /* Duo-LED2 - green ON */
 		}
 	}
 }
