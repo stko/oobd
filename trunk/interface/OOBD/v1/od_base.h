@@ -136,10 +136,9 @@ the first value x of a parameter command (p x ...) adresses the functional block
 /* define values of parameter */
 #define VALUE_PARAM_INFO_VERSION 				( 0 )
 #define VALUE_PARAM_INFO_SERIALNUMBER   		( 1 )
-#define VALUE_PARAM_INFO_BUS   					( 2 )
-#define VALUE_PARAM_INFO_PROTOCOL       		( 3 )
-#define VALUE_PARAM_INFO_BUS_MODE		( 4 )
-#define VALUE_PARAM_INFO_BUS_CONFIG   			( 5 )
+#define VALUE_PARAM_INFO_ABOUT		( 2 )
+#define VALUE_PARAM_INFO_BUS_MODE		( 3 )
+#define VALUE_PARAM_INFO_BUS_CONFIG   			( 4 )
 
 
 /* Global message types */
@@ -177,7 +176,10 @@ the first value x of a parameter command (p x ...) adresses the functional block
 #define ERR_CODE_OS_UNKNOWN_COMMAND_TEXT oobd_Error_Text_OS[ERR_CODE_OS_UNKNOWN_COMMAND]	//!<unknown command
 #define ERR_CODE_OS_COMMAND_NOT_SUPPORTED 3	//!< OS couldn't resolve command
 //#define ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT "Command not supported"        //!<unknown command
-#define ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT oobd_Error_Text_OS[ERR_CODE_OS_COMMAND_NOT_SUPPORTED]	//!<unknown command
+#define ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT oobd_Error_Text_OS[ERR_CODE_OS_COMMAND_NOT_SUPPORTED]	//!< command known, but not supported
+#define ERR_CODE_OS_UNKNOWN_OUTPUT_PIN 4	//!< Hardware Signal not known/supported
+//#define ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT "Command not supported"        //!<unknown command
+#define ERR_CODE_OS_UNKNOWN_OUTPUT_PIN_TEXT oobd_Error_Text_OS[ERR_CODE_OS_UNKNOWN_OUTPUT_PIN]	//!< not available otuput pin
 
 
 //! help constants to address the parameter array 

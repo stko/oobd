@@ -60,7 +60,7 @@ typedef struct UDSBUFFER {
     unsigned char data[UDSSIZE];
 } UDSBuffer;
 
-extern char *oobd_Error_Text_OS;
+extern char *oobd_Error_Text_OS[];
 
 
 /*!
@@ -205,13 +205,14 @@ void odp_uds_printParam(portBASE_TYPE msgType, void *data,
     param_data *args = data;
     extern bus_paramPrint actBus_paramPrint;
     if (args->args[ARG_CMD] == PARAM_INFO
-	&& args->args[ARG_VALUE_1] == VALUE_PARAM_INFO_PROTOCOL) {
+	&& args->args[ARG_VALUE_1] == VALUE_PARAM_INFO_VERSION) {
 	printser_string("1 - UDS (ISO14229-1)");
 	printLF();
 	printEOT();
     } else {
-	DEBUGPRINT("Parameter not known by uds - forward to bus\n", 'a');
-	actBus_paramPrint(args);	/* forward the received params to the underlying bus. */
+	createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+			       FBID_PROTOCOL_GENERIC, 0,
+			       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
     }
 }
 
@@ -588,17 +589,6 @@ void obp_uds(void *pvParameters)
 		switch (args->args[ARG_RECV]) {
 		case FBID_PROTOCOL_GENERIC:
 		    switch (args->args[ARG_CMD]) {
-			// first we commend out all parameters  which are not used to generate the right "unknown parameter" message in the default - area
-			/*
-			   case PARAM_ECHO:
-			   break;
-			   case PARAM_TIMEOUT_PENDING:
-			   break;
-			   case PARAM_BLOCKSIZE:
-			   break;
-			   case PARAM_FRAME_DELAY:
-			   break;
-			 */
 		    case PARAM_INFO:
 			CreateParamOutputMsg(args, odp_uds_printParam);
 			break;

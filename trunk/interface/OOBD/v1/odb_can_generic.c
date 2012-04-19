@@ -39,7 +39,7 @@
 #include "od_protocols.h"
 #include "odb_can.h"
 
-extern char *oobd_Error_Text_OS;
+extern char *oobd_Error_Text_OS[];
 
 print_cbf printdata_CAN = NULL;
 struct CanConfig *canConfig;
@@ -72,12 +72,12 @@ void bus_param_canPrint(param_data * args)
 	       args->args[ARG_CMD]);
     if (args->args[ARG_CMD] == PARAM_INFO) {
 	switch (args->args[ARG_CMD]) {
-	case VALUE_PARAM_INFO_BUS:	/* p 0 2 */
+	case VALUE_PARAM_INFO_VERSION:
 	    printser_string("CAN Bus");
 	    printLF();
 	    printEOT();
 	    break;
-	case VALUE_PARAM_INFO_BUS_MODE:	/* p 0 4 */
+	case VALUE_PARAM_INFO_BUS_MODE:
 	    switch (canConfig->mode) {
 	    case VALUE_BUS_SILENT_MODE:
 		printser_string("0 - CAN Transceiver in 'Silent Mode'");
