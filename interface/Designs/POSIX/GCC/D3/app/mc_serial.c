@@ -48,6 +48,7 @@ static int oobdIOHandle = 0;
 void writeChar(char a)
 {
     /* Echo it back to the sender. */
+    //! \bug Echo off is not supported yet
     (void) write(oobdIOHandle, &a, 1);
     putchar(a);
 }

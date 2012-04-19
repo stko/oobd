@@ -38,7 +38,7 @@
 #include "mc_sys_generic.h"
 #include "mc_serial_generic.h"
 
-extern char *oobd_Error_Text_OS;
+extern char *oobd_Error_Text_OS[];
 
 
 /* global message queues */
@@ -303,10 +303,13 @@ void inputParserTask(void *pvParameters)
 				// send event information to the ILM task
 				CreateEventMsg(MSG_EVENT_CMDLINE, 0);
 				if (args.argv > 0) {
+				    DEBUGPRINT("FB: %d\n",
+					       args.args[ARG_RECV]);
 				    switch (args.args[ARG_RECV]) {
 				    case FBID_SERIALIN_GENERIC:
 					switch (args.args[ARG_CMD]) {
 					case PARAM_ECHO:
+					    //! \bug Echo off is not supported yet
 					    createCommandResultMsg
 						(FBID_SERIALIN_GENERIC,
 						 ERR_CODE_NO_ERR, 0, NULL);

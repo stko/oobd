@@ -39,11 +39,12 @@
 #include "mc_sys_generic.h"
 
 //! All Errormessages of the OS Function Block
-char *oobd_Error_Text_OS[4] = {
+char *oobd_Error_Text_OS[] = {
     "",				// indox 0 is no error
     "can't generate protocol task",
     "Unknown command",
-    "Command not supported"
+    "Command not supported",
+    "Output Pin not supported"
 };
 
 
@@ -77,9 +78,19 @@ portBASE_TYPE eval_param_sys(param_data * args)
     int i;
     switch (args->args[ARG_CMD]) {
     case PARAM_SET_OUTPUT:
-	sysIoCtrl(args->args[ARG_VALUE_1], 0,
-		  args->args[ARG_VALUE_2], 0, 0);
-	return pdTRUE;
+	if (sysIoCtrl(args->args[ARG_VALUE_1], 0,
+		      args->args[ARG_VALUE_2], 0, 0) == pdTRUE) {
+	    createCommandResultMsg
+		(FBID_SYS_GENERIC, ERR_CODE_NO_ERR, 0, NULL);
+	    return pdTRUE;
+	} else {
+	    createCommandResultMsg
+		(FBID_SYS_GENERIC,
+		 ERR_CODE_OS_UNKNOWN_OUTPUT_PIN,
+		 args->args[ARG_VALUE_1],
+		 ERR_CODE_OS_UNKNOWN_OUTPUT_PIN_TEXT);
+	    return pdFALSE;
+	}
 	break;
 /*    case PARAM_PROTOCOL:
 	//! \todo this kind of task switching is not design intent
@@ -124,15 +135,11 @@ portBASE_TYPE eval_param_sys(param_data * args)
 
 
     default:
-	if (eval_param_sys_specific(args) == pdTRUE) {
-	    return pdTRUE;
-	} else {
-	    createCommandResultMsg
-		(FBID_SYS_GENERIC,
-		 ERR_CODE_OS_UNKNOWN_COMMAND,
-		 0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
-	    return pdFALSE;
-	}
+	createCommandResultMsg
+	    (FBID_SYS_GENERIC,
+	     ERR_CODE_OS_UNKNOWN_COMMAND,
+	     0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+	return pdFALSE;
     }
 }
 

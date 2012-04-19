@@ -66,7 +66,7 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 	       args->args[ARG_RECV], args->args[ARG_CMD]);
     switch (args->args[ARG_CMD]) {
     case PARAM_INFO:
-	switch (args->args[ARG_CMD]) {
+	switch (args->args[ARG_VALUE_1]) {
 
 	case VALUE_PARAM_INFO_VERSION:	/* p 0 0 */
 	    printser_string("OOBD ");
@@ -114,13 +114,6 @@ portBASE_TYPE eval_param_sys_specific(param_data * args)
 	    return pdFALSE;
 	}
 	break;
-    case PARAM_SET_OUTPUT:
-	sysIoCtrl(args->args[ARG_VALUE_1], 0,
-		  args->args[ARG_VALUE_2], 0, 0);
-	return pdTRUE;
-	break;
-
-
     default:
 	createCommandResultMsg
 	    (FBID_SYS_SPEC,
@@ -144,7 +137,6 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 	break;
     case IO_LED_GREEN:
 	DEBUGPRINT("IO_LED_GREEN set to %ld\n", upperValue);
-	return pdTRUE;
 	return pdTRUE;
 	break;
     case IO_LED_RED:
