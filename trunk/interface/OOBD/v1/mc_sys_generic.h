@@ -42,10 +42,6 @@
 #define IO_LED_GREEN (1)
 #define IO_LED_RED (2)
 #define IO_BUZZER 	(3)
-/*!
-To seperate between OOBD standard IOs and implementation specific IOs, the identifiers for system specific IOs starts with the offset SYS_SPECIFIC_IO_OFFSET
-*/
-#define SYS_SPECIFIC_IO_OFFSET	(10000)
   /*! \defgroup system_generic_parm Commands: Generic System Commands
      Generic (implementation independent) system commands, where the command is as P 0 x ...
 

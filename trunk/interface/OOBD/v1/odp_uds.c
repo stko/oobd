@@ -583,11 +583,15 @@ void obp_uds(void *pvParameters)
 		break;
 	    case MSG_SERIAL_PARAM:
 		args = (portBASE_TYPE *) msg->addr;
-		DEBUGPRINT("parameter received %ld %ld\n",
-			   args->args[ARG_CMD], args->args[ARG_VALUE_1]);
+		DEBUGPRINT("protocol parameter received %ld %ld %ld\n",
+			   args->args[ARG_RECV], args->args[ARG_CMD],
+			   args->args[ARG_VALUE_1]);
 
 		switch (args->args[ARG_RECV]) {
 		case FBID_PROTOCOL_GENERIC:
+		    DEBUGPRINT
+			("generic protocol parameter received %ld %ld\n",
+			 args->args[ARG_CMD], args->args[ARG_VALUE_1]);
 		    switch (args->args[ARG_CMD]) {
 		    case PARAM_INFO:
 			CreateParamOutputMsg(args, odp_uds_printParam);
@@ -600,12 +604,16 @@ void obp_uds(void *pvParameters)
 			break;
 		    default:
 			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
-					       FBID_PROTOCOL_GENERIC, 0,
+					       ERR_CODE_OS_UNKNOWN_COMMAND,
+					       0,
 					       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 			break;
 		    }
 		    break;
 		case FBID_PROTOCOL_SPEC:
+		    DEBUGPRINT("uds protocol parameter received %ld %ld\n",
+			       args->args[ARG_CMD],
+			       args->args[ARG_VALUE_1]);
 		    switch (args->args[ARG_CMD]) {
 			// first we commend out all parameters  which are not used to generate the right "unknown parameter" message in the default - area
 			/*
@@ -625,6 +633,8 @@ void obp_uds(void *pvParameters)
 			break;
 		    case PARAM_RECVID:
 			udsConfig.recvID = args->args[ARG_VALUE_1];
+			createCommandResultMsg(FBID_PROTOCOL_SPEC,
+					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
 		    case PARAM_SENDID:
 			udsConfig.sendID = args->args[ARG_VALUE_1];
@@ -648,11 +658,12 @@ void obp_uds(void *pvParameters)
 			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
-			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 		    default:
 			createCommandResultMsg(FBID_PROTOCOL_SPEC,
-					       FBID_PROTOCOL_SPEC, 0,
+					       ERR_CODE_OS_UNKNOWN_COMMAND,
+					       0,
 					       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 			break;
 		    }
@@ -662,8 +673,8 @@ void obp_uds(void *pvParameters)
 		    actBus_param(args);	/* forward the received params to the underlying bus. */
 		    break;
 		default:
-		    createCommandResultMsg(FBID_PROTOCOL_GENERIC,
-					   FBID_PROTOCOL_GENERIC, 0,
+		    createCommandResultMsg(FBID_PROTOCOL_SPEC,
+					   ERR_CODE_OS_UNKNOWN_COMMAND, 0,
 					   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 		    break;
 		}

@@ -189,6 +189,14 @@ the first value x of a parameter command (p x ...) adresses the functional block
 #define ARG_VALUE_2 (3)		//!<index of 2. value
 
 
+/*!
+To seperate between OOBD standard IOs and implementation specific IOs, the identifiers for system specific IOs starts with the offset SYS_SPECIFIC_IO_OFFSET.
+
+*/
+#define SYS_SPECIFIC_IO_OFFSET	(10000)
+
+
+
   /*! \addtogroup serial_generic_parm 
 
    *  @{
@@ -270,7 +278,7 @@ void createCommandResultMsgFromISR(portBASE_TYPE eSource,
 				   portBASE_TYPE eType,
 				   portBASE_TYPE eDetail, char *text);
 void CreateParamOutputMsg(param_data * args, print_cbf printRoutine);
-
+void CreateEventMsg(portBASE_TYPE event, portBASE_TYPE value);
 // Print functions
 
 void printser_string(char const *str);

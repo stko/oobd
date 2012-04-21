@@ -34,7 +34,7 @@
  */
 
 /* OOBD headers. */
-#include "od_config.h"
+#include "od_base.h"
 #include "od_protocols.h"
 #include "odb_can.h"
 #include "mc_can.h"
@@ -58,11 +58,13 @@ recv_cbf reportReceicedData = NULL;
 void prvUDPTask(void *pvParameters);
 
 
+extern char *oobd_Error_Text_OS[];
+extern struct CanConfig *canConfig;
+
 /*-----------------------------------------------------------*/
 
 portBASE_TYPE bus_init_can()
 {
-    extern struct CanConfig *canConfig;
 
     canConfig = pvPortMalloc(sizeof(struct CanConfig));
     if (canConfig == NULL) {
@@ -70,7 +72,7 @@ portBASE_TYPE bus_init_can()
 		   'a');
 	return pdFAIL;
     }
-    canConfig->bus = VALUE_BUS_SILENT_MODE;	/* default */
+    canConfig->bus = VALUE_BUS_MODE_SILENT;	/* default */
     canConfig->busConfig = VALUE_BUS_CONFIG_11bit_500kbit;	/* default */
 // Initialise Receives sockets. 
     xReceiveAddress.sin_family = AF_INET;
@@ -171,9 +173,78 @@ void ParamPrint(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 /*-----------------------------------------------------------*/
 portBASE_TYPE bus_param_can(param_data * args)
 {
-    DEBUGPRINT("Bus Parameter received param %ld value %ld\n",
-	       args->args[ARG_RECV], args->args[ARG_CMD]);
-    CreateParamOutputMsg(args, ParamPrint);
+
+
+    switch (args->args[ARG_CMD]) {
+    case PARAM_BUS_CONFIG:
+	if (args->args[ARG_VALUE_1] != 0)
+	    canConfig->busConfig = args->args[ARG_VALUE_1];
+	createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
+	break;
+
+    case PARAM_BUS_MODE:
+	switch (args->args[ARG_VALUE_1]) {
+	case VALUE_BUS_MODE_SILENT:
+	    // send event information to the ILM task
+	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_OFF);
+	    createCommandResultMsg(FBID_BUS_SPEC,
+				   ERR_CODE_NO_ERR, 0, NULL);
+	    break;
+	case VALUE_BUS_MODE_LOOP_BACK:
+	    // send event information to the ILM task
+	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
+	    createCommandResultMsg(FBID_BUS_SPEC,
+				   ERR_CODE_NO_ERR, 0, NULL);
+	    break;
+	case VALUE_BUS_MODE_LOOP_BACK_WITH_SILENT:
+	    // send event information to the ILM task
+	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
+	    createCommandResultMsg(FBID_BUS_SPEC,
+				   ERR_CODE_NO_ERR, 0, NULL);
+	    break;
+	case VALUE_BUS_MODE_NORMAL:
+	    // send event information to the ILM task
+	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
+	    createCommandResultMsg(FBID_BUS_SPEC,
+				   ERR_CODE_NO_ERR, 0, NULL);
+	    break;
+
+	default:
+	    createCommandResultMsg(FBID_BUS_SPEC,
+				   ERR_CODE_OS_COMMAND_NOT_SUPPORTED,
+				   args->args[ARG_VALUE_1],
+				   ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
+	    break;
+	}
+	break;
+
+    case PARAM_BUS_OUTPUT_ACTIVATE:
+	switch (args->args[ARG_VALUE_1]) {
+	case 0:
+	case 1:
+	    CreateEventMsg(MSG_EVENT_BUS_CHANNEL, args->args[ARG_VALUE_1]);
+	    sysIoCtrl(5000, 0, args->args[ARG_VALUE_1], 0,	//5000 is just a dummy value, as a channel switch is not part of the generic part at all
+		      0);
+	    createCommandResultMsg(FBID_BUS_SPEC,
+				   ERR_CODE_NO_ERR, 0, NULL);
+	    break;
+	default:
+	    createCommandResultMsg(FBID_BUS_SPEC,
+				   ERR_CODE_OS_COMMAND_NOT_SUPPORTED,
+				   args->args[ARG_VALUE_1],
+				   ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
+	    break;
+	}
+	break;
+
+
+    default:
+	createCommandResultMsg(FBID_BUS_SPEC,
+			       ERR_CODE_OS_UNKNOWN_COMMAND, 0,
+			       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+	break;
+    }
+
     return pdPASS;
 }
 
@@ -183,8 +254,6 @@ void bus_close_can()
 {
     extern struct CanConfig *canConfig;
     free(canConfig);
-
-
 }
 
 
@@ -198,9 +267,7 @@ void prvUDPTask(void *pvParameters)
     //struct sockaddr_in xSendAddress;
     // int iSocketSend, iReturn = 0, iSendTaskList = pdTRUE;
     //xQueueHandle xUDPReceiveQueue = (xQueueHandle) pvParameters;
-
     /* Open a socket for sending. */
-
     for (;;) {
 	if (pdPASS ==
 	    xQueueReceive(xUDPReceiveQueue, &xPacket,
