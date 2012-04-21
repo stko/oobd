@@ -79,30 +79,30 @@ void bus_param_canPrint(param_data * args)
 	    break;
 	case VALUE_PARAM_INFO_BUS_MODE:
 	    switch (canConfig->mode) {
-	    case VALUE_BUS_SILENT_MODE:
+	    case VALUE_BUS_MODE_SILENT:
 		printser_string("0 - CAN Transceiver in 'Silent Mode'");
 		printLF();
 		printEOT();
 		break;
-	    case VALUE_BUS_LOOP_BACK_MODE:
+	    case VALUE_BUS_MODE_LOOP_BACK:
 		printser_string("1 - CAN Transceiver in 'Loop Back Mode'");
 		printLF();
 		printEOT();
 		break;
-	    case VALUE_BUS_LOOP_BACK_WITH_SILENT_MODE:
+	    case VALUE_BUS_MODE_LOOP_BACK_WITH_SILENT:
 		printser_string
 		    ("2 - CAN Transceiver in 'Loop Back combined with Silent Mode'");
 		printLF();
 		printEOT();
 		break;
-	    case VALUE_BUS_NORMAL_MODE:
+	    case VALUE_BUS_MODE_NORMAL:
 		printser_string("3 - CAN Transceiver in 'Normal Mode'");
 		printLF();
 		printEOT();
 		break;
 	    }
 	    break;
-	case VALUE_PARAM_INFO_BUS_CONFIG:	/* p 0 5 */
+	case VALUE_PARAM_INFO_BUS_CONFIG:
 	    switch (canConfig->busConfig) {
 	    case VALUE_BUS_CONFIG_11bit_125kbit:
 		printser_string("1 = ISO 15765-4, CAN 11bit ID/125kBaud");
@@ -146,16 +146,16 @@ void bus_param_canPrint(param_data * args)
 		break;
 	    }
 	default:
-	    createCommandResultMsg(FBID_BUS_GENERIC,
-				   ERR_CODE_OS_UNKNOWN_COMMAND, 0,
-				   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+	    evalResult(FBID_BUS_GENERIC,
+		       ERR_CODE_OS_UNKNOWN_COMMAND, 0,
+		       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 
 	    break;
 	}
     } else {
-	createCommandResultMsg(FBID_BUS_GENERIC,
-			       ERR_CODE_OS_UNKNOWN_COMMAND, 0,
-			       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+	evalResult(FBID_BUS_GENERIC,
+		   ERR_CODE_OS_UNKNOWN_COMMAND, 0,
+		   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 
     }
 }

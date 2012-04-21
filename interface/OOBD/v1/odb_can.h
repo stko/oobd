@@ -60,6 +60,8 @@ void odb_can_init();
 Default: off
 
   \param value 0 = off !=0 = on
+  \param channel bus channel
+
 */
 #define PARAM_LISTEN    	    ( 1 )
 /*! \brief set bus mode
@@ -67,6 +69,7 @@ Default: off
 Default: VALUE_BUS_SILENT_MODE
 
   \param value see VALUE_BUS defs
+  \param channel bus channel
 */
 #define PARAM_BUS_MODE 		    ( 2 )
 /*! \brief set bus bit and speed
@@ -74,23 +77,22 @@ Default: VALUE_BUS_SILENT_MODE
 Default: 11bit 500kb
 
   \param value see VALUE_BUS_CONFIG_ defs
+  \param channel bus channel
 */
 #define PARAM_BUS_CONFIG 	    ( 3 )
-/*! \brief set ??
-
-\todo was war das nochmal gleich?
+/*! \brief set the actual output channel
 
 
+  \param channel bus channel 0-x
 
-  \param value see VALUE - defs
 */
-#define PARAM_BUS 		    ( 6 )
+#define PARAM_BUS_OUTPUT_ACTIVATE 		    ( 6 )
 
 /* define values of CAN specific parameter */
-#define VALUE_BUS_SILENT_MODE					( 0 )	//!< set CAN bus into silent mode
-#define VALUE_BUS_LOOP_BACK_MODE				( 1 )	//!< set CAN bus into loopback mode
-#define VALUE_BUS_LOOP_BACK_WITH_SILENT_MODE	( 2 )	//!< set CAN bus into loopback/silent mode
-#define VALUE_BUS_NORMAL_MODE					( 3 )	//!< set CAN bus into normal mode
+#define VALUE_BUS_MODE_SILENT					( 0 )	//!< set CAN bus into silent mode
+#define VALUE_BUS_MODE_LOOP_BACK				( 1 )	//!< set CAN bus into loopback mode
+#define VALUE_BUS_MODE_LOOP_BACK_WITH_SILENT	( 2 )	//!< set CAN bus into loopback/silent mode
+#define VALUE_BUS_MODE_NORMAL					( 3 )	//!< set CAN bus into normal mode
 #define VALUE_BUS_CONFIG_11bit_125kbit  		( 1 )	//!< set CAN bus speed to 11bit with 125kbit
 #define VALUE_BUS_CONFIG_11bit_250kbit  		( 2 )	//!< set CAN bus speed to 11bit with 250kbit
 #define VALUE_BUS_CONFIG_11bit_500kbit  		( 3 )	//!< set CAN bus speed to 11bit with 500kbit
