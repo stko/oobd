@@ -80,7 +80,19 @@ udslen =0
 receive = null
 setTimeout = null
 setSendID =null
-hardwareID =""
+
+-- actual hardware 
+-- 0 ELM 
+-- 1 DXM standard
+-- 2 OOBD DXM 
+-- 3 OOBD DXM w. bus swichter
+
+hardwareID =0
+firmware_revision=""
+hardware_model=""
+
+
+
 
 function getStringPart(text, index)
   start, finish = string.find(text," ")
@@ -115,22 +127,22 @@ function translateDTC(highByte, lowByte)
   hNibble= (highByte -(highByte % 16)) / 16 -- tricky to do an integer devide with luas float numbers..
   lNibble =highByte % 16
   start = "??"
-  if hNibble ==  0 then start = "P0" end
-  if hNibble ==  1 then start = "P1" end
-  if hNibble ==  2 then start = "P2" end
-  if hNibble ==  3 then start = "P3" end
-  if hNibble ==  4 then start = "C0" end
-  if hNibble ==  5 then start = "C1" end
-  if hNibble ==  6 then start = "C2" end
-  if hNibble ==  7 then start = "C3" end
-  if hNibble ==  8 then start = "B0" end
-  if hNibble ==  9 then start = "B1" end
-  if hNibble == 10 then start = "B2" end
-  if hNibble == 11 then start = "B3" end
-  if hNibble == 12 then start = "U0" end
-  if hNibble == 13 then start = "U1" end
-  if hNibble == 14 then start = "U2" end
-  if hNibble == 15 then start = "U3" end
+  if hNibble ==  0 then start = "P0" 
+  elseif hNibble ==  1 then start = "P1" 
+  elseif hNibble ==  2 then start = "P2" 
+  elseif hNibble ==  3 then start = "P3" 
+  elseif hNibble ==  4 then start = "C0" 
+  elseif hNibble ==  5 then start = "C1" 
+  elseif hNibble ==  6 then start = "C2" 
+  elseif hNibble ==  7 then start = "C3" 
+  elseif hNibble ==  8 then start = "B0" 
+  elseif hNibble ==  9 then start = "B1" 
+  elseif hNibble == 10 then start = "B2" 
+  elseif hNibble == 11 then start = "B3" 
+  elseif hNibble == 12 then start = "U0" 
+  elseif hNibble == 13 then start = "U1" 
+  elseif hNibble == 14 then start = "U2" 
+  elseif hNibble == 15 then start = "U3" end
   return start..string.format("%X",lNibble)..string.format("%02X",lowByte)
 end
 
@@ -145,13 +157,21 @@ end
 
 -- set response timeout in 10ms units - only needed for OOBD 
 function setTimeout_OOBD(timeout)
-  echoWrite("p 7 "..timeout.."\r")
+  if hardwareID==2 then
+    echoWrite("p 7 "..timeout.."\r")
+  elseif hardwareID==3 then
+    echoWrite("p 6 0 "..timeout.."\r")
+  end
 end
 
 
 -- set sender address - only needed for OOBD 
 function setSendID_OOBD(addr)
-  echoWrite("p 16 "..addr.."\r")
+  if hardwareID==2 then
+    echoWrite("p 16 "..addr.."\r")
+  elseif hardwareID==3 then
+    echoWrite("p 6 8 "..addr.."\r")
+  end
 end
 
 function doNothing(value)
@@ -224,8 +244,10 @@ function receive_DXM()
 end
 
 function setModuleID(id)
-  if hardwareID == "OOBD" then
+  if hardwareID == 2 then
     echoWrite("p 11 $"..id.."\r")
+  elseif hardwareID==3 then
+    echoWrite("p 6 4 $"..id.."\r")
   else
     echoWrite("atci "..id.."\r")
   end
@@ -241,7 +263,7 @@ end
 
 
 function setBus(bus)
-  if hardwareID == "OOBD" then
+  if hardwareID == 2 then
     if bus == "HS-CAN" then
       echoWrite("p 6 3\r")
     end
@@ -253,8 +275,20 @@ function setBus(bus)
     end
    -- activate bus
       echoWrite("p 5 3\r")
-
-  else
+    
+  elseif hardwareID == 3 then
+    if bus == "HS-CAN" then
+      echoWrite("p 8 3 3\r")
+      echoWrite("p 8 4 0\r")
+    elseif bus == "IMS-CAN" then
+      echoWrite("p 8 3 3\r")
+      echoWrite("p 8 4 0\r")
+    elseif bus == "MS-CAN" then
+      echoWrite("p 8 3 11\r")
+      echoWrite("p 8 4 1\r")
+    end
+   -- activate bus
+      echoWrite("p 8 2 3\r")
     
   end
 end
@@ -282,10 +316,10 @@ function receive_OOBD()
 	    else
 	      if firstChar == ":" then -- error message
 		doLoop= false
-		answ=getStringPart(answ,2)
+		answ=getStringPart(answ,3)
 		udsLen=tonumber(answ) * -1 -- return error code as negative value
 	      else
-		if firstChar == "." or firstChar == ">" then -- end of data or promt
+		if firstChar == "." or firstChar == ">" then -- end of data or prompt
 		  doLoop = false
 		else -- unknown data
 		  udsLen=-2
@@ -300,53 +334,98 @@ end
 
 function interface_version(oldvalue,id)
   local answ=""
-  if hardwareID == "OOBD" then
+  if hardwareID == 2 then
     echoWrite("p 0 0\r")
+    answ=serReadLn(2000, true)
+    return answ
+  elseif hardwareID == 3 then
+    echoWrite("p 0 0 0\r")
+    err, ans = readAnswerArray()
+    return ans[1]
   else
     echoWrite("at!01\r")
-  end
     answ=serReadLn(2000, true)
-  return answ
+    return answ
+  end
 end
 
 function interface_serial(oldvalue,id)
   local answ=""
-  if hardwareID == "OOBD" then
-    echoWrite("p 0 1\r")
+  if hardwareID == 2 then
+     echoWrite("p 0 1\r")
+     answ=serReadLn(2000, true)
+    return answ
+  elseif hardwareID == 3 then
+    echoWrite("p 0 0 1\r")
+    err, ans = readAnswerArray()
+    return ans[1]
   else
     echoWrite("at!00\r")
-  end
     answ=serReadLn(2000, true)
-  return answ
+    return answ
+  end
 end
 
 function interface_voltage(oldvalue,id)
   local answ=""
-  if hardwareID == "OOBD" then
+  if hardwareID == 2 then
     echoWrite("p 0 6\r")
     answ=serReadLn(2000, true)
-		answ=round(getStringPart(answ, 1)/1000, 2)
-		answ=answ.." Volt"
+    answ=round(getStringPart(answ, 1)/1000, 2)
+    answ=answ.." Volt"
+    return answ
+  elseif hardwareID == 3 then
+    echoWrite("p 1 0 0\r")
+    err, ans = readAnswerArray()
+    if err <0 then
+      return ans[1]
+    else
+      answ=round(getStringPart(answ[1], 1)/1000, 2)
+      answ=answ.." Volt"
+      return answ
+    end
   else
     echoWrite("at!10\r")
     answ=serReadLn(2000, true)
- end
-  return answ
+    return answ
+  end
 end
 
 function interface_bus(oldvalue,id)
   local answ=""
-  if hardwareID == "OOBD" then
-    echoWrite("p 0 5\r")
-  else
-	  echoWrite("0100\r") -- first send something to let the DXM search for a available bus
-	  udsLen=receive()
-	  echoWrite("atdp\r")
-  end
+  if hardwareID == 2 then
+    echoWrite("p 0 6\r")
     answ=serReadLn(2000, true)
-  return answ
+    return answ
+  elseif hardwareID == 3 then
+    echoWrite("p 8 0 0\r")
+    err, ans = readAnswerArray()
+    return ans[1]
+  else
+    echoWrite("0100\r") -- first send something to let the DXM search for a available bus
+    udsLen=receive()
+    echoWrite("atdp\r")
+    answ=serReadLn(2000, true)
+    return answ
+  end
 end
 
+function readAnswerArray()
+  local res={}
+  local answ=""
+  answ=serReadLn(2000, true)
+  while  answ ~="" and answ ~="." do
+    firstChar=string.sub(answ,1,1)
+    table.insert(res,answ)
+    if firstChar == ":" then -- error message
+      res={}
+      table.insert(res,answ)
+      answ=getStringPart(answ,3)
+      return tonumber(answ) * -1 , res -- return error code as negative value
+    end
+  end
+  return #res , res -- return nr of lines and answer array
+end
 
 function identifyOOBDInterface()
 	local answ=""
@@ -357,27 +436,44 @@ function identifyOOBDInterface()
 	-- Abfrage auf OOBD -interfae
 	echoWrite("p 0 0 \r")
 	answ=serReadLn(2000, false)
-	echoWrite("p 0 0 \r")
-	answ=serReadLn(2000, false)
 	print ("Busantwort:", answ)
 	-- Antwort auseinanderfiedeln und Prüfen
-	answ= getStringPart(answ, 1)
-	print ("teilstring:",answ)
-	if answ=="OOBD" then
+	idString= getStringPart(answ, 1)
+	print ("teilstring:",idString)
+	if idString=="OOBD" then
+	  firmware_revision=getStringPart(answ, 3)
+	  hardware_model=getStringPart(answ, 2)
+	  hardware_variant=getStringPart(answ, 4)
 	  receive = receive_OOBD
 	  setTimeout = setTimeout_OOBD
 	  setSendID = setSendID_OOBD
-	  hardwareID="OOBD"
-	  -- to support older OOBD firmware, set the Module-ID to functional address
-	  echoWrite("p 11 $7DF\r")
-
+	  hardwareID=2
+	  if hardware_model=="POSIX" or hardware_model=="dxm" then
+	    if hardware_variant=="POSIX" or hardware_variant=="Lux-Wolf" then
+	      hardwareID=3
+	      --[[		    echoWrite("p 0 1 1\r") -- set protocol
+			  err, res = readAnswerArray()
+			  if err ~=0 then
+			    print (" Set protocol error:", err, res[1])
+			  end
+			  echoWrite("p 0 1 1\r") -- set Bus
+			  err, res = readAnswerArray()
+			  if err ~=0 then
+			    print (" Set protocol error:", err, res[1])
+			  end
+	      --]]	  
+	    else
+	      -- to support older OOBD firmware, set the Module-ID to functional address
+	      echoWrite("p 11 $7DF\r")
+	    end
+	  end
 	else
 	  receive = receive_DXM
 	  setTimeout = doNothing
 	  setSendID = doNothing
-	  hardwareID="DXM"
+	  hardwareID=1
 	end
-	print ("Hardware found: ", hardwareID)
+	print ("Hardware found: ", hardwareID, "Revision: ",firmware_revision,"Model",hardware_model, "Variant", hardware_variant)
 end
 
 ---------------------- System Info Menu --------------------------------------
