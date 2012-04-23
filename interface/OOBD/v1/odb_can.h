@@ -86,7 +86,7 @@ Default: 11bit 500kb
   \param channel bus channel 0-x
 
 */
-#define PARAM_BUS_OUTPUT_ACTIVATE 		    ( 6 )
+#define PARAM_BUS_OUTPUT_ACTIVATE 		    ( 4 )
 
 /* define values of CAN specific parameter */
 #define VALUE_BUS_MODE_SILENT					( 0 )	//!< set CAN bus into silent mode

@@ -166,7 +166,8 @@ portBASE_TYPE bus_param_can(param_data * args)
 	    CreateEventMsg(MSG_EVENT_BUS_CHANNEL, args->args[ARG_VALUE_1]);
 	      sysIoCtrl(IO_REL1, 0, args->args[ARG_VALUE_1], 0,
 				      0);
-	      vTaskDelay( 250 / portTICK_RATE_MS ); // wait to give the mechanic relay time to switch
+	      // \todo the delay caused a block in the simulator, does it also in real MC?
+	      //vTaskDelay( 250 / portTICK_RATE_MS ); // wait to give the mechanic relay time to switch
 				createCommandResultMsg(FBID_BUS_SPEC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 	    break;

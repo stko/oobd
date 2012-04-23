@@ -99,16 +99,16 @@ the first value x of a parameter command (p x ...) adresses the functional block
    */
 
 
-#define FBID_SYS_GENERIC 0	//!<The generic part of the system
-#define FBID_SYS_SPEC 1		//!<The mc specific part of the system
-#define FBID_SERIALIN_GENERIC 2	//!< The generic part of the serial_in process
-#define FBID_SERIALIN_SPEC 3	//!< The implementation specific part of the serial_in process
-#define FBID_SERIALOUT_GENERIC 4	//!< The generic part of the serial_out process
-#define FBID_SERIALOUT_SPEC 5	//!< The implementation specific part of the serial_out process
-#define FBID_PROTOCOL_GENERIC 6	//!<The generic part of the actual protocol
-#define FBID_PROTOCOL_SPEC 7	//!<The implementation specific part of the actual protocol -but up to now a protocol is planned as always generic, but not implementation speicif
-#define FBID_BUS_GENERIC 8	//!<The generic part of the actual bus
-#define FBID_BUS_SPEC 9		//!<The implementation specific part of the actual bus
+#define FBID_SYS_SPEC 0		//!<The mc specific part of the system
+#define FBID_SYS_GENERIC 1	//!<The generic part of the system
+#define FBID_SERIALIN_SPEC 2	//!< The implementation specific part of the serial_in process
+#define FBID_SERIALIN_GENERIC 3	//!< The generic part of the serial_in process
+#define FBID_SERIALOUT_SPEC 4	//!< The implementation specific part of the serial_out process
+#define FBID_SERIALOUT_GENERIC 5	//!< The generic part of the serial_out process
+#define FBID_PROTOCOL_SPEC 6	//!<The implementation specific part of the actual protocol -but up to now a protocol is planned as always generic, but not implementation speicif
+#define FBID_PROTOCOL_GENERIC 7	//!<The generic part of the actual protocol
+#define FBID_BUS_SPEC 8		//!<The implementation specific part of the actual bus
+#define FBID_BUS_GENERIC 9	//!<The generic part of the actual bus
 
 /*! 
 

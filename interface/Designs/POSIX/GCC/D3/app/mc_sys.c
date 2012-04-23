@@ -129,18 +129,18 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 			portBASE_TYPE upperValue, portBASE_TYPE duration,
 			portBASE_TYPE waveType)
 {
-    DEBUGPRINT("Pin: %ld to value %ld\n", pinID, upperValue);
+//    DEBUGPRINT("Pin: %ld to value %ld\n", pinID, upperValue);
     switch (pinID) {
     case IO_LED_WHITE:
-	DEBUGPRINT("IO_LED_WHITE set to %ld\n", upperValue);
+//	DEBUGPRINT("IO_LED_WHITE set to %ld\n", upperValue);
 	return pdTRUE;
 	break;
     case IO_LED_GREEN:
-	DEBUGPRINT("IO_LED_GREEN set to %ld\n", upperValue);
+//	DEBUGPRINT("IO_LED_GREEN set to %ld\n", upperValue);
 	return pdTRUE;
 	break;
     case IO_LED_RED:
-	DEBUGPRINT("IO_LED_RED set to %ld\n", upperValue);
+//	DEBUGPRINT("IO_LED_RED set to %ld\n", upperValue);
 	return pdTRUE;
 	break;
     case IO_BUZZER:
