@@ -161,12 +161,18 @@ class dbEntry
     fwrite($outFp,$this->index);
     fwrite($outFp,chr(0));
     if ($this->lt!=null){
-	self::printBinaryValue($outFp, $this->lt->start);
+// this is the output with the absolute file position
+//	self::printBinaryValue($outFp, $this->lt->start);
+// this is the output with the relative skip() jump length, counted from behind the second (gt) 4 byte binary value of the actual element
+	self::printBinaryValue($outFp, $this->lt->start-($this->start+strlen($this->index)+1+4+4+1));
     }else{
 	self::printBinaryValue($outFp, 0);
     }
     if ($this->gt!=null){
-	self::printBinaryValue($outFp, $this->gt->start);
+// this is the output with the absolute file position
+//	self::printBinaryValue($outFp, $this->gt->start);
+// this is the output with the relative skip() jump length, counted from behind the second (gt) 4 byte binary value of the actual element
+	self::printBinaryValue($outFp, $this->gt->start-($this->start+strlen($this->index)+1+4+4+1));
     }else{
 	self::printBinaryValue($outFp, 0);
     }
