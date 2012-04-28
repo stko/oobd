@@ -62,15 +62,15 @@ void obd_uds_init();
 
 
 /* define parameter types */
-#define PARAM_TIMEOUT 		    ( 0 )
-#define PARAM_TIMEOUT_PENDING       ( 1 )
-#define PARAM_BLOCKSIZE 	    ( 2 )
-#define PARAM_FRAME_DELAY 	    ( 3 )
-#define PARAM_RECVID  		    ( 4 )
-#define PARAM_TP_ON                 ( 5 )
-#define PARAM_TP_OFF                ( 6 )
-#define PARAM_TP_FREQ               ( 7 )
-#define PARAM_SENDID  		    ( 8 )
+#define PARAM_TIMEOUT 		    ( 1 )
+#define PARAM_TIMEOUT_PENDING       ( 2 )
+#define PARAM_BLOCKSIZE 	    ( 3 )
+#define PARAM_FRAME_DELAY 	    ( 4 )
+#define PARAM_RECVID  		    ( 5 )
+#define PARAM_TP_ON                 ( 6 )
+#define PARAM_TP_OFF                ( 7 )
+#define PARAM_TP_FREQ               ( 8 )
+#define PARAM_SENDID  		    ( 9 )
 /*! 
 
 

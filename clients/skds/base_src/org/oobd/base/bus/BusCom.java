@@ -300,7 +300,7 @@ class ComReader implements Runnable {
 				if (c > 31) {
 					res += (char) c;
 				}
-				if (c == 10) { // LF detected, condition meet
+				if (c == 13) { // CR detected, condition meet - LF (0x10) is completely ignored
 					// res+=".";
 					doLoop = res.equals("") && ignoreEmptyLines;
 				}
