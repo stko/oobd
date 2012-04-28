@@ -160,7 +160,7 @@ function setTimeout_OOBD(timeout)
   if hardwareID==2 then
     echoWrite("p 7 "..timeout.."\r")
   elseif hardwareID==3 then
-    echoWrite("p 6 0 "..timeout.."\r")
+    echoWrite("p 6 1 "..timeout.."\r")
   end
 end
 
@@ -170,7 +170,7 @@ function setSendID_OOBD(addr)
   if hardwareID==2 then
     echoWrite("p 16 "..addr.."\r")
   elseif hardwareID==3 then
-    echoWrite("p 6 8 "..addr.."\r")
+    echoWrite("p 6 9 "..addr.."\r")
   end
 end
 
@@ -247,17 +247,17 @@ function setModuleID(id)
   if hardwareID == 2 then
     echoWrite("p 11 $"..id.."\r")
   elseif hardwareID==3 then
-    echoWrite("p 6 4 $"..id.."\r")
+    echoWrite("p 6 5 $"..id.."\r")
   else
     echoWrite("atci "..id.."\r")
   end
 end
 
 function deactivateBus()
-  if hardwareID == "OOBD" then
-    echoWrite("p 5 0\r")
-  else
-    
+  if hardwareID == 2 then
+   echoWrite("p 5 0\r")
+   elseif hardwareID==3 then
+    echoWrite("p 8 2 0\r")
   end
 end
 
@@ -423,6 +423,7 @@ function readAnswerArray()
       answ=getStringPart(answ,3)
       return tonumber(answ) * -1 , res -- return error code as negative value
     end
+    answ=serReadLn(2000, true)
   end
   return #res , res -- return nr of lines and answer array
 end
