@@ -124,12 +124,12 @@ portBASE_TYPE bus_send_can(data_packet * data)
     int i;
     DEBUGPRINT("CAN- Send Buffer with len %ld\n", data->len);
     /*++++++++++++++++++++
-    for (i = 0; i < data->len; i++) {
-	printser_uint8ToHex(data->data[i]);
-	printser_string(" ");
-    }
-    printser_string("\r");
-    */
+       for (i = 0; i < data->len; i++) {
+       printser_uint8ToHex(data->data[i]);
+       printser_string(" ");
+       }
+       printser_string("\r");
+     */
     static xUDPPacket xPacket;
     xPacket.ucPacket[0] = data->recv & 0xFF;	//just use the LByte
     xPacket.ucPacket[1] = data->len;
@@ -226,7 +226,7 @@ portBASE_TYPE bus_param_can(param_data * args)
 	    CreateEventMsg(MSG_EVENT_BUS_CHANNEL, args->args[ARG_VALUE_1]);
 	    sysIoCtrl(5000, 0, args->args[ARG_VALUE_1], 0,	//5000 is just a dummy value, as a channel switch is not part of the generic part at all
 		      0);
-//	    vTaskDelay( 250 / portTICK_RATE_MS ); // wait to give the mechanic relay time to switch
+//          vTaskDelay( 250 / portTICK_RATE_MS ); // wait to give the mechanic relay time to switch
 	    createCommandResultMsg(FBID_BUS_SPEC,
 				   ERR_CODE_NO_ERR, 0, NULL);
 	    break;
