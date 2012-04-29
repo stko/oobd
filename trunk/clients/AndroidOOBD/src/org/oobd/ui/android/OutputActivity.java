@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.json.JSONException;
 import org.oobd.base.support.Onion;
@@ -26,7 +28,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import com.lamerman.*;
+//import com.lamerman.*;
 
 //http://code.google.com/p/android-file-dialog/
 
@@ -81,7 +83,7 @@ public class OutputActivity extends Activity {
 									public void onClick(DialogInterface dialog,
 											int item) {
 										if (item == 0) { // save locally
-											Intent intent = new Intent(
+/*											Intent intent = new Intent(
 													OutputActivity
 															.getInstance()
 															.getBaseContext(),
@@ -90,7 +92,13 @@ public class OutputActivity extends Activity {
 													FileDialog.START_PATH,
 													"/sdcard/OOBD");
 											startActivityForResult(intent, 1);
-										} else { // send it somehow
+*/
+											Intent intent = new Intent("org.openintents.action.PICK_FILE");
+											intent.putExtra(
+													Intent.EXTRA_TITLE,
+													"Save as text");
+											startActivityForResult(intent, 1);
+											} else { // send it somehow
 											Intent intent = new Intent(
 													Intent.ACTION_SEND);
 											intent.putExtra(
@@ -164,7 +172,13 @@ public class OutputActivity extends Activity {
 
 		if (resultCode == Activity.RESULT_OK) {
 
-			String filePath = data.getStringExtra(FileDialog.RESULT_PATH);
+			URI filePath = null;
+			try {
+				filePath = new URI(data.getDataString());
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			final File file = new File(filePath);
 			if (file.exists()) {
 				AlertDialog alertDialog = new AlertDialog.Builder(
