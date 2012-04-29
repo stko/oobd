@@ -32,11 +32,6 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>FileExplorer_src</name>
-			<type>2</type>
-			<locationURI>_android_FileExplorer_4b3dc9fb/src</locationURI>
-		</link>
-		<link>
 			<name>base_src</name>
 			<type>2</type>
 			<location>/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/base_src</location>

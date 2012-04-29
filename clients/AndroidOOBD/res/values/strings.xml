@@ -2,5 +2,5 @@
 <resources>
     <string name="app_name">OpenOnBoardDiagnostics</string>
     <string name="app_name_short">OOBD</string>
-    <string name="app_svnversion">308</string>
+    <string name="app_svnversion">309</string>
 </resources>
