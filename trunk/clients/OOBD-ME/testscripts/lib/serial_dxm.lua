@@ -375,7 +375,7 @@ function interface_voltage(oldvalue,id)
     answ=answ.." Volt"
     return answ
   elseif hardwareID == 3 then
-    echoWrite("p 1 0 0\r")
+    echoWrite("p 1 0 2\r")
     err, ans = readAnswerArray()
     if err <0 then
       return ans[1]
