@@ -341,7 +341,7 @@ function interface_version(oldvalue,id)
   elseif hardwareID == 3 then
     echoWrite("p 0 0 0\r")
     err, ans = readAnswerArray()
-    return ans[1]
+    return answ[1]
   else
     echoWrite("at!01\r")
     answ=serReadLn(2000, true)
@@ -358,7 +358,7 @@ function interface_serial(oldvalue,id)
   elseif hardwareID == 3 then
     echoWrite("p 0 0 1\r")
     err, ans = readAnswerArray()
-    return ans[1]
+    return answ[1]
   else
     echoWrite("at!00\r")
     answ=serReadLn(2000, true)
@@ -375,10 +375,10 @@ function interface_voltage(oldvalue,id)
     answ=answ.." Volt"
     return answ
   elseif hardwareID == 3 then
-    echoWrite("p 1 0 2\r")
+    echoWrite("p 0 0 2\r")
     err, ans = readAnswerArray()
     if err <0 then
-      return ans[1]
+      return answ[1]
     else
       answ=round(getStringPart(answ[1], 1)/1000, 2)
       answ=answ.." Volt"
@@ -449,7 +449,7 @@ function identifyOOBDInterface()
 	  setTimeout = setTimeout_OOBD
 	  setSendID = setSendID_OOBD
 	  hardwareID=2
-	  if hardware_model=="POSIX" or hardware_model=="dxm" then
+	  if hardware_model=="POSIX" or hardware_model=="D2" then
 	    if hardware_variant=="POSIX" or hardware_variant=="Lux-Wolf" then
 	      hardwareID=3
 	      --[[		    echoWrite("p 0 1 1\r") -- set protocol

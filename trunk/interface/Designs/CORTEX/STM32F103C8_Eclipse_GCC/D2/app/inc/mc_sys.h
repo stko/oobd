@@ -46,14 +46,14 @@
    */
 
 /* Values for PARAM_INFO - P 0 0 x */
-#define VALUE_PARAM_INFO_ADC_POWER      		( 1 )	//!< Outputs the actual device power supply voltage
-#define VALUE_PARAM_INFO_CPU_INFO 				( 2 )	//!< Outputs the actual CPU type
-#define VALUE_PARAM_INFO_MEM_LOC  				( 3 )	//!< Outputs the Mem Loc
-#define VALUE_PARAM_INFO_ROM_TABLE_LOC  		( 4 )	//!< Outputs the ROM Table Location
-#define VALUE_PARAM_INFO_FREE_HEAP_SIZE			( 5 )	//!< Outputs the free Heap
-#define VALUE_PARAM_INFO_CRC32					( 6 )	//!< Outputs the firmware CRC checksum result
-#define VALUE_PARAM_INFO_BTM222_DEVICENAME 		( 7 )	//!< Outputs the BT Devicename
-#define VALUE_PARAM_INFO_BTM222_UART_SPEED 		( 8 )	//!< Outputs the BT UART Speed
+#define VALUE_PARAM_INFO_ADC_POWER      		( 2 )	//!< Outputs the actual device power supply voltage
+#define VALUE_PARAM_INFO_CPU_INFO 				( 3 )	//!< Outputs the actual CPU type
+#define VALUE_PARAM_INFO_MEM_LOC  				( 4 )	//!< Outputs the Mem Loc
+#define VALUE_PARAM_INFO_ROM_TABLE_LOC  		( 5 )	//!< Outputs the ROM Table Location
+#define VALUE_PARAM_INFO_FREE_HEAP_SIZE			( 6 )	//!< Outputs the free Heap
+#define VALUE_PARAM_INFO_CRC32					( 7 )	//!< Outputs the firmware CRC checksum result
+#define VALUE_PARAM_INFO_BTM222_DEVICENAME 		( 8 )	//!< Outputs the BT Devicename
+#define VALUE_PARAM_INFO_BTM222_UART_SPEED 		( 9 )	//!< Outputs the BT UART Speed
 
 /*System specific IO- Pins */
 #define IO_REL1 	(0) + SYS_SPECIFIC_IO_OFFSET
