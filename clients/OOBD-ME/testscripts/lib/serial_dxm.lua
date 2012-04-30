@@ -340,7 +340,7 @@ function interface_version(oldvalue,id)
     return answ
   elseif hardwareID == 3 then
     echoWrite("p 0 0 0\r")
-    err, ans = readAnswerArray()
+    err, answ = readAnswerArray()
     return answ[1]
   else
     echoWrite("at!01\r")
@@ -357,7 +357,7 @@ function interface_serial(oldvalue,id)
     return answ
   elseif hardwareID == 3 then
     echoWrite("p 0 0 1\r")
-    err, ans = readAnswerArray()
+    err, answ = readAnswerArray()
     return answ[1]
   else
     echoWrite("at!00\r")
@@ -376,7 +376,7 @@ function interface_voltage(oldvalue,id)
     return answ
   elseif hardwareID == 3 then
     echoWrite("p 0 0 2\r")
-    err, ans = readAnswerArray()
+    err, answ = readAnswerArray()
     if err <0 then
       return answ[1]
     else
@@ -399,8 +399,8 @@ function interface_bus(oldvalue,id)
     return answ
   elseif hardwareID == 3 then
     echoWrite("p 8 0 0\r")
-    err, ans = readAnswerArray()
-    return ans[1]
+    err, answ = readAnswerArray()
+    return answ[1]
   else
     echoWrite("0100\r") -- first send something to let the DXM search for a available bus
     udsLen=receive()
