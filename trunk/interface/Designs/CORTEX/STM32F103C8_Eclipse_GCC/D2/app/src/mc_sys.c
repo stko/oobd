@@ -57,8 +57,6 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 
     DEBUGPRINT("sys specific parameter received: %ld / %ld\n",
 	       args->args[ARG_CMD], args->args[ARG_VALUE_1]);
-    switch (args->args[ARG_RECV]) {
-    case FBID_SYS_GENERIC:
     switch (args->args[ARG_CMD]) {
     case PARAM_INFO:
 	switch (args->args[ARG_VALUE_1]) {
@@ -84,22 +82,6 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 	    printLF();
 	    printEOT();
 	    break;
-	default:
-	    evalResult(FBID_SYS_SPEC, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT, 0,
-		       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
-	    break;
-	}
-	break;
-
-    default:
-	break;
-    }
-    break;
-    case FBID_SYS_SPEC:
-    switch (args->args[ARG_CMD]) {
-    case PARAM_INFO:
-	switch (args->args[ARG_VALUE_1]) {
-
 	case VALUE_PARAM_INFO_ADC_POWER:	
 	    printser_int((readADC1(8) * (3.15 / 4096)) * 10000, 10);	/* result in mV */
 	    printser_string(" mV");
@@ -190,15 +172,8 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 		       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 	    break;
 	}
-	break;
+    }
 
-    default:
-	break;
-    }
-    break;
-    default:
-	break;
-    }
 }
 
 portBASE_TYPE eval_param_sys_specific(param_data * args)
