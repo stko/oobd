@@ -74,7 +74,7 @@ void bus_param_can_generic_Print(portBASE_TYPE msgType, void *data,
     DEBUGPRINT("can Parameter receiced %ld-%ld\n", args->args[ARG_RECV],
 	       args->args[ARG_CMD]);
     if (args->args[ARG_CMD] == PARAM_INFO) {
-	switch (args->args[ARG_CMD]) {
+	switch (args->args[ARG_VALUE_1]) {
 	case VALUE_PARAM_INFO_VERSION:
 	    printser_string("CAN Bus");
 	    printLF();
@@ -148,6 +148,7 @@ void bus_param_can_generic_Print(portBASE_TYPE msgType, void *data,
 		printEOT();
 		break;
 	    }
+	    break;
 	default:
 	    evalResult(FBID_BUS_GENERIC,
 		       ERR_CODE_OS_UNKNOWN_COMMAND, 0,
