@@ -398,7 +398,7 @@ function interface_bus(oldvalue,id)
     answ=serReadLn(2000, true)
     return answ
   elseif hardwareID == 3 then
-    echoWrite("p 8 0 0\r")
+    echoWrite("p 9 0 0\r")
     err, answ = readAnswerArray()
     return answ[1]
   else
@@ -485,7 +485,7 @@ function SysInfo_Menu(oldvalue,id)
 	addElement("DXM BIOS", "interface_version","-",0x2, "")
 	addElement("Power", "interface_voltage","-",0x6, "")
 	addElement("Which Bus?", "interface_bus","-",0x2, "")
-	addElement("<<< Main", "Start","<<<",0x10, "")
+	addElement("<<< Main", "Main","<<<",0x10, "")
 	pageDone()
 	return oldvalue
 end
