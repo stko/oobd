@@ -63,7 +63,7 @@ void ilmTask(void *pvParameters)
     extern xQueueHandle ilmQueue;
     MsgData *msg;
     portBASE_TYPE msgType;
-    portBASE_TYPE activeBus = 1;
+    portBASE_TYPE activeBus = 2;
     Tone *tone = NULL;
     enum ledMode {
 	LED_OFF,
@@ -183,11 +183,15 @@ void ilmTask(void *pvParameters)
 		    DEBUGPRINT
 			("ILM Handler: MSG_EVENT_BUS_MODE event received\n",
 			 'a');
+		    Leds[activeBus].mode =
+			((portBASE_TYPE *) msg->addr) ==
+			MSG_EVENT_BUS_MODE_ON ? LED_ON : LED_OFF;
 		    break;
 		case MSG_EVENT_BUS_CHANNEL:
 		    DEBUGPRINT
 			("ILM Handler: MSG_EVENT_BUS_CHANNEL event received\n",
 			 'a');
+		    activeBus = (portBASE_TYPE *) msg->addr;
 		    break;
 		case MSG_EVENT_CMDLINE:
 		    DEBUGPRINT

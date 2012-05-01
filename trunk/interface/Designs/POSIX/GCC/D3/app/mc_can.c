@@ -160,7 +160,8 @@ void bus_flush_can()
 
 /*-----------------------------------------------------------*/
 
-void ParamPrint(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
+void bus_param_can_spec_Print(portBASE_TYPE msgType, void *data,
+			      printChar_cbf printchar)
 {
     param_data *args;
     args = data;
@@ -172,7 +173,7 @@ void ParamPrint(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 
 
 /*-----------------------------------------------------------*/
-portBASE_TYPE bus_param_can(param_data * args)
+portBASE_TYPE bus_param_can_spec(param_data * args)
 {
 
 
@@ -223,10 +224,12 @@ portBASE_TYPE bus_param_can(param_data * args)
 	switch (args->args[ARG_VALUE_1]) {
 	case 0:
 	case 1:
-	    CreateEventMsg(MSG_EVENT_BUS_CHANNEL, args->args[ARG_VALUE_1]);
+	    CreateEventMsg(MSG_EVENT_BUS_CHANNEL,
+			   args->args[ARG_VALUE_1] == 1 ? 1 : 2);
 	    sysIoCtrl(5000, 0, args->args[ARG_VALUE_1], 0,	//5000 is just a dummy value, as a channel switch is not part of the generic part at all
 		      0);
-//          vTaskDelay( 250 / portTICK_RATE_MS ); // wait to give the mechanic relay time to switch
+	    //! \bug this delay causes the protocol task to sleep for this time, but dring that his message queue runs full
+	    vTaskDelay(250 / portTICK_RATE_MS);	// wait to give the mechanic relay time to switch
 	    createCommandResultMsg(FBID_BUS_SPEC,
 				   ERR_CODE_NO_ERR, 0, NULL);
 	    break;

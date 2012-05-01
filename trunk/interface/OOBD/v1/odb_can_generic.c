@@ -65,9 +65,12 @@ print_telegram(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
     printLF();
 }
 
+
 /*-----------------------------------------------------------*/
-void bus_param_canPrint(param_data * args)
+void bus_param_can_generic_Print(portBASE_TYPE msgType, void *data,
+				 printChar_cbf printchar)
 {
+    param_data *args = data;
     DEBUGPRINT("can Parameter receiced %ld-%ld\n", args->args[ARG_RECV],
 	       args->args[ARG_CMD]);
     if (args->args[ARG_CMD] == PARAM_INFO) {
@@ -163,10 +166,24 @@ void bus_param_canPrint(param_data * args)
 
 /*-----------------------------------------------------------*/
 
-void odb_can_printParam(portBASE_TYPE msgType, param_data * args,
-			printChar_cbf printchar)
+portBASE_TYPE bus_param_can_generic(param_data * args)
 {
-    bus_param_canPrint(args);
+
+    switch (args->args[ARG_RECV]) {
+    case FBID_BUS_GENERIC:
+	CreateParamOutputMsg(args, bus_param_can_generic_Print);
+	break;
+    case FBID_BUS_SPEC:
+	bus_param_can_spec(args);
+	break;
+    default:
+	createCommandResultMsg(FBID_BUS_GENERIC,
+			       ERR_CODE_OS_UNKNOWN_COMMAND, 0,
+			       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+
+	break;
+    }
+
 }
 
 /*-----------------------------------------------------------*/
@@ -186,8 +203,8 @@ void odb_can_setup()
     actBus_init = bus_init_can;
     actBus_send = bus_send_can;
     actBus_flush = bus_flush_can;
-    actBus_param = bus_param_can;
-    actBus_paramPrint = bus_param_canPrint;
+    actBus_param = bus_param_can_generic;
+    actBus_paramPrint = bus_param_can_generic_Print;
     actBus_close = bus_close_can;
 }
 

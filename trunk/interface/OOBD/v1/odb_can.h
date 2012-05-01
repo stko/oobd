@@ -41,10 +41,20 @@
 portBASE_TYPE bus_init_can();
 portBASE_TYPE bus_send_can(data_packet * data);
 void bus_flush_can();
-portBASE_TYPE bus_param_can(param_data * args);
 void bus_close_can();
 
 void odb_can_init();
+
+
+portBASE_TYPE bus_param_can_spec(param_data * args);
+portBASE_TYPE bus_param_can_generic(param_data * args);
+void bus_param_can_generic_Print(portBASE_TYPE msgType, void *data,
+				 printChar_cbf printchar);
+void bus_param_can_spec_Print(portBASE_TYPE msgType, void *data,
+			      printChar_cbf printchar);
+
+
+
 
   /*! \defgroup prot_can_generic_parm Commands: Generic CAN Commands
      The generic CAN commands are as follows, where the command is as P 8 value ...
@@ -113,6 +123,8 @@ struct CanConfig {
      mode,			//!< id of actual used Tranceiver mode
      busConfig			//!< nr of actual used bus configuration
 };
+
+
 
 
 #endif				/* INC_ODB_CAN_H */
