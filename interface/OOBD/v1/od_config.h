@@ -91,7 +91,7 @@
 
 
 #define LEDFLASHTIME (100)	//!< LED long flash period time in ticks
-#define LEDFLASHTIMESHORT (20)	//!< LED short flash period time in ticks
+#define LEDFLASHTIMESHORT (10)	//!< LED short flash period time in ticks
 #define LED_SERIAL_TIMEOUT (1000)	//!< LED timeout for the serial input
 
 /*-------- Global Vars --------------*/
