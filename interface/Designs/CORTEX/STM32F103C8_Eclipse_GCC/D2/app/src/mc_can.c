@@ -119,28 +119,28 @@ portBASE_TYPE bus_param_can_spec(param_data * args) {
 	case PARAM_BUS_MODE:
 		switch (args->args[ARG_VALUE_1]) {
 		case VALUE_BUS_MODE_SILENT:
-			CAN1_Configuration(canConfig->busConfig, CAN_Mode_Silent); /* set CAN interface to silent mode */
+			CAN1_Configuration((uint8_t)canConfig->busConfig, CAN_Mode_Silent); /* set CAN interface to silent mode */
 			canConfig->bus = args->args[ARG_VALUE_1]; /* set config.bus to current value of Paramter */
 			// send event information to the ILM task
 			CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_OFF);
 			createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 			break;
 		case VALUE_BUS_MODE_LOOP_BACK:
-			CAN1_Configuration(canConfig->busConfig, CAN_Mode_LoopBack); /* set CAN interface to loop back mode */
+			CAN1_Configuration((uint8_t)canConfig->busConfig, CAN_Mode_LoopBack); /* set CAN interface to loop back mode */
 			canConfig->bus = args->args[ARG_VALUE_1]; /* set config.bus to current value of Paramter */
 			// send event information to the ILM task
 			CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
 			createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 			break;
 		case VALUE_BUS_MODE_LOOP_BACK_WITH_SILENT:
-			CAN1_Configuration(canConfig->busConfig, CAN_Mode_Silent_LoopBack); /* set CAN interface to loop back combined with silent mode */
+			CAN1_Configuration((uint8_t)canConfig->busConfig, CAN_Mode_Silent_LoopBack); /* set CAN interface to loop back combined with silent mode */
 			canConfig->bus = args->args[ARG_VALUE_1]; /* set config.bus to current value of Paramter */
 			// send event information to the ILM task
 			CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
 			createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 			break;
 		case VALUE_BUS_MODE_NORMAL:
-			CAN1_Configuration(canConfig->busConfig, CAN_Mode_Normal); /* set CAN interface to normal mode */
+			CAN1_Configuration((uint8_t)canConfig->busConfig, CAN_Mode_Normal); /* set CAN interface to normal mode */
 			canConfig->bus = args->args[ARG_VALUE_1]; /* set config.bus to current value of Paramter */
 			// send event information to the ILM task
 			CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
@@ -159,7 +159,7 @@ portBASE_TYPE bus_param_can_spec(param_data * args) {
 		switch (args->args[ARG_VALUE_1]) {
 		case 0:
 		case 1:
-			CreateEventMsg(MSG_EVENT_BUS_CHANNEL, args->args[ARG_VALUE_1]);
+			CreateEventMsg(MSG_EVENT_BUS_CHANNEL, args->args[ARG_VALUE_1] == 1 ? 1 : 2);
 			sysIoCtrl(IO_REL1, 0, args->args[ARG_VALUE_1], 0, 0);
 			//! \bug this delay causes the protocol task to sleep for this time, but dring that his message queue runs full
 			vTaskDelay( 250 / portTICK_RATE_MS ); // wait to give the mechanic relay time to switch
