@@ -427,10 +427,19 @@ end
 ---------------------- Main Menu --------------------------------------
 
 -- This function is called at start and at each re- coonect, so all neccesary (re-)initalisation needs to be done here
-
-
 function Start(oldvalue,id)
 	identifyOOBDInterface()
+	Main(oldvalue,id)
+	return oldvalue
+end
+
+function CloseScript(oldvalue,id)
+	deactivateBus()
+	return oldvalue
+end
+
+function Main(oldvalue,id)
+	deactivateBus()
 	setBus(BusID)
 	setSendID("$7E8") -- set not UDS compatible sender (=answer) address for OOBD firmware
 	setBus("HS-CAN")
@@ -448,10 +457,6 @@ function Start(oldvalue,id)
 end
 
 
-function CloseScript(oldvalue,id)
-	deactivateBus()
-	return oldvalue
-end
 ----------------- Do the initial settings --------------
 
 Start("","")
