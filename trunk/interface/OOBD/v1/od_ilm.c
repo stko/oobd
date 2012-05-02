@@ -184,14 +184,14 @@ void ilmTask(void *pvParameters)
 			("ILM Handler: MSG_EVENT_BUS_MODE event received\n",
 			 'a');
 		    Leds[activeBus].mode =
-			((portBASE_TYPE *) msg->addr) ==
+			(*(portBASE_TYPE *) msg->addr) ==
 			MSG_EVENT_BUS_MODE_ON ? LED_ON : LED_OFF;
 		    break;
 		case MSG_EVENT_BUS_CHANNEL:
-		    DEBUGPRINT
+			DEBUGPRINT
 			("ILM Handler: MSG_EVENT_BUS_CHANNEL event received\n",
 			 'a');
-		    activeBus = (portBASE_TYPE *) msg->addr;
+		    activeBus = (*(portBASE_TYPE *) msg->addr);
 		    break;
 		case MSG_EVENT_CMDLINE:
 		    DEBUGPRINT
