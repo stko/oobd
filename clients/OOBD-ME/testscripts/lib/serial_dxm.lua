@@ -287,8 +287,9 @@ function setBus(bus)
       echoWrite("p 8 3 11\r")
       echoWrite("p 8 4 1\r")
     end
+    serWait(".|:",2000) // wait 2 secs for an response
    -- activate bus
-      echoWrite("p 8 2 3\r")
+    echoWrite("p 8 2 3\r")
     
   end
 end
