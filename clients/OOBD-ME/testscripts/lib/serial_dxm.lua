@@ -20,7 +20,7 @@ serDisplayWrite = serDisplayWriteCall
 --[[
 readcount= 1
 input = {}
-input[1]="OOBD D2 212"
+input[1]="OOBD D2 212 Lux-Wolf Ostern"
 input[2]="Searching"
 input[3]="41 00 FF FF FF FF"
 input[4]=">"
@@ -90,6 +90,31 @@ setSendID =null
 hardwareID =0
 firmware_revision=""
 hardware_model=""
+
+
+
+
+---------------------- Greetings --------------------------------------
+
+function greet(oldvalue,id)
+	serDisplayWrite("Thanks to")
+	serDisplayWrite("")
+	serDisplayWrite("Mike Luxen")
+	serDisplayWrite("Joseph Urhahne")
+	serDisplayWrite("Wolfgang Sauer")
+	serDisplayWrite("Peter Mayer")
+	serDisplayWrite("Axel Bullwinkel")
+	serDisplayWrite("Uli Schmoll")
+	serDisplayWrite("Wolfgang Sommer")
+	serDisplayWrite("Günter Römer")
+	serDisplayWrite("Ekkehard Pofahl")
+	serDisplayWrite("Dennis Kurzweil")
+	serDisplayWrite("Martin F.")
+	serDisplayWrite("")
+	serDisplayWrite("and to all the others,")
+	serDisplayWrite("who made this possible")
+	return oldvalue
+end
 
 
 
@@ -435,6 +460,8 @@ function identifyOOBDInterface()
 	if openChannel ~= nil then
 	  openChannel("serial")
 	end 
+	-- clean input queue
+	echoWrite("\r\r\r")
 	-- Abfrage auf OOBD -interfae
 	echoWrite("p 0 0 \r")
 	answ=serReadLn(2000, false)
