@@ -2,20 +2,27 @@ include local.make
 
 
 
-LIB=lib
+SOURCES= OOBD.lua
+
+
+
+
+LUALIB=lib
+
 #CFLAGS=-u $(AUTHOR) -I $(LIB) -x $(RSAID)
 CFLAGS=
 
-SOURCES= OOBD.lua
 
 OBJECTS=$(SOURCES:.lua=.lbc)
-
-%.lbc: %.lua   $(LIB)/serial_dxm.lua
-	$(CC) $(CFLAGS)-o $@ $(LIB)/serial_dxm.lua $<
+%.lbc: %.lua 
+	$(OLP) $<  | $(CC) $(CFLAGS) -o $@ -
 	$(CP) $@ $(LBCPATH)/
 
 
-all: $(OBJECTS)
+
+all:  scripts 
+
+scripts: $(OBJECTS)  $(LUALIB)/serial_dxm.lua 
 
 
 clean:

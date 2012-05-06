@@ -4,6 +4,9 @@ OOBD.lua
 
 local BusID = "HS-CAN";
 
+
+dofile("lib/serial_dxm.lua")
+
 ---------------------- Vehicle Info Menu --------------------------------------
 
 
@@ -400,30 +403,6 @@ function showdtcs(oldvalue,id)
 end
 
 
-
-
----------------------- Greetings --------------------------------------
-
-function greet(oldvalue,id)
-	serDisplayWrite("Testscript für externe Datei!!!!")
-	serDisplayWrite("")
-	serDisplayWrite("Mike Luxen")
-	serDisplayWrite("Joseph Urhahne")
-	serDisplayWrite("Wolfgang Sauer")
-	serDisplayWrite("Peter Mayer")
-	serDisplayWrite("Axel Bullwinkel")
-	serDisplayWrite("Uli Schmoll")
-	serDisplayWrite("Wolfgang Sommer")
-	serDisplayWrite("Günter Römer")
-	serDisplayWrite("Ekkehard Pofahl")
-	serDisplayWrite("Dennis Kurzweil")
-	serDisplayWrite("Martin F.")
-	serDisplayWrite("Arnd Bensch")
-	serDisplayWrite("")
-	serDisplayWrite("and to all the others,")
-	serDisplayWrite("who made this possible")
-	return oldvalue
-end
 ---------------------- Main Menu --------------------------------------
 
 -- This function is called at start and at each re- coonect, so all neccesary (re-)initalisation needs to be done here
