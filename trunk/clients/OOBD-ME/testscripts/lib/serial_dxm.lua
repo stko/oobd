@@ -309,7 +309,7 @@ function setBus(bus)
       echoWrite("p 8 3 3\r")
       echoWrite("p 8 4 0\r")
     elseif bus == "MS-CAN" then
-      echoWrite("p 8 3 11\r")
+      echoWrite("p 8 3 1\r")
       echoWrite("p 8 4 1\r")
     end
     serWait(".|:",2000) -- wait 2 secs for an response
