@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -41,7 +41,7 @@ namespace org.oobd.tools.OpenDiagX
             string name = nav.Name;
             if (nav.HasChildren)
             {
-                nav.MoveToFirstChild();
+                //nav.MoveToFirstChild();
                 // Security Bytes
                 XPathNodeIterator iterator = nav.Select("/MDX/ECU_DATA/SECURITY_DATA/FIXED_BYTES/FIXED_BYTE");
                 String SecCode = "";
@@ -54,16 +54,16 @@ namespace org.oobd.tools.OpenDiagX
                     addTextnode(root, "SecCode", SecCode);
                 }
                 //Module Address
-                addTextnode(root, "PhysAdress", strRight(getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS"),3));
-                addTextnode(root, "Bus", getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/NAME"));
-                addTextnode(root, "BusSpeed", getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/DATA_RATE"));
-                addTextnode(root, "PhysAdressShort", strRight(getpath(nav, "PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS"), 2));
+                addTextnode(root, "PhysAdress", strRight(getpath(nav, "/MDX/PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS"),3));
+                addTextnode(root, "Bus", getpath(nav, "/MDX/PROTOCOL/PHYSICAL_AND_LINK_LAYER/NAME"));
+                addTextnode(root, "BusSpeed", getpath(nav, "/MDX/PROTOCOL/PHYSICAL_AND_LINK_LAYER/DATA_RATE"));
+                addTextnode(root, "PhysAdressShort", strRight(getpath(nav, "/MDX/PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS"), 2));
                 //Module Short Name
-                addTextnode(root, "ShortName", getpath(nav, "ADMINISTRATION/SHORTNAME"));
+                addTextnode(root, "ShortName", getpath(nav, "/MDX/ADMINISTRATION/SHORTNAME"));
                 //Module Name
-                addTextnode(root, "Name", getpath(nav, "ADMINISTRATION/ECU_NAME"));
+                addTextnode(root, "Name", getpath(nav, "/MDX/ADMINISTRATION/ECU_NAME"));
                 //SSDS Part Number
-                addTextnode(root, "SSDSPartNo", getpath(nav, "ADMINISTRATION/SSDS_INFORMATION/SSDS_PART_NUMBER"));
+                addTextnode(root, "SSDSPartNo", getpath(nav, "/MDX/ADMINISTRATION/SSDS_INFORMATION/SSDS_PART_NUMBER"));
 
                 // es fehlt: "PROTOCOL/APPLICATION_LAYER/SECURITY_LEVELS_SUPPORTED/SECURITY_LEVEL"
                 // es fehlt: "ECU_DATA/DATA_IDENTIFIERS/DID...."
@@ -230,14 +230,14 @@ namespace org.oobd.tools.OpenDiagX
                     //addTextnode(thisDIDEntry, "Resolution", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION"));
                     try2addTextnode(thisDIDEntry, iterator2.Current, "Resolution", "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION", "1");
                     //addTextnode(thisDIDEntry, "Offset", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET"));
-                    try2addTextnode(thisDIDEntry, iterator2.Current, "Offset", "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET", "1");
+                    try2addTextnode(thisDIDEntry, iterator2.Current, "Offset", "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET", "0");
                     //addTextnode(thisDIDEntry, "Units", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS"));
                     try2addTextnode(thisDIDEntry, iterator2.Current, "Units", "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS", "");
                 }
                 else
                 {
                     addTextnode(thisDIDEntry, "Resolution", "1");
-                    addTextnode(thisDIDEntry, "Offset", "1");
+                    addTextnode(thisDIDEntry, "Offset", "0");
                     addTextnode(thisDIDEntry, "Units", "");
                 }
             }
