@@ -36,7 +36,8 @@ typedef void (*pFunction) (void);
 /* Constants used by Serial Command Line Mode */
 #define CMD_STRING_SIZE       128
 
-#define ApplicationAddress    0x8002400
+// need to disable the ApplicationAddress constant here 
+//#define ApplicationAddress    0x8002400
 #define STM32F10X_MD
 #if defined (STM32F10X_MD) || defined (STM32F10X_MD_VL)
 #define PAGE_SIZE                         (0x400)	/* 1 Kbyte */
@@ -55,7 +56,8 @@ typedef void (*pFunction) (void);
 #endif
 
 /* Compute the FLASH upload image size */
-#define FLASH_IMAGE_SIZE                   (uint32_t) (FLASH_SIZE - (ApplicationAddress - 0x08000000))
+//#define FLASH_IMAGE_SIZE                   (uint32_t) (FLASH_SIZE - (ApplicationAddress - 0x08000000))
+#define FLASH_IMAGE_SIZE                   (uint32_t) (FLASH_SIZE )
 
 /* Exported macro ------------------------------------------------------------*/
 /* Common routines */
