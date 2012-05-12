@@ -31,6 +31,10 @@
 uint8_t file_name[FILE_NAME_LENGTH];
 /* Flash user program offset => -4 to  add application size at the end of Flashloader flash area*/
 // no real flash -> no flash variables ;-)
+
+// Simulate the Application MEM with a buffer
+uint8_t ApplicationAddress[FLASH_SIZE];
+
 uint32_t FlashDestination = ApplicationAddress - 4;
 uint16_t PageSize = PAGE_SIZE;
 uint32_t EraseCounter = 0x0;
@@ -53,7 +57,6 @@ static int32_t Receive_Byte(uint8_t * c, uint32_t timeout)
 	if (SerialKeyPressed(c) == 1) {
 	    return 0;
 	}
-	printf("Receive_Byte timeout: %d\n", timeout);
     }
     return -1;
 }
@@ -66,6 +69,7 @@ static int32_t Receive_Byte(uint8_t * c, uint32_t timeout)
 static uint32_t Send_Byte(uint8_t c)
 {
     SerialPutChar(c);
+    printf("Send Byte: 0x%2X\n", c);
     return 0;
 }
 
@@ -92,17 +96,18 @@ Receive_Packet(uint8_t * data, int32_t * length, uint32_t timeout)
 	printf("No start byte received - exit Receive_Packet\n");
 	return -1;
     }
+    printf("Ending Receive_Packet\n");
     switch (c) {
     case SOH:
-        printf("Packet Normal Size\n");
+	printf("Packet Normal Size\n");
 	packet_size = PACKET_SIZE;
 	break;
     case STX:
-       printf("Packet 1K Size\n");
+	printf("Packet 1K Size\n");
 	packet_size = PACKET_1K_SIZE;
 	break;
     case EOT:
-       printf("Packet EOT\n");
+	printf("Packet EOT\n");
 	return 0;
     case CA:
 	if ((Receive_Byte(&c, timeout) == 0) && (c == CA)) {
@@ -113,7 +118,7 @@ Receive_Packet(uint8_t * data, int32_t * length, uint32_t timeout)
 	}
     case ABORT1:
     case ABORT2:
-       printf("Packet Aboert\n");
+	printf("Packet Abort\n");
 	return 1;
     default:
 	return -1;
@@ -121,11 +126,13 @@ Receive_Packet(uint8_t * data, int32_t * length, uint32_t timeout)
     *data = c;
     for (i = 1; i < (packet_size + PACKET_OVERHEAD); i++) {
 	if (Receive_Byte(data + i, timeout) != 0) {
+	    printf("Error 1 moving data\n");
 	    return -1;
 	}
     }
     if (data[PACKET_SEQNO_INDEX] != ((data[PACKET_SEQNO_COMP_INDEX] ^ 0xff)
 				     & 0xff)) {
+	printf("Error 2 moving data\n");
 	return -1;
     }
     *length = packet_size;
@@ -153,6 +160,7 @@ int32_t Ymodem_Receive(uint8_t * buf)
 		    /* Abort by sender */
 		case -1:
 		    Send_Byte(ACK);
+		    printf("end of transmission\n");
 		    return 0;
 		    /* End of transmission */
 		case 0:
@@ -167,7 +175,7 @@ int32_t Ymodem_Receive(uint8_t * buf)
 		    } else {
 			if (packets_received == 0) {
 			    /* Filename packet */
-				printf("Filename Packet recv.\n");
+			    printf("Filename Packet recv.\n");
 			    if (packet_data[PACKET_HEADER] != 0) {
 				/* Filename packet has valid data */
 				for (i = 0, file_ptr = packet_data
@@ -176,13 +184,13 @@ int32_t Ymodem_Receive(uint8_t * buf)
 				    file_name[i++] = *file_ptr++;
 				}
 				file_name[i++] = '\0';
-				printf("Filename recv: %s\n",file_name);
+				printf("Filename recv: %s\n", file_name);
 				for (i = 0, file_ptr++; (*file_ptr != ' ')
 				     && (i < FILE_SIZE_LENGTH);) {
 				    file_size[i++] = *file_ptr++;
 				}
 				file_size[i++] = '\0';
-				printf("Filesize recv: %s\n",file_size);
+				printf("Filesize recv: %s\n", file_size);
 				Str2Int(file_size, &size);
 				/* Test the size of the image to be sent */
 				/* Image size is greater than Flash size */
@@ -224,26 +232,36 @@ int32_t Ymodem_Receive(uint8_t * buf)
 			}
 			/* Data packet */
 			else {
+			    printf("begin MemCopy data\n");
 			    memcpy(buf_ptr, packet_data + PACKET_HEADER,
 				   packet_length);
+			    printf("MemCopy data 1\n");
 			    RamSource = (uint32_t) buf;
 			    for (j = 0; (j < packet_length)
 				 && (FlashDestination < (ApplicationAddress
 							 - 4) + size);
 				 j += 4) {
+				printf
+				    ("j: %d packet_length: %d  FlashDestination %d ApplicationAddress %d Size %d\n",
+				     j, packet_length, FlashDestination,
+				     ApplicationAddress, size);
+
 				/* Program the data received into STM32F10x Flash */
 //                              FLASH_ProgramWord(FlashDestination,  *(uint32_t *) RamSource);
 				if (*(uint32_t *) FlashDestination
 				    != *(uint32_t *) RamSource) {
 				    /* End session */
+				    printf("MemCopy data 2\n");
 				    Send_Byte(CA);
 				    Send_Byte(CA);
 				    return -2;
 				}
+				printf("MemCopy data 3\n");
 				FlashDestination += 4;
 				RamSource += 4;
 			    }
 			    Send_Byte(ACK);
+			    printf("End MemCopy data\n");
 			}
 			packets_received++;
 			session_begin = 1;
@@ -274,6 +292,7 @@ int32_t Ymodem_Receive(uint8_t * buf)
 	    break;
 	}
     }
+    printf("return recv. file size: %d \n", size);
     return (int32_t) size;
 }
 
