@@ -17,7 +17,9 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <table>
 <tr><td>Name:</td><td><xsl:value-of select="./Name"/></td></tr>
 <tr><td>Short Name:</td><td><xsl:value-of select="./ShortName"/></td></tr>
-<tr><td>Module-Address:</td><td>0x7<xsl:value-of select="./PhysAdressShort"/></td></tr>
+<tr><td>Module-Address:</td><td>0x<xsl:value-of select="./PhysAdress"/></td></tr>
+<tr><td>Response-Address:</td><td>0x<xsl:value-of select="./RespAdress"/></td></tr>
+<tr><td>Functional-Address:</td><td>0x<xsl:value-of select="./FuncAdress"/></td></tr>
 <tr><td>Bus:</td><td><xsl:value-of select="./Bus"/></td></tr>
 </table>
 
