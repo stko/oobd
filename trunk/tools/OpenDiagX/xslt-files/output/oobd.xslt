@@ -13,7 +13,9 @@ dofile("../lib_uds/module.lua")
 <xsl:template match="oobdobx">
 local moduleName = '<xsl:value-of select="./Name"/>'
 local shortName = '<xsl:value-of select="./ShortName"/>'
-local ModuleID = "7<xsl:value-of select="./PhysAdressShort"/>";
+local ModuleID = "<xsl:value-of select="./PhysAdress"/>";
+local ResponseID = "<xsl:value-of select="./RespAdress"/>";
+local FunctionalID = "<xsl:value-of select="./FuncAdress"/>";
 local BusID = "<xsl:value-of select="./Bus"/>";
 
 --[[
