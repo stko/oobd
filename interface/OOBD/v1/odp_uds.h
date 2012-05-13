@@ -39,6 +39,14 @@
 
 void obd_uds_init();
 
+// Add obd_uds_init() to the list of protocols to be initialized
+
+#define DUMMY LIST_OF_PROTOCOLS_TO_INITIALIZE obd_uds_init();
+#undef LIST_OF_PROTOCOLS_TO_INITIALIZE
+#define LIST_OF_PROTOCOLS_TO_INITIALIZE DUMMY obd_uds_init();
+#undef DUMMY
+
+
 //! UDS protocol Error constants and texts
 #define ERR_CODE_UDS_DATA_TOO_LONG_ERR 1
 #define ERR_CODE_UDS_DATA_TOO_LONG_ERR_TEXT "<- Data block longer 4095 Bytes"

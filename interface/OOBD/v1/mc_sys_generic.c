@@ -48,6 +48,10 @@ char *oobd_Error_Text_OS[] = {
 };
 
 
+//startupProtocol and startupBus need to be static to "be there" when another task get started with their address as parameter
+portBASE_TYPE startupProtocol;
+portBASE_TYPE startupBus;
+
 
 void mc_init_sys_boot()
 {
@@ -146,6 +150,21 @@ portBASE_TYPE eval_param_sys(param_data * args)
 void mc_init_sys_tasks()
 {
     DEBUGPRINT("init system tasks\n", 'a');
+    startupProtocol = mc_sys_get_startupProtocol();
+    startupBus = mc_sys_get_startupBus();
+    DEBUGPRINT("Inital protocol: %d\n", startupProtocol);
+    DEBUGPRINT("Inital bus: %d\n", startupBus);
+    //! \todo move the task generation into the mc_sys_generic.c file
+    /* starting with UDS protocol of the list by default */
+    if (pdPASS ==
+	xTaskCreate(odparr[startupProtocol],
+		    (const signed portCHAR *) "prot",
+		    configMINIMAL_STACK_SIZE, (void *) &startupBus,
+		    TASK_PRIO_LOW, &xTaskProtHandle))
+	DEBUGPRINT("*** 'prot' Task created ***\n", 'a');
+    else
+	DEBUGPRINT("*** 'prot' Task NOT created ***\n", 'a');
+
     mc_init_sys_tasks_specific();
 }
 

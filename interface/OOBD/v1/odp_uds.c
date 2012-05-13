@@ -269,7 +269,7 @@ void obp_uds(void *pvParameters)
     int keeprunning = 1;
     data_packet *dp;
     data_packet actDataPacket;
-
+    portBASE_TYPE busToUse = *(portBASE_TYPE *) pvParameters;
 /* function pointers to the bus interface */
     extern bus_init actBus_init;
     extern bus_send actBus_send;
@@ -314,8 +314,9 @@ void obp_uds(void *pvParameters)
     portBASE_TYPE timeout = 0;
     blockSize_BS = 0;
     separationTime_ST = 0;
-    /* select the can bus as output */
-    odbarr[ODB_CAN] ();
+    DEBUGPRINT("Start Bus nr %d\n", busToUse);
+    /* activate the bus... */
+    odbarr[busToUse] ();
     actBus_init();
     /* tell the Rx-ISR about the function to use for received data */
     busControl(ODB_CMD_RECV, odp_uds_recvdata);
