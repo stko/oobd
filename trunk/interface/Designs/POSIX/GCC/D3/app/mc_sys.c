@@ -57,6 +57,20 @@ void mc_init_sys_shutdown_specific()
     DEBUGPRINT("shutdown the MC specific systems\n", 'a');
 }
 
+
+portBASE_TYPE mc_sys_get_startupProtocol()
+{
+    return VALUE_PARAM_PROTOCOL_CAN_UDS;
+}
+
+portBASE_TYPE mc_sys_get_startupBus()
+{
+
+    return ODB_CAN;
+}
+
+
+
 void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 			     printChar_cbf printchar)
 {
@@ -152,6 +166,14 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 	return pdFALSE;
 	break;
     }
+}
+
+
+
+portBASE_TYPE sysSound(portBASE_TYPE frequency, portBASE_TYPE volume)
+{
+    DEBUGPRINT("Play frequency of %d Hz for %d ticks duration\n",
+	       frequency, volume);
 }
 
 

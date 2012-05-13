@@ -134,15 +134,7 @@ int main(void)
 
     // Version String
     DEBUGPRINT("OOBD Build: %s\n", SVNREV);
-
-    //! \todo move the task generation into the mc_sys_generic.c file
-    /* starting with UDS protocol of the list by default */
-    if (pdPASS == xTaskCreate(odparr[1], (const signed portCHAR *) "prot",
-			      configMINIMAL_STACK_SIZE, (void *) NULL,
-			      TASK_PRIO_LOW, &xTaskProtHandle))
-	DEBUGPRINT("*** 'prot' Task created ***\n", 'a');
-    else
-	DEBUGPRINT("*** 'prot' Task NOT created ***\n", 'a');
+    mc_init_sys_tasks();
 
     if (pdPASS == xTaskCreate(tickTask, (const signed portCHAR *) "Tick",
 			      configMINIMAL_STACK_SIZE, (void *) NULL,
@@ -151,7 +143,6 @@ int main(void)
     else
 	DEBUGPRINT("*** 'Tick' Task NOT created ***\n", 'a');
 
-    mc_init_sys_tasks();
 
 
     /* Set the scheduler running.  This function will not return unless a task calls vTaskEndScheduler(). */

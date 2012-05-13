@@ -69,6 +69,8 @@ void mc_init_sys_boot_specific();
 void mc_init_sys_tasks_specific();
 void mc_init_sys_shutdown_specific();
 
+portBASE_TYPE mc_sys_get_startupProtocol();	//!< get startup Protocol
+portBASE_TYPE mc_sys_get_startupBus();	//! get startup Bus
 
 
 /** \brief handles input parameters

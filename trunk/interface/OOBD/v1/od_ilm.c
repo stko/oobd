@@ -46,12 +46,14 @@ typedef struct {
      thanks to http://www.run.montefiore.ulg.ac.be/~martin/resources/kung-f00.html !!
    */
 Tone *sounds[2] =
-    { (Tone[]){{1, 10}, {2, 10}, {3, 10}, {0, 0}}, (Tone[]){{4, 10},
-							    {5, 10}, {6,
-								      10},
-							    {7, 10}, {8,
-								      10},
-							    {0, 0}}
+    { (Tone[]){{440, 50}, {0, 50}, {440, 80}, {0, 0}}, (Tone[]){{4, 10},
+								{5, 10},
+								{6,
+								 10},
+								{7, 10},
+								{8,
+								 10},
+								{0, 0}}
 };
 
 /*-----------------------------------------------------------*/
@@ -65,6 +67,7 @@ void ilmTask(void *pvParameters)
     portBASE_TYPE msgType;
     portBASE_TYPE activeBus = 2;
     Tone *tone = NULL;
+    portBASE_TYPE toneDuration;
     enum ledMode {
 	LED_OFF,
 	LED_FLASH,
@@ -96,15 +99,8 @@ void ilmTask(void *pvParameters)
 	}
 	// test only
 	tone = sounds[0];
-	DEBUGPRINT("tone 0: %ld\n", *tone);
-	DEBUGPRINT("sound address 0: %lX\n", sounds[0]);
-	DEBUGPRINT("sound  0: %ld\n", sounds[0]);
-	DEBUGPRINT("sound address 1: %lX\n", sounds[1]);
-	DEBUGPRINT("sound 1: %ld\n", sounds[1]);
-	tone++;
-	DEBUGPRINT("tone pointer: %lX\n", *tone);
-	DEBUGPRINT("tone content: %ld\n", tone);
-	tone = sounds[0];
+	toneDuration = tone->duration;
+	sysSound(tone->freq, tone->duration);
 	for (;;) {
 	    if (MSG_NONE !=
 		(msgType = waitMsg(ilmQueue, &msg, portMAX_DELAY)))
@@ -115,8 +111,7 @@ void ilmTask(void *pvParameters)
 		    ledTick++;
 		    for (i = 0; i < 3; i++) {
 			if (Leds[i].backwardTickCounterSinceLastIncomingEvent > 0) {	// reduce the tick counter since the last event
-			    Leds[i].
-				backwardTickCounterSinceLastIncomingEvent--;
+			    Leds[i].backwardTickCounterSinceLastIncomingEvent--;
 			    if (Leds[i].backwardTickCounterSinceLastIncomingEvent == 0 && Leds[i].mode == LED_ON) {	// timeout reached to switch back from permanent Light to flashing
 				Leds[i].mode = LED_FLASH;
 				Leds[i].lostConnectionFlag = pdTRUE;
@@ -158,15 +153,16 @@ void ilmTask(void *pvParameters)
 		    }
 		    // manage the beep
 		    if (tone != NULL) {
-			DEBUGPRINT
-			    ("ILM Handler: play Sound frequency %ld \n",
-			     tone->freq);
-			DEBUGPRINT
-			    ("ILM Handler: play Sound duration %ld \n",
-			     tone->duration);
-			tone++;
-			if (tone->duration == 0) {
-			    tone = NULL;
+			toneDuration--;
+			if (toneDuration < 1) {
+			    tone++;
+			    if (tone->duration == 0) {
+				sysSound(0, 0);	//stop sound
+				tone = NULL;
+			    } else {
+				toneDuration = tone->duration;	//load next tone
+				sysSound(tone->freq, tone->duration);
+			    }
 			}
 		    }
 		    break;
@@ -177,7 +173,9 @@ void ilmTask(void *pvParameters)
 		    Leds[activeBus].mode = LED_ON;
 		    Leds[activeBus].actualOnStatus = pdTRUE;
 		    Leds[activeBus].flickerTime = LEDFLASHTIMESHORT;
-		    Leds[activeBus].backwardTickCounterSinceLastIncomingEvent = LED_SERIAL_TIMEOUT;
+		    Leds[activeBus].
+			backwardTickCounterSinceLastIncomingEvent =
+			LED_SERIAL_TIMEOUT;
 		    break;
 		case MSG_EVENT_BUS_MODE:
 		    DEBUGPRINT
@@ -188,7 +186,7 @@ void ilmTask(void *pvParameters)
 			MSG_EVENT_BUS_MODE_ON ? LED_ON : LED_OFF;
 		    break;
 		case MSG_EVENT_BUS_CHANNEL:
-			DEBUGPRINT
+		    DEBUGPRINT
 			("ILM Handler: MSG_EVENT_BUS_CHANNEL event received\n",
 			 'a');
 		    activeBus = (*(portBASE_TYPE *) msg->addr);
@@ -200,7 +198,9 @@ void ilmTask(void *pvParameters)
 		    Leds[IO_LED_WHITE].mode = LED_ON;
 		    Leds[IO_LED_WHITE].actualOnStatus = pdTRUE;
 		    Leds[IO_LED_WHITE].flickerTime = LEDFLASHTIMESHORT;
-		    Leds[IO_LED_WHITE].backwardTickCounterSinceLastIncomingEvent = LED_SERIAL_TIMEOUT;
+		    Leds[IO_LED_WHITE].
+			backwardTickCounterSinceLastIncomingEvent =
+			LED_SERIAL_TIMEOUT;
 		    break;
 		default:
 		    {
