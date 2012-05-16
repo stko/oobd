@@ -200,6 +200,11 @@ portBASE_TYPE eval_param_sys_specific(param_data * args) {
 		return pdTRUE;
 		break;
 
+	case PARAM_SET_PROTOCOL_AND_BUS_DEFAULT:
+			createCommandResultMsg(FBID_SYS_SPEC,
+					ERR_CODE_OS_COMMAND_NOT_SUPPORTED, 0,
+					ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
+			return pdFALSE;
 	default:
 		createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_OS_UNKNOWN_COMMAND, 0,
 				ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);

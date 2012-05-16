@@ -63,13 +63,28 @@ char outputBuffer[100];
 
 void initProtocols()
 {
+
+
+    // Clean up the protocol array first before initialize it
+    int i;
+    for (i = 0; i < SYS_NR_OF_PROTOCOLS; i++)
+	odparr[i] = NULL;
+
     //! \todo here all protocols and busses needs to be initialized, but not hardcoded the uds- protocol
     //LIST_OF_PROTOCOLS_TO_INITIALIZE
+
+
+
+
     obd_uds_init();
 }
 
 void initBusses()
 {
+    // Clean up the bus array first before initialize it
+    int i;
+    for (i = 0; i < SYS_NR_OF_BUSSES; i++)
+	odbarr[i] = NULL;
     //LIST_OF_BUSSES_TO_INITIALIZE
     odb_can_init();
 }

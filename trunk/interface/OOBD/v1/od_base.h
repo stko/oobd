@@ -158,6 +158,7 @@ the first value x of a parameter command (p x ...) adresses the functional block
 #define MSG_EVENT_BUS_MODE		( 13 )	//!< message to ilm handler: bus mode has changed
 #define MSG_EVENT_BUS_CHANNEL		( 14 )	//!< message to ilm handler: bus channel has changed. value= selected channel
 #define MSG_EVENT_CMDLINE		( 15 )	//!< message to ilm handler: serial input line received
+#define MSG_PROTOCOL_STOP		( 16 )	//!< tells the  protocol to quit
 
 //! Global Event values
 #define MSG_EVENT_BUS_MODE_OFF		( 0 )	//!< message value of MSG_EVENT_BUS_MODE: Bus is offline

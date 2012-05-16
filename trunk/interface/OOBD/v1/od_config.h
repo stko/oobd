@@ -47,6 +47,7 @@
 #include <unistd.h>
 
 #include "FreeRTOS.h"
+#include "semphr.h"
 #include "task.h"
 #include "queue.h"
 

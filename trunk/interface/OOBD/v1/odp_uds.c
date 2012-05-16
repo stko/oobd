@@ -292,6 +292,7 @@ void obp_uds(void *pvParameters)
     portBASE_TYPE separationTime_ST;
 
     portBASE_TYPE stateMachine_state = 0;
+    extern xSemaphoreHandle protocollBinarySemaphore;
     int i;
     unsigned char telegram[8];
     /* Memory eater Nr. 1: The UDS message buffer */
@@ -314,6 +315,9 @@ void obp_uds(void *pvParameters)
     portBASE_TYPE timeout = 0;
     blockSize_BS = 0;
     separationTime_ST = 0;
+    //catch the "Protocoll is running" Semaphore
+    xSemaphoreTake(protocollBinarySemaphore, portMAX_DELAY);
+
     DEBUGPRINT("Start Bus nr %d\n", busToUse);
     /* activate the bus... */
     odbarr[busToUse] ();
@@ -683,6 +687,10 @@ void obp_uds(void *pvParameters)
 		DEBUGPRINT("Reset Protocol\n", 'a');
 		udsBuffer->len = 0;
 		break;
+	    case MSG_PROTOCOL_STOP:
+		DEBUGPRINT("Stop Protocol\n", 'a');
+		keeprunning = 0;
+		break;
 	    case MSG_SEND_BUFFER:
 		/* let's Dance: Starting the transfer protocol */
 		if (udsBuffer->len > 0) {
@@ -768,6 +776,8 @@ void obp_uds(void *pvParameters)
     /* Do all cleanup here to finish task */
     actBus_close();
     free(udsBuffer);
+    xSemaphoreGive(protocollBinarySemaphore);
+
     vTaskDelete(NULL);
 }
 

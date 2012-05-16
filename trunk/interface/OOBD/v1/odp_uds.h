@@ -40,11 +40,8 @@
 void obd_uds_init();
 
 // Add obd_uds_init() to the list of protocols to be initialized
+#define LIST_OF_PROTOCOLS_TO_INITIALIZE #LIST_OF_PROTOCOLS_TO_INITIALIZE obd_uds_init();
 
-#define DUMMY LIST_OF_PROTOCOLS_TO_INITIALIZE obd_uds_init();
-#undef LIST_OF_PROTOCOLS_TO_INITIALIZE
-#define LIST_OF_PROTOCOLS_TO_INITIALIZE DUMMY obd_uds_init();
-#undef DUMMY
 
 
 //! UDS protocol Error constants and texts

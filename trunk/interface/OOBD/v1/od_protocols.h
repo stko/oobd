@@ -105,11 +105,11 @@ void (*odparr[SYS_NR_OF_PROTOCOLS]) (void *pvParameters);
 enum busses {
     ODB_CAN,
     // ODB_SIZE defines the number of available busses
-    ODB_SIZE
+    SYS_NR_OF_BUSSES
 };
 
 // define a array to store all busses
-void (*odbarr[ODB_SIZE]) ();
+void (*odbarr[SYS_NR_OF_BUSSES]) ();
 
 /* Variable to holf the handle of xTaksCreate from "prot"-Task */
 xTaskHandle xTaskProtHandle;
