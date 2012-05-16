@@ -48,10 +48,8 @@ void odb_can_init();
 
 // Add obd_uds_init() to the list of protocols to be initialized
 
-#define DUMMY LIST_OF_BUSSES_TO_INITIALIZE odb_can_init();
-#undef LIST_OF_BUSSES_TO_INITIALIZE
-#define LIST_OF_BUSSES_TO_INITIALIZE DUMMY odb_can_init();
-#undef DUMMY
+#define LIST_OF_BUSSES_TO_INITIALIZE #LIST_OF_BUSSES_TO_INITIALIZE odb_can_init();
+
 
 
 portBASE_TYPE bus_param_can_spec(param_data * args);

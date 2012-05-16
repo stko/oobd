@@ -52,7 +52,8 @@
 /* define parameter types */
 
 #define PARAM_PROTOCOL 		    ( 1 )	//!< switch to protocol y, accourding to the available protocol table \ref protocol_table
-#define PARAM_SET_OUTPUT 		    ( 2 )	//!< switch to protocol y, accourding to the available protocol table \ref protocol_table
+#define PARAM_SET_OUTPUT 		( 2 )	//!< switch to protocol y, accourding to the available protocol table \ref protocol_table
+#define PARAM_SET_PROTOCOL_AND_BUS_DEFAULT	( 3 )	//!< store default protocol and bus for next boot
 #define PARAM_RESET           ( 99 )	//!<  performs a soft reset
 
   /*! @} */
@@ -70,7 +71,9 @@ void mc_init_sys_tasks_specific();
 void mc_init_sys_shutdown_specific();
 
 portBASE_TYPE mc_sys_get_startupProtocol();	//!< get startup Protocol
-portBASE_TYPE mc_sys_get_startupBus();	//! get startup Bus
+portBASE_TYPE mc_sys_get_startupBus();	//!< get startup Bus
+
+portBASE_TYPE mc_start_protocol(portBASE_TYPE protocol, portBASE_TYPE bus);	//!< starts new protocol with a new protocol. Previous running protocol needs to stop first !
 
 
 /** \brief handles input parameters

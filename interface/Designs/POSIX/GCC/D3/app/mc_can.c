@@ -38,7 +38,7 @@
 #include "od_protocols.h"
 #include "odb_can.h"
 #include "mc_can.h"
-
+#include "mc_sys_generic.h"
 
 /* UDP Packet size to send/receive. */
 #define mainUDP_SEND_ADDRESS		"127.0.0.1"
@@ -57,6 +57,7 @@ recv_cbf reportReceicedData = NULL;
 /* Send/Receive UDP packets. */
 void prvUDPTask(void *pvParameters);
 
+xTaskHandle xprvUDPTaskHandle;
 
 extern char *oobd_Error_Text_OS[];
 extern struct CanConfig *canConfig;
@@ -99,7 +100,7 @@ portBASE_TYPE bus_init_can()
 	xSendAddress.sin_port = htons(UDP_PORT_SEND);
 	/* Create a Task which waits to receive messages and sends its own when it times out. */
 	xTaskCreate(prvUDPTask, "UDPRxTx", configMINIMAL_STACK_SIZE, NULL,
-		    TASK_PRIO_MID, NULL);
+		    TASK_PRIO_MID, &xprvUDPTaskHandle);
 
 	/* Remember to open a whole in your Firewall to be able to receive!!! */
 
@@ -258,6 +259,9 @@ portBASE_TYPE bus_param_can_spec(param_data * args)
 void bus_close_can()
 {
     extern struct CanConfig *canConfig;
+    vSocketClose(iSocketSend);
+    vSocketClose(iSocketReceive);
+    vTaskDelete(xprvUDPTaskHandle);
     free(canConfig);
 }
 

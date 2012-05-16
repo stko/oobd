@@ -38,6 +38,12 @@
 #include "od_base.h"
 #include "mc_sys_generic.h"
 
+
+
+
+xQueueHandle protocolQueue;
+
+
 //! All Errormessages of the OS Function Block
 char *oobd_Error_Text_OS[] = {
     "",				// indox 0 is no error
@@ -51,10 +57,12 @@ char *oobd_Error_Text_OS[] = {
 //startupProtocol and startupBus need to be static to "be there" when another task get started with their address as parameter
 portBASE_TYPE startupProtocol;
 portBASE_TYPE startupBus;
-
+xSemaphoreHandle protocollBinarySemaphore;
 
 void mc_init_sys_boot()
 {
+//generate binary semaphore for protocol switching
+    vSemaphoreCreateBinary(protocollBinarySemaphore);
     DEBUGPRINT("boot system\n", 'a');
     mc_init_sys_boot_specific();
 }
@@ -96,46 +104,41 @@ portBASE_TYPE eval_param_sys(param_data * args)
 	    return pdFALSE;
 	}
 	break;
-/*    case PARAM_PROTOCOL:
-	//! \todo this kind of task switching is not design intent
-	//! \todo no use of protocol table, its hardcoded instead
-	if (VALUE_PARAM_PROTOCOL_CAN_RAW == args->args[ARG_VALUE_1]) {	
-	    printser_string("Protocol CAN RAW activated!");
-	    vTaskDelete(xTaskProtHandle);
-	    vTaskDelay(100 / portTICK_RATE_MS);
-	   
-	    if (pdPASS == xTaskCreate(odparr[0], (const signed portCHAR *)
-				      "prot", configMINIMAL_STACK_SIZE,
-				      (void *) NULL, TASK_PRIO_LOW,
-				      &xTaskProtHandle))
-		DEBUGPRINT("\r\n*** 'prot' Task created ***", 'a');
-	    else
-		DEBUGPRINT("\r\n*** 'prot' Task NOT created ***", 'a');
-	}
-	if (VALUE_PARAM_PROTOCOL_CAN_UDS == args->args[ARG_VALUE_1]) {	
-	    printser_string("Protocol CAN UDS activated!");
-	    vTaskDelete(xTaskProtHandle);
-	    vTaskDelay(100 / portTICK_RATE_MS);
-	   
-	    if (pdPASS == xTaskCreate(odparr[1], (const signed portCHAR *)
-				      "prot", configMINIMAL_STACK_SIZE,
-				      (void *) NULL, TASK_PRIO_LOW,
-				      &xTaskProtHandle)) {
-		DEBUGPRINT("\r\n*** 'prot' Task created ***", 'a');
-		createCommandResultMsg(FBID_SYS_GENERIC, ERR_CODE_NO_ERR,
-				       0, NULL);
-	    } else {
-		createCommandResultMsg
-		    (FBID_SYS_GENERIC,
-		     ERR_CODE_OS_NO_PROTOCOL_TASK,
-		     0, ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT);
-		DEBUGPRINT("\r\n*** 'prot' Task NOT created ***", 'a');
-	    }
-	}
-	return pdTRUE;
-	break;
+    case PARAM_PROTOCOL:
+	DEBUGPRINT("Try to switch to protocol %d with bus %d\n",
+		   args->args[ARG_VALUE_1], args->args[ARG_VALUE_2]);
+	startupProtocol = args->args[ARG_VALUE_1];
+	startupBus = args->args[ARG_VALUE_2];
+	if (startupProtocol < SYS_NR_OF_PROTOCOLS
+	    && startupBus < SYS_NR_OF_BUSSES
+	    && odparr[startupProtocol] != NULL
+	    && odbarr[startupBus] != NULL) {
+	    sendMsg(MSG_PROTOCOL_STOP, protocolQueue, NULL);
+	    if (xSemaphoreTake(protocollBinarySemaphore, 2000 / portTICK_RATE_MS) == pdPASS) {	// wait 2s for the protocol task to finish
+		//job done, free semaphore again for the new protocol task
+		xSemaphoreGive(protocollBinarySemaphore);
+		// and start new protocol..
+		if (mc_start_protocol(startupProtocol, startupBus) == 0) {
+		    createCommandResultMsg
+			(FBID_SYS_GENERIC, ERR_CODE_NO_ERR, 0, NULL);
+		    return pdTRUE;
+		} else {
+		    createCommandResultMsg
+			(FBID_SYS_GENERIC,
+			 ERR_CODE_OS_NO_PROTOCOL_TASK,
+			 0, ERR_CODE_OS_NO_PROTOCOL_TASK_TEXT);
+		    return pdFALSE;
+		}
 
-*/
+	    }
+	} else {
+	    createCommandResultMsg
+		(FBID_SYS_GENERIC,
+		 ERR_CODE_OS_COMMAND_NOT_SUPPORTED,
+		 0, ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
+	    return pdFALSE;
+	}
+	break;
 
 
     default:
@@ -154,17 +157,8 @@ void mc_init_sys_tasks()
     startupBus = mc_sys_get_startupBus();
     DEBUGPRINT("Inital protocol: %d\n", startupProtocol);
     DEBUGPRINT("Inital bus: %d\n", startupBus);
-    //! \todo move the task generation into the mc_sys_generic.c file
     /* starting with UDS protocol of the list by default */
-    if (pdPASS ==
-	xTaskCreate(odparr[startupProtocol],
-		    (const signed portCHAR *) "prot",
-		    configMINIMAL_STACK_SIZE, (void *) &startupBus,
-		    TASK_PRIO_LOW, &xTaskProtHandle))
-	DEBUGPRINT("*** 'prot' Task created ***\n", 'a');
-    else
-	DEBUGPRINT("*** 'prot' Task NOT created ***\n", 'a');
-
+    mc_start_protocol(startupProtocol, startupBus);
     mc_init_sys_tasks_specific();
 }
 
@@ -172,4 +166,27 @@ void mc_init_sys_shutdown()
 {
     DEBUGPRINT("shutdown systems\n", 'a');
     mc_init_sys_shutdown_specific();
+}
+
+
+portBASE_TYPE mc_start_protocol(portBASE_TYPE protocol, portBASE_TYPE bus)
+{
+    if (protocol < SYS_NR_OF_PROTOCOLS && bus < SYS_NR_OF_BUSSES
+	&& odparr[protocol] != NULL && odbarr[bus] != NULL) {
+	startupProtocol = protocol;
+	startupBus = bus;
+	if (pdPASS ==
+	    xTaskCreate(odparr[startupProtocol],
+			(const signed portCHAR *) "prot",
+			configMINIMAL_STACK_SIZE, (void *) &startupBus,
+			TASK_PRIO_LOW, &xTaskProtHandle)) {
+	    DEBUGPRINT("*** 'prot' Task created ***\n", 'a');
+	    return 0;
+	} else {
+	    DEBUGPRINT("*** 'prot' Task NOT created ***\n", 'a');
+	    return -2;
+	}
+    } else {
+	return -1;
+    }
 }
