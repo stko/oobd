@@ -30,23 +30,26 @@ Entry 1
 ..
 Entry n
 
-Entry = Key 0x0 (FilePosition of greater Key) (FilePosition of smaller Key) Values 1  0x0 [..Values n  0x0] 0x0
+Entry = Key 0x0 (Offset, if key > Searchstring) (Offset, if key < Searchstring) Values 1  0x0 [..Values n  0x0] 0x0
 
-Fileposition = binary unsigned 32-Bit Big Endian
+Offset = binary unsigned 32-Bit Big Endian, calculated as skip() value from the fileposition after the second 4-Byte value up to the start of the next key string to be evaluated. To distingluish 
+between an offset of 0 to the next key string and a 0 as the indicator for the end of the search tree, the skip() offset given in the file is always 1 higher as in really, so 1 needs to be
+substracted to have the correct jump width (e.g. Offset in file: 9 means real jump width 9 -1 = 8   = skip(8)
+
 
 
 How to read this file:
 
 1 - Read Headerline (from the file beginning until the first 0x0). Store this data for later naming of the found columns.
-2 - read key value (string until the next 0x0) and the next 4 Byte long file positions for greater and smaller key values. If they are 0 (zero), there's no more smaller or greater key available
+2 - read key value (string until the next 0x0) and the both next 4 Byte long skip() offsets (= relativefile positions) for the greater and smaller key value. If they are 0 (zero), there's no more smaller or greater key available
 3 - compare key with search string:
     - if equal, read attached values in an array. This array then contains the search result(s). Return this and the header line as positive search result.
     - if smaller:
 	  if smaller file position is 0 (zero), then return from search with empty result array.
-	  if smaller file position is not 0, set file Seek pointer to file postion and continue again with step 2
+	  if smaller file position is not 0, jump per skip() to the file postion of the next index string and continue again with step 2
     - if bigger:
 	  if bigger file position is 0 (zero), then return from search with empty result array.
-	  if bigger file position is not 0, set file Seek pointer to file postion and continue again with step 2
+	  if bigger file position is not 0, jump per skip() to the file postion of the next index string and continue again with step 2
 
 
 
@@ -164,7 +167,7 @@ class dbEntry
 // this is the output with the absolute file position
 //	self::printBinaryValue($outFp, $this->lt->start);
 // this is the output with the relative skip() jump length, counted from behind the second (gt) 4 byte binary value of the actual element
-	self::printBinaryValue($outFp, $this->lt->start-($this->start+strlen($this->index)+1+4+4+1));
+	self::printBinaryValue($outFp, $this->lt->start-($this->start+strlen($this->index)+1+4+4-1));
     }else{
 	self::printBinaryValue($outFp, 0);
     }
@@ -172,7 +175,7 @@ class dbEntry
 // this is the output with the absolute file position
 //	self::printBinaryValue($outFp, $this->gt->start);
 // this is the output with the relative skip() jump length, counted from behind the second (gt) 4 byte binary value of the actual element
-	self::printBinaryValue($outFp, $this->gt->start-($this->start+strlen($this->index)+1+4+4+1));
+	self::printBinaryValue($outFp, $this->gt->start-($this->start+strlen($this->index)+1+4+4-1));
     }else{
 	self::printBinaryValue($outFp, 0);
     }
