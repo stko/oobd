@@ -8,6 +8,7 @@ using System.Xml;
 
 using System.Xml.XPath;
 using System.Xml.Xsl;
+
 namespace org.oobd.tools.OpenDiagX
 {
     public class OpenDiagXCore
@@ -25,11 +26,13 @@ namespace org.oobd.tools.OpenDiagX
             StreamWriter memwtr = new StreamWriter(memstrm);
             StreamReader memrdr = new StreamReader(memstrm);
             XmlTextWriter myWriter = new XmlTextWriter(memstrm, null);
+            XmlTextReader myReader = new XmlTextReader(inputStream);
+            myReader.XmlResolver = null; /* fix error of missing referenced to DTD file */
             //Create a stream for output
             using (XmlWriter xmlWriter =
             xmlDoc.CreateNavigator().AppendChild())
             {
-                myXslTrans.Transform(new XmlTextReader(inputStream), xmlWriter);
+                myXslTrans.Transform(myReader, xmlWriter);
             }
             xmlDocOut = openFile("test.sxml");
             // Create XPathNavigator object by calling CreateNavigator of XmlDocument
@@ -75,7 +78,25 @@ namespace org.oobd.tools.OpenDiagX
                 {
                     String dataType = getpath(iterator.Current, "DID_TYPE");
                     //textBox.Text += "Data Type: "+dataType+"\r\n";
-                    if (dataType.Equals("bitmapped")) handleBitmap(iterator);
+                   if (dataType.Equals("bitmapped")) handleBitmap(iterator);
+ 
+                    if (dataType.Equals("packeted"))
+                    {
+                        String subDataType = getpath(iterator.Current, "SUB_FIELD/DATA_DEFINITION/DATA_TYPE");
+                        //textBox.Text += "Sub Data Type: " + subDataType + "\r\n";
+    
+                        /* not implemented yet
+                         * if (subDataType.Equals("bcd")) handleBcd(iterator);
+                         * if (subDataType.Equals("enumerated")) handleEnumerator(iterator);
+                        */
+                        
+                        /* not maybe not used for packeted DID_TYPE, investigation ongoing
+                        if (subDataType.Equals("ascii")) handleASCII(iterator);
+                        if (subDataType.Equals("unsigned")) handleUnsigned(iterator);
+                        if (dataType.Equals("bitmapped")) handleBitmap(iterator);
+                        */
+                    }
+ 
                     if (dataType.Equals("single_value"))
                     {
                         String subDataType = getpath(iterator.Current, "SUB_FIELD/DATA_DEFINITION/DATA_TYPE");
@@ -83,7 +104,7 @@ namespace org.oobd.tools.OpenDiagX
                         if (subDataType.Equals("ascii")) handleASCII(iterator);
                         if (subDataType.Equals("unsigned")) handleUnsigned(iterator);
                     }
-                }
+   }
                 iterator = nav.Select("/MDX/ECU_DATA/DIAGNOSTIC_TROUBLE_CODES/DTC");
                 XmlElement subtree = xmlDocOut.CreateElement("DTCS");
                 root.AppendChild(subtree);
