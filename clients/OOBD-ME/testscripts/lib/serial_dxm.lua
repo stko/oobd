@@ -184,7 +184,7 @@ end
 function setTimeout_OOBD(timeout)
   if hardwareID==2 then
     echoWrite("p 7 "..timeout.."\r")
-  elseif hardwareID==3 then
+  elseif hardwareID==3 or hardwareID==4 then
     echoWrite("p 6 1 "..timeout.."\r")
   end
 end
@@ -194,7 +194,7 @@ end
 function setSendID_OOBD(addr)
   if hardwareID==2 then
     echoWrite("p 16 "..addr.."\r")
-  elseif hardwareID==3 then
+  elseif hardwareID==3 or hardwareID==4 then
     echoWrite("p 6 9 "..addr.."\r")
   end
 end
@@ -271,7 +271,7 @@ end
 function setModuleID(id)
   if hardwareID == 2 then
     echoWrite("p 11 $"..id.."\r")
-  elseif hardwareID==3 then
+  elseif hardwareID==3 or hardwareID==4 then
     echoWrite("p 6 5 $"..id.."\r")
   else
     echoWrite("atci "..id.."\r")
@@ -281,7 +281,7 @@ end
 function deactivateBus()
   if hardwareID == 2 then
    echoWrite("p 5 0\r")
-   elseif hardwareID==3 then
+   elseif hardwareID==3 or hardwareID==4 then
     echoWrite("p 8 2 0\r")
   end
 end
@@ -300,8 +300,18 @@ function setBus(bus)
     end
    -- activate bus
       echoWrite("p 5 3\r")
-    
   elseif hardwareID == 3 then
+    if bus == "HS-CAN" then
+      echoWrite("p 8 3 3\r")
+    elseif bus == "IMS-CAN" then
+      echoWrite("p 8 3 3\r")
+    elseif bus == "MS-CAN" then
+      echoWrite("p 8 3 1\r")
+    end
+    serWait(".|:",2000) -- wait 2 secs for an response
+   -- activate bus
+    echoWrite("p 8 2 3\r")
+  elseif hardwareID == 4 then
     if bus == "HS-CAN" then
       echoWrite("p 8 3 3\r")
       echoWrite("p 8 4 0\r")
@@ -315,7 +325,6 @@ function setBus(bus)
     serWait(".|:",2000) -- wait 2 secs for an response
    -- activate bus
     echoWrite("p 8 2 3\r")
-    
   end
 end
 
@@ -364,7 +373,7 @@ function interface_version(oldvalue,id)
     echoWrite("p 0 0\r")
     answ=serReadLn(2000, true)
     return answ
-  elseif hardwareID == 3 then
+  elseif hardwareID == 3 or hardwareID == 4 then
     echoWrite("p 0 0 0\r")
     err, answ = readAnswerArray()
     return answ[1]
@@ -381,7 +390,7 @@ function interface_serial(oldvalue,id)
      echoWrite("p 0 1\r")
      answ=serReadLn(2000, true)
     return answ
-  elseif hardwareID == 3 then
+  elseif hardwareID == 3 or hardwareID == 4 then
     echoWrite("p 0 0 1\r")
     err, answ = readAnswerArray()
     return answ[1]
@@ -400,7 +409,7 @@ function interface_voltage(oldvalue,id)
     answ=round(getStringPart(answ, 1)/1000, 2)
     answ=answ.." Volt"
     return answ
-  elseif hardwareID == 3 then
+  elseif hardwareID == 3 or hardwareID == 4 then
     echoWrite("p 0 0 2\r")
     err, answ = readAnswerArray()
     if err <0 then
@@ -423,7 +432,7 @@ function interface_bus(oldvalue,id)
     echoWrite("p 0 6\r")
     answ=serReadLn(2000, true)
     return answ
-  elseif hardwareID == 3 then
+  elseif hardwareID == 3 or hardwareID == 4 then
     echoWrite("p 9 0 0\r")
     err, answ = readAnswerArray()
     return answ[1]
@@ -476,10 +485,12 @@ function identifyOOBDInterface()
 	  receive = receive_OOBD
 	  setTimeout = setTimeout_OOBD
 	  setSendID = setSendID_OOBD
+	  --[[ Original DXM1, with old OOBD firmware <= Revision 346 ]]--
 	  hardwareID=2
 	  if hardware_model=="POSIX" or hardware_model=="D2" then
-	    if hardware_variant=="POSIX" or hardware_variant=="Lux-Wolf" then
-	      hardwareID=3
+	    if hardware_variant=="POSIX" or hardware_variant=="dxm" then
+		  --[[ Original DXM1, with new firmware paramater set > Revision 346 ]]--
+		  hardwareID=3
 	      --[[		    echoWrite("p 0 1 1\r") -- set protocol
 			  err, res = readAnswerArray()
 			  if err ~=0 then
@@ -491,7 +502,21 @@ function identifyOOBDInterface()
 			    print (" Set protocol error:", err, res[1])
 			  end
 	      --]]	  
-	    else
+		elseif hardware_variant=="POSIX" or hardware_variant=="Lux-Wolf" then
+		  --[[ OOBD-Cup v5, new firmware paramater set ]]--
+		  hardwareID=4
+	      --[[		    echoWrite("p 0 1 1\r") -- set protocol
+			  err, res = readAnswerArray()
+			  if err ~=0 then
+			    print (" Set protocol error:", err, res[1])
+			  end
+			  echoWrite("p 0 1 1\r") -- set Bus
+			  err, res = readAnswerArray()
+			  if err ~=0 then
+			    print (" Set protocol error:", err, res[1])
+			  end
+	      --]]	  
+        else
 	      -- to support older OOBD firmware, set the Module-ID to functional address
 	      echoWrite("p 11 $7DF\r")
 	    end
