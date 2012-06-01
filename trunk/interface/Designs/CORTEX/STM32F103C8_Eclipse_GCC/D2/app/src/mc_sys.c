@@ -45,6 +45,17 @@
 
 extern char *oobd_Error_Text_OS;
 
+portBASE_TYPE mc_sys_get_startupProtocol()
+{
+    return VALUE_PARAM_PROTOCOL_CAN_UDS;
+}
+
+portBASE_TYPE mc_sys_get_startupBus()
+{
+
+    return ODB_CAN;
+}
+
 void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 		printChar_cbf printchar) {
 	param_data *args;
