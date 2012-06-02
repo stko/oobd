@@ -1,15 +1,15 @@
 EAGLE AutoRouter Statistics:
 
-Job           : D:/sourceforge/trunk/interface/D2/pcb/V6/OOBD-Cup_v6.brd
+Job           : D:/sourceforge/trunk/interface/Designs/CORTEX/STM32F103C8_Eclipse_GCC/D2/pcb/V5/OOBD-Cup_v5.brd
 
-Start at      : 12:16:49 (11.03.2012)
-End at        : 12:16:51 (11.03.2012)
+Start at      : 16:32:21 (02.06.2012)
+End at        : 16:32:23 (02.06.2012)
 Elapsed time  : 00:00:02
 
-Signals       :    46   RoutingGrid: 6.25 mil  Layers: 2
-Connections   :    87   predefined:  87 ( 82 Vias )
+Signals       :    48   RoutingGrid: 6.25 mil  Layers: 2
+Connections   :   106   predefined:  106 ( 91 Vias )
 
-Router memory :   409260
+Router memory :   387720
 
 Passname          :     Route Optimize1 Optimize2 Optimize3 Optimize4
 
