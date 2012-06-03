@@ -1,0 +1,225 @@
+#!/usr/bin/php
+<?php
+	$jobDone=false;
+	if ($argc==4){ // = 3 parameters, param 0 is the script name itself
+		$inputFileName=$argv[3];
+		$templateName=$argv[1];
+		$inputFile=getFilecontent($templateName,$inputFileName);
+		if ($inputFile == null){
+			exitProg($inputFileName." does not contain oobdtemplate ".$templateName."!\n",1);
+		}
+		$checkResult=checkTagNames($inputFile);
+		if ($checkResult != null){
+			print $checkResult;
+			exit( 1 );
+		}
+		if ( $argv[2] == "--struct" || $argv[2] == "--extract" ){
+			for ( $i = 0 ; $i < count( $inputFile["openNames"] ) ; $i++ ){
+				print ">>>> oobdtemple ".$templateName." ".$inputFile["openNames"][$i]." >>>>";
+				// in case of extract print also the content of a tag
+				if ( $argv[2] == "--extract" ){
+				print $inputFile["ins"][$i];
+				} else {
+					print "\n"; // in case of no content, we need a LF here
+				}
+				print "<<<< oobdtemple ".$templateName." ".$inputFile["closeNames"][$i]." <<<<\n";
+			}
+			$jobDone=true;
+		}
+	}
+	if ($argc==5){ // = 4 parameters, param 0 is the script name itself
+		$inputFileName=$argv[3];
+		$templateFileName=$argv[4];
+		$templateName=$argv[1];
+		$inputFile=getFilecontent($templateName,$inputFileName);
+		if ($inputFile == null){
+			exitProg($inputFileName." does not contain oobdtemplate ".$templateName."!\n",1);
+		}
+		$checkResult=checkTagNames($inputFile);
+		if ($checkResult != null){
+			print $checkResult;
+			exit( 1 );
+		}
+		$templateFile=getFilecontent($templateName,$templateFileName);
+		if ($templateFile == null){
+			exitProg($templateFileName." does not contain oobdtemplate ".$templateName."!\n",1);
+		}
+		$checkResult=checkTagNames($templateFile);
+		if ($checkResult != null){
+			print $checkResult;
+			exit( 1 );
+		}
+		$err=checkTemplateConsistency($inputFile,$templateFile);
+		if ( $err == true && ! $argv[2] == "--develop" ){
+			exit( 1 );
+		}
+		if ( $argv[2] == "--check" || $argv[2] == "--develop" ){
+			$jobDone=true;
+		}
+		if ( $argv[2] == "--update"  ){
+			//$fh=fopen($inputFileName,"w");
+			$fh=STDOUT;
+			fwrite($fh,$inputFile["start"]);
+			for ( $i = 0 ; $i < count( $inputFile["openNames"] ) ; $i++ ){
+				fwrite($fh, ">>>> oobdtemple ".$templateName." ".$inputFile["openNames"][$i]." >>>>");
+				fwrite($fh, $templateFile["ins"][$i]);
+				fwrite($fh, "<<<< oobdtemple ".$templateName." ".$inputFile["closeNames"][$i]." <<<<");
+				if ($i < count ( $inputFile["outs"] ) ) { // outs have always one element less as template elements, because the last piece is the "end"
+					fwrite($fh, $inputFile["outs"][$i]);
+				}
+			}
+			fwrite($fh,$inputFile["end"]);
+			$jobDone=true;
+		}
+	}
+	if (!$jobDone){
+		usage();
+	}
+	dumpStruct($inputFile);
+
+
+
+function getFilecontent( $tmplname , $fileName ){
+	$subject=file_get_contents( $fileName );
+	$res=array();
+	$res["fileName"]=$fileName;
+	// searching the "ins"
+	$pattern = '/>>>>\s*oobdtemple\s+'.$tmplname.'\s+(?P<openName>\w*?)\s*>>>>(?P<content>.*?)<<<<\s*oobdtemple\s+'.$tmplname.'\s+(?P<closeName>\w*?)\s*<<<</s';
+	if (preg_match_all($pattern, $subject, $matches) == 0){
+		return null;
+	}
+	$res["openNames"]=$matches["openName"];
+	$res["closeNames"]=$matches["closeName"];
+	$res["ins"]=$matches["content"];
+
+	// searching the "outs"
+	$pattern = '/<<<<\s*oobdtemple\s+'.$tmplname.'(\s+(?P<name>\w*?))\s*<<<<(?P<content>(.*?))>>>>\s*oobdtemple\s+'.$tmplname.'(\s+(?P<closeName>\w*?))\s*>>>>/s';
+	if (preg_match_all($pattern, $subject, $matches) == 0){
+		$res["outs"]=array ();
+	} else {
+		$res["outs"]=$matches["content"];
+	}
+
+	// searching the "start"
+	$pattern = '/^(?P<content>(.*?))>>>>\s*oobdtemple\s+'.$tmplname.'(\s+(?P<name>\w*?))\s*>>>>/s';
+	if (preg_match($pattern, $subject, $matches) == 0){
+		$res["start"]="";
+	} else {
+		$res["start"]=$matches["content"];
+	}
+
+	// searching the "end"
+	$pattern = '/<<<<\s*oobdtemple\s+'.$tmplname.'\s+(?P<name>\w*?)\s*<<<<(?P<content>(.*?))$/s';
+	if (preg_match($pattern, $subject, $matches) == 0){
+		$res["end"]="";
+	} else {
+		$res["end"]=$matches["content"];
+	}
+	//dumpStruct($res);
+
+	return $res;
+
+}
+
+
+function checkTagNames($fileArray){
+	for ($i=0;$i<count($fileArray["openNames"]);$i++){
+		if ($fileArray["openNames"][$i] !=  $fileArray["closeNames"][$i]){
+			return $fileArray["fileName"].":Operation canceled: Element name at opening Tag \"".$fileArray["openNames"][$i]."\" is different to the element name at the closing Tag \"".$fileArray["closeNames"][$i]."\"\n";
+		}
+	}
+}
+
+
+function exitProg($message, $exitCode){
+	file_put_contents('php://stderr', $message);
+	exit ($exitCode);
+}
+
+function usage(){
+	global $argv;
+	print basename($argv[0])." - the OOBD template tool
+Part of the OOBD tool set (www.oobd.org)
+
+Default usage:
+	".basename($argv[0])." template_name --check sourcefile templatefile
+
+Checks, if the template of <templatefile> is 1:1 included in <sourcefile>. Exits with exitcode 1 if not, otherways with 0
+
+Development support:
+	".basename($argv[0])." template_name --develop sourcefile templatefile
+
+Same as --check, but just writes warning to stderr and exit with 0 to not stop a make process
+
+
+Update source file:
+	".basename($argv[0])." template_name --update sourcefile templatefile
+Transfers actual content of <templatefile> into <sourcefile>. Stops, if template structure between <sourcefile> and <templatefile> is different
+
+
+Update template file:
+	".basename($argv[0])." template_name --writetemplate sourcefile templatefile
+Saves actual template content of <sourcefile> to <templatefile>. Stops, if template structure between <sourcefile> and <templatefile> is different
+
+
+Show template structure:
+	".basename($argv[0])." template_name --struct file
+Prints the actual template struct in <file> to stdout. Helpful for finding errors when ".basename($argv[0])." complains about template structure differences
+
+Extract template :
+	".basename($argv[0])." template_name --extract file
+Prints the actual template content in <file> to stdout. Helpful to generate a fresh template file out of an given soure file.
+
+
+
+
+"; 
+}
+
+
+
+function checkTemplateConsistency($file1,$file2){
+	$hasError = false;
+	if ( count( $file1[ "openNames" ] ) != count( $file2[ "openNames" ] ) ) {
+		print "Template consistency error: ". $file1[ "fileName "] . " has ". count( $file1[ "openNames "] ) . " template blocks, ". $file2[ "fileName "] . " has ". count( $file2[ "openNames" ] ) . " instead\n";
+		$hasError = true;
+	}
+	if (count( $file1[ "openNames" ] ) > count( $file2[ "openNames" ] ) ) {
+		//reduce the comparision to the smaller number of entries
+		$nrOfElements=count( $file2[ "openNames" ] ) ;
+		print "Template consistency warning: Element comparison has been truncated to the first ".$nrOfElements." entries\n";
+	} else {
+		$nrOfElements=count( $file1[ "openNames" ] ) ;
+	}
+	for ($i=0 ; $i < $nrOfElements ; $i++ ){
+		if ( $file1[ "openNames" ][ $i ] != $file2[ "openNames" ][ $i ]){
+			print "Template consistency error: ". $file1[ "fileName"] . " has different template element\"". $file1[ "openNames" ][ $i ] . "\" compared to ". $file2[ "fileName"] . ": ". $file2[ "openNames" ][ $i ] . " at element nr.".$i."\n";
+		$hasError = true;
+		}
+		if ( $file1[ "ins" ][ $i ] != $file2[ "ins" ][ $i ]){
+			print "Template consistency error: ". $file1[ "fileName"] . " has different content at template element \"". $file1[ "openNames" ][ $i ] . "\" compared to ". $file2[ "fileName"] . ": ". $file2[ "openNames" ][ $i ] . " [element nr.".$i."]\n";
+		$hasError = true;
+		}
+	}
+	return $hasError;
+}
+
+function dumpStruct($file){
+	if ($file != null){
+		print "Start:\n";
+		print_r($file["start"]);
+		print "Open Names:\n";
+		print_r($file["openNames"]);
+		print "close Names:\n";
+		print_r($file["closeNames"]);
+		print "Ins:\n";
+		print_r($file["ins"]);
+		print "Outs:\n";
+		print_r($file["outs"]);
+		print "End:\n";
+		print_r($file["end"]);
+	}
+
+}
+
+?>

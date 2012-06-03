@@ -1,0 +1,37 @@
+text 1 in start 
+text 2 in start
+
+>>>>oobdtemple serial tag_1>>>>
+text 1 in 1 
+	>>>>oobdtemple  no_serial >>>>
+	Add some nested templates for testing
+	<<<<oobdtemple  no_serial <<<<
+
+text 2 in 1 
+<<<<oobdtemple serial tag_1 <<<<
+>>>>oobdtemple  serial tag_2   >>>>
+text 1 in 1 
+	>>>>oobdtemple  no_serial >>>>
+	Add some nested templates for testing
+	<<<<oobdtemple  no_serial <<<<
+
+text 2 in 1 
+<<<<oobdtemple  serial tag_2<<<<
+text 1 out 1 
+
+	>>>>oobdtemple  no_serial >>>>
+	Add some nested templates for testing
+	<<<<oobdtemple  no_serial <<<<
+
+text 2 out 1 
+>>>>oobdtemple  serial >>>>
+text 1 in 2 
+text 2 in 2 
+<<<< oobdtemple  serial  <<<<
+>>>> oobdtemple  serial correct_name_tag>>>>
+text 1 in 2 
+text 2 in 2 
+<<<<oobdtemple  serial  correct_name_tag<<<<
+text 1 in end 
+text 2 in end
+
