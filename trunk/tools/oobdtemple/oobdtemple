@@ -49,16 +49,20 @@
 			print $checkResult;
 			exit( 1 );
 		}
-		$err=checkTemplateConsistency($inputFile,$templateFile);
-		if ( $err == true && ! $argv[2] == "--develop" ){
-			exit( 1 );
-		}
 		if ( $argv[2] == "--check" || $argv[2] == "--develop" ){
+		  $consistencyError=checkTemplateConsistency($inputFile,$templateFile,false);
+		  if ( $consistencyError == true && $argv[2] != "--develop" ){
+			  exit( 1 );
+		  }
 			$jobDone=true;
 		}
 		if ( $argv[2] == "--update"  ){
-			//$fh=fopen($inputFileName,"w");
-			$fh=STDOUT;
+		    $consistencyError=checkTemplateConsistency($inputFile,$templateFile,true);
+		    if ( $consistencyError == true ){
+			    exit( 1 );
+		    }
+			$fh=fopen($inputFileName,"w");
+			//$fh=STDOUT;
 			fwrite($fh,$inputFile["start"]);
 			for ( $i = 0 ; $i < count( $inputFile["openNames"] ) ; $i++ ){
 				fwrite($fh, ">>>> oobdtemple ".$templateName." ".$inputFile["openNames"][$i]." >>>>");
@@ -69,13 +73,35 @@
 				}
 			}
 			fwrite($fh,$inputFile["end"]);
+			fwrite($fh,"\n");
+			$jobDone=true;
+		}
+		if ( $argv[2] == "--writetemplate"  ){
+		    $consistencyError=checkTemplateConsistency($inputFile,$templateFile,true);
+		    if ( $consistencyError == true ){
+			    exit( 1 );
+		    }
+			$fh=fopen($templateFileName,"w");
+			//$fh=STDOUT;
+			//fwrite($fh,$inputFile["start"]);
+			for ( $i = 0 ; $i < count( $inputFile["openNames"] ) ; $i++ ){
+				fwrite($fh, ">>>> oobdtemple ".$templateName." ".$inputFile["openNames"][$i]." >>>>");
+				fwrite($fh, $inputFile["ins"][$i]);
+				fwrite($fh, "<<<< oobdtemple ".$templateName." ".$inputFile["closeNames"][$i]." <<<<\n");
+			//	if ($i < count ( $inputFile["outs"] ) ) { // outs have always one element less as template elements, because the last piece is the "end"
+			//		fwrite($fh, $inputFile["outs"][$i]);
+			//	}
+			}
+			//fwrite($fh,$inputFile["end"]);
+			//fwrite($fh,"\n");
 			$jobDone=true;
 		}
 	}
 	if (!$jobDone){
 		usage();
+	} else {
+	  //dumpStruct($inputFile);
 	}
-	dumpStruct($inputFile);
 
 
 
@@ -109,7 +135,7 @@ function getFilecontent( $tmplname , $fileName ){
 	}
 
 	// searching the "end"
-	$pattern = '/<<<<\s*oobdtemple\s+'.$tmplname.'\s+(?P<name>\w*?)\s*<<<<(?P<content>(.*?))$/s';
+	$pattern = '/.*<<<<\s*oobdtemple\s+'.$tmplname.'\s+(?P<name>\w*?)\s*<<<<(?P<content>(.*?))$/s';
 	if (preg_match($pattern, $subject, $matches) == 0){
 		$res["end"]="";
 	} else {
@@ -178,7 +204,7 @@ Prints the actual template content in <file> to stdout. Helpful to generate a fr
 
 
 
-function checkTemplateConsistency($file1,$file2){
+function checkTemplateConsistency( $file1 , $file2 , $noContentCheck ){
 	$hasError = false;
 	if ( count( $file1[ "openNames" ] ) != count( $file2[ "openNames" ] ) ) {
 		print "Template consistency error: ". $file1[ "fileName "] . " has ". count( $file1[ "openNames "] ) . " template blocks, ". $file2[ "fileName "] . " has ". count( $file2[ "openNames" ] ) . " instead\n";
@@ -193,11 +219,11 @@ function checkTemplateConsistency($file1,$file2){
 	}
 	for ($i=0 ; $i < $nrOfElements ; $i++ ){
 		if ( $file1[ "openNames" ][ $i ] != $file2[ "openNames" ][ $i ]){
-			print "Template consistency error: ". $file1[ "fileName"] . " has different template element\"". $file1[ "openNames" ][ $i ] . "\" compared to ". $file2[ "fileName"] . ": ". $file2[ "openNames" ][ $i ] . " at element nr.".$i."\n";
+			print "Template consistency error: ". $file1[ "fileName"] . " has different template element\"". $file1[ "openNames" ][ $i ] . "\" compared to ". $file2[ "fileName"] . ": \"". $file2[ "openNames" ][ $i ] . "\" at element nr.".$i."\n";
 		$hasError = true;
 		}
-		if ( $file1[ "ins" ][ $i ] != $file2[ "ins" ][ $i ]){
-			print "Template consistency error: ". $file1[ "fileName"] . " has different content at template element \"". $file1[ "openNames" ][ $i ] . "\" compared to ". $file2[ "fileName"] . ": ". $file2[ "openNames" ][ $i ] . " [element nr.".$i."]\n";
+		if ( $file1[ "ins" ][ $i ] != $file2[ "ins" ][ $i ] && !$noContentCheck){
+			print "Template consistency error: ". $file1[ "fileName"] . " has different content at template element \"". $file1[ "openNames" ][ $i ] . "\" compared to \"". $file2[ "fileName"] . ": \"". $file2[ "openNames" ][ $i ] . "\" [element nr.".$i."]\n";
 		$hasError = true;
 		}
 	}
