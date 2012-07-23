@@ -33,8 +33,8 @@ public class SwingSystem implements IFsystem {
     }
 
     public HashMap loadOobdClasses(String path, String classPrefix, Class<?> classType) {
-      	HashMap<String, Class<?>> myInstances = new HashMap<String, Class<?>>();
-              // TODO copy this code section to Swing / ME IFSystem implementation
+        HashMap<String, Class<?>> myInstances = new HashMap<String, Class<?>>();
+        // TODO copy this code section to Swing / ME IFSystem implementation
 
         File directory = new File(path);
         if (directory.exists()) {
@@ -44,7 +44,7 @@ public class SwingSystem implements IFsystem {
                 // read the path of the directory
                 sourceURL = directory.toURI().toURL();
             } catch (java.net.MalformedURLException ex) {
-                Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING,"", ex.getMessage());
+                Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "", ex.getMessage());
             }
             // generate URLClassLoader for that directory
 
@@ -71,15 +71,16 @@ public class SwingSystem implements IFsystem {
 
                     } catch (ClassNotFoundException ex) {
                         // Wird geworfen, wenn die Klasse nicht gefunden wurde
-                         Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING,"couldn't load class", ex);
+                        Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "couldn't load class", ex);
                         ex.printStackTrace();
                     }
 
                 }
             }
         }// if
-        else
-        	 Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING,"Directory " + directory.getName() + " does not exist. Class " + classPrefix + " could not be loaded.");
+        else {
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "Directory " + directory.getName() + " does not exist. Class " + classPrefix + " could not be loaded.");
+        }
         // returns Hashmap filled with classes found
 
         return myInstances;
@@ -98,39 +99,27 @@ public class SwingSystem implements IFsystem {
     }
 
     public InputStream generateResourceStream(int pathID, String ResourceName) throws java.util.MissingResourceException {
-        if (pathID == OOBDConstants.FT_PROPS) {
-            try {
-                return new FileInputStream(ResourceName);
-            } catch (FileNotFoundException ex) {
-                throw new java.util.MissingResourceException("Resource not found", "SwingSystem", ResourceName);
-            }
-        } else {
-            if (pathID == OOBDConstants.FT_SCRIPT) {
-                try {
-                    return new FileInputStream(ResourceName);
-                } catch (FileNotFoundException ex) {
-                    throw new java.util.MissingResourceException("Resource not found:"+ResourceName, "SwingSystem", ResourceName);
-                }
-            } else {
-                throw new java.util.MissingResourceException("Resource not known", "SwingSystem", ResourceName);
-            }
+        try {
+            return new FileInputStream(ResourceName);
+        } catch (FileNotFoundException ex) {
+            throw new java.util.MissingResourceException("Resource not found:" + ResourceName, "SwingSystem", ResourceName);
         }
     }
 
     public Object supplyHardwareHandle(Onion typ) {
-         String osname = System.getProperty("os.name", "").toLowerCase();
-         	 Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG,"OS detected: "+osname);
-       try{
-           if (osname.startsWith("windows")) {
-            return new ComPort_Win();
-        }else{
-               return new ComPort_Unix();
-        }
+        String osname = System.getProperty("os.name", "").toLowerCase();
+        Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "OS detected: " + osname);
+        try {
+            if (osname.startsWith("windows")) {
+                return new ComPort_Win();
+            } else {
+                return new ComPort_Unix();
+            }
 
-               } catch (Exception ex) {
-                    ex.printStackTrace();
-                    return null;
-                }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
 
     }
 }

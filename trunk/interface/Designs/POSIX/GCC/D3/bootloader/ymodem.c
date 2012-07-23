@@ -196,7 +196,9 @@ int32_t Ymodem_Receive(uint8_t * buf)
 				/* Image size is greater than Flash size */
 				if (size > (FLASH_SIZE - 1)) {
 				    /* End session */
-				  printf("Filesize %d is too big for flash size %d\n", size,FLASH_SIZE);
+				    printf
+					("Filesize %d is too big for flash size %d\n",
+					 size, FLASH_SIZE);
 				    Send_Byte(CA);
 				    Send_Byte(CA);
 				    return -1;
@@ -250,15 +252,15 @@ int32_t Ymodem_Receive(uint8_t * buf)
 				/* Program the data received into STM32F10x Flash */
 //                              FLASH_ProgramWord(FlashDestination,  *(uint32_t *) RamSource);
 				/* just a sumulation so nothing physical to copy into flash
-				if (*(uint32_t *) FlashDestination
-				    != *(uint32_t *) RamSource) {
-				    // End session 
-				    printf("MemCopy data 2\n");
-				    Send_Byte(CA);
-				    Send_Byte(CA);
-				    return -2;
-				}
-				*/
+				   if (*(uint32_t *) FlashDestination
+				   != *(uint32_t *) RamSource) {
+				   // End session 
+				   printf("MemCopy data 2\n");
+				   Send_Byte(CA);
+				   Send_Byte(CA);
+				   return -2;
+				   }
+				 */
 				printf("MemCopy data 3\n");
 				FlashDestination += 4;
 				RamSource += 4;

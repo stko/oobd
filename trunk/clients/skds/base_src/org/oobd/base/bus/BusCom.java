@@ -222,11 +222,6 @@ class ComReader implements Runnable {
 								close();
 							}
 							for (int i = 0; i < n; ++i) {
-								System.out.print("Char rec:"+Integer.toHexString(buffer[i]));
-								if (buffer[i]>31){
-									System.out.print(" : "+(char) buffer[i]);
-								}
-								System.out.println();
 								inBuffer.append((char) buffer[i]);
 							}
 						} else {
@@ -330,6 +325,7 @@ class ComReader implements Runnable {
 		}
 		Logger.getLogger(ComReader.class.getName()).log(Level.INFO,
 				"Serial input:" + res);
+		System.out.println("Serial input:"+res);
 		return res;
 	}
 
