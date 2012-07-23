@@ -1,5 +1,5 @@
 
-package org.oobd.database;
+package org.oobd.base.db;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import javax.print.DocFlavor.STRING;
  *
  */
 
-public class OODBDictonary {
+public class OOBDictionary {
 
 	private FileInputStream ins;
 	private String searchIndex;
@@ -93,7 +93,7 @@ public class OODBDictonary {
          * @param file The fileinputstream
          * @param index the searching index
          */
-	public OODBDictonary(FileInputStream file, String index){
+	public OOBDictionary(FileInputStream file, String index){
 		this.ins= file;
 
 		this.searchIndex = index;
