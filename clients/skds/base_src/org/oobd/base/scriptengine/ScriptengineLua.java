@@ -7,6 +7,8 @@ package org.oobd.base.scriptengine;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Properties;
+import java.util.Iterator;
+
 import org.oobd.base.*;
 import org.oobd.base.support.Onion;
 
@@ -16,17 +18,21 @@ import java.io.IOException;
 import java.io.*;
 import java.io.File.*;
 import java.util.MissingResourceException;
+import org.oobd.base.support.OnionNoEntryException;
 
 
 import se.krka.kahlua.stdlib.BaseLib;
 import se.krka.kahlua.stdlib.CoroutineLib;
 import se.krka.kahlua.stdlib.MathLib;
 import se.krka.kahlua.stdlib.StringLib;
+import se.krka.kahlua.stdlib.TableLib;
 import se.krka.kahlua.vm.JavaFunction;
 import se.krka.kahlua.vm.LuaCallFrame;
 import se.krka.kahlua.vm.LuaClosure;
 import se.krka.kahlua.vm.LuaPrototype;
 import se.krka.kahlua.vm.LuaState;
+import se.krka.kahlua.vm.LuaTable;
+import se.krka.kahlua.vm.LuaTableImpl;
 import org.json.JSONException;
 
 /**
@@ -40,6 +46,7 @@ public class ScriptengineLua extends OobdScriptengine {
     private LuaState state;
     private LuaCallFrame callFrame;
     private OobdScriptengine myself;
+    private String scriptDir;
 
     public ScriptengineLua(String id, Core myCore, IFsystem mySystem) {
         super(id, myCore, mySystem, "ScriptengineLua id " + id);
@@ -68,6 +75,7 @@ public class ScriptengineLua extends OobdScriptengine {
         MathLib.register(state);
         StringLib.register(state);
         CoroutineLib.register(state);
+        TableLib.register(state);
 
 
         Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG, "Try to initialize Lua engine");
@@ -146,7 +154,6 @@ public class ScriptengineLua extends OobdScriptengine {
                 return 1;
             }
         });
-
         register("pageDoneCall", new JavaFunction() {
 
             public int call(LuaCallFrame callFrame, int nArguments) {
@@ -166,7 +173,6 @@ public class ScriptengineLua extends OobdScriptengine {
                 return 1;
             }
         });
-
         register("serReadLnCall", new JavaFunction() {
 
             public int call(LuaCallFrame callFrame, int nArguments) {
@@ -199,7 +205,6 @@ public class ScriptengineLua extends OobdScriptengine {
                 return 1;
             }
         });
-
         register("serWaitCall", new JavaFunction() {
 
             public int call(LuaCallFrame callFrame, int nArguments) {
@@ -231,7 +236,6 @@ public class ScriptengineLua extends OobdScriptengine {
                 return 1;
             }
         });
-
         register("serSleepCall", new JavaFunction() {
 
             public int call(LuaCallFrame callFrame, int nArguments) {
@@ -247,7 +251,6 @@ public class ScriptengineLua extends OobdScriptengine {
                 return 1;
             }
         });
-
         register("serWriteCall", new JavaFunction() {
 
             public int call(LuaCallFrame callFrame, int nArguments) {
@@ -272,7 +275,6 @@ public class ScriptengineLua extends OobdScriptengine {
                 return 1;
             }
         });
-
         register("serFlushCall", new JavaFunction() {
 
             public int call(LuaCallFrame callFrame, int nArguments) {
@@ -294,7 +296,6 @@ public class ScriptengineLua extends OobdScriptengine {
                 return 1;
             }
         });
-
         register("serDisplayWriteCall", new JavaFunction() {
 
             public int call(LuaCallFrame callFrame, int nArguments) {
@@ -316,23 +317,67 @@ public class ScriptengineLua extends OobdScriptengine {
                 return 1;
             }
         });
+        register("onionMsgCall", new JavaFunction() {
 
-        String scriptPath = null;
+            public int call(LuaCallFrame callFrame, int nArguments) {
+                //BaseLib.luaAssert(nArguments >0, "not enough args");
+                initRPC(callFrame, nArguments);
+                Onion result =new Onion();
+                Message answer = null;
+                try {
+                    answer = myself.getMsgPort().sendAndWait(new Message(myself, DBName, new Onion(""
+                            + "{'type':'" + CM_DBLOOKUP + "',"
+                            + "'owner':"
+                            + "{'name':'" + myself.getId() + "'},"
+                            + "'command':'lookup',"
+                           + "'dbfilename':'" + scriptDir+File.separator+getString(0) + "',"
+                            + "'key':'" + getString(1)
+                            + "'}")), -1);
+                    if (answer != null) {
+                        result = answer.getContent().getOnion("result");
+                         //} catch (IOException ex) {
+                        //    Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+                        //}
+                    }
+                } catch (JSONException ex) {
+                    Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+ //               Object tab = callFrame.get(0);
+ //               System.out.println(tab.getClass().getName());
+                LuaTableImpl newTable = new LuaTableImpl();
+//                try {
+                    //newTable = onion2Lua(new Onion("{" + "'type':'" + CM_WRITESTRING + "'," + "'owner':" + "{'name':'" + myself.getId() + "'}," + "'command':'serDisplayWrite'," + "'data':'" + "blablub" + "'" + "}"));
+                newTable = onion2Lua(result);
+/*                } catch (JSONException ex) {
+                    Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+                }
+*/
+                //newTable.rawset("Testkey", "Testvalue");
+                callFrame.push(newTable);
+                System.out.println("onionMsg called\n");
+                finishRPC(callFrame, nArguments);
+                return 1;
+            }
+        });
+
+        String scriptFileName = null;
         if (myStartupParam != null) {
-            scriptPath = myStartupParam.getOnionString("scriptpath");
+            scriptFileName = myStartupParam.getOnionString("scriptpath");
         }
         // given filename overrides config settings
-        if (scriptPath == null) {
+        if (scriptFileName == null) {
             Properties props = new Properties();
             try {
                 props.load(UISystem.generateResourceStream(FT_PROPS, UISystem.generateUIFilePath(FT_PROPS, "enginelua.props")));
-                scriptPath = props.getProperty("LuaDefaultScript", ENG_LUA_DEFAULT);
+                scriptFileName = props.getProperty("LuaDefaultScript", ENG_LUA_DEFAULT);
             } catch (Exception ignored) {
                 Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG, "couldn't load properties");
             }
         }
         try {
-            doScript(scriptPath);
+            scriptDir = (new File(scriptFileName)).getParentFile().getAbsolutePath();
+            doScript(scriptFileName);
         } catch (IOException ex) {
             Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, "couldn't run script engine", ex);
         }
@@ -448,5 +493,40 @@ public class ScriptengineLua extends OobdScriptengine {
         Double response = BaseLib.rawTonumber(callFrame.get(index));
         //callFrame.push(response);
         return response.intValue();
+    }
+
+    LuaTableImpl onion2Lua(Onion input) {
+        LuaTableImpl newLuaTable = new LuaTableImpl();
+        System.out.println("Enter onion2lua");
+        for (Iterator iter = input.keys(); iter.hasNext();) {
+            String key = (String) iter.next();
+            System.out.println("Key:" + key);
+
+            Object value;
+            try {
+                value = input.getOnionObject(key);
+                if (value == null) {
+                    newLuaTable.rawset(key, null);
+                } else if (value instanceof String) {
+                    newLuaTable.rawset(key, value);
+                } else if (value instanceof Boolean) {
+                    newLuaTable.rawset(key, value);
+                } else if (value instanceof Double) {
+                    newLuaTable.rawset(key, value);
+                } else if (value instanceof Integer) {
+                    newLuaTable.rawset(key, ((Integer) value).doubleValue());
+                } else if (value instanceof Long) {
+                    newLuaTable.rawset(key, ((Long) value).doubleValue());
+                } else if (value instanceof Onion) {
+                    newLuaTable.rawset(key, onion2Lua((Onion) value));
+                } else {
+                    System.out.println("Unbekannter Typ");
+                }
+
+            } catch (OnionNoEntryException ex) {
+                Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return newLuaTable;
     }
 }

@@ -1,3 +1,4 @@
+//>>>> oobdtemple protocol header>>>>
 /*
 	
 	This file is part of the OOBD.org distribution.
@@ -29,20 +30,19 @@
 
 */
 
-/**
- * implementation of the UDS protocol
- */
 
 /* OOBD headers. */
 #include "od_config.h"
 #include "od_base.h"
 #include "od_protocols.h"
+
+//<<<< oobdtemple protocol header <<<<
+/**
+ * implementation of the UDS protocol
+ */
+
 #include "odp_uds.h"
-/*
-#ifdef OOBD_PLATFORM_STM32
-#include "stm32f10x.h"
-#endif
-*/
+
 
 /* some defines only need internally */
 #define SM_UDS_STANDBY 			( 0 )
@@ -54,6 +54,13 @@
 #define SM_UDS_SEND_CF			( 6 )
 
 #define UDSSIZE ( 4095 )
+//>>>> oobdtemple protocol buffer >>>>
+/*!
+
+  \brief generate a protocol receive & transmit buffer
+
+*/
+//<<<< oobdtemple protocol buffer <<<<
 
 typedef struct UDSBUFFER {
     portBASE_TYPE len;
@@ -79,10 +86,11 @@ portBASE_TYPE odp_uds_reduceID(portBASE_TYPE id)
 }
 
 
+//>>>> oobdtemple protocol protocol2bus  >>>>
 /*!
-\brief move data from UDS buffer into CAN data
-
+\brief move data from protocol buffer into the bus send buffer
 */
+//<<<< oobdtemple protocol protocol2bus <<<<
 
 void
 odp_uds_data2CAN(unsigned char *dataPtr, unsigned char *canPtr,
@@ -101,10 +109,11 @@ odp_uds_data2CAN(unsigned char *dataPtr, unsigned char *canPtr,
 
 }
 
+//>>>> oobdtemple protocol bus2protocol  >>>>
 /*!
-\brief move data from can telegram into UDS buffer
-
+\brief move data from bus receive buffer into the protocol receive buffer
 */
+//<<<< oobdtemple protocol bus2protocol <<<<
 
 void
 udp_uds_CAN2data(UDSBuffer * udsPtr, unsigned char *canPtr,
@@ -161,11 +170,14 @@ odp_uds_generateTesterPresents(unsigned char *tpArray,
 }
 
 
+
+//>>>> oobdtemple protocol bus2protocol  >>>>
 /*!
-\brief dumps the UDS Buffer
+\brief prints the received protocol buffer as Hexdump to the serial port
 
-
+This function is called through the output task, when the protocol sends a MSG_DUMP_BUFFER message to request a buffer dump
 */
+//<<<< oobdtemple protocol bus2protocol <<<<
 
 void
 odp_uds_printdata_Buffer(portBASE_TYPE msgType, void *data,

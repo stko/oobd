@@ -20,6 +20,7 @@ public interface OOBDConstants {
     public static final String CM_RES_LOOKUP = "RESULT_LOOKUP";
     public static final String CM_BUSTEST = "BUSTEST";
     public static final String CM_WRITESTRING = "WRITESTRING";
+   public static final String CM_DBLOOKUP = "DBLOOKUP";
     // IDs used for internal core list handling
     public static final String CL_PANE = "pane";
     public static final String CL_OBJECTS = "objects";
@@ -46,6 +47,7 @@ public interface OOBDConstants {
     //
     public final static String CoreMailboxName = "core";
     public final static String BusMailboxName = "BusCom";
+    public final static String DBName = "AVLLookup";
     // definitions of the Visual Elements Handling flags (=bitpositions)
      public final static int VE_MENU = 0;
     public final static int VE_UPDATE = 1;

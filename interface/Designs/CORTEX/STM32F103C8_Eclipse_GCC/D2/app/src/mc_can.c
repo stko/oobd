@@ -162,7 +162,7 @@ portBASE_TYPE bus_param_can_spec(param_data * args) {
 			CreateEventMsg(MSG_EVENT_BUS_CHANNEL, args->args[ARG_VALUE_1] == 1 ? 1 : 2);
 			sysIoCtrl(IO_REL1, 0, args->args[ARG_VALUE_1], 0, 0);
 			//! \bug this delay causes the protocol task to sleep for this time, but dring that his message queue runs full
-			vTaskDelay( 250 / portTICK_RATE_MS ); // wait to give the mechanic relay time to switch
+			//vTaskDelay( 250 / portTICK_RATE_MS ); // wait to give the mechanic relay time to switch
 			createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 			break;
 		default:

@@ -100,7 +100,11 @@ public class Onion extends JSONObject {
             i++;
         }
         try {
-            return actOnion.get(parts[i]);
+            Object actObject=actOnion.get(parts[i]);
+            if (actObject instanceof JSONObject ){
+                 return new Onion(((JSONObject) actObject).toString());
+            }else
+                    return actObject;
         } catch (JSONException e) {
             throw new OnionNoEntryException();
         }

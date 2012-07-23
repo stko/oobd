@@ -287,10 +287,11 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 			for (Iterator iter = classObjects.keySet().iterator(); iter
 					.hasNext();) {
 				String element = (String) iter.next();
-				Class<?> value = (Class<?>) classObjects.get(element);
+ 				Class<?> value = (Class<?>) classObjects.get(element);
 				try {
 					OobdDB thisClass = (OobdDB) value.newInstance();
 					thisClass.registerCore(this);
+					new Thread(thisClass).start();
 					databases.put(element, thisClass);
 
 				} catch (InstantiationException ex) {
@@ -781,6 +782,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 			}
 			if (receiver == null) {
 				receiver = protocols.get(msg.rec);
+			}
+			if (receiver == null) {
+				receiver = databases.get(msg.rec);
 			}
 			if (receiver != null) {
 				receiver.sendMsg(msg);

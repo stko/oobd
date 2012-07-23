@@ -6,6 +6,7 @@ local BusID = "HS-CAN";
 
 
 dofile("lib/serial_dxm.lua")
+--dofile("lib/json.lua")
 
 ---------------------- Vehicle Info Menu --------------------------------------
 
@@ -438,6 +439,57 @@ end
 
 ----------------- Do the initial settings --------------
 
-Start("","")
+--Start("","")
+
+o = {
+id1 = {  cmd = "id0x22F190" , bus = "HS-CAN" , mid = "720" , flags=0x02 , title="VIN", call = "readAscPid"} ,
+id2 = {  cmd = "id0x22F188" , bus = "HS-CAN" , mid = "720" , flags=0x02 , title="IPC s/w Version", call = "readAscPid"} ,
+id3 = {  cmd = "id0x22F188" , bus = "HS-CAN" , mid = "737" , flags=0x02 , title="RCM s/w Version", call = "readAscPid"} ,
+id4 = {  cmd = "id0x22F124" , bus = "HS-CAN" , mid = "737" , flags=0x02 , title="RCM Calibration Number", call = "readAscPid"} ,
+id5 = {  cmd = "id0x22DD02" , bus = "HS-CAN" , mid = "720" , flags=0x06 , mult = 1 , offset = 0 , len = 1 , unit = "V" , title = "Main ECU Voltage Supply", call = "readNumPid"} ,
+id6 = {  cmd = "id0x22F188" , bus = "MS-CAN" , mid = "733" , flags=0x02 , title="EATC s/w Version", call = "readAscPid"} ,
+dummy =0
+
+}
+for k,v in pairs (o) do
+    print (k,v)
+end
+
+newArray= onionMsgCall("dtc.oodb","005")
+print ("Table")
+for k,v in pairs (newArray) do
+    print (k,v)
+end
+
+print ("header")
+for k,v in pairs (newArray.header) do
+    print (k,v)
+end
+
+print ("header 1")
+for k,v in pairs (newArray["header"]) do
+    print (k,v)
+end
+
+print ("data")
+for k,v in pairs (newArray.data) do
+    print (k,v)
+end
+
+print ("data 1")
+for k,v in pairs (newArray.data["1"]) do
+    print (k,v)
+end
+
+x = newArray.header.size
+y = newArray.len
+
+print ("Sizes:" ,y, x)
+
+
+  for cx = 1 , x, 1 do 
+	  print (y, cx, newArray.data[tostring(y)][tostring(cx)])
+  end
+
 return
 
