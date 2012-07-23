@@ -322,7 +322,7 @@ public class ScriptengineLua extends OobdScriptengine {
             public int call(LuaCallFrame callFrame, int nArguments) {
                 //BaseLib.luaAssert(nArguments >0, "not enough args");
                 initRPC(callFrame, nArguments);
-                Onion result =new Onion();
+                Onion result = new Onion();
                 Message answer = null;
                 try {
                     answer = myself.getMsgPort().sendAndWait(new Message(myself, DBName, new Onion(""
@@ -330,12 +330,12 @@ public class ScriptengineLua extends OobdScriptengine {
                             + "'owner':"
                             + "{'name':'" + myself.getId() + "'},"
                             + "'command':'lookup',"
-                           + "'dbfilename':'" + scriptDir+File.separator+getString(0) + "',"
+                            + "'dbfilename':'" + scriptDir + File.separator + getString(0) + "',"
                             + "'key':'" + getString(1)
                             + "'}")), -1);
                     if (answer != null) {
                         result = answer.getContent().getOnion("result");
-                         //} catch (IOException ex) {
+                        //} catch (IOException ex) {
                         //    Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
                         //}
                     }
@@ -343,20 +343,62 @@ public class ScriptengineLua extends OobdScriptengine {
                     Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
- //               Object tab = callFrame.get(0);
- //               System.out.println(tab.getClass().getName());
+                //               Object tab = callFrame.get(0);
+                //               System.out.println(tab.getClass().getName());
                 LuaTableImpl newTable = new LuaTableImpl();
 //                try {
-                    //newTable = onion2Lua(new Onion("{" + "'type':'" + CM_WRITESTRING + "'," + "'owner':" + "{'name':'" + myself.getId() + "'}," + "'command':'serDisplayWrite'," + "'data':'" + "blablub" + "'" + "}"));
+                //newTable = onion2Lua(new Onion("{" + "'type':'" + CM_WRITESTRING + "'," + "'owner':" + "{'name':'" + myself.getId() + "'}," + "'command':'serDisplayWrite'," + "'data':'" + "blablub" + "'" + "}"));
                 newTable = onion2Lua(result);
-/*                } catch (JSONException ex) {
-                    Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+                /*                } catch (JSONException ex) {
+                Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
                 }
-*/
+                 */
                 //newTable.rawset("Testkey", "Testvalue");
                 callFrame.push(newTable);
                 System.out.println("onionMsg called\n");
                 finishRPC(callFrame, nArguments);
+                return 1;
+            }
+        });
+        register("dbLookupCall", new JavaFunction() {
+
+            public int call(LuaCallFrame callFrame, int nArguments) {
+                //BaseLib.luaAssert(nArguments >0, "not enough args");
+                initRPC(callFrame, nArguments);
+                Onion result = new Onion();
+                Message answer = null;
+                try {
+                    answer = myself.getMsgPort().sendAndWait(new Message(myself, DBName, new Onion(""
+                            + "{'type':'" + CM_DBLOOKUP + "',"
+                            + "'owner':"
+                            + "{'name':'" + myself.getId() + "'},"
+                            + "'command':'lookup',"
+                            + "'dbfilename':'" + scriptDir + File.separator + getString(0) + "',"
+                            + "'key':'" + getString(1)
+                            + "'}")), -1);
+                    if (answer != null) {
+                        result = answer.getContent().getOnion("result");
+                        //} catch (IOException ex) {
+                        //    Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+                        //}
+                    }
+                } catch (JSONException ex) {
+                    Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                //               Object tab = callFrame.get(0);
+                //               System.out.println(tab.getClass().getName());
+                LuaTableImpl newTable = new LuaTableImpl();
+//                try {
+                //newTable = onion2Lua(new Onion("{" + "'type':'" + CM_WRITESTRING + "'," + "'owner':" + "{'name':'" + myself.getId() + "'}," + "'command':'serDisplayWrite'," + "'data':'" + "blablub" + "'" + "}"));
+                newTable = onion2Lua(result);
+                /*                } catch (JSONException ex) {
+                Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                 */
+                //newTable.rawset("Testkey", "Testvalue");
+                callFrame.push(newTable);
+                 finishRPC(callFrame, nArguments);
                 return 1;
             }
         });
@@ -497,11 +539,8 @@ public class ScriptengineLua extends OobdScriptengine {
 
     LuaTableImpl onion2Lua(Onion input) {
         LuaTableImpl newLuaTable = new LuaTableImpl();
-        System.out.println("Enter onion2lua");
         for (Iterator iter = input.keys(); iter.hasNext();) {
             String key = (String) iter.next();
-            System.out.println("Key:" + key);
-
             Object value;
             try {
                 value = input.getOnionObject(key);
@@ -520,7 +559,6 @@ public class ScriptengineLua extends OobdScriptengine {
                 } else if (value instanceof Onion) {
                     newLuaTable.rawset(key, onion2Lua((Onion) value));
                 } else {
-                    System.out.println("Unbekannter Typ");
                 }
 
             } catch (OnionNoEntryException ex) {
