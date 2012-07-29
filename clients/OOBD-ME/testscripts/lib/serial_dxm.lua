@@ -8,6 +8,7 @@ openPage = openPageCall
 addElement = addElementCall
 pageDone = pageDoneCall
 openChannel = openChannelCall
+dbLookup = dbLookupCall
 --]]
 ---[[
 serFlush = serFlushCall

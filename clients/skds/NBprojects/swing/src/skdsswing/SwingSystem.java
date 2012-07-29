@@ -88,15 +88,10 @@ public class SwingSystem implements IFsystem {
     }
 
     public String generateUIFilePath(int pathID, String fileName) {
-        switch (pathID) {
-            case OOBDConstants.FT_PROPS:
-                //return "resources/"+fileName;
+
                 return fileName;
 
-            default:
-                return null;
-        }
-    }
+     }
 
     public InputStream generateResourceStream(int pathID, String ResourceName) throws java.util.MissingResourceException {
         try {

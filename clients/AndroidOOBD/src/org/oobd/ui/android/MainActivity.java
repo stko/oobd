@@ -42,6 +42,9 @@ public class MainActivity extends Activity {
 	private Button mDiagnoseButton;
 	private Spinner mSourceSpinner;
 	private String scriptName;
+	private String BTDeviceName="";
+	private String lastScript="";
+	private SharedPreferences preferences;
 	private BluetoothAdapter mBluetoothAdapter;
 
 	public static MainActivity myMainActivity;
@@ -75,6 +78,24 @@ public class MainActivity extends Activity {
 				android.R.layout.simple_spinner_item, OOBDApp.getInstance()
 						.getAvailableLuaScript());
 		mSourceSpinner.setAdapter(adapter);
+
+
+		preferences = getSharedPreferences("OOBD_SETTINGS", MODE_PRIVATE);
+		if (preferences != null) {
+			BTDeviceName = preferences.getString("BTDEVICE",
+					"");
+			lastScript = preferences.getString("SCRIPT",
+					"");
+			if(!lastScript.equals("")){
+				for (int i = 0; i < mSourceSpinner.getCount(); i++) {
+					if (lastScript.equals(mSourceSpinner.getItemAtPosition(i))) {
+						mSourceSpinner.setSelection(i);
+						break;
+					}
+				}
+
+			}
+		}
 
 		mDiagnoseButton.setOnClickListener(new View.OnClickListener() {
 
@@ -133,12 +154,6 @@ public class MainActivity extends Activity {
 					alertDialog.show();
 				    return;
 				}
-				String BTDeviceName="";
-				SharedPreferences preferences = getSharedPreferences("OOBD_SETTINGS", MODE_PRIVATE);
-				if (preferences != null) {
-					BTDeviceName = preferences.getString("BTDEVICE",
-							"");
-				}
 				if (BTDeviceName.equalsIgnoreCase("")) {
 					AlertDialog alertDialog = new AlertDialog.Builder(
 							myMainActivity).create();
@@ -155,6 +170,8 @@ public class MainActivity extends Activity {
 				    return;
 				}
 				if (scriptName != null) {
+					preferences.edit().putString("SCRIPT",
+							scriptName).commit();
 					//prepare the "load Script" message
 					Diagnose.showDialog=true;
 					// the following trick avoids a recreation of the Diagnose

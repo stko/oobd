@@ -56,11 +56,12 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 
 	public String generateUIFilePath(int pathID, String fileName) {
 		switch (pathID) {
-		case OOBDConstants.FT_PROPS:
-			return "/" + fileName;
+
+		 case FT_DATABASE: return fileName;
 
 		default:
-			return null;
+			return "/sdcard/OOBD/" + fileName;
+			// return null;
 		}
 	}
 
@@ -74,70 +75,47 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 		Log.v(this.getClass().getSimpleName(), "Try to load: " + resourceName
 				+ " with path ID : " + pathID);
 		InputStream resource = null;
-		if (pathID == OOBDConstants.FT_PROPS) { // Achtung: Hier wird der
-			// ResourceName nicht weiter
-			// beachtet, weil nur hardcoded
-			// der oobdcore verwendet wird.
-			// Ist das so richtig
-			/*
-			 * if (resourceName.contains("oobdcore")) resource =
-			 * OOBDApp.getInstance
-			 * ().getApplicationContext().getResources().openRawResource
-			 * (R.raw.oobdcore); else if (resourceName.contains("enginelua"))
-			 * resource =
-			 * OOBDApp.getInstance().getApplicationContext().getResources
-			 * ().openRawResource(R.raw.enginelua); else if
-			 * (resourceName.contains("buscom")) resource =
-			 * OOBDApp.getInstance()
-			 * .getApplicationContext().getResources().openRawResource
-			 * (R.raw.buscom);
-			 * 
-			 * Log.v(this.getClass().getSimpleName(), "File " + resourceName +
-			 * " could be loaded from /res/raw");
-			 */
+		switch (pathID) {
+		case OOBDConstants.FT_PROPS:
+		case OOBDConstants.FT_DATABASE:
 			try {
-				resource = new FileInputStream("/sdcard/OOBD/" + resourceName);
+				resource = new FileInputStream(generateUIFilePath(pathID,
+						resourceName));
 				Log.v(this.getClass().getSimpleName(), "File " + resourceName
-						+ " could be loaded from /sdcard/oobd");
+						+ " loaded from /sdcard/oobd");
 			} catch (FileNotFoundException e) {
 				Log.v(this.getClass().getSimpleName(), "File " + resourceName
 						+ " could not loaded from /sdcard/oobd", e);
 			}
 			return resource;
-		} else if (pathID == OOBDConstants.FT_SCRIPT) {
+		case OOBDConstants.FT_SCRIPT:
 			try {
-				// InputStream resource = new
-				// FileInputStream("/sdcard/stdlib.lbc");
-				resource = new FileInputStream("/sdcard/OOBD/" + resourceName);
+				resource = new FileInputStream(generateUIFilePath(pathID,
+						resourceName));
 				Log.v(this.getClass().getSimpleName(), "File " + resourceName
-						+ " could be loaded from /sdcard/oobd");
+						+ " loaded from /sdcard/oobd");
 				return resource;
 			} catch (IOException e) {
-				Log
-						.e(this.getClass().getSimpleName(),
-								"Script not found on SDCard or SDCard not available. Try to read from /assets");
+				Log.e(this.getClass().getSimpleName(),
+						"Script not found on SDCard or SDCard not available. Try to read from /assets");
 				try {
-					resource = OOBDApp.getInstance().getAssets().open(
-							resourceName);
-					Log
-							.v(
-									this.getClass().getSimpleName(),
-									"File "
-											+ resourceName
-											+ ": default file loaded from /assets instead of sdcard.");
+					resource = OOBDApp.getInstance().getAssets()
+							.open(resourceName);
+					Log.v(this.getClass().getSimpleName(),
+							"File "
+									+ resourceName
+									+ ": default file loaded from /assets instead of sdcard.");
 
 					// inform user in Dialog Box:
 
 					MainActivity.getMyMainActivity().runOnUiThread(
 							new Runnable() {
 								public void run() {
-									Toast
-											.makeText(
-													MainActivity
-															.getMyMainActivity()
-															.getApplicationContext(),
-													"Skript on SDCard not found. Loading default Script.",
-													Toast.LENGTH_LONG).show();
+									Toast.makeText(
+											MainActivity.getMyMainActivity()
+													.getApplicationContext(),
+											"Skript on SDCard not found. Loading default Script.",
+											Toast.LENGTH_LONG).show();
 								}
 							});
 
@@ -150,10 +128,11 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 				}
 			}
 
-		} else {
+		default:
 			throw new java.util.MissingResourceException("Resource not known",
 					"OOBDApp", resourceName);
 		}
+
 	}
 
 	public void onCreate() {
@@ -176,7 +155,7 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 				return name.toLowerCase().endsWith(".lbc");
 			}
 		};
-		File dir = new File("/sdcard/OOBD/");
+		File dir = new File(generateUIFilePath(OOBDConstants.FT_SCRIPT,""));
 		String[] children = dir.list(filter);
 		if (children == null) {
 			return new String[0];
@@ -223,14 +202,14 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 		return myComPort;
 	}
 
-	public boolean isConnected(){
-		if (myComPort==null){
+	public boolean isConnected() {
+		if (myComPort == null) {
 			return false;
-		}else{
-			return (myComPort.getInputStream()!=null);
+		} else {
+			return (myComPort.getInputStream() != null);
 		}
 	}
-	
+
 	public void closeHardwareHandle() {
 		if (myComPort != null) {
 			myComPort.close();
