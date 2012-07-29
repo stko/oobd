@@ -163,9 +163,12 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
 		// userInterface.sm("Moin");
 		props = new Properties();
-		InputStream inStream = systemInterface.generateResourceStream(FT_PROPS,
+/*		InputStream inStream = systemInterface.generateResourceStream(FT_PROPS,
 				systemInterface.generateUIFilePath(FT_PROPS,
 						OOBDConstants.CorePrefsFileName));
+*/
+		InputStream inStream = systemInterface.generateResourceStream(FT_PROPS,
+						OOBDConstants.CorePrefsFileName);
 		if (inStream != null) {
 			try {
 				props.load(inStream);

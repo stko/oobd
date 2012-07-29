@@ -58,6 +58,9 @@ end
 
 -- here it becomes tricky: store the necessary function calls as a id- indexed hash table
 
+-- parameter taken from http://en.wikipedia.org/wiki/OBD-II_PIDs
+
+
 local PID01CMDs = {
 	------------------------ these are the lines copied from the "CalcNumPid" section in the OBD2_PIDs - OpenOffice- File
 -------------- 1 section -----------------------------------------------
@@ -390,7 +393,17 @@ function showdtcs(oldvalue,id)
 				if nrOfDTC> 0 then
 					local i = 0
 					for i = 1 , nrOfDTC, 1 do
-						serDisplayWrite(tostring(i)..": P"..tostring(udsBuffer[2*i + 1],16)..tostring(udsBuffer[2*i + 2],16))
+						DTCCode=translateDTC(udsBuffer[2*i + 1],udsBuffer[2*i + 2])
+						if dbLookup ~= null then
+							newArray= dbLookup("dtc.oodb",DTCCode)
+							if newArray.len > 0 then
+								index=tostring(newArray.header["Description"])
+								DTCCode= "("..DTCCode..") " .. newArray.data["1"][index]
+							else
+							    print ("DB error :", newArray.len)
+							end
+						end
+						serDisplayWrite(tostring(i)..": "..DTCCode)
 					end
 				end
 				return tostring(nrOfDTC).." DTC(s)"
@@ -439,27 +452,6 @@ end
 
 ----------------- Do the initial settings --------------
 
---Start("","")
-
-newArray= dbLookupCall("dtc.oodb","005")
-
-print ("header")
-for k,v in pairs (newArray.header) do
-    print (k,"=",v)
-end
-
-x = newArray.header.size
-y = newArray.len
-
-print ("Sizes:" ,y, x)
-
-
-  for cy = 1, y , 1 do
-  for cx = 1 , x, 1 do 
-  
-	  print (cy, cx, newArray.data[tostring(cy)][tostring(cx)])
-  end
-end
-
+Start("","")
 return
 

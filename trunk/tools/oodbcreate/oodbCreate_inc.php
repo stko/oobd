@@ -196,6 +196,7 @@ class dbEntry
 
 
 // help function to read a complete text line from the input file stream
+// supresses comment line which starts  with an #
 function freadLine($inFp){
   $line="";
   $eof=FALSE;
@@ -207,7 +208,13 @@ function freadLine($inFp){
 	if ($char!="\r"){
 	  $line.=$char;
 	}
-      }else $eol=true;
+      }else{
+	if (preg_match ( "/^\s*#/", $line)){ // if this line starts with an #, then the line is surpressed
+	  $line="";
+	} else {
+	  $eol=true;
+	}
+      }
     }
   }
   if($eof){
@@ -229,7 +236,7 @@ function createDB($inFp, $outFp){
       $headerLine=$line; // store the headerLine which contains the colum names at the beginning
     }else{
       list($index,$content)=split("\t",$line,2); //split each line into key and value
-      if ($lastIndex == $index){ // line belongs to previous key
+       if ($lastIndex == $index){ // line belongs to previous key
 	$actLine->addContent($content); //add content to previous key
       }else{
 	$actLine= new dbEntry($actLine,$index,$content); //create a new key object
