@@ -6,6 +6,12 @@ http://code.google.com/p/stm32flash/
 Get device indormation:
 ./stm32flash /dev/ttyS0
 
+Read unprotect device:
+./stm32flash -z /dev/ttyS0
+
+Write unprotect device:
+./stm32flash -u /dev/ttyS0
+
 Write with verify and then start execution:
 ./stm32flash -w <filename> -v -g 0x0 /dev/ttyS0
 
@@ -16,21 +22,27 @@ Start execution:
 ./stm32flash -g 0x0 /dev/ttyS0
 
 Example to write OOBD Flashloader:
-./stm32flash -w OOBD_Flashloader_SVN267.hex -v -g 0x0 /dev/ttyS0
+./stm32flash -w OOBD_Flashloader_SVN392.hex -v -g 0x0 /dev/ttyS0
 
 
 --- WINDOWS ---
 Get device indormation:
-stm32flash.exe /dev/ttyS0
+stm32flash.exe COM1
+
+Read unprotect device:
+./stm32flash -z COM1
+
+Write unprotect device:
+./stm32flash -u COM1
 
 Write with verify and then start execution:
-stm32flash.exe -w <filename> -v -g 0x0 /dev/ttyS0
+stm32flash.exe -w <filename> -v -g 0x0 COM1
 
 Read flash to file:
-stm32flash.exe -r <filename> /dev/ttyS0
+stm32flash.exe -r <filename> COM1
 
 Start execution:
-stm32flash.exe -g 0x0 /dev/ttyS0
+stm32flash.exe -g 0x0 COM1
 
 Example to write OOBD Flashloader:
-stm32flash.exe -w OOBD_Flashloader_SVN267.hex -v -g 0x0 /dev/ttyS0
+stm32flash.exe -w OOBD_Flashloader_SVN392.hex -v -g 0x0 COM1
