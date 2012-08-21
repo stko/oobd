@@ -12,7 +12,16 @@ Read unprotect device:
 Write unprotect device:
 ./stm32flash -u /dev/ttyS0
 
+Write bootloader, erase whole memory verify and then start execution:
+./stm32flash -w <filename> -v -x -g 0x0 /dev/ttyS0
+
+Write firmware on offset 0x2F3C (0x08002F3C), verify and then start execution:
+./stm32flash -w <filename> -v -o 0x2f3C-g 0x0 /dev/ttyS0
+
 Write with verify and then start execution:
+./stm32flash -w <filename> -v -g 0x0 /dev/ttyS0
+
+General write with verify and then start execution:
 ./stm32flash -w <filename> -v -g 0x0 /dev/ttyS0
 
 Read flash to file:
@@ -35,7 +44,13 @@ Read unprotect device:
 Write unprotect device:
 ./stm32flash -u COM1
 
-Write with verify and then start execution:
+Write bootloader, erase whole memory verify and then start execution:
+./stm32flash -w <filename> -v -x -g 0x0 COM1
+
+Write firmware on offset 0x2F3C (0x08002F3C), verify and then start execution:
+./stm32flash -w <filename> -v -o 0x2f3C-g 0x0 /dev/COM1
+
+General write with verify and then start execution:
 stm32flash.exe -w <filename> -v -g 0x0 COM1
 
 Read flash to file:
