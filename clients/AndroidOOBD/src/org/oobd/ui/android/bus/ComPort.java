@@ -1,6 +1,7 @@
 package org.oobd.ui.android.bus;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -71,80 +72,68 @@ public class ComPort implements OOBDPort {
 			}
 		}
 
-		if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
-			Set<BluetoothDevice> pairedDevices = mBluetoothAdapter
-					.getBondedDevices();
-			Log.v(this.getClass().getSimpleName(), "Anzahl paired devices: "
-					+ pairedDevices.size());
+		obdDevice = mBluetoothAdapter.getRemoteDevice(BTAddress);
 
-			// If there are paired devices
-			if (pairedDevices.size() > 0) {
-				// Loop through paired devices
-				for (BluetoothDevice device : pairedDevices) {
-					// Add the name and address to an array adapter to show in a
-					// ListView
-					Log.d(this.getClass().getSimpleName(),
-							"Found Bluetooth Device: " + device.getName() + "="
-									+ device.getAddress() + " search for "
-									+ BTAddress);
-					// TODO delete following line once device selection is
-					// implemented
-					if (BTAddress.equalsIgnoreCase(device.getAddress())) {
-						obdDevice = device;
-					}
-				}
-				Log.v(this.getClass().getSimpleName(), "MY_UUID: " + MY_UUID);
+		if (obdDevice != null) { // Get a BluetoothSocket to connect
+			// with the given BluetoothDevice
+			try {
+				mBluetoothAdapter.cancelDiscovery();
+				Log.v(this.getClass().getSimpleName(),
+						"Device " + obdDevice.getName());
+				java.lang.reflect.Method m = obdDevice.getClass().getMethod(
+//						"createRfcommSocket", new Class[] { int.class });
+				"createInsecureRfcommSocket", new Class[] { int.class });
+				serialPort = (BluetoothSocket) m.invoke(obdDevice,
+						Integer.valueOf(1));
 
-				if (obdDevice != null) { // Get a BluetoothSocket to connect
-					// with the given BluetoothDevice
+				if (serialPort != null) {
 					try {
-						// MY_UUID is the app's UUID string, also used by the
-						// server code
-						Log.v(this.getClass().getSimpleName(), "Device "
-								+ obdDevice.getName());
-						serialPort = obdDevice
-								.createRfcommSocketToServiceRecord(MY_UUID);
-						if (serialPort != null) {
-							try {
 
-								serialPort.connect();
-								Log.d("OOBD:Bluetooth", "Bluetooth connected");
-								inputStream = serialPort.getInputStream();
-								outputStream = serialPort.getOutputStream();
-								OOBDApp.getInstance().displayToast(
-										"Bluetooth connected");
-								return true;
-							} catch (IOException ex) {
-								Log.e(this.getClass().getSimpleName(),
-										"Error: Could not connect to socket.",ex);
-								OOBDApp.getInstance().displayToast(
-								"Bluetooth NOT connected!");
-							}
-						} else {
-							Log.e("OOBD:Bluetooth", "Bluetooth NOT connected!");
-							OOBDApp.getInstance().displayToast(
-							"Bluetooth NOT connected!");
-						}
-						// do not yet connect. Connect before calling the
-						// socket.
+						serialPort.connect();
+						Log.d("OOBD:Bluetooth", "Bluetooth connected");
+						inputStream = serialPort.getInputStream();
+						outputStream = serialPort.getOutputStream();
+						OOBDApp.getInstance().displayToast(
+								"Bluetooth connected");
+						return true;
 					} catch (IOException ex) {
 						Log.e(this.getClass().getSimpleName(),
-								"Error: Could not connect to socket.",ex);
+								"Error: Could not connect to socket.", ex);
 						OOBDApp.getInstance().displayToast(
-						"Bluetooth NOT connected!");
-						if (serialPort != null) {
-							try {
-								serialPort.close();
-							} catch (IOException closeEx) {
-							}
-							;
-						}
-						return false;
+								"Bluetooth NOT connected!");
 					}
+				} else {
+					Log.e("OOBD:Bluetooth", "Bluetooth NOT connected!");
+					OOBDApp.getInstance().displayToast(
+							"Bluetooth NOT connected!");
+					if (serialPort != null) {
+						try {
+							serialPort.close();
+						} catch (IOException closeEx) {
+						}
+					}
+					return false;
 				}
-			} else
-				System.out.println("No Paired Devices Found");
+				// do not yet connect. Connect before calling the
+				// socket.
+			} catch (SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+
 		return false;
 	}
 
@@ -181,44 +170,44 @@ public class ComPort implements OOBDPort {
 		}
 		return null;
 	}
-	
-	public OOBDPort resetConnection(){
+
+	public OOBDPort resetConnection() {
 		return close();
 	}
 
 	public PortInfo[] getPorts() {
-			System.out.println("Starting Bluetooth Detection and Device Pairing");
+		System.out.println("Starting Bluetooth Detection and Device Pairing");
 
-			BluetoothAdapter mBluetoothAdapter = BluetoothAdapter
-					.getDefaultAdapter();
-			if (mBluetoothAdapter == null) {
-				Log.w(this.getClass().getSimpleName(), "Bluetooth not supported.");
-				PortInfo[] BTDeviceSet = new PortInfo[1];
-				BTDeviceSet[0] = new PortInfo("", "No Devices paired :-(");
-				return BTDeviceSet;
-			}
-			Set<BluetoothDevice> pairedDevices = mBluetoothAdapter
-					.getBondedDevices();
-			PortInfo[] BTDeviceSet = new PortInfo[pairedDevices.size()];
-			Log.v(this.getClass().getSimpleName(), "Anzahl paired devices: "
-					+ pairedDevices.size());
-
-			// If there are paired devices
-			if (pairedDevices.size() > 0) {
-				// Loop through paired devices
-					int i = 0;
-
-				for (BluetoothDevice device : pairedDevices) {
-					// Add the name and address to an array adapter to show in a
-					// ListView
-					Log.d("OOBD:BluetoothIntiWorker", "Found Bluetooth Device: "
-							+ device.getName() + "=" + device.getAddress());
-					BTDeviceSet[i] = new PortInfo(device.getAddress(), device
-							.getName());
-					i++;
-				}
-			}
+		BluetoothAdapter mBluetoothAdapter = BluetoothAdapter
+				.getDefaultAdapter();
+		if (mBluetoothAdapter == null) {
+			Log.w(this.getClass().getSimpleName(), "Bluetooth not supported.");
+			PortInfo[] BTDeviceSet = new PortInfo[1];
+			BTDeviceSet[0] = new PortInfo("", "No Devices paired :-(");
 			return BTDeviceSet;
+		}
+		Set<BluetoothDevice> pairedDevices = mBluetoothAdapter
+				.getBondedDevices();
+		PortInfo[] BTDeviceSet = new PortInfo[pairedDevices.size()];
+		Log.v(this.getClass().getSimpleName(), "Anzahl paired devices: "
+				+ pairedDevices.size());
+
+		// If there are paired devices
+		if (pairedDevices.size() > 0) {
+			// Loop through paired devices
+			int i = 0;
+
+			for (BluetoothDevice device : pairedDevices) {
+				// Add the name and address to an array adapter to show in a
+				// ListView
+				Log.d("OOBD:BluetoothIntiWorker", "Found Bluetooth Device: "
+						+ device.getName() + "=" + device.getAddress());
+				BTDeviceSet[i] = new PortInfo(device.getAddress(),
+						device.getName());
+				i++;
+			}
+		}
+		return BTDeviceSet;
 	}
 
 }

@@ -31,7 +31,6 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 import android.content.SharedPreferences;
 
-
 /**
  * 
  * @author Andreas Budde, Peter Mayer Activity that is launched when the app is
@@ -42,8 +41,8 @@ public class MainActivity extends Activity {
 	private Button mDiagnoseButton;
 	private Spinner mSourceSpinner;
 	private String scriptName;
-	private String BTDeviceName="";
-	private String lastScript="";
+	private String BTDeviceName = "";
+	private String lastScript = "";
 	private SharedPreferences preferences;
 	private BluetoothAdapter mBluetoothAdapter;
 
@@ -53,7 +52,7 @@ public class MainActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//Remove title bar
+		// Remove title bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);
 
@@ -79,14 +78,11 @@ public class MainActivity extends Activity {
 						.getAvailableLuaScript());
 		mSourceSpinner.setAdapter(adapter);
 
-
 		preferences = getSharedPreferences("OOBD_SETTINGS", MODE_PRIVATE);
 		if (preferences != null) {
-			BTDeviceName = preferences.getString("BTDEVICE",
-					"");
-			lastScript = preferences.getString("SCRIPT",
-					"");
-			if(!lastScript.equals("")){
+			BTDeviceName = preferences.getString("BTDEVICE", "");
+			lastScript = preferences.getString("SCRIPT", "");
+			if (!lastScript.equals("")) {
 				for (int i = 0; i < mSourceSpinner.getCount(); i++) {
 					if (lastScript.equals(mSourceSpinner.getItemAtPosition(i))) {
 						mSourceSpinner.setSelection(i);
@@ -105,8 +101,10 @@ public class MainActivity extends Activity {
 					AlertDialog alertDialog = new AlertDialog.Builder(
 							myMainActivity).create();
 					alertDialog.setTitle("Device Problem");
-					alertDialog.setMessage("This device does not support Bluetooth!");
-					alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,"Buy another",
+					alertDialog
+							.setMessage("This device does not support Bluetooth!");
+					alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
+							"Buy another",
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int which) {
@@ -114,15 +112,16 @@ public class MainActivity extends Activity {
 								}
 							});
 					alertDialog.show();
-				    return;
-				}
-				else {
+					return;
+				} else {
 					if (!mBluetoothAdapter.isEnabled()) {
 						AlertDialog alertDialog = new AlertDialog.Builder(
 								myMainActivity).create();
 						alertDialog.setTitle("Config Problem");
-						alertDialog.setMessage("Bluetooth is not switched on in settings!");
-						alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,"I'll do",
+						alertDialog
+								.setMessage("Bluetooth is not switched on in settings!");
+						alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
+								"I'll do",
 								new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface dialog,
 											int which) {
@@ -130,21 +129,23 @@ public class MainActivity extends Activity {
 									}
 								});
 						alertDialog.show();
-					    return;
+						return;
 					}
 				}
 
+				Set<BluetoothDevice> pairedDevices = mBluetoothAdapter
+						.getBondedDevices();
+				Log.v(this.getClass().getSimpleName(),
+						"Anzahl paired devices: " + pairedDevices.size());
 
-				Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-				Log.v(this.getClass().getSimpleName(), "Anzahl paired devices: " + pairedDevices.size());
-				
 				// If there are paired devices
-				if (pairedDevices.size() <1) {
+				if (pairedDevices.size() < 1) {
 					AlertDialog alertDialog = new AlertDialog.Builder(
 							myMainActivity).create();
 					alertDialog.setTitle("No Paired Devides");
 					alertDialog.setMessage("No Paired Devices found!");
-					alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,"I'll change that",
+					alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
+							"I'll change that",
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int which) {
@@ -152,14 +153,16 @@ public class MainActivity extends Activity {
 								}
 							});
 					alertDialog.show();
-				    return;
+					return;
 				}
+				BTDeviceName = preferences.getString("BTDEVICE", "");
 				if (BTDeviceName.equalsIgnoreCase("")) {
 					AlertDialog alertDialog = new AlertDialog.Builder(
 							myMainActivity).create();
 					alertDialog.setTitle("Not configured yet");
 					alertDialog.setMessage("BT Device not set in Settings");
-					alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,"I'll choose one",
+					alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
+							"I'll choose one",
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int which) {
@@ -167,13 +170,12 @@ public class MainActivity extends Activity {
 								}
 							});
 					alertDialog.show();
-				    return;
+					return;
 				}
 				if (scriptName != null) {
-					preferences.edit().putString("SCRIPT",
-							scriptName).commit();
-					//prepare the "load Script" message
-					Diagnose.showDialog=true;
+					preferences.edit().putString("SCRIPT", scriptName).commit();
+					// prepare the "load Script" message
+					Diagnose.showDialog = true;
 					// the following trick avoids a recreation of the Diagnose
 					// TapActivity as long as the previous created one is still
 					// in memory
@@ -186,8 +188,8 @@ public class MainActivity extends Activity {
 					// Diagnose.class));
 					try {
 						AndroidGui.getInstance().startScriptEngine(
-								new Onion("{" + "'scriptpath':'"
-										+ scriptName + "'" + "}"));
+								new Onion("{" + "'scriptpath':'" + scriptName
+										+ "'" + "}"));
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						Log.e("OOBD", "JSON creation error", e);
@@ -195,9 +197,10 @@ public class MainActivity extends Activity {
 				}
 			}
 		});
-		TextView versionView=(TextView) findViewById(R.id.versionView);
-		versionView.setText("Build " +getResources().getString(R.string.app_svnversion));
-		
+		TextView versionView = (TextView) findViewById(R.id.versionView);
+		versionView.setText("Build "
+				+ getResources().getString(R.string.app_svnversion));
+
 	}
 
 	/**
@@ -230,21 +233,23 @@ public class MainActivity extends Activity {
 	public static void setMyMainActivity(MainActivity myMainActivity) {
 		MainActivity.myMainActivity = myMainActivity;
 	}
+
 	public synchronized void onActivityResult(final int requestCode,
 			int resultCode, final Intent data) {
 
 	}
-	
-	public void onStart(){
+
+	public void onStart() {
 		super.onStart();
-	   	if (mBluetoothAdapter == null) {
+		if (mBluetoothAdapter == null) {
 			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 			if (mBluetoothAdapter == null) {
-			    Log.w(this.getClass().getSimpleName(), "Bluetooth not supported.");
-			}
-			else {
+				Log.w(this.getClass().getSimpleName(),
+						"Bluetooth not supported.");
+			} else {
 				if (!mBluetoothAdapter.isEnabled()) {
-					Log.w(this.getClass().getSimpleName(), "Bluetooth not enabled.");
+					Log.w(this.getClass().getSimpleName(),
+							"Bluetooth not enabled.");
 				}
 			}
 		}

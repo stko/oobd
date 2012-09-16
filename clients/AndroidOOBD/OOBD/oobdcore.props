@@ -1,0 +1,14 @@
+#OOBD Core Preferences for Android Version
+# For the Android Version, all classes must be specified explicitly.
+#OOBD Core Preferences
+# Search path for dynamic classes
+EngineClassPath=org.oobd.base.scriptengine.ScriptengineLua
+ProtocolClassPath=org.oobd.base.protocol.ProtocolUDS
+ConnectorClassPath=org.oobd.base.connector.ConnectorLocal
+#----------------------------
+#Different Versions: Bus Echo / Android Bluetooth (BT does not work in emulator)
+BusClassPath=org.oobd.base.bus.BusCom
+#BusClassPrefix=org.oobd.ui.base.bus.
+#BusClassPath=org.oobd.ui.android.bus.BusEchoAndroid
+#BusClassPrefix=org.oobd.ui.android.bus.
+DatabaseClassPath=org.oobd.base.db.AVLLookup

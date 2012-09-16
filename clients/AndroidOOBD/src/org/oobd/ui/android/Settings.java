@@ -35,6 +35,7 @@ public class Settings extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings);
+		preferences = this.getSharedPreferences("OOBD_SETTINGS", MODE_PRIVATE);
 		portListGenerator=((OOBDPort)OOBDApp.getInstance().getCore().supplyHardwareHandle(null));
 		mDeviceSpinner = (Spinner) findViewById(R.id.BTDeviceSpinner);
 		mDeviceSpinner
@@ -64,7 +65,6 @@ public class Settings extends Activity {
 	
 	
 	private void createList() {
-		preferences = this.getSharedPreferences("OOBD_SETTINGS", MODE_PRIVATE);
 		if (preferences != null) {
 			BTDeviceName = preferences.getString("BTDEVICE",
 					"00:12:6F:07:27:25");

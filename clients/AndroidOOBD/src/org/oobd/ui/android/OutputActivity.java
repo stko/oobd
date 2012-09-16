@@ -8,11 +8,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.json.JSONException;
+import org.oobd.base.OOBDConstants;
 import org.oobd.base.support.Onion;
 import org.oobd.ui.android.application.AndroidGui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.TabActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,6 +25,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.Html;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -226,6 +229,16 @@ public class OutputActivity extends Activity {
 
 	public void addText(String text) {
 		myRefreshHandler.sendMessage(Message.obtain(myRefreshHandler, 2, text));
+	}
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		// if back- button is pressed
+		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+			DiagnoseTab.getInstance().getTabHost().setCurrentTab(0);
+			return true; // stop further handling of the
+			// back-button
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 
 }

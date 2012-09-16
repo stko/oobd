@@ -1,6 +1,8 @@
 package org.oobd.ui.android;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.oobd.base.OOBDConstants;
 import org.oobd.ui.android.application.OOBDApp;
@@ -85,7 +87,14 @@ public class DiagnoseAdapter extends ArrayAdapter<DiagnoseItem> {
 					parent, false);
 		}
 
-		DiagnoseItem item = getItem(position);
+		DiagnoseItem item = null;
+		try {
+			item = getItem(position);
+
+		} catch (Exception ex) {
+			Logger.getLogger(DiagnoseAdapter.class.getName()).log(Level.WARNING,
+					null, ex);
+		}
 		
 		if (item != null) {
 			
