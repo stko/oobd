@@ -180,20 +180,20 @@ public class Diagnose extends ListActivity {
 		Visualizer myVisualizer = myItem.getMyVisualizer();
 		switch (item.getItemId()) {
 		case 0:
-			myVisualizer.setUpdateFlag(OOBDConstants.VE_UPDATE, !myVisualizer
-					.getUpdateFlag(OOBDConstants.VE_UPDATE));
+			myVisualizer.setUpdateFlag(OOBDConstants.VE_UPDATE,
+					!myVisualizer.getUpdateFlag(OOBDConstants.VE_UPDATE));
 			break;
 		case 1:
-			myVisualizer.setUpdateFlag(OOBDConstants.VE_TIMER, !myVisualizer
-					.getUpdateFlag(OOBDConstants.VE_TIMER));
+			myVisualizer.setUpdateFlag(OOBDConstants.VE_TIMER,
+					!myVisualizer.getUpdateFlag(OOBDConstants.VE_TIMER));
 			break;
 		case 2:
-			myVisualizer.setUpdateFlag(OOBDConstants.VE_LOG, !myVisualizer
-					.getUpdateFlag(OOBDConstants.VE_LOG));
+			myVisualizer.setUpdateFlag(OOBDConstants.VE_LOG,
+					!myVisualizer.getUpdateFlag(OOBDConstants.VE_LOG));
 			break;
 		case 3:
-			myVisualizer.setUpdateFlag(OOBDConstants.VE_BACK, !myVisualizer
-					.getUpdateFlag(OOBDConstants.VE_BACK));
+			myVisualizer.setUpdateFlag(OOBDConstants.VE_BACK,
+					!myVisualizer.getUpdateFlag(OOBDConstants.VE_BACK));
 			break;
 
 		}
@@ -223,25 +223,36 @@ public class Diagnose extends ListActivity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// if back- button is pressed
 		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-			// stop automatic updates
-			if (myTimerButton.isChecked()) {
-				myTimerButton.toggle(); // setSelected only has no effect..
-				wl.release();
-			}
-			synchronized (mDiagnoseItems) {
-				if (mDiagnoseItems != null) {
-					// searching for list entry which contains the "back"- Flag
-					int i;
-					for (i = 0; i < mDiagnoseItems.size()
-							&& !mDiagnoseItems.get(i).getMyVisualizer()
-									.getUpdateFlag(OOBDConstants.VE_BACK); i++) {
-					}
-					if (i < mDiagnoseItems.size()) { // a "back"-item found
-						mDiagnoseItems.get(i).getMyVisualizer().updateRequest(
-								OOBDConstants.UR_USER); // simulate a user
-						// selection of this
-						// list item
-						return true; // stop further handling of the back-button
+			// is the output tab active?
+			if (DiagnoseTab.getInstance().getTabHost().getCurrentTab() == 1) {
+				// go back to the diagnostic tab
+				DiagnoseTab.getInstance().getTabHost().setCurrentTab(0);
+			} else {
+
+				// stop automatic updates
+				if (myTimerButton.isChecked()) {
+					myTimerButton.toggle(); // setSelected only has no effect..
+					wl.release();
+				}
+				synchronized (mDiagnoseItems) {
+					if (mDiagnoseItems != null) {
+						// searching for list entry which contains the "back"-
+						// Flag
+						int i;
+						for (i = 0; i < mDiagnoseItems.size()
+								&& !mDiagnoseItems.get(i).getMyVisualizer()
+										.getUpdateFlag(OOBDConstants.VE_BACK); i++) {
+						}
+						if (i < mDiagnoseItems.size()) { // a "back"-item found
+							mDiagnoseItems.get(i).getMyVisualizer()
+									.updateRequest(OOBDConstants.UR_USER); // simulate
+																			// a
+																			// user
+							// selection of this
+							// list item
+							return true; // stop further handling of the
+											// back-button
+						}
 					}
 				}
 			}
