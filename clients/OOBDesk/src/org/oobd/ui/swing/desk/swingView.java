@@ -4,6 +4,7 @@
 package org.oobd.ui.swing.desk;
 
 import java.awt.CardLayout;
+import java.awt.GridLayout;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
@@ -15,15 +16,33 @@ import javax.swing.Timer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import purejavacomm.CommPortIdentifier;
+import gnu.io.*;
+
+import java.awt.LayoutManager;
+import org.oobd.base.*;
+import org.oobd.base.Core;
+import org.oobd.base.IFui;
+import org.oobd.base.visualizer.*;
+import org.oobd.base.support.Onion;
+
+
+import java.util.Vector;
+import java.util.Iterator;
 
 /**
  * The application's main frame.
  */
-public class swingView extends FrameView {
+public class swingView extends FrameView implements IFui, org.oobd.base.OOBDConstants {
 
     final static String MAINPANEL = "card2";
     final static String DIAGNOSEPANEL = "card3";
     final static String SETTINGSPANEL = "card4";
+   Core oobdCore;
 
     public swingView(SingleFrameApplication app) {
         super(app);
@@ -106,6 +125,7 @@ public class swingView extends FrameView {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         mainPanel = new javax.swing.JPanel();
         main = new javax.swing.JPanel();
@@ -118,6 +138,9 @@ public class swingView extends FrameView {
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         comportComboBox = new javax.swing.JComboBox();
+        jButton1 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        scriptDir = new javax.swing.JTextField();
         diagnose = new javax.swing.JPanel();
         toolPanelDiagnose = new javax.swing.JPanel();
         DiagnoseTitle = new javax.swing.JLabel();
@@ -129,12 +152,13 @@ public class swingView extends FrameView {
         updateButton = new javax.swing.JButton();
         timerButton = new javax.swing.JToggleButton();
         diagnoseScrollPanel = new javax.swing.JScrollPane();
-        diagnoseItemListView = new javax.swing.JList();
+        diagnoseButtonPanel = new javax.swing.JPanel();
         outputPanel = new javax.swing.JPanel();
         outputToolbar = new javax.swing.JToolBar();
         cancelButton = new javax.swing.JButton();
         logButton = new javax.swing.JToggleButton();
         saveButton = new javax.swing.JButton();
+        jTextAreaOutput = new javax.swing.JTextField();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         settingsMenuItem = new javax.swing.JMenuItem();
@@ -194,7 +218,7 @@ public class swingView extends FrameView {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 384, Short.MAX_VALUE)
+            .addGap(0, 503, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -208,6 +232,12 @@ public class swingView extends FrameView {
         mainPanel.add(main, "card2");
 
         settings.setName("settings"); // NOI18N
+        settings.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                settingsComponentShown(evt);
+            }
+        });
+        settings.setLayout(new java.awt.GridBagLayout());
 
         jLabel2.setIcon(resourceMap.getIcon("jLabel2.icon")); // NOI18N
         jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
@@ -218,15 +248,47 @@ public class swingView extends FrameView {
                 jLabel2MouseClicked(evt);
             }
         });
-        settings.add(jLabel2);
+        settings.add(jLabel2, new java.awt.GridBagConstraints());
 
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
-        settings.add(jLabel1);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        settings.add(jLabel1, gridBagConstraints);
 
-        comportComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        comportComboBox.setEditable(true);
         comportComboBox.setName("comportComboBox"); // NOI18N
-        settings.add(comportComboBox);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        settings.add(comportComboBox, gridBagConstraints);
+
+        jButton1.setIcon(resourceMap.getIcon("jButton1.icon")); // NOI18N
+        jButton1.setText(resourceMap.getString("jButton1.text")); // NOI18N
+        jButton1.setToolTipText(resourceMap.getString("jButton1.toolTipText")); // NOI18N
+        jButton1.setName("jButton1"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 2;
+        settings.add(jButton1, gridBagConstraints);
+
+        jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
+        jLabel4.setName("jLabel4"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        settings.add(jLabel4, gridBagConstraints);
+
+        scriptDir.setText(resourceMap.getString("scriptDir.text")); // NOI18N
+        scriptDir.setName("scriptDir"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        settings.add(scriptDir, gridBagConstraints);
 
         mainPanel.add(settings, "card4");
 
@@ -258,7 +320,7 @@ public class swingView extends FrameView {
 
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getActionMap(swingView.class, this);
         backButton.setAction(actionMap.get("onClickButton_Back")); // NOI18N
-        backButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/oobd/ui/swing/desk/resources/back.png"))); // NOI18N
+        backButton.setIcon(resourceMap.getIcon("backButton.icon")); // NOI18N
         backButton.setText(resourceMap.getString("backButton.text")); // NOI18N
         backButton.setToolTipText(resourceMap.getString("backButton.toolTipText")); // NOI18N
         backButton.setFocusable(false);
@@ -289,19 +351,24 @@ public class swingView extends FrameView {
 
         diagnoseScrollPanel.setName("diagnoseScrollPanel"); // NOI18N
 
-        diagnoseItemListView.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
+        diagnoseButtonPanel.setName("diagnoseButtonPanel"); // NOI18N
+        diagnoseButtonPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                diagnoseButtonPanelComponentShown(evt);
+            }
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                diagnoseButtonPanelComponentShown(evt);
+            }
         });
-        diagnoseItemListView.setName("diagnoseItemListView"); // NOI18N
-        diagnoseScrollPanel.setViewportView(diagnoseItemListView);
+        diagnoseButtonPanel.setLayout(new java.awt.GridLayout(1, 0));
+        diagnoseScrollPanel.setViewportView(diagnoseButtonPanel);
 
         diagnosePanel.add(diagnoseScrollPanel);
 
         diagnoseTabPanel.addTab(resourceMap.getString("diagnosePanel.TabConstraints.tabTitle"), resourceMap.getIcon("diagnosePanel.TabConstraints.tabIcon"), diagnosePanel, resourceMap.getString("diagnosePanel.TabConstraints.tabToolTip")); // NOI18N
 
         outputPanel.setName("outputPanel"); // NOI18N
+        outputPanel.setLayout(new javax.swing.BoxLayout(outputPanel, javax.swing.BoxLayout.PAGE_AXIS));
 
         outputToolbar.setRollover(true);
         outputToolbar.setName("outputToolbar"); // NOI18N
@@ -331,18 +398,11 @@ public class swingView extends FrameView {
         saveButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         outputToolbar.add(saveButton);
 
-        javax.swing.GroupLayout outputPanelLayout = new javax.swing.GroupLayout(outputPanel);
-        outputPanel.setLayout(outputPanelLayout);
-        outputPanelLayout.setHorizontalGroup(
-            outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(outputToolbar, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
-        );
-        outputPanelLayout.setVerticalGroup(
-            outputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(outputPanelLayout.createSequentialGroup()
-                .addComponent(outputToolbar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(413, Short.MAX_VALUE))
-        );
+        outputPanel.add(outputToolbar);
+
+        jTextAreaOutput.setText(resourceMap.getString("jTextAreaOutput.text")); // NOI18N
+        jTextAreaOutput.setName("jTextAreaOutput"); // NOI18N
+        outputPanel.add(jTextAreaOutput);
 
         diagnoseTabPanel.addTab(resourceMap.getString("outputPanel.TabConstraints.tabTitle"), resourceMap.getIcon("outputPanel.TabConstraints.tabIcon"), outputPanel, resourceMap.getString("outputPanel.TabConstraints.tabToolTip")); // NOI18N
 
@@ -350,12 +410,14 @@ public class swingView extends FrameView {
 
         mainPanel.add(diagnose, "card3");
 
+        menuBar.setBackground(resourceMap.getColor("menuBar.background")); // NOI18N
         menuBar.setName("menuBar"); // NOI18N
 
         fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
         fileMenu.setName("fileMenu"); // NOI18N
 
         settingsMenuItem.setAction(actionMap.get("onClickMenu_Settings")); // NOI18N
+        settingsMenuItem.setText(resourceMap.getString("settingsMenuItem.text")); // NOI18N
         settingsMenuItem.setName("settingsMenuItem"); // NOI18N
         fileMenu.add(settingsMenuItem);
 
@@ -384,11 +446,11 @@ public class swingView extends FrameView {
         statusPanel.setLayout(statusPanelLayout);
         statusPanelLayout.setHorizontalGroup(
             statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(statusPanelSeparator, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
+            .addComponent(statusPanelSeparator, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
             .addGroup(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusMessageLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 200, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 319, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel)
@@ -435,6 +497,45 @@ public class swingView extends FrameView {
 
     }//GEN-LAST:event_jLabel3MouseClicked
 
+    private void settingsComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_settingsComponentShown
+
+        String osname = System.getProperty("os.name", "").toLowerCase();
+        Enumeration pList = null;
+        Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "OS detected: " + osname);
+        try {
+            if (osname.startsWith("windows")) {
+                pList = gnu.io.CommPortIdentifier.getPortIdentifiers();
+            } else {
+                pList = CommPortIdentifier.getPortIdentifiers();
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        // Process the list.
+        while (pList.hasMoreElements()) {
+            CommPortIdentifier cpi = (CommPortIdentifier) pList.nextElement();
+            System.out.print("Port " + cpi.getName() + " ");
+            if (cpi.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+                System.out.println("is a Serial Port: " + cpi);
+                comportComboBox.addItem(cpi.getName());
+            }
+        }
+    }//GEN-LAST:event_settingsComponentShown
+
+    private void diagnoseButtonPanelComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_diagnoseButtonPanelComponentShown
+        GridLayout thisGrid =  (GridLayout)diagnoseButtonPanel.getLayout();
+        thisGrid =new GridLayout(0,2);
+        diagnoseButtonPanel.setLayout(thisGrid);
+        diagnoseButtonPanel.add(new TextVisualizerJPanel());
+                            diagnoseButtonPanel.invalidate();
+                    diagnoseButtonPanel.validate();
+                    diagnoseButtonPanel.repaint();
+
+ 
+    }//GEN-LAST:event_diagnoseButtonPanelComponentShown
+
     @Action
     public void onClickButton_Back() {
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
@@ -468,18 +569,21 @@ public class swingView extends FrameView {
     private javax.swing.JComboBox comportComboBox;
     private javax.swing.JLabel connectSymbol;
     private javax.swing.JPanel diagnose;
-    private javax.swing.JList diagnoseItemListView;
+    private javax.swing.JPanel diagnoseButtonPanel;
     private javax.swing.JPanel diagnosePanel;
     private javax.swing.JScrollPane diagnoseScrollPanel;
     private javax.swing.JTabbedPane diagnoseTabPanel;
     private javax.swing.JToolBar diagnoseToolBar;
+    private javax.swing.JButton jButton1;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JTextField jTextAreaOutput;
     private javax.swing.JToggleButton logButton;
     private javax.swing.JPanel main;
     private javax.swing.JPanel mainPanel;
@@ -489,6 +593,7 @@ public class swingView extends FrameView {
     private javax.swing.JToolBar outputToolbar;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JButton saveButton;
+    private javax.swing.JTextField scriptDir;
     private javax.swing.JPanel settings;
     private javax.swing.JMenuItem settingsMenuItem;
     private javax.swing.JLabel statusAnimationLabel;
@@ -504,4 +609,33 @@ public class swingView extends FrameView {
     private final Icon[] busyIcons = new Icon[15];
     private int busyIconIndex = 0;
     private JDialog aboutBox;
+
+    public void sm(String msg) {
+           jTextAreaOutput.setText(jTextAreaOutput.getText()+msg+ "\n");
+
+ }
+
+    public void registerOobdCore(Core core) {
+       oobdCore = core;
+      }
+
+    public void announceScriptengine(String id, String visibleName) {
+        //does nothing here
+    }
+
+    public Class getVisualizerClass(String visualizerType, String theme) {
+         return TextVisualizerJPanel.class;
+    }
+
+    public void visualize(Onion myOnion) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void openPage(String seID, String Name, int colcount, int rowcount) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void openPageCompleted(String seID, String Name) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

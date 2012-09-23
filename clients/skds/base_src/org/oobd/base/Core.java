@@ -155,7 +155,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		activeEngines = new HashMap<String, OobdScriptengine>();
 		assignments = new HashMap<String, Object>();
 		visualizers = new HashMap<String, ArrayList<Visualizer>>();
-                databases = new HashMap<String, OobdDB>();
+		databases = new HashMap<String, OobdDB>();
 		systemInterface.registerOobdCore(this); // Anounce itself at the
 		// Systeminterface
 		userInterface.registerOobdCore(this); // Anounce itself at the
@@ -163,12 +163,14 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
 		// userInterface.sm("Moin");
 		props = new Properties();
-/*		InputStream inStream = systemInterface.generateResourceStream(FT_PROPS,
-				systemInterface.generateUIFilePath(FT_PROPS,
-						OOBDConstants.CorePrefsFileName));
-*/
+		/*
+		 * InputStream inStream =
+		 * systemInterface.generateResourceStream(FT_PROPS,
+		 * systemInterface.generateUIFilePath(FT_PROPS,
+		 * OOBDConstants.CorePrefsFileName));
+		 */
 		InputStream inStream = systemInterface.generateResourceStream(FT_PROPS,
-						OOBDConstants.CorePrefsFileName);
+				OOBDConstants.CorePrefsFileName);
 		if (inStream != null) {
 			try {
 				props.load(inStream);
@@ -190,10 +192,10 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		try {
 			Logger.getLogger(Core.class.getName()).log(Level.CONFIG,
 					"Try to load: " + props.getProperty("BusClassPath", "bus"));
-			HashMap<String, Class<?>> classObjects = loadOobdClasses(props
-					.getProperty("BusClassPath", "bus"), props.getProperty(
-					"BusClassPrefix", "org.oobd.base.bus."), Class
-					.forName("org.oobd.base.bus.OobdBus"));
+			HashMap<String, Class<?>> classObjects = loadOobdClasses(
+					props.getProperty("BusClassPath", "bus"),
+					props.getProperty("BusClassPrefix", "org.oobd.base.bus."),
+					Class.forName("org.oobd.base.bus.OobdBus"));
 			for (Iterator iter = classObjects.keySet().iterator(); iter
 					.hasNext();) {
 				String element = (String) iter.next();
@@ -222,10 +224,10 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		}
 		// ----------- load Connectors -------------------------------
 		try {
-			HashMap<String, Class<?>> classObjects = loadOobdClasses(props
-					.getProperty("ConnectorClassPath", "connector"),
-					"org.oobd.base.connector.", Class
-							.forName("org.oobd.base.connector.OobdConnector"));
+			HashMap<String, Class<?>> classObjects = loadOobdClasses(
+					props.getProperty("ConnectorClassPath", "connector"),
+					"org.oobd.base.connector.",
+					Class.forName("org.oobd.base.connector.OobdConnector"));
 			for (Iterator iter = classObjects.keySet().iterator(); iter
 					.hasNext();) {
 				String element = (String) iter.next();
@@ -253,10 +255,10 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		}
 		// ----------- load Protocols -------------------------------
 		try {
-			HashMap<String, Class<?>> classObjects = loadOobdClasses(props
-					.getProperty("ProtocolClassPath", "protocol"),
-					"org.oobd.base.protocol.", Class
-							.forName("org.oobd.base.protocol.OobdProtocol"));
+			HashMap<String, Class<?>> classObjects = loadOobdClasses(
+					props.getProperty("ProtocolClassPath", "protocol"),
+					"org.oobd.base.protocol.",
+					Class.forName("org.oobd.base.protocol.OobdProtocol"));
 			for (Iterator iter = classObjects.keySet().iterator(); iter
 					.hasNext();) {
 				String element = (String) iter.next();
@@ -283,14 +285,14 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		}
 		// ----------- load Databases -------------------------------
 		try {
-			HashMap<String, Class<?>> classObjects = loadOobdClasses(props
-					.getProperty("DatabaseClassPath", "db"),
-					"org.oobd.base.db.", Class
-							.forName("org.oobd.base.db.OobdDB"));
+			HashMap<String, Class<?>> classObjects = loadOobdClasses(
+					props.getProperty("DatabaseClassPath", "db"),
+					"org.oobd.base.db.",
+					Class.forName("org.oobd.base.db.OobdDB"));
 			for (Iterator iter = classObjects.keySet().iterator(); iter
 					.hasNext();) {
 				String element = (String) iter.next();
- 				Class<?> value = (Class<?>) classObjects.get(element);
+				Class<?> value = (Class<?>) classObjects.get(element);
 				try {
 					OobdDB thisClass = (OobdDB) value.newInstance();
 					thisClass.registerCore(this);
@@ -318,8 +320,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 			scriptengines = loadOobdClasses(
 					props.getProperty("EngineClassPath", "scriptengine"),
 					"org.oobd.base.scriptengine.",
-					Class
-							.forName("org.oobd.base.scriptengine.OobdScriptengine"));
+					Class.forName("org.oobd.base.scriptengine.OobdScriptengine"));
 			for (Iterator iter = scriptengines.keySet().iterator(); iter
 					.hasNext();) {
 				String element = (String) iter.next();
@@ -637,14 +638,14 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
 			if (myOnion.isType(CM_PAGE)) {
 				String dummy = myOnion.getOnionString("owner");
-				userInterface.openPage(myOnion.getOnionString("owner"), myOnion
-						.getOnionString("name"), 1, 1);
+				userInterface.openPage(myOnion.getOnionString("owner"),
+						myOnion.getOnionString("name"), 1, 1);
 				return false;
 			}
 			if (myOnion.isType(CM_PAGEDONE)) {
 				userInterface.openPageCompleted(
-						myOnion.getOnionString("owner"), myOnion
-								.getOnionString("name"));
+						myOnion.getOnionString("owner"),
+						myOnion.getOnionString("name"));
 				return false;
 			}
 			if (myOnion.isType(CM_WRITESTRING)) {
@@ -710,10 +711,11 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	 * 
 	 */
 	public void updateVisualizers() {
-		//Collection<ArrayList<Visualizer>> c = Collections
-		//		.synchronizedCollection(visualizers.values());
-		 Collection<ArrayList<Visualizer>> c = visualizers.values();
-	//	synchronized (c) {
+		synchronized (visualizers) { // Collection<ArrayList<Visualizer>> c =
+										// Collections
+			// .synchronizedCollection(visualizers.values());
+			Collection<ArrayList<Visualizer>> c = visualizers.values();
+			// synchronized (c) {
 			// obtain an Iterator for Collection
 			Iterator<ArrayList<Visualizer>> itr;
 
@@ -724,36 +726,36 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 				itr = c.iterator();
 				while (itr.hasNext()) {
 					ArrayList<Visualizer> engineVisualizers = itr.next();
-						boolean somethingToRemove=false;
-						Iterator<Visualizer> visItr = engineVisualizers
-								.iterator();
-//						synchronized (visItr) {
-							while (visItr.hasNext()) {
-								Visualizer vis = visItr.next();
-//								synchronized (vis) {
-									if (vis.getRemoved()) {
-										somethingToRemove=true;
-									} else {
-										vis.doUpdate(i);
-									}
-								}
-//							}
-//						}
+					boolean somethingToRemove = false;
+					Iterator<Visualizer> visItr = engineVisualizers.iterator();
+					// synchronized (visItr) {
+					while (visItr.hasNext()) {
+						Visualizer vis = visItr.next();
+						// synchronized (vis) {
+						if (vis.getRemoved()) {
+							somethingToRemove = true;
+						} else {
+							vis.doUpdate(i);
+						}
+					}
+					// }
+					// }
 					synchronized (engineVisualizers) {
-						if (somethingToRemove){
-							int del=0;
-							while (del<engineVisualizers.size()){
-								if (engineVisualizers.get(del).getRemoved()){
+						if (somethingToRemove) {
+							int del = 0;
+							while (del < engineVisualizers.size()) {
+								if (engineVisualizers.get(del).getRemoved()) {
 									engineVisualizers.remove(del);
 								}
 								del++;
 							}
-							
+
 						}
 					}
 				}
 			}
-	//	}
+			// }
+		}
 	}
 
 	/**
@@ -847,8 +849,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 				// messages
 				if (actionRequest(thisMsg.content) == true) {
 					try {
-						thisMsg.content.setValue("replyID", thisMsg.content
-								.getInt("msgID"));
+						thisMsg.content.setValue("replyID",
+								thisMsg.content.getInt("msgID"));
 					} catch (JSONException ex) {
 						Logger.getLogger(Core.class.getName()).log(
 								Level.SEVERE, null, ex);
