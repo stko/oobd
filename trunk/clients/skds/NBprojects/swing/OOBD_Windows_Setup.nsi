@@ -8,6 +8,7 @@ SetCompress force
 SetCompressor /SOLID lzma
 Name "OOBD-Swing"
 OutFile "OOBD-Swing_Windows_Setup.exe"
+RequestExecutionLevel user
 XPStyle on
 Var Dialog
 Var Label
@@ -76,16 +77,19 @@ File /r  "dist/lib"
 #File /r  "build/classes/skdsswing/bus"
 File /r  "../Base/build/classes/org/oobd/base/bus"
 File /r  "../Base/build/classes/org/oobd/base/port"
+File /r  "../Base/build/classes/org/oobd/base/db"
 File /r  "../Base/build/classes/org/oobd/base/scriptengine"
 File /r  "../Base/build/classes/org/oobd/base/protocol"
 File /oname=OOBD-Swing.jar  "dist/SKDS-Swing.jar"
-File "buscom_dist.props"
+File  "buscom_dist.props"
 File /oname=oobdcore.props  "oobdcore_dist.props"
-File "enginelua_dist.props"
+File  "enginelua_dist.props"
 File "oobd.url"
 File "jlogviewer.jar"
 File "logging.props"
 File /oname=OOBD.lbc "../../../OOBD-ME/res/OOBD.lbc"
+File "../../../OOBD-ME/testscripts/dtc.csv"
+File "../../../OOBD-ME/testscripts/dtc.oodb"
 File /oname=stdlib.lbc "../../../OOBD-ME/res/stdlib.lbc"
 CreateDirectory "$INSTDIR\logs"
 
@@ -109,6 +113,7 @@ Section "un.Uninstall"
 RMDir /r $INSTDIR\lib
 RMDir /r $INSTDIR\logs
 RMDir /r $INSTDIR\bus
+RMDir /r $INSTDIR\db
 RMDir /r $INSTDIR\scriptengine
 RMDir /r $INSTDIR\protocol
 RMDir /r $INSTDIR\SKDS-Swing
@@ -118,6 +123,7 @@ Delete "$INSTDIR\OOBD-Swing.jar"
 Delete "$INSTDIR\oobd.url"
 Delete "$INSTDIR\*.props"
 Delete "$INSTDIR\OOBD.lbc"
+Delete "$INSTDIR\dtc.*"
 Delete "$INSTDIR\stdlib.lbc"
 Delete "$INSTDIR\uninstaller.exe"
 RMDir $INSTDIR

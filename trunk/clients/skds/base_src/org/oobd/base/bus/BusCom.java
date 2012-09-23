@@ -62,8 +62,10 @@ public class BusCom extends OobdBus implements OOBDConstants {
 
 			} else if ("serWait".equalsIgnoreCase(command)) {
 				try {
-					Integer result = reader.wait(Base64Coder.decodeString(on
-							.getOnionString("data")), on.getInt("timeout"));
+					Integer result = reader
+							.wait(Base64Coder.decodeString(on
+									.getOnionString("data")), on
+									.getInt("timeout"));
 					Logger.getLogger(BusCom.class.getName()).log(Level.INFO,
 							"busCom serWait: " + result);
 					replyMsg(msg, new Onion("" + "{'type':'" + CM_RES_BUS
@@ -93,8 +95,8 @@ public class BusCom extends OobdBus implements OOBDConstants {
 
 			} else if ("serReadLn".equalsIgnoreCase(command)) {
 				try {
-					String result = reader.readln(on.getInt("timeout"), on
-							.optBoolean("ignore"));
+					String result = reader.readln(on.getInt("timeout"),
+							on.optBoolean("ignore"));
 					Logger.getLogger(BusCom.class.getName()).log(Level.INFO,
 							"busCom readline: " + result);
 					replyMsg(msg, new Onion("" + "{'type':'" + CM_RES_BUS
@@ -176,11 +178,11 @@ class ComReader implements Runnable {
 	public synchronized char readChar() {
 		int inChar = -1;
 		if (comHandle != null && comHandle.getInputStream() != null) {
+			Logger.getLogger(BusCom.class.getName()).log(Level.INFO,
+					"call available");
 			try {
 				if (comHandle.getInputStream().available() > 0) {
 					inChar = comHandle.getInputStream().read();
-					System.out.println("Readchar:" + (char) inChar);
-
 					return (char) inChar;
 				}
 			} catch (Exception ex) {
@@ -206,50 +208,45 @@ class ComReader implements Runnable {
 			int input;
 			int n;
 
-			if (comHandle != null) {
-				try {
-					if (comHandle.getInputStream() != null) {
-						n = comHandle.getInputStream().available();
-						if (n > 0) {
-							byte[] buffer = new byte[n];
-							try {
+			try {
+				if (comHandle != null && comHandle.getInputStream() != null) {
+					n = comHandle.getInputStream().available();
+					if (n > 0) {
+						byte[] buffer = new byte[n];
 
-								n = comHandle.getInputStream().read(buffer, 0,
-										n);
-							} catch (IOException ex) {
-								Logger.getLogger(ComReader.class.getName())
-										.log(Level.WARNING, null, ex);
-								close();
-							}
-							for (int i = 0; i < n; ++i) {
-								inBuffer.append((char) buffer[i]);
-							}
-						} else {
-							try {
-								Thread.sleep(1);
-							} catch (InterruptedException ex) {
-								// the VM doesn't want us to sleep anymore,
-								// so get back to work
-								Logger.getLogger(ComReader.class.getName())
-										.log(Level.WARNING, null, ex);
+						n = comHandle.getInputStream().read(buffer, 0, n);
 
-							}
+						for (int i = 0; i < n; ++i) {
+							inBuffer.append((char) buffer[i]);
+						}
+					} else {
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException ex) {
+							// the VM doesn't want us to sleep anymore,
+							// so get back to work
+							Logger.getLogger(ComReader.class.getName()).log(
+									Level.WARNING, null, ex);
+
 						}
 					}
+				} else {
+					// as this thread runs in an unstopped endless loop, as
+					// long
+					// there's no serial port open, we need to slow him down
+					// here...
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// the VM doesn't want us to sleep anymore,
+						// so get back to work
+					}
+				}
 
-				} catch (Exception ex) {
-					Logger.getLogger(ComReader.class.getName()).log(
-							Level.WARNING, null, ex);
-				}
-			} else {
-				// as this thread runs in an unstopped endless loop, as long
-				// there's no serial port open, we need to slow him down here...
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					// the VM doesn't want us to sleep anymore,
-					// so get back to work
-				}
+			} catch (Exception ex) {
+				Logger.getLogger(ComReader.class.getName()).log(Level.WARNING,
+						"Unexpected error: Close down socket", ex);
+				close();
 			}
 		}
 	}
@@ -295,7 +292,8 @@ class ComReader implements Runnable {
 				if (c > 31) {
 					res += (char) c;
 				}
-				if (c == 13) { // CR detected, condition meet - LF (0x10) is completely ignored
+				if (c == 13) { // CR detected, condition meet - LF (0x10) is
+								// completely ignored
 					// res+=".";
 					doLoop = res.equals("") && ignoreEmptyLines;
 				}
@@ -325,7 +323,7 @@ class ComReader implements Runnable {
 		}
 		Logger.getLogger(ComReader.class.getName()).log(Level.INFO,
 				"Serial input:" + res);
-		System.out.println("Serial input:"+res);
+		System.out.println("Serial input:" + res);
 		return res;
 	}
 
