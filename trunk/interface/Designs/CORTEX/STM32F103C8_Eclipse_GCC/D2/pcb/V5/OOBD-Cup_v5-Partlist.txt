@@ -1,47 +1,45 @@
-Partlist
+Stückliste exportiert aus V:/OOBD/trunk/interface/Designs/CORTEX/STM32F103C8_Eclipse_GCC/D2/pcb/V5/OOBD-Cup_v5.sch am 28.09.2012 11:32:01
 
-Exported from OOBD-Cup_v5.brd at 31.01.2012 12:30:42
-
-EAGLE Version 5.11.0 Copyright (c) 1988-2010 CadSoft
-
-Part       Value           Package        Library          Position (mil)        Orientation
-
-BT-ANTENNA                 SWRA117D_RIGHT ant-planar-1     (1725 2700)           MR90
-C1         270pF           C0603K         rcl              (350 2400)            R270
-C2         1µF             C0603K         rcl              (425 2400)            R270
-C3         100nF           C0603K         rcl              (500 2400)            R270
-C4         47µ/35V         SV-D           cap-master       (725 1750)            R270
-C5         220µF/6V        C6032-TE-C     rc-master        (925 1750)            R270
-D1         1N4148          MICROMELF-W    diode            (125 1650)            R0
-D100       B140            SMB            diode            (350 1850)            MR180
-D101       BAS40           SOT23          diode            (300 1700)            MR90
-IC1        DXM1            DMX1-MINI      DXM              (550 2800)            R270
-IC2        MC34063-SO      SO8            mc34063          (375 2225)            R90
-IC100      BTM-182         BTM-182        BTM182           (1100 2400)           MR90
-IC101      BTM-222         BTM-222        btm-222          (1150 2300)           MR0
-JP1        SPI / SD-Card   JP4Q           jumper           (1200 1825)           R0
-JP1-OBD1                   JP4            jumper           (100 1900)            R90
-JP2        Programm        JP4Q           jumper           (1600 1825)           R180
-JP2-OBD1                   JP4            jumper           (100 2300)            R90
-JP3-OBD1                   JP4            jumper           (100 2700)            R90
-L1         47µH            07HCP-XXXX-50  Inductor-Fastron (375 2625)            R0
-L2         47uH            PIS2408        Inductor-Fastron (456.201 2623.768)    R90
-LED1       Ge, Low Current U57X32         led              (1425 2925)           R0
-LED2       Rt/Gr           DUOLED2X5      led              (1350 1650)           R0
-R1         4K7             R0603          rcl              (1275 2925)           R90
-R2         680R            R0603          rcl              (1575 2925)           R270
-R3         180k            R0603          rcl              (250 2450)            R180
-R4         5k6             R0603          rcl              (250 2375)            R0
-R5         4K7             R0603          rcl              (350 2050)            R270
-R100       3k3             R0603          rcl              (300 2400)            MR270
-R101       47k             R0603          rcl              (450 2400)            MR180
-R102       1R              R0805          rcl              (370.819 2055.02)     MR270
-R103       1R              R0805          rcl              (500.004 2050)        MR270
-R104       1R              R0805          rcl              (581.252 2050)        MR270
-R105       82R             R0603          rcl              (1068.752 1643.752)   MR270
-R106       82R             R0603          rcl              (1150 1643.752)       MR270
-REL1       FTR-B4GA        FTR-B4GA       relay            (400 1800)            R0
-SG1        PMB24FV         PMB24F/V       buzzer           (650 2925)            R0
-SG2        MBWOE           BME0603SA      buzzer           (450 2831.252)        R180
-T1         BC847           SOT23          transistor       (1175 2950)           R180
-T2         BC847           SOT23          transistor       (250 2050)            R180
+Bauteil    Wert          Device            Package        Description                     
+BT-ANTENNA               ANTENNA_1RIGHT    SWRA117D_RIGHT                                 
+C1         220µF/6V      CP_6032-TE-C      C6032-TE-C     POLARIZED CAP                   
+C2         47µ/35V       CP-SV-D           SV-D           POLARIZED CAP                   
+C3         100nF         C-EUC0603K        C0603K         CAPACITOR, European symbol      
+C4         270pF         C-EUC0603K        C0603K         CAPACITOR, European symbol      
+C5         1µF           C-EUC0603K        C0603K         CAPACITOR, European symbol      
+D100       B140          SCHOTTKY-DIODESMD SMB            Schottky Diode                  
+D101       1N4148        DIODE-MICROMELF-W MICROMELF-W    DIODE                           
+D102       BAS40         BAS40             SOT23          Silicon Schottky Diodes         
+IC1        MC34063-SO    MC34063-SO        SO8            DC/DC converter MC34063 in SO08.
+IC2        DXM1          DXM1-MINI         DMX1-MINI                                      
+IC100      BTM-182       BTM-182           BTM-182        Rayson BTM-182 Bluetooth Modul  
+IC101      BTM-222       BTM-222           BTM-222        Rayson BTM-222 Bluetooth Modul  
+JP1        SPI / SD-Card JP4Q              JP4Q           JUMPER                          
+JP1-OBD1                 JP4E              JP4            JUMPER                          
+JP2        Program       JP4Q              JP4Q           JUMPER                          
+JP2-OBD1                 JP4E              JP4            JUMPER                          
+JP3-OBD1                 JP4E              JP4            JUMPER                          
+L1         47µH          07HCP-XXXX-50     07HCP-XXXX-50  Fastron                         
+L2         47uH          PIS2408           PIS2408        Fastron SMD Power Inductors     
+LED1       Blue          LEDSQR5.7X3.2     U57X32         LED                             
+LED2       Rt/Gr         DUOLED2X5         DUOLED2X5      DUO LED                         
+R1         10k           R-EU_R0603        R0603          RESISTOR, European symbol       
+R2         3k3           R-EU_R0603        R0603          RESISTOR, European symbol       
+R3         180k          R-EU_R0603        R0603          RESISTOR, European symbol       
+R4         47k           R-EU_R0603        R0603          RESISTOR, European symbol       
+R100       4K7           R-EU_R0603        R0603          RESISTOR, European symbol       
+R101       390R          R-EU_R0603        R0603          RESISTOR, European symbol       
+R102       10k           R-EU_R0603        R0603          RESISTOR, European symbol       
+R103       1R            R-EU_R0805        R0805          RESISTOR, European symbol       
+R104       5k6           R-EU_R0603        R0603          RESISTOR, European symbol       
+R105       1R            R-EU_R0805        R0805          RESISTOR, European symbol       
+R106       1R            R-EU_R0805        R0805          RESISTOR, European symbol       
+R107       4K7           R-EU_R0603        R0603          RESISTOR, European symbol       
+R108       4K7           R-EU_R0603        R0603          RESISTOR, European symbol       
+R109       82R           R-EU_R0603        R0603          RESISTOR, European symbol       
+R110       82R           R-EU_R0603        R0603          RESISTOR, European symbol       
+REL1       FTR-B4GA      FTR-B4GA          FTR-B4GA       Fujitsu FTR-B4 Series           
+SG1        MBWOE         MBWOE             BME0603SA      Buzzer                          
+T1         BC817         BC847             SOT23          NPN TRANSISTOR                  
+T100       BC817         BC847             SOT23          NPN TRANSISTOR                  
+T101       BC817         BC847             SOT23          NPN TRANSISTOR                  
