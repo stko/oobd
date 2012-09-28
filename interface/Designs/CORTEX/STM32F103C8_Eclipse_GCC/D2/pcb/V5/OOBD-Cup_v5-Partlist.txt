@@ -1,17 +1,17 @@
-Stückliste exportiert aus V:/OOBD/trunk/interface/Designs/CORTEX/STM32F103C8_Eclipse_GCC/D2/pcb/V5/OOBD-Cup_v5.sch am 28.09.2012 11:32:01
+Stückliste exportiert aus V:/OOBD/trunk/interface/Designs/CORTEX/STM32F103C8_Eclipse_GCC/D2/pcb/V5/OOBD-Cup_v5.sch am 28.09.2012 13:12:09
 
 Bauteil    Wert          Device            Package        Description                     
 BT-ANTENNA               ANTENNA_1RIGHT    SWRA117D_RIGHT                                 
-C1         220µF/6V      CP_6032-TE-C      C6032-TE-C     POLARIZED CAP                   
-C2         47µ/35V       CP-SV-D           SV-D           POLARIZED CAP                   
-C3         100nF         C-EUC0603K        C0603K         CAPACITOR, European symbol      
-C4         270pF         C-EUC0603K        C0603K         CAPACITOR, European symbol      
-C5         1µF           C-EUC0603K        C0603K         CAPACITOR, European symbol      
-D100       B140          SCHOTTKY-DIODESMD SMB            Schottky Diode                  
-D101       1N4148        DIODE-MICROMELF-W MICROMELF-W    DIODE                           
-D102       BAS40         BAS40             SOT23          Silicon Schottky Diodes         
-IC1        MC34063-SO    MC34063-SO        SO8            DC/DC converter MC34063 in SO08.
-IC2        DXM1          DXM1-MINI         DMX1-MINI                                      
+C1         100nF         C-EUC0603K        C0603K         CAPACITOR, European symbol      
+C2         1µF           C-EUC0603K        C0603K         CAPACITOR, European symbol      
+C3         270pF         C-EUC0603K        C0603K         CAPACITOR, European symbol      
+C4         47µ/35V       CP-SV-D           SV-D           POLARIZED CAP                   
+C5         220µF/6V      CP_6032-TE-C      C6032-TE-C     POLARIZED CAP                   
+D100       BAS40         BAS40             SOT23          Silicon Schottky Diodes         
+D101       B140          SCHOTTKY-DIODESMD SMB            Schottky Diode                  
+D102       1N4148        DIODE-MICROMELF-W MICROMELF-W    DIODE                           
+IC1        DXM1          DXM1-MINI         DMX1-MINI                                      
+IC2        MC34063-SO    MC34063-SO        SO8            DC/DC converter MC34063 in SO08.
 IC100      BTM-182       BTM-182           BTM-182        Rayson BTM-182 Bluetooth Modul  
 IC101      BTM-222       BTM-222           BTM-222        Rayson BTM-222 Bluetooth Modul  
 JP1        SPI / SD-Card JP4Q              JP4Q           JUMPER                          
@@ -21,23 +21,23 @@ JP2-OBD1                 JP4E              JP4            JUMPER
 JP3-OBD1                 JP4E              JP4            JUMPER                          
 L1         47µH          07HCP-XXXX-50     07HCP-XXXX-50  Fastron                         
 L2         47uH          PIS2408           PIS2408        Fastron SMD Power Inductors     
-LED1       Blue          LEDSQR5.7X3.2     U57X32         LED                             
-LED2       Rt/Gr         DUOLED2X5         DUOLED2X5      DUO LED                         
-R1         10k           R-EU_R0603        R0603          RESISTOR, European symbol       
+LED1       Rt/Gr         DUOLED2X5         DUOLED2X5      DUO LED                         
+LED2       Blue          LEDSQR5.7X3.2     U57X32         LED                             
+R1         180k          R-EU_R0603        R0603          RESISTOR, European symbol       
 R2         3k3           R-EU_R0603        R0603          RESISTOR, European symbol       
-R3         180k          R-EU_R0603        R0603          RESISTOR, European symbol       
-R4         47k           R-EU_R0603        R0603          RESISTOR, European symbol       
-R100       4K7           R-EU_R0603        R0603          RESISTOR, European symbol       
-R101       390R          R-EU_R0603        R0603          RESISTOR, European symbol       
-R102       10k           R-EU_R0603        R0603          RESISTOR, European symbol       
-R103       1R            R-EU_R0805        R0805          RESISTOR, European symbol       
-R104       5k6           R-EU_R0603        R0603          RESISTOR, European symbol       
+R3         47k           R-EU_R0603        R0603          RESISTOR, European symbol       
+R4         10k           R-EU_R0603        R0603          RESISTOR, European symbol       
+R100       82R           R-EU_R0603        R0603          RESISTOR, European symbol       
+R101       4K7           R-EU_R0603        R0603          RESISTOR, European symbol       
+R102       82R           R-EU_R0603        R0603          RESISTOR, European symbol       
+R103       5k6           R-EU_R0603        R0603          RESISTOR, European symbol       
+R104       4K7           R-EU_R0603        R0603          RESISTOR, European symbol       
 R105       1R            R-EU_R0805        R0805          RESISTOR, European symbol       
 R106       1R            R-EU_R0805        R0805          RESISTOR, European symbol       
-R107       4K7           R-EU_R0603        R0603          RESISTOR, European symbol       
-R108       4K7           R-EU_R0603        R0603          RESISTOR, European symbol       
-R109       82R           R-EU_R0603        R0603          RESISTOR, European symbol       
-R110       82R           R-EU_R0603        R0603          RESISTOR, European symbol       
+R107       1R            R-EU_R0805        R0805          RESISTOR, European symbol       
+R108       10k           R-EU_R0603        R0603          RESISTOR, European symbol       
+R109       390R          R-EU_R0603        R0603          RESISTOR, European symbol       
+R110       4K7           R-EU_R0603        R0603          RESISTOR, European symbol       
 REL1       FTR-B4GA      FTR-B4GA          FTR-B4GA       Fujitsu FTR-B4 Series           
 SG1        MBWOE         MBWOE             BME0603SA      Buzzer                          
 T1         BC817         BC847             SOT23          NPN TRANSISTOR                  
