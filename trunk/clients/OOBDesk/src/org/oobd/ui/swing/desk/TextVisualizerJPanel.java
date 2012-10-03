@@ -11,6 +11,7 @@
 package org.oobd.ui.swing.desk;
 
 import java.awt.Graphics;
+import javax.swing.Icon;
 import org.oobd.base.*;
 import org.oobd.base.visualizer.*;
 import org.oobd.base.support.Onion;
@@ -24,6 +25,7 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
     boolean toBePlaced = true; //indicates, if the actual instance is already been placed on an canvas or not
     boolean awaitingUpdate = false;
     Visualizer value;
+    static private final Icon[] symbolIcons = new Icon[15];
 
     /** Creates new form TextVisualizerJPanel */
     public TextVisualizerJPanel() {
@@ -35,8 +37,8 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
     public void paintComponent(Graphics g) {
         System.out.println("Paint request...");
         if (value != null) {
-            functionName.setText("<html>"+value.getToolTip()+"</html>");
-            functionValue.setText("<html>"+value.toString()+"</html>");
+            functionName.setText("<html>" + value.getToolTip() + "</html>");
+            functionValue.setText("<html>" + value.toString() + "</html>");
         }
         super.paintComponent(g);
     }
