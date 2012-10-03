@@ -2,9 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package skdsswing;
+package org.oobd.ui.swing.support;
 
 import java.io.FileNotFoundException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.FileHandler;
@@ -89,13 +90,13 @@ public class SwingSystem implements IFsystem {
 
     public String generateUIFilePath(int pathID, String fileName) {
 
-                return fileName;
+        return fileName;
 
-     }
+    }
 
     public InputStream generateResourceStream(int pathID, String ResourceName) throws java.util.MissingResourceException {
         try {
-            return new FileInputStream(ResourceName);
+            return new FileInputStream(generateUIFilePath(pathID, ResourceName));
         } catch (FileNotFoundException ex) {
             throw new java.util.MissingResourceException("Resource not found:" + ResourceName, "SwingSystem", ResourceName);
         }
@@ -116,5 +117,44 @@ public class SwingSystem implements IFsystem {
             return null;
         }
 
+    }
+
+    public Properties loadProperty(int pathID, String filename) {
+        Properties properties = new Properties();
+        InputStream is = null;
+        try {
+            is = new FileInputStream(generateUIFilePath(pathID, filename));
+            properties.load(is);
+        } catch (Exception e) {
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "could not load property file: {0}", filename);
+
+        } finally {
+            if (null != is) {
+                try {
+                    is.close();
+                } catch (Exception e) {
+                }
+            }
+        }
+        return properties;
+    }
+
+    public boolean saveProperty(int pathID, String filename, Properties properties) {
+        OutputStream os = null;
+        try {
+            os = new FileOutputStream(generateUIFilePath(pathID, filename));
+            properties.store(os, null);
+            return true;
+        } catch (Exception e) {
+             Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "could not save property file: {0}", filename);
+           return false;
+        } finally {
+            if (null != os) {
+                try {
+                    os.close();
+                } catch (Exception e) {
+                }
+            }
+        }
     }
 }

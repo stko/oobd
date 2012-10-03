@@ -657,4 +657,8 @@ public class SKDSSwingView extends FrameView implements ActionListener, IFui, or
     private SDKSSwingFileExplorer fileExplorer;
     private SKDSSwingUpload frameUpload;
     private SKDSSwingPortConfiguration framePortconf;
+
+    public void startScriptEngine(Onion onion) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

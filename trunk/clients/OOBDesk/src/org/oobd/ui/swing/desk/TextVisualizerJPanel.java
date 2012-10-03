@@ -10,6 +10,7 @@
  */
 package org.oobd.ui.swing.desk;
 
+import java.awt.Graphics;
 import org.oobd.base.*;
 import org.oobd.base.visualizer.*;
 import org.oobd.base.support.Onion;
@@ -30,6 +31,21 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
         initComponents();
     }
 
+    @Override
+    public void paintComponent(Graphics g) {
+        System.out.println("Paint request...");
+        if (value != null) {
+            functionName.setText("<html>"+value.getToolTip()+"</html>");
+            functionValue.setText("<html>"+value.toString()+"</html>");
+        }
+        super.paintComponent(g);
+    }
+
+    public static IFvisualizer getInstance(String pageID, String vizName) {
+
+        return new TextVisualizerJPanel();
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -39,12 +55,15 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        valueLabel = new javax.swing.JLabel();
-        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
+        functionValue = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        titleLabel = new javax.swing.JLabel();
+        functionName = new javax.swing.JLabel();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
-        jLabel3 = new javax.swing.JLabel();
+        backImageLabel = new javax.swing.JLabel();
+        updateImageLabel = new javax.swing.JLabel();
+        timerImageLabel = new javax.swing.JLabel();
+        logImageLabel = new javax.swing.JLabel();
+        forwardImageLabel = new javax.swing.JLabel();
 
         setName("Form"); // NOI18N
         addMouseListener(new java.awt.event.MouseAdapter() {
@@ -54,28 +73,37 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
         });
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.PAGE_AXIS));
 
-        valueLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class);
-        valueLabel.setText(resourceMap.getString("valueLabel.text")); // NOI18N
-        valueLabel.setName("valueLabel"); // NOI18N
-        add(valueLabel);
-
-        filler2.setName("filler2"); // NOI18N
-        add(filler2);
+        functionValue.setFont(resourceMap.getFont("functionValue.font")); // NOI18N
+        functionValue.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        functionValue.setText(resourceMap.getString("functionValue.text")); // NOI18N
+        functionValue.setName("functionValue"); // NOI18N
+        add(functionValue);
 
         jPanel1.setName("jPanel1"); // NOI18N
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.LINE_AXIS));
+        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.PAGE_AXIS));
 
-        titleLabel.setText(resourceMap.getString("titleLable.text")); // NOI18N
-        titleLabel.setName("titleLable"); // NOI18N
-        jPanel1.add(titleLabel);
+        functionName.setText(resourceMap.getString("titleLable.text")); // NOI18N
+        functionName.setName("titleLable"); // NOI18N
+        jPanel1.add(functionName);
 
         filler1.setName("filler1"); // NOI18N
         jPanel1.add(filler1);
 
-        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
-        jLabel3.setName("jLabel3"); // NOI18N
-        jPanel1.add(jLabel3);
+        backImageLabel.setName("backImageLabel"); // NOI18N
+        jPanel1.add(backImageLabel);
+
+        updateImageLabel.setName("updateImageLabel"); // NOI18N
+        jPanel1.add(updateImageLabel);
+
+        timerImageLabel.setName("timerImageLabel"); // NOI18N
+        jPanel1.add(timerImageLabel);
+
+        logImageLabel.setName("logImageLabel"); // NOI18N
+        jPanel1.add(logImageLabel);
+
+        forwardImageLabel.setName("forwardImageLabel"); // NOI18N
+        jPanel1.add(forwardImageLabel);
 
         add(jPanel1);
     }// </editor-fold>//GEN-END:initComponents
@@ -88,12 +116,15 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
 
     }//GEN-LAST:event_formMouseClicked
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel backImageLabel;
     private javax.swing.Box.Filler filler1;
-    private javax.swing.Box.Filler filler2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel forwardImageLabel;
+    private javax.swing.JLabel functionName;
+    private javax.swing.JLabel functionValue;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JLabel titleLabel;
-    private javax.swing.JLabel valueLabel;
+    private javax.swing.JLabel logImageLabel;
+    private javax.swing.JLabel timerImageLabel;
+    private javax.swing.JLabel updateImageLabel;
     // End of variables declaration//GEN-END:variables
 
     public boolean isGroup() {
@@ -101,13 +132,13 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
     }
 
     public void setVisualizer(Visualizer viz) {
-        this.value=viz;
+        this.value = viz;
     }
 
     public void initValue(Visualizer viz, Onion onion) {
-        titleLabel.setText(onion.getOnionString("tooltip"));
-        this.value=viz;
-  }
+        functionName.setText(onion.getOnionString("tooltip"));
+        this.value = viz;
+    }
 
     public boolean update(int level) {
         switch (level) {
