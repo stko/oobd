@@ -10,6 +10,28 @@
 <project name="OOBDesk" default="default" basedir=".">
     <description>Builds, tests, and runs the project OOBDesk.</description>
     <import file="nbproject/build-impl.xml"/>
+ <target name="-post-jar" description="Sets the buildversion for the current build">
+    <propertyfile file="${src.dir}/org/oobd/ui/swing/desk/resources/swing.properties">
+        <entry key="Application.buildnumber" value="1" type="int" operation="+"/>
+    </propertyfile>
+</target>
+<target name="-post-init" description="Sets the buildversion for the current build">
+    <exec outputproperty="svna.version" executable="svnversion">
+        <arg value="-c" />
+        <redirector>
+            <outputfilterchain>
+                <tokenfilter>
+                    <replaceregex pattern="^[0-9]*:?" replace="" flags="g"/>
+                    <replaceregex pattern="M" replace="" flags="g"/>
+                </tokenfilter>
+            </outputfilterchain>
+        </redirector>
+    </exec>
+    <propertyfile file="${src.dir}/org/oobd/ui/swing/desk/resources/swing.properties">
+        <entry key="Application.revision" value="${svna.version}" type="int" operation="="/>
+    </propertyfile>
+    <echo>Revision found from SVN: ${svna.version}</echo>
+</target>   
     <!--
 
     There exist several targets which are by default empty and which can be 

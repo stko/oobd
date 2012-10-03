@@ -787,7 +787,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     public void openPage(String seID, String Name, int colcount, int rowcount) {
         //cleans the page
         System.out.println("Open Page");
-
+        statusMessageLabel.setText(Name);
         if (pageObjects != null) {
             diagnoseButtonPanel.removeAll();
             for (IFvisualizer vis : pageObjects) {
