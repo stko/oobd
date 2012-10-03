@@ -24,6 +24,10 @@ import purejavacomm.CommPortIdentifier;
 import gnu.io.*;
 
 import java.awt.LayoutManager;
+import java.io.File;
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import org.oobd.base.*;
 import org.oobd.base.Core;
 import org.oobd.base.IFui;
@@ -33,16 +37,26 @@ import org.oobd.base.support.Onion;
 
 import java.util.Vector;
 import java.util.Iterator;
+import java.util.Properties;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+import org.json.JSONException;
+import org.oobd.base.archive.*;
 
 /**
  * The application's main frame.
  */
-public class swingView extends FrameView implements IFui, org.oobd.base.OOBDConstants {
+public class swingView extends org.jdesktop.application.FrameView implements IFui, org.oobd.base.OOBDConstants {
 
     final static String MAINPANEL = "card2";
     final static String DIAGNOSEPANEL = "card3";
     final static String SETTINGSPANEL = "card4";
-   Core oobdCore;
+    Core oobdCore;
+    Properties appProbs;
+    private String scriptEngineID = null;
+    private String scriptEngineVisibleName;
+    private Vector<IFvisualizer> pageObjects;
 
     public swingView(SingleFrameApplication app) {
         super(app);
@@ -105,6 +119,7 @@ public class swingView extends FrameView implements IFui, org.oobd.base.OOBDCons
                 }
             }
         });
+
     }
 
     @Action
@@ -129,7 +144,7 @@ public class swingView extends FrameView implements IFui, org.oobd.base.OOBDCons
 
         mainPanel = new javax.swing.JPanel();
         main = new javax.swing.JPanel();
-        jComboBox1 = new javax.swing.JComboBox();
+        scriptSelectComboBox = new javax.swing.JComboBox();
         jLabel3 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         oobdImage = new javax.swing.JLabel();
@@ -138,7 +153,7 @@ public class swingView extends FrameView implements IFui, org.oobd.base.OOBDCons
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         comportComboBox = new javax.swing.JComboBox();
-        jButton1 = new javax.swing.JButton();
+        chooseScriptDirectoryButton = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         scriptDir = new javax.swing.JTextField();
         diagnose = new javax.swing.JPanel();
@@ -182,11 +197,15 @@ public class swingView extends FrameView implements IFui, org.oobd.base.OOBDCons
         main.setBackground(resourceMap.getColor("main.background")); // NOI18N
         main.setForeground(resourceMap.getColor("main.foreground")); // NOI18N
         main.setName("main"); // NOI18N
+        main.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                mainComponentShown(evt);
+            }
+        });
         main.setLayout(new java.awt.BorderLayout());
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox1.setName("jComboBox1"); // NOI18N
-        main.add(jComboBox1, java.awt.BorderLayout.PAGE_END);
+        scriptSelectComboBox.setName("scriptSelectComboBox"); // NOI18N
+        main.add(scriptSelectComboBox, java.awt.BorderLayout.PAGE_END);
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setIcon(resourceMap.getIcon("jLabel3.icon")); // NOI18N
@@ -233,6 +252,9 @@ public class swingView extends FrameView implements IFui, org.oobd.base.OOBDCons
 
         settings.setName("settings"); // NOI18N
         settings.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentHidden(java.awt.event.ComponentEvent evt) {
+                settingsComponentHidden(evt);
+            }
             public void componentShown(java.awt.event.ComponentEvent evt) {
                 settingsComponentShown(evt);
             }
@@ -265,14 +287,19 @@ public class swingView extends FrameView implements IFui, org.oobd.base.OOBDCons
         gridBagConstraints.gridy = 1;
         settings.add(comportComboBox, gridBagConstraints);
 
-        jButton1.setIcon(resourceMap.getIcon("jButton1.icon")); // NOI18N
-        jButton1.setText(resourceMap.getString("jButton1.text")); // NOI18N
-        jButton1.setToolTipText(resourceMap.getString("jButton1.toolTipText")); // NOI18N
-        jButton1.setName("jButton1"); // NOI18N
+        chooseScriptDirectoryButton.setIcon(resourceMap.getIcon("chooseScriptDirectoryButton.icon")); // NOI18N
+        chooseScriptDirectoryButton.setText(resourceMap.getString("chooseScriptDirectoryButton.text")); // NOI18N
+        chooseScriptDirectoryButton.setToolTipText(resourceMap.getString("chooseScriptDirectoryButton.toolTipText")); // NOI18N
+        chooseScriptDirectoryButton.setName("chooseScriptDirectoryButton"); // NOI18N
+        chooseScriptDirectoryButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chooseScriptDirectoryButtonActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 2;
-        settings.add(jButton1, gridBagConstraints);
+        settings.add(chooseScriptDirectoryButton, gridBagConstraints);
 
         jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
         jLabel4.setName("jLabel4"); // NOI18N
@@ -487,21 +514,36 @@ public class swingView extends FrameView implements IFui, org.oobd.base.OOBDCons
     }// </editor-fold>//GEN-END:initComponents
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+
+        appProbs.setProperty(OOBDConstants.PropName_ScriptDir, scriptDir.getText());
+        appProbs.setProperty(OOBDConstants.PropName_SerialPort, (String) comportComboBox.getSelectedItem());
+        oobdCore.getSystemIF().saveProperty(FT_PROPS,
+                OOBDConstants.AppPrefsFileName, appProbs);
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         cl.show(mainPanel, MAINPANEL);
     }//GEN-LAST:event_jLabel2MouseClicked
 
     private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
+        String scriptName = scriptSelectComboBox.getSelectedItem().toString();
+        appProbs.setProperty(OOBDConstants.PropName_ScriptName, scriptName);
+
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         cl.show(mainPanel, DIAGNOSEPANEL);
-
+        try {
+            startScriptEngine(
+                    new Onion("{" + "'scriptpath':'" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath()
+                    + "'" + "}"));
+        } catch (JSONException ex) {
+            // TODO Auto-generated catch block
+            Logger.getLogger(swingView.class.getName()).log(Level.WARNING, "JSON creation error", ex.getMessage());
+        }
     }//GEN-LAST:event_jLabel3MouseClicked
 
     private void settingsComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_settingsComponentShown
 
         String osname = System.getProperty("os.name", "").toLowerCase();
         Enumeration pList = null;
-        Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "OS detected: " + osname);
+        Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "OS detected: {0}", osname);
         try {
             if (osname.startsWith("windows")) {
                 pList = gnu.io.CommPortIdentifier.getPortIdentifiers();
@@ -513,28 +555,69 @@ public class swingView extends FrameView implements IFui, org.oobd.base.OOBDCons
             ex.printStackTrace();
         }
 
+        String port = appProbs.getProperty(OOBDConstants.PropName_SerialPort, null);
+        int portListIndex = -1;
         // Process the list.
         while (pList.hasMoreElements()) {
             CommPortIdentifier cpi = (CommPortIdentifier) pList.nextElement();
-            System.out.print("Port " + cpi.getName() + " ");
             if (cpi.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-                System.out.println("is a Serial Port: " + cpi);
                 comportComboBox.addItem(cpi.getName());
+                if (cpi.getName().equalsIgnoreCase(port)) {
+                    portListIndex = comportComboBox.getItemCount() - 1;
+                }
             }
         }
+        if (portListIndex > -1) {
+            comportComboBox.setSelectedIndex(portListIndex);
+        }
+        scriptDir.setText(appProbs.getProperty(OOBDConstants.PropName_ScriptDir, ""));
+
     }//GEN-LAST:event_settingsComponentShown
 
     private void diagnoseButtonPanelComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_diagnoseButtonPanelComponentShown
-        GridLayout thisGrid =  (GridLayout)diagnoseButtonPanel.getLayout();
-        thisGrid =new GridLayout(0,2);
+        GridLayout thisGrid = (GridLayout) diagnoseButtonPanel.getLayout();
+        thisGrid = new GridLayout(0, 2);
         diagnoseButtonPanel.setLayout(thisGrid);
         diagnoseButtonPanel.add(new TextVisualizerJPanel());
-                            diagnoseButtonPanel.invalidate();
-                    diagnoseButtonPanel.validate();
-                    diagnoseButtonPanel.repaint();
+        System.out.println("add and redraw grid");
+        diagnoseButtonPanel.invalidate();
+        diagnoseButtonPanel.validate();
+        diagnoseButtonPanel.repaint();
 
- 
+
     }//GEN-LAST:event_diagnoseButtonPanelComponentShown
+
+    private void chooseScriptDirectoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseScriptDirectoryButtonActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        chooser.addChoosableFileFilter(new FileFilter() {
+
+            public boolean accept(File f) {
+                if (f.isDirectory()) {
+                    return true;
+                }
+                return f.getName().toLowerCase().endsWith(".lbc");
+            }
+
+            public String getDescription() {
+                return "OOBD Scripts";
+            }
+        });
+        chooser.setMultiSelectionEnabled(false);
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        if (chooser.showOpenDialog(this.getFrame())
+                == JFileChooser.APPROVE_OPTION) {
+            appProbs.setProperty(OOBDConstants.PropName_ScriptDir, chooser.getSelectedFile().toString());
+            scriptDir.setText(chooser.getSelectedFile().toString());
+        }
+    }//GEN-LAST:event_chooseScriptDirectoryButtonActionPerformed
+
+    private void settingsComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_settingsComponentHidden
+        // TODO add your handling code here:
+    }//GEN-LAST:event_settingsComponentHidden
+
+    private void mainComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_mainComponentShown
+ 
+    }//GEN-LAST:event_mainComponentShown
 
     @Action
     public void onClickButton_Back() {
@@ -566,6 +649,7 @@ public class swingView extends FrameView implements IFui, org.oobd.base.OOBDCons
     private javax.swing.JLabel DiagnoseTitle;
     private javax.swing.JButton backButton;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JButton chooseScriptDirectoryButton;
     private javax.swing.JComboBox comportComboBox;
     private javax.swing.JLabel connectSymbol;
     private javax.swing.JPanel diagnose;
@@ -574,8 +658,6 @@ public class swingView extends FrameView implements IFui, org.oobd.base.OOBDCons
     private javax.swing.JScrollPane diagnoseScrollPanel;
     private javax.swing.JTabbedPane diagnoseTabPanel;
     private javax.swing.JToolBar diagnoseToolBar;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -594,6 +676,7 @@ public class swingView extends FrameView implements IFui, org.oobd.base.OOBDCons
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JButton saveButton;
     private javax.swing.JTextField scriptDir;
+    private javax.swing.JComboBox scriptSelectComboBox;
     private javax.swing.JPanel settings;
     private javax.swing.JMenuItem settingsMenuItem;
     private javax.swing.JLabel statusAnimationLabel;
@@ -611,31 +694,145 @@ public class swingView extends FrameView implements IFui, org.oobd.base.OOBDCons
     private JDialog aboutBox;
 
     public void sm(String msg) {
-           jTextAreaOutput.setText(jTextAreaOutput.getText()+msg+ "\n");
+        jTextAreaOutput.setText(jTextAreaOutput.getText() + msg + "\n");
 
- }
+    }
 
     public void registerOobdCore(Core core) {
-       oobdCore = core;
-      }
+        oobdCore = core;
+        appProbs = oobdCore.getSystemIF().loadProperty(FT_PROPS,
+                OOBDConstants.AppPrefsFileName);
+        String script = appProbs.getProperty(OOBDConstants.PropName_ScriptName, null);
+        int i = -1;
+        ArrayList<Archive> files = Factory.getDirContent(appProbs.getProperty(OOBDConstants.PropName_ScriptDir, null));
+        for (Archive file : files) {
+            scriptSelectComboBox.addItem(file);
+            if (file.toString().equalsIgnoreCase(script)) {
+                i = scriptSelectComboBox.getItemCount() - 1;
+            }
+        }
+        if (i > -1) {
+            scriptSelectComboBox.setSelectedIndex(i);
+        }
+    }
 
     public void announceScriptengine(String id, String visibleName) {
-        //does nothing here
+        Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: Scriptengine-ID: {0} visibleName:{1}", new Object[]{id, visibleName});
+        // more as one scriptengine is not used in this app
+        //scriptEngineMap.put(id, visibleName);
+            System.out.println("Announce Scriptid "+id);
+       if ("ScriptengineLua".equalsIgnoreCase(id)) {
+            System.out.println("Set Scriptid to "+id);
+            scriptEngineID = id;
+            scriptEngineVisibleName = visibleName;
+        }
     }
 
     public Class getVisualizerClass(String visualizerType, String theme) {
-         return TextVisualizerJPanel.class;
+        return TextVisualizerJPanel.class;
     }
 
     public void visualize(Onion myOnion) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Visualizer newVisualizer = new Visualizer(myOnion);
+        JComponent newJComponent;
+        // to be able to delete the created  objects on a a page later when closing the page, we need to log the creation here
+        pageObjects = (Vector<IFvisualizer>) oobdCore.getAssign(newVisualizer.getOwnerEngine(), org.oobd.base.OOBDConstants.CL_OBJECTS);
+        if (pageObjects == null) {
+            pageObjects = new Vector<IFvisualizer>();
+            oobdCore.setAssign(newVisualizer.getOwnerEngine(), org.oobd.base.OOBDConstants.CL_OBJECTS, pageObjects);
+        }
+        Class<IFvisualizer> visualizerClass = getVisualizerClass(myOnion.getOnionString("type"), myOnion.getOnionString("theme"));
+        Class[] argsClass = new Class[2]; // first we set up an pseudo - args - array for the scriptengine- constructor
+        argsClass[0] = String.class; // and fill it with the info, that the argument for the constructor will be first a String
+        argsClass[1] = String.class;
+        // and fill it with the info, that the argument for the constructor will be first a String
+        try {
+            Method classMethod = visualizerClass.getMethod("getInstance", argsClass); // and let Java find the correct constructor with one string as parameter
+            Object[] args = {newVisualizer.getOwnerEngine(), newVisualizer.getName()}; //we will an args-array with our String parameter
+            newJComponent = (JComponent) classMethod.invoke(null, args); // and finally create the object from the scriptengine class with its unique id as parameter
+            newVisualizer.setOwner((IFvisualizer) newJComponent);
+            ((IFvisualizer) newJComponent).setVisualizer(newVisualizer);
+            // add to internal list
+            pageObjects.add((IFvisualizer) newJComponent);
+            if (((IFvisualizer) newJComponent).isGroup()) {
+                /*               // if the component is not already placed
+                //JScrollPane scrollpane = new JScrollPane(newJComponent);
+                JScrollPane scrollpane = new JScrollPane();
+                scrollpane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+                scrollpane.setViewportView(newJComponent);
+                // scrollpane.setPreferredSize(new Dimension(300, 300));
+                GridBagConstraints c = new GridBagConstraints();
+                JPanel panel = (JPanel) oobdCore.getAssign(
+                newVisualizer.getOwnerEngine(),
+                org.oobd.base.OOBDConstants.CL_PANE + ":page");
+                c.fill = GridBagConstraints.REMAINDER;
+                
+                c.gridx = 0;
+                c.gridy = 0;
+                c.weightx = 1;
+                c.weighty = 1;
+                //panel.add(newJComponent, c);
+                panel.add(scrollpane, java.awt.BorderLayout.CENTER);//, c);
+                //panel.add(scrollpane, c);
+                panel.validate();
+                 */            }
+            System.out.println("new Vizualizer created");
+            ((IFvisualizer) newJComponent).initValue(newVisualizer, myOnion);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void openPage(String seID, String Name, int colcount, int rowcount) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //cleans the page
+        System.out.println("Open Page");
+
+        if (pageObjects != null) {
+            diagnoseButtonPanel.removeAll();
+            for (IFvisualizer vis : pageObjects) {
+                System.out.println("nremove old vizualiers");
+
+                JComponent newJComponent = (JComponent) vis;
+                vis.setRemove(seID);
+            }
+            pageObjects.removeAllElements();
+            diagnoseButtonPanel.validate();
+        }
     }
 
     public void openPageCompleted(String seID, String Name) {
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        refreshGrid();
+
+    }
+
+    void refreshGrid() {
+        //build the components out of the previously collected list of vsiualizers
+        System.out.println("refresh grid");
+        if (pageObjects != null) {
+            diagnoseButtonPanel.removeAll();
+            for (IFvisualizer vis : pageObjects) {
+                JComponent newJComponent = (JComponent) vis;
+                diagnoseButtonPanel.add(newJComponent);
+            }
+            diagnoseButtonPanel.validate();
+        }
+    }
+
+    public void startScriptEngine(Onion onion) {
+
+        if (scriptEngineID != null) {
+            String seID = oobdCore.createScriptEngine(scriptEngineID, onion);
+
+            //JTabbedPane newjTabPane = new JTabbedPane(); //create a inner JTabbedPane as container for the later coming scriptengine pages
+            //newjTabPane.setName(seID); // set the name of that canvas that it can be found again later
+            //mainSeTabbedPane.addTab(seID, newjTabPane); // and put this canvas inside the pane which belongs to that particular scriptengine
+            // and now, after initialisation of the UI, let the games begin...
+            oobdCore.setAssign(seID, org.oobd.base.OOBDConstants.CL_PANE, new Object()); //store the related drawing pane, the TabPane for that scriptengine
+            //stop the Progress Dialog BEFORE the script starts
+            //Diagnose.getInstance().stopProgressDialog();
+            oobdCore.startScriptEngine(seID, onion);
+        }
     }
 }

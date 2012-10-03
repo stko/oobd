@@ -42,9 +42,14 @@ public interface OOBDConstants {
     public static final Integer UR_USER = 0;
     public static final Integer UR_UPDATE = 1;
     public static final Integer UR_TIMER = 2;
-    // Path for oobdcore.props:
+    // file names for property files:
      public final static String CorePrefsFileName = "oobdcore.props";
-    //
+     public final static String AppPrefsFileName = "app.props";
+     //key names for properties
+     public final static String PropName_SerialPort ="SerialPort";
+     public final static String PropName_ScriptDir ="ScriptDir";
+     public final static String PropName_ScriptName ="Script";
+     //Mailbox names
     public final static String CoreMailboxName = "core";
     public final static String BusMailboxName = "BusCom";
     public final static String DBName = "AVLLookup";
@@ -60,6 +65,7 @@ public interface OOBDConstants {
     public final static int FT_BUS = 2;
     public final static int FT_ENGINE = 3;
     public final static int FT_DATABASE = 4;
+   public final static int FT_IGNORE = 5;
     // loop time for timer triggered List- Updates in ms
     public final static int LV_UPDATE = 100;
     // loop time for status Updates in ms

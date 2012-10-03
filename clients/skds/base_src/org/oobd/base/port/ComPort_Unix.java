@@ -6,6 +6,7 @@ package org.oobd.base.port;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.oobd.base.*;
 import org.oobd.base.port.OOBDPort;
 import org.oobd.base.port.PortInfo;
 import org.oobd.base.support.Onion;
@@ -36,12 +37,8 @@ public class ComPort_Unix implements OOBDPort {
     }
 
     public boolean connect(Onion options) {
-        Properties props = new Properties();
-        try {
-            props.load(new FileInputStream("buscom.props"));
-        } catch (IOException ignored) {
-        }
-        String defaultPort = "";
+        Properties props = Core.getSingleInstance().getSystemIF().loadProperty(OOBDConstants.FT_IGNORE, OOBDConstants.AppPrefsFileName);
+         String defaultPort = "";
         Boolean portFound = false;
 
         // determine the name of the serial port on several operating systems
@@ -60,7 +57,7 @@ public class ComPort_Unix implements OOBDPort {
             return false;
         }
 
-        defaultPort = props.getProperty("SerialPort", defaultPort);
+        defaultPort = props.getProperty(OOBDConstants.PropName_SerialPort, defaultPort);
         boolean hwFlowControl = props.getProperty("HardwareFlowControl", "true").equalsIgnoreCase("true");
 
         // parse ports and if the default port is found, initialized the reader

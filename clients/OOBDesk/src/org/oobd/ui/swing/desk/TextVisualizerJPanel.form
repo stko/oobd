@@ -17,38 +17,31 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,44,0,0,1,-112"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout">
     <Property name="axis" type="int" value="3"/>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JLabel" name="valueLabel">
+    <Component class="javax.swing.JLabel" name="functionValue">
       <Properties>
-        <Property name="horizontalAlignment" type="int" value="2"/>
-        <Property name="text" type="java.lang.String" resourceKey="valueLabel.text"/>
-        <Property name="name" type="java.lang.String" value="valueLabel" noResource="true"/>
+        <Property name="font" type="java.awt.Font" resourceKey="functionValue.font"/>
+        <Property name="horizontalAlignment" type="int" value="0"/>
+        <Property name="text" type="java.lang.String" resourceKey="functionValue.text"/>
+        <Property name="name" type="java.lang.String" value="functionValue" noResource="true"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.Box$Filler" name="filler2">
-      <Properties>
-        <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[32767, 0]"/>
-        </Property>
-        <Property name="name" type="java.lang.String" value="filler2" noResource="true"/>
-      </Properties>
-      <AuxValues>
-        <AuxValue name="classDetails" type="java.lang.String" value="Box.Filler.HorizontalGlue"/>
-      </AuxValues>
     </Component>
     <Container class="javax.swing.JPanel" name="jPanel1">
       <Properties>
         <Property name="name" type="java.lang.String" value="jPanel1" noResource="true"/>
       </Properties>
 
-      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout">
+        <Property name="axis" type="int" value="3"/>
+      </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="titleLabel">
+        <Component class="javax.swing.JLabel" name="functionName">
           <Properties>
             <Property name="text" type="java.lang.String" resourceKey="titleLable.text"/>
             <Property name="name" type="java.lang.String" value="titleLable" noResource="true"/>
@@ -65,10 +58,29 @@
             <AuxValue name="classDetails" type="java.lang.String" value="Box.Filler.HorizontalGlue"/>
           </AuxValues>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel3">
+        <Component class="javax.swing.JLabel" name="backImageLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" resourceKey="jLabel3.text"/>
-            <Property name="name" type="java.lang.String" value="jLabel3" noResource="true"/>
+            <Property name="name" type="java.lang.String" value="backImageLabel" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="updateImageLabel">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="updateImageLabel" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="timerImageLabel">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="timerImageLabel" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="logImageLabel">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="logImageLabel" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="forwardImageLabel">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="forwardImageLabel" noResource="true"/>
           </Properties>
         </Component>
       </SubComponents>

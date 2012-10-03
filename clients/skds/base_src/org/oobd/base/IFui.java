@@ -77,4 +77,13 @@ public interface IFui  {
      * @param Name of the new canvas
      */
     public void openPageCompleted(String seID, String Name);
+    
+    /**
+     * \brief Starts an Scriptengine
+     * \ingroup visualisation
+     * @param onion 
+     */
+     public void startScriptEngine (Onion onion);
+    
+    
 }
