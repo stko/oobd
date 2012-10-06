@@ -218,7 +218,7 @@ function receive_DXM()
 	udsLen=0
 	answ=""
 	print("Receive via DXM...")
-	answ=serReadLn(10000, true)
+	answ=serReadLn(1000, true)
 	if answ == "" then
 		return 0
 	else

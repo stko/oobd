@@ -23,7 +23,13 @@ import java.util.logging.Logger;
 import purejavacomm.CommPortIdentifier;
 import gnu.io.*;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.LayoutManager;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -38,8 +44,14 @@ import org.oobd.base.support.Onion;
 import java.util.Vector;
 import java.util.Iterator;
 import java.util.Properties;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.border.Border;
 import javax.swing.filechooser.FileFilter;
 import org.json.JSONException;
 import org.oobd.base.archive.*;
@@ -57,6 +69,11 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private String scriptEngineID = null;
     private String scriptEngineVisibleName;
     private Vector<IFvisualizer> pageObjects;
+    private boolean alreadyRefreshing;
+    private final String popupText_update = "Toggle Update Flag";
+    private final String popupText_timer = "Toggle Timer Flag";
+    private final String popupText_log = "Toggle Log Flag";
+    MouseAdapter popupMenuHandle;
 
     public swingView(SingleFrameApplication app) {
         super(app);
@@ -119,6 +136,84 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                 }
             }
         });
+        ActionListener popupActionListener = new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Mouse action detected:" + e.getActionCommand());
+                String whichItemString = e.getActionCommand();
+                int index = 0;
+                if (popupText_update.equals(whichItemString)) {
+                    index = 1;
+                } else if (popupText_timer.equals(whichItemString)) {
+                    index = 2;
+                } else if (popupText_log.equals(whichItemString)) {
+                    index = 3;
+                }
+                JMenuItem menuItem = ((JMenuItem) e.getSource());
+                JPopupMenu popupMenu = (JPopupMenu) menuItem.getParent();
+                IFvisualizer vi = (IFvisualizer) popupMenu.getInvoker();
+                vi.getVisualizer().setUpdateFlag(index, !vi.getVisualizer().getUpdateFlag(index));
+                ((Component) vi).invalidate();
+                ((Component) vi).validate();
+                ((Component) vi).repaint();
+                System.out.println("Index Found:" + index);
+            }
+        };
+        final JPopupMenu Pmenu = new JPopupMenu("Toggle Flags");
+        JMenuItem menuItem = new JMenuItem(popupText_update, new ImageIcon(swingView.class.getResource("/org/oobd/base/images/update_16.png")));
+        menuItem.addActionListener(popupActionListener);
+        Pmenu.add(menuItem);
+        menuItem = new JMenuItem(popupText_timer, new ImageIcon(swingView.class.getResource("/org/oobd/base/images/timer_16.png")));
+        menuItem.addActionListener(popupActionListener);
+        Pmenu.add(menuItem);
+        menuItem = new JMenuItem(popupText_log, new ImageIcon(swingView.class.getResource("/org/oobd/base/images/text_16.png")));
+        menuItem.addActionListener(popupActionListener);
+        Pmenu.add(menuItem);
+        Pmenu.setBorder(BorderFactory.createTitledBorder("Toggle Flags"));
+        Pmenu.setBorderPainted(true);
+
+        popupMenuHandle =
+                new MouseAdapter() {
+
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        maybeShowPopup(e);
+                    }
+
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        //((JPanel) e.getComponent()).setBackground(Color.white);
+                        //.setBorder(BorderFactory.createLineBorder(Color.black));
+                        
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        //((JPanel) e.getComponent()).setBackground(Color.lightGray);
+                        //setBorder(BorderFactory.createEmptyBorder());
+                    }
+
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        maybeShowPopup(e);
+                    }
+
+                    public void maybeShowPopup(MouseEvent Me) {
+                        System.out.println("Mouse event detected on" + Me.getComponent().getClass().getName());
+                        if (Me.isPopupTrigger()) {
+                            System.out.println("Popup trigger detected!");
+
+                            Pmenu.show(Me.getComponent(), Me.getX(), Me.getY());
+                        } else {
+                            if (Me.getClickCount() == 2) {
+
+                                ((IFvisualizer) Me.getComponent()).getVisualizer().updateRequest(OOBDConstants.UR_USER);
+                            }
+                        }
+                    }
+                };
+        diagnoseTabPanel.setSelectedComponent(diagnosePanel);
+
 
     }
 
@@ -150,7 +245,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         oobdImage = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         settings = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        backButtonLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         comportComboBox = new javax.swing.JComboBox();
         chooseScriptDirectoryButton = new javax.swing.JButton();
@@ -173,7 +268,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         cancelButton = new javax.swing.JButton();
         logButton = new javax.swing.JToggleButton();
         saveButton = new javax.swing.JButton();
-        jTextAreaOutput = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextAreaOutput = new javax.swing.JTextArea();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         settingsMenuItem = new javax.swing.JMenuItem();
@@ -184,7 +280,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         statusMessageLabel = new javax.swing.JLabel();
         statusAnimationLabel = new javax.swing.JLabel();
         progressBar = new javax.swing.JProgressBar();
-        jPanel1 = new javax.swing.JPanel();
 
         mainPanel.setName("mainPanel"); // NOI18N
 
@@ -261,16 +356,16 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         });
         settings.setLayout(new java.awt.GridBagLayout());
 
-        jLabel2.setIcon(resourceMap.getIcon("jLabel2.icon")); // NOI18N
-        jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
-        jLabel2.setToolTipText(resourceMap.getString("jLabel2.toolTipText")); // NOI18N
-        jLabel2.setName("jLabel2"); // NOI18N
-        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+        backButtonLabel.setIcon(resourceMap.getIcon("backButtonLabel.icon")); // NOI18N
+        backButtonLabel.setText(resourceMap.getString("backButtonLabel.text")); // NOI18N
+        backButtonLabel.setToolTipText(resourceMap.getString("backButtonLabel.toolTipText")); // NOI18N
+        backButtonLabel.setName("backButtonLabel"); // NOI18N
+        backButtonLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel2MouseClicked(evt);
+                backButtonLabelMouseClicked(evt);
             }
         });
-        settings.add(jLabel2, new java.awt.GridBagConstraints());
+        settings.add(backButtonLabel, new java.awt.GridBagConstraints());
 
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
@@ -356,6 +451,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         backButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         diagnoseToolBar.add(backButton);
 
+        updateButton.setAction(actionMap.get("onClickButton_Update")); // NOI18N
         updateButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/oobd/ui/swing/desk/resources/update.png"))); // NOI18N
         updateButton.setText(resourceMap.getString("updateButton.text")); // NOI18N
         updateButton.setToolTipText(resourceMap.getString("updateButton.toolTipText")); // NOI18N
@@ -398,6 +494,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         outputPanel.setLayout(new javax.swing.BoxLayout(outputPanel, javax.swing.BoxLayout.PAGE_AXIS));
 
         outputToolbar.setRollover(true);
+        outputToolbar.setMaximumSize(new java.awt.Dimension(32767, 46));
         outputToolbar.setName("outputToolbar"); // NOI18N
 
         cancelButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/oobd/ui/swing/desk/resources/cancel.png"))); // NOI18N
@@ -427,9 +524,14 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
         outputPanel.add(outputToolbar);
 
-        jTextAreaOutput.setText(resourceMap.getString("jTextAreaOutput.text")); // NOI18N
+        jScrollPane1.setName("jScrollPane1"); // NOI18N
+
+        jTextAreaOutput.setColumns(20);
+        jTextAreaOutput.setRows(5);
         jTextAreaOutput.setName("jTextAreaOutput"); // NOI18N
-        outputPanel.add(jTextAreaOutput);
+        jScrollPane1.setViewportView(jTextAreaOutput);
+
+        outputPanel.add(jScrollPane1);
 
         diagnoseTabPanel.addTab(resourceMap.getString("outputPanel.TabConstraints.tabTitle"), resourceMap.getIcon("outputPanel.TabConstraints.tabIcon"), outputPanel, resourceMap.getString("outputPanel.TabConstraints.tabToolTip")); // NOI18N
 
@@ -495,47 +597,36 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                 .addGap(3, 3, 3))
         );
 
-        jPanel1.setName("jPanel1"); // NOI18N
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 379, Short.MAX_VALUE)
-        );
-
         setComponent(mainPanel);
         setMenuBar(menuBar);
         setStatusBar(statusPanel);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+    private void backButtonLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonLabelMouseClicked
 
+        System.out.println("Try to sacw settings..");
         appProbs.setProperty(OOBDConstants.PropName_ScriptDir, scriptDir.getText());
-        appProbs.setProperty(OOBDConstants.PropName_SerialPort, (String) comportComboBox.getSelectedItem());
+        appProbs.setProperty(OOBDConstants.PropName_SerialPort, comportComboBox.getEditor().getItem().toString());
         oobdCore.getSystemIF().saveProperty(FT_PROPS,
                 OOBDConstants.AppPrefsFileName, appProbs);
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         cl.show(mainPanel, MAINPANEL);
-    }//GEN-LAST:event_jLabel2MouseClicked
+    }//GEN-LAST:event_backButtonLabelMouseClicked
 
     private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
         String scriptName = scriptSelectComboBox.getSelectedItem().toString();
         appProbs.setProperty(OOBDConstants.PropName_ScriptName, scriptName);
-
+        oobdCore.getSystemIF().saveProperty(FT_PROPS,
+                OOBDConstants.AppPrefsFileName, appProbs);
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         cl.show(mainPanel, DIAGNOSEPANEL);
         try {
             startScriptEngine(
-                    new Onion("{" + "'scriptpath':'" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath()
+                    new Onion("{" + "'scriptpath':'" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath().replace("\\", "/")
                     + "'" + "}"));
         } catch (JSONException ex) {
             // TODO Auto-generated catch block
-            Logger.getLogger(swingView.class.getName()).log(Level.WARNING, "JSON creation error", ex.getMessage());
+            Logger.getLogger(swingView.class.getName()).log(Level.WARNING, "JSON creation error with file name:"+((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath(), ex.getMessage());
         }
     }//GEN-LAST:event_jLabel3MouseClicked
 
@@ -546,9 +637,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "OS detected: {0}", osname);
         try {
             if (osname.startsWith("windows")) {
-                pList = gnu.io.CommPortIdentifier.getPortIdentifiers();
+                pList = purejavacomm.CommPortIdentifier.getPortIdentifiers();
             } else {
-                pList = CommPortIdentifier.getPortIdentifiers();
+                pList = gnu.io.CommPortIdentifier.getPortIdentifiers();
             }
 
         } catch (Exception ex) {
@@ -556,6 +647,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
 
         String port = appProbs.getProperty(OOBDConstants.PropName_SerialPort, null);
+        System.out.println("Port find in settings: " + port);
         int portListIndex = -1;
         // Process the list.
         while (pList.hasMoreElements()) {
@@ -569,12 +661,16 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
         if (portListIndex > -1) {
             comportComboBox.setSelectedIndex(portListIndex);
+        } else {
+            System.out.println("port not found in list, setting it to " + port);
+            comportComboBox.setSelectedItem(port);
         }
         scriptDir.setText(appProbs.getProperty(OOBDConstants.PropName_ScriptDir, ""));
 
     }//GEN-LAST:event_settingsComponentShown
 
     private void diagnoseButtonPanelComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_diagnoseButtonPanelComponentShown
+        /*
         GridLayout thisGrid = (GridLayout) diagnoseButtonPanel.getLayout();
         thisGrid = new GridLayout(0, 2);
         diagnoseButtonPanel.setLayout(thisGrid);
@@ -583,8 +679,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         diagnoseButtonPanel.invalidate();
         diagnoseButtonPanel.validate();
         diagnoseButtonPanel.repaint();
-
-
+         */
+        refreshGrid();
     }//GEN-LAST:event_diagnoseButtonPanelComponentShown
 
     private void chooseScriptDirectoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseScriptDirectoryButtonActionPerformed
@@ -616,13 +712,25 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }//GEN-LAST:event_settingsComponentHidden
 
     private void mainComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_mainComponentShown
- 
+        statusMessageLabel.setText("Selected the Script you want to use and press Start");
     }//GEN-LAST:event_mainComponentShown
 
     @Action
     public void onClickButton_Back() {
-        CardLayout cl = (CardLayout) (mainPanel.getLayout());
-        cl.show(mainPanel, MAINPANEL);
+        IFvisualizer back = null;
+        if (pageObjects != null) {
+            for (IFvisualizer vis : pageObjects) {
+                if (back == null && vis.getVisualizer().getUpdateFlag(4)) {
+                    back = vis;
+                }
+            }
+        }
+        if (back != null) {
+            back.getVisualizer().updateRequest(OOBDConstants.UR_USER);
+        } else {
+            CardLayout cl = (CardLayout) (mainPanel.getLayout());
+            cl.show(mainPanel, MAINPANEL);
+        }
     }
 
     @Action
@@ -648,6 +756,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel DiagnoseTitle;
     private javax.swing.JButton backButton;
+    private javax.swing.JLabel backButtonLabel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton chooseScriptDirectoryButton;
     private javax.swing.JComboBox comportComboBox;
@@ -659,13 +768,12 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JTabbedPane diagnoseTabPanel;
     private javax.swing.JToolBar diagnoseToolBar;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JTextField jTextAreaOutput;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextAreaOutput;
     private javax.swing.JToggleButton logButton;
     private javax.swing.JPanel main;
     private javax.swing.JPanel mainPanel;
@@ -694,8 +802,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private JDialog aboutBox;
 
     public void sm(String msg) {
-        jTextAreaOutput.setText(jTextAreaOutput.getText() + msg + "\n");
-
+        if (logButton.isSelected()) {
+            jTextAreaOutput.append(msg + "\n");
+        }
     }
 
     public void registerOobdCore(Core core) {
@@ -720,9 +829,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: Scriptengine-ID: {0} visibleName:{1}", new Object[]{id, visibleName});
         // more as one scriptengine is not used in this app
         //scriptEngineMap.put(id, visibleName);
-            System.out.println("Announce Scriptid "+id);
-       if ("ScriptengineLua".equalsIgnoreCase(id)) {
-            System.out.println("Set Scriptid to "+id);
+        System.out.println("Announce Scriptid " + id);
+        if ("ScriptengineLua".equalsIgnoreCase(id)) {
+            System.out.println("Set Scriptid to " + id);
             scriptEngineID = id;
             scriptEngineVisibleName = visibleName;
         }
@@ -776,9 +885,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                 //panel.add(scrollpane, c);
                 panel.validate();
                  */            }
-            System.out.println("new Vizualizer created");
             ((IFvisualizer) newJComponent).initValue(newVisualizer, myOnion);
-
+            newJComponent.addMouseListener(popupMenuHandle);
+            System.out.println("new Vizualizer created");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -810,13 +919,29 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     void refreshGrid() {
         //build the components out of the previously collected list of vsiualizers
         System.out.println("refresh grid");
-        if (pageObjects != null) {
+        // it seems that sometimes the resize form event is called during rezize Event... which generates an endless
+        // recursive loop. To avoid this, the variable alreadyRefreshing started should indicate that there's already a refresh ongoing..
+        alreadyRefreshing = false;
+        if (pageObjects != null && !alreadyRefreshing) {
+            alreadyRefreshing = true;
+            GridLayout thisGrid = (GridLayout) diagnoseButtonPanel.getLayout();
+            Dimension s = diagnoseButtonPanel.getSize();
+            int cols = s.width / 200;
+            if (cols < 1) {
+                cols = 1;
+            }
+            thisGrid = new GridLayout(0, cols);
+            diagnoseButtonPanel.setLayout(thisGrid);
+
             diagnoseButtonPanel.removeAll();
             for (IFvisualizer vis : pageObjects) {
                 JComponent newJComponent = (JComponent) vis;
                 diagnoseButtonPanel.add(newJComponent);
             }
+            diagnoseButtonPanel.invalidate();
             diagnoseButtonPanel.validate();
+            diagnoseButtonPanel.repaint();
+            alreadyRefreshing = false;
         }
     }
 
@@ -833,6 +958,17 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             //stop the Progress Dialog BEFORE the script starts
             //Diagnose.getInstance().stopProgressDialog();
             oobdCore.startScriptEngine(seID, onion);
+        }
+    }
+
+    @Action
+    public void onClickButton_Update() {
+        if (pageObjects != null) {
+            for (IFvisualizer vis : pageObjects) {
+                if (vis.getVisualizer().getUpdateFlag(1)) {
+                    vis.getVisualizer().updateRequest(OOBDConstants.UR_UPDATE);
+                }
+            }
         }
     }
 }

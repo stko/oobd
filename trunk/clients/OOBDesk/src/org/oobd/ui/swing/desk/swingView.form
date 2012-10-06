@@ -127,15 +127,15 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel2">
+            <Component class="javax.swing.JLabel" name="backButtonLabel">
               <Properties>
-                <Property name="icon" type="javax.swing.Icon" resourceKey="jLabel2.icon"/>
-                <Property name="text" type="java.lang.String" resourceKey="jLabel2.text"/>
-                <Property name="toolTipText" type="java.lang.String" resourceKey="jLabel2.toolTipText"/>
-                <Property name="name" type="java.lang.String" value="jLabel2" noResource="true"/>
+                <Property name="icon" type="javax.swing.Icon" resourceKey="backButtonLabel.icon"/>
+                <Property name="text" type="java.lang.String" resourceKey="backButtonLabel.text"/>
+                <Property name="toolTipText" type="java.lang.String" resourceKey="backButtonLabel.toolTipText"/>
+                <Property name="name" type="java.lang.String" value="backButtonLabel" noResource="true"/>
               </Properties>
               <Events>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jLabel2MouseClicked"/>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="backButtonLabelMouseClicked"/>
               </Events>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -293,9 +293,15 @@
                             <Property name="name" type="java.lang.String" value="backButton" noResource="true"/>
                             <Property name="verticalTextPosition" type="int" value="3"/>
                           </Properties>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="swingView_backButton"/>
+                          </AuxValues>
                         </Component>
                         <Component class="javax.swing.JButton" name="updateButton">
                           <Properties>
+                            <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
+                              <action class="org.oobd.ui.swing.desk.swingView" id="onClickButton_Update" methodName="onClickButton_Update"/>
+                            </Property>
                             <Property name="icon" type="javax.swing.Icon" noResource="true" editor="org.netbeans.modules.form.editors2.IconEditor">
                               <Image iconType="3" name="/org/oobd/ui/swing/desk/resources/update.png"/>
                             </Property>
@@ -368,6 +374,9 @@
                     <Container class="javax.swing.JToolBar" name="outputToolbar">
                       <Properties>
                         <Property name="rollover" type="boolean" value="true"/>
+                        <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[32767, 46]"/>
+                        </Property>
                         <Property name="name" type="java.lang.String" value="outputToolbar" noResource="true"/>
                       </Properties>
 
@@ -412,12 +421,25 @@
                         </Component>
                       </SubComponents>
                     </Container>
-                    <Component class="javax.swing.JTextField" name="jTextAreaOutput">
+                    <Container class="javax.swing.JScrollPane" name="jScrollPane1">
                       <Properties>
-                        <Property name="text" type="java.lang.String" resourceKey="jTextAreaOutput.text"/>
-                        <Property name="name" type="java.lang.String" value="jTextAreaOutput" noResource="true"/>
+                        <Property name="name" type="java.lang.String" value="jScrollPane1" noResource="true"/>
                       </Properties>
-                    </Component>
+                      <AuxValues>
+                        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                      </AuxValues>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                      <SubComponents>
+                        <Component class="javax.swing.JTextArea" name="jTextAreaOutput">
+                          <Properties>
+                            <Property name="columns" type="int" value="20"/>
+                            <Property name="rows" type="int" value="5"/>
+                            <Property name="name" type="java.lang.String" value="jTextAreaOutput" noResource="true"/>
+                          </Properties>
+                        </Component>
+                      </SubComponents>
+                    </Container>
                   </SubComponents>
                 </Container>
               </SubComponents>
@@ -557,24 +579,6 @@
           </AuxValues>
         </Component>
       </SubComponents>
-    </Container>
-    <Container class="javax.swing.JPanel" name="jPanel1">
-      <Properties>
-        <Property name="name" type="java.lang.String" value="jPanel1" noResource="true"/>
-      </Properties>
-
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="100" max="32767" attributes="0"/>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="379" max="32767" attributes="0"/>
-          </Group>
-        </DimensionLayout>
-      </Layout>
     </Container>
   </NonVisualComponents>
   <Properties>
