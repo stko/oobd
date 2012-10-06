@@ -12,6 +12,7 @@ package org.oobd.ui.swing.desk;
 
 import java.awt.Graphics;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import org.oobd.base.*;
 import org.oobd.base.visualizer.*;
 import org.oobd.base.support.Onion;
@@ -25,12 +26,20 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
     boolean toBePlaced = true; //indicates, if the actual instance is already been placed on an canvas or not
     boolean awaitingUpdate = false;
     Visualizer value;
-    static private final Icon[] symbolIcons = new Icon[15];
+    static private final Icon[] myIcons = new Icon[6];
 
     /** Creates new form TextVisualizerJPanel */
     public TextVisualizerJPanel() {
         super();
         initComponents();
+        if (myIcons[0] == null) { //initial setup
+            myIcons[0] = new ImageIcon(swingView.class.getResource("/org/oobd/base/images/blank_16.png"));
+            myIcons[1] = new ImageIcon(swingView.class.getResource("/org/oobd/base/images/forward_16.png"));
+            myIcons[2] = new ImageIcon(swingView.class.getResource("/org/oobd/base/images/update_16.png"));
+            myIcons[3] = new ImageIcon(swingView.class.getResource("/org/oobd/base/images/timer_16.png"));
+            myIcons[4] = new ImageIcon(swingView.class.getResource("/org/oobd/base/images/text_16.png"));
+            myIcons[5] = new ImageIcon(swingView.class.getResource("/org/oobd/base/images/back_16.png"));
+        }
     }
 
     @Override
@@ -40,12 +49,48 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
             functionName.setText("<html>" + value.getToolTip() + "</html>");
             functionValue.setText("<html>" + value.toString() + "</html>");
         }
+        if (value.getUpdateFlag(4)) {
+
+            backImageLabel.setIcon(myIcons[OOBDConstants.VE_BACK + 1]);
+        } else {
+            backImageLabel.setIcon(myIcons[0]);
+        }
+
+        if (value.getUpdateFlag(1)) {
+            updateImageLabel.setIcon(myIcons[OOBDConstants.VE_UPDATE + 1]);
+        } else {
+            updateImageLabel.setIcon(myIcons[0]);
+        }
+
+        if (value.getUpdateFlag(2)) {
+            timerImageLabel.setIcon(myIcons[OOBDConstants.VE_TIMER + 1]);
+        } else {
+            timerImageLabel.setIcon(myIcons[0]);
+        }
+
+        if (value.getUpdateFlag(3)) {
+            logImageLabel.setIcon(myIcons[OOBDConstants.VE_LOG + 1]);
+        } else {
+            logImageLabel.setIcon(myIcons[0]);
+        }
+
+        if (value.getUpdateFlag(0)) {
+            forwardImageLabel.setIcon(myIcons[OOBDConstants.VE_MENU + 1]);
+        } else {
+            forwardImageLabel.setIcon(myIcons[0]);
+        }
+
+
         super.paintComponent(g);
     }
 
     public static IFvisualizer getInstance(String pageID, String vizName) {
 
         return new TextVisualizerJPanel();
+        /*    if (evt.getClickCount() == 2) {
+        
+        value.updateRequest(OOBDConstants.UR_USER);}
+         */
     }
 
     /** This method is called from within the constructor to
@@ -66,13 +111,11 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
         timerImageLabel = new javax.swing.JLabel();
         logImageLabel = new javax.swing.JLabel();
         forwardImageLabel = new javax.swing.JLabel();
+        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 32767));
+        filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
+        setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         setName("Form"); // NOI18N
-        addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                formMouseClicked(evt);
-            }
-        });
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.PAGE_AXIS));
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class);
@@ -82,8 +125,11 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
         functionValue.setName("functionValue"); // NOI18N
         add(functionValue);
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jPanel1.setMinimumSize(new java.awt.Dimension(14, 20));
         jPanel1.setName("jPanel1"); // NOI18N
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.PAGE_AXIS));
+        jPanel1.setPreferredSize(new java.awt.Dimension(14, 20));
+        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.LINE_AXIS));
 
         functionName.setText(resourceMap.getString("titleLable.text")); // NOI18N
         functionName.setName("titleLable"); // NOI18N
@@ -92,6 +138,7 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
         filler1.setName("filler1"); // NOI18N
         jPanel1.add(filler1);
 
+        backImageLabel.setIcon(resourceMap.getIcon("backImageLabel.icon")); // NOI18N
         backImageLabel.setName("backImageLabel"); // NOI18N
         jPanel1.add(backImageLabel);
 
@@ -107,19 +154,19 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
         forwardImageLabel.setName("forwardImageLabel"); // NOI18N
         jPanel1.add(forwardImageLabel);
 
+        filler2.setName("filler2"); // NOI18N
+        jPanel1.add(filler2);
+
         add(jPanel1);
+
+        filler3.setName("filler3"); // NOI18N
+        add(filler3);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
-        if (evt.getClickCount() == 2) {
-
-            value.updateRequest(OOBDConstants.UR_USER);
-        }
-
-    }//GEN-LAST:event_formMouseClicked
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel backImageLabel;
     private javax.swing.Box.Filler filler1;
+    private javax.swing.Box.Filler filler2;
+    private javax.swing.Box.Filler filler3;
     private javax.swing.JLabel forwardImageLabel;
     private javax.swing.JLabel functionName;
     private javax.swing.JLabel functionValue;
@@ -135,6 +182,10 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
 
     public void setVisualizer(Visualizer viz) {
         this.value = viz;
+    }
+
+    public Visualizer getVisualizer() {
+        return this.value;
     }
 
     public void initValue(Visualizer viz, Onion onion) {

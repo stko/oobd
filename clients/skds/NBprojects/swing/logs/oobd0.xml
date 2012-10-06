@@ -2,106 +2,5767 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2011-06-03T13:52:15</date>
-  <millis>1307101935713</millis>
+  <date>2012-10-03T10:43:27</date>
+  <millis>1349253807536</millis>
   <sequence>0</sequence>
-  <logger>org.jdesktop.application.Application</logger>
-  <level>SEVERE</level>
-  <class>org.jdesktop.application.Application$1</class>
-  <method>run</method>
+  <logger>sun.awt.X11.backingStore.XToolkit</logger>
+  <level>CONFIG</level>
+  <class>sun.awt.X11.XToolkit</class>
+  <method>setBackingStoreType</method>
   <thread>10</thread>
-  <message>Application class skdsswing.SKDSSwingApp failed to launch</message>
-  <exception>
-    <message>java.util.MissingResourceException: Resource not found</message>
-    <frame>
-      <class>skdsswing.SwingSystem</class>
-      <method>generateResourceStream</method>
-      <line>102</line>
-    </frame>
-    <frame>
-      <class>org.oobd.base.Core</class>
-      <method>&lt;init&gt;</method>
-      <line>141</line>
-    </frame>
-    <frame>
-      <class>skdsswing.SKDSSwingApp</class>
-      <method>startup</method>
-      <line>22</line>
-    </frame>
-    <frame>
-      <class>org.jdesktop.application.Application$1</class>
-      <method>run</method>
-      <line>171</line>
-    </frame>
-    <frame>
-      <class>java.awt.event.InvocationEvent</class>
-      <method>dispatch</method>
-      <line>209</line>
-    </frame>
-    <frame>
-      <class>java.awt.EventQueue</class>
-      <method>dispatchEventImpl</method>
-      <line>678</line>
-    </frame>
-    <frame>
-      <class>java.awt.EventQueue</class>
-      <method>access$000</method>
-      <line>86</line>
-    </frame>
-    <frame>
-      <class>java.awt.EventQueue$1</class>
-      <method>run</method>
-      <line>639</line>
-    </frame>
-    <frame>
-      <class>java.awt.EventQueue$1</class>
-      <method>run</method>
-      <line>637</line>
-    </frame>
-    <frame>
-      <class>java.security.AccessController</class>
-      <method>doPrivileged</method>
-    </frame>
-    <frame>
-      <class>java.security.AccessControlContext$1</class>
-      <method>doIntersectionPrivilege</method>
-      <line>87</line>
-    </frame>
-    <frame>
-      <class>java.awt.EventQueue</class>
-      <method>dispatchEvent</method>
-      <line>648</line>
-    </frame>
-    <frame>
-      <class>java.awt.EventDispatchThread</class>
-      <method>pumpOneEventForFilters</method>
-      <line>296</line>
-    </frame>
-    <frame>
-      <class>java.awt.EventDispatchThread</class>
-      <method>pumpEventsForFilter</method>
-      <line>211</line>
-    </frame>
-    <frame>
-      <class>java.awt.EventDispatchThread</class>
-      <method>pumpEventsForHierarchy</method>
-      <line>201</line>
-    </frame>
-    <frame>
-      <class>java.awt.EventDispatchThread</class>
-      <method>pumpEvents</method>
-      <line>196</line>
-    </frame>
-    <frame>
-      <class>java.awt.EventDispatchThread</class>
-      <method>pumpEvents</method>
-      <line>188</line>
-    </frame>
-    <frame>
-      <class>java.awt.EventDispatchThread</class>
-      <method>run</method>
-      <line>122</line>
-    </frame>
-  </exception>
+  <message>The system property sun.awt.backingStore is not set, by default backingStore=NotUseful</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808288</millis>
+  <sequence>1</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.base.Core</class>
+  <method>&lt;init&gt;</method>
+  <thread>11</thread>
+  <message>Try to load: /home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/NBprojects/Base/build/classes/org/oobd/base/bus</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808288</millis>
+  <sequence>2</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.base.Core</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>Scanne Directory: /home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/NBprojects/Base/build/classes/org/oobd/base/bus</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808289</millis>
+  <sequence>3</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: Conditions$SingleCondition.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808290</millis>
+  <sequence>4</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: Conditions.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808290</millis>
+  <sequence>5</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: BusCom.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808291</millis>
+  <sequence>6</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: ComReader.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808291</millis>
+  <sequence>7</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: BusEcho.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808291</millis>
+  <sequence>8</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: OobdBus.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808292</millis>
+  <sequence>9</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: BusCom.rs</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808298</millis>
+  <sequence>10</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.base.Core</class>
+  <method>&lt;init&gt;</method>
+  <thread>11</thread>
+  <message>Register BusCom as bus</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808299</millis>
+  <sequence>11</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>WARNING</level>
+  <class>org.oobd.base.Core</class>
+  <method>&lt;init&gt;</method>
+  <thread>11</thread>
+  <message>can't create instance of OobdBus</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808310</millis>
+  <sequence>12</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>WARNING</level>
+  <class>org.oobd.base.Core</class>
+  <method>&lt;init&gt;</method>
+  <thread>11</thread>
+  <message>can't create instance of BusEcho</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808311</millis>
+  <sequence>13</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.base.Core</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>Scanne Directory: connector</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808311</millis>
+  <sequence>14</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>WARNING</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>Directory connector does not exist. Class org.oobd.base.connector. could not be loaded.</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808312</millis>
+  <sequence>15</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.base.Core</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>Scanne Directory: /home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/NBprojects/Base/build/classes/org/oobd/base/protocol</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808312</millis>
+  <sequence>16</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: ProtocolUDS.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808313</millis>
+  <sequence>17</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: OobdProtocol.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808313</millis>
+  <sequence>18</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>WARNING</level>
+  <class>org.oobd.base.Core</class>
+  <method>&lt;init&gt;</method>
+  <thread>11</thread>
+  <message>can't create instance of OobdProtocol</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808313</millis>
+  <sequence>19</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.base.Core</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>Scanne Directory: /home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/NBprojects/Base/build/classes/org/oobd/base/db</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808314</millis>
+  <sequence>20</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: AVLLookup.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808314</millis>
+  <sequence>21</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: OobdDB.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808314</millis>
+  <sequence>22</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: OODBDictionary.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808315</millis>
+  <sequence>23</sequence>
+  <logger>org.oobd.base.db.AVLLookup</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.base.db.AVLLookup</class>
+  <method>&lt;init&gt;</method>
+  <thread>11</thread>
+  <message>AVLLookup  object created: null</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808321</millis>
+  <sequence>24</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>WARNING</level>
+  <class>org.oobd.base.Core</class>
+  <method>&lt;init&gt;</method>
+  <thread>11</thread>
+  <message>can't create instance of OobdDB</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808323</millis>
+  <sequence>25</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.base.Core</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>Scanne Directory: /home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/NBprojects/Base/build/classes/org/oobd/base/scriptengine</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808324</millis>
+  <sequence>26</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: OobdScriptengine.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808324</millis>
+  <sequence>27</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: ScriptengineLua$9.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808325</millis>
+  <sequence>28</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: ScriptengineLua$1.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808325</millis>
+  <sequence>29</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: ScriptengineLua$3.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808326</millis>
+  <sequence>30</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: ScriptengineLua$11.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808326</millis>
+  <sequence>31</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: ScriptengineLua$8.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808327</millis>
+  <sequence>32</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: ScriptengineLua.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808327</millis>
+  <sequence>33</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: ScriptengineLua$2.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808328</millis>
+  <sequence>34</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: ScriptengineLua$12.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808328</millis>
+  <sequence>35</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: ScriptengineLua$7.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808329</millis>
+  <sequence>36</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: ScriptengineLua$6.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808329</millis>
+  <sequence>37</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: ScriptengineLua$4.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808330</millis>
+  <sequence>38</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: ScriptengineLua$10.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808330</millis>
+  <sequence>39</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: ScriptengineTerminal.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808331</millis>
+  <sequence>40</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>loadOobdClasses</method>
+  <thread>11</thread>
+  <message>File to be load as class: ScriptengineLua$5.class</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808332</millis>
+  <sequence>41</sequence>
+  <logger>skdsswing.SKDSSwingView</logger>
+  <level>CONFIG</level>
+  <class>skdsswing.SKDSSwingView</class>
+  <method>announceScriptengine</method>
+  <thread>11</thread>
+  <message>Interface announcement: Scriptengine-ID: ScriptengineLua visibleName:Script</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808334</millis>
+  <sequence>42</sequence>
+  <logger>skdsswing.SKDSSwingView</logger>
+  <level>CONFIG</level>
+  <class>skdsswing.SKDSSwingView</class>
+  <method>announceScriptengine</method>
+  <thread>11</thread>
+  <message>Interface announcement: Scriptengine-ID: ScriptengineTerminal visibleName:Terminal</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:28</date>
+  <millis>1349253808334</millis>
+  <sequence>43</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.base.CoreTick</class>
+  <method>run</method>
+  <thread>12</thread>
+  <message> Start Core tick thread</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813447</millis>
+  <sequence>44</sequence>
+  <logger>skdsswing.SKDSSwingView</logger>
+  <level>CONFIG</level>
+  <class>skdsswing.SKDSSwingView</class>
+  <method>actionPerformed</method>
+  <thread>11</thread>
+  <message>Attempt to create ScriptEngine ScriptengineLua</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813447</millis>
+  <sequence>45</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.base.Core</class>
+  <method>createScriptEngine</method>
+  <thread>11</thread>
+  <message>Core should create scriptengine: ScriptengineLua</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813447</millis>
+  <sequence>46</sequence>
+  <logger>org.oobd.base.scriptengine.OobdScriptengine</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.base.scriptengine.OobdScriptengine</class>
+  <method>&lt;init&gt;</method>
+  <thread>11</thread>
+  <message>Scriptengine  object created: ScriptengineLua.1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813447</millis>
+  <sequence>47</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua</class>
+  <method>&lt;init&gt;</method>
+  <thread>11</thread>
+  <message>Construct ScriptengineLua instance ScriptengineLua.1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813448</millis>
+  <sequence>48</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.base.Core</class>
+  <method>startScriptEngine</method>
+  <thread>11</thread>
+  <message>Start scriptengine: ScriptengineLua.1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813510</millis>
+  <sequence>49</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua</class>
+  <method>run</method>
+  <thread>13</thread>
+  <message>Try to initialize Lua engine</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813591</millis>
+  <sequence>50</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"command":"connect","owner":"ScriptengineLua.1","msgID":1,"type":"CHANNEL","channel":"serial"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813592</millis>
+  <sequence>51</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813592</millis>
+  <sequence>52</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813592</millis>
+  <sequence>53</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813592</millis>
+  <sequence>54</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813593</millis>
+  <sequence>55</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>14</thread>
+  <message>Msg: core ==&gt; BusCom content:{"port":"serial","command":"connect","msgID":1,"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813593</millis>
+  <sequence>56</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813594</millis>
+  <sequence>57</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813594</millis>
+  <sequence>58</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813595</millis>
+  <sequence>59</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813596</millis>
+  <sequence>60</sequence>
+  <logger>org.oobd.ui.swing.support.SwingSystem</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.ui.swing.support.SwingSystem</class>
+  <method>supplyHardwareHandle</method>
+  <thread>15</thread>
+  <message>OS detected: linux</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813617</millis>
+  <sequence>61</sequence>
+  <logger>org.oobd.base.port.ComPort_Unix</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.base.port.ComPort_Unix</class>
+  <method>connect</method>
+  <thread>15</thread>
+  <message>Found port: /tmp/DXM</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813626</millis>
+  <sequence>62</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>15</thread>
+  <message>Msg: BusCom ==&gt; core content:{"result":true,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":1}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813626</millis>
+  <sequence>63</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>Port Core Msg reply id:1 Waiting ID:1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813627</millis>
+  <sequence>64</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>A reply message 1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813627</millis>
+  <sequence>65</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>saved and notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813628</millis>
+  <sequence>66</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>14</thread>
+  <message>Msg: core ==&gt; ScriptengineLua.1 content:{"command":"connect","owner":"ScriptengineLua.1","msgID":1,"type":"CHANNEL","channel":"serial","replyID":1}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813628</millis>
+  <sequence>67</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:1 Waiting ID:1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813628</millis>
+  <sequence>68</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>A reply message 1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813628</millis>
+  <sequence>69</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>saved and notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813629</millis>
+  <sequence>70</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"command":"serFlush","owner":{"name":"ScriptengineLua.1"},"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813629</millis>
+  <sequence>71</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813629</millis>
+  <sequence>72</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813630</millis>
+  <sequence>73</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813630</millis>
+  <sequence>74</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813631</millis>
+  <sequence>75</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serFlush </message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813632</millis>
+  <sequence>76</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"DQ0N","command":"serWrite","owner":{"name":"ScriptengineLua.1"},"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813633</millis>
+  <sequence>77</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813633</millis>
+  <sequence>78</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813634</millis>
+  <sequence>79</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813634</millis>
+  <sequence>80</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813635</millis>
+  <sequence>81</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait with string data:&gt;&lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813635</millis>
+  <sequence>82</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"DQ0N","command":"serWait","owner":{"name":"ScriptengineLua.1"},"msgID":2,"type":"BUSTEST","timeout":"500"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813635</millis>
+  <sequence>83</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813635</millis>
+  <sequence>84</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWrite: &gt;&lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813635</millis>
+  <sequence>85</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813636</millis>
+  <sequence>86</sequence>
+  <logger>org.oobd.base.bus.ComReader</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.ComReader</class>
+  <method>write</method>
+  <thread>15</thread>
+  <message>Serial output:</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813636</millis>
+  <sequence>87</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:33</date>
+  <millis>1349253813637</millis>
+  <sequence>88</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814146</millis>
+  <sequence>89</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWait: 0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814146</millis>
+  <sequence>90</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>15</thread>
+  <message>Msg: BusCom ==&gt; ScriptengineLua.1 content:{"result":0,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":2}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814147</millis>
+  <sequence>91</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:2 Waiting ID:2</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814147</millis>
+  <sequence>92</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>A reply message 2</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814148</millis>
+  <sequence>93</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>saved and notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814148</millis>
+  <sequence>94</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait returns with onion:{"result":0,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":2}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814149</millis>
+  <sequence>95</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"command":"serFlush","owner":{"name":"ScriptengineLua.1"},"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814149</millis>
+  <sequence>96</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814149</millis>
+  <sequence>97</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814150</millis>
+  <sequence>98</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814150</millis>
+  <sequence>99</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814150</millis>
+  <sequence>100</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serFlush </message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814150</millis>
+  <sequence>101</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"cCAwIDAgDQ==","command":"serWrite","owner":{"name":"ScriptengineLua.1"},"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814151</millis>
+  <sequence>102</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814151</millis>
+  <sequence>103</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814151</millis>
+  <sequence>104</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814151</millis>
+  <sequence>105</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814151</millis>
+  <sequence>106</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait with string data:&gt;p 0 0 &lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814152</millis>
+  <sequence>107</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"cCAwIDAgDQ==","command":"serWait","owner":{"name":"ScriptengineLua.1"},"msgID":3,"type":"BUSTEST","timeout":"500"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814152</millis>
+  <sequence>108</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814152</millis>
+  <sequence>109</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814152</millis>
+  <sequence>110</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWrite: &gt;p 0 0 &lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814152</millis>
+  <sequence>111</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814153</millis>
+  <sequence>112</sequence>
+  <logger>org.oobd.base.bus.ComReader</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.ComReader</class>
+  <method>write</method>
+  <thread>15</thread>
+  <message>Serial output:p 0 0 </message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814153</millis>
+  <sequence>113</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814164</millis>
+  <sequence>114</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWait: 1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814164</millis>
+  <sequence>115</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>15</thread>
+  <message>Msg: BusCom ==&gt; ScriptengineLua.1 content:{"result":1,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":3}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814165</millis>
+  <sequence>116</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:3 Waiting ID:3</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814165</millis>
+  <sequence>117</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>A reply message 3</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814165</millis>
+  <sequence>118</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>saved and notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814166</millis>
+  <sequence>119</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait returns with onion:{"result":1,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":3}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814167</millis>
+  <sequence>120</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"command":"serReadLn","owner":{"name":"ScriptengineLua.1"},"msgID":4,"type":"BUSTEST","timeout":"2000","ignore":"false"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814167</millis>
+  <sequence>121</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814167</millis>
+  <sequence>122</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814167</millis>
+  <sequence>123</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814168</millis>
+  <sequence>124</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814169</millis>
+  <sequence>125</sequence>
+  <logger>org.oobd.base.bus.ComReader</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.ComReader</class>
+  <method>readln</method>
+  <thread>15</thread>
+  <message>Serial input:OOBD POSIX  441 POSIX Sat, 16 Jun 2012 17:20:37 +0200</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814169</millis>
+  <sequence>126</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom readline: OOBD POSIX  441 POSIX Sat, 16 Jun 2012 17:20:37 +0200</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814170</millis>
+  <sequence>127</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>15</thread>
+  <message>Msg: BusCom ==&gt; ScriptengineLua.1 content:{"result":"T09CRCBQT1NJWCAgNDQxIFBPU0lYIFNhdCwgMTYgSnVuIDIwMTIgMTc6MjA6MzcgKzAyMDA=","owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":4}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814170</millis>
+  <sequence>128</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:4 Waiting ID:4</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814170</millis>
+  <sequence>129</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>A reply message 4</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814171</millis>
+  <sequence>130</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>saved and notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814174</millis>
+  <sequence>131</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"command":"serFlush","owner":{"name":"ScriptengineLua.1"},"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814175</millis>
+  <sequence>132</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814175</millis>
+  <sequence>133</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814175</millis>
+  <sequence>134</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814175</millis>
+  <sequence>135</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814176</millis>
+  <sequence>136</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serFlush </message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814176</millis>
+  <sequence>137</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"cCA4IDIgMA0=","command":"serWrite","owner":{"name":"ScriptengineLua.1"},"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814177</millis>
+  <sequence>138</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814177</millis>
+  <sequence>139</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814177</millis>
+  <sequence>140</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814178</millis>
+  <sequence>141</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814178</millis>
+  <sequence>142</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait with string data:&gt;p 8 2 0&lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814178</millis>
+  <sequence>143</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWrite: &gt;p 8 2 0&lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814179</millis>
+  <sequence>144</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"cCA4IDIgMA0=","command":"serWait","owner":{"name":"ScriptengineLua.1"},"msgID":5,"type":"BUSTEST","timeout":"500"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814182</millis>
+  <sequence>145</sequence>
+  <logger>org.oobd.base.bus.ComReader</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.ComReader</class>
+  <method>write</method>
+  <thread>15</thread>
+  <message>Serial output:p 8 2 0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814183</millis>
+  <sequence>146</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814184</millis>
+  <sequence>147</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814184</millis>
+  <sequence>148</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814184</millis>
+  <sequence>149</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814195</millis>
+  <sequence>150</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWait: 1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814196</millis>
+  <sequence>151</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>15</thread>
+  <message>Msg: BusCom ==&gt; ScriptengineLua.1 content:{"result":1,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":5}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814196</millis>
+  <sequence>152</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:5 Waiting ID:5</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814197</millis>
+  <sequence>153</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>A reply message 5</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814197</millis>
+  <sequence>154</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>saved and notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814197</millis>
+  <sequence>155</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait returns with onion:{"result":1,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":5}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814198</millis>
+  <sequence>156</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"command":"serFlush","owner":{"name":"ScriptengineLua.1"},"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814198</millis>
+  <sequence>157</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814199</millis>
+  <sequence>158</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814199</millis>
+  <sequence>159</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814199</millis>
+  <sequence>160</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814200</millis>
+  <sequence>161</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serFlush </message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814200</millis>
+  <sequence>162</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"cCA4IDMgMw0=","command":"serWrite","owner":{"name":"ScriptengineLua.1"},"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814200</millis>
+  <sequence>163</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814201</millis>
+  <sequence>164</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814201</millis>
+  <sequence>165</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814201</millis>
+  <sequence>166</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814202</millis>
+  <sequence>167</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait with string data:&gt;p 8 3 3&lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814202</millis>
+  <sequence>168</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWrite: &gt;p 8 3 3&lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814202</millis>
+  <sequence>170</sequence>
+  <logger>org.oobd.base.bus.ComReader</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.ComReader</class>
+  <method>write</method>
+  <thread>15</thread>
+  <message>Serial output:p 8 3 3</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814202</millis>
+  <sequence>169</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"cCA4IDMgMw0=","command":"serWait","owner":{"name":"ScriptengineLua.1"},"msgID":6,"type":"BUSTEST","timeout":"500"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814203</millis>
+  <sequence>171</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814203</millis>
+  <sequence>172</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814204</millis>
+  <sequence>173</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814204</millis>
+  <sequence>174</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814215</millis>
+  <sequence>175</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWait: 1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814215</millis>
+  <sequence>176</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>15</thread>
+  <message>Msg: BusCom ==&gt; ScriptengineLua.1 content:{"result":1,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":6}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814216</millis>
+  <sequence>177</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:6 Waiting ID:6</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814216</millis>
+  <sequence>178</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>A reply message 6</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814216</millis>
+  <sequence>179</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>saved and notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814217</millis>
+  <sequence>180</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait returns with onion:{"result":1,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":6}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814217</millis>
+  <sequence>181</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait with string data:&gt;null&lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814218</millis>
+  <sequence>182</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"Lnw6","command":"serWait","owner":{"name":"ScriptengineLua.1"},"msgID":7,"type":"BUSTEST","timeout":"2000"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814218</millis>
+  <sequence>183</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814218</millis>
+  <sequence>184</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814219</millis>
+  <sequence>185</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814219</millis>
+  <sequence>186</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814220</millis>
+  <sequence>187</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWait: 1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814220</millis>
+  <sequence>188</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>15</thread>
+  <message>Msg: BusCom ==&gt; ScriptengineLua.1 content:{"result":1,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":7}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814221</millis>
+  <sequence>189</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:7 Waiting ID:7</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814221</millis>
+  <sequence>190</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>A reply message 7</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814221</millis>
+  <sequence>191</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>saved and notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814222</millis>
+  <sequence>192</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait returns with onion:{"result":1,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":7}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814227</millis>
+  <sequence>193</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"command":"serFlush","owner":{"name":"ScriptengineLua.1"},"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814228</millis>
+  <sequence>194</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814228</millis>
+  <sequence>195</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814228</millis>
+  <sequence>196</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814228</millis>
+  <sequence>197</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814228</millis>
+  <sequence>198</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"cCA4IDIgMw0=","command":"serWrite","owner":{"name":"ScriptengineLua.1"},"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814228</millis>
+  <sequence>200</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814229</millis>
+  <sequence>201</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814229</millis>
+  <sequence>202</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814228</millis>
+  <sequence>199</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serFlush </message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814229</millis>
+  <sequence>203</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814229</millis>
+  <sequence>204</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait with string data:&gt;p 8 2 3&lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814230</millis>
+  <sequence>205</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWrite: &gt;p 8 2 3&lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814230</millis>
+  <sequence>206</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"cCA4IDIgMw0=","command":"serWait","owner":{"name":"ScriptengineLua.1"},"msgID":8,"type":"BUSTEST","timeout":"500"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814230</millis>
+  <sequence>207</sequence>
+  <logger>org.oobd.base.bus.ComReader</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.ComReader</class>
+  <method>write</method>
+  <thread>15</thread>
+  <message>Serial output:p 8 2 3</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814230</millis>
+  <sequence>208</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814230</millis>
+  <sequence>209</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814230</millis>
+  <sequence>210</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814231</millis>
+  <sequence>211</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814241</millis>
+  <sequence>212</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWait: 1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814242</millis>
+  <sequence>213</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>15</thread>
+  <message>Msg: BusCom ==&gt; ScriptengineLua.1 content:{"result":1,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":8}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814242</millis>
+  <sequence>214</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:8 Waiting ID:8</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814242</millis>
+  <sequence>215</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>A reply message 8</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814242</millis>
+  <sequence>216</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>saved and notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814242</millis>
+  <sequence>217</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait returns with onion:{"result":1,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":8}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814243</millis>
+  <sequence>218</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"command":"serFlush","owner":{"name":"ScriptengineLua.1"},"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814243</millis>
+  <sequence>219</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814244</millis>
+  <sequence>220</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814244</millis>
+  <sequence>221</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814244</millis>
+  <sequence>222</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814245</millis>
+  <sequence>223</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serFlush </message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814245</millis>
+  <sequence>224</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"cCA2IDkgJDdFOA0=","command":"serWrite","owner":{"name":"ScriptengineLua.1"},"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814245</millis>
+  <sequence>225</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814245</millis>
+  <sequence>226</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814246</millis>
+  <sequence>227</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814246</millis>
+  <sequence>228</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814246</millis>
+  <sequence>229</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait with string data:&gt;p 6 9 $7E8&lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814246</millis>
+  <sequence>230</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWrite: &gt;p 6 9 $7E8&lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814246</millis>
+  <sequence>231</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"cCA2IDkgJDdFOA0=","command":"serWait","owner":{"name":"ScriptengineLua.1"},"msgID":9,"type":"BUSTEST","timeout":"500"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814246</millis>
+  <sequence>232</sequence>
+  <logger>org.oobd.base.bus.ComReader</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.ComReader</class>
+  <method>write</method>
+  <thread>15</thread>
+  <message>Serial output:p 6 9 $7E8</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814246</millis>
+  <sequence>233</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814247</millis>
+  <sequence>234</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814247</millis>
+  <sequence>235</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814247</millis>
+  <sequence>236</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814263</millis>
+  <sequence>237</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWait: 1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814263</millis>
+  <sequence>238</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>15</thread>
+  <message>Msg: BusCom ==&gt; ScriptengineLua.1 content:{"result":1,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":9}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814264</millis>
+  <sequence>239</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:9 Waiting ID:9</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814264</millis>
+  <sequence>240</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>A reply message 9</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814264</millis>
+  <sequence>241</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>saved and notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814265</millis>
+  <sequence>242</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait returns with onion:{"result":1,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":9}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814265</millis>
+  <sequence>243</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"name":"OOBD-ME Main","owner":"ScriptengineLua.1","type":"PAGE"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814266</millis>
+  <sequence>244</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814266</millis>
+  <sequence>245</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814266</millis>
+  <sequence>246</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814267</millis>
+  <sequence>247</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814267</millis>
+  <sequence>248</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"name":"createCMD01Menu:","value":"&gt;&gt;&gt;","owner":{"name":"ScriptengineLua.1"},"type":"VISUALIZE","updevents":1,"tooltip":"Sensor Data &gt;"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814268</millis>
+  <sequence>249</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814268</millis>
+  <sequence>250</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814269</millis>
+  <sequence>251</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814269</millis>
+  <sequence>252</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814270</millis>
+  <sequence>253</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"name":"createCMD02Menu:","value":"&gt;&gt;&gt;","owner":{"name":"ScriptengineLua.1"},"type":"VISUALIZE","updevents":1,"tooltip":"Snapshot Data &gt;"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814270</millis>
+  <sequence>254</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814270</millis>
+  <sequence>255</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814271</millis>
+  <sequence>256</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814273</millis>
+  <sequence>257</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814281</millis>
+  <sequence>258</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"name":"createCMD03Menu:","value":"&gt;&gt;&gt;","owner":{"name":"ScriptengineLua.1"},"type":"VISUALIZE","updevents":1,"tooltip":"Dynamic Menu3 &gt;"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814282</millis>
+  <sequence>259</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814282</millis>
+  <sequence>260</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814285</millis>
+  <sequence>261</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814285</millis>
+  <sequence>262</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814285</millis>
+  <sequence>263</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"name":"showdtcs:","value":"-","owner":{"name":"ScriptengineLua.1"},"type":"VISUALIZE","tooltip":"Trouble Codes"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814286</millis>
+  <sequence>264</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814286</millis>
+  <sequence>265</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814286</millis>
+  <sequence>266</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814286</millis>
+  <sequence>267</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814287</millis>
+  <sequence>268</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"name":"vin:","value":"-","owner":{"name":"ScriptengineLua.1"},"type":"VISUALIZE","updevents":2,"tooltip":"VIN Number"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814287</millis>
+  <sequence>269</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814287</millis>
+  <sequence>270</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814287</millis>
+  <sequence>271</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814287</millis>
+  <sequence>272</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814287</millis>
+  <sequence>273</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"name":"clearDTC:","value":"-","owner":{"name":"ScriptengineLua.1"},"type":"VISUALIZE","tooltip":"Clear Trouble Codes"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814288</millis>
+  <sequence>274</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814288</millis>
+  <sequence>275</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814288</millis>
+  <sequence>276</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814288</millis>
+  <sequence>277</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814288</millis>
+  <sequence>278</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"name":"SysInfo_Menu:","value":"&gt;&gt;&gt;","owner":{"name":"ScriptengineLua.1"},"type":"VISUALIZE","updevents":1,"tooltip":"System Info &gt;&gt;&gt;"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814288</millis>
+  <sequence>279</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814288</millis>
+  <sequence>280</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814288</millis>
+  <sequence>281</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814289</millis>
+  <sequence>282</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814289</millis>
+  <sequence>283</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"name":"greet:","value":"","owner":{"name":"ScriptengineLua.1"},"type":"VISUALIZE","tooltip":"Greetings"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814289</millis>
+  <sequence>284</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814289</millis>
+  <sequence>285</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814289</millis>
+  <sequence>286</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814289</millis>
+  <sequence>287</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814289</millis>
+  <sequence>288</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"name":"Canvastest_1","owner":"ScriptengineLua.1","type":"PAGEDONE"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814290</millis>
+  <sequence>289</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814290</millis>
+  <sequence>290</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814290</millis>
+  <sequence>291</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814290</millis>
+  <sequence>292</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:34</date>
+  <millis>1349253814290</millis>
+  <sequence>293</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>CONFIG</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua</class>
+  <method>doScript</method>
+  <thread>13</thread>
+  <message>Start Lua Script/home/steffen/Desktop/workcopies/oobd/trunk/clients/OOBD-ME/testscripts/OOBD.lbc</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817141</millis>
+  <sequence>294</sequence>
+  <logger>org.oobd.base.visualizer.Visualizer</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.visualizer.Visualizer</class>
+  <method>updateRequest</method>
+  <thread>11</thread>
+  <message>Update request0 my ownwer is: {"name":"ScriptengineLua.1"}actual visualizer data: {"name":"createCMD01Menu:","value":"&gt;&gt;&gt;","owner":{"name":"ScriptengineLua.1"},"type":"VISUALIZE","updevents":1,"tooltip":"Sensor Data &gt;"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817141</millis>
+  <sequence>295</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>11</thread>
+  <message>Msg: core ==&gt; core content:{"actValue":"&gt;&gt;&gt;","to":"ScriptengineLua.1","updType":0,"optid":"null","type":"UPDATE","vis":"createCMD01Menu:"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817142</millis>
+  <sequence>296</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>11</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817142</millis>
+  <sequence>297</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>11</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817142</millis>
+  <sequence>298</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>11</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817143</millis>
+  <sequence>299</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>11</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817143</millis>
+  <sequence>300</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>14</thread>
+  <message>Msg: core ==&gt; ScriptengineLua.1 content:{"actValue":"&gt;&gt;&gt;","to":"ScriptengineLua.1","updType":0,"optid":"null","type":"UPDATE","vis":"createCMD01Menu:"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817144</millis>
+  <sequence>301</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817144</millis>
+  <sequence>302</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817144</millis>
+  <sequence>303</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817145</millis>
+  <sequence>304</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817145</millis>
+  <sequence>305</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua</class>
+  <method>run</method>
+  <thread>13</thread>
+  <message>Msg received:{"actValue":"&gt;&gt;&gt;","to":"ScriptengineLua.1","updType":0,"optid":"null","type":"UPDATE","vis":"createCMD01Menu:"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817146</millis>
+  <sequence>306</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua</class>
+  <method>callFunction</method>
+  <thread>13</thread>
+  <message>function to call in Lua:createCMD01Menu</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817146</millis>
+  <sequence>307</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"command":"serFlush","owner":{"name":"ScriptengineLua.1"},"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817147</millis>
+  <sequence>308</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817147</millis>
+  <sequence>309</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817147</millis>
+  <sequence>310</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817147</millis>
+  <sequence>311</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817148</millis>
+  <sequence>312</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"MDEwMA0=","command":"serWrite","owner":{"name":"ScriptengineLua.1"},"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817148</millis>
+  <sequence>313</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serFlush </message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817149</millis>
+  <sequence>314</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817149</millis>
+  <sequence>315</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817149</millis>
+  <sequence>316</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817150</millis>
+  <sequence>317</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817150</millis>
+  <sequence>318</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait with string data:&gt;0100&lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817150</millis>
+  <sequence>319</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWrite: &gt;0100&lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817151</millis>
+  <sequence>320</sequence>
+  <logger>org.oobd.base.bus.ComReader</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.ComReader</class>
+  <method>write</method>
+  <thread>15</thread>
+  <message>Serial output:0100</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817151</millis>
+  <sequence>321</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"MDEwMA0=","command":"serWait","owner":{"name":"ScriptengineLua.1"},"msgID":10,"type":"BUSTEST","timeout":"500"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817152</millis>
+  <sequence>322</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817152</millis>
+  <sequence>323</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817152</millis>
+  <sequence>324</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817153</millis>
+  <sequence>325</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817163</millis>
+  <sequence>326</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWait: 1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817164</millis>
+  <sequence>327</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>15</thread>
+  <message>Msg: BusCom ==&gt; ScriptengineLua.1 content:{"result":1,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":10}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817164</millis>
+  <sequence>328</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:10 Waiting ID:10</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817165</millis>
+  <sequence>329</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>A reply message 10</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817165</millis>
+  <sequence>330</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>saved and notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817165</millis>
+  <sequence>331</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait returns with onion:{"result":1,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":10}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817166</millis>
+  <sequence>332</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"command":"serReadLn","owner":{"name":"ScriptengineLua.1"},"msgID":11,"type":"BUSTEST","timeout":"2000","ignore":"true"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817167</millis>
+  <sequence>333</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817167</millis>
+  <sequence>334</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817167</millis>
+  <sequence>335</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817167</millis>
+  <sequence>336</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817222</millis>
+  <sequence>337</sequence>
+  <logger>org.oobd.base.bus.ComReader</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.ComReader</class>
+  <method>readln</method>
+  <thread>15</thread>
+  <message>Serial input::Error: 7 5 0 Answer time exeeded</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817223</millis>
+  <sequence>338</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom readline: :Error: 7 5 0 Answer time exeeded</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817223</millis>
+  <sequence>339</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>15</thread>
+  <message>Msg: BusCom ==&gt; ScriptengineLua.1 content:{"result":"OkVycm9yOiA3IDUgMCBBbnN3ZXIgdGltZSBleGVlZGVk","owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":11}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817223</millis>
+  <sequence>340</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:11 Waiting ID:11</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817223</millis>
+  <sequence>341</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>A reply message 11</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817223</millis>
+  <sequence>342</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>saved and notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817225</millis>
+  <sequence>343</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"to":{"name":"createCMD01Menu:"},"value":"NO DATA","owner":{"name":"ScriptengineLua.1"},"type":"VALUE"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817225</millis>
+  <sequence>344</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817225</millis>
+  <sequence>345</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817225</millis>
+  <sequence>346</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817225</millis>
+  <sequence>347</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:37</date>
+  <millis>1349253817226</millis>
+  <sequence>348</sequence>
+  <logger>org.oobd.base.visualizer.Visualizer</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.visualizer.Visualizer</class>
+  <method>setValue</method>
+  <thread>14</thread>
+  <message>Visualizer.setValue(): update needed.</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819941</millis>
+  <sequence>349</sequence>
+  <logger>org.oobd.base.visualizer.Visualizer</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.visualizer.Visualizer</class>
+  <method>updateRequest</method>
+  <thread>11</thread>
+  <message>Update request0 my ownwer is: {"name":"ScriptengineLua.1"}actual visualizer data: {"name":"SysInfo_Menu:","value":"&gt;&gt;&gt;","owner":{"name":"ScriptengineLua.1"},"type":"VISUALIZE","updevents":1,"tooltip":"System Info &gt;&gt;&gt;"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819941</millis>
+  <sequence>350</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>11</thread>
+  <message>Msg: core ==&gt; core content:{"actValue":"&gt;&gt;&gt;","to":"ScriptengineLua.1","updType":0,"optid":"null","type":"UPDATE","vis":"SysInfo_Menu:"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819942</millis>
+  <sequence>351</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>11</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819942</millis>
+  <sequence>352</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>11</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819942</millis>
+  <sequence>353</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>11</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819943</millis>
+  <sequence>354</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>11</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819943</millis>
+  <sequence>355</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>14</thread>
+  <message>Msg: core ==&gt; ScriptengineLua.1 content:{"actValue":"&gt;&gt;&gt;","to":"ScriptengineLua.1","updType":0,"optid":"null","type":"UPDATE","vis":"SysInfo_Menu:"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819943</millis>
+  <sequence>356</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819944</millis>
+  <sequence>357</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819944</millis>
+  <sequence>358</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819944</millis>
+  <sequence>359</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819945</millis>
+  <sequence>360</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua</class>
+  <method>run</method>
+  <thread>13</thread>
+  <message>Msg received:{"actValue":"&gt;&gt;&gt;","to":"ScriptengineLua.1","updType":0,"optid":"null","type":"UPDATE","vis":"SysInfo_Menu:"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819945</millis>
+  <sequence>361</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua</class>
+  <method>callFunction</method>
+  <thread>13</thread>
+  <message>function to call in Lua:SysInfo_Menu</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819946</millis>
+  <sequence>362</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"name":"Sysinfo","owner":"ScriptengineLua.1","type":"PAGE"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819946</millis>
+  <sequence>363</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819946</millis>
+  <sequence>364</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819947</millis>
+  <sequence>365</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819947</millis>
+  <sequence>366</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819947</millis>
+  <sequence>367</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"name":"interface_serial:","value":"-","owner":{"name":"ScriptengineLua.1"},"type":"VISUALIZE","updevents":2,"tooltip":"DXM Serial"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819948</millis>
+  <sequence>368</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819948</millis>
+  <sequence>369</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819949</millis>
+  <sequence>370</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819949</millis>
+  <sequence>371</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819949</millis>
+  <sequence>372</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"name":"interface_version:","value":"-","owner":{"name":"ScriptengineLua.1"},"type":"VISUALIZE","updevents":2,"tooltip":"DXM BIOS"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819950</millis>
+  <sequence>373</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819951</millis>
+  <sequence>374</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819951</millis>
+  <sequence>375</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819952</millis>
+  <sequence>376</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819952</millis>
+  <sequence>377</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"name":"interface_voltage:","value":"-","owner":{"name":"ScriptengineLua.1"},"type":"VISUALIZE","updevents":6,"tooltip":"Power"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819953</millis>
+  <sequence>378</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819953</millis>
+  <sequence>379</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819953</millis>
+  <sequence>380</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819953</millis>
+  <sequence>381</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819954</millis>
+  <sequence>382</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"name":"interface_bus:","value":"-","owner":{"name":"ScriptengineLua.1"},"type":"VISUALIZE","updevents":2,"tooltip":"Which Bus?"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819954</millis>
+  <sequence>383</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819955</millis>
+  <sequence>384</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819955</millis>
+  <sequence>385</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819955</millis>
+  <sequence>386</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819956</millis>
+  <sequence>387</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"name":"Main:","value":"&lt;&lt;&lt;","owner":{"name":"ScriptengineLua.1"},"type":"VISUALIZE","updevents":16,"tooltip":"&lt;&lt;&lt; Main"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819956</millis>
+  <sequence>388</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819957</millis>
+  <sequence>389</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819957</millis>
+  <sequence>390</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819958</millis>
+  <sequence>391</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819958</millis>
+  <sequence>392</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"name":"Canvastest_1","owner":"ScriptengineLua.1","type":"PAGEDONE"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819958</millis>
+  <sequence>393</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819959</millis>
+  <sequence>394</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819959</millis>
+  <sequence>395</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819959</millis>
+  <sequence>396</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819960</millis>
+  <sequence>397</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"to":{"name":"SysInfo_Menu:"},"value":"SysInfo_Menu:","owner":{"name":"ScriptengineLua.1"},"type":"VALUE"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819960</millis>
+  <sequence>398</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819960</millis>
+  <sequence>399</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819961</millis>
+  <sequence>400</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:39</date>
+  <millis>1349253819961</millis>
+  <sequence>401</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:40</date>
+  <millis>1349253820068</millis>
+  <sequence>402</sequence>
+  <logger>org.oobd.base.visualizer.Visualizer</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.visualizer.Visualizer</class>
+  <method>setValue</method>
+  <thread>14</thread>
+  <message>Visualizer.setValue(): update needed.</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821292</millis>
+  <sequence>403</sequence>
+  <logger>org.oobd.base.visualizer.Visualizer</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.visualizer.Visualizer</class>
+  <method>updateRequest</method>
+  <thread>11</thread>
+  <message>Update request0 my ownwer is: {"name":"ScriptengineLua.1"}actual visualizer data: {"name":"interface_voltage:","value":"-","owner":{"name":"ScriptengineLua.1"},"type":"VISUALIZE","updevents":6,"tooltip":"Power"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821293</millis>
+  <sequence>404</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>11</thread>
+  <message>Msg: core ==&gt; core content:{"actValue":"-","to":"ScriptengineLua.1","updType":0,"optid":"null","type":"UPDATE","vis":"interface_voltage:"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821293</millis>
+  <sequence>405</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>11</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821294</millis>
+  <sequence>406</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>11</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821294</millis>
+  <sequence>407</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>11</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821294</millis>
+  <sequence>408</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>11</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821295</millis>
+  <sequence>409</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>14</thread>
+  <message>Msg: core ==&gt; ScriptengineLua.1 content:{"actValue":"-","to":"ScriptengineLua.1","updType":0,"optid":"null","type":"UPDATE","vis":"interface_voltage:"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821295</millis>
+  <sequence>410</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821296</millis>
+  <sequence>411</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821296</millis>
+  <sequence>412</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821296</millis>
+  <sequence>413</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821297</millis>
+  <sequence>414</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua</class>
+  <method>run</method>
+  <thread>13</thread>
+  <message>Msg received:{"actValue":"-","to":"ScriptengineLua.1","updType":0,"optid":"null","type":"UPDATE","vis":"interface_voltage:"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821297</millis>
+  <sequence>415</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua</class>
+  <method>callFunction</method>
+  <thread>13</thread>
+  <message>function to call in Lua:interface_voltage</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821298</millis>
+  <sequence>416</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"command":"serFlush","owner":{"name":"ScriptengineLua.1"},"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821298</millis>
+  <sequence>417</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821298</millis>
+  <sequence>418</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821298</millis>
+  <sequence>419</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821299</millis>
+  <sequence>420</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821299</millis>
+  <sequence>421</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serFlush </message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821299</millis>
+  <sequence>422</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"cCAwIDAgMg0=","command":"serWrite","owner":{"name":"ScriptengineLua.1"},"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821300</millis>
+  <sequence>423</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821300</millis>
+  <sequence>424</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821301</millis>
+  <sequence>425</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821301</millis>
+  <sequence>426</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821301</millis>
+  <sequence>427</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait with string data:&gt;p 0 0 2&lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821301</millis>
+  <sequence>428</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWrite: &gt;p 0 0 2&lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821302</millis>
+  <sequence>429</sequence>
+  <logger>org.oobd.base.bus.ComReader</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.ComReader</class>
+  <method>write</method>
+  <thread>15</thread>
+  <message>Serial output:p 0 0 2</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821303</millis>
+  <sequence>430</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"cCAwIDAgMg0=","command":"serWait","owner":{"name":"ScriptengineLua.1"},"msgID":12,"type":"BUSTEST","timeout":"500"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821303</millis>
+  <sequence>431</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821303</millis>
+  <sequence>432</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821304</millis>
+  <sequence>433</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821304</millis>
+  <sequence>434</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821315</millis>
+  <sequence>435</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWait: 1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821315</millis>
+  <sequence>436</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>15</thread>
+  <message>Msg: BusCom ==&gt; ScriptengineLua.1 content:{"result":1,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":12}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821315</millis>
+  <sequence>437</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:12 Waiting ID:12</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821315</millis>
+  <sequence>438</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>A reply message 12</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821316</millis>
+  <sequence>439</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>saved and notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821316</millis>
+  <sequence>440</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait returns with onion:{"result":1,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":12}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821316</millis>
+  <sequence>441</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"command":"serReadLn","owner":{"name":"ScriptengineLua.1"},"msgID":13,"type":"BUSTEST","timeout":"2000","ignore":"true"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821317</millis>
+  <sequence>442</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821317</millis>
+  <sequence>443</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821317</millis>
+  <sequence>444</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821318</millis>
+  <sequence>445</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821318</millis>
+  <sequence>446</sequence>
+  <logger>org.oobd.base.bus.ComReader</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.ComReader</class>
+  <method>readln</method>
+  <thread>15</thread>
+  <message>Serial input::Error: 0 2 0 Unknown command</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821318</millis>
+  <sequence>447</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom readline: :Error: 0 2 0 Unknown command</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821318</millis>
+  <sequence>448</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>15</thread>
+  <message>Msg: BusCom ==&gt; ScriptengineLua.1 content:{"result":"OkVycm9yOiAwIDIgMCBVbmtub3duIGNvbW1hbmQ=","owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":13}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821319</millis>
+  <sequence>449</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:13 Waiting ID:13</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821319</millis>
+  <sequence>450</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>A reply message 13</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821319</millis>
+  <sequence>451</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>saved and notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821320</millis>
+  <sequence>452</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"to":{"name":"interface_voltage:"},"value":":Error: 0 2 0 Unknown command","owner":{"name":"ScriptengineLua.1"},"type":"VALUE"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821321</millis>
+  <sequence>453</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821321</millis>
+  <sequence>454</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821321</millis>
+  <sequence>455</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821321</millis>
+  <sequence>456</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:41</date>
+  <millis>1349253821322</millis>
+  <sequence>457</sequence>
+  <logger>org.oobd.base.visualizer.Visualizer</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.visualizer.Visualizer</class>
+  <method>setValue</method>
+  <thread>14</thread>
+  <message>Visualizer.setValue(): update needed.</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822644</millis>
+  <sequence>458</sequence>
+  <logger>org.oobd.base.visualizer.Visualizer</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.visualizer.Visualizer</class>
+  <method>updateRequest</method>
+  <thread>11</thread>
+  <message>Update request0 my ownwer is: {"name":"ScriptengineLua.1"}actual visualizer data: {"name":"interface_version:","value":"-","owner":{"name":"ScriptengineLua.1"},"type":"VISUALIZE","updevents":2,"tooltip":"DXM BIOS"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822645</millis>
+  <sequence>459</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>11</thread>
+  <message>Msg: core ==&gt; core content:{"actValue":"-","to":"ScriptengineLua.1","updType":0,"optid":"null","type":"UPDATE","vis":"interface_version:"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822646</millis>
+  <sequence>460</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>11</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822646</millis>
+  <sequence>461</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>11</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822646</millis>
+  <sequence>462</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>11</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822646</millis>
+  <sequence>463</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>11</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822647</millis>
+  <sequence>464</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>14</thread>
+  <message>Msg: core ==&gt; ScriptengineLua.1 content:{"actValue":"-","to":"ScriptengineLua.1","updType":0,"optid":"null","type":"UPDATE","vis":"interface_version:"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822647</millis>
+  <sequence>465</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822648</millis>
+  <sequence>466</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822648</millis>
+  <sequence>467</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822648</millis>
+  <sequence>468</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>14</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822649</millis>
+  <sequence>469</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua</class>
+  <method>run</method>
+  <thread>13</thread>
+  <message>Msg received:{"actValue":"-","to":"ScriptengineLua.1","updType":0,"optid":"null","type":"UPDATE","vis":"interface_version:"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822649</millis>
+  <sequence>470</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua</class>
+  <method>callFunction</method>
+  <thread>13</thread>
+  <message>function to call in Lua:interface_version</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822650</millis>
+  <sequence>471</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"command":"serFlush","owner":{"name":"ScriptengineLua.1"},"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822650</millis>
+  <sequence>472</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822650</millis>
+  <sequence>473</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822650</millis>
+  <sequence>474</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822651</millis>
+  <sequence>475</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822651</millis>
+  <sequence>476</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serFlush </message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822651</millis>
+  <sequence>477</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"cCAwIDAgMA0=","command":"serWrite","owner":{"name":"ScriptengineLua.1"},"type":"BUSTEST"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822652</millis>
+  <sequence>478</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822652</millis>
+  <sequence>479</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822653</millis>
+  <sequence>480</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822653</millis>
+  <sequence>481</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822653</millis>
+  <sequence>482</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait with string data:&gt;p 0 0 0&lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822653</millis>
+  <sequence>483</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWrite: &gt;p 0 0 0&lt;</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822654</millis>
+  <sequence>484</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"data":"cCAwIDAgMA0=","command":"serWait","owner":{"name":"ScriptengineLua.1"},"msgID":14,"type":"BUSTEST","timeout":"500"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822654</millis>
+  <sequence>485</sequence>
+  <logger>org.oobd.base.bus.ComReader</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.ComReader</class>
+  <method>write</method>
+  <thread>15</thread>
+  <message>Serial output:p 0 0 0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822654</millis>
+  <sequence>486</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822655</millis>
+  <sequence>487</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822655</millis>
+  <sequence>488</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822655</millis>
+  <sequence>489</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822666</millis>
+  <sequence>490</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom serWait: 1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822667</millis>
+  <sequence>491</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>15</thread>
+  <message>Msg: BusCom ==&gt; ScriptengineLua.1 content:{"result":1,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":14}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822667</millis>
+  <sequence>492</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:14 Waiting ID:14</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822667</millis>
+  <sequence>493</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>A reply message 14</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822668</millis>
+  <sequence>494</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>saved and notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822668</millis>
+  <sequence>495</sequence>
+  <logger>org.oobd.base.scriptengine.ScriptengineLua</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.scriptengine.ScriptengineLua$6</class>
+  <method>call</method>
+  <thread>13</thread>
+  <message>Lua calls serWait returns with onion:{"result":1,"owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":14}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822669</millis>
+  <sequence>496</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"command":"serReadLn","owner":{"name":"ScriptengineLua.1"},"msgID":15,"type":"BUSTEST","timeout":"2000","ignore":"true"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822669</millis>
+  <sequence>497</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822669</millis>
+  <sequence>498</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822670</millis>
+  <sequence>499</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822670</millis>
+  <sequence>500</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822671</millis>
+  <sequence>501</sequence>
+  <logger>org.oobd.base.bus.ComReader</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.ComReader</class>
+  <method>readln</method>
+  <thread>15</thread>
+  <message>Serial input:OOBD POSIX  441 POSIX Sat, 16 Jun 2012 17:20:37 +0200</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822671</millis>
+  <sequence>502</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom readline: OOBD POSIX  441 POSIX Sat, 16 Jun 2012 17:20:37 +0200</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822672</millis>
+  <sequence>503</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>15</thread>
+  <message>Msg: BusCom ==&gt; ScriptengineLua.1 content:{"result":"T09CRCBQT1NJWCAgNDQxIFBPU0lYIFNhdCwgMTYgSnVuIDIwMTIgMTc6MjA6MzcgKzAyMDA=","owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":15}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822681</millis>
+  <sequence>504</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:15 Waiting ID:15</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822682</millis>
+  <sequence>505</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>A reply message 15</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822683</millis>
+  <sequence>506</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>saved and notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822683</millis>
+  <sequence>507</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; BusCom content:{"command":"serReadLn","owner":{"name":"ScriptengineLua.1"},"msgID":16,"type":"BUSTEST","timeout":"2000","ignore":"true"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822684</millis>
+  <sequence>508</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Buscom Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822684</millis>
+  <sequence>509</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822684</millis>
+  <sequence>510</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822684</millis>
+  <sequence>511</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822684</millis>
+  <sequence>512</sequence>
+  <logger>org.oobd.base.bus.ComReader</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.ComReader</class>
+  <method>readln</method>
+  <thread>15</thread>
+  <message>Serial input:.</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822684</millis>
+  <sequence>513</sequence>
+  <logger>org.oobd.base.bus.BusCom</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.bus.BusCom</class>
+  <method>run</method>
+  <thread>15</thread>
+  <message>busCom readline: .</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822685</millis>
+  <sequence>514</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>15</thread>
+  <message>Msg: BusCom ==&gt; ScriptengineLua.1 content:{"result":"Lg==","owner":{"name":"b:Com"},"type":"RESULT_BUS","replyID":16}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822685</millis>
+  <sequence>515</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>Port ScriptengineLua id ScriptengineLua.1 Msg reply id:16 Waiting ID:16</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822685</millis>
+  <sequence>516</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>A reply message 16</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822685</millis>
+  <sequence>517</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>15</thread>
+  <message>saved and notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822685</millis>
+  <sequence>518</sequence>
+  <logger>org.oobd.base.Core</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.Core</class>
+  <method>transferMsg</method>
+  <thread>13</thread>
+  <message>Msg: ScriptengineLua.1 ==&gt; core content:{"to":{"name":"interface_version:"},"value":"OOBD POSIX  441 POSIX Sat, 16 Jun 2012 17:20:37 +0200","owner":{"name":"ScriptengineLua.1"},"type":"VALUE"}</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822685</millis>
+  <sequence>519</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>Port Core Msg reply id:-1 Waiting ID:0</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822686</millis>
+  <sequence>520</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>A non reply message -1</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822686</millis>
+  <sequence>521</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg saved</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822686</millis>
+  <sequence>522</sequence>
+  <logger>org.oobd.base.MessagePort</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.MessagePort</class>
+  <method>receive</method>
+  <thread>13</thread>
+  <message>msg notified</message>
+</record>
+<record>
+  <date>2012-10-03T10:43:42</date>
+  <millis>1349253822687</millis>
+  <sequence>523</sequence>
+  <logger>org.oobd.base.visualizer.Visualizer</logger>
+  <level>INFO</level>
+  <class>org.oobd.base.visualizer.Visualizer</class>
+  <method>setValue</method>
+  <thread>14</thread>
+  <message>Visualizer.setValue(): update needed.</message>
 </record>
 </log>

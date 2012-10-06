@@ -28,6 +28,15 @@ public interface IFvisualizer {
      */
     public void setVisualizer(Visualizer viz);
 
+    /**
+     * \brief links the visualizer to the real visualization component
+     * \ingroup visualisation
+     *
+     * When e.g. the user press a button, the button needs to tell this to his corrosponding visualizer to start some action.
+     * @param viz
+     */
+    public Visualizer getVisualizer();
+
      /**
      * \brief initialize the visualisation object
      * \ingroup visualisation
