@@ -11,7 +11,6 @@ using System.IO;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 
-
 namespace org.oobd.tools.OpenDiagX
 {
     public partial class Main : Form
