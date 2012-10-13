@@ -49,6 +49,7 @@ public interface OOBDConstants {
      public final static String PropName_SerialPort ="SerialPort";
      public final static String PropName_ScriptDir ="ScriptDir";
      public final static String PropName_ScriptName ="Script";
+     public final static String PropName_OutputDir ="OutputDir";
      //Mailbox names
     public final static String CoreMailboxName = "core";
     public final static String BusMailboxName = "BusCom";

@@ -5,6 +5,7 @@ package org.oobd.ui.swing.desk;
 
 import java.awt.CardLayout;
 import java.awt.GridLayout;
+import java.io.IOException;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
@@ -28,9 +29,11 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.LayoutManager;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -51,6 +54,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.filechooser.FileFilter;
 import org.json.JSONException;
@@ -59,7 +63,7 @@ import org.oobd.base.archive.*;
 /**
  * The application's main frame.
  */
-public class swingView extends org.jdesktop.application.FrameView implements IFui, org.oobd.base.OOBDConstants {
+public class swingView extends org.jdesktop.application.FrameView implements IFui, org.oobd.base.OOBDConstants, ActionListener {
 
     final static String MAINPANEL = "card2";
     final static String DIAGNOSEPANEL = "card3";
@@ -68,12 +72,16 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     Properties appProbs;
     private String scriptEngineID = null;
     private String scriptEngineVisibleName;
-    private Vector<IFvisualizer> pageObjects;
+    private Vector<IFvisualizer> pageObjects = null;
     private boolean alreadyRefreshing;
     private final String popupText_update = "Toggle Update Flag";
     private final String popupText_timer = "Toggle Timer Flag";
     private final String popupText_log = "Toggle Log Flag";
     MouseAdapter popupMenuHandle;
+    private final Timer timer;
+    private int processBarMax = 100;
+    private int elementCount;
+    private String pageTitle;
 
     public swingView(SingleFrameApplication app) {
         super(app);
@@ -83,13 +91,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         // status bar initialization - message timeout, idle icon and busy animation, etc
         ResourceMap resourceMap = getResourceMap();
         int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
-        messageTimer = new Timer(messageTimeout, new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                statusMessageLabel.setText("");
-            }
-        });
-        messageTimer.setRepeats(false);
         int busyAnimationRate = resourceMap.getInteger("StatusBar.busyAnimationRate");
         for (int i = 0; i < busyIcons.length; i++) {
             busyIcons[i] = resourceMap.getIcon("StatusBar.busyIcons[" + i + "]");
@@ -104,42 +105,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         idleIcon = resourceMap.getIcon("StatusBar.idleIcon");
         statusAnimationLabel.setIcon(idleIcon);
         progressBar.setVisible(false);
-
-        // connecting action tasks to status bar via TaskMonitor
-        TaskMonitor taskMonitor = new TaskMonitor(getApplication().getContext());
-        taskMonitor.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                String propertyName = evt.getPropertyName();
-                if ("started".equals(propertyName)) {
-                    if (!busyIconTimer.isRunning()) {
-                        statusAnimationLabel.setIcon(busyIcons[0]);
-                        busyIconIndex = 0;
-                        busyIconTimer.start();
-                    }
-                    progressBar.setVisible(true);
-                    progressBar.setIndeterminate(true);
-                } else if ("done".equals(propertyName)) {
-                    busyIconTimer.stop();
-                    statusAnimationLabel.setIcon(idleIcon);
-                    progressBar.setVisible(false);
-                    progressBar.setValue(0);
-                } else if ("message".equals(propertyName)) {
-                    String text = (String) (evt.getNewValue());
-                    statusMessageLabel.setText((text == null) ? "" : text);
-                    messageTimer.restart();
-                } else if ("progress".equals(propertyName)) {
-                    int value = (Integer) (evt.getNewValue());
-                    progressBar.setVisible(true);
-                    progressBar.setIndeterminate(false);
-                    progressBar.setValue(value);
-                }
-            }
-        });
         ActionListener popupActionListener = new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Mouse action detected:" + e.getActionCommand());
                 String whichItemString = e.getActionCommand();
                 int index = 0;
                 if (popupText_update.equals(whichItemString)) {
@@ -156,7 +124,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                 ((Component) vi).invalidate();
                 ((Component) vi).validate();
                 ((Component) vi).repaint();
-                System.out.println("Index Found:" + index);
             }
         };
         final JPopupMenu Pmenu = new JPopupMenu("Toggle Flags");
@@ -183,14 +150,13 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                     @Override
                     public void mouseEntered(MouseEvent e) {
                         //((JPanel) e.getComponent()).setBackground(Color.white);
-                        //.setBorder(BorderFactory.createLineBorder(Color.black));
-                        
+                        ((JPanel) e.getComponent()).setBorder(BorderFactory.createLineBorder(Color.black));
                     }
 
                     @Override
                     public void mouseExited(MouseEvent e) {
                         //((JPanel) e.getComponent()).setBackground(Color.lightGray);
-                        //setBorder(BorderFactory.createEmptyBorder());
+                        ((JPanel) e.getComponent()).setBorder(BorderFactory.createEmptyBorder());
                     }
 
                     @Override
@@ -198,23 +164,62 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                         maybeShowPopup(e);
                     }
 
-                    public void maybeShowPopup(MouseEvent Me) {
-                        System.out.println("Mouse event detected on" + Me.getComponent().getClass().getName());
-                        if (Me.isPopupTrigger()) {
-                            System.out.println("Popup trigger detected!");
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (e.getClickCount() == 1) {
 
-                            Pmenu.show(Me.getComponent(), Me.getX(), Me.getY());
-                        } else {
-                            if (Me.getClickCount() == 2) {
+                            ((IFvisualizer) e.getComponent()).getVisualizer().updateRequest(OOBDConstants.UR_USER);
+                        }
+                    }
 
-                                ((IFvisualizer) Me.getComponent()).getVisualizer().updateRequest(OOBDConstants.UR_USER);
-                            }
+                    public void maybeShowPopup(MouseEvent e) {
+                        if (e.isPopupTrigger()) {
+                            Pmenu.show(e.getComponent(), e.getX(), e.getY());
                         }
                     }
                 };
+        timer = new Timer(1000, this);
+        timer.setInitialDelay(500);
+        timer.start();
+
         diagnoseTabPanel.setSelectedComponent(diagnosePanel);
+        diagnoseTitle.setText("");
+        connectSymbol.setText("");
+        statusMessageLabel.setText("Selected the Script you want to use and press Start");
 
 
+        getFrame().setIconImage(Toolkit.getDefaultToolkit().createImage(swingView.class.getResource("/org/oobd/base/images/obd2_icon.png")));
+
+
+    }
+
+    void setStatusLine(String propertyName, Object content) {
+
+        if ("started".equals(propertyName)) {
+            if (!busyIconTimer.isRunning()) {
+                statusAnimationLabel.setIcon(busyIcons[0]);
+                busyIconIndex = 0;
+                busyIconTimer.start();
+            }
+            progressBar.setVisible(true);
+            progressBar.setIndeterminate(true);
+        } else if ("done".equals(propertyName)) {
+            busyIconTimer.stop();
+            statusAnimationLabel.setIcon(idleIcon);
+            progressBar.setVisible(false);
+            progressBar.setValue(0);
+        } else if ("message".equals(propertyName)) {
+            String text = (String) content;
+            statusMessageLabel.setText((text == null) ? "" : text);
+        } else if ("progress".equals(propertyName)) {
+            int value = (Integer) content;
+            progressBar.setMaximum(processBarMax);
+            progressBar.setVisible(true);
+            progressBar.setIndeterminate(false);
+            progressBar.setValue(value);
+        } else if ("maximum".equals(propertyName)) {
+            processBarMax = (Integer) content;
+        }
     }
 
     @Action
@@ -253,7 +258,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         scriptDir = new javax.swing.JTextField();
         diagnose = new javax.swing.JPanel();
         toolPanelDiagnose = new javax.swing.JPanel();
-        DiagnoseTitle = new javax.swing.JLabel();
+        diagnoseTitle = new javax.swing.JLabel();
         connectSymbol = new javax.swing.JLabel();
         diagnoseTabPanel = new javax.swing.JTabbedPane();
         diagnosePanel = new javax.swing.JPanel();
@@ -265,6 +270,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         diagnoseButtonPanel = new javax.swing.JPanel();
         outputPanel = new javax.swing.JPanel();
         outputToolbar = new javax.swing.JToolBar();
+        outputBackButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         logButton = new javax.swing.JToggleButton();
         saveButton = new javax.swing.JButton();
@@ -286,6 +292,11 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         mainPanel.add(main,MAINPANEL);
         mainPanel.add(settings,SETTINGSPANEL);
         mainPanel.add(diagnose,DIAGNOSEPANEL);
+        mainPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                mainPanelComponentResized(evt);
+            }
+        });
         mainPanel.setLayout(new java.awt.CardLayout());
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(swingView.class);
@@ -420,9 +431,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         toolPanelDiagnose.setName("toolPanelDiagnose"); // NOI18N
         toolPanelDiagnose.setLayout(new javax.swing.BoxLayout(toolPanelDiagnose, javax.swing.BoxLayout.LINE_AXIS));
 
-        DiagnoseTitle.setText(resourceMap.getString("DiagnoseTitle.text")); // NOI18N
-        DiagnoseTitle.setName("DiagnoseTitle"); // NOI18N
-        toolPanelDiagnose.add(DiagnoseTitle);
+        diagnoseTitle.setText(resourceMap.getString("diagnoseTitle.text")); // NOI18N
+        diagnoseTitle.setName("diagnoseTitle"); // NOI18N
+        toolPanelDiagnose.add(diagnoseTitle);
 
         connectSymbol.setText(resourceMap.getString("connectSymbol.text")); // NOI18N
         connectSymbol.setName("connectSymbol"); // NOI18N
@@ -452,7 +463,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         diagnoseToolBar.add(backButton);
 
         updateButton.setAction(actionMap.get("onClickButton_Update")); // NOI18N
-        updateButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/oobd/ui/swing/desk/resources/update.png"))); // NOI18N
+        updateButton.setIcon(resourceMap.getIcon("updateButton.icon")); // NOI18N
         updateButton.setText(resourceMap.getString("updateButton.text")); // NOI18N
         updateButton.setToolTipText(resourceMap.getString("updateButton.toolTipText")); // NOI18N
         updateButton.setFocusable(false);
@@ -475,14 +486,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         diagnoseScrollPanel.setName("diagnoseScrollPanel"); // NOI18N
 
         diagnoseButtonPanel.setName("diagnoseButtonPanel"); // NOI18N
-        diagnoseButtonPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentResized(java.awt.event.ComponentEvent evt) {
-                diagnoseButtonPanelComponentShown(evt);
-            }
-            public void componentShown(java.awt.event.ComponentEvent evt) {
-                diagnoseButtonPanelComponentShown(evt);
-            }
-        });
         diagnoseButtonPanel.setLayout(new java.awt.GridLayout(1, 0));
         diagnoseScrollPanel.setViewportView(diagnoseButtonPanel);
 
@@ -497,12 +500,30 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         outputToolbar.setMaximumSize(new java.awt.Dimension(32767, 46));
         outputToolbar.setName("outputToolbar"); // NOI18N
 
+        outputBackButton.setIcon(resourceMap.getIcon("outputBackButton.icon")); // NOI18N
+        outputBackButton.setText(resourceMap.getString("outputBackButton.text")); // NOI18N
+        outputBackButton.setFocusable(false);
+        outputBackButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        outputBackButton.setName("outputBackButton"); // NOI18N
+        outputBackButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        outputBackButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                outputBackButtonActionPerformed(evt);
+            }
+        });
+        outputToolbar.add(outputBackButton);
+
         cancelButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/oobd/ui/swing/desk/resources/cancel.png"))); // NOI18N
         cancelButton.setToolTipText(resourceMap.getString("cancelButton.toolTipText")); // NOI18N
         cancelButton.setFocusable(false);
         cancelButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         cancelButton.setName("cancelButton"); // NOI18N
         cancelButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
         outputToolbar.add(cancelButton);
 
         logButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/oobd/ui/swing/desk/resources/text.png"))); // NOI18N
@@ -520,6 +541,11 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         saveButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         saveButton.setName("saveButton"); // NOI18N
         saveButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButtonActionPerformed(evt);
+            }
+        });
         outputToolbar.add(saveButton);
 
         outputPanel.add(outputToolbar);
@@ -604,11 +630,23 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     private void backButtonLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonLabelMouseClicked
 
-        System.out.println("Try to sacw settings..");
         appProbs.setProperty(OOBDConstants.PropName_ScriptDir, scriptDir.getText());
         appProbs.setProperty(OOBDConstants.PropName_SerialPort, comportComboBox.getEditor().getItem().toString());
         oobdCore.getSystemIF().saveProperty(FT_PROPS,
                 OOBDConstants.AppPrefsFileName, appProbs);
+        String script = appProbs.getProperty(OOBDConstants.PropName_ScriptName, null);
+        scriptSelectComboBox.removeAllItems();
+        int i = -1;
+        ArrayList<Archive> files = Factory.getDirContent(appProbs.getProperty(OOBDConstants.PropName_ScriptDir, null));
+        for (Archive file : files) {
+            scriptSelectComboBox.addItem(file);
+            if (file.toString().equalsIgnoreCase(script)) {
+                i = scriptSelectComboBox.getItemCount() - 1;
+            }
+        }
+        if (i > -1) {
+            scriptSelectComboBox.setSelectedIndex(i);
+        }
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         cl.show(mainPanel, MAINPANEL);
     }//GEN-LAST:event_backButtonLabelMouseClicked
@@ -626,7 +664,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                     + "'" + "}"));
         } catch (JSONException ex) {
             // TODO Auto-generated catch block
-            Logger.getLogger(swingView.class.getName()).log(Level.WARNING, "JSON creation error with file name:"+((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath(), ex.getMessage());
+            Logger.getLogger(swingView.class.getName()).log(Level.WARNING, "JSON creation error with file name:" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath(), ex.getMessage());
         }
     }//GEN-LAST:event_jLabel3MouseClicked
 
@@ -647,7 +685,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
 
         String port = appProbs.getProperty(OOBDConstants.PropName_SerialPort, null);
-        System.out.println("Port find in settings: " + port);
         int portListIndex = -1;
         // Process the list.
         while (pList.hasMoreElements()) {
@@ -662,29 +699,20 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         if (portListIndex > -1) {
             comportComboBox.setSelectedIndex(portListIndex);
         } else {
-            System.out.println("port not found in list, setting it to " + port);
             comportComboBox.setSelectedItem(port);
         }
         scriptDir.setText(appProbs.getProperty(OOBDConstants.PropName_ScriptDir, ""));
 
     }//GEN-LAST:event_settingsComponentShown
 
-    private void diagnoseButtonPanelComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_diagnoseButtonPanelComponentShown
-        /*
-        GridLayout thisGrid = (GridLayout) diagnoseButtonPanel.getLayout();
-        thisGrid = new GridLayout(0, 2);
-        diagnoseButtonPanel.setLayout(thisGrid);
-        diagnoseButtonPanel.add(new TextVisualizerJPanel());
-        System.out.println("add and redraw grid");
-        diagnoseButtonPanel.invalidate();
-        diagnoseButtonPanel.validate();
-        diagnoseButtonPanel.repaint();
-         */
-        refreshGrid();
-    }//GEN-LAST:event_diagnoseButtonPanelComponentShown
-
     private void chooseScriptDirectoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseScriptDirectoryButtonActionPerformed
         JFileChooser chooser = new JFileChooser();
+        File oldDir = null;
+        String oldDirName = appProbs.getProperty(OOBDConstants.PropName_ScriptDir, null);
+        if (oldDirName != null) {
+            oldDir = new File(oldDirName);
+        }
+        chooser.setCurrentDirectory(oldDir);
         chooser.addChoosableFileFilter(new FileFilter() {
 
             public boolean accept(File f) {
@@ -714,6 +742,67 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private void mainComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_mainComponentShown
         statusMessageLabel.setText("Selected the Script you want to use and press Start");
     }//GEN-LAST:event_mainComponentShown
+
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        File oldDir = null;
+        String oldDirName = appProbs.getProperty(OOBDConstants.PropName_OutputDir, null);
+        if (oldDirName != null) {
+            oldDir = new File(oldDirName);
+        }
+        chooser.setCurrentDirectory(oldDir);
+        chooser.setMultiSelectionEnabled(false);
+        chooser.setFileSelectionMode(JFileChooser.SAVE_DIALOG);
+        chooser.addChoosableFileFilter(new FileFilter() {
+
+            public boolean accept(File f) {
+                if (f.isDirectory()) {
+                    return true;
+                }
+                //return f.getName().toLowerCase().endsWith(".lbc");
+                return true;
+            }
+
+            public String getDescription() {
+                return "All Files";
+            }
+        });
+        if (chooser.showSaveDialog(this.getFrame())
+                == JFileChooser.APPROVE_OPTION) {
+            try {
+                FileWriter os = new FileWriter(chooser.getSelectedFile().toString());
+                os.write(jTextAreaOutput.getText());
+                os.close();
+                appProbs.setProperty(OOBDConstants.PropName_OutputDir, chooser.getCurrentDirectory().toString());
+                oobdCore.getSystemIF().saveProperty(FT_PROPS,
+                        OOBDConstants.AppPrefsFileName, appProbs);
+
+            } catch (IOException ex) {
+                Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_saveButtonActionPerformed
+
+    private void mainPanelComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_mainPanelComponentResized
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(new Runnable() {
+
+                public void run() {
+                    refreshGrid();
+                }
+            });
+        } else {
+            refreshGrid();
+        }
+    }//GEN-LAST:event_mainPanelComponentResized
+
+    private void outputBackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputBackButtonActionPerformed
+        diagnoseTabPanel.setSelectedComponent(diagnosePanel);
+    }//GEN-LAST:event_outputBackButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        jTextAreaOutput.setText("");
+    }//GEN-LAST:event_cancelButtonActionPerformed
 
     @Action
     public void onClickButton_Back() {
@@ -754,7 +843,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         cl.show(mainPanel, SETTINGSPANEL);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel DiagnoseTitle;
     private javax.swing.JButton backButton;
     private javax.swing.JLabel backButtonLabel;
     private javax.swing.JButton cancelButton;
@@ -766,6 +854,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JPanel diagnosePanel;
     private javax.swing.JScrollPane diagnoseScrollPanel;
     private javax.swing.JTabbedPane diagnoseTabPanel;
+    private javax.swing.JLabel diagnoseTitle;
     private javax.swing.JToolBar diagnoseToolBar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
@@ -779,6 +868,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JLabel oobdImage;
+    private javax.swing.JButton outputBackButton;
     private javax.swing.JPanel outputPanel;
     private javax.swing.JToolBar outputToolbar;
     private javax.swing.JProgressBar progressBar;
@@ -794,7 +884,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JPanel toolPanelDiagnose;
     private javax.swing.JButton updateButton;
     // End of variables declaration//GEN-END:variables
-    private final Timer messageTimer;
     private final Timer busyIconTimer;
     private final Icon idleIcon;
     private final Icon[] busyIcons = new Icon[15];
@@ -829,9 +918,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: Scriptengine-ID: {0} visibleName:{1}", new Object[]{id, visibleName});
         // more as one scriptengine is not used in this app
         //scriptEngineMap.put(id, visibleName);
-        System.out.println("Announce Scriptid " + id);
         if ("ScriptengineLua".equalsIgnoreCase(id)) {
-            System.out.println("Set Scriptid to " + id);
             scriptEngineID = id;
             scriptEngineVisibleName = visibleName;
         }
@@ -863,6 +950,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             ((IFvisualizer) newJComponent).setVisualizer(newVisualizer);
             // add to internal list
             pageObjects.add((IFvisualizer) newJComponent);
+            setStatusLine("progress", 100 - 100 / elementCount);
+            elementCount++;
             if (((IFvisualizer) newJComponent).isGroup()) {
                 /*               // if the component is not already placed
                 //JScrollPane scrollpane = new JScrollPane(newJComponent);
@@ -887,45 +976,57 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                  */            }
             ((IFvisualizer) newJComponent).initValue(newVisualizer, myOnion);
             newJComponent.addMouseListener(popupMenuHandle);
-            System.out.println("new Vizualizer created");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void openPage(String seID, String Name, int colcount, int rowcount) {
+    public void openPage(String seID, String name, int colcount, int rowcount) {
         //cleans the page
-        System.out.println("Open Page");
-        statusMessageLabel.setText(Name);
+        setStatusLine("started", null);
+        setStatusLine("message", "Load Page");
+        pageTitle = name;
         if (pageObjects != null) {
             diagnoseButtonPanel.removeAll();
             for (IFvisualizer vis : pageObjects) {
-                System.out.println("nremove old vizualiers");
-
-                JComponent newJComponent = (JComponent) vis;
                 vis.setRemove(seID);
             }
             pageObjects.removeAllElements();
-            diagnoseButtonPanel.validate();
+            //diagnoseButtonPanel.validate();
         }
+        elementCount = 1;
+        setStatusLine("message", "Load Page..");
+
     }
 
     public void openPageCompleted(String seID, String Name) {
 
-        refreshGrid();
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(new Runnable() {
+
+                public void run() {
+                    refreshGrid();
+                }
+            });
+        } else {
+            refreshGrid();
+        }
+        setStatusLine("done", null);
+        statusMessageLabel.setText(pageTitle);
 
     }
 
     void refreshGrid() {
         //build the components out of the previously collected list of vsiualizers
-        System.out.println("refresh grid");
         // it seems that sometimes the resize form event is called during rezize Event... which generates an endless
         // recursive loop. To avoid this, the variable alreadyRefreshing started should indicate that there's already a refresh ongoing..
         alreadyRefreshing = false;
         if (pageObjects != null && !alreadyRefreshing) {
             alreadyRefreshing = true;
+            diagnoseButtonPanel.getParent().invalidate();
+            diagnoseButtonPanel.invalidate();
             GridLayout thisGrid = (GridLayout) diagnoseButtonPanel.getLayout();
-            Dimension s = diagnoseButtonPanel.getSize();
+            Dimension s = diagnose.getSize();
             int cols = s.width / 200;
             if (cols < 1) {
                 cols = 1;
@@ -938,9 +1039,10 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                 JComponent newJComponent = (JComponent) vis;
                 diagnoseButtonPanel.add(newJComponent);
             }
-            diagnoseButtonPanel.invalidate();
             diagnoseButtonPanel.validate();
             diagnoseButtonPanel.repaint();
+            diagnoseButtonPanel.getParent().validate();
+            diagnoseButtonPanel.getParent().repaint();
             alreadyRefreshing = false;
         }
     }
@@ -963,12 +1065,32 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     @Action
     public void onClickButton_Update() {
+        int i = 2;
+        setStatusLine("started", null);
         if (pageObjects != null) {
             for (IFvisualizer vis : pageObjects) {
                 if (vis.getVisualizer().getUpdateFlag(1)) {
                     vis.getVisualizer().updateRequest(OOBDConstants.UR_UPDATE);
+                     setStatusLine("progress", 100 - 100 / i);
+                    i++;
                 }
             }
         }
+        setStatusLine("done", 100 - 100 / i);
+
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        if (timerButton.isSelected() && pageObjects != null) {
+            synchronized (pageObjects) {
+                for (IFvisualizer vis : pageObjects) {
+                    if (vis.getVisualizer().getUpdateFlag(2)) {
+                        vis.getVisualizer().updateRequest(OOBDConstants.UR_TIMER);
+                    }
+                }
+
+            }
+        }
+        timer.restart();
     }
 }

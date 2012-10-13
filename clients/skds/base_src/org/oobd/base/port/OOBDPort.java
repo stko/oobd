@@ -27,4 +27,7 @@ public interface OOBDPort {
 	public OutputStream getOutputStream();
 
 	public boolean available();
+        
+           public void attachShutDownHook();
+        
 }
