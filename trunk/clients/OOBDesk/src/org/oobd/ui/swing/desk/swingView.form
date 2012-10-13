@@ -6,6 +6,9 @@
       <Properties>
         <Property name="name" type="java.lang.String" value="mainPanel" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="mainPanelComponentResized"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="&#xa;mainPanel.add(main,MAINPANEL);&#xa;mainPanel.add(settings,SETTINGSPANEL);&#xa;mainPanel.add(diagnose,DIAGNOSEPANEL);"/>
       </AuxValues>
@@ -229,10 +232,10 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JLabel" name="DiagnoseTitle">
+                <Component class="javax.swing.JLabel" name="diagnoseTitle">
                   <Properties>
-                    <Property name="text" type="java.lang.String" resourceKey="DiagnoseTitle.text"/>
-                    <Property name="name" type="java.lang.String" value="DiagnoseTitle" noResource="true"/>
+                    <Property name="text" type="java.lang.String" resourceKey="diagnoseTitle.text"/>
+                    <Property name="name" type="java.lang.String" value="diagnoseTitle" noResource="true"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="connectSymbol">
@@ -302,9 +305,7 @@
                             <Property name="action" type="javax.swing.Action" editor="org.netbeans.modules.swingapp.ActionEditor">
                               <action class="org.oobd.ui.swing.desk.swingView" id="onClickButton_Update" methodName="onClickButton_Update"/>
                             </Property>
-                            <Property name="icon" type="javax.swing.Icon" noResource="true" editor="org.netbeans.modules.form.editors2.IconEditor">
-                              <Image iconType="3" name="/org/oobd/ui/swing/desk/resources/update.png"/>
-                            </Property>
+                            <Property name="icon" type="javax.swing.Icon" resourceKey="updateButton.icon"/>
                             <Property name="text" type="java.lang.String" resourceKey="updateButton.text"/>
                             <Property name="toolTipText" type="java.lang.String" resourceKey="updateButton.toolTipText"/>
                             <Property name="focusable" type="boolean" value="false"/>
@@ -339,10 +340,6 @@
                           <Properties>
                             <Property name="name" type="java.lang.String" value="diagnoseButtonPanel" noResource="true"/>
                           </Properties>
-                          <Events>
-                            <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="diagnoseButtonPanelComponentShown"/>
-                            <EventHandler event="componentShown" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="diagnoseButtonPanelComponentShown"/>
-                          </Events>
 
                           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
                             <Property name="columns" type="int" value="0"/>
@@ -382,6 +379,19 @@
 
                       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
                       <SubComponents>
+                        <Component class="javax.swing.JButton" name="outputBackButton">
+                          <Properties>
+                            <Property name="icon" type="javax.swing.Icon" resourceKey="outputBackButton.icon"/>
+                            <Property name="text" type="java.lang.String" resourceKey="outputBackButton.text"/>
+                            <Property name="focusable" type="boolean" value="false"/>
+                            <Property name="horizontalTextPosition" type="int" value="0"/>
+                            <Property name="name" type="java.lang.String" value="outputBackButton" noResource="true"/>
+                            <Property name="verticalTextPosition" type="int" value="3"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="outputBackButtonActionPerformed"/>
+                          </Events>
+                        </Component>
                         <Component class="javax.swing.JButton" name="cancelButton">
                           <Properties>
                             <Property name="icon" type="javax.swing.Icon" noResource="true" editor="org.netbeans.modules.form.editors2.IconEditor">
@@ -393,6 +403,9 @@
                             <Property name="name" type="java.lang.String" value="cancelButton" noResource="true"/>
                             <Property name="verticalTextPosition" type="int" value="3"/>
                           </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelButtonActionPerformed"/>
+                          </Events>
                         </Component>
                         <Component class="javax.swing.JToggleButton" name="logButton">
                           <Properties>
@@ -418,6 +431,9 @@
                             <Property name="name" type="java.lang.String" value="saveButton" noResource="true"/>
                             <Property name="verticalTextPosition" type="int" value="3"/>
                           </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveButtonActionPerformed"/>
+                          </Events>
                         </Component>
                       </SubComponents>
                     </Container>

@@ -25,6 +25,7 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
 
     boolean toBePlaced = true; //indicates, if the actual instance is already been placed on an canvas or not
     boolean awaitingUpdate = false;
+    boolean removalState = false;
     Visualizer value;
     static private final Icon[] myIcons = new Icon[6];
 
@@ -44,7 +45,6 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
 
     @Override
     public void paintComponent(Graphics g) {
-        System.out.println("Paint request...");
         if (value != null) {
             functionName.setText("<html>" + value.getToolTip() + "</html>");
             functionValue.setText("<html>" + value.toString() + "</html>");
@@ -131,6 +131,8 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
         jPanel1.setPreferredSize(new java.awt.Dimension(14, 20));
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.LINE_AXIS));
 
+        functionName.setFont(resourceMap.getFont("titleLable.font")); // NOI18N
+        functionName.setForeground(resourceMap.getColor("titleLable.foreground")); // NOI18N
         functionName.setText(resourceMap.getString("titleLable.text")); // NOI18N
         functionName.setName("titleLable"); // NOI18N
         jPanel1.add(functionName);
@@ -194,26 +196,31 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
     }
 
     public boolean update(int level) {
-        switch (level) {
-            case 0: {
-                awaitingUpdate = true;
-                return false;
-            }
-            case 2: {
-                if (awaitingUpdate == true) {
-                    this.invalidate();
-                    this.validate();
-                    this.repaint();
-                    awaitingUpdate = false;
-                    return true;
+        if (!removalState) {
+            switch (level) {
+                case 0: {
+                    awaitingUpdate = true;
+                    return false;
                 }
+                case 2: {
+                    if (awaitingUpdate == true) {
+                        this.invalidate();
+                        this.validate();
+                        this.repaint();
+                        awaitingUpdate = false;
+                        return true;
+                    }
+                }
+                default:
+                    return false;
             }
-            default:
-                return false;
+        } else {
+            return true;
         }
     }
 
     public void setRemove(String pageID) {
-        //nothing to be done here
+        removalState = true;
+        value.setRemove();
     }
 }

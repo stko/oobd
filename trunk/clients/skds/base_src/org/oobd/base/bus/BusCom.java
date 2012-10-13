@@ -47,7 +47,7 @@ public class BusCom extends OobdBus implements OOBDConstants {
 		while (keepRunning == true) {
 			Message msg = getMsg(true);
 			Onion on = msg.getContent();
-			System.out.println("Buscom Message abgeholt:" + on.toString());
+			//System.out.println("Buscom Message abgeholt:" + on.toString());
 			String command = on.getOnionString("command");
 			if ("serWrite".equalsIgnoreCase(command)) {
 				String data = Base64Coder.decodeString(on
@@ -166,7 +166,6 @@ class ComReader implements Runnable {
 				Logger.getLogger(ComReader.class.getName()).log(Level.INFO,
 						"Serial output:" + s);
 				comHandle.getOutputStream().write(s.getBytes(), 0, s.length());
-				System.out.println("Geschrieben an outputstream:" + s);
 				// outStream.flush();
 			} catch (IOException ex) {
 				Logger.getLogger(ComReader.class.getName()).log(Level.WARNING,
@@ -323,7 +322,6 @@ class ComReader implements Runnable {
 		}
 		Logger.getLogger(ComReader.class.getName()).log(Level.INFO,
 				"Serial input:" + res);
-		System.out.println("Serial input:" + res);
 		return res;
 	}
 

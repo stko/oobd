@@ -87,7 +87,8 @@ public class ComPort_Unix implements OOBDPort {
                         outputStream = serialPort.getOutputStream();
                         //outStreamWriter = new OutputStreamWriter(outStream, "iso-8859-1");
                         serialPort.enableReceiveTimeout(5);
-                        return true;
+                         attachShutDownHook();
+                       return true;
                     } catch (UnsupportedCommOperationException ex) {
                         Logger.getLogger(ComPort_Unix.class.getName()).log(Level.SEVERE, "Unsupported serial port parameter", ex);
                         return false;
@@ -168,6 +169,20 @@ public class ComPort_Unix implements OOBDPort {
         }
                ArrayList<PortInfo> myList= Collections.list(portList);
                return (PortInfo[])myList.toArray();
+
+    }
+
+    public void attachShutDownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+
+            @Override
+            public void run() {
+                System.out.println("Inside Add Shutdown Hook");
+                close();
+                System.out.println("Serial line closed");
+            }
+        });
+        System.out.println("Shut Down Hook Attached.");
 
     }
 }
