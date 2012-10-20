@@ -28,16 +28,16 @@ R2         3k3           R-EU_R0603        R0603          RESISTOR, European sym
 R3         47k           R-EU_R0603        R0603          RESISTOR, European symbol       
 R4         10k           R-EU_R0603        R0603          RESISTOR, European symbol       
 R100       82R           R-EU_R0603        R0603          RESISTOR, European symbol       
-R101       4K7           R-EU_R0603        R0603          RESISTOR, European symbol       
+R101       4k7           R-EU_R0603        R0603          RESISTOR, European symbol       
 R102       82R           R-EU_R0603        R0603          RESISTOR, European symbol       
 R103       5k6           R-EU_R0603        R0603          RESISTOR, European symbol       
-R104       4K7           R-EU_R0603        R0603          RESISTOR, European symbol       
+R104       4k7           R-EU_R0603        R0603          RESISTOR, European symbol       
 R105       1R            R-EU_R0805        R0805          RESISTOR, European symbol       
 R106       1R            R-EU_R0805        R0805          RESISTOR, European symbol       
 R107       1R            R-EU_R0805        R0805          RESISTOR, European symbol       
 R108       10k           R-EU_R0603        R0603          RESISTOR, European symbol       
-R109       390R          R-EU_R0603        R0603          RESISTOR, European symbol       
-R110       4K7           R-EU_R0603        R0603          RESISTOR, European symbol       
+R109       4k7           R-EU_R0603        R0603          RESISTOR, European symbol       
+R110       4k7           R-EU_R0603        R0603          RESISTOR, European symbol       
 REL1       FTR-B4GA      FTR-B4GA          FTR-B4GA       Fujitsu FTR-B4 Series           
 SG1        MBWOE         MBWOE             BME0603SA      Buzzer                          
 T1         BC817         BC847             SOT23          NPN TRANSISTOR                  
