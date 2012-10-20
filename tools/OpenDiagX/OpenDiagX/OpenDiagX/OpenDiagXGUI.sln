@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenDiagXGUI", "OpenDiagXGUI.csproj", "{E894C179-3442-446B-BE37-637025C294FE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0FAA9EE6-395F-4A6F-A01B-1A68451C19E0} = {0FAA9EE6-395F-4A6F-A01B-1A68451C19E0}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenDiagXCore", "..\OpenDiagXCore\OpenDiagXCore.csproj", "{0FAA9EE6-395F-4A6F-A01B-1A68451C19E0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E894C179-3442-446B-BE37-637025C294FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E894C179-3442-446B-BE37-637025C294FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E894C179-3442-446B-BE37-637025C294FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E894C179-3442-446B-BE37-637025C294FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FAA9EE6-395F-4A6F-A01B-1A68451C19E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FAA9EE6-395F-4A6F-A01B-1A68451C19E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FAA9EE6-395F-4A6F-A01B-1A68451C19E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FAA9EE6-395F-4A6F-A01B-1A68451C19E0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
