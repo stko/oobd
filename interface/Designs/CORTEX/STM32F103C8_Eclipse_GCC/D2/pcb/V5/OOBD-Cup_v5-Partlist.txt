@@ -4,7 +4,7 @@ Bauteil    Wert          Device            Package        Description
 BT-ANTENNA               ANTENNA_1RIGHT    SWRA117D_RIGHT                                 
 C1         100nF         C-EUC0603K        C0603K         CAPACITOR, European symbol      
 C2         1µF           C-EUC0603K        C0603K         CAPACITOR, European symbol      
-C3         270pF         C-EUC0603K        C0603K         CAPACITOR, European symbol      
+C3         220pF         C-EUC0603K        C0603K         CAPACITOR, European symbol      
 C4         47µ/35V       CP-SV-D           SV-D           POLARIZED CAP                   
 C5         220µF/6V      CP_6032-TE-C      C6032-TE-C     POLARIZED CAP                   
 D100       BAS40         BAS40             SOT23          Silicon Schottky Diodes         
