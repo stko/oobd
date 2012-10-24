@@ -16,7 +16,7 @@ namespace org.oobd.tools.OpenDiagX
         XmlNode root;
         XmlDocument xmlDocOut;
         XmlElement subNode;
-        
+
         public String transform(String inXSLTFileName, String outXSLTFileName, StreamReader inputStream)
         {
             XslCompiledTransform myXslTrans = new XslCompiledTransform();
@@ -48,7 +48,7 @@ namespace org.oobd.tools.OpenDiagX
                 //nav.MoveToFirstChild();
                 // Security Bytes
                 XPathNodeIterator iterator = nav.Select("/MDX/ECU_DATA/SECURITY_DATA/FIXED_BYTES/FIXED_BYTE");
-                
+
                 String SecCode = "";
                 while (iterator.MoveNext())
                 {
@@ -59,9 +59,9 @@ namespace org.oobd.tools.OpenDiagX
                     addTextnode(root, "SecCode", SecCode);
                 }
                 //Module Address
-                addTextnode(root, "PhysAdress", strRight(getpath(nav, "/MDX/PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS"),3));
-                addTextnode(root, "RespAdress", strRight(getpath(nav, "/MDX/PROTOCOL/PHYSICAL_AND_LINK_LAYER/RESPONSE_ADDRESS"),3));
-                addTextnode(root, "FuncAdress", strRight(getpath(nav, "/MDX/PROTOCOL/PHYSICAL_AND_LINK_LAYER/FUNCTIONAL_ADDRESS"),3));
+                addTextnode(root, "PhysAdress", strRight(getpath(nav, "/MDX/PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS"), 3));
+                addTextnode(root, "RespAdress", strRight(getpath(nav, "/MDX/PROTOCOL/PHYSICAL_AND_LINK_LAYER/RESPONSE_ADDRESS"), 3));
+                addTextnode(root, "FuncAdress", strRight(getpath(nav, "/MDX/PROTOCOL/PHYSICAL_AND_LINK_LAYER/FUNCTIONAL_ADDRESS"), 3));
                 addTextnode(root, "Bus", getpath(nav, "/MDX/PROTOCOL/PHYSICAL_AND_LINK_LAYER/NAME"));
                 addTextnode(root, "BusSpeed", getpath(nav, "/MDX/PROTOCOL/PHYSICAL_AND_LINK_LAYER/DATA_RATE"));
                 addTextnode(root, "PhysAdressShort", strRight(getpath(nav, "/MDX/PROTOCOL/PHYSICAL_AND_LINK_LAYER/PHYSICAL_ADDRESS"), 2));
@@ -106,54 +106,75 @@ namespace org.oobd.tools.OpenDiagX
                             if (subDataType.Equals("bcd")) handleBCD(iterator2);
                             if (subDataType.Equals("enumerated")) handleEnumerated(iterator2);
                             if (subDataType.Equals("float")) handleFloat(iterator2);
-                            
-                        }    
+
+                        }
                     }
 
                     if (dataType.Equals("bitmapped"))
                     {
                         String subDataType = getpath(iterator.Current, "SUB_FIELD/DATA_DEFINITION/DATA_TYPE");
                         //textBox.Text += "Sub Data Type: " + subDataType + "\r\n";
-
+                        String outputSession = getAttr(iterator.Current,"ACCESS_PARAMETERS/CONTROLLABLE","SESSION_REFS");
+                        if (outputSession != null && outputSession.Contains("_"))
+                        {
+                            outputSession = outputSession.ToLower().Replace("session_","");
+                        }
+                        else
+                        {
+                            outputSession = null;
+                        }
+                        String outputService = getAttr(iterator.Current, "ACCESS_PARAMETERS/CONTROLLABLE","SERVICE_REFS");
+                        if (outputService != null && outputService.Contains("_"))
+                        {
+                            outputService = outputService.ToUpper().Replace("SERVICE_", "");
+                        }
+                        else
+                        {
+                            outputService = null;
+                        }
                         subNode = addSubNode(root, "BMP");
                         addTextnode(subNode, "Group", DIDname);
                         addTextnode(subNode, "HighPID", HighPid);
                         addTextnode(subNode, "LowPID", LowPid);
                         addTextnode(subNode, "ByteSize", strbyteSize);
-
+                        if (outputSession != null && outputService != null)
+                        {
+                            addTextnode(subNode, "OutputSession", outputSession);
+                            addTextnode(subNode, "OutputService", outputService);
+                        }
                         XPathNodeIterator iterator2 = iterator.Current.Select("SUB_FIELD");
                         while (iterator2.MoveNext())
                         {
                             handleBitmap(iterator2);
                         }
-/* 
-                        if (subDataType.Equals("enumerated")) handleEnumerated(iterator2);
-                        if (subDataType.Equals("unsigned")) handleUnsigned(iterator2);
-                        if (subDataType.Equals("bytes")) handleBytes(iterator2);
-*/
-                   }
-          
+                        /* 
+                                                if (subDataType.Equals("enumerated")) handleEnumerated(iterator2);
+                                                if (subDataType.Equals("unsigned")) handleUnsigned(iterator2);
+                                                if (subDataType.Equals("bytes")) handleBytes(iterator2);
+                        */
+                    }
+
                     if (dataType.Equals("single_value"))
                     {
                         String subDataType = getpath(iterator.Current, "SUB_FIELD/DATA_DEFINITION/DATA_TYPE");
                         //textBox.Text += "Sub Data Type: " + subDataType + "\r\n";
                         subNode = addSubNode(root, "SVL");
-                        addTextnode(subNode, "Name", DIDname);   
+                        addTextnode(subNode, "Name", DIDname);
                         addTextnode(subNode, "HighPID", HighPid);
                         addTextnode(subNode, "LowPID", LowPid);
                         addTextnode(subNode, "ByteSize", strbyteSize);
-                        
+
                         XPathNodeIterator iterator2 = iterator.Current.Select("SUB_FIELD");
                         iterator2.MoveNext();
 
                         if (subDataType.Equals("ascii")) handleASCII(iterator2);
                         if (subDataType.Equals("unsigned")) handleUnsigned(iterator2);
                         if (subDataType.Equals("bytes")) handleBytes(iterator2);
-                        if (subDataType.Equals("signed")) handleSigned(iterator2); 
+                        if (subDataType.Equals("signed")) handleSigned(iterator2);
                         if (subDataType.Equals("bcd")) handleBCD(iterator2);
-/* single value enumerated values must be adapted as they could have more than one bit length, i.e.. ENUM_VALUE 2, 3, 4, ...
- * if (subDataType.Equals("enumerated")) handleEnumerated(iterator2);
- */
+                        /* single value enumerated values must be adapted as they could have more than one bit length, i.e.. ENUM_VALUE 2, 3, 4, ...
+                         * if (subDataType.Equals("enumerated")) handleEnumerated(iterator2);
+                         */
                         if (subDataType.Equals("float")) handleFloat(iterator2);
                     }
                 }
@@ -178,7 +199,7 @@ namespace org.oobd.tools.OpenDiagX
                     subtree.AppendChild(thisDTC);
                     addTextnode(thisDTC, "ID", strRight(getpath(iterator.Current, "NUMBER"), 4));
                     addTextnode(thisDTC, "DESCRIPTION", getpath(iterator.Current, "NAME"));
-                    addTextnode(thisDTC, "SESSION_REFS",iterator.Current.GetAttribute("SESSION_REFS", ""));
+                    addTextnode(thisDTC, "SESSION_REFS", iterator.Current.GetAttribute("SESSION_REFS", ""));
                 }
             }
             //Perform the actual transformation
@@ -193,9 +214,10 @@ namespace org.oobd.tools.OpenDiagX
             //seperate the result in single lines to add it to the textbox
             return memrdr.ReadToEnd();
         }
-    
-        private String strRight(String text, int len){
-            return text.Substring(text.Length-len);
+
+        private String strRight(String text, int len)
+        {
+            return text.Substring(text.Length - len);
         }
 
 
@@ -205,19 +227,31 @@ namespace org.oobd.tools.OpenDiagX
             {
                 XPathNodeIterator iterator = (XPathNodeIterator)nav.Evaluate(path + "/text()");
                 iterator.MoveNext();
-                return iterator.Current.Value.ToString().Replace("\"","'").Trim();
+                return iterator.Current.Value.ToString().Replace("\"", "'").Trim();
             }
             else
             {
                 return null;
             }
         }
+        private String getAttr(XPathNavigator nav, String path, String attr)
+        {
+            String attribut = null;
+            XPathNavigator test= nav.SelectSingleNode(path);
+            if (test != null)
+            {
+                attribut = test.GetAttribute(attr, "");
+            }
+            return attribut;
+        }
+
+
         private void handleBitmap(XPathNodeIterator iterator)
         {
             int byteSize = Convert.ToInt32(getpath(iterator.Current, "../BYTE_SIZE"));
             String Name = getpath(iterator.Current, "NAME");
             String LBit = getpath(iterator.Current, "LEAST_SIG_BIT");
- 
+
             XPathNodeIterator iterator2 = iterator.Current.Select("DATA_DEFINITION");
             while (iterator2.MoveNext())
             {
@@ -279,10 +313,10 @@ namespace org.oobd.tools.OpenDiagX
                     addTextnode(thisBitEntry, "Bit", LBit);
                     addTextnode(thisBitEntry, "BytePos", (byteSize - 1 - Convert.ToInt16(LBit) / 8).ToString());
                     addTextnode(thisBitEntry, "BitPos", (Convert.ToInt16(LBit) % 8).ToString());
- 
+
                     addTextnode(thisBitEntry, "Resolution", "1");
                     addTextnode(thisBitEntry, "Offset", "0");
-                    addTextnode(thisBitEntry, "Units", "");            
+                    addTextnode(thisBitEntry, "Units", "");
                 }
             }
         }
@@ -298,13 +332,13 @@ namespace org.oobd.tools.OpenDiagX
             {
                 Name = parentLevelName;
             }
-            
+
             XmlElement thisDIDEntry = addSubNode(subNode, "ASCII");
             addTextnode(thisDIDEntry, "Name", Name);
             addTextnode(thisDIDEntry, "BytePos", ((Convert.ToInt16(byteSize) - ((Convert.ToInt16(MBit) + 1) / 8)).ToString()));
             addTextnode(thisDIDEntry, "BitPos", (Convert.ToInt16(LBit) % 8).ToString());
             addTextnode(thisDIDEntry, "ByteNr", (((Convert.ToInt16(MBit) + 1 - Convert.ToInt16(LBit)) / 8).ToString()));
-            addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit)- Convert.ToInt16(LBit)+1).ToString()));
+            addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit) + 1).ToString()));
         }
 
         private void handleUnsigned(XPathNodeIterator iterator)
@@ -325,23 +359,23 @@ namespace org.oobd.tools.OpenDiagX
             addTextnode(thisDIDEntry, "BytePos", ((Convert.ToInt16(byteSize) - ((Convert.ToInt16(MBit) + 1) / 8)).ToString()));
             addTextnode(thisDIDEntry, "BitPos", (Convert.ToInt16(LBit) % 8).ToString());
             addTextnode(thisDIDEntry, "ByteNr", (((Convert.ToInt16(MBit) + 1 - Convert.ToInt16(LBit)) / 8).ToString()));
-            addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit)+1).ToString()));
+            addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit) + 1).ToString()));
 
             if (iterator.Current.SelectSingleNode("DATA_DEFINITION/NUMERIC_PARAMETERS") != null)
-                {
-                    //addTextnode(thisDIDEntry, "Resolution", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION"));
-                    try2addTextnode(thisDIDEntry, iterator.Current, "Resolution", "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION", "1");
-                    //addTextnode(thisDIDEntry, "Offset", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET"));
-                    try2addTextnode(thisDIDEntry, iterator.Current, "Offset", "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET", "0");
-                    //addTextnode(thisDIDEntry, "Units", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS"));
-                    try2addTextnode(thisDIDEntry, iterator.Current, "Units", "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS", "");
-                }
-                else
-                {
-                    addTextnode(thisDIDEntry, "Resolution", "1");
-                    addTextnode(thisDIDEntry, "Offset", "0");
-                    addTextnode(thisDIDEntry, "Units", "");
-                }
+            {
+                //addTextnode(thisDIDEntry, "Resolution", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION"));
+                try2addTextnode(thisDIDEntry, iterator.Current, "Resolution", "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION", "1");
+                //addTextnode(thisDIDEntry, "Offset", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET"));
+                try2addTextnode(thisDIDEntry, iterator.Current, "Offset", "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET", "0");
+                //addTextnode(thisDIDEntry, "Units", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS"));
+                try2addTextnode(thisDIDEntry, iterator.Current, "Units", "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS", "");
+            }
+            else
+            {
+                addTextnode(thisDIDEntry, "Resolution", "1");
+                addTextnode(thisDIDEntry, "Offset", "0");
+                addTextnode(thisDIDEntry, "Units", "");
+            }
         }
         private void handleSigned(XPathNodeIterator iterator)
         {
@@ -361,23 +395,23 @@ namespace org.oobd.tools.OpenDiagX
             addTextnode(thisDIDEntry, "BytePos", ((Convert.ToInt16(byteSize) - ((Convert.ToInt16(MBit) + 1) / 8)).ToString()));
             addTextnode(thisDIDEntry, "BitPos", (Convert.ToInt16(LBit) % 8).ToString());
             addTextnode(thisDIDEntry, "ByteNr", (((Convert.ToInt16(MBit) + 1 - Convert.ToInt16(LBit)) / 8).ToString()));
-            addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit)+1).ToString()));
-            
+            addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit) + 1).ToString()));
+
             if (iterator.Current.SelectSingleNode("DATA_DEFINITION/NUMERIC_PARAMETERS") != null)
-                {
-                    //addTextnode(thisDIDEntry, "Resolution", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION"));
-                    try2addTextnode(thisDIDEntry, iterator.Current, "Resolution", "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION", "1");
-                    //addTextnode(thisDIDEntry, "Offset", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET"));
-                    try2addTextnode(thisDIDEntry, iterator.Current, "Offset", "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET", "0");
-                    //addTextnode(thisDIDEntry, "Units", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS"));
-                    try2addTextnode(thisDIDEntry, iterator.Current, "Units", "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS", "");
-                }
-                else
-                {
-                    addTextnode(thisDIDEntry, "Resolution", "1");
-                    addTextnode(thisDIDEntry, "Offset", "0");
-                    addTextnode(thisDIDEntry, "Units", "");
-                }
+            {
+                //addTextnode(thisDIDEntry, "Resolution", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION"));
+                try2addTextnode(thisDIDEntry, iterator.Current, "Resolution", "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION", "1");
+                //addTextnode(thisDIDEntry, "Offset", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET"));
+                try2addTextnode(thisDIDEntry, iterator.Current, "Offset", "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET", "0");
+                //addTextnode(thisDIDEntry, "Units", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS"));
+                try2addTextnode(thisDIDEntry, iterator.Current, "Units", "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS", "");
+            }
+            else
+            {
+                addTextnode(thisDIDEntry, "Resolution", "1");
+                addTextnode(thisDIDEntry, "Offset", "0");
+                addTextnode(thisDIDEntry, "Units", "");
+            }
         }
         private void handleBCD(XPathNodeIterator iterator)
         {
@@ -397,7 +431,7 @@ namespace org.oobd.tools.OpenDiagX
             addTextnode(thisDIDEntry, "BytePos", ((Convert.ToInt16(byteSize) - ((Convert.ToInt16(MBit) + 1) / 8)).ToString()));
             addTextnode(thisDIDEntry, "BitPos", (Convert.ToInt16(LBit) % 8).ToString());
             addTextnode(thisDIDEntry, "ByteNr", (((Convert.ToInt16(MBit) + 1 - Convert.ToInt16(LBit)) / 8).ToString()));
-            addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit)+1).ToString()));
+            addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit) + 1).ToString()));
 
             if (iterator.Current.SelectSingleNode("DATA_DEFINITION/NUMERIC_PARAMETERS") != null)
             {
@@ -414,7 +448,7 @@ namespace org.oobd.tools.OpenDiagX
                 addTextnode(thisDIDEntry, "Offset", "0");
                 addTextnode(thisDIDEntry, "Units", "");
             }
-  
+
         }
         private void handleFloat(XPathNodeIterator iterator)
         {
@@ -423,7 +457,7 @@ namespace org.oobd.tools.OpenDiagX
             String Name = getpath(iterator.Current, "NAME");
             String parentLevelName = getpath(iterator.Current, "../NAME");
             int byteSize = Convert.ToInt32(getpath(iterator.Current, "../BYTE_SIZE"));
-            
+
             if (Name == null)
             {
                 Name = parentLevelName;
@@ -435,8 +469,8 @@ namespace org.oobd.tools.OpenDiagX
             addTextnode(thisDIDEntry, "BytePos", ((Convert.ToInt16(byteSize) - ((Convert.ToInt16(MBit) + 1) / 8)).ToString()));
             addTextnode(thisDIDEntry, "BitPos", (Convert.ToInt16(LBit) % 8).ToString());
             addTextnode(thisDIDEntry, "ByteNr", (((Convert.ToInt16(MBit) + 1 - Convert.ToInt16(LBit)) / 8).ToString()));
-            addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit)+1).ToString()));
-          
+            addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit) + 1).ToString()));
+
             if (iterator.Current.SelectSingleNode("DATA_DEFINITION/NUMERIC_PARAMETERS") != null)
             {
                 //addTextnode(thisDIDEntry, "Resolution", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION"));
@@ -453,7 +487,7 @@ namespace org.oobd.tools.OpenDiagX
                 addTextnode(thisDIDEntry, "Units", "");
             }
         }
-        
+
         private void handleEnumerated(XPathNodeIterator iterator)
         {
             int byteSize = Convert.ToInt32(getpath(iterator.Current, "../BYTE_SIZE"));
@@ -498,10 +532,10 @@ namespace org.oobd.tools.OpenDiagX
             String LBit = getpath(iterator.Current, "LEAST_SIG_BIT");
             String MBit = getpath(iterator.Current, "MOST_SIG_BIT");
             String Name = getpath(iterator.Current, "NAME");
-           
+
             String parentLevelName = getpath(iterator.Current, "../NAME");
             int byteSize = Convert.ToInt32(getpath(iterator.Current, "../BYTE_SIZE"));
-            
+
             if (Name == null)
             {
                 Name = parentLevelName;
@@ -513,23 +547,23 @@ namespace org.oobd.tools.OpenDiagX
             addTextnode(thisDIDEntry, "BytePos", ((Convert.ToInt16(byteSize) - ((Convert.ToInt16(MBit) + 1) / 8)).ToString()));
             addTextnode(thisDIDEntry, "BitPos", (Convert.ToInt16(LBit) % 8).ToString());
             addTextnode(thisDIDEntry, "ByteNr", (((Convert.ToInt16(MBit) + 1 - Convert.ToInt16(LBit)) / 8).ToString()));
-            addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit)+1).ToString()));
-          
+            addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit) + 1).ToString()));
+
             if (iterator.Current.SelectSingleNode("DATA_DEFINITION/NUMERIC_PARAMETERS") != null)
-                {
-                    //addTextnode(thisDIDEntry, "Resolution", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION"));
-                    try2addTextnode(thisDIDEntry, iterator.Current, "Resolution", "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION", "1");
-                    //addTextnode(thisDIDEntry, "Offset", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET"));
-                    try2addTextnode(thisDIDEntry, iterator.Current, "Offset", "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET", "0");
-                    //addTextnode(thisDIDEntry, "Units", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS"));
-                    try2addTextnode(thisDIDEntry, iterator.Current, "Units", "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS", "");
-                }
-                else
-                {
-                    addTextnode(thisDIDEntry, "Resolution", "1");
-                    addTextnode(thisDIDEntry, "Offset", "0 ");
-                    addTextnode(thisDIDEntry, "Units", "");
-                }
+            {
+                //addTextnode(thisDIDEntry, "Resolution", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION"));
+                try2addTextnode(thisDIDEntry, iterator.Current, "Resolution", "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION", "1");
+                //addTextnode(thisDIDEntry, "Offset", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET"));
+                try2addTextnode(thisDIDEntry, iterator.Current, "Offset", "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET", "0");
+                //addTextnode(thisDIDEntry, "Units", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS"));
+                try2addTextnode(thisDIDEntry, iterator.Current, "Units", "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS", "");
+            }
+            else
+            {
+                addTextnode(thisDIDEntry, "Resolution", "1");
+                addTextnode(thisDIDEntry, "Offset", "0 ");
+                addTextnode(thisDIDEntry, "Units", "");
+            }
         }
         private Boolean try2addTextnode(XmlElement outputNode, XPathNavigator currentNode, String tagName, String path, String defaultValue)
         {

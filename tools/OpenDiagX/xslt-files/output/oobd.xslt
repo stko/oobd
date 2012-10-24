@@ -106,25 +106,25 @@ local selftest = {
 </xsl:template>
 
 <xsl:template match="SingleBit">
-<xsl:variable name="corrByteNr" select="0+number(./BytePos)"/>idx<xsl:value-of select="number($corrByteNr)"/><xsl:value-of select="./BitNr"/> = { by = <xsl:value-of select="number($corrByteNr)"/> , bi = <xsl:value-of select="./BitPos"/> , t= "<xsl:value-of select="./Name"/>" , lt = "<xsl:value-of select="./LowText"/>" ,  ht = "<xsl:value-of select="./HighText"/>"},
+<xsl:variable name="corrByteNr" select="0+number(./BytePos)"/>idx<xsl:value-of select="./Bit"/><xsl:value-of select="./BitNr"/> = { by = <xsl:value-of select="number($corrByteNr)"/> , bi = <xsl:value-of select="./BitPos"/><xsl:if test="../OutputSession">, session = "<xsl:value-of select="../OutputSession"/>"</xsl:if><xsl:if test="../OutputService">, service = "<xsl:value-of select="../OutputService"/>"</xsl:if>, t= "<xsl:value-of select="./Name"/>" , lt = "<xsl:value-of select="./LowText"/>" ,  ht = "<xsl:value-of select="./HighText"/>"},
 </xsl:template>
 
-<xsl:template match="UNSIGNED"> <xsl:param name="paramPCK" /><xsl:if test="$paramPCK = 1">idx<xsl:value-of select="./BytePos" /><xsl:value-of select="./BitPos" /> = </xsl:if> {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "UNSIGNED" , title = "<xsl:value-of select="./Name"/>"} ,
+<xsl:template match="UNSIGNED"> <xsl:param name="paramPCK" /><xsl:if test="$paramPCK = 1">idx<xsl:value-of select="./Bit" /><xsl:value-of select="./BitPos" /> = </xsl:if> {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "UNSIGNED" , title = "<xsl:value-of select="./Name"/>"} ,
 </xsl:template>
 
-<xsl:template match="SIGNED"> <xsl:param name="paramPCK" /><xsl:if test="$paramPCK = 1">idx<xsl:value-of select="./BytePos" /><xsl:value-of select="./BitPos" /> = </xsl:if> {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "SIGNED", title = "<xsl:value-of select="./Name"/>"} ,
+<xsl:template match="SIGNED"> <xsl:param name="paramPCK" /><xsl:if test="$paramPCK = 1">idx<xsl:value-of select="./Bit" /><xsl:value-of select="./BitPos" /> = </xsl:if> {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "SIGNED", title = "<xsl:value-of select="./Name"/>"} ,
 </xsl:template>
 
-<xsl:template match="FLOAT"> <xsl:param name="paramPCK" /><xsl:if test="$paramPCK = 1">idx<xsl:value-of select="./BytePos" /><xsl:value-of select="./BitPos" /> = </xsl:if> {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "FLOAT", title = "<xsl:value-of select="./Name"/>"} ,
+<xsl:template match="FLOAT"> <xsl:param name="paramPCK" /><xsl:if test="$paramPCK = 1">idx<xsl:value-of select="./Bit" /><xsl:value-of select="./BitPos" /> = </xsl:if> {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "FLOAT", title = "<xsl:value-of select="./Name"/>"} ,
 </xsl:template>
 
-<xsl:template match="BCD"> <xsl:param name="paramPCK" /><xsl:if test="$paramPCK = 1">idx<xsl:value-of select="./BytePos" /><xsl:value-of select="./BitPos" /> = </xsl:if> {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "BCD", title = "<xsl:value-of select="./Name"/>"} ,
+<xsl:template match="BCD"> <xsl:param name="paramPCK" /><xsl:if test="$paramPCK = 1">idx<xsl:value-of select="./Bit" /><xsl:value-of select="./BitPos" /> = </xsl:if> {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "BCD", title = "<xsl:value-of select="./Name"/>"} ,
 </xsl:template>
 
-<xsl:template match="ASCII"> <xsl:param name="paramPCK" /><xsl:if test="$paramPCK = 1">idx<xsl:value-of select="./BytePos" /><xsl:value-of select="./BitPos" /> = </xsl:if> {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , dtype = "ASCII", title = "<xsl:value-of select="./Name"/>" },
+<xsl:template match="ASCII"> <xsl:param name="paramPCK" /><xsl:if test="$paramPCK = 1">idx<xsl:value-of select="./Bit" /><xsl:value-of select="./BitPos" /> = </xsl:if> {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , dtype = "ASCII", title = "<xsl:value-of select="./Name"/>" },
 </xsl:template>
 
-<xsl:template match="BYTE"> <xsl:param name="paramPCK" /><xsl:if test="$paramPCK = 1">idx<xsl:value-of select="./BytePos" /><xsl:value-of select="./BitPos" /> = </xsl:if> {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "BYTE", title = "<xsl:value-of select="./Name"/>"} ,
+<xsl:template match="BYTE"> <xsl:param name="paramPCK" /><xsl:if test="$paramPCK = 1">idx<xsl:value-of select="./Bit" /><xsl:value-of select="./BitPos" /> = </xsl:if> {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "BYTE", title = "<xsl:value-of select="./Name"/>"} ,
 </xsl:template>
 
 <xsl:template match="ENUM"> <xsl:param name="paramPCK" /><xsl:variable name="corrByteNr" select="0+number(./SingleBit/ByteNr)" />
