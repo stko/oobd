@@ -216,4 +216,14 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 			myComPort = null;
 		}
 	}
+
+	public Properties loadProperty(int pathID, String filename) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean saveProperty(int pathID, String filename, Properties prop) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

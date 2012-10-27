@@ -210,4 +210,19 @@ public class ComPort implements OOBDPort {
 		return BTDeviceSet;
 	}
 
+	public void attachShutDownHook() {
+	      Runtime.getRuntime().addShutdownHook(new Thread() {
+
+	            @Override
+	            public void run() {
+	                System.out.println("Inside Add Shutdown Hook");
+	                close();
+	                System.out.println("Serial line closed");
+	            }
+	        });
+	        System.out.println("Shut Down Hook Attached.");
+
+		
+	}
+
 }

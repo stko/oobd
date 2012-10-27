@@ -81,7 +81,7 @@ public class Diagnose extends ListActivity {
 		// receive main menu from Lua Script Engine
 		// mDiagnoseItems = OOBDApp.getInstance().getDiagnoseItems("INIT");
 
-		mDiagnoseItems = (VizTable) VizTable.getInstance("", "");
+		mDiagnoseItems = VizTable.getInstance("", "");
 
 		mDiagnoseAdapter = new DiagnoseAdapter(Diagnose.this, mDiagnoseItems);
 		mDiagnoseListView.setAdapter(mDiagnoseAdapter);
@@ -176,8 +176,8 @@ public class Diagnose extends ListActivity {
 		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item
 				.getMenuInfo();
 		int ListItemIndex = info.position;
-		DiagnoseItem myItem = mDiagnoseItems.get(ListItemIndex);
-		Visualizer myVisualizer = myItem.getMyVisualizer();
+
+		Visualizer myVisualizer = mDiagnoseItems.get(ListItemIndex);
 		switch (item.getItemId()) {
 		case 0:
 			myVisualizer.setUpdateFlag(OOBDConstants.VE_UPDATE,
@@ -207,9 +207,7 @@ public class Diagnose extends ListActivity {
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 
-		DiagnoseItem selectedItem = mDiagnoseItems.get(position);
-
-		Visualizer myVisualizer = selectedItem.getMyVisualizer();
+		Visualizer myVisualizer = mDiagnoseItems.get(position);
 		if (myVisualizer.getUpdateFlag(OOBDConstants.VE_BACK)) {
 			if (myTimerButton.isChecked()) {
 				myTimerButton.toggle(); // setSelected only has no effect..
@@ -240,14 +238,14 @@ public class Diagnose extends ListActivity {
 						// Flag
 						int i;
 						for (i = 0; i < mDiagnoseItems.size()
-								&& !mDiagnoseItems.get(i).getMyVisualizer()
-										.getUpdateFlag(OOBDConstants.VE_BACK); i++) {
+								&& !mDiagnoseItems.get(i).getUpdateFlag(
+										OOBDConstants.VE_BACK); i++) {
 						}
 						if (i < mDiagnoseItems.size()) { // a "back"-item found
-							mDiagnoseItems.get(i).getMyVisualizer()
-									.updateRequest(OOBDConstants.UR_USER); // simulate
-																			// a
-																			// user
+							mDiagnoseItems.get(i).updateRequest(
+									OOBDConstants.UR_USER); // simulate
+															// a
+															// user
 							// selection of this
 							// list item
 							return true; // stop further handling of the
@@ -317,11 +315,8 @@ public class Diagnose extends ListActivity {
 						.getLastVisiblePosition(); i++) {
 					if (i < mDiagnoseListView.getCount()) {
 						try {
-							DiagnoseItem selectedItem = (DiagnoseItem) mDiagnoseListView
+							Visualizer myVisualizer =  (Visualizer) mDiagnoseListView.getItemAtPosition(i);
 
-							.getItemAtPosition(i);
-							Visualizer myVisualizer = selectedItem
-									.getMyVisualizer();
 							if (myVisualizer.getUpdateFlag(bitNr)) {
 								myVisualizer.updateRequest(updateType);
 							}

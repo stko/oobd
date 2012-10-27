@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.oobd.base.OOBDConstants;
+import org.oobd.base.visualizer.Visualizer;
 import org.oobd.ui.android.application.OOBDApp;
 
 import android.content.BroadcastReceiver;
@@ -24,9 +25,9 @@ import android.widget.ImageView;
 
 /**
  * @author Andreas Budde, Peter Mayer
- * Adapter to show the differen {@link DiagnoseItem} in a {@link ListView}
+ * Adapter to show the differen {@link Visualizer} in a {@link ListView}
  */
-public class DiagnoseAdapter extends ArrayAdapter<DiagnoseItem> {
+public class DiagnoseAdapter extends ArrayAdapter<Visualizer> {
 	
 	private final LayoutInflater mlayoutInflater;
 	
@@ -43,7 +44,7 @@ public class DiagnoseAdapter extends ArrayAdapter<DiagnoseItem> {
         }
 	};
 	
-	public DiagnoseAdapter(Context context, ArrayList<DiagnoseItem> items) {
+	public DiagnoseAdapter(Context context, ArrayList<Visualizer> items) {
 		super(context, 0, items);
 		mlayoutInflater = LayoutInflater.from(context);
 		
@@ -70,7 +71,7 @@ public class DiagnoseAdapter extends ArrayAdapter<DiagnoseItem> {
 
 	/**
 	 * Called by the ListView component for each DiagnoseListViewItem 
-	 * and properly displays each {@link DiagnoseItem}. Returns a View object 
+	 * and properly displays each {@link Visualizer}. Returns a View object 
 	 * that represents a list row.
 	 * @param position 	The position of the item within the adapter's data set of the item whose view we want.
 	 * @param convertView 	The old view to reuse, if possible. Note: You should check that this view is non-null and of an appropriate type before using. If it is not possible to convert this view to display the correct data, this method can create a new view.
@@ -87,7 +88,7 @@ public class DiagnoseAdapter extends ArrayAdapter<DiagnoseItem> {
 					parent, false);
 		}
 
-		DiagnoseItem item = null;
+		Visualizer item = null;
 		try {
 			item = getItem(position);
 
@@ -100,11 +101,11 @@ public class DiagnoseAdapter extends ArrayAdapter<DiagnoseItem> {
 			
 			TextView functionValue = (TextView) convertView
 				.findViewById(R.id.diagnose_function_value);
-			functionValue.setText(item.getFunctionValue());
+			functionValue.setText(item.toString());
 			
 			TextView functionName = (TextView) convertView
 				.findViewById(R.id.diagnose_function_name);
-			functionName.setText(item.getFunctionName());
+			functionName.setText(item.getToolTip());
 			
 /*			
 			backImageView
@@ -113,31 +114,31 @@ public class DiagnoseAdapter extends ArrayAdapter<DiagnoseItem> {
 			LogImageView
 			forwardImageView
 */			
-			if (item.getMyVisualizer().getUpdateFlag(4)){
+			if (item.getUpdateFlag(4)){
 				((ImageView) convertView.findViewById(R.id.backImageView)).setImageBitmap(myIcons[OOBDConstants.VE_BACK+1]);
 			}else{
 				((ImageView) convertView.findViewById(R.id.backImageView)).setImageBitmap(myIcons[0]);			
 			}
 			
-			if (item.getMyVisualizer().getUpdateFlag(1)){
+			if (item.getUpdateFlag(1)){
 				((ImageView) convertView.findViewById(R.id.updateImageView)).setImageBitmap(myIcons[OOBDConstants.VE_UPDATE+1]);
 			}else{
 				((ImageView) convertView.findViewById(R.id.updateImageView)).setImageBitmap(myIcons[0]);
 			}
 			
-			if (item.getMyVisualizer().getUpdateFlag(2)){
+			if (item.getUpdateFlag(2)){
 				((ImageView) convertView.findViewById(R.id.timerImageView)).setImageBitmap(myIcons[OOBDConstants.VE_TIMER+1]);
 			}else{
 				((ImageView) convertView.findViewById(R.id.timerImageView)).setImageBitmap(myIcons[0]);
 			}
 			
-			if (item.getMyVisualizer().getUpdateFlag(3)){
+			if (item.getUpdateFlag(3)){
 				((ImageView) convertView.findViewById(R.id.LogImageView)).setImageBitmap(myIcons[OOBDConstants.VE_LOG+1]);
 			}else{
 				((ImageView) convertView.findViewById(R.id.LogImageView)).setImageBitmap(myIcons[0]);
 			}
 			
-			if (item.getMyVisualizer().getUpdateFlag(0)){
+			if (item.getUpdateFlag(0)){
 				((ImageView) convertView.findViewById(R.id.forwardImageView)).setImageBitmap(myIcons[OOBDConstants.VE_MENU+1]);
 			}else{
 				((ImageView) convertView.findViewById(R.id.forwardImageView)).setImageBitmap(myIcons[0]);
