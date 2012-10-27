@@ -14,22 +14,29 @@ public class DiagnoseItem {
 	
 
 	
-	private Visualizer myVisualizer; 
+	private Visualizer value; 
 	private Onion myOnion;
+    boolean toBePlaced = true; //indicates, if the actual instance is already been placed on an canvas or not
+    boolean awaitingUpdate = false;
+    boolean removalState = false;
 
 	
-	public DiagnoseItem (Visualizer viz, Onion onion) {
-		this.myVisualizer = viz;
+	public DiagnoseItem () {
+		super();
+	}
+	
+	public void initValue (Visualizer viz, Onion onion) {
+		this.value = viz;
 		this.myOnion = onion;
 	}
 	
 
 	public String getFunctionValue() {
-		return myVisualizer.toString();
+		return value.toString();
 	}
 
 	public String getFunctionName() {
-		return myVisualizer.getToolTip();
+		return value.getToolTip();
 	}
 
 	public String toString() {
@@ -37,12 +44,20 @@ public class DiagnoseItem {
 	}
 
 
-	public Visualizer getMyVisualizer() {
-		return myVisualizer;
+	public Visualizer getVisualizer() {
+		return value;
 	}
 
-	public void setMyVisualizer(Visualizer myVisualizer) {
-		this.myVisualizer = myVisualizer;
+	public void setVisualizer(Visualizer myVisualizer) {
+		this.value = myVisualizer;
 	}
 
+    public void setRemove(String pageID) {
+        removalState = true;
+        value.setRemove();
+    }
+
+ 
+
+	
 }

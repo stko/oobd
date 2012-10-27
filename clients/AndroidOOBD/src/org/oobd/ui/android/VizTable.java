@@ -9,10 +9,16 @@ import org.oobd.ui.android.application.OOBDApp;
 
 import android.content.Intent;
 
-public class VizTable extends ArrayList<DiagnoseItem> implements IFvisualizer {
+//public class VizTable extends ArrayList<DiagnoseItem> implements IFvisualizer {
+	public class VizTable extends ArrayList<Visualizer> implements IFvisualizer {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public static VizTable thisVizTable = null;;
 	boolean awaitingUpdate = false;
+     boolean removalState = false;
 	
 	public static VizTable getInstance(String pageID, String vizName) {
 		if (thisVizTable == null)
@@ -36,8 +42,10 @@ public class VizTable extends ArrayList<DiagnoseItem> implements IFvisualizer {
 	}
 
 	public void initValue(Visualizer viz, Onion onion) {
-		DiagnoseItem item = new DiagnoseItem (viz, onion);
-		this.add(item);
+		//DiagnoseItem item = new DiagnoseItem ();
+		//item.initValue(viz, onion);
+		//this.add(item);
+		this.add(viz);
 	}
 
 	public boolean update(int level) {
@@ -57,10 +65,18 @@ public class VizTable extends ArrayList<DiagnoseItem> implements IFvisualizer {
 	}
 
 	public void setRemove(String pageID) {
-		for(DiagnoseItem item: this){
-			item.getMyVisualizer().setRemove();
+        removalState = true;
+//		for(DiagnoseItem item: this){
+//			item.getVisualizer().setRemove();
+			for(Visualizer item: this){
+				item.setRemove();
 		}
 		
+	}
+
+	public Visualizer getVisualizer() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

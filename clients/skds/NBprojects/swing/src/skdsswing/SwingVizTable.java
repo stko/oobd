@@ -140,4 +140,8 @@ public class SwingVizTable extends JTable implements IFvisualizer {
                return false;
         }
     }
+
+    public Visualizer getVisualizer() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

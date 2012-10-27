@@ -214,37 +214,39 @@ public class ScriptengineLua extends OobdScriptengine {
         register("serWaitCall", new JavaFunction() {
 
             public int call(LuaCallFrame callFrame, int nArguments) {
+                initRPC(callFrame, nArguments);
                 Logger.getLogger(ScriptengineLua.class.getName()).log(
                         Level.INFO,
                         "Lua calls serWait with string data:>" + getString(0)
                         + "<");
-                // BaseLib.luaAssert(nArguments >0, "not enough args");
-                initRPC(callFrame, nArguments);
                 int result = 0;
-                Message answer = null;
-                try {
-                    answer = myself.getMsgPort().sendAndWait(
-                            new Message(myself, BusMailboxName, new Onion(""
-                            + "{'type':'" + CM_BUSTEST + "',"
-                            + "'owner':" + "{'name':'" + myself.getId()
-                            + "'}," + "'command':'serWait',"
-                            + "'timeout':'" + getInt(1) + "',"
-                            + "'data':'"
-                            + Base64Coder.encodeString(getString(0))
-                            + "'}")), +(getInt(1) * 12) / 10);
+                if (getString(0) != null) { // send only if string contains anything to wait for
+                    // BaseLib.luaAssert(nArguments >0, "not enough args");
+                    Message answer = null;
+                    try {
+                        answer = myself.getMsgPort().sendAndWait(
+                                new Message(myself, BusMailboxName, new Onion(""
+                                + "{'type':'" + CM_BUSTEST + "',"
+                                + "'owner':" + "{'name':'" + myself.getId()
+                                + "'}," + "'command':'serWait',"
+                                + "'timeout':'" + getInt(1) + "',"
+                                + "'data':'"
+                                + Base64Coder.encodeString(getString(0))
+                                + "'}")), +(getInt(1) * 12) / 10);
 
-                    if (answer != null) {
+                        if (answer != null) {
+                            Logger.getLogger(ScriptengineLua.class.getName()).log(
+                                    Level.INFO,
+                                    "Lua calls serWait returns with onion:"
+                                    + answer.getContent().toString());
+                            result = answer.getContent().getInt("result");
+
+                        }
+
+                    } catch (JSONException ex) {
                         Logger.getLogger(ScriptengineLua.class.getName()).log(
-                                Level.INFO,
-                                "Lua calls serWait returns with onion:"
-                                + answer.getContent().toString());
-                        result = answer.getContent().getInt("result");
-
+                                Level.SEVERE, null, ex);
                     }
-
-                } catch (JSONException ex) {
-                    Logger.getLogger(ScriptengineLua.class.getName()).log(
-                            Level.SEVERE, null, ex);
                 }
                 callFrame.push(new Integer(result));
                 finishRPC(callFrame, nArguments);
