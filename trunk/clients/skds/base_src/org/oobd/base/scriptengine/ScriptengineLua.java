@@ -142,8 +142,8 @@ public class ScriptengineLua extends OobdScriptengine {
                             new Onion("" + "{'type':'" + CM_VISUALIZE + "',"
                             + "'owner':" + "{'name':'" + myself.getId()
                             + "'}," + updevent + optid + "'tooltip':'"
-                            + getString(0) + "'," + "'value':'"
-                            + getString(2) + "'," + "'name':'"
+                            + Base64Coder.encodeString(getString(0)) + "'," + "'value':'"
+                            + Base64Coder.encodeString(getString(2)) + "'," + "'name':'"
                             + getString(1) + ":" + getString(4) + "'}")));
 
                 } catch (JSONException ex) {
@@ -349,8 +349,8 @@ public class ScriptengineLua extends OobdScriptengine {
                             + "{'type':'" + CM_DBLOOKUP + "',"
                             + "'owner':" + "{'name':'" + myself.getId()
                             + "'}," + "'command':'lookup',"
-                            + "'dbfilename':'" + scriptDir
-                            + File.separator + getString(0) + "',"
+                            + "'dbfilename':'" + Base64Coder.encodeString(scriptDir
+                            + File.separator + getString(0)) + "',"
                             + "'key':'" + getString(1) + "'}")), -1);
                     if (answer != null) {
                         result = answer.getContent().getOnion("result");
@@ -398,8 +398,8 @@ public class ScriptengineLua extends OobdScriptengine {
                             + "{'type':'" + CM_DBLOOKUP + "',"
                             + "'owner':" + "{'name':'" + myself.getId()
                             + "'}," + "'command':'lookup',"
-                            + "'dbfilename':'" + scriptDir
-                            + File.separator + getString(0) + "',"
+                            + "'dbfilename':'" + Base64Coder.encodeString(scriptDir
+                            + File.separator + getString(0)) + "',"
                             //+ "'dbfilename':'" + getString(0) + "',"
                             + "'key':'" + Base64Coder.encodeString(getString(1)) + "'}")), -1);
                     if (answer != null) {
@@ -463,11 +463,11 @@ public class ScriptengineLua extends OobdScriptengine {
                             // + "'value':'" +
                             // Integer.toString(i)
                             + "'value':'"
-                            + callFunction(
+                            + Base64Coder.encodeString(callFunction(
                             vis,
                             new Object[]{
                                 on.getOnionString("vis"),
-                                on.getOnionString("optid")})
+                                on.getOnionString("optid")}))
                             + "'}")));
                 }
             } catch (JSONException ex) {

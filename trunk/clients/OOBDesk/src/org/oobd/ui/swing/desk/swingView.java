@@ -81,6 +81,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private final Timer timer;
     private int processBarMax = 100;
     private int elementCount;
+    private int defaultGridWidth = 200;
     private String pageTitle;
 
     public swingView(SingleFrameApplication app) {
@@ -266,6 +267,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         backButton = new javax.swing.JButton();
         updateButton = new javax.swing.JButton();
         timerButton = new javax.swing.JToggleButton();
+        jSeparator1 = new javax.swing.JToolBar.Separator();
+        gridSmallerButton = new javax.swing.JButton();
+        gridBiggerButton = new javax.swing.JButton();
         diagnoseScrollPanel = new javax.swing.JScrollPane();
         diagnoseButtonPanel = new javax.swing.JPanel();
         outputPanel = new javax.swing.JPanel();
@@ -480,6 +484,35 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         timerButton.setName("timerButton"); // NOI18N
         timerButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         diagnoseToolBar.add(timerButton);
+
+        jSeparator1.setName("jSeparator1"); // NOI18N
+        diagnoseToolBar.add(jSeparator1);
+
+        gridSmallerButton.setText(resourceMap.getString("gridSmallerButton.text")); // NOI18N
+        gridSmallerButton.setToolTipText(resourceMap.getString("gridSmallerButton.toolTipText")); // NOI18N
+        gridSmallerButton.setFocusable(false);
+        gridSmallerButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        gridSmallerButton.setName("gridSmallerButton"); // NOI18N
+        gridSmallerButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        gridSmallerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gridSmallerButtonActionPerformed(evt);
+            }
+        });
+        diagnoseToolBar.add(gridSmallerButton);
+
+        gridBiggerButton.setText(resourceMap.getString("gridBiggerButton.text")); // NOI18N
+        gridBiggerButton.setToolTipText(resourceMap.getString("gridBiggerButton.toolTipText")); // NOI18N
+        gridBiggerButton.setFocusable(false);
+        gridBiggerButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        gridBiggerButton.setName("gridBiggerButton"); // NOI18N
+        gridBiggerButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        gridBiggerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                gridBiggerButtonActionPerformed(evt);
+            }
+        });
+        diagnoseToolBar.add(gridBiggerButton);
 
         diagnosePanel.add(diagnoseToolBar);
 
@@ -804,6 +837,20 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         jTextAreaOutput.setText("");
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    private void gridSmallerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gridSmallerButtonActionPerformed
+        int actColCount = ((GridLayout) diagnoseButtonPanel.getLayout()).getColumns();
+        defaultGridWidth = diagnoseButtonPanel.getWidth() / (actColCount + 1);
+        refreshGrid();
+    }//GEN-LAST:event_gridSmallerButtonActionPerformed
+
+    private void gridBiggerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gridBiggerButtonActionPerformed
+        int actColCount = ((GridLayout) diagnoseButtonPanel.getLayout()).getColumns();
+        if (actColCount > 1) {
+            defaultGridWidth = diagnoseButtonPanel.getWidth() / (actColCount - 1);
+            refreshGrid();
+        }
+    }//GEN-LAST:event_gridBiggerButtonActionPerformed
+
     @Action
     public void onClickButton_Back() {
         IFvisualizer back = null;
@@ -856,12 +903,15 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JTabbedPane diagnoseTabPanel;
     private javax.swing.JLabel diagnoseTitle;
     private javax.swing.JToolBar diagnoseToolBar;
+    private javax.swing.JButton gridBiggerButton;
+    private javax.swing.JButton gridSmallerButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JTextArea jTextAreaOutput;
     private javax.swing.JToggleButton logButton;
     private javax.swing.JPanel main;
@@ -1027,7 +1077,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             diagnoseButtonPanel.invalidate();
             GridLayout thisGrid = (GridLayout) diagnoseButtonPanel.getLayout();
             Dimension s = diagnose.getSize();
-            int cols = s.width / 200;
+            int cols = s.width / defaultGridWidth;
             if (cols < 1) {
                 cols = 1;
             }
@@ -1071,7 +1121,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             for (IFvisualizer vis : pageObjects) {
                 if (vis.getVisualizer().getUpdateFlag(1)) {
                     vis.getVisualizer().updateRequest(OOBDConstants.UR_UPDATE);
-                     setStatusLine("progress", 100 - 100 / i);
+                    setStatusLine("progress", 100 - 100 / i);
                     i++;
                 }
             }

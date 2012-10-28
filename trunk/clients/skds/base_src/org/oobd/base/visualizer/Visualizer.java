@@ -153,7 +153,7 @@ public class Visualizer {
 		ownerEngine = onion.getOnion(OOBDConstants.FN_OWNER);
 		name = onion.getOnionString(OOBDConstants.FN_NAME);
 		optId = onion.getOnionString(OOBDConstants.FN_OPTID);
-		toolTip = onion.getOnionString(OOBDConstants.FN_TOOLTIP);
+		toolTip = onion.getOnionBase64String(OOBDConstants.FN_TOOLTIP);
 		try {
 			updateEvents = onion.getInt(OOBDConstants.FN_UPDATEOPS);
 		} catch (JSONException e) {
@@ -255,7 +255,7 @@ public class Visualizer {
 		if (val == null) {
 			return "#NA";
 		} else {
-			return val;
+			return Base64Coder.decodeString(val);
 		}
 
 	}

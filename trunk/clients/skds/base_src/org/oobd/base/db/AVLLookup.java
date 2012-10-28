@@ -39,7 +39,7 @@ public class AVLLookup extends OobdDB implements OOBDConstants {
             Onion on = msg.getContent();
             String command = on.getOnionString("command");
             if ("lookup".equalsIgnoreCase(command)) {
-                String dbFilename = on.getOnionString("dbfilename");
+                String dbFilename = on.getOnionBase64String("dbfilename");
                 String key = on.getOnionBase64String("key");
                 Logger.getLogger(AVLLookup.class.getName()).log(Level.INFO,
                         "AVLLookup lookup in " + dbFilename + " for: >" + key + "<");
