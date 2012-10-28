@@ -327,6 +327,37 @@
                             <Property name="verticalTextPosition" type="int" value="3"/>
                           </Properties>
                         </Component>
+                        <Component class="javax.swing.JToolBar$Separator" name="jSeparator1">
+                          <Properties>
+                            <Property name="name" type="java.lang.String" value="jSeparator1" noResource="true"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JButton" name="gridSmallerButton">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" resourceKey="gridSmallerButton.text"/>
+                            <Property name="toolTipText" type="java.lang.String" resourceKey="gridSmallerButton.toolTipText"/>
+                            <Property name="focusable" type="boolean" value="false"/>
+                            <Property name="horizontalTextPosition" type="int" value="0"/>
+                            <Property name="name" type="java.lang.String" value="gridSmallerButton" noResource="true"/>
+                            <Property name="verticalTextPosition" type="int" value="3"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="gridSmallerButtonActionPerformed"/>
+                          </Events>
+                        </Component>
+                        <Component class="javax.swing.JButton" name="gridBiggerButton">
+                          <Properties>
+                            <Property name="text" type="java.lang.String" resourceKey="gridBiggerButton.text"/>
+                            <Property name="toolTipText" type="java.lang.String" resourceKey="gridBiggerButton.toolTipText"/>
+                            <Property name="focusable" type="boolean" value="false"/>
+                            <Property name="horizontalTextPosition" type="int" value="0"/>
+                            <Property name="name" type="java.lang.String" value="gridBiggerButton" noResource="true"/>
+                            <Property name="verticalTextPosition" type="int" value="3"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="gridBiggerButtonActionPerformed"/>
+                          </Events>
+                        </Component>
                       </SubComponents>
                     </Container>
                     <Container class="javax.swing.JScrollPane" name="diagnoseScrollPanel">

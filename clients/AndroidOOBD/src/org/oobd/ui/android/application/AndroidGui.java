@@ -1,6 +1,7 @@
 package org.oobd.ui.android.application;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -125,12 +126,11 @@ public class AndroidGui implements IFui {
 		MainActivity.getMyMainActivity().runOnUiThread(new Runnable() {
 
 			public void run() {
-
 				Diagnose.getInstance()
 						.getListView()
 						.setAdapter(
 								new DiagnoseAdapter(Diagnose.getInstance(),
-										null));
+										VizTable.getInstance("", "") ));
 			}
 		});
 
