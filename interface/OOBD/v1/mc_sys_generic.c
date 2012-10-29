@@ -61,10 +61,10 @@ xSemaphoreHandle protocollBinarySemaphore;
 
 void mc_init_sys_boot()
 {
-//generate binary semaphore for protocol switching
-    vSemaphoreCreateBinary(protocollBinarySemaphore);
     DEBUGPRINT("boot system\n", 'a');
     mc_init_sys_boot_specific();
+    // generate binary semaphore for protocol switching
+    vSemaphoreCreateBinary(protocollBinarySemaphore);
 }
 
 
