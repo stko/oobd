@@ -391,19 +391,23 @@ void USART1_Configuration(void) {
 	/* set UartAutobaudControl to default UART value 115200kbit/s */
 	BTM222_UartAutobaudControl = 0;
 
+    USART_SendData(USART1, '\r'); /* clear command line from Bootloader String first */
+	for (nCount = 0; nCount < 9000000; nCount++) {
+	}; /* delay for waiting of BTM182/BTM222 power up*/
+
 	while (BTM222_UartAutobaudControl != 9) {
 		USART_SendData(USART1, 'a');
 		for (nCount = 0; nCount < nLength; nCount++) {
 		}; /* delay */
+
 		USART_SendData(USART1, 't');
+	    for (nCount = 0; nCount < nLength; nCount++) {
+		}; /* delay */
 
+	    USART_SendData(USART1, '\r');
 		for (nCount = 0; nCount < nLength; nCount++) {
 		}; /* delay */
-		USART_SendData(USART1, '\r');
-
-		for (nCount = 0; nCount < nLength; nCount++) {
-		}; /* delay */
-		for (nCount = 0; nCount < 100000; nCount++) {
+		for (nCount = 0; nCount < 150000; nCount++) {
 		}; /* delay */
 		BufCnt = 0;
 		BTM222_UART_Rx_Flag = pdFALSE;
@@ -429,7 +433,7 @@ void USART1_Configuration(void) {
 		for (nCount = 0; nCount < nLength; nCount++) {
 		}; /* delay */
 
-		for (nCount = 0; nCount < 800000; nCount++) {
+		for (nCount = 0; nCount < 500000; nCount++) {
 		}; /* delay */
 
 		/* check received response character from BTM222 */
