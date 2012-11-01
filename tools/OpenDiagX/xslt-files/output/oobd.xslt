@@ -14,10 +14,13 @@ dofile("../lib_uds/module.lua")
 <xsl:template match="oobdobx">
 moduleName = '<xsl:value-of select="./Name"/>'
 shortName = '<xsl:value-of select="./ShortName"/>'
-ModuleID = "<xsl:value-of select="./PhysAdress"/>";
-ResponseID = "<xsl:value-of select="./RespAdress"/>";
-FunctionalID = "<xsl:value-of select="./FuncAdress"/>";
+ModuleID = "<xsl:value-of select="./PhysAdress"/>"
+ResponseID = "<xsl:value-of select="./RespAdress"/>"
+FunctionalID = "<xsl:value-of select="./FuncAdress"/>"
 BusID = "<xsl:value-of select="./Bus"/>";
+
+
+-- optinclude("<xsl:value-of select="./ShortName"/>.seccode")
 
 --[[
 data sets for the readBMPPid() calls
