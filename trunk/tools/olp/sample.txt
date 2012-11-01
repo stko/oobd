@@ -4,3 +4,6 @@ dofile("incl_1.txt")
 --  DOFILE("incl_2.txt")
 line 3
 line 4
+-- optinclude("incl_1.txt")
+line 5
+line 6
