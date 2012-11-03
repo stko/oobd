@@ -19,7 +19,7 @@ ResponseID = "<xsl:value-of select="./RespAdress"/>"
 FunctionalID = "<xsl:value-of select="./FuncAdress"/>"
 BusID = "<xsl:value-of select="./Bus"/>";
 
-
+secCodes= {}
 -- optinclude("<xsl:value-of select="./ShortName"/>.seccode")
 
 --[[
