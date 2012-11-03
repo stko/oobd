@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 cd $1
 shift
 while [ $# -gt 1 ]
