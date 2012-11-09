@@ -729,7 +729,7 @@ void obp_uds(void *pvParameters)
 			actDataPacket.data[1] = udsBuffer->len % 256;
 			sequenceCounter = 0;
 			remainingBytes = udsBuffer->len - 6;
-			actBufferPos = 0;
+			actBufferPos = 6;
 			udsBuffer->len = 0;	/* prepare buffer to receive */
 			if (udsConfig.listen > 0) {
 			    odp_uds_dumpFrame(&actDataPacket,
