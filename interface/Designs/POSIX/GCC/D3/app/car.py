@@ -53,7 +53,7 @@ while True:
     msg =bytearray()
     data, addr = sock_in.recvfrom( 1024 ) # buffer size is 1024 bytes
     msg+=data
-    print "0x7%02X %02X %d %02X %02X %02X %02X %02X %02X %02X %02X" % ( msg[0] , msg[1] , msg[2] , msg[3] , msg[4] , msg[5] , msg[6] , msg[7] , msg[8] , msg[9] , msg[10]) 
+    print "received: 0x7%02X %02X %d %02X %02X %02X %02X %02X %02X %02X %02X" % ( msg[0] , msg[1] , msg[2] , msg[3] , msg[4] , msg[5] , msg[6] , msg[7] , msg[8] , msg[9] , msg[10]) 
     if msg[0] == 0xD0:
       msg[0]=0xE8 # changing functional address to answer address of ECU
     else:
@@ -76,7 +76,7 @@ while True:
       nrOfBytes = nrOfBytes -6 # 6 bytes aready received
       pid= "%02X%02X%02X" % ( msg[i+0] , msg[i+1] , msg[i+2])
       nextStep=0 # send FlowControl, wait for consecutive frames
-      sendTele(msg,{'d':[0x30,0x30,0x00,0x00]})
+      sendTele(msg,{'d':[0x30,0x30,0x00,0x00],'t':2})
       
     ################# Consecutive Frame #############
     if frameType == 2: # consecutive frame
