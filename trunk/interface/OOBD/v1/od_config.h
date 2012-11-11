@@ -81,6 +81,7 @@
 #define VALUE_PARAM_PROTOCOL_CAN_RAW			(0)
 #define VALUE_PARAM_PROTOCOL_CAN_UDS			(1)
 #define VALUE_PARAM_PROTOCOL_KLINE_FASTINIT		(2)
+#define VALUE_PARAM_PROTOCOL_CAN_RTD			(3)
 //#define VALUE_PARAM_PROTOCOL_xxx              (11) //please add new protocols here - this declaration becomes then globally valid for all OOBD firmware implementations
 
   /*! @} */
