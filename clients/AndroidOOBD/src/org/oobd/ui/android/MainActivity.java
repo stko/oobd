@@ -1,11 +1,18 @@
 package org.oobd.ui.android;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.util.MissingResourceException;
 import java.util.Set;
 
 import org.json.JSONException;
 import org.oobd.base.Base64Coder;
 import org.oobd.base.support.Onion;
+import org.oobd.base.OOBDConstants;
 import org.oobd.ui.android.application.AndroidGui;
 import org.oobd.ui.android.application.OOBDApp;
 
@@ -18,6 +25,8 @@ import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,7 +45,8 @@ import android.content.SharedPreferences;
  * @author Andreas Budde, Peter Mayer Activity that is launched when the app is
  *         launched.
  */
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity implements
+		ModalDialog.NoticeDialogListener {
 
 	private Button mDiagnoseButton;
 	private Spinner mSourceSpinner;
@@ -96,6 +106,8 @@ public class MainActivity extends Activity {
 		mDiagnoseButton.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
+
+
 				mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 				if (mBluetoothAdapter == null) {
 					AlertDialog alertDialog = new AlertDialog.Builder(
@@ -197,9 +209,81 @@ public class MainActivity extends Activity {
 				}
 			}
 		});
+		createDisclaimerDialog();
+
 		TextView versionView = (TextView) findViewById(R.id.versionView);
 		versionView.setText("Build "
 				+ getResources().getString(R.string.app_svnversion));
+
+	}
+
+	void createDisclaimerDialog() {
+		InputStream resource = null;
+		try {
+			resource = OOBDApp.getInstance()
+					.generateResourceStream(OOBDConstants.FT_SCRIPT,
+							OOBDConstants.DisclaimerFileName);
+		} catch (MissingResourceException ex) {
+
+		}
+		String title = "";
+		Boolean firstLine = true;
+		if (resource != null) {
+			try {
+				StringBuilder sb = new StringBuilder();
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(resource));
+				String line = null;
+
+				while ((line = reader.readLine()) != null) {
+					if (firstLine) {
+						title = line;
+						firstLine = false;
+					} else {
+						sb.append(line);
+					}
+				}
+				resource.close();
+
+				DialogFragment newFragment = new ModalDialog(title,
+						sb.toString());
+				newFragment.show(getSupportFragmentManager(), "disclaimer");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			startScript();
+		}
+	}
+
+	// this we need as a seperate function as it might be called by the
+	// onclickhandler of the Disclaimer dialog, as Android does not allow modal
+	// dialogs (only god knows why...)
+	void startScript() {
+		if (scriptName != null) {
+			preferences.edit().putString("SCRIPT", scriptName).commit();
+			// prepare the "load Script" message
+			Diagnose.showDialog = true;
+			// the following trick avoids a recreation of the Diagnose
+			// TapActivity as long as the previous created one is still
+			// in memory
+			Intent i = new Intent();
+			i.setClass(MainActivity.this, DiagnoseTab.class);
+			i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+			startActivity(i);
+
+			// startActivity(new Intent(MainActivity.this,
+			// Diagnose.class));
+			try {
+				AndroidGui.getInstance().startScriptEngine(
+						new Onion("{" + "'scriptpath':'" + scriptName + "'"
+								+ "}"));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				Log.e("OOBD", "JSON creation error", e);
+			}
+		}
 
 	}
 
@@ -253,6 +337,16 @@ public class MainActivity extends Activity {
 				}
 			}
 		}
+
+	}
+
+	public void onDialogPositiveClick(DialogFragment dialog) {
+		startScript();
+
+	}
+
+	public void onDialogNegativeClick(DialogFragment dialog) {
+		// TODO Auto-generated method stub
 
 	}
 
