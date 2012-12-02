@@ -184,33 +184,9 @@ public class MainActivity extends FragmentActivity implements
 					alertDialog.show();
 					return;
 				}
-				if (scriptName != null) {
-					preferences.edit().putString("SCRIPT", scriptName).commit();
-					// prepare the "load Script" message
-					Diagnose.showDialog = true;
-					// the following trick avoids a recreation of the Diagnose
-					// TapActivity as long as the previous created one is still
-					// in memory
-					Intent i = new Intent();
-					i.setClass(MainActivity.this, DiagnoseTab.class);
-					i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-					startActivity(i);
-
-					// startActivity(new Intent(MainActivity.this,
-					// Diagnose.class));
-					try {
-						AndroidGui.getInstance().startScriptEngine(
-								new Onion("{" + "'scriptpath':'" + scriptName
-										+ "'" + "}"));
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						Log.e("OOBD", "JSON creation error", e);
-					}
-				}
+				createDisclaimerDialog();
 			}
 		});
-		createDisclaimerDialog();
-
 		TextView versionView = (TextView) findViewById(R.id.versionView);
 		versionView.setText("Build "
 				+ getResources().getString(R.string.app_svnversion));
