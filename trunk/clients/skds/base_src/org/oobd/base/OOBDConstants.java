@@ -42,9 +42,11 @@ public interface OOBDConstants {
     public static final Integer UR_USER = 0;
     public static final Integer UR_UPDATE = 1;
     public static final Integer UR_TIMER = 2;
+    // file names for Disclaimer files:
+    public final static String DisclaimerFileName = "disclaim.html";
     // file names for property files:
-     public final static String CorePrefsFileName = "oobdcore.props";
-     public final static String AppPrefsFileName = "app.props";
+    public final static String CorePrefsFileName = "oobdcore.props";
+    public final static String AppPrefsFileName = "app.props";
      //key names for properties
      public final static String PropName_SerialPort ="SerialPort";
      public final static String PropName_ScriptDir ="ScriptDir";
