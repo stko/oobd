@@ -33,6 +33,7 @@ sock_in.bind( (UDP_IP,UDP_PORT_IN) )
 
 def sendTele(msg,data):
   d=data["d"]
+  msg[2]=data["e"]
   print dump(data)
   for i in range(len(d)):
     print d[i]

@@ -149,6 +149,24 @@ void bus_param_can_generic_Print(portBASE_TYPE msgType, void *data,
 		break;
 	    }
 	    break;
+	case VALUE_PARAM_INFO_BUS_ERROR:
+	    printser_int(bus_rx_count_can(), 10);
+	    printser_string(" ");
+	    printser_int(bus_tx_count_can(), 10);
+	    printser_string(" ");
+	    printser_int(bus_rx_error_can(), 10);
+	    printser_string(" ");
+	    printser_int(bus_tx_error_can(), 10);
+
+	    bus_clear_rx_error_can();
+	    bus_clear_tx_error_can();
+	    bus_clear_rx_count_can();
+	    bus_clear_tx_count_can();
+
+
+	    printLF();
+	    printEOT();
+	    break;
 	default:
 	    evalResult(FBID_BUS_GENERIC,
 		       ERR_CODE_OS_UNKNOWN_COMMAND, 0,

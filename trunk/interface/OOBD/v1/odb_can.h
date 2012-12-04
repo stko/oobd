@@ -45,6 +45,15 @@ void bus_close_can();
 
 void odb_can_init();
 
+portBASE_TYPE bus_rx_error_can();
+portBASE_TYPE bus_tx_error_can();
+void bus_clear_rx_error_can();
+void bus_clear_tx_error_can();
+
+portBASE_TYPE bus_rx_count_can();
+portBASE_TYPE bus_tx_count_can();
+void bus_clear_rx_count_can();
+void bus_clear_tx_count_can();
 
 // Add obd_uds_init() to the list of protocols to be initialized
 
@@ -63,7 +72,7 @@ void bus_param_can_spec_Print(portBASE_TYPE msgType, void *data,
 
 
   /*! \defgroup prot_can_generic_parm Commands: Generic CAN Commands
-     The generic CAN commands are as follows, where the command is as P 8 value ...
+     The generic CAN commands are as follows, where the command is as P 9 value ...
 
      x is as :
      *  @{
