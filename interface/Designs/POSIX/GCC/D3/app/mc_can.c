@@ -58,7 +58,9 @@ recv_cbf reportReceicedData = NULL;
 void prvUDPTask(void *pvParameters);
 
 xTaskHandle xprvUDPTaskHandle;
-
+portBASE_TYPE rxCount;
+portBASE_TYPE txCount;
+portBASE_TYPE errCount;
 extern char *oobd_Error_Text_OS[];
 extern struct CanConfig *canConfig;
 
@@ -66,7 +68,9 @@ extern struct CanConfig *canConfig;
 
 portBASE_TYPE bus_init_can()
 {
-
+    rxCount = 0;
+    txCount = 0;
+    errCount = 0;
     canConfig = pvPortMalloc(sizeof(struct CanConfig));
     if (canConfig == NULL) {
 	DEBUGPRINT("Fatal error: Not enough heap to allocate CanConfig!\n",
@@ -147,6 +151,13 @@ portBASE_TYPE bus_send_can(data_packet * data)
     if (sizeof(xUDPPacket) != iReturn) {
 	DEBUGPRINT("UDP Failed to send whole packet: %d.\n", errno);
     }
+    txCount++;
+    if (txCount > 100000) {
+	rxCount /= 2;
+	txCount /= 2;
+	errCount /= 2;
+
+    }
 
     return pdPASS;
 }
@@ -180,12 +191,18 @@ portBASE_TYPE bus_param_can_spec(param_data * args)
 
     switch (args->args[ARG_CMD]) {
     case PARAM_BUS_CONFIG:
+	rxCount = 0;
+	txCount = 0;
+	errCount = 0;
 	if (args->args[ARG_VALUE_1] != 0)
 	    canConfig->busConfig = args->args[ARG_VALUE_1];
 	createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	break;
 
     case PARAM_BUS_MODE:
+	rxCount = 0;
+	txCount = 0;
+	errCount = 0;
 	switch (args->args[ARG_VALUE_1]) {
 	case VALUE_BUS_MODE_SILENT:
 	    // send event information to the ILM task
@@ -222,6 +239,9 @@ portBASE_TYPE bus_param_can_spec(param_data * args)
 	break;
 
     case PARAM_BUS_OUTPUT_ACTIVATE:
+	rxCount = 0;
+	txCount = 0;
+	errCount = 0;
 	switch (args->args[ARG_VALUE_1]) {
 	case 0:
 	case 1:
@@ -281,10 +301,25 @@ void prvUDPTask(void *pvParameters)
 	if (pdPASS ==
 	    xQueueReceive(xUDPReceiveQueue, &xPacket,
 			  2500 / portTICK_RATE_MS)) {
+	    rxCount++;
+	    if (rxCount > 100000) {
+		rxCount /= 2;
+		txCount /= 2;
+		errCount /= 2;
+
+	    }
 	    /* Data received. Process it. */
 	    dp.recv = xPacket.ucPacket[0] + 0x700;	// add the HByte again
 	    dp.len = xPacket.ucPacket[1];
 	    dp.err = xPacket.ucPacket[2];	// use received value for error simulations
+	    if (dp.err) {
+		errCount++;
+		if (errCount > 100000) {
+		    rxCount /= 2;
+		    txCount /= 2;
+		    errCount /= 2;
+		}
+	    }
 	    dp.data = &xPacket.ucPacket[3];	// data starts here
 	    //xPacket.ucNull = 0; /* Ensure the string is terminated. */
 	    //DEBUGPRINT ("--%s", xPacket.ucPacket);
@@ -310,4 +345,51 @@ portBASE_TYPE busControl(portBASE_TYPE cmd, void *param)
 	return pdFAIL;
 	break;
     }
+}
+
+
+portBASE_TYPE bus_rx_error_can()
+{
+    return errCount;
+}
+
+portBASE_TYPE bus_tx_error_can()
+{
+    return 0;
+}
+
+
+void bus_clear_rx_error_can()
+{
+    errCount = 0;
+}
+
+
+void bus_clear_tx_error_can()
+{
+}
+
+
+
+portBASE_TYPE bus_rx_count_can()
+{
+    return rxCount;
+}
+
+
+portBASE_TYPE bus_tx_count_can()
+{
+  return txCount;
+}
+
+
+void bus_clear_rx_count_can()
+{
+  rxCount=0;
+}
+
+
+void bus_clear_tx_count_can()
+{
+  txCount=0;
 }

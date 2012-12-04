@@ -137,8 +137,16 @@ the first value x of a parameter command (p x ...) adresses the functional block
 #define VALUE_PARAM_INFO_VERSION 				( 0 )
 #define VALUE_PARAM_INFO_SERIALNUMBER   		( 1 )
 #define VALUE_PARAM_INFO_ABOUT		( 2 )
-#define VALUE_PARAM_INFO_BUS_MODE		( 3 )
-#define VALUE_PARAM_INFO_BUS_CONFIG   			( 4 )
+  /*! \addtogroup prot_can_generic_parm 
+   *  @{
+   */
+#define VALUE_PARAM_INFO_BUS_MODE		( 3 ) //!< Displays actual Bus Mode
+#define VALUE_PARAM_INFO_BUS_CONFIG   			( 4 ) //!< Displays actual Bus Config
+#define VALUE_PARAM_INFO_BUS_ERROR   			( 5 ) //!< Displays actual rx/tx counters and resets counters. Display format is: rx-count tx-count rx-error-count tx-error-count 
+/*! 
+
+@} */
+
 
 
 /* Global message types */
