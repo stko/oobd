@@ -20,7 +20,7 @@ FunctionalID = "<xsl:value-of select="./FuncAdress"/>"
 BusID = "<xsl:value-of select="./Bus"/>";
 
 secCodes= {}
--- optinclude("<xsl:value-of select="./ShortName"/>.seccode")
+ -- optinclude("<xsl:value-of select="./ShortName"/>.seccode")
 
 --[[
 data sets for the readBMPPid() calls
@@ -34,7 +34,7 @@ to save some memory, the variable names are kept short:
 --]]
 
 local BMPGroups = { 
-<xsl:for-each select="BMP">id0x<xsl:value-of select="HighPID"/><xsl:value-of select="LowPID"/> = { t = "<xsl:value-of select="Group"/>" , sb = {
+<xsl:for-each select="BMP">id0x<xsl:value-of select="HighPID"/><xsl:value-of select="LowPID"/> = { t = "<xsl:value-of select="Group"/>"<xsl:if test="AccessParams/AccessParamRead/ServiceID">, sev_r = "<xsl:value-of select="AccessParams/AccessParamRead/ServiceID"/>"</xsl:if><xsl:if test="AccessParams/AccessParamRead/SessionIDs">, ses_r ="<xsl:for-each select="AccessParams/AccessParamRead/SessionIDs/SessionID"><xsl:value-of select="current()"/>;</xsl:for-each>"</xsl:if><xsl:if test="AccessParams/AccessParamWrite/ServiceID">, sev_w = "<xsl:value-of select="AccessParams/AccessParamWrite/ServiceID"/>"</xsl:if><xsl:if test="AccessParams/AccessParamWrite/SessionIDs">, ses_w ="<xsl:for-each select="AccessParams/AccessParamWrite/SessionIDs/SessionID"><xsl:value-of select="current()"/>;</xsl:for-each>"</xsl:if><xsl:if test="AccessParams/AccessParamIOControl/ServiceID">, sev_ioc = "<xsl:value-of select="AccessParams/AccessParamIOControl/ServiceID"/>"</xsl:if><xsl:if test="AccessParams/AccessParamIOControl/SessionIDs">, ses_ioc ="<xsl:for-each select="AccessParams/AccessParamIOControl/SessionIDs/SessionID"><xsl:value-of select="current()"/>;</xsl:for-each>"</xsl:if><xsl:if test="AccessParams/AccessParamIOControl/IOControlParams">, iocp ="<xsl:for-each select="AccessParams/AccessParamIOControl/IOControlParams/IOControlParam">0<xsl:value-of select="current()"/>;</xsl:for-each>"</xsl:if>, sb = {
 <xsl:apply-templates select="SingleBit" />dummy=0}
 },
 <xsl:value-of select="usr_id"/>
@@ -43,14 +43,18 @@ local BMPGroups = {
 
 -- read data for each Single value - ASCII
 local ASCIIData = { 
-<xsl:for-each select="SVL"><xsl:if test="ASCII">id0x22<xsl:value-of select="./HighPID"/><xsl:value-of select="./LowPID"/> = <xsl:apply-templates select="ASCII" /></xsl:if>
+<xsl:for-each select="SVL"><xsl:if test="ASCII">id0x<xsl:value-of select="./HighPID"/><xsl:value-of select="./LowPID"/> = { ti = "<xsl:value-of select="Name"/>"<xsl:if test="AccessParams/AccessParamRead/ServiceID">, sev_r = "<xsl:value-of select="AccessParams/AccessParamRead/ServiceID"/>"</xsl:if><xsl:if test="AccessParams/AccessParamRead/SessionIDs">, ses_r ="<xsl:for-each select="AccessParams/AccessParamRead/SessionIDs/SessionID"><xsl:value-of select="current()"/>;</xsl:for-each>"</xsl:if><xsl:if test="AccessParams/AccessParamWrite/ServiceID">, sev_w = "<xsl:value-of select="AccessParams/AccessParamWrite/ServiceID"/>"</xsl:if><xsl:if test="AccessParams/AccessParamWrite/SessionIDs">, ses_w ="<xsl:for-each select="AccessParams/AccessParamWrite/SessionIDs/SessionID"><xsl:value-of select="current()"/>;</xsl:for-each>"</xsl:if><xsl:if test="AccessParams/AccessParamIOControl/ServiceID">, sev_ioc = "<xsl:value-of select="AccessParams/AccessParamIOControl/ServiceID"/>"</xsl:if><xsl:if test="AccessParams/AccessParamIOControl/SessionIDs">, ses_ioc ="<xsl:for-each select="AccessParams/AccessParamIOControl/SessionIDs/SessionID"><xsl:value-of select="current()"/>;</xsl:for-each>"</xsl:if><xsl:if test="AccessParams/AccessParamIOControl/IOControlParams">, iocp ="<xsl:for-each select="AccessParams/AccessParamIOControl/IOControlParams/IOControlParam">0<xsl:value-of select="current()"/>;</xsl:for-each>"</xsl:if>, av = {
+<xsl:apply-templates select="ASCII" />dummy=0}
+},
+</xsl:if>
 </xsl:for-each>dummy=0
 }
 
 -- read data for each Single value - Number
 local NumData = {
-<xsl:for-each select="SVL"><xsl:if test="BYTE">id0x22<xsl:value-of select="./HighPID"/><xsl:value-of select="./LowPID"/> = <xsl:apply-templates select="BYTE" /></xsl:if><xsl:if test="UNSIGNED">id0x22<xsl:value-of select="./HighPID"/><xsl:value-of select="./LowPID"/> = <xsl:apply-templates select="UNSIGNED" /></xsl:if>
-<xsl:if test="SIGNED">id0x22<xsl:value-of select="./HighPID"/><xsl:value-of select="./LowPID"/> = <xsl:apply-templates select="SIGNED" /></xsl:if>
+<xsl:for-each select="SVL">id0x<xsl:value-of select="./HighPID"/><xsl:value-of select="./LowPID"/> = { ti = "<xsl:value-of select="Name"/>"<xsl:if test="AccessParams/AccessParamRead/ServiceID">, sev_r = "<xsl:value-of select="AccessParams/AccessParamRead/ServiceID"/>"</xsl:if><xsl:if test="AccessParams/AccessParamRead/SessionIDs">, ses_r ="<xsl:for-each select="AccessParams/AccessParamRead/SessionIDs/SessionID"><xsl:value-of select="current()"/>;</xsl:for-each>"</xsl:if><xsl:if test="AccessParams/AccessParamWrite/ServiceID">, sev_w = "<xsl:value-of select="AccessParams/AccessParamWrite/ServiceID"/>"</xsl:if><xsl:if test="AccessParams/AccessParamWrite/SessionIDs">, ses_w ="<xsl:for-each select="AccessParams/AccessParamWrite/SessionIDs/SessionID"><xsl:value-of select="current()"/>;</xsl:for-each>"</xsl:if><xsl:if test="AccessParams/AccessParamIOControl/ServiceID">, sev_ioc = "<xsl:value-of select="AccessParams/AccessParamIOControl/ServiceID"/>"</xsl:if><xsl:if test="AccessParams/AccessParamIOControl/SessionIDs">, ses_ioc ="<xsl:for-each select="AccessParams/AccessParamIOControl/SessionIDs/SessionID"><xsl:value-of select="current()"/>;</xsl:for-each>"</xsl:if><xsl:if test="AccessParams/AccessParamIOControl/IOControlParams">, iocp ="<xsl:for-each select="AccessParams/AccessParamIOControl/IOControlParams/IOControlParam">0<xsl:value-of select="current()"/>;</xsl:for-each>"</xsl:if>, sv = {
+<xsl:if test="BYTE"><xsl:apply-templates select="BYTE" /></xsl:if><xsl:if test="UNSIGNED"><xsl:apply-templates select="UNSIGNED" /></xsl:if><xsl:if test="SIGNED"><xsl:apply-templates select="SIGNED" /></xsl:if>dummy=0}
+},
 <!--
  <xsl:apply-templates select="BCD" />
  <xsl:apply-templates select="FLOAT" />
@@ -64,35 +68,14 @@ local PacketedData = {
 <!--
 Loop for each PCK with different numbers of databytes is missing
 -->
-<xsl:for-each select="PCK">id0x22<xsl:value-of select="./HighPID"/><xsl:value-of select="./LowPID"/> = {  ti = "<xsl:value-of select="Name"/>", pv = {
-<xsl:if test="BYTE"><xsl:apply-templates select="BYTE">
-<xsl:with-param name="paramPCK" select="1" />
-</xsl:apply-templates>
-</xsl:if>
-<xsl:if test="SIGNED"><xsl:apply-templates select="SIGNED">
-<xsl:with-param name="paramPCK" select="1" />
-</xsl:apply-templates>
-</xsl:if>
-<xsl:if test="UNSIGNED"><xsl:apply-templates select="UNSIGNED">
-<xsl:with-param name="paramPCK" select="1" />
-</xsl:apply-templates>
-</xsl:if>
-<xsl:if test="ASCII"><xsl:apply-templates select="ASCII">
-<xsl:with-param name="paramPCK" select="1" />
-</xsl:apply-templates>
-</xsl:if>
-<xsl:if test="FLOAT"><xsl:apply-templates select="FLOAT">
-<xsl:with-param name="paramPCK" select="1" />
-</xsl:apply-templates>
-</xsl:if>
-<xsl:if test="BCD"><xsl:apply-templates select="BCD">
-<xsl:with-param name="paramPCK" select="1" />
-</xsl:apply-templates>
-</xsl:if>
-<xsl:if test="ENUM"><xsl:apply-templates select="ENUM">
-<xsl:with-param name="paramPCK" select="1" />
-</xsl:apply-templates>
-</xsl:if>dummy=0	}
+<xsl:for-each select="PCK">id0x<xsl:value-of select="./HighPID"/><xsl:value-of select="./LowPID"/> = { ti = "<xsl:value-of select="Name"/>"<xsl:if test="AccessParams/AccessParamRead/ServiceID">, sev_r = "<xsl:value-of select="AccessParams/AccessParamRead/ServiceID"/>"</xsl:if><xsl:if test="AccessParams/AccessParamRead/SessionIDs">, ses_r ="<xsl:for-each select="AccessParams/AccessParamRead/SessionIDs/SessionID"><xsl:value-of select="current()"/>;</xsl:for-each>"</xsl:if><xsl:if test="AccessParams/AccessParamWrite/ServiceID">, sev_w = "<xsl:value-of select="AccessParams/AccessParamWrite/ServiceID"/>"</xsl:if><xsl:if test="AccessParams/AccessParamWrite/SessionIDs">, ses_w ="<xsl:for-each select="AccessParams/AccessParamWrite/SessionIDs/SessionID"><xsl:value-of select="current()"/>;</xsl:for-each>"</xsl:if><xsl:if test="AccessParams/AccessParamIOControl/ServiceID">, sev_ioc = "<xsl:value-of select="AccessParams/AccessParamIOControl/ServiceID"/>"</xsl:if><xsl:if test="AccessParams/AccessParamIOControl/SessionIDs">, ses_ioc ="<xsl:for-each select="AccessParams/AccessParamIOControl/SessionIDs/SessionID"><xsl:value-of select="current()"/>;</xsl:for-each>"</xsl:if><xsl:if test="AccessParams/AccessParamIOControl/IOControlParams">, iocp ="<xsl:for-each select="AccessParams/AccessParamIOControl/IOControlParams/IOControlParam">0<xsl:value-of select="current()"/>;</xsl:for-each>"</xsl:if>, pv = {
+<xsl:if test="BYTE"><xsl:apply-templates select="BYTE" /></xsl:if>
+<xsl:if test="SIGNED"><xsl:apply-templates select="SIGNED" /></xsl:if>
+<xsl:if test="UNSIGNED"><xsl:apply-templates select="UNSIGNED" /></xsl:if>
+<xsl:if test="ASCII"><xsl:apply-templates select="ASCII" /></xsl:if>
+<xsl:if test="FLOAT"><xsl:apply-templates select="FLOAT" /></xsl:if>
+<xsl:if test="BCD"><xsl:apply-templates select="BCD" /></xsl:if>
+<xsl:if test="ENUM"><xsl:apply-templates select="ENUM" /></xsl:if>dummy=0}
 },
 </xsl:for-each>dummy=0
 }
@@ -112,27 +95,30 @@ local selftest = {
 <xsl:template match="SingleBit">
 <xsl:variable name="corrByteNr" select="0+number(./BytePos)"/>id0x<xsl:value-of select="../HighPID"/><xsl:value-of select="../LowPID"/><xsl:value-of select="number($corrByteNr)"/><xsl:value-of select="./BitPos"/> = { by = <xsl:value-of select="number($corrByteNr)"/> , bi = <xsl:value-of select="./BitPos"/><xsl:if test="../OutputSession">, session = "<xsl:value-of select="../OutputSession"/>"</xsl:if><xsl:if test="../OutputService">, service = "<xsl:value-of select="../OutputService"/>"</xsl:if>, t= "<xsl:value-of select="./Name"/>" , lt = "<xsl:value-of select="./LowText"/>" ,  ht = "<xsl:value-of select="./HighText"/>"},
 </xsl:template>
-
-<xsl:template match="UNSIGNED"> <xsl:param name="paramPCK" /><xsl:if test="$paramPCK = 1">id0x<xsl:value-of select="./BytePos" /><xsl:value-of select="./BitPos" /> = </xsl:if> {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "UNSIGNED" , t = "<xsl:value-of select="./Name"/>"} ,
+<!--
+<xsl:template match="SingleBit">
+<xsl:variable name="corrByteNr" select="0+number(./BytePos)"/>idx<xsl:value-of select="number($corrByteNr)"/><xsl:value-of select="./BitPos"/> = { by = <xsl:value-of select="number($corrByteNr)"/> , bi = <xsl:value-of select="./BitPos"/><xsl:for-each select="../AccessParams/AccessParamRead/SessionIDs/SessionID"><xsl:if test="../AccessParams/AccessParamRead/SessionIDs">, ses_r = "<xsl:value-of select="../SessionID"/>,</xsl:for-each>"</xsl:if><xsl:if test="../AccessParams/AccessParamRead/ServiceID">, sev_r = "<xsl:value-of select="../AccessParams/AccessParamRead/ServiceID"/>"</xsl:if>, t= "<xsl:value-of select="./Name"/>" , lt = "<xsl:value-of select="./LowText"/>" ,  ht = "<xsl:value-of select="./HighText"/>"},
+</xsl:template>
+-->
+<xsl:template match="UNSIGNED">idx<xsl:value-of select="./BytePos" /><xsl:value-of select="./BitPos" /> = {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "UNSIGNED" , t = "<xsl:value-of select="./Name"/>"} ,
 </xsl:template>
 
-<xsl:template match="SIGNED"> <xsl:param name="paramPCK" /><xsl:if test="$paramPCK = 1">id0x<xsl:value-of select="./BytePos" /><xsl:value-of select="./BitPos" /> = </xsl:if> {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "SIGNED", t = "<xsl:value-of select="./Name"/>"} ,
+<xsl:template match="SIGNED">idx<xsl:value-of select="./BytePos" /><xsl:value-of select="./BitPos" /> = {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "SIGNED", t = "<xsl:value-of select="./Name"/>"} ,
 </xsl:template>
 
-<xsl:template match="FLOAT"> <xsl:param name="paramPCK" /><xsl:if test="$paramPCK = 1">id0x<xsl:value-of select="./BytePos" /><xsl:value-of select="./BitPos" /> = </xsl:if> {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "FLOAT", t = "<xsl:value-of select="./Name"/>"} ,
+<xsl:template match="FLOAT">idx<xsl:value-of select="./BytePos" /><xsl:value-of select="./BitPos" /> = {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "FLOAT", t = "<xsl:value-of select="./Name"/>"} ,
 </xsl:template>
 
-<xsl:template match="BCD"> <xsl:param name="paramPCK" /><xsl:if test="$paramPCK = 1">id0x<xsl:value-of select="./BytePos" /><xsl:value-of select="./BitPos" /> = </xsl:if> {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "BCD", t = "<xsl:value-of select="./Name"/>"} ,
+<xsl:template match="BCD">idx<xsl:value-of select="./BytePos" /><xsl:value-of select="./BitPos" /> = {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "BCD", t = "<xsl:value-of select="./Name"/>"} ,
 </xsl:template>
 
-<xsl:template match="ASCII"> <xsl:param name="paramPCK" /><xsl:if test="$paramPCK = 1">id0x<xsl:value-of select="./BytePos" /><xsl:value-of select="./BitPos" /> = </xsl:if> {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , dtype = "ASCII", t = "<xsl:value-of select="./Name"/>" },
+<xsl:template match="ASCII">idx<xsl:value-of select="./BytePos" /><xsl:value-of select="./BitPos" /> = {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , dtype = "ASCII", t = "<xsl:value-of select="./Name"/>" },
 </xsl:template>
 
-<xsl:template match="BYTE"> <xsl:param name="paramPCK" /><xsl:if test="$paramPCK = 1">id0x<xsl:value-of select="./BytePos" /><xsl:value-of select="./BitPos" /> = </xsl:if> {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "BYTE", t = "<xsl:value-of select="./Name"/>"} ,
+<xsl:template match="BYTE">idx<xsl:value-of select="./BytePos" /><xsl:value-of select="./BitPos" /> = {  pos = <xsl:value-of select="./BytePos"/> , len = <xsl:value-of select="./ByteNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "BYTE", t = "<xsl:value-of select="./Name"/>"} ,
 </xsl:template>
 
-<xsl:template match="ENUM"> <xsl:param name="paramPCK" /><xsl:variable name="corrByteNr" select="0+number(./SingleBit/ByteNr)" />
-<xsl:if test="$paramPCK = 1">id0x<xsl:value-of select="number($corrByteNr)" /><xsl:value-of select="./SingleBit/BitPos" /></xsl:if> = { by = <xsl:value-of select="number($corrByteNr)"/> , bi = <xsl:value-of select="./SingleBit/BitNr"/> , t= "<xsl:value-of select="./SingleBit/Name"/>" , lt = "<xsl:value-of select="./SingleBit/LowText"/>" ,  ht = "<xsl:value-of select="./SingleBit/HighText"/>" , dtype = "ENUM"} ,
+<xsl:template match="ENUM"><xsl:variable name="corrByteNr" select="0+number(./SingleBit/ByteNr)" />idx<xsl:value-of select="number($corrByteNr)" /><xsl:value-of select="./SingleBit/BitPos" /> = { by = <xsl:value-of select="number($corrByteNr)"/> , bi = <xsl:value-of select="./SingleBit/BitNr"/> , t= "<xsl:value-of select="./SingleBit/Name"/>" , lt = "<xsl:value-of select="./SingleBit/LowText"/>" ,  ht = "<xsl:value-of select="./SingleBit/HighText"/>" , dtype = "ENUM"} ,
 </xsl:template>
 
 <!--
