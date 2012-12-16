@@ -51,6 +51,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="OpenDiagXCore">
+      <HintPath>..\OpenDiagXCore\bin\Release\OpenDiagXCore.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -58,12 +61,6 @@
   <ItemGroup>
     <Compile Include="Properties\OpenDiagXCL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\OpenDiagXCore\OpenDiagXCore.csproj">
-      <Project>{0FAA9EE6-395F-4A6F-A01B-1A68451C19E0}</Project>
-      <Name>OpenDiagXCore</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
@@ -86,6 +83,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
