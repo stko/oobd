@@ -94,7 +94,12 @@ namespace org.oobd.tools.OpenDiagX
                         addTextnode(subNode, "LowPID", LowPid);
                         addTextnode(subNode, "ByteSize", strbyteSize);
 
-                        XPathNodeIterator iterator2 = iterator.Current.Select("SUB_FIELD");
+                        // check Access Parameters like Read, Write, IO-Control for each DID
+                        XPathNodeIterator iterator2 = iterator.Current.Select("ACCESS_PARAMETERS");
+                        iterator2.MoveNext();
+                        handleAccessParams(iterator2);
+
+                        iterator2 = iterator.Current.Select("SUB_FIELD");
                         while (iterator2.MoveNext())
                         {
                             String subDataType = getpath(iterator2.Current, "DATA_DEFINITION/DATA_TYPE");
@@ -106,43 +111,23 @@ namespace org.oobd.tools.OpenDiagX
                             if (subDataType.Equals("bcd")) handleBCD(iterator2);
                             if (subDataType.Equals("enumerated")) handleEnumerated(iterator2);
                             if (subDataType.Equals("float")) handleFloat(iterator2);
-
                         }
                     }
 
                     if (dataType.Equals("bitmapped"))
                     {
-                        String subDataType = getpath(iterator.Current, "SUB_FIELD/DATA_DEFINITION/DATA_TYPE");
-                        //textBox.Text += "Sub Data Type: " + subDataType + "\r\n";
-                        String outputSession = getAttr(iterator.Current,"ACCESS_PARAMETERS/CONTROLLABLE","SESSION_REFS");
-                        if (outputSession != null && outputSession.Contains("_"))
-                        {
-                            outputSession = outputSession.ToLower().Replace("session_","");
-                        }
-                        else
-                        {
-                            outputSession = null;
-                        }
-                        String outputService = getAttr(iterator.Current, "ACCESS_PARAMETERS/CONTROLLABLE","SERVICE_REFS");
-                        if (outputService != null && outputService.Contains("_"))
-                        {
-                            outputService = outputService.ToUpper().Replace("SERVICE_", "");
-                        }
-                        else
-                        {
-                            outputService = null;
-                        }
                         subNode = addSubNode(root, "BMP");
                         addTextnode(subNode, "Group", DIDname);
                         addTextnode(subNode, "HighPID", HighPid);
                         addTextnode(subNode, "LowPID", LowPid);
                         addTextnode(subNode, "ByteSize", strbyteSize);
-                        if (outputSession != null && outputService != null)
-                        {
-                            addTextnode(subNode, "OutputSession", outputSession);
-                            addTextnode(subNode, "OutputService", outputService);
-                        }
-                        XPathNodeIterator iterator2 = iterator.Current.Select("SUB_FIELD");
+
+                        // check Access Parameters like Read, Write, IO-Control for each DID
+                        XPathNodeIterator iterator2 = iterator.Current.Select("ACCESS_PARAMETERS");
+                        iterator2.MoveNext();
+                        handleAccessParams(iterator2);
+
+                        iterator2 = iterator.Current.Select("SUB_FIELD");
                         while (iterator2.MoveNext())
                         {
                             handleBitmap(iterator2);
@@ -159,12 +144,18 @@ namespace org.oobd.tools.OpenDiagX
                         String subDataType = getpath(iterator.Current, "SUB_FIELD/DATA_DEFINITION/DATA_TYPE");
                         //textBox.Text += "Sub Data Type: " + subDataType + "\r\n";
                         subNode = addSubNode(root, "SVL");
+
                         addTextnode(subNode, "Name", DIDname);
                         addTextnode(subNode, "HighPID", HighPid);
                         addTextnode(subNode, "LowPID", LowPid);
                         addTextnode(subNode, "ByteSize", strbyteSize);
 
-                        XPathNodeIterator iterator2 = iterator.Current.Select("SUB_FIELD");
+                        // check Access Parameters like Read, Write, IO-Control for each DID
+                        XPathNodeIterator iterator2 = iterator.Current.Select("ACCESS_PARAMETERS");
+                        iterator2.MoveNext();
+                        handleAccessParams(iterator2);
+
+                        iterator2 = iterator.Current.Select("SUB_FIELD");
                         iterator2.MoveNext();
 
                         if (subDataType.Equals("ascii")) handleASCII(iterator2);
@@ -245,6 +236,141 @@ namespace org.oobd.tools.OpenDiagX
             return attribut;
         }
 
+        private void handleAccessParams(XPathNodeIterator iterator) 
+        {
+            String ServiceID_r = getAttr(iterator.Current, "READABLE", "SERVICE_REFS");
+            if (ServiceID_r != null && ServiceID_r.Contains("_"))
+            {
+                ServiceID_r = ServiceID_r.ToUpper().Replace("SERVICE_", "");
+            }
+            else
+            {
+                ServiceID_r = null;
+            }
+            
+            String ServiceID_w = getAttr(iterator.Current, "WRITEABLE", "SERVICE_REFS");
+            if (ServiceID_w != null && ServiceID_w.Contains("_"))
+            {
+                ServiceID_w = ServiceID_w.ToUpper().Replace("SERVICE_", "");
+            }
+            else
+            {
+                ServiceID_w = null;
+            }
+                        
+            String ServiceID_ioc = getAttr(iterator.Current, "CONTROLLABLE", "SERVICE_REFS");
+            if (ServiceID_ioc != null && ServiceID_ioc.Contains("_"))
+            {
+            ServiceID_ioc = ServiceID_ioc.ToUpper().Replace("SERVICE_", "");
+            }
+            else
+            {
+                ServiceID_ioc = null;
+            }
+
+            String SessionID_r = getAttr(iterator.Current, "READABLE", "SESSION_REFS");
+            if (SessionID_r != null && SessionID_r.Contains("_"))
+            {
+                SessionID_r = SessionID_r.ToLower().Replace("session_", "");
+            }
+            else
+            {
+                SessionID_r = null;
+            }
+
+            String SessionID_w = getAttr(iterator.Current, "WRITEABLE", "SESSION_REFS");
+            if (SessionID_w != null && SessionID_w.Contains("_"))
+            {
+                SessionID_w = SessionID_w.ToLower().Replace("session_", "");
+            }
+            else
+            {
+                SessionID_w = null;
+            }
+
+            String SessionID_ioc = getAttr(iterator.Current, "CONTROLLABLE", "SESSION_REFS");
+            if (SessionID_ioc != null && SessionID_ioc.Contains("_"))
+            {
+                SessionID_ioc = SessionID_ioc.ToLower().Replace("session_", "");
+            }
+            else
+            {
+                SessionID_ioc = null;
+            }
+
+            String IOControlParam = getAttr(iterator.Current, "CONTROLLABLE", "IOCP_REFS");
+            if (IOControlParam != null && IOControlParam.Contains("_"))
+            {
+                IOControlParam = IOControlParam.ToLower().Replace("iocp_", "");
+            }
+            else
+            {
+                IOControlParam = null;
+            }
+
+            XmlElement subNode2 = addSubNode(subNode, "AccessParams");
+
+            if (ServiceID_r != null)
+            {
+                XmlElement subNode3 = addSubNode(subNode2, "AccessParamRead");
+                addTextnode(subNode3, "ServiceID", ServiceID_r);
+
+                XmlElement subNode4 = addSubNode(subNode3, "SessionIDs");
+                addTextnode(subNode4, "SessionID", SessionID_r.Substring(0, 2));
+                while (SessionID_r.Contains(" "))
+                {
+                    if (SessionID_r.Length >= 3) // check if more than one Session-ID is available
+                    {
+                        SessionID_r = SessionID_r.Replace(SessionID_r.Substring(0, 2), "").Trim();
+                        addTextnode(subNode4, "SessionID", SessionID_r.Substring(0, 2));
+                    }
+                }
+            }
+
+            if (ServiceID_w != null)
+            {
+                XmlElement subNode3 = addSubNode(subNode2, "AccessParamWrite");
+                addTextnode(subNode3, "ServiceID", ServiceID_w);
+
+                XmlElement subNode4 = addSubNode(subNode3, "SessionIDs");
+                addTextnode(subNode4, "SessionID", SessionID_w.Substring(0, 2));
+                while (SessionID_w.Contains(" "))
+                {
+                    if (SessionID_w.Length >= 3) // check if more than one Session-ID is available
+                    {
+                        SessionID_w = SessionID_w.Replace(SessionID_w.Substring(0, 2), "").Trim();
+                        addTextnode(subNode4, "SessionID", SessionID_w.Substring(0, 2));
+                    }
+                }
+            }
+
+            if (ServiceID_ioc != null)
+            {
+                XmlElement subNode3 = addSubNode(subNode2, "AccessParamIOControl");
+                addTextnode(subNode3, "ServiceID", ServiceID_ioc);
+
+                XmlElement subNode4 = addSubNode(subNode3, "SessionIDs");
+                addTextnode(subNode4, "SessionID", SessionID_ioc.Substring(0, 2));
+                while (SessionID_ioc.Contains(" "))
+                {
+                    if (SessionID_ioc.Length >= 3) // check if more than one Session-ID is available
+                    {
+                        SessionID_ioc = SessionID_r.Replace(SessionID_ioc.Substring(0, 2), "").Trim();
+                        addTextnode(subNode4, "SessionID", SessionID_ioc.Substring(0, 2));
+                    }
+                }
+                if (IOControlParam != null)
+                {
+                    XmlElement subNode5 = addSubNode(subNode3, "IOControlParams");
+                    addTextnode(subNode5, "IOControlParam", IOControlParam.Substring(0, 1));
+                    while (IOControlParam.Contains(" "))
+                    {
+                        IOControlParam = IOControlParam.Replace(IOControlParam.Substring(0, 1), "").Trim();
+                        addTextnode(subNode5, "IOControlParam", IOControlParam.Substring(0, 1));
+                    }
+                }                         
+            }                   
+        }
 
         private void handleBitmap(XPathNodeIterator iterator)
         {
