@@ -616,12 +616,16 @@ namespace org.oobd.tools.OpenDiagX
 
         private void handleEnumerated(XPathNodeIterator iterator)
         {
-            int byteSize = Convert.ToInt32(getpath(iterator.Current, "../BYTE_SIZE"));
-            String Name = getpath(iterator.Current, "NAME");
+            int byteSize = Convert.ToInt32(getpath(iterator.Current, "../BYTE_SIZE")); /* Byte size of whole DID response */
             String LBit = getpath(iterator.Current, "LEAST_SIG_BIT");
+            String MBit = getpath(iterator.Current, "MOST_SIG_BIT");
 
             XmlElement thisDIDEntry = addSubNode(subNode, "ENUM");
-            addTextnode(thisDIDEntry, "Group", getpath(iterator.Current, "NAME"));
+            addTextnode(thisDIDEntry, "Name", getpath(iterator.Current, "NAME"));
+            addTextnode(thisDIDEntry, "BytePos", ((Convert.ToInt16(byteSize) - ((Convert.ToInt16(MBit) + 1) / 8)).ToString()));
+            addTextnode(thisDIDEntry, "BitPos", (Convert.ToInt16(LBit) % 8).ToString());
+            addTextnode(thisDIDEntry, "ByteNr", (((Convert.ToInt16(MBit) + 1 - Convert.ToInt16(LBit)) / 8).ToString()));
+            addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit) + 1).ToString()));
 
             XPathNodeIterator iterator2 = iterator.Current.Select("DATA_DEFINITION");
             while (iterator2.MoveNext())
@@ -629,27 +633,14 @@ namespace org.oobd.tools.OpenDiagX
                 XPathNodeIterator iterator3 = iterator2.Current.Select("ENUMERATED_PARAMETERS");
                 while (iterator3.MoveNext())
                 {
-                    String lowText = "";
-                    String highText = "";
                     XPathNodeIterator iterator4 = iterator3.Current.Select("ENUM_MEMBER");
+              
                     while (iterator4.MoveNext())
                     {
-                        if (getpath(iterator4.Current, "ENUM_VALUE").Equals("0x00") || getpath(iterator4.Current, "ENUM_VALUE").Equals("0")) // here a correct numeric convertion would be nessecary...
-                        {
-                            lowText = getpath(iterator4.Current, "DESCRIPTION");
-                        }
-                        if (getpath(iterator4.Current, "ENUM_VALUE").Equals("0x01") || getpath(iterator4.Current, "ENUM_VALUE").Equals("1")) // here a correct numeric convertion would be nessecary...
-                        {
-                            highText = getpath(iterator4.Current, "DESCRIPTION");
-                        }
+                        XmlElement thisBitEntry = addSubNode(thisDIDEntry, "EnumMember");
+                        addTextnode(thisBitEntry, "EnumValue", getpath(iterator4.Current, "ENUM_VALUE"));
+                        addTextnode(thisBitEntry, "EnumDescription", getpath(iterator4.Current, "DESCRIPTION"));
                     }
-                    XmlElement thisBitEntry = addSubNode(thisDIDEntry, "SingleBit");
-                    addTextnode(thisBitEntry, "Name", Name);
-                    addTextnode(thisBitEntry, "BitPos", LBit);
-                    addTextnode(thisBitEntry, "ByteNr", (byteSize - 1 - Convert.ToInt16(LBit) / 8).ToString());
-                    addTextnode(thisBitEntry, "BitNr", (Convert.ToInt16(LBit) % 8).ToString());
-                    addTextnode(thisBitEntry, "LowText", lowText);
-                    addTextnode(thisBitEntry, "HighText", highText);
                 }
             }
         }
