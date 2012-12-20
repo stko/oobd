@@ -163,9 +163,7 @@ namespace org.oobd.tools.OpenDiagX
                         if (subDataType.Equals("bytes")) handleBytes(iterator2);
                         if (subDataType.Equals("signed")) handleSigned(iterator2);
                         if (subDataType.Equals("bcd")) handleBCD(iterator2);
-                        /* single value enumerated values must be adapted as they could have more than one bit length, i.e.. ENUM_VALUE 2, 3, 4, ...
-                         * if (subDataType.Equals("enumerated")) handleEnumerated(iterator2);
-                         */
+                        if (subDataType.Equals("enumerated")) handleEnumerated(iterator2);
                         if (subDataType.Equals("float")) handleFloat(iterator2);
                     }
                 }
