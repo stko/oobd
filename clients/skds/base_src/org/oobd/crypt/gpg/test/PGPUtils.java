@@ -465,42 +465,7 @@ public class PGPUtils {
        }
    }
 
-public class EncryptFiles {
-   
-   /**
-    * Encrypts a file for transfer over standard FTP or via email
-    * @param out Output Stream containing the file
-    * @param fileName String representation of the file we want to create
-    * @param encKey PGPPublicKey to encrypt the file.
-    * @param armor boolean value decides whether we need a new instance of an ArmoredOutputStream
-    * @param withIntegrityCheck boolean value for setting the Integrity Packet
-    * @throws IOException
-    * @throws NoSuchProviderException
-    */
-   public static void encryptFile(OutputStream out, String fileName, PGPPublicKey encKey, boolean armor, boolean withIntegrityCheck) 
-											throws IOException, NoSuchProviderException {
-       if (armor) {
-           out = new ArmoredOutputStream(out);
-       }
-       try {
-           PGPEncryptedDataGenerator cPk = new PGPEncryptedDataGenerator(PGPEncryptedData.CAST5, 
-									       withIntegrityCheck,new SecureRandom(), "BC");
-           cPk.addMethod(encKey);
-           OutputStream cOut = cPk.open(out, new byte[1 << 16]);
-           PGPCompressedDataGenerator comData = new PGPCompressedDataGenerator(PGPCompressedData.ZIP);
-           PGPUtil.writeFileToLiteralData(comData.open(cOut), PGPLiteralData.BINARY, new File(fileName), new byte[1 << 16]);
-           comData.close();
-           cOut.close();
-           out.close();
-       } catch (PGPException e) {
-           System.err.println(e);
-           if (e.getUnderlyingException() != null) {
-               e.getUnderlyingException().printStackTrace();
-           }
-       }
-   }
-   
-}
+
 
 
 
@@ -746,4 +711,43 @@ public class EncryptFiles {
     }
 
 }
+
+
+/*public class EncryptFiles {
+   
+   //*
+    //* Encrypts a file for transfer over standard FTP or via email
+    //* @param out Output Stream containing the file
+    //* @param fileName String representation of the file we want to create
+    //* @param encKey PGPPublicKey to encrypt the file.
+    //* @param armor boolean value decides whether we need a new instance of an ArmoredOutputStream
+    //* @param withIntegrityCheck boolean value for setting the Integrity Packet
+    //* @throws IOException
+    //* @throws NoSuchProviderException
+    //
+   public static void encryptFile(OutputStream out, String fileName, PGPPublicKey encKey, boolean armor, boolean withIntegrityCheck) 
+											throws IOException, NoSuchProviderException {
+       if (armor) {
+           out = new ArmoredOutputStream(out);
+       }
+       try {
+           PGPEncryptedDataGenerator cPk = new PGPEncryptedDataGenerator(PGPEncryptedData.CAST5, 
+									       withIntegrityCheck,new SecureRandom(), "BC");
+           cPk.addMethod(encKey);
+           OutputStream cOut = cPk.open(out, new byte[1 << 16]);
+           PGPCompressedDataGenerator comData = new PGPCompressedDataGenerator(PGPCompressedData.ZIP);
+           PGPUtil.writeFileToLiteralData(comData.open(cOut), PGPLiteralData.BINARY, new File(fileName), new byte[1 << 16]);
+           comData.close();
+           cOut.close();
+           out.close();
+       } catch (PGPException e) {
+           System.err.println(e);
+           if (e.getUnderlyingException() != null) {
+               e.getUnderlyingException().printStackTrace();
+           }
+       }
+   }
+   
+}
+*/
 
