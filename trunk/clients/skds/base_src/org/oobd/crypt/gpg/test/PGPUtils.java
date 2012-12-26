@@ -300,7 +300,7 @@ public class PGPUtils {
      * returns an encrypted input stream
      */
     @SuppressWarnings("unchecked")
-	public static InputStream decryptFileStream(InputStream in,  InputStream keyIn, char[] passwd)
+	public static InputStream decryptFileStream_old(InputStream in,  InputStream keyIn, char[] passwd)
     	throws Exception
     {
 	InputStream unc =null;    	
@@ -385,8 +385,9 @@ public class PGPUtils {
 
 //-------------  NEW  from http://blog.mrjaredpowell.com/2010/Automate_decryption_Bouncy_Castle.htm
 
-  public static void decryptFile(InputStream in, InputStream keyIn, char[] passwd) throws Exception {
-       in = PGPUtil.getDecoderStream(in);
+  public static InputStream decryptFileStream(InputStream in, InputStream keyIn, char[] passwd) throws Exception {
+  	InputStream unc =null;    	
+     in = PGPUtil.getDecoderStream(in);
        PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(keyIn));
        try {
            PGPObjectFactory pgpF = new PGPObjectFactory(in);
@@ -431,7 +432,8 @@ public class PGPUtils {
            if (message instanceof  PGPLiteralData) {
                PGPLiteralData ld = (PGPLiteralData) message;
    
-               FileOutputStream fOut = new FileOutputStream("/media/ram/" + ld.getFileName());
+               /*
+		FileOutputStream fOut = new FileOutputStream("/media/ram/" + ld.getFileName());
                BufferedOutputStream bOut = new BufferedOutputStream(fOut);
    
                InputStream unc = ld.getInputStream();
@@ -442,12 +444,14 @@ public class PGPUtils {
                }
    
                bOut.close();
+		*/
+		unc = ld.getInputStream();
            } else if (message instanceof  PGPOnePassSignatureList) {
                throw new PGPException("encrypted message contains a signed message - not literal data.");
            } else {
                throw new PGPException("message is not a simple encrypted file - type unknown.");
            }
-   
+ /* 
            if (pbe.isIntegrityProtected()) {
                if (!pbe.verify()) {
                    System.err.println("message failed integrity check");
@@ -457,12 +461,14 @@ public class PGPUtils {
            } else {
                System.err.println("no message integrity check");
            }
+*/
        } catch (PGPException e) {
            System.err.println(e);
            if (e.getUnderlyingException() != null) {
                e.getUnderlyingException().printStackTrace();
            }
        }
+	return unc;
    }
 
 
