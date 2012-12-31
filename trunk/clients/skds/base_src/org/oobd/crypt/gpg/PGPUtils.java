@@ -1,3 +1,5 @@
+package org.oobd.crypt.gpg;
+
 // taken from http://sloanseaman.com/wordpress/2012/05/13/revisited-pgp-encryptiondecryption-in-java/
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -12,15 +14,21 @@ import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.util.Date;
 import java.util.Iterator;
+
 
 import org.apache.commons.io.IOUtils;
 import org.spongycastle.bcpg.ArmoredOutputStream;
 import org.spongycastle.bcpg.HashAlgorithmTags;
 import org.spongycastle.bcpg.PublicKeyAlgorithmTags;
+import org.spongycastle.bcpg.CompressionAlgorithmTags;
+import org.spongycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.spongycastle.bcpg.sig.KeyFlags;
 import org.spongycastle.jce.provider.BouncyCastleProvider;
+import org.spongycastle.openpgp.*;
 import org.spongycastle.openpgp.PGPCompressedData;
 import org.spongycastle.openpgp.PGPCompressedDataGenerator;
 import org.spongycastle.openpgp.PGPEncryptedData;
@@ -84,6 +92,15 @@ public class PGPUtils {
     	PGPSignature.NO_CERTIFICATION,
     	PGPSignature.DEFAULT_CERTIFICATION
     };
+
+public static void init()
+{
+	Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
+}
+
+
+
+//Read more: http://www.aviransplace.com/2004/10/12/using-rsa-encryption-with-java/#ixzz2GYW2AadB
 
     @SuppressWarnings("unchecked")
     public static PGPPublicKey readPublicKey(InputStream in)
@@ -208,81 +225,7 @@ public class PGPUtils {
      */
  
    @SuppressWarnings("unchecked")
-/*
-	public static void decryptFile(InputStream in, OutputStream out, InputStream keyIn, char[] passwd)
-    	throws Exception
-    {
-    	Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
 
-        in = org.spongycastle.openpgp.PGPUtil.getDecoderStream(in);
-
-        PGPObjectFactory pgpF = new PGPObjectFactory(in);
-        PGPEncryptedDataList enc;
-
-        Object o = pgpF.nextObject();
-        //
-        // the first object might be a PGP marker packet.
-        //
-        if (o instanceof  PGPEncryptedDataList) {
-            enc = (PGPEncryptedDataList) o;
-        } else {
-            enc = (PGPEncryptedDataList) pgpF.nextObject();
-        }
-
-        //
-        // find the secret key
-        //
-        Iterator<PGPPublicKeyEncryptedData> it = enc.getEncryptedDataObjects();
-        PGPPrivateKey sKey = null;
-        PGPPublicKeyEncryptedData pbe = null;
-
-        while (sKey == null && it.hasNext()) {
-            pbe = it.next();
-
-            sKey = findPrivateKey(keyIn, pbe.getKeyID(), passwd);
-        }
-
-        if (sKey == null) {
-            throw new IllegalArgumentException("Secret key for message not found.");
-        }
-
-        InputStream clear = pbe.getDataStream(new BcPublicKeyDataDecryptorFactory(sKey));
-//        InputStream clear = pbe.getDataStream(sKey, BouncyCastleProvider.PROVIDER_NAME);
-
-
-        PGPObjectFactory plainFact = new PGPObjectFactory(clear);
-
-        Object message = plainFact.nextObject();
-
-        if (message instanceof  PGPCompressedData) {
-            PGPCompressedData cData = (PGPCompressedData) message;
-            PGPObjectFactory pgpFact = new PGPObjectFactory(cData.getDataStream());
-
-            message = pgpFact.nextObject();
-        }
-
-        if (message instanceof  PGPLiteralData) {
-            PGPLiteralData ld = (PGPLiteralData) message;
-
-            InputStream unc = ld.getInputStream();
-            int ch;
-
-            while ((ch = unc.read()) >= 0) {
-                out.write(ch);
-            }
-        } else if (message instanceof  PGPOnePassSignatureList) {
-            throw new PGPException("Encrypted message contains a signed message - not literal data.");
-        } else {
-            throw new PGPException("Message is not a simple encrypted file - type unknown.");
-        }
-
-        if (pbe.isIntegrityProtected()) {
-            if (!pbe.verify()) {
-            	throw new PGPException("Message failed integrity check");
-            }
-        }
-    }
-*/
 	public static void decryptFile(InputStream in, OutputStream out, InputStream keyIn, char[] passwd)
     	throws Exception
     {
@@ -295,95 +238,12 @@ public class PGPUtils {
             }
      }
 
+//-------------  NEW  from http://blog.mrjaredpowell.com/2010/Automate_decryption_Bouncy_Castle.htm
 
     /**
      * returns an encrypted input stream
      */
     @SuppressWarnings("unchecked")
-	public static InputStream decryptFileStream_old(InputStream in,  InputStream keyIn, char[] passwd)
-    	throws Exception
-    {
-	InputStream unc =null;    	
-	Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
-
-        in = org.spongycastle.openpgp.PGPUtil.getDecoderStream(in);
-
-        PGPObjectFactory pgpF = new PGPObjectFactory(in);
-        PGPEncryptedDataList enc;
-
-        Object o = pgpF.nextObject();
-        //
-        // the first object might be a PGP marker packet.
-        //
-        if (o instanceof  PGPEncryptedDataList) {
-            enc = (PGPEncryptedDataList) o;
-        } else {
-            enc = (PGPEncryptedDataList) pgpF.nextObject();
-        }
-
-        //
-        // find the secret key
-        //
-        Iterator<PGPPublicKeyEncryptedData> it = enc.getEncryptedDataObjects();
-        PGPPrivateKey sKey = null;
-        PGPPublicKeyEncryptedData pbe = null;
-
-        while (sKey == null && it.hasNext()) {
-            pbe = it.next();
-
-            sKey = findPrivateKey(keyIn, pbe.getKeyID(), passwd);
-        }
-
-        if (sKey == null) {
-            throw new IllegalArgumentException("Secret key for message not found.");
-        }
-
-        InputStream clear = pbe.getDataStream(new BcPublicKeyDataDecryptorFactory(sKey));
-//        InputStream clear = pbe.getDataStream(sKey, BouncyCastleProvider.PROVIDER_NAME);
-
-
-        PGPObjectFactory plainFact = new PGPObjectFactory(clear);
-
-        Object message = plainFact.nextObject();
-
-        if (message instanceof  PGPCompressedData) {
-            PGPCompressedData cData = (PGPCompressedData) message;
-            PGPObjectFactory pgpFact = new PGPObjectFactory(cData.getDataStream());
-
-            message = pgpFact.nextObject();
-        }
-
-        if (message instanceof  PGPLiteralData) {
-            PGPLiteralData ld = (PGPLiteralData) message;
-
-            unc= ld.getInputStream();
-            /*
-           InputStream unc = ld.getInputStream();
-		int ch;
-
-            while ((ch = unc.read()) >= 0) {
-                out.write(ch);
-            }
-	*/
-        } else if (message instanceof  PGPOnePassSignatureList) {
-            throw new PGPException("Encrypted message contains a signed message - not literal data.");
-        } else {
-            throw new PGPException("Message is not a simple encrypted file - type unknown.");
-        }
-
-        if (pbe.isIntegrityProtected()) {
-            if (!pbe.verify()) {
-            	throw new PGPException("Message failed integrity check");
-            }
-        }
-	return unc;
-    }
-
-
-
-
-
-//-------------  NEW  from http://blog.mrjaredpowell.com/2010/Automate_decryption_Bouncy_Castle.htm
 
   public static InputStream decryptFileStream(InputStream in, InputStream keyIn, char[] passwd) throws Exception {
   	InputStream unc =null;    	
@@ -431,27 +291,13 @@ public class PGPUtils {
    
            if (message instanceof  PGPLiteralData) {
                PGPLiteralData ld = (PGPLiteralData) message;
-   
-               /*
-		FileOutputStream fOut = new FileOutputStream("/media/ram/" + ld.getFileName());
-               BufferedOutputStream bOut = new BufferedOutputStream(fOut);
-   
-               InputStream unc = ld.getInputStream();
-               int ch;
-   
-               while ((ch = unc.read()) >= 0) {
-                   bOut.write(ch);
-               }
-   
-               bOut.close();
-		*/
-		unc = ld.getInputStream();
+ 		unc = ld.getInputStream();
            } else if (message instanceof  PGPOnePassSignatureList) {
                throw new PGPException("encrypted message contains a signed message - not literal data.");
            } else {
                throw new PGPException("message is not a simple encrypted file - type unknown.");
            }
- /* 
+ /* -------------  the commended routine below always caused an EOFreached error
            if (pbe.isIntegrityProtected()) {
                if (!pbe.verify()) {
                    System.err.println("message failed integrity check");
@@ -476,173 +322,6 @@ public class PGPUtils {
 
 
 
-
-
-
-/*
-    public static void encryptFile(
-        OutputStream out,
-        String fileName,
-        PGPPublicKey encKey,
-        boolean armor,
-        boolean withIntegrityCheck)
-        throws IOException, NoSuchProviderException, PGPException
-    {
-    	Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
-
-        if (armor) {
-            out = new ArmoredOutputStream(out);
-        }
-
-        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-        PGPCompressedDataGenerator comData = new PGPCompressedDataGenerator(PGPCompressedData.ZIP);
-
-        PGPUtil.writeFileToLiteralData(
-                comData.open(bOut),
-                PGPLiteralData.BINARY,
-                new File(fileName) );
-
-        comData.close();
-
-        BcPGPDataEncryptorBuilder dataEncryptor = new BcPGPDataEncryptorBuilder(PGPEncryptedData.TRIPLE_DES);
-        dataEncryptor.setWithIntegrityPacket(withIntegrityCheck);
-        dataEncryptor.setSecureRandom(new SecureRandom());
-
-        PGPEncryptedDataGenerator encryptedDataGenerator = new PGPEncryptedDataGenerator(dataEncryptor);
-        encryptedDataGenerator.addMethod(new BcPublicKeyKeyEncryptionMethodGenerator(encKey));
-
-        byte[] bytes = bOut.toByteArray();
-        OutputStream cOut = encryptedDataGenerator.open(out, bytes.length);
-        cOut.write(bytes);
-        cOut.close();
-        out.close();
-    }
-
-    @SuppressWarnings("unchecked")
-	public static void signEncryptFile(
-        OutputStream out,
-        String fileName,
-        PGPPublicKey publicKey,
-        PGPSecretKey secretKey,
-        String password,
-        boolean armor,
-        boolean withIntegrityCheck )
-        throws Exception
-    {
-
-        // Initialize spongy Castle security provider
-        Provider provider = new spongyCastleProvider();
-        Security.addProvider(provider);
-
-        if (armor) {
-            out = new ArmoredOutputStream(out);
-        }
-
-        BcPGPDataEncryptorBuilder dataEncryptor = new BcPGPDataEncryptorBuilder(PGPEncryptedData.TRIPLE_DES);
-        dataEncryptor.setWithIntegrityPacket(withIntegrityCheck);
-        dataEncryptor.setSecureRandom(new SecureRandom());
-
-        PGPEncryptedDataGenerator encryptedDataGenerator = new PGPEncryptedDataGenerator(dataEncryptor);
-        encryptedDataGenerator.addMethod(new BcPublicKeyKeyEncryptionMethodGenerator(publicKey));
-
-        OutputStream encryptedOut = encryptedDataGenerator.open(out, new byte[PGPUtils.BUFFER_SIZE]);
-
-        // Initialize compressed data generator
-        PGPCompressedDataGenerator compressedDataGenerator = new PGPCompressedDataGenerator(PGPCompressedData.ZIP);
-        OutputStream compressedOut = compressedDataGenerator.open(encryptedOut, new byte [PGPUtils.BUFFER_SIZE]);
-
-        // Initialize signature generator
-        PGPPrivateKey privateKey = findPrivateKey(secretKey, password.toCharArray());
-
-        PGPContentSignerBuilder signerBuilder = new BcPGPContentSignerBuilder(secretKey.getPublicKey().getAlgorithm(),
-                HashAlgorithmTags.SHA1);
-
-        PGPSignatureGenerator signatureGenerator = new PGPSignatureGenerator(signerBuilder);
-        signatureGenerator.init(PGPSignature.BINARY_DOCUMENT, privateKey);
-
-        boolean firstTime = true;
-        Iterator<String> it = secretKey.getPublicKey().getUserIDs();
-        while (it.hasNext() && firstTime) {
-            PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
-            spGen.setSignerUserID(false, it.next());
-            signatureGenerator.setHashedSubpackets(spGen.generate());
-            // Exit the loop after the first iteration
-            firstTime = false;
-        }
-        signatureGenerator.generateOnePassVersion(false).encode(compressedOut);
-
-        // Initialize literal data generator
-        PGPLiteralDataGenerator literalDataGenerator = new PGPLiteralDataGenerator();
-        OutputStream literalOut = literalDataGenerator.open(
-            compressedOut,
-            PGPLiteralData.BINARY,
-            fileName,
-            new Date(),
-            new byte [PGPUtils.BUFFER_SIZE] );
-
-        // Main loop - read the "in" stream, compress, encrypt and write to the "out" stream
-        FileInputStream in = new FileInputStream(fileName);
-        byte[] buf = new byte[PGPUtils.BUFFER_SIZE];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            literalOut.write(buf, 0, len);
-            signatureGenerator.update(buf, 0, len);
-        }
-
-        in.close();
-        literalDataGenerator.close();
-        // Generate the signature, compress, encrypt and write to the "out" stream
-        signatureGenerator.generate().encode(compressedOut);
-        compressedDataGenerator.close();
-        encryptedDataGenerator.close();
-        if (armor) {
-            out.close();
-        }
-    }
-    public static boolean verifyFile(
-    	InputStream in,
-        InputStream keyIn,
-        String extractContentFile)
-        throws Exception
-    {
-        in = PGPUtil.getDecoderStream(in);
-
-        PGPObjectFactory pgpFact = new PGPObjectFactory(in);
-        PGPCompressedData c1 = (PGPCompressedData)pgpFact.nextObject();
-
-        pgpFact = new PGPObjectFactory(c1.getDataStream());
-
-        PGPOnePassSignatureList p1 = (PGPOnePassSignatureList)pgpFact.nextObject();
-
-        PGPOnePassSignature ops = p1.get(0);
-
-        PGPLiteralData p2 = (PGPLiteralData)pgpFact.nextObject();
-
-        InputStream dIn = p2.getInputStream();
-
-        IOUtils.copy(dIn, new FileOutputStream(extractContentFile));
-
-        int ch;
-        PGPPublicKeyRingCollection pgpRing = new PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(keyIn));
-
-        PGPPublicKey key = pgpRing.getPublicKey(ops.getKeyID());
-
-        FileOutputStream out = new FileOutputStream(p2.getFileName());
-
-        ops.init(new BcPGPContentVerifierBuilderProvider(), key);
-
-        while ((ch = dIn.read()) >= 0)
-        {
-            ops.update((byte)ch);
-            out.write(ch);
-        }
-
-        out.close();
-
-        PGPSignatureList p3 = (PGPSignatureList)pgpFact.nextObject();
-        return ops.verify(p3.get(0));
-    }
-*/
 
     /**
      * From LockBox Lobs PGP Encryption tools.
@@ -716,7 +395,6 @@ public class PGPUtils {
         return true;
     }
 
-}
 
 
 /*public class EncryptFiles {
