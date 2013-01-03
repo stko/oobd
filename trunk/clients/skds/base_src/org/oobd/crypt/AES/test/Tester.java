@@ -1,20 +1,27 @@
+package org.oobd.crypt.AES.test;
+
 import org.oobd.crypt.AES.EncodeDecodeAES;
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Basic symmetric encryption example
  */
 public class Tester {
 
-	private static String seedWith16Chars = "This is my seed.";
-	private static String textToEncrypt = "Schrabbeldabbel";
 
 	public static void main(String[] args) throws Exception {
 		try {
-			String encrypted = EncodeDecodeAES.encrypt(seedWith16Chars, textToEncrypt);
-			System.out.println("Encrypt: "+encrypted);
-			String decrypted = EncodeDecodeAES.decrypt(seedWith16Chars, encrypted);
+			String seed=args[0];
+			String textToEncrypt=args[1];
+			
+			byte[] encrypted = EncodeDecodeAES.encryptBytes(seed, textToEncrypt.getBytes());
+			System.out.println(" String seed = \""+seed+"\";");
+			System.out.print(" byte[] passPhrase={ ");
+			for (int i=0; i< encrypted.length;i++){
+				System.out.print(encrypted[i]);
+				System.out.print(" , ");
+			}
+			System.out.println(" } ; ");
+			String decrypted = new String(EncodeDecodeAES.decryptBytes(seed, encrypted));
 			System.out.println("Decrypt: "+ decrypted);
 		} catch (Exception e) {
 			e.printStackTrace();

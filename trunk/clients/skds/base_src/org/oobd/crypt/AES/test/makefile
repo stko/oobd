@@ -8,4 +8,4 @@ Tester.class :   Tester.java
 
 
 run:
-	java $(OPT) Tester
+	java $(OPT) org.oobd.crypt.AES.test.Tester

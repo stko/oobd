@@ -68,7 +68,8 @@ public interface OOBDConstants {
     public final static int FT_BUS = 2;
     public final static int FT_ENGINE = 3;
     public final static int FT_DATABASE = 4;
-   public final static int FT_IGNORE = 5;
+    public final static int FT_IGNORE = 5;
+    public final static int FT_KEY = 6;
     // loop time for timer triggered List- Updates in ms
     public final static int LV_UPDATE = 100;
     // loop time for status Updates in ms

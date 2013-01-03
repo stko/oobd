@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.oobd.base.Core;
+
 /**
  *
  * @author steffen
@@ -46,9 +48,12 @@ public class Factory {
         File file = new File(filePath);
         if (file.exists()) {
             String name[] = file.getName().split("\\.");
+            Logger.getLogger(Factory.class.getName()).log(Level.INFO, "Length of file name array: {0}" + name.length );
             if (name.length > 1) {
-                if (name[1].equals("lbc")) {
-                    return new FileHandlerLBC();
+                if (name[name.length-1].equals("pgp")) {
+                    return new FileHandlerPGP(Core.getSingleInstance());
+                }else{
+                	return new FileHandlerLBC(Core.getSingleInstance());
                 }
             }
         }

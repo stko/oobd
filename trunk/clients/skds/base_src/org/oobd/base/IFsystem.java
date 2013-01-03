@@ -75,4 +75,29 @@ public interface IFsystem {
      * @return a object which connects to the system specific hardware or nil
      */
     public Object supplyHardwareHandle(Onion typ);
+    
+    /**
+     * \brief returns the (secret) application pass phrase for data decoding
+     * 
+     * @return the application pass phrase
+     */
+    public char[] getAppPassPhrase();
+
+    
+    /**
+     * \brief returns the (secret) user pass phrase for data decoding
+     * 
+     * @return the user pass phrase
+     */
+
+    
+    public String getUserPassPhrase();
+
+    
+    /**
+     * \brief stores the (secret) user pass phrase for later data decoding
+     * 
+     * @param the user pass phrase
+     */
+    public void setUserPassPhrase(String upp);
 }

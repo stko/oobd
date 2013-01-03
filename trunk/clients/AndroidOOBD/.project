@@ -34,7 +34,7 @@
 		<link>
 			<name>base_src</name>
 			<type>2</type>
-			<location>/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/base_src</location>
+			<locationURI>PARENT-1-PROJECT_LOC/skds/base_src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

@@ -12,6 +12,8 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.oobd.base.Core;
+
 /**
  *
  * @author steffen
@@ -20,6 +22,11 @@ public class FileHandlerLBC implements Archive {
 
     String myFilePath;
     String myFileName;
+	Core core;
+
+	public FileHandlerLBC(Core c){
+		core=c;
+	}
 
     public InputStream getInputStream(String innerPath) {
         if (myFilePath != null) {

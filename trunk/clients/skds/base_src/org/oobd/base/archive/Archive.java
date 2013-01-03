@@ -5,12 +5,15 @@ package org.oobd.base.archive;
 
 import java.io.InputStream;
 
+import org.oobd.base.Core;
+
 /**
  *
  * @author steffen
  */
 public interface Archive {
     
+   
     /**
      * \brief return the inputstream of that file
      * @param innerPath internal path inside the file, e.g. if the file is an archive

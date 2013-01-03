@@ -1,3 +1,5 @@
+package org.oobd.crypt.gpg.test;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.FileOutputStream;
