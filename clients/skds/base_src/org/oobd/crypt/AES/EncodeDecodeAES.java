@@ -1,6 +1,7 @@
 package org.oobd.crypt.AES;
  
  import java.security.SecureRandom;
+import java.security.Security;
  
 import java.lang.reflect.*;
 
@@ -10,7 +11,7 @@ import java.lang.reflect.*;
  import javax.crypto.SecretKey;
  import javax.crypto.spec.SecretKeySpec;
  
- import org.oobd.base.Base64Coder;
+import org.oobd.base.Base64Coder;
  
  public class EncodeDecodeAES {
  
@@ -19,9 +20,9 @@ import java.lang.reflect.*;
  	private final static byte[] key = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
  
  
- 	// static {
- 	// Security.addProvider(new BouncyCastleProvider());
- 	// }
+ 	static {
+ 	  Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
+ 	  }
  
  	public static String encrypt(String seed, String cleartext) throws Exception {
  		byte[] rawKey = getRawKey(seed.getBytes());
@@ -58,8 +59,9 @@ import java.lang.reflect.*;
  
  
  	private static byte[] getRawKey(byte[] seed) throws Exception {
- 		KeyGenerator kgen = KeyGenerator.getInstance("AES"); // , "SC");
- 		SecureRandom sr = null;
+		 KeyGenerator kgen = KeyGenerator.getInstance("AES"); // , "SC");
+		//KeyGenerator kgen = KeyGenerator.getInstance("AES" , "SC");
+		 		SecureRandom sr = null;
  		if (isAndroid_4_2_JellyBean()) {
  			sr = SecureRandom.getInstance("SHA1PRNG", "Crypto");
  		} else {
@@ -86,7 +88,8 @@ import java.lang.reflect.*;
  
  	private static byte[] encrypt(byte[] raw, byte[] clear) throws Exception {
  		SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
- 		Cipher cipher = Cipher.getInstance("AES"); // /ECB/PKCS7Padding", "SC");
+		Cipher cipher = Cipher.getInstance("AES"); // /ECB/PKCS7Padding", "SC");
+		//Cipher cipher = Cipher.getInstance("AES/ECB/PKCS7Padding", "SC");
  		cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
  		byte[] encrypted = cipher.doFinal(clear);
  		return encrypted;
@@ -96,6 +99,7 @@ import java.lang.reflect.*;
  	private static byte[] decrypt(byte[] raw, byte[] encrypted) throws Exception {
  		SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
  		Cipher cipher = Cipher.getInstance("AES"); // /ECB/PKCS7Padding", "SC");
+ 		//Cipher cipher = Cipher.getInstance("AES/ECB/PKCS7Padding", "SC");
  		cipher.init(Cipher.DECRYPT_MODE, skeySpec);
  		byte[] decrypted = cipher.doFinal(encrypted);
  		return decrypted;

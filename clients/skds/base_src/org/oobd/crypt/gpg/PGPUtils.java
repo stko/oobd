@@ -1,44 +1,21 @@
 package org.oobd.crypt.gpg;
 
-// taken from http://sloanseaman.com/wordpress/2012/05/13/revisited-pgp-encryptiondecryption-in-java/
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.security.NoSuchProviderException;
-import java.security.Provider;
-import java.security.SecureRandom;
 import java.security.Security;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.util.Date;
 import java.util.Iterator;
 
 
-import org.apache.commons.io.IOUtils;
-import org.spongycastle.bcpg.ArmoredOutputStream;
-import org.spongycastle.bcpg.HashAlgorithmTags;
 import org.spongycastle.bcpg.PublicKeyAlgorithmTags;
-import org.spongycastle.bcpg.CompressionAlgorithmTags;
-import org.spongycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.spongycastle.bcpg.sig.KeyFlags;
-import org.spongycastle.jce.provider.BouncyCastleProvider;
-import org.spongycastle.openpgp.*;
 import org.spongycastle.openpgp.PGPCompressedData;
-import org.spongycastle.openpgp.PGPCompressedDataGenerator;
-import org.spongycastle.openpgp.PGPEncryptedData;
-import org.spongycastle.openpgp.PGPEncryptedDataGenerator;
 import org.spongycastle.openpgp.PGPEncryptedDataList;
 import org.spongycastle.openpgp.PGPException;
 import org.spongycastle.openpgp.PGPLiteralData;
-import org.spongycastle.openpgp.PGPLiteralDataGenerator;
 import org.spongycastle.openpgp.PGPObjectFactory;
-import org.spongycastle.openpgp.PGPOnePassSignature;
 import org.spongycastle.openpgp.PGPOnePassSignatureList;
 import org.spongycastle.openpgp.PGPPrivateKey;
 import org.spongycastle.openpgp.PGPPublicKey;
@@ -49,21 +26,13 @@ import org.spongycastle.openpgp.PGPSecretKey;
 import org.spongycastle.openpgp.PGPSecretKeyRing;
 import org.spongycastle.openpgp.PGPSecretKeyRingCollection;
 import org.spongycastle.openpgp.PGPSignature;
-import org.spongycastle.openpgp.PGPSignatureGenerator;
-import org.spongycastle.openpgp.PGPSignatureList;
-import org.spongycastle.openpgp.PGPSignatureSubpacketGenerator;
 import org.spongycastle.openpgp.PGPSignatureSubpacketVector;
 import org.spongycastle.openpgp.PGPUtil;
 
 import org.spongycastle.openpgp.operator.PBESecretKeyDecryptor;
-import org.spongycastle.openpgp.operator.PGPContentSignerBuilder;
 import org.spongycastle.openpgp.operator.bc.BcPBESecretKeyDecryptorBuilder;
-import org.spongycastle.openpgp.operator.bc.BcPGPContentSignerBuilder;
-import org.spongycastle.openpgp.operator.bc.BcPGPContentVerifierBuilderProvider;
-import org.spongycastle.openpgp.operator.bc.BcPGPDataEncryptorBuilder;
 import org.spongycastle.openpgp.operator.bc.BcPGPDigestCalculatorProvider;
 import org.spongycastle.openpgp.operator.bc.BcPublicKeyDataDecryptorFactory;
-import org.spongycastle.openpgp.operator.bc.BcPublicKeyKeyEncryptionMethodGenerator;
 
 
 
@@ -434,4 +403,4 @@ public static void init()
    
 }
 */
-
+}

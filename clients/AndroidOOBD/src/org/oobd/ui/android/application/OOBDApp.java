@@ -6,13 +6,16 @@ import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
 import java.io.*;
+import java.lang.reflect.Method;
 
 import org.oobd.base.Core;
 import org.oobd.base.OOBDConstants;
 import org.oobd.base.IFsystem;
 import org.oobd.base.IFui;
+import org.oobd.base.archive.*;
 
 import org.oobd.base.support.Onion;
+import org.oobd.crypt.AES.EncodeDecodeAES;
 import org.oobd.ui.android.Diagnose;
 import org.oobd.ui.android.DiagnoseItem;
 import org.oobd.ui.android.MainActivity;
@@ -49,7 +52,8 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 	private static OOBDApp mInstance;
 	private Toast mToast;
 	private ComPort myComPort;
-
+	private String userPassPhrase="";
+	
 	public static OOBDApp getInstance() {
 		return mInstance;
 	}
@@ -57,7 +61,8 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 	public String generateUIFilePath(int pathID, String fileName) {
 		switch (pathID) {
 
-		 case FT_DATABASE: return fileName;
+		case FT_DATABASE:
+			return fileName;
 
 		default:
 			return "/sdcard/OOBD/" + fileName;
@@ -77,7 +82,6 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 		InputStream resource = null;
 		switch (pathID) {
 		case OOBDConstants.FT_PROPS:
-		case OOBDConstants.FT_DATABASE:
 			try {
 				resource = new FileInputStream(generateUIFilePath(pathID,
 						resourceName));
@@ -88,45 +92,20 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 						+ " could not loaded from /sdcard/oobd", e);
 			}
 			return resource;
+		case OOBDConstants.FT_DATABASE:
 		case OOBDConstants.FT_SCRIPT:
 			try {
-				resource = new FileInputStream(generateUIFilePath(pathID,
-						resourceName));
+				String filePath = generateUIFilePath(pathID, resourceName);
+				Archive achive = Factory.getArchive(filePath);
+				achive.bind(filePath);
+				resource = achive.getInputStream("");
 				Log.v(this.getClass().getSimpleName(), "File " + resourceName
 						+ " loaded from /sdcard/oobd");
-				return resource;
-			} catch (IOException e) {
-				Log.e(this.getClass().getSimpleName(),
-						"Script not found on SDCard or SDCard not available. Try to read from /assets");
-				try {
-					resource = OOBDApp.getInstance().getAssets()
-							.open(resourceName);
-					Log.v(this.getClass().getSimpleName(),
-							"File "
-									+ resourceName
-									+ ": default file loaded from /assets instead of sdcard.");
-
-					// inform user in Dialog Box:
-
-					MainActivity.getMyMainActivity().runOnUiThread(
-							new Runnable() {
-								public void run() {
-									Toast.makeText(
-											MainActivity.getMyMainActivity()
-													.getApplicationContext(),
-											"Skript on SDCard not found. Loading default Script.",
-											Toast.LENGTH_LONG).show();
-								}
-							});
-
-					return resource;
-				} catch (IOException ex) {
-					Log.e(this.getClass().getSimpleName(),
-							"Script also not found in local directory /assets");
-					throw new java.util.MissingResourceException(
-							"Resource not found", "OOBDApp", resourceName);
-				}
+			} catch (Exception e) {
+				Log.v(this.getClass().getSimpleName(), "File " + resourceName
+						+ " could not loaded from /sdcard/oobd", e);
 			}
+			return resource;
 
 		default:
 			throw new java.util.MissingResourceException("Resource not known",
@@ -152,10 +131,11 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 
 		FilenameFilter filter = new FilenameFilter() {
 			public boolean accept(File dir, String name) {
-				return name.toLowerCase().endsWith(".lbc");
+				return name.toLowerCase().endsWith(".lbc")
+						|| name.toLowerCase().endsWith(".pgp");
 			}
 		};
-		File dir = new File(generateUIFilePath(OOBDConstants.FT_SCRIPT,""));
+		File dir = new File(generateUIFilePath(OOBDConstants.FT_SCRIPT, ""));
 		String[] children = dir.list(filter);
 		if (children == null) {
 			return new String[0];
@@ -225,5 +205,42 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 	public boolean saveProperty(int pathID, String filename, Properties prop) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public char[] getAppPassPhrase() {
+		try {
+			Class<?> act = Class.forName("org.oobd.crypt.PassPhraseProvider");
+			Method m0 = act.getDeclaredMethod("getPassPhrase", (Class[]) null);
+			return (char[]) m0.invoke(null, (Object[]) null);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "DummyPassPhrase".toCharArray();
+			
+		}		
+	}
+
+	public String getUserPassPhrase() {
+		if (userPassPhrase.equals("")){
+			return "";
+		}else{
+			try {
+				return new String(EncodeDecodeAES.decrypt(getAppPassPhrase().toString(), userPassPhrase));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return "";
+			}
+		}
+	}
+
+	public void setUserPassPhrase(String upp) {
+		try {
+			userPassPhrase=EncodeDecodeAES.encrypt(getAppPassPhrase().toString(), upp);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			userPassPhrase="";
+		}
+		
 	}
 }

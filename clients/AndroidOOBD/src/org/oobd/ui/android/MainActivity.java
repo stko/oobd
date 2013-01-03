@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.oobd.base.Base64Coder;
 import org.oobd.base.support.Onion;
 import org.oobd.base.OOBDConstants;
+import org.oobd.crypt.AES.EncodeDecodeAES;
 import org.oobd.ui.android.application.AndroidGui;
 import org.oobd.ui.android.application.OOBDApp;
 
@@ -39,6 +40,8 @@ import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 import android.widget.TextView;
 import android.content.SharedPreferences;
+
+import android.widget.EditText;
 
 /**
  * 
@@ -106,7 +109,6 @@ public class MainActivity extends FragmentActivity implements
 		mDiagnoseButton.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
-
 
 				mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 				if (mBluetoothAdapter == null) {
@@ -190,15 +192,36 @@ public class MainActivity extends FragmentActivity implements
 		TextView versionView = (TextView) findViewById(R.id.versionView);
 		versionView.setText("Build "
 				+ getResources().getString(R.string.app_svnversion));
-
+		final EditText input = new EditText(this);
+new AlertDialog.Builder(myMainActivity)
+	    .setTitle("PGP Pass Phrase")
+	    .setMessage("If you want to use PGP scripts, please input your pass phrase here")
+	    .setView(input)
+	    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+	        public void onClick(DialogInterface dialog, int whichButton) {
+	            try {
+	            	OOBDApp.getInstance().setUserPassPhrase(input.getText().toString());
+	        		//System.out.println("User Passphrase:"+passphrase);
+	        		//System.out.println("decrypted User Passphrase:"+EncodeDecodeAES.decrypt(new String(OOBDApp.getInstance().getPassPhase()), passphrase));
+				} catch (Exception e) {
+					// e.printStackTrace();
+					OOBDApp.getInstance().setUserPassPhrase("");
+				}
+	        }
+	    }).setNegativeButton("Not today", new DialogInterface.OnClickListener() {
+	        public void onClick(DialogInterface dialog, int whichButton) {
+	            // Do nothing.
+	        }
+	    }).show();
+		String pp=new String(OOBDApp.getInstance().getAppPassPhrase());
+		System.out.println("System Passphrase:"+pp);
 	}
 
 	void createDisclaimerDialog() {
 		InputStream resource = null;
 		try {
-			resource = OOBDApp.getInstance()
-					.generateResourceStream(OOBDConstants.FT_SCRIPT,
-							OOBDConstants.DisclaimerFileName);
+			resource = OOBDApp.getInstance().generateResourceStream(
+					OOBDConstants.FT_SCRIPT, OOBDConstants.DisclaimerFileName);
 		} catch (MissingResourceException ex) {
 
 		}
