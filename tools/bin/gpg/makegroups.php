@@ -1,9 +1,11 @@
 #!/usr/bin/php
 <?php
 	$jobDone=false;
-	if ($argc==3){ // = 2 parameters, param 0 is the script name itself
+	if ($argc==5){ // = 4 parameters, param 0 is the script name itself
 		$appPassPhraseFile=$argv[1];
 		$grouplist=$argv[2];
+		$pubfile=$argv[3];
+		$secfile=$argv[4];
 		$appPassPhrase=exec("gpg  -o - --decrypt " . $appPassPhraseFile, $output, $retval);
 		if ($retval != 0 or $appPassPhrase == ""){
 			exitProg("Error when decrypting application pass phrase!\n", 1);	
@@ -24,8 +26,8 @@ Name-Real: $group
 #Name-Email: joe@foo.bar
 Expire-Date: 0
 Passphrase: $appPassPhrase
-%pubring oobd_groups.pub
-%secring oobd_groups.sec
+%pubring $pubfile
+%secring $secfile
 %commit
 
 ";
@@ -49,11 +51,13 @@ function usage(){
 Part of the OOBD tool set (www.oobd.org)
 
 Usage:
-	".basename($argv[0])." appPassPhrase.gpg userlist
+	".basename($argv[0])." appPassPhrase.gpg userlist pubkeyfile seckeyfile
 
 appkey.gpg: contains the application pass phrase in the last line of text, encrypted with the key masters gpg key
 
 grouplist.txt : contains the name of the groups to be generated, one per row
+
+pubkeyfile, seckeyfile: File to store the new keys in
 
 ".basename($argv[0])." writes the gpg config file to stdout, where gpg takes this as input with 'gpg --batch --gen-key -'
 
