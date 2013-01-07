@@ -82,7 +82,7 @@ void System_Configuration(void) {
 	ADC_Configuration();
 
 	/* Timer 2 configuration for PWM output, 3100Hz/50% duty cycle */
-	TIM2_Configuration(); /* OOBD-Cup v5 only * */
+	TIM2_Configuration(3100); /* OOBD-Cup v5 only * */
 
 	/* NVIC configuration */
 	//  NVIC_Configuration();
@@ -1258,7 +1258,7 @@ void ADC_Configuration(void) {
 
 }
 
-void TIM2_Configuration(void) {
+void TIM2_Configuration(int Frequency) {
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	TIM_OCInitTypeDef TIM_OCInitStructure;
 	uint16_t PrescalerValue = 0;
@@ -1266,8 +1266,8 @@ void TIM2_Configuration(void) {
 
 	/* Compute the prescaler value, set TIM2CLK to 2MHz */
 	PrescalerValue = (uint16_t) (SystemCoreClock / 2000000) - 1;
-	/* Time base configuration, TIM2 is running at 3100Hz */
-	TIM_TimeBaseStructure.TIM_Period = 644;
+	/* PWM Time base configuration based on TIM2CLK of 2MHz */
+	TIM_TimeBaseStructure.TIM_Period = 2000000/Frequency;
 	TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0;
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
