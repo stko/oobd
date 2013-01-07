@@ -366,6 +366,9 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 }
 
 portBASE_TYPE sysSound(portBASE_TYPE frequency, portBASE_TYPE volume) {
+	if (frequency != 0)
+		TIM2_Configuration(frequency);
+	/* if frequency=0 => disable buzzer, otherwise enable buzzer with frequency */
 	frequency ? TIM_Cmd(TIM2, ENABLE) : TIM_Cmd(TIM2, DISABLE); /* Buzzer */
 }
 
