@@ -87,7 +87,6 @@ struct UdsConfig {
     portBASE_TYPE recvID,	//!< Module ID
      sendID,			//!< sender ID, used when the expected answer ID <> recvID || 8
      timeout,			//!< timeout in systemticks
-     listen,			//!< listen level
      timeoutPending,		//!< timeout for response pending delays in system ticks
      blockSize,			//!< max. number of frames to send, overwrites the values received from Module, if > 0.
      separationTime,		//!< delay between two frames,overwrites the values received from Module, if > 0
