@@ -379,17 +379,17 @@ portBASE_TYPE bus_rx_count_can()
 
 portBASE_TYPE bus_tx_count_can()
 {
-  return txCount;
+    return txCount;
 }
 
 
 void bus_clear_rx_count_can()
 {
-  rxCount=0;
+    rxCount = 0;
 }
 
 
 void bus_clear_tx_count_can()
 {
-  txCount=0;
+    txCount = 0;
 }

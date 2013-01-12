@@ -286,6 +286,37 @@ void CreateEventMsg(portBASE_TYPE event, portBASE_TYPE value)
 
 }
 
+ODPBuffer *createODPBuffer(portBASE_TYPE size)
+{
+    ODPBuffer *odpBuffer = pvPortMalloc(sizeof(struct ODPBuffer));
+    if (odpBuffer == NULL) {
+	DEBUGPRINT("Fatal error: Not enough heap to allocate ODPBuffer!\n",
+		   'a');
+	return (ODPBuffer *) NULL;
+    } else {
+	odpBuffer->data = pvPortMalloc(size);
+	if (odpBuffer->data == NULL) {
+	    DEBUGPRINT
+		("Fatal error: Not enough heap to allocate ODPBuffer data!\n",
+		 'a');
+	    return (ODPBuffer *) NULL;
+	}
+    }
+    return odpBuffer;
+
+}
+
+
+void freeODPBuffer(ODPBuffer * odpBuffer)
+{
+    if (odpBuffer != NULL) {
+	if (odpBuffer->data != NULL) {
+	    free(odpBuffer->data);
+	}
+	free(odpBuffer);
+    }
+}
+
 
 
 /*

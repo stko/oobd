@@ -62,10 +62,7 @@
 */
 //<<<< oobdtemple protocol buffer <<<<
 
-typedef struct UDSBUFFER {
-    portBASE_TYPE len;
-    unsigned char data[UDSSIZE];
-} UDSBuffer;
+
 
 extern char *oobd_Error_Text_OS[];
 
@@ -116,7 +113,7 @@ odp_uds_data2CAN(unsigned char *dataPtr, unsigned char *canPtr,
 //<<<< oobdtemple protocol bus2protocol <<<<
 
 void
-udp_uds_CAN2data(UDSBuffer * udsPtr, unsigned char *canPtr,
+udp_uds_CAN2data(ODPBuffer * udsPtr, unsigned char *canPtr,
 		 portBASE_TYPE startFrom, portBASE_TYPE len)
 {
     int i;
@@ -171,13 +168,13 @@ odp_uds_generateTesterPresents(unsigned char *tpArray,
 
 
 
-//>>>> oobdtemple protocol bus2protocol  >>>>
+//>>>> oobdtemple protocol printdata_Buffer  >>>>
 /*!
 \brief prints the received protocol buffer as Hexdump to the serial port
 
 This function is called through the output task, when the protocol sends a MSG_DUMP_BUFFER message to request a buffer dump
 */
-//<<<< oobdtemple protocol bus2protocol <<<<
+//<<<< oobdtemple protocol printdata_Buffer <<<<
 
 void
 odp_uds_printdata_Buffer(portBASE_TYPE msgType, void *data,
@@ -185,8 +182,8 @@ odp_uds_printdata_Buffer(portBASE_TYPE msgType, void *data,
 {
     extern xQueueHandle inputQueue;
 
-    UDSBuffer **doublePtr;
-    UDSBuffer *myUDSBuffer;
+    ODPBuffer **doublePtr;
+    ODPBuffer *myUDSBuffer;
     doublePtr = data;
     myUDSBuffer = *doublePtr;
     int i;
@@ -210,6 +207,14 @@ odp_uds_printdata_Buffer(portBASE_TYPE msgType, void *data,
 
 }
 
+//>>>> oobdtemple protocol printParam  >>>>
+/*!
+\brief prints the requested parameter of the actual protocol
+
+This function is called through the output task, when the protocol sends a MSG_HANDLE_PARAM message to request a parameter output
+*/
+//<<<< oobdtemple protocol printParam <<<<
+
 
 void odp_uds_printParam(portBASE_TYPE msgType, void *data,
 			printChar_cbf printchar)
@@ -229,11 +234,14 @@ void odp_uds_printParam(portBASE_TYPE msgType, void *data,
 }
 
 
+//>>>> oobdtemple protocol recvdata  >>>>
 
-/*-----------------------------------------------------------*/
-/** callback function, called from CAN Rx ISR
- *  transfers received telegrams into Msgqueue
+/*!
+\brief callback function, called from BUS Rx ISR
+
+transfers received telegrams into Msgqueue
  */
+//<<<< oobdtemple protocol recvdata <<<<
 
 void odp_uds_recvdata(data_packet * p)
 {
@@ -252,7 +260,14 @@ void odp_uds_recvdata(data_packet * p)
     }
 }
 
-//! \bug Sachlich falsch: Das Bus- Listening muß im Bus erfolgen, nicht im Protocoll, sonst sieht man evt. Busprobleme nicht
+//>>>> oobdtemple protocol dumpFrame  >>>>
+
+/*!
+\brief requests the output of received bus frame
+\bug Sachlich falsch: Das Bus- Listening muß im Bus erfolgen, nicht im Protocoll, sonst sieht man evt. Busprobleme nicht
+ */
+//<<<< oobdtemple protocol dumpFrame <<<<
+
 void odp_uds_dumpFrame(data_packet * p, print_cbf print_data)
 {
     MsgData *msg;
@@ -271,13 +286,23 @@ void odp_uds_dumpFrame(data_packet * p, print_cbf print_data)
 
 /*!
 
-structure of UDS- CAN telegram taken fom http://www.canbushack.com/blog/index.php/2010/03/19/iso-15765-2-can-transport-layer-yes-it-can-be-fun
+structure of UDS- CAN telegram taken fom http://www.canbushack.com/blog/index.php?title=iso-15765-2-can-transport-layer-yes-it-can-be-fun&more=1&c=1&tb=1&pb=1
 
 */
+
+//>>>> oobdtemple protocol mainloop  >>>>
+
+/*!
+\brief Main protocol loop
+
+
+ */
+//<<<< oobdtemple protocol mainloop <<<<
 
 
 void obp_uds(void *pvParameters)
 {
+//>>>> oobdtemple protocol initmain  >>>>
     int keeprunning = 1;
     data_packet *dp;
     data_packet actDataPacket;
@@ -291,42 +316,16 @@ void obp_uds(void *pvParameters)
     extern xQueueHandle protocolQueue;
     extern xQueueHandle outputQueue;
     extern xQueueHandle inputQueue;
-    extern print_cbf printdata_CAN;
 
     MsgData *msg;
     MsgData *ownMsg;
     param_data *args;
-    portBASE_TYPE sequenceCounter;
-    portBASE_TYPE remainingBytes;
-    portBASE_TYPE actBufferPos;
-    portBASE_TYPE actFrameLen;
-    portBASE_TYPE blockSize_BS;
-    portBASE_TYPE separationTime_ST;
 
-    portBASE_TYPE stateMachine_state = 0;
     extern xSemaphoreHandle protocollBinarySemaphore;
-    int i;
-    unsigned char telegram[8];
-    /* Memory eater Nr. 1: The UDS message buffer */
-    UDSBuffer *udsBuffer;
-    /* Memory eater Nr. 2: The Tester Present Marker Flags */
-    unsigned char tp_Flags[128];
     portBASE_TYPE msgType;
-    struct UdsConfig udsConfig;
-
-    /* Init default parameters */
-    udsConfig.recvID = 0x7DF;
-    udsConfig.sendID = 0x00;	// 0 disables special sendID
-    udsConfig.timeout = 6;
-    udsConfig.listen = 0;
-    udsConfig.timeoutPending = 150;
-    udsConfig.blockSize = 0;
-    udsConfig.separationTime = 0;
-    udsConfig.tpFreq = 250;
-
     portBASE_TYPE timeout = 0;
-    blockSize_BS = 0;
-    separationTime_ST = 0;
+    portBASE_TYPE showBusTransfer = 0;
+    int i;
     //catch the "Protocoll is running" Semaphore
     xSemaphoreTake(protocollBinarySemaphore, portMAX_DELAY);
 
@@ -334,28 +333,59 @@ void obp_uds(void *pvParameters)
     /* activate the bus... */
     odbarr[busToUse] ();
     actBus_init();
+    ODPBuffer *protocolBuffer;
+    protocolBuffer = NULL;
+    // start with the protocol specific initalisation
+//<<<< oobdtemple protocol initmain <<<<
+    extern print_cbf printdata_CAN;
+    portBASE_TYPE sequenceCounter;
+    portBASE_TYPE remainingBytes;
+    portBASE_TYPE actBufferPos;
+    portBASE_TYPE actFrameLen;
+    portBASE_TYPE blockSize_BS;
+    portBASE_TYPE separationTime_ST;
+    portBASE_TYPE stateMachine_state = 0;
+    unsigned char telegram[8];
+    /* Memory eater Nr. 1: The UDS message buffer */
+    /* Memory eater Nr. 2: The Tester Present Marker Flags */
+    unsigned char tp_Flags[128];
+    struct UdsConfig udsConfig;
+
+    /* Init default parameters */
+    udsConfig.recvID = 0x7DF;
+    udsConfig.sendID = 0x00;	// 0 disables special sendID
+    udsConfig.timeout = 6;
+    udsConfig.timeoutPending = 150;
+    udsConfig.blockSize = 0;
+    udsConfig.separationTime = 0;
+    udsConfig.tpFreq = 250;
+
+    blockSize_BS = 0;
+    separationTime_ST = 0;
     /* tell the Rx-ISR about the function to use for received data */
     busControl(ODB_CMD_RECV, odp_uds_recvdata);
-    udsBuffer = pvPortMalloc(sizeof(struct UDSBUFFER));
-    udsBuffer->len = 0;
-    if (udsBuffer == NULL) {
+    protocolBuffer = createODPBuffer(UDSSIZE);
+    if (protocolBuffer == NULL) {
 	keeprunning = 0;
-	DEBUGPRINT("Fatal error: Not enough heap to allocate UDSBuffer!\n",
-		   'a');
     }
+    protocolBuffer->len = 0;
     /* reset the Tester Present Array */
     for (i = 0; i < 128; i++) {
 	tp_Flags[i] = 0;
     }
+//>>>> oobdtemple protocol mainloop_start  >>>>    
     for (; keeprunning;) {
 
 	if (MSG_NONE != (msgType = waitMsg(protocolQueue, &msg, portMAX_DELAY)))	// portMAX_DELAY
 	    /* handle message */
 	{
 	    switch (msgType) {
+//<<<< oobdtemple protocol mainloop_start <<<<
+//>>>> oobdtemple protocol MSG_BUS_RECV  >>>>    
 	    case MSG_BUS_RECV:
 		dp = msg->addr;
-		if (udsConfig.listen > 0) {
+//<<<< oobdtemple protocol MSG_BUS_RECV <<<<
+		if (showBusTransfer > 0) {
 		    odp_uds_dumpFrame(dp, printdata_CAN);
 		}
 		if (((udsConfig.sendID == 0 ? dp->recv == (udsConfig.recvID | 8) : dp->recv == udsConfig.sendID)) || udsConfig.recvID == 0x7DF) {	/* Tester Address correct / we sendes a broadcast (udsConfig.recvID==0x7DF)? */
@@ -386,7 +416,7 @@ void obp_uds(void *pvParameters)
 				stateMachine_state = SM_UDS_SEND_CF;
 			    } else {	/* wrong answer */
 				stateMachine_state = SM_UDS_STANDBY;
-				udsBuffer->len = 0;
+				protocolBuffer->len = 0;
 				createCommandResultMsg
 				    (FBID_PROTOCOL_GENERIC,
 				     ERR_CODE_UDS_MISSING_FLOW_CONTROL,
@@ -408,7 +438,7 @@ void obp_uds(void *pvParameters)
 				actFrameLen =
 				    remainingBytes >
 				    7 ? 7 : remainingBytes;
-				odp_uds_data2CAN(&udsBuffer->data
+				odp_uds_data2CAN(&protocolBuffer->data
 						 [actBufferPos], &telegram,
 						 actFrameLen, 1);
 				sequenceCounter =
@@ -417,7 +447,7 @@ void obp_uds(void *pvParameters)
 				actBufferPos += actFrameLen;
 				remainingBytes -= actFrameLen;
 				actDataPacket.data[0] = 0x20 + sequenceCounter;	// prepare CF
-				if (udsConfig.listen > 0) {
+				if (showBusTransfer > 0) {
 				    odp_uds_dumpFrame(&actDataPacket,
 						      printdata_CAN);
 				}
@@ -441,7 +471,7 @@ void obp_uds(void *pvParameters)
 				    actFrameLen =
 					remainingBytes >
 					7 ? 7 : remainingBytes;
-				    udp_uds_CAN2data(udsBuffer,
+				    udp_uds_CAN2data(protocolBuffer,
 						     &(dp->data[1]),
 						     actBufferPos,
 						     actFrameLen);
@@ -457,8 +487,9 @@ void obp_uds(void *pvParameters)
 					timeout = 0;
 					/* to dump the  buffer, we send the address of the udsbuffer to the print routine */
 					ownMsg =
-					    createMsg(&udsBuffer,
-						      sizeof(udsBuffer));
+					    createMsg(&protocolBuffer,
+						      sizeof
+						      (protocolBuffer));
 					/* add correct print routine; */
 					ownMsg->print =
 					    odp_uds_printdata_Buffer;
@@ -527,10 +558,10 @@ void obp_uds(void *pvParameters)
 				actBufferPos = 6;
 				DEBUGPRINT("First Frame with %ld Bytes\n",
 					   remainingBytes);
-				udsBuffer->len = remainingBytes;	/* set the buffer size alredy inhope, that all goes well ;-) */
+				protocolBuffer->len = remainingBytes;	/* set the buffer size alredy inhope, that all goes well ;-) */
 				remainingBytes -= 6;	/* the first 6 bytes are already in the FF */
-				udp_uds_CAN2data(udsBuffer, &(dp->data[2]),
-						 0, 6);
+				udp_uds_CAN2data(protocolBuffer,
+						 &(dp->data[2]), 0, 6);
 				actDataPacket.recv = udsConfig.recvID;
 				actDataPacket.data = &telegram;
 				actDataPacket.len = 8;
@@ -540,7 +571,7 @@ void obp_uds(void *pvParameters)
 				telegram[0] = 0x30;	/* 0x30 = 3=>FlowControl, 0=>CTS = ContinoueToSend */
 				stateMachine_state = SM_UDS_WAIT_FOR_CF;
 				timeout = udsConfig.timeout;
-				if (udsConfig.listen > 0) {
+				if (showBusTransfer > 0) {
 				    odp_uds_dumpFrame(&actDataPacket,
 						      printdata_CAN);
 				}
@@ -550,16 +581,16 @@ void obp_uds(void *pvParameters)
 				    DEBUGPRINT
 					("Single Frame with %d Bytes\n",
 					 dp->data[0]);
-				    udsBuffer->len = dp->data[0];
-				    udp_uds_CAN2data(udsBuffer,
+				    protocolBuffer->len = dp->data[0];
+				    udp_uds_CAN2data(protocolBuffer,
 						     &(dp->data[1]), 0,
 						     dp->data[0]);
 				    stateMachine_state = SM_UDS_STANDBY;
 				    timeout = 0;
 				    /* to dump the  buffer, we send the address of the udsbuffer to the print routine */
 				    ownMsg =
-					createMsg(&udsBuffer,
-						  sizeof(udsBuffer));
+					createMsg(&protocolBuffer,
+						  sizeof(protocolBuffer));
 				    /* add correct print routine; */
 				    ownMsg->print =
 					odp_uds_printdata_Buffer;
@@ -580,23 +611,28 @@ void obp_uds(void *pvParameters)
 			}
 		    }
 		}
+//>>>> oobdtemple protocol MSG_SERIAL_DATA  >>>>    
 		break;
 	    case MSG_SERIAL_DATA:
 		if (stateMachine_state == SM_UDS_STANDBY) {	/* only if just nothing to do */
 		    dp = (data_packet *) msg->addr;
-		    if (((udsBuffer->len) + dp->len) <= UDSSIZE) {
+		    // data block received from serial input which need to be handled now
+//<<<< oobdtemple protocol MSG_SERIAL_DATA <<<<
+		    if (((protocolBuffer->len) + dp->len) <= UDSSIZE) {
 			/* copy the data into the uds- buffer */
 			for (i = 0; i < dp->len; i++) {
-			    udsBuffer->data[udsBuffer->len++] =
+			    protocolBuffer->data[protocolBuffer->len++] =
 				dp->data[i];
 			}
 		    } else {
 			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
 					       ERR_CODE_UDS_DATA_TOO_LONG_ERR,
-					       (udsBuffer->len) + dp->len,
+					       (protocolBuffer->len) +
+					       dp->len,
 					       ERR_CODE_UDS_DATA_TOO_LONG_ERR_TEXT);
 		    }
 		}
+//>>>> oobdtemple protocol MSG_SERIAL_PARAM_1 >>>>    
 		break;
 	    case MSG_SERIAL_PARAM:
 		args = (portBASE_TYPE *) msg->addr;
@@ -611,11 +647,13 @@ void obp_uds(void *pvParameters)
 			 args->args[ARG_CMD], args->args[ARG_VALUE_1]);
 		    switch (args->args[ARG_CMD]) {
 		    case PARAM_INFO:
+//<<<< oobdtemple protocol MSG_SERIAL_PARAM_1 <<<<
 			CreateParamOutputMsg(args, odp_uds_printParam);
+//>>>> oobdtemple protocol MSG_SERIAL_PARAM_2 >>>>    
 			break;
 			// and here we proceed all command parameters
 		    case PARAM_LISTEN:
-			udsConfig.listen = args->args[ARG_VALUE_1];
+			showBusTransfer = args->args[ARG_VALUE_1];
 			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
@@ -627,6 +665,7 @@ void obp_uds(void *pvParameters)
 			break;
 		    }
 		    break;
+//<<<< oobdtemple protocol MSG_SERIAL_PARAM_2 <<<<
 		case FBID_PROTOCOL_SPEC:
 		    DEBUGPRINT("uds protocol parameter received %ld %ld\n",
 			       args->args[ARG_CMD],
@@ -685,6 +724,7 @@ void obp_uds(void *pvParameters)
 			break;
 		    }
 		    break;
+//>>>> oobdtemple protocol MSG_OTHERS >>>>    
 		case FBID_BUS_GENERIC:
 		case FBID_BUS_SPEC:
 		    actBus_param(args);	/* forward the received params to the underlying bus. */
@@ -695,27 +735,37 @@ void obp_uds(void *pvParameters)
 					   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 		    break;
 		}
+//<<<< oobdtemple protocol MSG_OTHERS <<<<
+//>>>> oobdtemple protocol MSG_INIT >>>>    
 	    case MSG_INIT:
 		DEBUGPRINT("Reset Protocol\n", 'a');
-		udsBuffer->len = 0;
+		if (protocolBuffer != NULL) {
+		    protocolBuffer->len = 0;
+		}
+//<<<< oobdtemple protocol MSG_INIT <<<<
+//>>>> oobdtemple protocol MSG_PROTOCOL_STOP >>>>    
 		break;
 	    case MSG_PROTOCOL_STOP:
 		DEBUGPRINT("Stop Protocol\n", 'a');
 		keeprunning = 0;
 		break;
+//<<<< oobdtemple protocol MSG_PROTOCOL_STOP <<<<
+//>>>> oobdtemple protocol MSG_SEND_BUFFER >>>>    
 	    case MSG_SEND_BUFFER:
 		/* let's Dance: Starting the transfer protocol */
-		if (udsBuffer->len > 0) {
+//<<<< oobdtemple protocol MSG_SEND_BUFFER <<<<
+		if (protocolBuffer->len > 0) {
 		    actDataPacket.recv = udsConfig.recvID;
 		    actDataPacket.data = &telegram;
 		    actDataPacket.len = 8;
-		    if (udsBuffer->len < 8) {	/* its just single frame */
-			odp_uds_data2CAN(&udsBuffer->data[0], &telegram,
-					 udsBuffer->len, 1);
-			actDataPacket.data[0] = udsBuffer->len;
-			udsBuffer->len = 0;	/* prepare buffer to receive */
+		    if (protocolBuffer->len < 8) {	/* its just single frame */
+			odp_uds_data2CAN(&protocolBuffer->data[0],
+					 &telegram, protocolBuffer->len,
+					 1);
+			actDataPacket.data[0] = protocolBuffer->len;
+			protocolBuffer->len = 0;	/* prepare buffer to receive */
 			actBufferPos = 0;
-			if (udsConfig.listen > 0) {
+			if (showBusTransfer > 0) {
 			    odp_uds_dumpFrame(&actDataPacket,
 					      printdata_CAN);
 			}
@@ -723,15 +773,15 @@ void obp_uds(void *pvParameters)
 			stateMachine_state = SM_UDS_WAIT_FOR_ANSWER;
 			timeout = udsConfig.timeout;
 		    } else {	/* we have to send multiframes */
-			odp_uds_data2CAN(&udsBuffer->data[0], &telegram, 6,
-					 2);
-			actDataPacket.data[0] = 0x10 + (udsBuffer->len / 256);	/* prepare FF */
-			actDataPacket.data[1] = udsBuffer->len % 256;
+			odp_uds_data2CAN(&protocolBuffer->data[0],
+					 &telegram, 6, 2);
+			actDataPacket.data[0] = 0x10 + (protocolBuffer->len / 256);	/* prepare FF */
+			actDataPacket.data[1] = protocolBuffer->len % 256;
 			sequenceCounter = 0;
-			remainingBytes = udsBuffer->len - 6;
+			remainingBytes = protocolBuffer->len - 6;
 			actBufferPos = 6;
-			udsBuffer->len = 0;	/* prepare buffer to receive */
-			if (udsConfig.listen > 0) {
+			protocolBuffer->len = 0;	/* prepare buffer to receive */
+			if (showBusTransfer > 0) {
 			    odp_uds_dumpFrame(&actDataPacket,
 					      printdata_CAN);
 			}
@@ -739,6 +789,7 @@ void obp_uds(void *pvParameters)
 			stateMachine_state = SM_UDS_WAIT_FOR_FC;
 			timeout = udsConfig.timeout;
 		    }
+//>>>> oobdtemple protocol MSG_SEND_BUFFER_2 >>>>    
 
 		} else {	/* no data to send? */
 		    createCommandResultMsg
@@ -753,10 +804,13 @@ void obp_uds(void *pvParameters)
 		    }
 		}
 		break;
+//<<<< oobdtemple protocol MSG_SEND_BUFFER_2 <<<<
+//>>>> oobdtemple protocol MSG_TICK >>>>    
 	    case MSG_TICK:
+//<<<< oobdtemple protocol MSG_TICK <<<<
 		if (timeout > 0) {	/* we just waiting for an answer */
 		    if (timeout == 1) {	/* time's gone... */
-			udsBuffer->len = 0;
+			protocolBuffer->len = 0;
 			DEBUGPRINT("Timeout!\n", 'a');
 			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
 					       ERR_CODE_UDS_TIMEOUT, 0,
@@ -777,6 +831,7 @@ void obp_uds(void *pvParameters)
 		odp_uds_generateTesterPresents(&tp_Flags, &telegram,
 					       actBus_send,
 					       udsConfig.tpFreq);
+//>>>> oobdtemple protocol final >>>>    
 		break;
 	    }
 	    disposeMsg(msg);
@@ -787,11 +842,12 @@ void obp_uds(void *pvParameters)
 
     /* Do all cleanup here to finish task */
     actBus_close();
-    free(udsBuffer);
+    freeODPBuffer(protocolBuffer);
     xSemaphoreGive(protocollBinarySemaphore);
-
     vTaskDelete(NULL);
 }
+
+//<<<< oobdtemple protocol final <<<<
 
 void obd_uds_init()
 {

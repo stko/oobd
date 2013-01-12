@@ -140,9 +140,9 @@ the first value x of a parameter command (p x ...) adresses the functional block
   /*! \addtogroup prot_can_generic_parm 
    *  @{
    */
-#define VALUE_PARAM_INFO_BUS_MODE		( 3 ) //!< Displays actual Bus Mode
-#define VALUE_PARAM_INFO_BUS_CONFIG   			( 4 ) //!< Displays actual Bus Config
-#define VALUE_PARAM_INFO_BUS_ERROR   			( 5 ) //!< Displays actual rx/tx counters and resets counters. Display format is: rx-count tx-count rx-error-count tx-error-count 
+#define VALUE_PARAM_INFO_BUS_MODE		( 3 )	//!< Displays actual Bus Mode
+#define VALUE_PARAM_INFO_BUS_CONFIG   			( 4 )	//!< Displays actual Bus Config
+#define VALUE_PARAM_INFO_BUS_ERROR   			( 5 )	//!< Displays actual rx/tx counters and resets counters. Display format is: rx-count tx-count rx-error-count tx-error-count
 /*! 
 
 @} */
@@ -264,6 +264,15 @@ typedef struct OdMsg {
 
 typedef struct OdMsg OdMsg;
 
+typedef struct ODPBuffer {
+    portBASE_TYPE len;
+    portBASE_TYPE size;
+    unsigned char *data;
+} ODPBUFFER;
+
+typedef struct ODPBuffer ODPBuffer;
+
+
 #include "od_protocols.h"
 
 
@@ -306,5 +315,10 @@ void evalResult(portBASE_TYPE source, portBASE_TYPE errType,
 		portBASE_TYPE detail, char *text);
 
 void printEOT();
+
+ODPBuffer *createODPBuffer(portBASE_TYPE size);
+
+void freeODPBuffer(ODPBuffer * odpBuffer);
+
 
 #endif				/* INC_OD_BASE_H */
