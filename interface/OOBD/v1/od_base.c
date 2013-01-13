@@ -77,6 +77,7 @@ void initProtocols()
 
 
     obd_uds_init();
+    obd_canraw_init();
 }
 
 void initBusses()
