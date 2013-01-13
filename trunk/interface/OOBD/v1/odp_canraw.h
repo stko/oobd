@@ -30,7 +30,7 @@
 */
 
 /**
- * implementation of the UDS protocol
+ * implementation of the CAN RAW protocol
  */
 
 
@@ -38,5 +38,41 @@
 #define INC_ODP_CANRAW_H
 
 void obd_canraw_init();
+inline int sendMoreFrames();
+
+// Add obd_canraw_init() to the list of protocols to be initialized
+#define LIST_OF_PROTOCOLS_TO_INITIALIZE #LIST_OF_PROTOCOLS_TO_INITIALIZE obd_canraw_init();
+
+
+
+//! UDS protocol Error constants and texts
+#define ERR_CODE_CANRAW_DATA_TOO_LONG_ERR 1
+#define ERR_CODE_CANRAW_DATA_TOO_LONG_ERR_TEXT "<- Data block longer 4095 Bytes"
+
+/*! \defgroup param_protocol_canraw Commands: Commands of the CAN Raw Protocol
+     The generic CAN commands are as follows, where the command is as P 7 value ...
+
+     x is as :
+
+
+*  @{
+   */
+
+
+/* define parameter types */
+
+#define PARAM_CANRAW_FRAME_DELAY 	    ( 1 )
+#define PARAM_CANRAW_SENDID  		    ( 2 )
+/*! 
+
+
+
+@} */
+
+/* store all parameter in one single struct to maybe later store such param sets in EEPROM */
+struct CanRawConfig {
+    portBASE_TYPE recvID,	//!< receiver ID
+     separationTime;		//!< delay between two frames
+};
 
 #endif				/* INC_ODP_CANRAW_H */

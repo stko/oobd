@@ -109,6 +109,14 @@ portBASE_TYPE eval_param_sys(param_data * args)
 		   args->args[ARG_VALUE_1], args->args[ARG_VALUE_2]);
 	startupProtocol = args->args[ARG_VALUE_1];
 	startupBus = args->args[ARG_VALUE_2];
+	DEBUGPRINT("startupProtocol %d\n", startupProtocol);
+	DEBUGPRINT("SYS_NR_OF_PROTOCOLS %d\n", SYS_NR_OF_PROTOCOLS);
+	DEBUGPRINT("startupBus %d\n", startupBus);
+	DEBUGPRINT("SYS_NR_OF_BUSSES %d\n", SYS_NR_OF_BUSSES);
+	DEBUGPRINT("odparr[startupProtocol] %d\n",
+		   odparr[startupProtocol]);
+	DEBUGPRINT("odbarr[startupBus] %d\n", odbarr[startupBus]);
+
 	if (startupProtocol < SYS_NR_OF_PROTOCOLS
 	    && startupBus < SYS_NR_OF_BUSSES
 	    && odparr[startupProtocol] != NULL

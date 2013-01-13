@@ -54,13 +54,6 @@
 #define SM_UDS_SEND_CF			( 6 )
 
 #define UDSSIZE ( 4095 )
-//>>>> oobdtemple protocol buffer >>>>
-/*!
-
-  \brief generate a protocol receive & transmit buffer
-
-*/
-//<<<< oobdtemple protocol buffer <<<<
 
 
 
