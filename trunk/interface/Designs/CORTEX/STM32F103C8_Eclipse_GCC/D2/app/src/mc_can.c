@@ -47,7 +47,10 @@ extern struct CanConfig *canConfig;
 
 /* callback function for received data */
 recv_cbf reportReceivedData = NULL;
-/* uint8_t   CAN_BusConfig; */
+
+portBASE_TYPE rxCount;
+portBASE_TYPE txCount;
+portBASE_TYPE errCount;
 
 portBASE_TYPE bus_init_can() {
 	canConfig = pvPortMalloc(sizeof(struct CanConfig));
@@ -242,3 +245,56 @@ void USB_LP_CAN1_RX0_IRQHandler(void) {
 }
 
 /*----------------------------------------------------------------------------*/
+
+portBASE_TYPE bus_rx_error_can()
+{
+    return errCount;
+}
+
+/*----------------------------------------------------------------------------*/
+
+portBASE_TYPE bus_tx_error_can()
+{
+    return 0;
+}
+
+/*----------------------------------------------------------------------------*/
+
+void bus_clear_rx_error_can()
+{
+    errCount = 0;
+}
+
+/*----------------------------------------------------------------------------*/
+
+void bus_clear_tx_error_can()
+{
+}
+
+/*----------------------------------------------------------------------------*/
+
+portBASE_TYPE bus_rx_count_can()
+{
+    return rxCount;
+}
+
+/*----------------------------------------------------------------------------*/
+
+portBASE_TYPE bus_tx_count_can()
+{
+    return txCount;
+}
+
+/*----------------------------------------------------------------------------*/
+
+void bus_clear_rx_count_can()
+{
+    rxCount = 0;
+}
+
+/*----------------------------------------------------------------------------*/
+
+void bus_clear_tx_count_can()
+{
+    txCount = 0;
+}
