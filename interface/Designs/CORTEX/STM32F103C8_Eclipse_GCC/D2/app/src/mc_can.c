@@ -189,6 +189,9 @@ portBASE_TYPE bus_param_can_spec(param_data * args) {
 
 void bus_close_can() {
 
+  reportReceivedData=NULL;
+  
+  Provozierter Compile- Error :-) Hier solltest Du auch wenigstens noch den CAN- Interrupt wieder ausschalten, denn wir entfernen den CAN- Bus Handler ja gerade, wenn auch nur vorübergehend..
 }
 
 /*----------------------------------------------------------------------------*/
@@ -238,7 +241,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void) {
 		dp.len = RxMessage.DLC;
 		dp.err = 0x00; /* use received value for error simulations */
 		dp.data = &RxMessage.Data[0]; /* data starts here */
-		reportReceivedData(&dp);
+		if (reportReceicedData)reportReceivedData(&dp);
 	}
 	//  portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
 	DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler finished ***");
