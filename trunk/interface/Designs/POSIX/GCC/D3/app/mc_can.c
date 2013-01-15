@@ -279,6 +279,7 @@ portBASE_TYPE bus_param_can_spec(param_data * args)
 void bus_close_can()
 {
     extern struct CanConfig *canConfig;
+    reportReceicedData = NULL;
     vSocketClose(iSocketSend);
     vSocketClose(iSocketReceive);
     vTaskDelete(xprvUDPTaskHandle);
@@ -323,7 +324,8 @@ void prvUDPTask(void *pvParameters)
 	    dp.data = &xPacket.ucPacket[3];	// data starts here
 	    //xPacket.ucNull = 0; /* Ensure the string is terminated. */
 	    //DEBUGPRINT ("--%s", xPacket.ucPacket);
-	    reportReceicedData(&dp);
+	    if (reportReceicedData)
+		reportReceicedData(&dp);
 	}
     }
 
