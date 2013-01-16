@@ -181,6 +181,10 @@ function nothing(oldvalue,id)
 	return oldvalue
 end
 
+function automaticBusSwitch()
+	return hardwareID==4
+end
+
 -- set response timeout in 10ms units - only needed for OOBD 
 function setTimeout_OOBD(timeout)
   if hardwareID==2 then
