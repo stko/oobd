@@ -53,6 +53,13 @@ portBASE_TYPE txCount;
 portBASE_TYPE errCount;
 
 portBASE_TYPE bus_init_can() {
+	NVIC_InitTypeDef NVIC_InitStructure;
+	extern startupProtocol;
+
+	rxCount = 0;
+	txCount = 0;
+	errCount = 0;
+
 	canConfig = pvPortMalloc(sizeof(struct CanConfig));
 	if (canConfig == NULL) {
 		DEBUGPRINT("Fatal error: Not enough heap to allocate CanConfig!\n",
@@ -61,6 +68,19 @@ portBASE_TYPE bus_init_can() {
 	}
 	canConfig->bus = VALUE_BUS_MODE_SILENT; /* default */
 	canConfig->busConfig = VALUE_BUS_CONFIG_11bit_500kbit; /* default */
+
+	if (startupProtocol == VALUE_PARAM_PROTOCOL_CAN_UDS) {
+		/* Enable CAN1 Receive interrupt for UDS protocol */
+		NVIC_InitStructure.NVIC_IRQChannel = USB_LP_CAN1_RX0_IRQn;
+
+		/* NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; */
+		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
+				= (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
+		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+		NVIC_Init(&NVIC_InitStructure);
+	}
+
 	return pdPASS;
 }
 
@@ -98,6 +118,13 @@ portBASE_TYPE bus_send_can(data_packet * data) {
 	/* transmit whole CAN frame as specified above on CAN1 */
 	CAN_Transmit(CAN1, &TxMessage);
 
+	txCount++;
+	if (txCount > 100000) {
+		rxCount /= 2;
+		txCount /= 2;
+		errCount /= 2;
+	}
+
 	DEBUGUARTPRINT("\r\n*** bus_send_can finished! ***");
 	return pdPASS;
 }
@@ -110,9 +137,24 @@ void bus_flush_can() {
 
 /*----------------------------------------------------------------------------*/
 
+void bus_param_can_spec_Print(portBASE_TYPE msgType, void *data,
+		printChar_cbf printchar) {
+	param_data *args;
+	args = data;
+	DEBUGPRINT
+	("Bus Parameter received via Outputtask param %ld value %ld\n",
+			args->args[ARG_RECV], args->args[ARG_CMD]);
+
+}
+
+/*----------------------------------------------------------------------------*/
+
 portBASE_TYPE bus_param_can_spec(param_data * args) {
 	switch (args->args[ARG_CMD]) {
 	case PARAM_BUS_CONFIG:
+		rxCount = 0;
+		txCount = 0;
+		errCount = 0;
 		if (args->args[ARG_VALUE_1] != 0)
 			CAN1_Configuration(args->args[ARG_VALUE_1], CAN_Mode_Silent); /* reinitialization of CAN interface */
 		canConfig->busConfig = args->args[ARG_VALUE_1];
@@ -120,30 +162,35 @@ portBASE_TYPE bus_param_can_spec(param_data * args) {
 		break;
 
 	case PARAM_BUS_MODE:
+		rxCount = 0;
+		txCount = 0;
+		errCount = 0;
 		switch (args->args[ARG_VALUE_1]) {
 		case VALUE_BUS_MODE_SILENT:
-			CAN1_Configuration((uint8_t)canConfig->busConfig, CAN_Mode_Silent); /* set CAN interface to silent mode */
+			CAN1_Configuration((uint8_t) canConfig->busConfig, CAN_Mode_Silent); /* set CAN interface to silent mode */
 			canConfig->bus = args->args[ARG_VALUE_1]; /* set config.bus to current value of Paramter */
 			// send event information to the ILM task
 			CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_OFF);
 			createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 			break;
 		case VALUE_BUS_MODE_LOOP_BACK:
-			CAN1_Configuration((uint8_t)canConfig->busConfig, CAN_Mode_LoopBack); /* set CAN interface to loop back mode */
+			CAN1_Configuration((uint8_t) canConfig->busConfig,
+					CAN_Mode_LoopBack); /* set CAN interface to loop back mode */
 			canConfig->bus = args->args[ARG_VALUE_1]; /* set config.bus to current value of Paramter */
 			// send event information to the ILM task
 			CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
 			createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 			break;
 		case VALUE_BUS_MODE_LOOP_BACK_WITH_SILENT:
-			CAN1_Configuration((uint8_t)canConfig->busConfig, CAN_Mode_Silent_LoopBack); /* set CAN interface to loop back combined with silent mode */
+			CAN1_Configuration((uint8_t) canConfig->busConfig,
+					CAN_Mode_Silent_LoopBack); /* set CAN interface to loop back combined with silent mode */
 			canConfig->bus = args->args[ARG_VALUE_1]; /* set config.bus to current value of Paramter */
 			// send event information to the ILM task
 			CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
 			createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 			break;
 		case VALUE_BUS_MODE_NORMAL:
-			CAN1_Configuration((uint8_t)canConfig->busConfig, CAN_Mode_Normal); /* set CAN interface to normal mode */
+			CAN1_Configuration((uint8_t) canConfig->busConfig, CAN_Mode_Normal); /* set CAN interface to normal mode */
 			canConfig->bus = args->args[ARG_VALUE_1]; /* set config.bus to current value of Paramter */
 			// send event information to the ILM task
 			CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
@@ -159,10 +206,14 @@ portBASE_TYPE bus_param_can_spec(param_data * args) {
 		break;
 
 	case PARAM_BUS_OUTPUT_ACTIVATE:
+		rxCount = 0;
+		txCount = 0;
+		errCount = 0;
 		switch (args->args[ARG_VALUE_1]) {
 		case 0:
 		case 1:
-			CreateEventMsg(MSG_EVENT_BUS_CHANNEL, args->args[ARG_VALUE_1] == 1 ? 1 : 2);
+			CreateEventMsg(MSG_EVENT_BUS_CHANNEL,
+					args->args[ARG_VALUE_1] == 1 ? 1 : 2);
 			sysIoCtrl(IO_REL1, 0, args->args[ARG_VALUE_1], 0, 0);
 			//! \bug this delay causes the protocol task to sleep for this time, but dring that his message queue runs full
 			//vTaskDelay( 250 / portTICK_RATE_MS ); // wait to give the mechanic relay time to switch
@@ -189,9 +240,19 @@ portBASE_TYPE bus_param_can_spec(param_data * args) {
 
 void bus_close_can() {
 
-  reportReceivedData=NULL;
-  
-  Provozierter Compile- Error :-) Hier solltest Du auch wenigstens noch den CAN- Interrupt wieder ausschalten, denn wir entfernen den CAN- Bus Handler ja gerade, wenn auch nur vorübergehend..
+	NVIC_InitTypeDef NVIC_InitStructure;
+
+	reportReceivedData = NULL;
+
+	/* Disable CAN1 Receive interrupt generally */
+	NVIC_InitStructure.NVIC_IRQChannel = USB_LP_CAN1_RX0_IRQn;
+
+	/* NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; */
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
+			= (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
+	NVIC_Init(&NVIC_InitStructure);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -241,7 +302,8 @@ void USB_LP_CAN1_RX0_IRQHandler(void) {
 		dp.len = RxMessage.DLC;
 		dp.err = 0x00; /* use received value for error simulations */
 		dp.data = &RxMessage.Data[0]; /* data starts here */
-		if (reportReceicedData)reportReceivedData(&dp);
+		if (reportReceivedData)
+			reportReceivedData(&dp);
 	}
 	//  portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
 	DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler finished ***");
@@ -249,55 +311,47 @@ void USB_LP_CAN1_RX0_IRQHandler(void) {
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_rx_error_can()
-{
-    return errCount;
+portBASE_TYPE bus_rx_error_can() {
+	return errCount;
 }
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_tx_error_can()
-{
-    return 0;
+portBASE_TYPE bus_tx_error_can() {
+	return 0;
 }
 
 /*----------------------------------------------------------------------------*/
 
-void bus_clear_rx_error_can()
-{
-    errCount = 0;
+void bus_clear_rx_error_can() {
+	errCount = 0;
 }
 
 /*----------------------------------------------------------------------------*/
 
-void bus_clear_tx_error_can()
-{
+void bus_clear_tx_error_can() {
 }
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_rx_count_can()
-{
-    return rxCount;
+portBASE_TYPE bus_rx_count_can() {
+	return rxCount;
 }
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_tx_count_can()
-{
-    return txCount;
+portBASE_TYPE bus_tx_count_can() {
+	return txCount;
 }
 
 /*----------------------------------------------------------------------------*/
 
-void bus_clear_rx_count_can()
-{
-    rxCount = 0;
+void bus_clear_rx_count_can() {
+	rxCount = 0;
 }
 
 /*----------------------------------------------------------------------------*/
 
-void bus_clear_tx_count_can()
-{
-    txCount = 0;
+void bus_clear_tx_count_can() {
+	txCount = 0;
 }

@@ -20,13 +20,13 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="elf" artifactName="DXM1_Firmware_Debug" buildArtefactType="org.eclipse.cdt.cross.arm.gnu.buildArtefactType.application" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.cross.arm.gnu.buildArtefactType.application" description="Debug version of STM32 firmware" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827" name="Debug_STM32" parent="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug" postannouncebuildStep="Generate binary and append CRC32 to binary" postbuildStep="arm-none-eabi-objcopy -O binary DXM1_Firmware_Debug.elf OOBD_Firmware_Debug.bin; ../cortex_crc OOBD_Firmware_Debug.bin OOBD_Firmware_Debug_CRC.bin ">
+				<configuration artifactExtension="elf" artifactName="DXM1_Firmware_Debug" buildArtefactType="org.eclipse.cdt.cross.arm.gnu.buildArtefactType.application" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.cross.arm.gnu.buildArtefactType.application" description="Debug version of STM32 firmware" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827" name="Debug_STM32" parent="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug" postannouncebuildStep="Generate binary and append CRC32 to binary" postbuildStep="arm-none-eabi-objcopy -O binary DXM1_Firmware_Debug.elf OOBD_Firmware_Debug.bin; ../../../../../../../tools/Cortex_CRC32/cortex_crc OOBD_Firmware_Debug.bin OOBD_Firmware_Debug_CRC.bin;">
 					<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827." name="/" resourcePath="">
 						<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug.1185211871" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug">
 							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1365641232" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.default" valueType="enumerated"/>
 							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.target.thumbinterwork.1453226764" name="Thumb interwork (-mthumb-interwork)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.target.thumbinterwork" value="false" valueType="boolean"/>
 							<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug.84136198" isAbstract="false" name="Linux Platform" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug"/>
-							<builder buildPath="${workspace_loc:/DXM1_Firmware/Debug_STM32}" id="org.eclipse.cdt.cross.arm.gnu.sourcery.builder.312054442" keepEnvironmentInBuildfile="false" name="ARM Sourcery GNU Make builder" parallelBuildOn="true" parallelizationNumber="-1" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.builder"/>
+							<builder buildPath="${workspace_loc:/DXM1_Firmware/Debug_STM32}" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.builder.base.1033511912" keepEnvironmentInBuildfile="false" name="ARM Sourcery Linux GNU Make builder" parallelBuildOn="true" parallelizationNumber="-1" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.builder.base"/>
 							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug.204786713" name="ARM Sourcery Linux GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug">
 								<option id="org.eclipse.cdt.cross.arm.gnu.assembler.option.include.paths.262475803" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.assembler.option.include.paths"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.assembler.option.warnings.pedantic.583806377" name="Pedantic (-pedantic)" superClass="org.eclipse.cdt.cross.arm.gnu.assembler.option.warnings.pedantic" value="true" valueType="boolean"/>
@@ -35,12 +35,12 @@
 							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug.646274676" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug">
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level.1137393046" name="Optimization level" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.optimization.level.size" valueType="enumerated"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths.1721390873" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV6.1.0/Source/portable/GCC/ARM_CM3&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../../../../../../OOBD/v1&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV6.1.0/Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV6.1.0/Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS/Core/CM3&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../../../../../OOBD/v1&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV6.1.0/Source/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV6.1.0/Source/portable/GCC/ARM_CM3&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV6.1.0/Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS/Core/CM3&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV6.1.0/Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/inc&quot;"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def.939664628" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="SVNREV='&quot;$(shell LC_ALL=C svnversion -cn ../ | sed -e &quot;s/.*://&quot; -e &quot;s/\([0-9]*\).*/\1/&quot; | grep &quot;[0-9]&quot; )&quot;'"/>
@@ -82,6 +82,27 @@
 							</tool>
 							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.debug.452455537" name="ARM Sourcery Linux GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.debug"/>
 							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.debug.329726973" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.debug"/>
+						</toolChain>
+					</folderInfo>
+					<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.252534942" name="/" resourcePath="FreeRTOS/portable/GCC/Posix">
+						<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug.602006997" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug" unusedChildren="">
+							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1365641232.2052103265" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1365641232"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.target.thumbinterwork.1453226764.1188951355" name="Thumb interwork (-mthumb-interwork)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.target.thumbinterwork.1453226764"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.269013589" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.max" valueType="enumerated"/>
+							<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug" isAbstract="false" name="Linux Platform" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug.2090618595" name="ARM Sourcery Linux GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug.204786713">
+								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input.660959337" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input"/>
+							</tool>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug.1165785407" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.debug.646274676">
+								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input.1974855581" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input"/>
+							</tool>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.debug.674882743" name="ARM Sourcery Linux GCC C++ Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.debug.746311079"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.debug.847142657" name="ARM Sourcery Linux GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.debug.796096990"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.debug.289906360" name="ARM Sourcery Linux GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.debug.611602632"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1630380579" name="ARM Sourcery Linux GCC Archiver" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1336319823"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.debug.995824005" name="ARM Sourcery Linux GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.debug.1705717351"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.debug.874044072" name="ARM Sourcery Linux GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.debug.452455537"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.debug.255701409" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.debug.329726973"/>
 						</toolChain>
 					</folderInfo>
 					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1247246876" name="stm32f10x_bkp.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_bkp.h" toolsToInvoke=""/>
@@ -137,10 +158,10 @@
 					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1599866551" name="odb_can.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/odb_can.h" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry excluding="OOBD|STM32F10x_StdPeriph_Driver|FreeRTOS|CMSIS|FreeRTOS/portable/GCC/Posix/port.c|FreeRTOS/portable/MemMang/heap_3.c|FreeRTOS/portable/MemMang/heap_1.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_it.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c|STM32F10x_StdPeriph_Driver/inc/stm32f10x_fsmc.h|STM32F10x_StdPeriph_Driver/inc/stm32f10x_dbgmcu.h|STM32F10x_StdPeriph_Driver/inc/stm32f10x_dac.h|STM32F10x_StdPeriph_Driver/inc/stm32f10x_cec.h|STM32F10x_StdPeriph_Driver/inc/stm32f10x_bkp.h|STM32F10x_StdPeriph_Driver/src/stm32f10x_cec.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/startup_stm32f10x_md.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/eeprom.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c|Source/portable/MemMang/heap_1.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/main.c|Demo/POSIX_GCC|Demo/POSIX_GCC/mc_posix_can.c|Demo/POSIX_GCC/AsyncIO|Demo/POSIX_GCC/FreeRTOSConfig.h|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/can_debug.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_cec.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/can.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/can.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|Demo/Common/drivers/ST/STM32F10xFWLib/v3_0_0|Source/portable/MemMang/heap_3.c|Source/portable/GCC/Posix|OOBD_Firmware/src/can.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|freeRTOS_CM3/Source/portable/MemMang/heap_3.c|freeRTOS_CM3/Source/portable/MemMang/heap_2.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="CMSIS"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="FreeRTOS"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="STM32F10x_StdPeriph_Driver"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="OOBD"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="CMSIS"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="OOBD"/>
+						<entry excluding="portable/MemMang/heap_3.c|portable/MemMang/heap_1.c|portable/GCC/Posix" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FreeRTOS"/>
+						<entry excluding="src/stm32f10x_iwdg.c|src/stm32f10x_pwr.c|src/stm32f10x_rtc.c|src/stm32f10x_sdio.c|src/stm32f10x_spi.c|src/stm32f10x_wwdg.c|src/stm32f10x_fsmc.c|src/stm32f10x_dbgmcu.c|src/stm32f10x_dac.c|src/stm32f10x_cec.c|src/stm32f10x_bkp.c|src/stm32f10x_it.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="STM32F10x_StdPeriph_Driver"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -5167,11 +5188,11 @@
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths.793840771" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;../inc&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV6.1.0/Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS/Core/CM3&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../../OOBD/v1&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV6.1.0/Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV6.1.0/Source/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV6.1.0/Source/portable/GCC/ARM_CM3&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV6.1.0/Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS/Core/CM3&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV6.1.0/Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/inc&quot;"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.packstruct.1255251650" name="Pack structures (-fpack-struct)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.packstruct" value="false" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.datasections.2079295362" name="Function sections (-fdata-sections)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.datasections" value="false" valueType="boolean"/>
@@ -5205,6 +5226,26 @@
 								<option id="org.eclipse.cdt.cross.arm.gnu.printsize.general.hex.871542477" name="Hex" superClass="org.eclipse.cdt.cross.arm.gnu.printsize.general.hex" value="true" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.printsize.general.totals.1809853860" name="Show Totals" superClass="org.eclipse.cdt.cross.arm.gnu.printsize.general.totals" value="false" valueType="boolean"/>
 							</tool>
+						</toolChain>
+					</folderInfo>
+					<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.992798531" name="/" resourcePath="FreeRTOS/portable/GCC/Posix">
+						<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.release.144709336" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.release" unusedChildren="">
+							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.2051012287.1772088396" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.2051012287"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1925442219" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.none" valueType="enumerated"/>
+							<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.release" isAbstract="false" name="Linux Platform" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.release"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.release.1867929831" name="ARM Sourcery Linux GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.release.143831278">
+								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input.210128172" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input"/>
+							</tool>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release.884798898" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release.1876267419">
+								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input.1643268078" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.c.compiler.base.input"/>
+							</tool>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.release.506647008" name="ARM Sourcery Linux GCC C++ Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.compiler.release.2024970125"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.release.182751064" name="ARM Sourcery Linux GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.linker.release.1951310333"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.release.448520426" name="ARM Sourcery Linux GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.cpp.linker.release.1466801912"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.2078318215" name="ARM Sourcery Linux GCC Archiver" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.archiver.base.1874622871"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.release.928720147" name="ARM Sourcery Linux GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createflash.release.1297027051"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.release.443336057" name="ARM Sourcery Linux GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.createlisting.release.1063852560"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release.2122715554" name="ARM Sourcery Linux GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.printsize.release.1856569119"/>
 						</toolChain>
 					</folderInfo>
 					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.1334737292" name="stm32f10x_bkp.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_bkp.h" toolsToInvoke=""/>
@@ -5268,10 +5309,10 @@
 					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.1641317971" name="odb_can.h" rcbsApplicability="disable" resourcePath="Demo/Common_OOBD/odb_can.h" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry excluding="OOBD|FreeRTOS|CMSIS|STM32F10x_StdPeriph_Driver|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/startup_stm32f10x_md.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/eeprom.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c|Source/portable/MemMang/heap_1.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/main.c|Demo/POSIX_GCC|Demo/POSIX_GCC/mc_posix_can.c|Demo/POSIX_GCC/AsyncIO|Demo/POSIX_GCC/FreeRTOSConfig.h|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/can_debug.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_cec.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/src/can.c|Demo/CORTEX_STM32F103E_Eclipse_GCC/can.c|Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|Demo/Common/drivers/ST/STM32F10xFWLib/v3_0_0|Source/portable/MemMang/heap_3.c|Source/portable/GCC/Posix|OOBD_Firmware/src/can.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c|STM32F10x_StdPeriph_Driver/src/misc.c|freeRTOS_CM3/Source/portable/MemMang/heap_3.c|freeRTOS_CM3/Source/portable/MemMang/heap_2.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-						<entry excluding="src/stm32f10x_wwdg.c|src/stm32f10x_spi.c|src/stm32f10x_sdio.c|src/stm32f10x_rtc.c|src/stm32f10x_pwr.c|src/stm32f10x_iwdg.c|src/stm32f10x_fsmc.c|src/stm32f10x_dbgmcu.c|src/stm32f10x_dac.c|src/stm32f10x_cec.c|src/stm32f10x_bkp.c|src/stm32f10x_it.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="STM32F10x_StdPeriph_Driver"/>
+						<entry excluding="src/stm32f10x_wwdg.c|src/stm32f10x_spi.c|src/stm32f10x_sdio.c|src/stm32f10x_rtc.c|src/stm32f10x_pwr.c|src/stm32f10x_iwdg.c|src/stm32f10x_fsmc.c|src/stm32f10x_dbgmcu.c|src/stm32f10x_dac.c|src/stm32f10x_cec.c|src/stm32f10x_bkp.c|src/stm32f10x_it.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="STM32F10x_StdPeriph_Driver"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="CMSIS"/>
-						<entry excluding="portable/GCC/Posix/port.c|portable/MemMang/heap_3.c|portable/MemMang/heap_1.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FreeRTOS"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="OOBD"/>
+						<entry excluding="portable/GCC/Posix|portable/GCC/Posix/port.c|portable/MemMang/heap_3.c|portable/MemMang/heap_1.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FreeRTOS"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
