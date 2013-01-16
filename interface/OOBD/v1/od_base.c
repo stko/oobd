@@ -308,23 +308,14 @@ ODPBuffer *createODPBuffer(portBASE_TYPE size)
 }
 
 
-void freeODPBuffer(ODPBuffer *odpBuffer)
+void freeODPBuffer(ODPBuffer * odpBuffer)
 {
 
-	if (odpBuffer != NULL) {
+    if (odpBuffer != NULL) {
 
 	if (odpBuffer->data != NULL) {
-		vPortFree(odpBuffer->data);
+	    vPortFree(odpBuffer->data);
 	}
-
-	if (odpBuffer->len != NULL) {
-		vPortFree(odpBuffer->len);
-	}
-
-	if (odpBuffer->size != NULL) {
-		vPortFree(odpBuffer->size);
-	}
-
 	vPortFree(odpBuffer);
     }
 }
