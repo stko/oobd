@@ -283,7 +283,7 @@ void bus_close_can()
     vSocketClose(iSocketSend);
     vSocketClose(iSocketReceive);
     vTaskDelete(xprvUDPTaskHandle);
-    free(canConfig);
+    vPortFree(canConfig);
 }
 
 
