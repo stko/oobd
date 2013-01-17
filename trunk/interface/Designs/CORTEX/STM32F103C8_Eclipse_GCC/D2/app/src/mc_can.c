@@ -280,6 +280,15 @@ void USB_LP_CAN1_RX0_IRQHandler(void) {
 	CanRxMsg RxMessage;
 	static data_packet dp;
 
+	/* check for receive errors */
+	if (CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_StuffErr
+		|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_FormErr
+		|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_ACKErr
+		|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_BitRecessiveErr
+		|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_BitDominantErr
+		|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_CRCErr)
+	errCount ++; // increment err Counter if CAN error occurs
+
 	/* initialize RxMessage CAN frame */
 	RxMessage.StdId = 0x00;
 	RxMessage.ExtId = 0x00;
@@ -293,6 +302,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void) {
 	CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
 
 	if (RxMessage.StdId != 0 || RxMessage.ExtId != 0) {
+		rxCount++;	/* increment counter for valid received CAN message */
 		/* Data received. Process it. */
 		if (RxMessage.IDE == CAN_ID_STD)
 			dp.recv = RxMessage.StdId; /* Standard CAN frame 11bit received */
