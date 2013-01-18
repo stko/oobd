@@ -138,15 +138,11 @@ transfers received telegrams into Msgqueue
 
 void odp_canraw_recvdata(data_packet * p)
 {
-    DEBUGPRINT("packet receivedl!\n", 'a');
     MsgData *msg;
     extern xQueueHandle protocolQueue;
     if (NULL != (msg = createDataMsg(p))) {
 	if (pdPASS != sendMsg(MSG_BUS_RECV, protocolQueue, msg)) {
 	    DEBUGPRINT("FATAL ERROR: protocol queue is full!\n", 'a');
-	} else {
-	    DEBUGUARTPRINT
-		("\r\n*** odp_canraw_recvdata: sendMsg - protocolQueue ***");
 	}
     } else {
 	DEBUGPRINT("FATAL ERROR: Out of Heap space!l\n", 'a');
@@ -215,7 +211,6 @@ void obp_canraw(void *pvParameters)
     //catch the "Protocoll is running" Semaphore
     xSemaphoreTake(protocollBinarySemaphore, portMAX_DELAY);
 
-    DEBUGPRINT("CAN Raw Protocol: Start Bus nr %d\n", busToUse);
     /* activate the bus... */
     odbarr[busToUse] ();
     actBus_init();
@@ -280,15 +275,18 @@ void obp_canraw(void *pvParameters)
 		break;
 	    case MSG_SERIAL_PARAM:
 		args = (portBASE_TYPE *) msg->addr;
-		DEBUGPRINT("protocol parameter received %ld %ld %ld\n",
-			   args->args[ARG_RECV], args->args[ARG_CMD],
-			   args->args[ARG_VALUE_1]);
-
+		/*
+		 * DEBUGPRINT("protocol parameter received %ld %ld %ld\n",
+		 args->args[ARG_RECV], args->args[ARG_CMD],
+		 args->args[ARG_VALUE_1]);
+		 */
 		switch (args->args[ARG_RECV]) {
 		case FBID_PROTOCOL_GENERIC:
-		    DEBUGPRINT
-			("generic protocol parameter received %ld %ld\n",
-			 args->args[ARG_CMD], args->args[ARG_VALUE_1]);
+		    /*
+		     *    DEBUGPRINT
+		     ("generic protocol parameter received %ld %ld\n",
+		     args->args[ARG_CMD], args->args[ARG_VALUE_1]);
+		     */
 		    switch (args->args[ARG_CMD]) {
 		    case PARAM_INFO:
 //<<<< oobdtemple protocol MSG_SERIAL_PARAM_1 <<<<
@@ -311,9 +309,7 @@ void obp_canraw(void *pvParameters)
 		    break;
 //<<<< oobdtemple protocol MSG_SERIAL_PARAM_2 <<<<
 		case FBID_PROTOCOL_SPEC:
-		    DEBUGPRINT
-			("can raw protocol parameter received %ld %ld\n",
-			 args->args[ARG_CMD], args->args[ARG_VALUE_1]);
+		    //DEBUGPRINT ("can raw protocol parameter received %ld %ld\n", args->args[ARG_CMD], args->args[ARG_VALUE_1]);
 		    switch (args->args[ARG_CMD]) {
 			// first we commend out all parameters  which are not used to generate the right "unknown parameter" message in the default - area
 			/*
@@ -357,7 +353,6 @@ void obp_canraw(void *pvParameters)
 //<<<< oobdtemple protocol MSG_OTHERS <<<<
 //>>>> oobdtemple protocol MSG_INIT >>>>    
 	    case MSG_INIT:
-		DEBUGPRINT("Reset Protocol\n", 'a');
 		if (protocolBuffer != NULL) {
 		    protocolBuffer->len = 0;
 		}
@@ -365,7 +360,6 @@ void obp_canraw(void *pvParameters)
 //>>>> oobdtemple protocol MSG_PROTOCOL_STOP >>>>    
 		break;
 	    case MSG_PROTOCOL_STOP:
-		DEBUGPRINT("Stop Protocol\n", 'a');
 		keeprunning = 0;
 		break;
 //<<<< oobdtemple protocol MSG_PROTOCOL_STOP <<<<
@@ -375,20 +369,12 @@ void obp_canraw(void *pvParameters)
 //<<<< oobdtemple protocol MSG_SEND_BUFFER <<<<
 		if (protocolBuffer->len > 0) {
 		    actBufferPos = 0;
-		    if (canRawConfig.separationTime > 0) {
-			if (sendMoreFrames(protocolBuffer, &actBufferPos, &showBusTransfer, &stateMachine_state, &timeout, canRawConfig.separationTime, printdata_CAN, actBus_send)) {	//fire first frame data
-			    timeout = canRawConfig.separationTime;	//and waiting
-			}
-		    } else {
-			for (; sendMoreFrames(protocolBuffer, &actBufferPos, &showBusTransfer, &stateMachine_state, &timeout, canRawConfig.separationTime, printdata_CAN, actBus_send););	// fire all in one shot.
-		    }
-
+		    for (; sendMoreFrames(protocolBuffer, &actBufferPos, &showBusTransfer, &stateMachine_state, &timeout, printdata_CAN, actBus_send););	// fire all in one shot.
 //>>>> oobdtemple protocol MSG_SEND_BUFFER_2 >>>>    
 
 		} else {	/* no data to send? */
 		    createCommandResultMsg
 			(FBID_PROTOCOL_GENERIC, ERR_CODE_NO_ERR, 0, NULL);
-		    DEBUGPRINT("Send input task release msg\n", 'a');
 
 		    /* just release the input again */
 		    if (pdPASS !=
@@ -404,15 +390,8 @@ void obp_canraw(void *pvParameters)
 //<<<< oobdtemple protocol MSG_TICK <<<<
 		if (timeout > 0) {	/* we just waiting for the next frame to send */
 		    if (timeout == 1) {	/* time's gone... */
-			if (sendMoreFrames(protocolBuffer,
-					   &actBufferPos,
-					   &showBusTransfer,
-					   &stateMachine_state,
-					   &timeout,
-					   canRawConfig.separationTime,
-					   printdata_CAN, actBus_send)) {
-			    timeout = canRawConfig.separationTime + 1;
-			} else {
+			for (; sendMoreFrames(protocolBuffer, &actBufferPos, &showBusTransfer, &stateMachine_state, &timeout, printdata_CAN, actBus_send););	// fire all in one shot.
+			if (timeout < 2) {	//
 			    protocolBuffer->len = 0;
 			    createCommandResultMsg
 				(FBID_PROTOCOL_GENERIC, ERR_CODE_NO_ERR, 0,
@@ -452,7 +431,7 @@ int sendMoreFrames(ODPBuffer * protocolBuffer,
 		   portBASE_TYPE * actBufferPos_ptr,
 		   portBASE_TYPE * showBusTransfer_ptr,
 		   portBASE_TYPE * stateMachine_state_ptr,
-		   portBASE_TYPE * timeout_ptr, portBASE_TYPE sepTime,
+		   portBASE_TYPE * timeout_ptr,
 		   print_cbf printdata_CAN, bus_send actBus_send)
 {
     unsigned char telegram[8];
@@ -460,7 +439,14 @@ int sendMoreFrames(ODPBuffer * protocolBuffer,
 #define MINIMALBYTESTOSEND 3
     if (protocolBuffer->len > 0
 	&& *actBufferPos_ptr + MINIMALBYTESTOSEND < protocolBuffer->len) {
-	actDataPacket.recv = protocolBuffer->data[*actBufferPos_ptr] * 256;
+	actDataPacket.recv =
+	    protocolBuffer->data[*actBufferPos_ptr] * 256 * 256 * 256;
+	(*actBufferPos_ptr)++;
+	actDataPacket.recv +=
+	    protocolBuffer->data[*actBufferPos_ptr] * 256 * 256;
+	(*actBufferPos_ptr)++;
+	actDataPacket.recv +=
+	    protocolBuffer->data[*actBufferPos_ptr] * 256;
 	(*actBufferPos_ptr)++;
 	actDataPacket.recv += protocolBuffer->data[*actBufferPos_ptr];
 	(*actBufferPos_ptr)++;
@@ -480,7 +466,11 @@ int sendMoreFrames(ODPBuffer * protocolBuffer,
 	if ((*actBufferPos_ptr) + MINIMALBYTESTOSEND < protocolBuffer->len) {	//some more to send?
 	    *timeout_ptr = protocolBuffer->data[*actBufferPos_ptr];
 	    (*actBufferPos_ptr)++;
-	    return 1;
+	    if (*timeout_ptr == 0) {	//send immediadly
+		return 1;
+	    } else {
+		return 0;	// break the send loop and wait
+	    }
 	} else {
 	    *timeout_ptr = 1;	//this will let the MSG_TICK event to do all the cleanup
 	    return 0;

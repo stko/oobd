@@ -95,7 +95,7 @@ void ilmTask(void *pvParameters)
 	Leds[IO_LED_RED].mode = LED_OFF;
 	for (i = 0; i < 3; i++) {
 	    Leds[i].actualOnStatus = pdFALSE;
-	    Leds[i].actualOnStatus = pdFALSE;
+	    Leds[i].flickerTime = 0;
 	}
 	// test only
 	tone = sounds[0];
