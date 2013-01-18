@@ -51,6 +51,9 @@ recv_cbf reportReceivedData = NULL;
 portBASE_TYPE rxCount;
 portBASE_TYPE txCount;
 portBASE_TYPE errCount;
+portBASE_TYPE stCANBusOffErr;
+portBASE_TYPE stCANBusWarningErr;
+portBASE_TYPE stCANBusPassiveErr;
 
 portBASE_TYPE bus_init_can() {
 	NVIC_InitTypeDef NVIC_InitStructure;
@@ -59,6 +62,9 @@ portBASE_TYPE bus_init_can() {
 	rxCount = 0;
 	txCount = 0;
 	errCount = 0;
+	stCANBusOffErr = 0;
+	stCANBusWarningErr = 0;
+	stCANBusPassiveErr = 0;
 
 	canConfig = pvPortMalloc(sizeof(struct CanConfig));
 	if (canConfig == NULL) {
@@ -70,13 +76,19 @@ portBASE_TYPE bus_init_can() {
 	canConfig->busConfig = VALUE_BUS_CONFIG_11bit_500kbit; /* default */
 
 	if (startupProtocol == VALUE_PARAM_PROTOCOL_CAN_UDS) {
-		/* Enable CAN1 Receive interrupt for UDS protocol */
+		/* Enable CAN1 Receive interrupts for UDS protocol */
 		NVIC_InitStructure.NVIC_IRQChannel = USB_LP_CAN1_RX0_IRQn;
-
-		/* NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; */
 		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
 				= (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
 		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+		NVIC_Init(&NVIC_InitStructure);
+
+		/* Enable CAN1 Receive interrupts for UDS protocol */
+		NVIC_InitStructure.NVIC_IRQChannel = CAN1_SCE_IRQn;
+		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
+				= (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
+		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
 		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 		NVIC_Init(&NVIC_InitStructure);
 	}
@@ -271,7 +283,6 @@ portBASE_TYPE busControl(portBASE_TYPE cmd, void *param) {
 }
 
 /*----------------------------------------------------------------------------*/
-
 void USB_LP_CAN1_RX0_IRQHandler(void) {
 	DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler entered ***");
 	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
@@ -279,15 +290,6 @@ void USB_LP_CAN1_RX0_IRQHandler(void) {
 	uint16_t LedDuration;
 	CanRxMsg RxMessage;
 	static data_packet dp;
-
-	/* check for receive errors */
-	if (CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_StuffErr
-		|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_FormErr
-		|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_ACKErr
-		|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_BitRecessiveErr
-		|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_BitDominantErr
-		|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_CRCErr)
-	errCount ++; // increment err Counter if CAN error occurs
 
 	/* initialize RxMessage CAN frame */
 	RxMessage.StdId = 0x00;
@@ -303,6 +305,12 @@ void USB_LP_CAN1_RX0_IRQHandler(void) {
 
 	if (RxMessage.StdId != 0 || RxMessage.ExtId != 0) {
 		rxCount++;	/* increment counter for valid received CAN message */
+		if (rxCount > 100000) {
+		  rxCount /= 2;
+		  txCount /= 2;
+		  errCount /= 2;
+		}
+
 		/* Data received. Process it. */
 		if (RxMessage.IDE == CAN_ID_STD)
 			dp.recv = RxMessage.StdId; /* Standard CAN frame 11bit received */
@@ -317,6 +325,30 @@ void USB_LP_CAN1_RX0_IRQHandler(void) {
 	}
 	//  portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
 	DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler finished ***");
+}
+
+/*----------------------------------------------------------------------------*/
+void CAN1_SCE_IRQHandler(void) {
+	DEBUGUARTPRINT("\r\n*** CAN1_SCE_IRQHandler entered ***");
+	portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+
+	/* check for receive errors */
+	if (CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_StuffErr
+			|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_FormErr
+			|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_ACKErr
+			|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_BitRecessiveErr
+			|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_BitDominantErr
+			|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_CRCErr) {
+		errCount ++; // increment err Counter if CAN error occurs
+		/* clear all interrupt Flags */
+		CAN_ClearITPendingBit(CAN1, CAN_IT_ERR);
+		CAN_ClearITPendingBit(CAN1, CAN_IT_LEC);
+		CAN_ClearITPendingBit(CAN1, CAN_IT_BOF);
+		CAN_ClearITPendingBit(CAN1, CAN_IT_EPV);
+		CAN_ClearITPendingBit(CAN1, CAN_IT_EWG);
+	}
+
+	DEBUGUARTPRINT("\r\n*** CAN1_SCE_IRQHandler finished ***");
 }
 
 /*----------------------------------------------------------------------------*/
@@ -364,4 +396,22 @@ void bus_clear_rx_count_can() {
 
 void bus_clear_tx_count_can() {
 	txCount = 0;
+}
+
+portBASE_TYPE bus_busoff_error_can() {
+	/* check for Bus-off flag */
+	stCANBusOffErr = CAN_GetFlagStatus(CAN1, CAN_FLAG_BOF);
+	return stCANBusOffErr;
+}
+
+portBASE_TYPE bus_passive_error_can() {
+	/* check for Error passive flag */
+	stCANBusPassiveErr = CAN_GetFlagStatus(CAN1, CAN_FLAG_EPV);
+	return stCANBusPassiveErr;
+}
+
+portBASE_TYPE bus_warning_error_can() {
+	/* check for Error Warning flag */
+	stCANBusWarningErr = CAN_GetFlagStatus(CAN1, CAN_FLAG_EWG);
+	return stCANBusWarningErr;
 }

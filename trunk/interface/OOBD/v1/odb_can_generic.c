@@ -157,6 +157,13 @@ void bus_param_can_generic_Print(portBASE_TYPE msgType, void *data,
 	    printser_int(bus_rx_error_can(), 10);
 	    printser_string(" ");
 	    printser_int(bus_tx_error_can(), 10);
+	    printser_string(" ");
+	    printser_int(bus_busoff_error_can(), 10);
+	    printser_string(" ");
+	    printser_int(bus_warning_error_can(), 10);
+	    printser_string(" ");
+	    printser_int(bus_passive_error_can(), 10);
+
 
 	    bus_clear_rx_error_can();
 	    bus_clear_tx_error_can();

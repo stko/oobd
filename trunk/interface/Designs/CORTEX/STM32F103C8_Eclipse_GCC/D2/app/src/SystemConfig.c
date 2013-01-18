@@ -123,8 +123,6 @@ void NVIC_Configuration(void) {
 
 	/* Enable CAN1 interrupt */
 	NVIC_InitStructure.NVIC_IRQChannel = USB_LP_CAN1_RX0_IRQn;
-
-	/* NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; */
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
 			= (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
@@ -1199,10 +1197,14 @@ void CAN1_Configuration(uint8_t CAN_BusConfig, uint8_t CAN_ModeConfig) {
 
 	CAN_FilterInit(&CAN_FilterInitStructure);
 
-	CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE);
+	CAN_ITConfig(CAN1, CAN_IT_EWG, ENABLE); /* Enable Error warning interrupt */
+	CAN_ITConfig(CAN1, CAN_IT_EPV, ENABLE); /* Enable Error passive interrupt */
+	CAN_ITConfig(CAN1, CAN_IT_ERR, ENABLE); /* Enable Error interrupt */
+	CAN_ITConfig(CAN1, CAN_IT_BOF, ENABLE); /* Enable Bus off interrupt */
+	CAN_ITConfig(CAN1, CAN_IT_LEC, ENABLE); /* Enable Last Error code interrupt */
+	CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE); /* Enable FIFO message pending interrupt */
 
 	DEBUGUARTPRINT("\r\n*** CANx_Configuration (CAN1) finished***");
-
 }
 
 /*----------------------------------------------------------------------------*/
