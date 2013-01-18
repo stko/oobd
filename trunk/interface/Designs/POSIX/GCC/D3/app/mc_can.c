@@ -245,6 +245,7 @@ portBASE_TYPE bus_param_can_spec(param_data * args)
 	switch (args->args[ARG_VALUE_1]) {
 	case 0:
 	case 1:
+	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_OFF);
 	    CreateEventMsg(MSG_EVENT_BUS_CHANNEL,
 			   args->args[ARG_VALUE_1] == 1 ? 1 : 2);
 	    sysIoCtrl(5000, 0, args->args[ARG_VALUE_1], 0,	//5000 is just a dummy value, as a channel switch is not part of the generic part at all

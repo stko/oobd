@@ -83,6 +83,7 @@ CFLAGS=-I . \
 		-DUSE_STDIO=1 \
 		-O0 \
 		-g \
+		-rdynamic \
 		-Wall \
 		-c \
 		-fmessage-length=0 \
