@@ -52,9 +52,12 @@ public interface OOBDConstants {
      public final static String PropName_ScriptDir ="ScriptDir";
      public final static String PropName_ScriptName ="Script";
      public final static String PropName_OutputDir ="OutputDir";
-     //Mailbox names
-    public final static String CoreMailboxName = "core";
-    public final static String BusMailboxName = "BusCom";
+     //PGP key file  names
+    public final static String PGP_USER_KEYFILE_NAME = "userkey.sec";
+    public final static String PGP_GROUP_KEYFILE_NAME = "groupkey.sec";
+    //Mailbox names
+   public final static String CoreMailboxName = "core";
+   public final static String BusMailboxName = "BusCom";
     public final static String DBName = "AVLLookup";
     // definitions of the Visual Elements Handling flags (=bitpositions)
      public final static int VE_MENU = 0;

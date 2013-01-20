@@ -25,6 +25,7 @@ import org.oobd.ui.android.bus.ComPort;
 
 import android.app.AlertDialog;
 import android.app.Application;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Looper;
@@ -63,6 +64,8 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 
 		case FT_DATABASE:
 			return fileName;
+		case FT_KEY:
+			return getFilesDir()+"/"+fileName;
 
 		default:
 			return "/sdcard/OOBD/" + fileName;
@@ -104,6 +107,16 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 			} catch (Exception e) {
 				Log.v(this.getClass().getSimpleName(), "File " + resourceName
 						+ " could not loaded from /sdcard/oobd", e);
+			}
+			return resource;
+		case OOBDConstants.FT_KEY:
+			try {
+				resource = openFileInput(resourceName);
+				Log.v(this.getClass().getSimpleName(), "Key File " + resourceName
+						+ " loaded from internal storage");
+			} catch (Exception e) {
+				Log.v(this.getClass().getSimpleName(), "Key File " + resourceName
+						+ " could not loaded from internal storage", e);
 			}
 			return resource;
 
@@ -209,8 +222,10 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 
 	public char[] getAppPassPhrase() {
 		try {
-			Class<?> act = Class.forName("org.oobd.crypt.PassPhraseProvider");
-			Method m0 = act.getDeclaredMethod("getPassPhrase", (Class[]) null);
+			String ppClassName =getString(getResources().getIdentifier("ppClassName", "string", getPackageName()));
+			String ppClassMethod =getString(getResources().getIdentifier("ppClassMethod", "string", getPackageName()));
+			Class<?> act = Class.forName(ppClassName);
+			Method m0 = act.getDeclaredMethod(ppClassMethod, (Class[]) null);
 			return (char[]) m0.invoke(null, (Object[]) null);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -224,7 +239,7 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 			return "";
 		}else{
 			try {
-				return new String(EncodeDecodeAES.decrypt(getAppPassPhrase().toString(), userPassPhrase));
+				return new String(EncodeDecodeAES.decrypt(new String(getAppPassPhrase()), userPassPhrase));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -235,8 +250,8 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 
 	public void setUserPassPhrase(String upp) {
 		try {
-			userPassPhrase=EncodeDecodeAES.encrypt(getAppPassPhrase().toString(), upp);
-		} catch (Exception e) {
+			userPassPhrase=EncodeDecodeAES.encrypt(new String(getAppPassPhrase()), upp);
+			} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			userPassPhrase="";

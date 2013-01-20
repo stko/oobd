@@ -46,6 +46,9 @@ public class Factory {
 
     public static Archive getArchive(String filePath) {
         File file = new File(filePath);
+        if (!file.exists()){
+        	file = new File(filePath+".pgp");
+        }
         if (file.exists()) {
             String name[] = file.getName().split("\\.");
             Logger.getLogger(Factory.class.getName()).log(Level.INFO, "Length of file name array: {0}" + name.length );
