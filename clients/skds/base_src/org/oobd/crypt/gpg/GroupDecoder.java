@@ -26,8 +26,9 @@ public class GroupDecoder {
 		}else{
 			System.out.println("user key found :-)");
 		}
+		System.out.println("group password:"+new String(groupPass));
 		InputStream unc = PGPUtils.decryptFileStream( in,   groupKeyStream, groupPass);
-		if (groupKeyStream==null){
+		if (unc==null){
 			System.out.println("group key not found :-(");
 		}else{
 			System.out.println("group key found :-)");

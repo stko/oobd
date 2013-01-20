@@ -1,11 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="vertical"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
-	<TextView android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="Select your BT-Device:" android:id="@+id/BTDeviceView" android:layout_weight="10" android:gravity="center|bottom"></TextView>
-	<Spinner android:id="@+id/BTDeviceSpinner" android:layout_height="wrap_content" android:layout_width="fill_parent"></Spinner>
-		
+    <CheckBox
+        android:id="@+id/PGPCheckBox"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pgp_checkbox" />
+
+    <TextView
+        android:id="@+id/pgpStatustextView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Medium Text"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/pgpImportKeysbutton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pgpimportKeybutton" />
+
+    <TextView
+        android:id="@+id/BTDeviceView"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6.30"
+        android:gravity="center|bottom"
+        android:text="@string/select_your_bt_device_" >
+    </TextView>
+
+    <Spinner
+        android:id="@+id/BTDeviceSpinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+    </Spinner>
+
 </LinearLayout>

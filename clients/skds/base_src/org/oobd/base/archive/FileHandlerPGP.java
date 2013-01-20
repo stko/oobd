@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.oobd.base.Core;
+import org.oobd.base.OOBDConstants;
 import org.oobd.crypt.gpg.*;
 
 /**
@@ -37,9 +38,8 @@ public class FileHandlerPGP implements Archive {
 				return GroupDecoder
 						.decryptGroup(
 								new FileInputStream(myFilePath),
-								new FileInputStream("/sdcard/OOBD/userkey.sec"),
-								new FileInputStream(
-										"/sdcard/OOBD/skoehle6_groups.pgp"),
+								core.getSystemIF().generateResourceStream(OOBDConstants.FT_KEY,OOBDConstants.PGP_USER_KEYFILE_NAME),
+								new FileInputStream(core.getSystemIF().generateUIFilePath(OOBDConstants.FT_KEY,OOBDConstants.PGP_GROUP_KEYFILE_NAME)),
 								core.getSystemIF().getAppPassPhrase(),core.getSystemIF().getUserPassPhrase().toCharArray());
 
 			} catch (Exception ex) {
