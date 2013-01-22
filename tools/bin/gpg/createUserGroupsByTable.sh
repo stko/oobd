@@ -18,7 +18,9 @@ do
 	echo "value:" ${USERS[$user]}
 	gpg --yes --batch --no-default-keyring --secret-keyring ./$user.groupring.tmp  -o $user.groupring --export-secret-keys
 
-	gpg -v --yes --batch --no-default-keyring --trust-model always  --keyring ./userkey.pub --recipient $user --output $user.groupkeys --encrypt $user.groupring
+	gpg --yes --batch --no-default-keyring --trust-model always  --keyring ./userkey.pub --recipient $user --output $user.groupkeys --encrypt $user.groupring
 #	gpg -v --yes --batch --no-default-keyring --trust-model always  --keyring ./userkey.pub --recipient $user --output $user.groupkeys --encrypt ./oobd_groups.sec
 done
  
+rm *.groupring
+rm *.groupring.tmp
