@@ -434,7 +434,8 @@ end
 function Main(oldvalue,id)
 	deactivateBus()
 	setBus(BusID)
-	setSendID("$7E8") -- set not UDS compatible sender (=answer) address for OOBD firmware
+	setModuleID("$7DF") -- set legislated OBD/WWH-OBD functional request ID
+	setSendID("$7E8") 	-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
 	setBus("HS-CAN")
 	openPage("OOBD-ME Main")
 	addElement("Sensor Data >", "createCMD01Menu",">>>",0x1, "")
