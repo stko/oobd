@@ -54,6 +54,8 @@ portBASE_TYPE errCount;
 portBASE_TYPE stCANBusOffErr;
 portBASE_TYPE stCANBusWarningErr;
 portBASE_TYPE stCANBusPassiveErr;
+portBASE_TYPE ctrCANTec;
+portBASE_TYPE ctrCANRec;
 
 portBASE_TYPE bus_init_can() {
 	NVIC_InitTypeDef NVIC_InitStructure;
@@ -65,6 +67,8 @@ portBASE_TYPE bus_init_can() {
 	stCANBusOffErr = 0;
 	stCANBusWarningErr = 0;
 	stCANBusPassiveErr = 0;
+	ctrCANTec = 0;
+	ctrCANRec = 0;
 
 	canConfig = pvPortMalloc(sizeof(struct CanConfig));
 	if (canConfig == NULL) {
@@ -75,6 +79,14 @@ portBASE_TYPE bus_init_can() {
 	canConfig->bus = VALUE_BUS_MODE_SILENT; /* default */
 	canConfig->busConfig = VALUE_BUS_CONFIG_11bit_500kbit; /* default */
 
+	/* Enable CAN1 Receive interrupts for UDS protocol */
+	NVIC_InitStructure.NVIC_IRQChannel = USB_HP_CAN1_TX_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
+			= (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+
 	if (startupProtocol == VALUE_PARAM_PROTOCOL_CAN_UDS) {
 		/* Enable CAN1 Receive interrupts for UDS protocol */
 		NVIC_InitStructure.NVIC_IRQChannel = USB_LP_CAN1_RX0_IRQn;
@@ -84,7 +96,7 @@ portBASE_TYPE bus_init_can() {
 		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 		NVIC_Init(&NVIC_InitStructure);
 
-		/* Enable CAN1 Receive interrupts for UDS protocol */
+		/* Enable CAN1 Receive error interrupts for UDS protocol */
 		NVIC_InitStructure.NVIC_IRQChannel = CAN1_SCE_IRQn;
 		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
 				= (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
@@ -260,13 +272,20 @@ void bus_close_can() {
 
 	/* Disable CAN1 Receive interrupt generally */
 	NVIC_InitStructure.NVIC_IRQChannel = USB_LP_CAN1_RX0_IRQn;
-
-	/* NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; */
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
 			= (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
 	NVIC_Init(&NVIC_InitStructure);
+
+	/* Disable CAN1 Receive interrupts for UDS protocol */
+	NVIC_InitStructure.NVIC_IRQChannel = USB_HP_CAN1_TX_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
+			= (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
+	NVIC_Init(&NVIC_InitStructure);
+
 }
 
 /*----------------------------------------------------------------------------*/
@@ -340,15 +359,32 @@ void CAN1_SCE_IRQHandler(void) {
 			|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_ACKErr
 			|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_BitRecessiveErr
 			|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_BitDominantErr
-			|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_CRCErr) {
+			|| CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_CRCErr)
 		errCount ++; // increment err Counter if CAN error occurs
-		/* clear all interrupt Flags */
-		CAN_ClearITPendingBit(CAN1, CAN_IT_ERR);
-		CAN_ClearITPendingBit(CAN1, CAN_IT_LEC);
-		CAN_ClearITPendingBit(CAN1, CAN_IT_BOF);
-		CAN_ClearITPendingBit(CAN1, CAN_IT_EPV);
-		CAN_ClearITPendingBit(CAN1, CAN_IT_EWG);
+
+	/* clear all interrupt Flags */
+	CAN_ClearITPendingBit(CAN1, CAN_IT_ERR);
+	CAN_ClearITPendingBit(CAN1, CAN_IT_LEC);
+	CAN_ClearITPendingBit(CAN1, CAN_IT_BOF);
+	CAN_ClearITPendingBit(CAN1, CAN_IT_EPV);
+	CAN_ClearITPendingBit(CAN1, CAN_IT_EWG);
+
+	DEBUGUARTPRINT("\r\n*** CAN1_SCE_IRQHandler finished ***");
+}
+
+/*----------------------------------------------------------------------------*/
+void USB_HP_CAN1_TX_IRQHandler(void) {
+	DEBUGUARTPRINT("\r\n*** USB_HP_CAN1_TX_IRQHandler entered ***");
+
+	txCount ++; // increment CAN-Tx Counter if interrupt occurs
+	if (txCount > 100000) {
+	  rxCount /= 2;
+	  txCount /= 2;
+	  errCount /= 2;
 	}
+
+	/* clear Tranmit interrupt flag */
+	CAN_ClearITPendingBit(CAN1, CAN_IT_TME);
 
 	DEBUGUARTPRINT("\r\n*** CAN1_SCE_IRQHandler finished ***");
 }
@@ -416,4 +452,16 @@ portBASE_TYPE bus_warning_error_can() {
 	/* check for Error Warning flag */
 	stCANBusWarningErr = CAN_GetFlagStatus(CAN1, CAN_FLAG_EWG);
 	return stCANBusWarningErr;
+}
+
+portBASE_TYPE bus_tec_can() {
+	/* read Transmit Error Counter of CAN hardware */
+	ctrCANTec = CAN_GetLSBTransmitErrorCounter(CAN1);
+	return ctrCANTec;
+}
+
+portBASE_TYPE bus_rec_can() {
+	/* read Receive Error Counter of CAN hardware */
+	ctrCANRec = CAN_GetReceiveErrorCounter(CAN1);
+	return ctrCANRec;
 }
