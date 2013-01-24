@@ -1203,6 +1203,8 @@ void CAN1_Configuration(uint8_t CAN_BusConfig, uint8_t CAN_ModeConfig) {
 	CAN_ITConfig(CAN1, CAN_IT_BOF, ENABLE); /* Enable Bus off interrupt */
 	CAN_ITConfig(CAN1, CAN_IT_LEC, ENABLE); /* Enable Last Error code interrupt */
 	CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE); /* Enable FIFO message pending interrupt */
+	CAN_ITConfig(CAN1, CAN_IT_TME, ENABLE); /* Enable CAN Transmit empty interrupt */
+
 
 	DEBUGUARTPRINT("\r\n*** CANx_Configuration (CAN1) finished***");
 }
