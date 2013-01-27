@@ -1,6 +1,7 @@
 package org.oobd.ui.android;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +21,7 @@ import org.oobd.base.port.PortInfo;
 import org.oobd.ui.android.application.OOBDApp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -45,8 +47,11 @@ public class Settings extends Activity {
 	private TextView pgpStatus;
 	private Button pgpImportKeys;
 
+	public static Settings mySettingsActivity;
+
 	// protected void onCreate(Bundle savedInstanceState,OOBDPort comPort) {
 	protected void onCreate(Bundle savedInstanceState) {
+		mySettingsActivity = this;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings);
 		preferences = this.getSharedPreferences("OOBD_SETTINGS", MODE_PRIVATE);
@@ -85,12 +90,40 @@ public class Settings extends Activity {
 		pgpImportKeys.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View v) {
-				importKeyFiles();
-				pgpStatus.setText("PGP Key Status: " + checkKeyFiles());
+				if (checkKeyFiles() != 0) {
+					importKeyFiles();
+					updateUI();
+				} else {
+					new AlertDialog.Builder(mySettingsActivity)
+							.setTitle("Delete PGP Key Files")
+							.setMessage(
+									"Do you REALLY want to delete your PGP keys??")
+							.setPositiveButton("Delete them!",
+									new DialogInterface.OnClickListener() {
+										public void onClick(
+												DialogInterface dialog,
+												int whichButton) {
+											try {
+												deleteKeyFiles();
+												updateUI();
+											} catch (Exception e) {
+											}
+										}
+									})
+							.setNegativeButton("Cancel",
+									new DialogInterface.OnClickListener() {
+										public void onClick(
+												DialogInterface dialog,
+												int whichButton) {
+											// Do nothing.
+										}
+									}).show();
+				}
 
-			}});
-
+			}
+		});
 		updateUI();
+
 	}
 
 	protected void onRestart() {
@@ -115,10 +148,35 @@ public class Settings extends Activity {
 				break;
 			}
 		}
-		pgpStatus.setText("PGP Key Status: " + checkKeyFiles());
+		int pgp = checkKeyFiles();
+		String pgpStatusText = "";
+		switch (pgp) {
+		case 0:
+			pgpStatusText = "All Keys available";
+			break;
+		case 1:
+			pgpStatusText = "Missing User Key File - try to import";
+			break;
+		case 2:
+			pgpStatusText = "Missing Group Key File - try to import";
+			break;
+		default:
+			pgpStatusText = "No Key files found - try to import";
+			break;
+		}
+		pgpStatus.setText("PGP Key Status: " + pgpStatusText);
+		if (pgp != 0) {
+			preferences.edit().putBoolean("PGPENABLED", false).commit();
+			pgpEnabled.setChecked(false);
+			pgpEnabled.setEnabled(false);
+			pgpImportKeys.setText("Import PGP keys now");
+		} else {
+			pgpEnabled.setEnabled(true);
+			pgpImportKeys.setText("DELETE PGP keys now");
+		}
 	}
 
-	private String checkKeyFiles() {
+	private int checkKeyFiles() {
 		Boolean userKeyExist;
 		Boolean groupKeyExist;
 		try {
@@ -136,19 +194,24 @@ public class Settings extends Activity {
 			groupKeyExist = false;
 		}
 		if (userKeyExist && groupKeyExist) {
-			return "All Keys available";
+			return 0;
 		} else {
 			if (userKeyExist) {
-				return "Missing Group Key File";
+				return 2;
 			} else {
 				if (userKeyExist) {
-					return "Missing User Key File";
+					return 1;
 				} else {
-					return "Not any Key found";
+					return 3;
 
 				}
 			}
 		}
+	}
+
+	private void deleteKeyFiles() {
+		deleteFile(OOBDConstants.PGP_USER_KEYFILE_NAME);
+		deleteFile(OOBDConstants.PGP_GROUP_KEYFILE_NAME);
 	}
 
 	private void importKeyFiles() {

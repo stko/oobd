@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -295,13 +296,25 @@ public class MainActivity extends FragmentActivity implements
 
 	}
 
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if ( keyCode == KeyEvent.KEYCODE_MENU ) {
+			startActivity(new Intent(this, Settings.class));
+	        return true;
+	    }
+	    return super.onKeyDown(keyCode, event);
+	}
+	
+	
 	/**
 	 * Create Option menu with link to settings
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		MenuInflater inflater = getMenuInflater();
+		// please note: This "menu starter" is disabled through the onKeyDown - handler above..
+  		super.onCreateOptionsMenu(menu);
+ 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.home_menu, menu);
 		return true;
 	}
