@@ -196,9 +196,9 @@ end
 -- set sender address - only needed for OOBD 
 function setSendID_OOBD(addr)
   if hardwareID==2 then
-    echoWrite("p 16 "..addr.."\r")
+    echoWrite("p 16 $"..addr.."\r")
   elseif hardwareID==3 or hardwareID==4 then
-    echoWrite("p 6 9 "..addr.."\r")
+    echoWrite("p 6 9 $"..addr.."\r")
   end
 end
 
