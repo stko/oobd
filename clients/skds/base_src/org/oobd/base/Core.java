@@ -656,6 +656,10 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 						.getOnionString("data")));
 				return false;
 			}
+			if (myOnion.isType(CM_PARAM)) {
+				userInterface.requestParamInput(myOnion);
+				return false;
+			}
 		} catch (org.json.JSONException e) {
 			Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
 					"JSON exception..");
@@ -735,15 +739,15 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 					while (visItr.hasNext()) {
 						Visualizer vis = visItr.next();
 						if (vis != null) {
-							 synchronized (vis) {
-							if (vis.getRemoved()) {
-								somethingToRemove = true;
-							} else {
-								vis.doUpdate(i);
+							synchronized (vis) {
+								if (vis.getRemoved()) {
+									somethingToRemove = true;
+								} else {
+									vis.doUpdate(i);
+								}
 							}
 						}
 					}
-					 }
 					// }
 					synchronized (engineVisualizers) {
 						if (somethingToRemove) {
@@ -827,6 +831,51 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		} catch (JSONException ex) {
 			Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE,
 					null, ex);
+		}
+
+	}
+
+	/**
+	 * forwards parameter requests to the UI to
+	 * 
+	 * @todo extend this function to allow all type of parameter inputs + return
+	 *       values to the caller
+	 * 
+	 * @param msg
+	 *            the parameter description
+	 */
+	public void requestParamInput(Onion msg) {
+		try {
+			Onion thisOnion = new Onion("{" + "'type':'" + CM_PARAM + "',"
+					+ "'owner':" + "{'name':'"
+					+ Core.getSingleInstance().getId() + "'}" + "}");
+			thisOnion.setValue(CM_PARAM, msg);
+			sendMsg(new Message(Core.getSingleInstance(), CoreMailboxName,
+					thisOnion));
+		} catch (JSONException ex) {
+			Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE,
+					null, ex);
+		}
+
+	}
+
+	/**
+	 * a small help routine to output text from elements who don't have an own
+	 * mailbox
+	 * 
+	 * @param msg
+	 *            the text to show
+	 */
+
+	public void userAlert(String msg) {
+		System.out.println("Error:"+msg);
+		try {
+			core.requestParamInput(new Onion("{" + "'type':'"
+					+ OOBDConstants.CM_PARAM + "'," + "'type':'a',"
+					+ "'tooltip':'" + Base64Coder.encodeString(msg) + "'" + "}"));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}

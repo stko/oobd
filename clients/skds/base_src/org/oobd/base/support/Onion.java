@@ -380,4 +380,20 @@ public class Onion extends JSONObject {
 		}
 
 	}
+
+	public Onion setValue(String path, Onion value) {
+		OnionData od = createPath(path);
+		if (od != null) {
+			try {
+				od.onion.put(od.key, value);
+			} catch (JSONException e) {
+				return null;
+			}
+
+			return od.onion;
+		} else {
+			return null;
+		}
+		
+	}
 }

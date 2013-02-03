@@ -9,7 +9,7 @@ import org.oobd.base.support.Onion;
 
 public interface IFui  {
 
-    /**
+	   /**
      * \brief append and shows a string in the output area
      *
      * The string is added to the content of the output area and the output area is made visible to the user
@@ -17,6 +17,15 @@ public interface IFui  {
      * @param msg
      */
     public void sm(String msg);
+
+    /**
+     * \brief Builds an input window which allows the user to input some parameters
+     *
+     * According to http://www.oobd.org/doku.php?id=dev:onionspec
+     *
+     * @param msg a param onion (see http://www.oobd.org/doku.php?id=dev:onionspec&#param)
+     */
+    public void requestParamInput(Onion msg);
 
     /**
      * \brief register the core instance to the UserInterface
