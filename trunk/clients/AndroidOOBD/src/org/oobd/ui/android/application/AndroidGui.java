@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.oobd.base.Base64Coder;
 import org.oobd.base.Core;
 import org.oobd.base.IFui;
 import org.oobd.base.support.Onion;
@@ -19,6 +20,8 @@ import org.oobd.ui.android.VizTable;
 
 //import android.app.ProgressDialog;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 
@@ -44,6 +47,39 @@ public class AndroidGui implements IFui {
 		OutputActivity.getInstance().addText(msg + "\n");
 		// TODO outputtofront crashes
 		// DiagnoseTab.getInstance().outputToFront();
+	}
+
+	public void requestParamInput(Onion msg){
+		System.out.println("Onion received:"+msg.toString());
+		
+		   class OneShotTask implements Runnable {
+		        Onion thisOnion;
+		        OneShotTask(Onion o) { thisOnion = o; }
+		        public void run() {
+					OutputActivity.getInstance().addText(Base64Coder.decodeString(thisOnion.getOnionString("PARAM/tooltip")) + "\n");
+					AlertDialog alertDialog = new AlertDialog.Builder(
+							Diagnose.getInstance()).create();
+					alertDialog.setTitle("OOBD Message");
+					alertDialog
+							.setMessage(Base64Coder.decodeString(thisOnion.getOnionString("PARAM/tooltip")));
+					alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
+							"OK",
+							new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,
+										int which) {
+									dialog.cancel();
+								}
+							});
+					alertDialog.show();
+					return;
+		        }
+		    }
+		
+		Diagnose.getInstance().runOnUiThread(new OneShotTask(msg));
+
+		
+		
+
 	}
 
 	public void registerOobdCore(Core core) {

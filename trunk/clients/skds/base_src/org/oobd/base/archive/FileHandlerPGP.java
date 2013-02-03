@@ -9,12 +9,18 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.NoSuchProviderException;
+import java.util.MissingResourceException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.json.JSONException;
+import org.oobd.base.Base64Coder;
 import org.oobd.base.Core;
 import org.oobd.base.OOBDConstants;
+import org.oobd.base.support.Onion;
 import org.oobd.crypt.gpg.*;
+import org.spongycastle.openpgp.PGPException;
 
 /**
  * 
@@ -26,27 +32,39 @@ public class FileHandlerPGP implements Archive {
 	String myFileName;
 	Core core;
 
-	public FileHandlerPGP(Core c){
-		core=c;
+	public FileHandlerPGP(Core c) {
+		core = c;
 	}
-	
-	
+
 	public InputStream getInputStream(String innerPath) {
 		if (myFilePath != null) {
+			FileInputStream mfp = null;
 			try {
-
-				return GroupDecoder
-						.decryptGroup(
-								new FileInputStream(myFilePath),
-								core.getSystemIF().generateResourceStream(OOBDConstants.FT_KEY,OOBDConstants.PGP_USER_KEYFILE_NAME),
-								new FileInputStream(core.getSystemIF().generateUIFilePath(OOBDConstants.FT_KEY,OOBDConstants.PGP_GROUP_KEYFILE_NAME)),
-								core.getSystemIF().getAppPassPhrase(),core.getSystemIF().getUserPassPhrase().toCharArray());
-
-			} catch (Exception ex) {
-				Logger.getLogger(FileHandlerPGP.class.getName()).log(
-						Level.SEVERE, null, ex);
+				mfp = new FileInputStream(myFilePath);
+			} catch (FileNotFoundException e) {
+				Core.getSingleInstance().userAlert(
+						"Error: Can't read PGP crypted file");
+			}
+			InputStream userKeyFile = core.getSystemIF()
+					.generateResourceStream(OOBDConstants.FT_KEY,
+							OOBDConstants.PGP_USER_KEYFILE_NAME);
+			if (userKeyFile == null) {
+				Core.getSingleInstance().userAlert(
+						"Error: Can't read PGP user key file");
 				return null;
 			}
+			InputStream groupKeyFile = core.getSystemIF()
+					.generateResourceStream(OOBDConstants.FT_KEY,
+							OOBDConstants.PGP_GROUP_KEYFILE_NAME);
+			if (groupKeyFile == null) {
+				Core.getSingleInstance().userAlert(
+						"Error: Can't read PGP group key file");
+				return null;
+			}
+			return GroupDecoder.decryptGroup(mfp, userKeyFile, groupKeyFile,
+					core.getSystemIF().getAppPassPhrase(), core.getSystemIF()
+							.getUserPassPhrase().toCharArray());
+
 		}
 		return null;
 	}

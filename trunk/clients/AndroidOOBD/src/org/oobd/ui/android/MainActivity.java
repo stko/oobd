@@ -6,12 +6,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Set;
 
 import org.json.JSONException;
 import org.oobd.base.Base64Coder;
+import org.oobd.base.Core;
+import org.oobd.base.IFui;
 import org.oobd.base.support.Onion;
+import org.oobd.base.visualizer.IFvisualizer;
+import org.oobd.base.visualizer.Visualizer;
 import org.oobd.base.OOBDConstants;
 import org.oobd.crypt.AES.EncodeDecodeAES;
 import org.oobd.ui.android.application.AndroidGui;
@@ -224,7 +231,6 @@ public class MainActivity extends FragmentActivity implements
 								}
 							}).show();
 		}
-		String pp = new String(OOBDApp.getInstance().getAppPassPhrase());
 	}
 
 	void createDisclaimerDialog() {
@@ -370,5 +376,8 @@ public class MainActivity extends FragmentActivity implements
 		// TODO Auto-generated method stub
 
 	}
+	
+	
+	
 
 }

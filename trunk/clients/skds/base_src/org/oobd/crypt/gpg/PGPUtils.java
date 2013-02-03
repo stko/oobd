@@ -211,15 +211,17 @@ public static void init()
 
     /**
      * returns an encrypted input stream
+     * @throws PGPException 
+     * @throws IOException 
+     * @throws NoSuchProviderException 
      */
     @SuppressWarnings("unchecked")
 
-  public static InputStream decryptFileStream(InputStream in, InputStream keyIn, char[] passwd) throws Exception {
+  public static InputStream decryptFileStream(InputStream in, InputStream keyIn, char[] passwd) throws IOException, PGPException, NoSuchProviderException  {
   	InputStream unc =null;    	
      in = PGPUtil.getDecoderStream(in);
        PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(keyIn));
-       try {
-           PGPObjectFactory pgpF = new PGPObjectFactory(in);
+          PGPObjectFactory pgpF = new PGPObjectFactory(in);
            PGPEncryptedDataList enc;
            Object o = pgpF.nextObject();
            if (o instanceof  PGPEncryptedDataList) {
@@ -227,8 +229,7 @@ public static void init()
            } else {
                enc = (PGPEncryptedDataList) pgpF.nextObject();
            }
-           System.out.println(enc.size() + " enc size.");
-           //
+          //
            @SuppressWarnings("rawtypes")
            Iterator it = enc.getEncryptedDataObjects();
            PGPPrivateKey sKey = null;
@@ -277,13 +278,7 @@ public static void init()
                System.err.println("no message integrity check");
            }
 */
-       } catch (PGPException e) {
-           System.err.println(e);
-           if (e.getUnderlyingException() != null) {
-               e.getUnderlyingException().printStackTrace();
-           }
-       }
-	return unc;
+  	return unc;
    }
 
 

@@ -139,13 +139,12 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 	}
 
 	public CharSequence[] getAvailableLuaScript() {
-		// TODO read what scripts are available on the device (e.g. from
-		// harddisc?)
+		
 
 		FilenameFilter filter = new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				return name.toLowerCase().endsWith(".lbc")
-						|| name.toLowerCase().endsWith(".pgp");
+						|| name.toLowerCase().endsWith(".lbc.pgp");
 			}
 		};
 		File dir = new File(generateUIFilePath(OOBDConstants.FT_SCRIPT, ""));
