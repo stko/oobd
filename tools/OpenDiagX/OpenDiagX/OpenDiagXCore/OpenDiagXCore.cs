@@ -375,6 +375,7 @@ namespace org.oobd.tools.OpenDiagX
             int byteSize = Convert.ToInt32(getpath(iterator.Current, "../BYTE_SIZE"));
             String Name = getpath(iterator.Current, "NAME");
             String LBit = getpath(iterator.Current, "LEAST_SIG_BIT");
+            String MBit = getpath(iterator.Current, "MOST_SIG_BIT");
 
             XPathNodeIterator iterator2 = iterator.Current.Select("DATA_DEFINITION");
             while (iterator2.MoveNext())
@@ -399,9 +400,10 @@ namespace org.oobd.tools.OpenDiagX
                             }
                         }
                         XmlElement thisBitEntry = addSubNode(subNode, "SingleBit");
+
                         addTextnode(thisBitEntry, "Name", Name);
                         addTextnode(thisBitEntry, "Bit", LBit);
-                        addTextnode(thisBitEntry, "BytePos", (byteSize - 1 - Convert.ToInt16(LBit) / 8).ToString());
+						addTextnode(thisBitEntry, "BytePos", (byteSize - 1 - Convert.ToInt16(MBit)/8).ToString());
                         addTextnode(thisBitEntry, "BitPos", (Convert.ToInt16(LBit) % 8).ToString());
                         addTextnode(thisBitEntry, "LowText", lowText);
                         addTextnode(thisBitEntry, "HighText", highText);
@@ -410,9 +412,10 @@ namespace org.oobd.tools.OpenDiagX
                 else if (iterator.Current.SelectSingleNode("DATA_DEFINITION/NUMERIC_PARAMETERS") != null)
                 {
                     XmlElement thisBitEntry = addSubNode(subNode, "SingleBit");
+
                     addTextnode(thisBitEntry, "Name", Name);
                     addTextnode(thisBitEntry, "Bit", LBit);
-                    addTextnode(thisBitEntry, "BytePos", (byteSize - 1 - Convert.ToInt16(LBit) / 8).ToString());
+					addTextnode(thisBitEntry, "BytePos", (byteSize - 1 - Convert.ToInt16(MBit)/8).ToString());
                     addTextnode(thisBitEntry, "BitPos", (Convert.ToInt16(LBit) % 8).ToString());
                     if (iterator.Current.SelectSingleNode("DATA_DEFINITION/NUMERIC_PARAMETERS") != null)
                     {
@@ -433,11 +436,11 @@ namespace org.oobd.tools.OpenDiagX
                 else
                 {
                     XmlElement thisBitEntry = addSubNode(subNode, "SingleBit");
+
                     addTextnode(thisBitEntry, "Name", Name);
                     addTextnode(thisBitEntry, "Bit", LBit);
-                    addTextnode(thisBitEntry, "BytePos", (byteSize - 1 - Convert.ToInt16(LBit) / 8).ToString());
+					addTextnode(thisBitEntry, "BytePos", (byteSize - 1 - Convert.ToInt16(MBit)/8).ToString());
                     addTextnode(thisBitEntry, "BitPos", (Convert.ToInt16(LBit) % 8).ToString());
-
                     addTextnode(thisBitEntry, "Resolution", "1");
                     addTextnode(thisBitEntry, "Offset", "0");
                     addTextnode(thisBitEntry, "Units", "");
@@ -458,8 +461,9 @@ namespace org.oobd.tools.OpenDiagX
             }
 
             XmlElement thisDIDEntry = addSubNode(subNode, "ASCII");
+
             addTextnode(thisDIDEntry, "Name", Name);
-            addTextnode(thisDIDEntry, "BytePos", ((Convert.ToInt16(byteSize) - ((Convert.ToInt16(MBit) + 1) / 8)).ToString()));
+            addTextnode(thisDIDEntry, "BytePos", (byteSize - 1 - Convert.ToInt16(MBit)/8).ToString());
             addTextnode(thisDIDEntry, "BitPos", (Convert.ToInt16(LBit) % 8).ToString());
             addTextnode(thisDIDEntry, "ByteNr", (((Convert.ToInt16(MBit) + 1 - Convert.ToInt16(LBit)) / 8).ToString()));
             addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit) + 1).ToString()));
@@ -479,12 +483,13 @@ namespace org.oobd.tools.OpenDiagX
             }
 
             XmlElement thisDIDEntry = addSubNode(subNode, "UNSIGNED");
+
             addTextnode(thisDIDEntry, "Name", Name);
-            addTextnode(thisDIDEntry, "BytePos", ((Convert.ToInt16(byteSize) - ((Convert.ToInt16(MBit) + 1) / 8)).ToString()));
+            addTextnode(thisDIDEntry, "BytePos", (byteSize - 1 - Convert.ToInt16(MBit)/8).ToString());
             addTextnode(thisDIDEntry, "BitPos", (Convert.ToInt16(LBit) % 8).ToString());
             addTextnode(thisDIDEntry, "ByteNr", (((Convert.ToInt16(MBit) + 1 - Convert.ToInt16(LBit)) / 8).ToString()));
             addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit) + 1).ToString()));
-
+            
             if (iterator.Current.SelectSingleNode("DATA_DEFINITION/NUMERIC_PARAMETERS") != null)
             {
                 //addTextnode(thisDIDEntry, "Resolution", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/RESOLUTION"));
@@ -515,8 +520,9 @@ namespace org.oobd.tools.OpenDiagX
             }
 
             XmlElement thisDIDEntry = addSubNode(subNode, "SIGNED");
+
             addTextnode(thisDIDEntry, "Name", Name);
-            addTextnode(thisDIDEntry, "BytePos", ((Convert.ToInt16(byteSize) - ((Convert.ToInt16(MBit) + 1) / 8)).ToString()));
+            addTextnode(thisDIDEntry, "BytePos", (byteSize - 1 - Convert.ToInt16(MBit)/8).ToString());
             addTextnode(thisDIDEntry, "BitPos", (Convert.ToInt16(LBit) % 8).ToString());
             addTextnode(thisDIDEntry, "ByteNr", (((Convert.ToInt16(MBit) + 1 - Convert.ToInt16(LBit)) / 8).ToString()));
             addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit) + 1).ToString()));
@@ -551,8 +557,9 @@ namespace org.oobd.tools.OpenDiagX
             }
 
             XmlElement thisDIDEntry = addSubNode(subNode, "BCD");
+
             addTextnode(thisDIDEntry, "Name", Name);
-            addTextnode(thisDIDEntry, "BytePos", ((Convert.ToInt16(byteSize) - ((Convert.ToInt16(MBit) + 1) / 8)).ToString()));
+            addTextnode(thisDIDEntry, "BytePos", (byteSize - 1 - Convert.ToInt16(MBit)/8).ToString());
             addTextnode(thisDIDEntry, "BitPos", (Convert.ToInt16(LBit) % 8).ToString());
             addTextnode(thisDIDEntry, "ByteNr", (((Convert.ToInt16(MBit) + 1 - Convert.ToInt16(LBit)) / 8).ToString()));
             addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit) + 1).ToString()));
@@ -590,7 +597,7 @@ namespace org.oobd.tools.OpenDiagX
             XmlElement thisDIDEntry = addSubNode(subNode, "FLOAT");
 
             addTextnode(thisDIDEntry, "Name", Name);
-            addTextnode(thisDIDEntry, "BytePos", ((Convert.ToInt16(byteSize) - ((Convert.ToInt16(MBit) + 1) / 8)).ToString()));
+            addTextnode(thisDIDEntry, "BytePos", (byteSize - 1 - Convert.ToInt16(MBit)/8).ToString());
             addTextnode(thisDIDEntry, "BitPos", (Convert.ToInt16(LBit) % 8).ToString());
             addTextnode(thisDIDEntry, "ByteNr", (((Convert.ToInt16(MBit) + 1 - Convert.ToInt16(LBit)) / 8).ToString()));
             addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit) + 1).ToString()));
@@ -619,11 +626,12 @@ namespace org.oobd.tools.OpenDiagX
             String MBit = getpath(iterator.Current, "MOST_SIG_BIT");
 
             XmlElement thisDIDEntry = addSubNode(subNode, "ENUM");
+
             addTextnode(thisDIDEntry, "Name", getpath(iterator.Current, "NAME"));
-            addTextnode(thisDIDEntry, "BytePos", ((Convert.ToInt16(byteSize) - ((Convert.ToInt16(MBit) + 1) / 8)).ToString()));
+            addTextnode(thisDIDEntry, "BytePos", (byteSize - 1 - Convert.ToInt16(MBit)/8).ToString());
             addTextnode(thisDIDEntry, "BitPos", (Convert.ToInt16(LBit) % 8).ToString());
-            addTextnode(thisDIDEntry, "ByteNr", (((Convert.ToInt16(MBit) + 1 - Convert.ToInt16(LBit)) / 8).ToString()));
-            addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit) + 1).ToString()));
+            addTextnode(thisDIDEntry, "ByteNr", ((Convert.ToInt16(MBit) + 1 - Convert.ToInt16(LBit)) / 8).ToString());
+            addTextnode(thisDIDEntry, "BitNr", (Convert.ToInt16(MBit) - Convert.ToInt16(LBit) + 1).ToString());
 
             XPathNodeIterator iterator2 = iterator.Current.Select("DATA_DEFINITION");
             while (iterator2.MoveNext())
@@ -659,7 +667,7 @@ namespace org.oobd.tools.OpenDiagX
             XmlElement thisDIDEntry = addSubNode(subNode, "BYTE");
 
             addTextnode(thisDIDEntry, "Name", Name);
-            addTextnode(thisDIDEntry, "BytePos", ((Convert.ToInt16(byteSize) - ((Convert.ToInt16(MBit) + 1) / 8)).ToString()));
+            addTextnode(thisDIDEntry, "BytePos", (byteSize - 1 - Convert.ToInt16(MBit)/8).ToString());
             addTextnode(thisDIDEntry, "BitPos", (Convert.ToInt16(LBit) % 8).ToString());
             addTextnode(thisDIDEntry, "ByteNr", (((Convert.ToInt16(MBit) + 1 - Convert.ToInt16(LBit)) / 8).ToString()));
             addTextnode(thisDIDEntry, "BitNr", ((Convert.ToInt16(MBit) - Convert.ToInt16(LBit) + 1).ToString()));
