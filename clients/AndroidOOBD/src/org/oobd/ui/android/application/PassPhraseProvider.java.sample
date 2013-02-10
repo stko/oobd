@@ -1,0 +1,8 @@
+package org.oobd.ui.android.application;
+
+
+public class PassPhraseProvider {
+	public static char[] getPassPhrase() {
+		return "DummyPassPhrase".toCharArray();
+	}
+}

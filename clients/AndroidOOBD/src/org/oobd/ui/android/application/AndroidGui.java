@@ -56,12 +56,20 @@ public class AndroidGui implements IFui {
 		        Onion thisOnion;
 		        OneShotTask(Onion o) { thisOnion = o; }
 		        public void run() {
-					OutputActivity.getInstance().addText(Base64Coder.decodeString(thisOnion.getOnionString("PARAM/tooltip")) + "\n");
+		        	String message = "internal error: Invalid cmd parameters";
+		        	ArrayList<Onion> params = thisOnion.getOnionArray("PARAM","param");
+		        	if (params != null){
+		        		Onion p0Onion=params.get(0);
+		        		if (p0Onion!=null){
+		        			message=Base64Coder.decodeString(p0Onion.getOnionString("tooltip"));
+		        		}
+		        	}
+					OutputActivity.getInstance().addText(message + "\n");
 					AlertDialog alertDialog = new AlertDialog.Builder(
 							Diagnose.getInstance()).create();
 					alertDialog.setTitle("OOBD Message");
 					alertDialog
-							.setMessage(Base64Coder.decodeString(thisOnion.getOnionString("PARAM/tooltip")));
+							.setMessage(message);
 					alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
 							"OK",
 							new DialogInterface.OnClickListener() {
