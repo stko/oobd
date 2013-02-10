@@ -4,8 +4,11 @@
  */
 package org.oobd.base.support;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONException;
 import org.oobd.base.Base64Coder;
@@ -157,6 +160,31 @@ public class Onion extends JSONObject {
 		} catch (OnionNoEntryException e) {
 			return null;
 		}
+	}
+
+	/**
+	 * returns the string value at the given path at index
+	 * 
+	 * @param path
+	 *            /path/to/value
+	 * @return ArrayList<Onion>
+	 */
+	public ArrayList<Onion> getOnionArray(String path,String name) {
+		ArrayList<Onion> res = new ArrayList<Onion>();
+		try {
+			Onion result = getOnion(path);
+			if (result != null) {
+				String aString =result.get(name).toString();
+				JSONArray r = new JSONArray(aString);
+				for (int i = 0; i < r.length(); i++) {
+					res.add(new Onion(r.get(i).toString()));
+				}
+				return res;
+			}
+		} catch (JSONException e) {
+			return null;
+		}
+		return res;
 	}
 
 	/**
@@ -394,6 +422,6 @@ public class Onion extends JSONObject {
 		} else {
 			return null;
 		}
-		
+
 	}
 }

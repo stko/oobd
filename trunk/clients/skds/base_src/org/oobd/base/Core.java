@@ -156,9 +156,13 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		assignments = new HashMap<String, Object>();
 		visualizers = new HashMap<String, ArrayList<Visualizer>>();
 		databases = new HashMap<String, OobdDB>();
+		System.out.println("Try to set the Systeminterface -callback...");
 		systemInterface.registerOobdCore(this); // Anounce itself at the
 		// Systeminterface
+		System.out.println("Systeminterface set");
+		System.out.println("Try to set the userinterface -callback...");
 		userInterface.registerOobdCore(this); // Anounce itself at the
+		System.out.println("Userinterface set");
 		// Userinterface
 
 		// userInterface.sm("Moin");
@@ -205,10 +209,10 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 					// Wird geworfen, wenn die Klasse nicht "instanziert" werden
 					// kann
 					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-							"can't create instance of " + element);
+							"InstantiationException: can't instance of Bus " + element);
 				} catch (IllegalAccessException ex) {
 					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-							"can't create instance of " + element);
+							"IllegalAccessException: can't create instance of Bus " + element);
 				}
 
 			}
@@ -236,10 +240,10 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 					// Wird geworfen, wenn die Klasse nicht "instanziert" werden
 					// kann
 					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-							"can't create instance of " + element);
+							"InstantiationException: can't instance of Connector " + element);
 				} catch (IllegalAccessException ex) {
 					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-							"can't create instance of " + element);
+							"IllegalAccessException: can't create instance of Connector " + element);
 				}
 
 			}
@@ -266,10 +270,10 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 					// Wird geworfen, wenn die Klasse nicht "instanziert" werden
 					// kann
 					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-							"can't create instance of " + element);
+							"InstantiationException: can't instance of Protocol " + element);
 				} catch (IllegalAccessException ex) {
 					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-							"can't create instance of " + element);
+							"IllegalAccessException: can't create instance of Protocol " + element);
 				}
 
 			}
@@ -297,10 +301,10 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 					// Wird geworfen, wenn die Klasse nicht "instanziert" werden
 					// kann
 					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-							"can't create instance of " + element);
+							"InstantiationException: can't instance of Database " + element);
 				} catch (IllegalAccessException ex) {
 					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-							"can't create instance of " + element);
+							"IllegalAccessException: can't create instance of Database " + element);
 				}
 
 			}
@@ -336,7 +340,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 					}
 				} catch (Exception ex) {
 					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-							"can't create instance of " + element);
+							"can't call static method 'publicName' of " + element); 
+					ex.printStackTrace();
+
 				}
 			}
 		} catch (ClassNotFoundException ex) {
@@ -868,11 +874,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	 */
 
 	public void userAlert(String msg) {
-		System.out.println("Error:"+msg);
 		try {
-			core.requestParamInput(new Onion("{" + "'type':'"
-					+ OOBDConstants.CM_PARAM + "'," + "'type':'a',"
-					+ "'tooltip':'" + Base64Coder.encodeString(msg) + "'" + "}"));
+			core.requestParamInput(new Onion("{" + "'param' : [{ " + "'type':'a',"
+					+ "'tooltip':'" + Base64Coder.encodeString(msg) + "'" + "}]}"));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

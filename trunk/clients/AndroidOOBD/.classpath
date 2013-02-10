@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="org/oobd/ui/android/bus/AndroidBusReader.java|org/oobd/ui/android/bus/BluetoothInitWorker.java|org/oobd/ui/android/bus/BusEchoAndroid.java|org/oobd/ui/android/bus/BusCom.java" kind="src" path="src"/>
-	<classpathentry excluding="org/oobd/base/port/ComPort_Unix.java|org/oobd/base/port/ComPort_Win.java|org/oobd/ui/swing/support/|org/apache/commons/io/|org/apache/|org/spongycastle/" kind="src" path="base_src"/>
+	<classpathentry excluding="org/apache/|org/apache/commons/io/|org/oobd/base/port/ComPort_Unix.java|org/oobd/base/port/ComPort_Win.java|org/oobd/base/port/RXTXcomm.jar|org/oobd/base/port/jna.jar|org/oobd/base/port/librxtxSerial.jnilib|org/oobd/base/port/librxtxSerial.so|org/oobd/base/port/purejavacomm.jar|org/oobd/base/port/rxtxSerial.dll|org/oobd/ui/swing/support/|org/spongycastle/|org/oobd/crypt/AES/test/|org/oobd/crypt/gpg/test/|org/oobd/base/images/" kind="src" path="base_src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="lib" path="assets/commons-codec-1.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="assets/kahlua.jar"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry kind="lib" path="base_src/PGPclasses.jar"/>
+	<classpathentry kind="lib" path="libs/commons-codec-1.4.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
