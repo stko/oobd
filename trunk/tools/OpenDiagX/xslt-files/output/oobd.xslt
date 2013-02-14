@@ -6,6 +6,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:apply-templates/>
 
 dofile("../lib_lua/oobd_lib/serial_dxm.lua")
+dofile("../lib_lua/oobd_lib/lua_utils.lua")
 dofile("../lib_lua/luabit/bit.lua")
 dofile("../lib_protocol/standard-uds.lua")
 dofile("../lib_protocol/secaccess.lua")
