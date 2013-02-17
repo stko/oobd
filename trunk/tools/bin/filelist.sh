@@ -1,13 +1,5 @@
-#!/bin/bash
-cd $1
-shift
-while [ $# -gt 1 ]
-  do
-  echo -n $1 " "
-  shopt -s nullglob
-  for i in *.$2
-    do echo -n $i " "
-  done
-  echo
-  shift 2
+if ls -U *.$1 >/dev/null 2>&1 ; then 
+for i in *.$1
+	do echo -n $i " "
 done
+fi
