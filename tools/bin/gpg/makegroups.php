@@ -6,10 +6,19 @@
 		$grouplist=$argv[2];
 		$pubfile=$argv[3];
 		$secfile=$argv[4];
-		$appPassPhrase=exec("gpg  -o - --decrypt " . $appPassPhraseFile, $output, $retval);
-		if ($retval != 0 or $appPassPhrase == ""){
-			exitProg("Error when decrypting application pass phrase!\n", 1);	
+		if (strtolower(substr($appPassPhraseFile,strripos($appPassPhraseFile,".")-strlen($appPassPhraseFile))) == "gpg"){
+			$appPassPhrase=exec("gpg  -o - --decrypt " . $appPassPhraseFile, $output, $retval);
+			if ($retval != 0 or $appPassPhrase == ""){
+				exitProg("Error when decrypting application pass phrase!\n", 1);	
+			}
+		}else{
+			$content=file($appPassPhraseFile);
+			$appPassPhrase=$content[0];
 		}
+		if (!isset($appPassPhrase) || strlen($appPassPhrase)==0){
+			exitProg("Error while reading passphrase from " . $appPassPhraseFile . "\n", 1);
+		}
+
 		$groups=file($grouplist,FILE_IGNORE_NEW_LINES+FILE_SKIP_EMPTY_LINES);
 		if (count($groups)==0){
 			exitProg("Error while reading groups from " . $grouplist . "\n", 1);
