@@ -38,7 +38,7 @@ case $command in
 	;;
 	"sendkeys")
 		echo "send new generated keys.." 
-		$DIR/sendgroupmails.vbs 
+		cscript $DIR/sendgroupmails.vbs 
 	;;
 	"clean")
 		echo "remove the temporary files"
