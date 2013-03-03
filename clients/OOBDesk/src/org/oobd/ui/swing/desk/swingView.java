@@ -52,6 +52,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -1142,5 +1143,20 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             }
         }
         timer.restart();
+    }
+
+    public void requestParamInput(Onion msg) {
+        System.out.println("Onion received:" + msg.toString());
+
+        String message = "internal error: Invalid cmd parameters";
+        ArrayList<Onion> params = msg.getOnionArray("PARAM", "param");
+        if (params != null) {
+            Onion p0Onion = params.get(0);
+            if (p0Onion != null) {
+                message = Base64Coder.decodeString(p0Onion.getOnionString("tooltip"));
+            }
+        }
+        JOptionPane.showMessageDialog(null, message);
+
     }
 }

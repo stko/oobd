@@ -23,6 +23,7 @@ import org.oobd.ui.android.application.OOBDApp;
 import android.app.Activity;
 import android.app.AlertDialog;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -150,19 +151,18 @@ public class Settings extends Activity {
 		}
 		int pgp = checkKeyFiles();
 		String pgpStatusText = "";
-		switch (pgp) {
-		case 0:
-			pgpStatusText = "All Keys available";
-			break;
-		case 1:
-			pgpStatusText = "Missing User Key File - try to import";
-			break;
-		case 2:
-			pgpStatusText = "Missing Group Key File - try to import";
-			break;
-		default:
-			pgpStatusText = "No Key files found - try to import";
-			break;
+		if ((pgp & 0x01) > 0) {
+			pgpStatusText = "New Group Key File is waiting for import";
+		} else if ((pgp & 0x02) > 0) {
+			pgpStatusText = "New User Key File is waiting for import";
+
+		} else if ((pgp & 0x04) > 0) {
+			pgpStatusText = "Missing Group Key File !!";
+
+		} else if ((pgp & 0x08) > 0) {
+			pgpStatusText = "Missing User Key File !!";
+		} else {
+			pgpStatusText = "All Keys in place";
 		}
 		pgpStatus.setText("PGP Key Status: " + pgpStatusText);
 		if (pgp != 0) {
@@ -179,6 +179,8 @@ public class Settings extends Activity {
 	private int checkKeyFiles() {
 		Boolean userKeyExist;
 		Boolean groupKeyExist;
+		Boolean newUserKeyExist;
+		Boolean newGroupKeyExist;
 		try {
 			FileInputStream keyfile = openFileInput(OOBDConstants.PGP_USER_KEYFILE_NAME);
 			userKeyExist = keyfile != null;
@@ -193,20 +195,26 @@ public class Settings extends Activity {
 		} catch (Exception e) {
 			groupKeyExist = false;
 		}
-		if (userKeyExist && groupKeyExist) {
-			return 0;
-		} else {
-			if (userKeyExist) {
-				return 2;
-			} else {
-				if (userKeyExist) {
-					return 1;
-				} else {
-					return 3;
-
-				}
-			}
+		try {
+			InputStream keyfile = OOBDApp.getInstance().generateResourceStream(
+					OOBDConstants.FT_SCRIPT,
+					OOBDConstants.PGP_USER_KEYFILE_NAME);
+			newUserKeyExist = keyfile != null;
+			keyfile.close();
+		} catch (Exception e) {
+			newUserKeyExist = false;
 		}
+		try {
+			InputStream keyfile = OOBDApp.getInstance().generateResourceStream(
+					OOBDConstants.FT_SCRIPT,
+					OOBDConstants.PGP_GROUP_KEYFILE_NAME);
+			newGroupKeyExist = keyfile != null;
+			keyfile.close();
+		} catch (Exception e) {
+			newGroupKeyExist = false;
+		}
+		return (userKeyExist ? 0 : 8) + (groupKeyExist ? 0 : 4)
+				+ (newUserKeyExist ? 2 : 0) + (newGroupKeyExist ? 1 : 0);
 	}
 
 	private void deleteKeyFiles() {
@@ -215,13 +223,23 @@ public class Settings extends Activity {
 	}
 
 	private void importKeyFiles() {
-		importsingleKeyFile(OOBDConstants.PGP_USER_KEYFILE_NAME,
-				OOBDConstants.PGP_USER_KEYFILE_NAME);
-		importsingleKeyFile(OOBDConstants.PGP_GROUP_KEYFILE_NAME,
-				OOBDConstants.PGP_GROUP_KEYFILE_NAME);
+		if (importsingleKeyFile(OOBDConstants.PGP_USER_KEYFILE_NAME,
+				OOBDConstants.PGP_USER_KEYFILE_NAME)) {
+			File f = new File(OOBDApp.getInstance().generateUIFilePath(
+					OOBDConstants.FT_SCRIPT,
+					OOBDConstants.PGP_USER_KEYFILE_NAME));
+			f.delete();
+		}
+		if (importsingleKeyFile(OOBDConstants.PGP_GROUP_KEYFILE_NAME,
+				OOBDConstants.PGP_GROUP_KEYFILE_NAME)) {
+			File f = new File(OOBDApp.getInstance().generateUIFilePath(
+					OOBDConstants.FT_SCRIPT,
+					OOBDConstants.PGP_GROUP_KEYFILE_NAME));
+			f.delete();
+		}
 	}
 
-	private void importsingleKeyFile(String from, String to) {
+	private boolean importsingleKeyFile(String from, String to) {
 		FileOutputStream fos;
 		InputStream inFile = OOBDApp.getInstance().generateResourceStream(
 				OOBDConstants.FT_SCRIPT, from);
@@ -231,10 +249,12 @@ public class Settings extends Activity {
 				org.apache.commons.io.IOUtils.copy(inFile, fos);
 				inFile.close();
 				fos.close();
+				return true;
 			} catch (IOException e) {
 				// e.printStackTrace(); no stacktrace needed
 			}
 		}
+		return false;
 
 	}
 
