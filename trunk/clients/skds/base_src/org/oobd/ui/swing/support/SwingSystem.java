@@ -157,4 +157,16 @@ public class SwingSystem implements IFsystem {
             }
         }
     }
+
+    public char[] getAppPassPhrase() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String getUserPassPhrase() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setUserPassPhrase(String upp) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

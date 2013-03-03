@@ -37,24 +37,32 @@ public class GroupDecoder {
 			groupKeyStream = PGPUtils.decryptFileStream(groupkeyFile,
 					userkeyFile, userPass);
 		} catch (NoSuchProviderException e1) {
-			Core.getSingleInstance().userAlert("Internal Error");
+			Core.getSingleInstance().userAlert("Group Keys: Internal Error");
 			e1.printStackTrace();
 		} catch (IOException e1) {
-			Core.getSingleInstance().userAlert("Error: Can't read PGP Key file(s)");
+			Core.getSingleInstance().userAlert(
+					"Group Key Error: Can't read PGP Key file(s)");
 		} catch (PGPException e1) {
-			Core.getSingleInstance().userAlert("Error: Invalid PGP Key or pass phrase");
+			Core.getSingleInstance().userAlert(
+					"Group Key Error: Invalid PGP Key or pass phrase");
+		} catch (IllegalArgumentException e1) {
+			Core.getSingleInstance().userAlert(
+					"Group Key Error: Failed to find private key");
 		}
 		InputStream unc = null;
 		try {
-			unc = PGPUtils.decryptFileStream(in, groupKeyStream,
-					groupPass);
+			unc = PGPUtils.decryptFileStream(in, groupKeyStream, groupPass);
 		} catch (NoSuchProviderException e1) {
-			Core.getSingleInstance().userAlert("Internal Error");
+			Core.getSingleInstance().userAlert("Script Encryption: Internal Error");
 			e1.printStackTrace();
 		} catch (IOException e1) {
-			Core.getSingleInstance().userAlert("Error: Can't read PGP Key file(s)");
+			Core.getSingleInstance().userAlert(
+					"Script Encryption Error: Can't read PGP Key file(s)");
 		} catch (PGPException e1) {
-			Core.getSingleInstance().userAlert("Error: Invalid group Key");
+			Core.getSingleInstance().userAlert("Script Encryption Error: Invalid group Key");
+		} catch (IllegalArgumentException e1) {
+			Core.getSingleInstance().userAlert(
+					"Script Encryption Error: Failed to find private key");
 		}
 		try {
 			userkeyFile.close();
