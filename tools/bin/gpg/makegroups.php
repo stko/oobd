@@ -6,7 +6,7 @@
 		$grouplist=$argv[2];
 		$pubfile=$argv[3];
 		$secfile=$argv[4];
-		if (strtolower(substr($appPassPhraseFile,strripos($appPassPhraseFile,".")-strlen($appPassPhraseFile))) == "gpg"){
+		if (strtolower(substr($appPassPhraseFile,strripos($appPassPhraseFile,".")-strlen($appPassPhraseFile)+1)) == "gpg"){
 			$appPassPhrase=exec("gpg  -o - --decrypt " . $appPassPhraseFile, $output, $retval);
 			if ($retval != 0 or $appPassPhrase == ""){
 				exitProg("Error when decrypting application pass phrase!\n", 1);	
