@@ -44,9 +44,7 @@ function loadUserFile($filename){
 		if (!feof($handle)) {
 		echo "Error: unexpected fgets() fail\n";
 		}
-	fclose($handle);
-	}else{
-		echo "Error: file not found...\n";
+		fclose($handle);
 	}
 	return $res;
 }
