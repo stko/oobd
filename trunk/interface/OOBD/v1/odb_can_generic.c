@@ -32,6 +32,7 @@
 /**
  * generic part of the CAN routines
  */
+#include "stm32f10x.h"
 
 /* OOBD headers. */
 /*-----------------------------------------------------------*/
@@ -66,6 +67,7 @@ void print_telegram(portBASE_TYPE msgType, void *data, printChar_cbf printchar) 
 /*-----------------------------------------------------------*/
 void bus_param_can_generic_Print(portBASE_TYPE msgType, void *data,
 		printChar_cbf printchar) {
+	CAN_FilterInitTypeDef CAN_FilterInitStructure;
 	param_data *args = data;
 	DEBUGPRINT("can Parameter receiced %ld-%ld\n", args->args[ARG_RECV],
 			args->args[ARG_CMD]);
@@ -176,6 +178,25 @@ void bus_param_can_generic_Print(portBASE_TYPE msgType, void *data,
 			printLF();
 			printEOT();
 			break;
+
+		case VALUE_PARAM_INFO_CanFilterID:
+	    	printser_string("0x");
+	      	printser_int((uint16_t)(CAN1->sFilterRegister[0].FR1 & 0x0000FFFF)>>5, 16);
+	    	printser_string(" 0x");
+	    	printser_int((uint16_t)(CAN1->sFilterRegister[0].FR2 & 0x0000FFFF)>>5, 16);
+			printLF();
+			printEOT();
+	    	break;
+
+		case VALUE_PARAM_INFO_CanMaskID:
+	    	printser_string("0x");
+	    	printser_int((uint16_t)(CAN1->sFilterRegister[0].FR1>>16 & 0x0000FFFF)>>5 , 16);
+	    	printser_string(" 0x");
+	    	printser_int((uint16_t)(CAN1->sFilterRegister[0].FR2>>16 & 0x0000FFFF)>>5 , 16);
+			printLF();
+			printEOT();
+			break;
+
 		default:
 			evalResult(FBID_BUS_GENERIC, ERR_CODE_OS_UNKNOWN_COMMAND, 0,
 					ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
