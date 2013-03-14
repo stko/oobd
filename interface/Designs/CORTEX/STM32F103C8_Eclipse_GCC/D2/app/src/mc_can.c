@@ -33,6 +33,7 @@
  * MC specific can routines
  */
 
+
 /* OOBD headers. */
 #include "od_base.h"
 #include "od_protocols.h"
@@ -41,7 +42,6 @@
 #include "mc_sys.h"
 #include "stm32f10x.h"
 #include "SystemConfig.h"
-
 extern char *oobd_Error_Text_OS;
 extern struct CanConfig *canConfig;
 
@@ -174,6 +174,8 @@ void bus_param_can_spec_Print(portBASE_TYPE msgType, void *data,
 /*----------------------------------------------------------------------------*/
 
 portBASE_TYPE bus_param_can_spec(param_data * args) {
+	CAN_FilterInitTypeDef CAN_FilterInitStructure;
+
 	switch (args->args[ARG_CMD]) {
 	case PARAM_BUS_CONFIG:
 		rxCount = 0;
@@ -251,6 +253,35 @@ portBASE_TYPE bus_param_can_spec(param_data * args) {
 					ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
 			break;
 		}
+		break;
+
+	case PARAM_BUS_CanFilterID:
+       	/* CAN filter ID reconfig */
+       	CAN_FilterInitStructure.CAN_FilterNumber = 0;
+       	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
+      	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
+    	CAN_FilterInitStructure.CAN_FilterIdLow = args->args[ARG_VALUE_1] << 5;
+      	CAN_FilterInitStructure.CAN_FilterMaskIdLow = (uint16_t)(CAN1->sFilterRegister[CAN_FilterInitStructure.CAN_FilterNumber].FR1>>16 & 0x0000FFFF);
+      	CAN_FilterInitStructure.CAN_FilterIdHigh = (uint16_t)(CAN1->sFilterRegister[CAN_FilterInitStructure.CAN_FilterNumber].FR2 & 0x0000FFFF);
+      	CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (uint16_t)(CAN1->sFilterRegister[CAN_FilterInitStructure.CAN_FilterNumber].FR2>>16 & 0x0000FFFF);
+       	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = 0;
+       	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
+       	CAN_FilterInit(&CAN_FilterInitStructure);
+		createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
+		break;
+
+	case PARAM_BUS_CanMaskID:
+       	CAN_FilterInitStructure.CAN_FilterNumber = 0;
+       	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
+      	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
+      	CAN_FilterInitStructure.CAN_FilterIdLow = (uint16_t)(CAN1->sFilterRegister[CAN_FilterInitStructure.CAN_FilterNumber].FR1 & 0x0000FFFF);
+      	CAN_FilterInitStructure.CAN_FilterMaskIdLow = (uint16_t)args->args[ARG_VALUE_1] << 5;
+      	CAN_FilterInitStructure.CAN_FilterIdHigh = (uint16_t)(CAN1->sFilterRegister[CAN_FilterInitStructure.CAN_FilterNumber].FR2 & 0x0000FFFF);
+      	CAN_FilterInitStructure.CAN_FilterMaskIdHigh = (uint16_t)(CAN1->sFilterRegister[CAN_FilterInitStructure.CAN_FilterNumber].FR2>>16 & 0x0000FFFF);
+      	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = 0;
+       	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
+       	CAN_FilterInit(&CAN_FilterInitStructure);
+		createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 		break;
 
 	default:

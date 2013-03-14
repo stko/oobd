@@ -104,7 +104,7 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 			printEOT();
 			break;
 		case VALUE_PARAM_INFO_MEM_LOC:
-			sendMemLoc(0x8002400); /* send Mem Location */
+			sendMemLoc(args[ARG_VALUE_2]); /* send Mem Location */
 			printLF();
 			printEOT();
 			break;

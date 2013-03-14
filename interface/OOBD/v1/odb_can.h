@@ -112,6 +112,20 @@ Default: 11bit 500kb
 
 */
 #define PARAM_BUS_OUTPUT_ACTIVATE 		    ( 4 )
+/*! \brief set the actual CAN Filter IDs
+
+
+  \param CAN Filter ID
+
+*/
+#define	PARAM_BUS_CanFilterID				( 10 )
+/*! \brief set the actual CAN Mask IDs
+
+
+  \param CAN Mask ID
+
+*/
+#define	PARAM_BUS_CanMaskID				( 11 )
 
 /* define values of CAN specific parameter */
 #define VALUE_BUS_MODE_SILENT					( 0 )	//!< set CAN bus into silent mode
