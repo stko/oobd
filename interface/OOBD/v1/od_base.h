@@ -128,8 +128,9 @@ typedef struct error_data {
 #define VALUE_PARAM_INFO_BUS_MODE		( 3 )	//!< Displays actual Bus Mode
 #define VALUE_PARAM_INFO_BUS_CONFIG   			( 4 )	//!< Displays actual Bus Config
 #define VALUE_PARAM_INFO_BUS_ERROR   			( 5 )	//!< Displays actual rx/tx counters and resets counters. Display format is: rx-count tx-count rx-error-count tx-error-count
-#define VALUE_PARAM_INFO_CanFilterID			(10)  //!< Displays actual CAN Filter IDs
-#define VALUE_PARAM_INFO_CanMaskID			(11)  //!< Displays actual CAN Filter Mask IDs
+#define VALUE_PARAM_INFO_Can11FilterID			(10)  //!< Displays actual CAN Filter IDs - 11bit
+#define VALUE_PARAM_INFO_Can29FilterID			(11)  //!< Displays actual CAN Filter IDs - 29bit
+
 /*! 
 
  @} */

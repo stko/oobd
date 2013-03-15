@@ -1092,8 +1092,6 @@ void CAN1_Configuration(uint8_t CAN_BusConfig, uint8_t CAN_ModeConfig) {
 
 	CAN_InitTypeDef CAN_InitStructure;
 
-	CAN_FilterInitTypeDef CAN_FilterInitStructure;
-
 	/* CAN register init */
 	CAN_DeInit(CAN1);
 
@@ -1174,19 +1172,6 @@ void CAN1_Configuration(uint8_t CAN_BusConfig, uint8_t CAN_ModeConfig) {
 	}
 
 	CAN_Init(CAN1, &CAN_InitStructure);
-
-	//! \todo Filter must be configurable via parameter to use also 29bit CAN-ID
-	/* Default CAN filter init - ID 0x700-0x7FF*/
-	CAN_FilterInitStructure.CAN_FilterNumber = 0;
-	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
-	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_16bit;
-	CAN_FilterInitStructure.CAN_FilterIdLow = 0x0700 << 5; /* Start CAN-ID1 0x0700 */
-	CAN_FilterInitStructure.CAN_FilterIdHigh = 0x0000 << 5; /* Start CAN-ID2 0 */
-	CAN_FilterInitStructure.CAN_FilterMaskIdLow = 0x0700 << 5; /* Range1 0x700 - 0x7FF) */
-	CAN_FilterInitStructure.CAN_FilterMaskIdHigh = 0x07FF << 5; /* Range2 0 */
-	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = 0;
-	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
-	CAN_FilterInit(&CAN_FilterInitStructure);
 
 	CAN_ITConfig(CAN1, CAN_IT_EWG, ENABLE); /* Enable Error warning interrupt */
 	CAN_ITConfig(CAN1, CAN_IT_EPV, ENABLE); /* Enable Error passive interrupt */
