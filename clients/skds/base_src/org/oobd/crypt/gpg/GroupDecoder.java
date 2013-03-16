@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.security.NoSuchProviderException;
 
 import org.oobd.base.Core;
+import org.oobd.crypt.AES.EncodeDecodeAES;
 import org.spongycastle.openpgp.PGPException;
 
 public class GroupDecoder {
@@ -33,6 +34,24 @@ public class GroupDecoder {
 			InputStream userkeyFile, InputStream groupkeyFile,
 			char[] groupPass, char[] userPass) {
 		InputStream groupKeyStream = null;
+		/*
+		 * Core.getSingleInstance().outputText("OS-BuildString:"+android.os.Build
+		 * .VERSION.RELEASE);
+		 * Core.getSingleInstance().outputText("OS-Version>4.1:"+new
+		 * Integer(EncodeDecodeAES
+		 * .compareVersionStrings(android.os.Build.VERSION
+		 * .RELEASE,"4.2")).toString());
+		 * Core.getSingleInstance().outputText("User Password: "+new
+		 * String(userPass));
+		 * Core.getSingleInstance().userAlert("OS-BuildString:"
+		 * +android.os.Build.VERSION.RELEASE);
+		 * Core.getSingleInstance().userAlert("OS-Version>4.1:"+new
+		 * Integer(EncodeDecodeAES
+		 * .compareVersionStrings(android.os.Build.VERSION
+		 * .RELEASE,"4.2")).toString());
+		 * Core.getSingleInstance().userAlert("User Password: "+new
+		 * String(userPass));
+		 */
 		try {
 			groupKeyStream = PGPUtils.decryptFileStream(groupkeyFile,
 					userkeyFile, userPass);
@@ -53,13 +72,15 @@ public class GroupDecoder {
 		try {
 			unc = PGPUtils.decryptFileStream(in, groupKeyStream, groupPass);
 		} catch (NoSuchProviderException e1) {
-			Core.getSingleInstance().userAlert("Script Encryption: Internal Error");
+			Core.getSingleInstance().userAlert(
+					"Script Encryption: Internal Error");
 			e1.printStackTrace();
 		} catch (IOException e1) {
 			Core.getSingleInstance().userAlert(
 					"Script Encryption Error: Can't read PGP Key file(s)");
 		} catch (PGPException e1) {
-			Core.getSingleInstance().userAlert("Script Encryption Error: Invalid group Key");
+			Core.getSingleInstance().userAlert(
+					"Script Encryption Error: Invalid group Key");
 		} catch (IllegalArgumentException e1) {
 			Core.getSingleInstance().userAlert(
 					"Script Encryption Error: Failed to find private key");
