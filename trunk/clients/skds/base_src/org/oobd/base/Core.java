@@ -189,9 +189,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		// ----------- load Busses -------------------------------
 		try {
 			Logger.getLogger(Core.class.getName()).log(Level.CONFIG,
-					"Try to load: " + props.getProperty("BusClassPath", "bus"));
+					"Try to load: " + props.getProperty("BusClassPath", "org.oobd.base.bus.BusCom"));
 			HashMap<String, Class<?>> classObjects = loadOobdClasses(
-					props.getProperty("BusClassPath", "bus"),
+					props.getProperty("BusClassPath", "org.oobd.base.bus.BusCom"),
 					props.getProperty("BusClassPrefix", "org.oobd.base.bus."),
 					Class.forName("org.oobd.base.bus.OobdBus"));
 			for (Iterator iter = classObjects.keySet().iterator(); iter
@@ -223,7 +223,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		// ----------- load Connectors -------------------------------
 		try {
 			HashMap<String, Class<?>> classObjects = loadOobdClasses(
-					props.getProperty("ConnectorClassPath", "connector"),
+					props.getProperty("ConnectorClassPath", "org.oobd.base.connector.ConnectorLocal"),
 					"org.oobd.base.connector.",
 					Class.forName("org.oobd.base.connector.OobdConnector"));
 			for (Iterator iter = classObjects.keySet().iterator(); iter
@@ -254,7 +254,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		// ----------- load Protocols -------------------------------
 		try {
 			HashMap<String, Class<?>> classObjects = loadOobdClasses(
-					props.getProperty("ProtocolClassPath", "protocol"),
+					props.getProperty("ProtocolClassPath", "org.oobd.base.protocol.ProtocolUDS"),
 					"org.oobd.base.protocol.",
 					Class.forName("org.oobd.base.protocol.OobdProtocol"));
 			for (Iterator iter = classObjects.keySet().iterator(); iter
@@ -284,7 +284,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		// ----------- load Databases -------------------------------
 		try {
 			HashMap<String, Class<?>> classObjects = loadOobdClasses(
-					props.getProperty("DatabaseClassPath", "db"),
+					props.getProperty("DatabaseClassPath", "org.oobd.base.db.AVLLookup"),
 					"org.oobd.base.db.",
 					Class.forName("org.oobd.base.db.OobdDB"));
 			for (Iterator iter = classObjects.keySet().iterator(); iter
@@ -316,7 +316,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		// INSTANCES!-------------------------------
 		try {
 			scriptengines = loadOobdClasses(
-					props.getProperty("EngineClassPath", "scriptengine"),
+					props.getProperty("EngineClassPath", "org.oobd.base.scriptengine.ScriptengineLua"),
 					"org.oobd.base.scriptengine.",
 					Class.forName("org.oobd.base.scriptengine.OobdScriptengine"));
 			for (Iterator iter = scriptengines.keySet().iterator(); iter
