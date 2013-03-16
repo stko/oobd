@@ -50,8 +50,7 @@ public class AndroidGui implements IFui {
 	}
 
 	public void requestParamInput(Onion msg){
-		System.out.println("Onion received:"+msg.toString());
-		
+
 		   class OneShotTask implements Runnable {
 		        Onion thisOnion;
 		        OneShotTask(Onion o) { thisOnion = o; }

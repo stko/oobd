@@ -98,11 +98,11 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 			try {
 				resource = openFileInput(resourceName);
 				Log.v(this.getClass().getSimpleName(), "Key File "
-						+ resourceName + " loaded from internal storage");
+						+ resourceName + " loaded");
 			} catch (Exception e) {
 				Log.v(this.getClass().getSimpleName(), "Key File "
 						+ resourceName
-						+ " could not loaded from internal storage", e);
+						+ " could not loaded", e);
 			}
 			return resource;
 
