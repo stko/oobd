@@ -33,6 +33,8 @@ case $command in
 		$DIR/creategrouplist.sh $LUAMAINDIR > $GROUPLIST
 	;;
 	"groupkeys")
+		read -p "do you REALLY want to create new groupfiles?? (y/N)"
+		[ "$REPLY" != "y" ] && exit 1
 		echo "generate groupkeys from " $GROUPLIST 
 		$DIR/makegroups.sh $APPPASSPHRASEFILE  $GROUPLIST $GROUPPUBKEYS $GROUPSECKEYS
 	;;
