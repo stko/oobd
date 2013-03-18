@@ -40,7 +40,7 @@ case $command in
 	;;
 	"sendkeys")
 		echo "send new generated keys.." 
-		cscript $DIR/sendgroupmails.vbs 
+		cscript "`cygpath -w $DIR/sendgroupmails.vbs`"
 	;;
 	"clean")
 		echo "remove the temporary files"
