@@ -80,7 +80,7 @@ udsBuffer = {}
 udslen =0
 receive = null
 setTimeout = null
-setSendID =null
+setSendID = null
 
 -- actual hardware 
 -- 0 ELM 
@@ -170,7 +170,6 @@ function translateDTC(highByte, lowByte)
   return start..string.format("%X",lNibble)..string.format("%02X",lowByte)
 end
 
-
 function notyet(oldvalue,id)
 	return "not implemented yet"
 end
@@ -192,7 +191,6 @@ function setTimeout_OOBD(timeout)
   end
 end
 
-
 -- set sender address - only needed for OOBD 
 function setSendID_OOBD(addr)
   if hardwareID==2 then
@@ -202,11 +200,17 @@ function setSendID_OOBD(addr)
   end
 end
 
+-- set CAN-ID filter - only needed for OOBD 
+function setCANFilter_OOBD(id, addr, mask)
+  if hardwareID==3 or hardwareID==4 then
+    echoWrite("p 8 10 "..id.." $0"..addr.."\r") -- use CAN-Filter No <id>, CAN-ID <addr>
+	echoWrite("p 8 11 "..id.." $0"..mask.."\r") -- use CAN-Filter No <id>, CAN-IDMask <mask>
+  end
+end
+
 function doNothing(value)
 -- do nothing
 end
-
-
 
 function echoWrite(text)
 	serFlush()
@@ -491,6 +495,8 @@ function identifyOOBDInterface()
 	  receive = receive_OOBD
 	  setTimeout = setTimeout_OOBD
 	  setSendID = setSendID_OOBD
+	  setCANFilter = setCANFilter_OOBD
+
 	  --[[ Original DXM1, with old OOBD firmware <= Revision 346 ]]--
 	  hardwareID=2
 	  if hardware_model=="POSIX" or hardware_model=="D2" then
