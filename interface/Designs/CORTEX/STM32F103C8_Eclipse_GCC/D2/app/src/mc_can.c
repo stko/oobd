@@ -174,6 +174,52 @@ void bus_param_can_spec_Print(portBASE_TYPE msgType, void *data,
 
 /*----------------------------------------------------------------------------*/
 
+uint16_t CAN_GetFilterReg16(CAN_TypeDef* CANx, uint8_t FilterID, uint8_t FilterReg, uint8_t FilterPos)
+{
+	/* Check the parameters */
+	assert_param(IS_CAN_ALL_PERIPH(CANx));
+
+	if (FilterPos == 0) /* IDLow */
+	{
+		/* Get the LowID of the 32bit Filter register Fx.FR1 */
+		if (FilterReg == 1) /* FR1 */
+			return (uint16_t)(CANx->sFilterRegister[FilterID].FR1 & 0x0000FFFF)>>5;
+		else if (FilterReg == 2) /* FR2 */
+			return (uint16_t)(CANx->sFilterRegister[FilterID].FR2 & 0x0000FFFF)>>5;
+		else
+			return NULL;
+	}
+	else if (FilterPos == 1)/* ID High */
+	{
+		if (FilterReg == 1) /* FR1 */
+			return (uint16_t)(CAN1->sFilterRegister[FilterID].FR1>>16 & 0x0000FFFF)>>5;
+		else if (FilterReg == 2) /* FR2 */
+			return (uint16_t)(CAN1->sFilterRegister[FilterID].FR2>>16 & 0x0000FFFF)>>5;
+		else
+			return NULL;
+	}
+	else
+		return NULL;
+}
+
+/*----------------------------------------------------------------------------*/
+
+uint32_t CAN_GetFilterReg32(CAN_TypeDef* CANx, uint8_t FilterID, uint8_t FilterReg)
+{
+	/* Check the parameters */
+	assert_param(IS_CAN_ALL_PERIPH(CANx));
+
+	/* Get the LowID of the 32bit Filter register Fx.FR1 */
+	if (FilterReg == 1) /* FR1, else FR2 */
+		return (uint32_t)CANx->sFilterRegister[FilterID].FR1>>3;
+	else if (FilterReg == 2)
+		return (uint32_t)CANx->sFilterRegister[FilterID].FR2>>3;
+	else
+		return NULL;
+}
+
+/*----------------------------------------------------------------------------*/
+
 portBASE_TYPE bus_param_can_spec(param_data * args) {
 	CAN_FilterInitTypeDef CAN_FilterInitStructure;
 	uint8_t i;
@@ -330,7 +376,7 @@ portBASE_TYPE bus_param_can_spec(param_data * args) {
 
 	case PARAM_BUS_Can11MaskID: /* 11bit CAN filter mask ID reconfig */
        	/* check CAN-ID */
-		if (args->args[ARG_VALUE_2] < 0x7FF)
+		if (args->args[ARG_VALUE_2] <= 0x7FF)
 		{
 			/* check filter mask number */
 			if (args->args[ARG_VALUE_1] == 1)
