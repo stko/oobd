@@ -183,14 +183,14 @@ void bus_param_can_generic_Print(portBASE_TYPE msgType, void *data,
 		case VALUE_PARAM_INFO_Can11FilterID:
 			for (i=0; i<10; i++)
 			{
-				printser_string("0x");
-				printser_int((uint16_t)(CAN1->sFilterRegister[i].FR1 & 0x0000FFFF)>>5, 16);
+ 				printser_string("0x");
+				printser_int(CAN_GetFilterReg16(CAN1, i, 1, 0), 16);
 				printser_string(" 0x");
-				printser_int((uint16_t)(CAN1->sFilterRegister[i].FR1>>16 & 0x0000FFFF)>>5, 16);
+				printser_int(CAN_GetFilterReg16(CAN1, i, 1, 1), 16);
 				printser_string(" 0x");
-				printser_int((uint16_t)(CAN1->sFilterRegister[i].FR2 & 0x0000FFFF)>>5, 16);
+				printser_int(CAN_GetFilterReg16(CAN1, i, 2, 0), 16);
 				printser_string(" 0x");
-				printser_int((uint16_t)(CAN1->sFilterRegister[i].FR2>>16 & 0x0000FFFF)>>5, 16);
+				printser_int(CAN_GetFilterReg16(CAN1, i, 2, 1), 16);
 				printLF();
 			}
 			printLF();
@@ -201,9 +201,9 @@ void bus_param_can_generic_Print(portBASE_TYPE msgType, void *data,
 			for (i=0; i<10; i++)
 			{
 				printser_string("0x");
-				printser_int((uint32_t)(CAN1->sFilterRegister[i].FR1 & 0xFFFFFFFF)>>3, 16);
+				printser_int(CAN_GetFilterReg32(CAN1, i, 1), 16);
 				printser_string(" 0x");
-				printser_int((uint32_t)(CAN1->sFilterRegister[i].FR2 & 0xFFFFFFFF)>>3, 16);
+				printser_int(CAN_GetFilterReg32(CAN1, i, 2), 16);
 				printLF();
 			}
 			printLF();
