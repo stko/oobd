@@ -32,7 +32,6 @@
 /**
  * generic part of the CAN routines
  */
-#include "stm32f10x.h"
 
 /* OOBD headers. */
 /*-----------------------------------------------------------*/
@@ -67,9 +66,8 @@ void print_telegram(portBASE_TYPE msgType, void *data, printChar_cbf printchar) 
 /*-----------------------------------------------------------*/
 void bus_param_can_generic_Print(portBASE_TYPE msgType, void *data,
 		printChar_cbf printchar) {
-	CAN_FilterInitTypeDef CAN_FilterInitStructure;
 	param_data *args = data;
-	uint8_t i;
+	uint8_t FiltCntr;
 	DEBUGPRINT("can Parameter receiced %ld-%ld\n", args->args[ARG_RECV],
 			args->args[ARG_CMD]);
 	if (args->args[ARG_CMD] == PARAM_INFO) {
@@ -181,16 +179,16 @@ void bus_param_can_generic_Print(portBASE_TYPE msgType, void *data,
 			break;
 
 		case VALUE_PARAM_INFO_Can11FilterID:
-			for (i=0; i<10; i++)
+			for (FiltCntr=0; FiltCntr<10; FiltCntr++)
 			{
  				printser_string("0x");
-				printser_int(CAN_GetFilterReg16(CAN1, i, 1, 0), 16);
+				printser_int(CAN_GetFilterReg16(FiltCntr, 1, 0), 16);
 				printser_string(" 0x");
-				printser_int(CAN_GetFilterReg16(CAN1, i, 1, 1), 16);
+				printser_int(CAN_GetFilterReg16(FiltCntr, 1, 1), 16);
 				printser_string(" 0x");
-				printser_int(CAN_GetFilterReg16(CAN1, i, 2, 0), 16);
+				printser_int(CAN_GetFilterReg16(FiltCntr, 2, 0), 16);
 				printser_string(" 0x");
-				printser_int(CAN_GetFilterReg16(CAN1, i, 2, 1), 16);
+				printser_int(CAN_GetFilterReg16(FiltCntr, 2, 1), 16);
 				printLF();
 			}
 			printLF();
@@ -198,12 +196,12 @@ void bus_param_can_generic_Print(portBASE_TYPE msgType, void *data,
 	    	break;
 
 		case VALUE_PARAM_INFO_Can29FilterID:
-			for (i=0; i<10; i++)
+			for (FiltCntr=0; FiltCntr<10; FiltCntr++)
 			{
 				printser_string("0x");
-				printser_int(CAN_GetFilterReg32(CAN1, i, 1), 16);
+				printser_int(CAN_GetFilterReg32(FiltCntr, 1), 16);
 				printser_string(" 0x");
-				printser_int(CAN_GetFilterReg32(CAN1, i, 2), 16);
+				printser_int(CAN_GetFilterReg32(FiltCntr, 2), 16);
 				printLF();
 			}
 			printLF();
