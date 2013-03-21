@@ -174,7 +174,7 @@ void bus_param_can_spec_Print(portBASE_TYPE msgType, void *data,
 
 /*----------------------------------------------------------------------------*/
 
-uint16_t CAN_GetFilterReg16(CAN_TypeDef* CANx, uint8_t FilterID, uint8_t FilterReg, uint8_t FilterPos)
+uint16_t CAN_GetFilterReg16(uint8_t FilterID, uint8_t FilterReg, uint8_t FilterPos)
 {
 	/* Check the parameters */
 	assert_param(IS_CAN_ALL_PERIPH(CANx));
@@ -183,9 +183,9 @@ uint16_t CAN_GetFilterReg16(CAN_TypeDef* CANx, uint8_t FilterID, uint8_t FilterR
 	{
 		/* Get the LowID of the 32bit Filter register Fx.FR1 */
 		if (FilterReg == 1) /* FR1 */
-			return (uint16_t)(CANx->sFilterRegister[FilterID].FR1 & 0x0000FFFF)>>5;
+			return (uint16_t)(CAN1->sFilterRegister[FilterID].FR1 & 0x0000FFFF)>>5;
 		else if (FilterReg == 2) /* FR2 */
-			return (uint16_t)(CANx->sFilterRegister[FilterID].FR2 & 0x0000FFFF)>>5;
+			return (uint16_t)(CAN1->sFilterRegister[FilterID].FR2 & 0x0000FFFF)>>5;
 		else
 			return NULL;
 	}
@@ -204,16 +204,16 @@ uint16_t CAN_GetFilterReg16(CAN_TypeDef* CANx, uint8_t FilterID, uint8_t FilterR
 
 /*----------------------------------------------------------------------------*/
 
-uint32_t CAN_GetFilterReg32(CAN_TypeDef* CANx, uint8_t FilterID, uint8_t FilterReg)
+uint32_t CAN_GetFilterReg32(uint8_t FilterID, uint8_t FilterReg)
 {
 	/* Check the parameters */
 	assert_param(IS_CAN_ALL_PERIPH(CANx));
 
 	/* Get the LowID of the 32bit Filter register Fx.FR1 */
-	if (FilterReg == 1) /* FR1, else FR2 */
-		return (uint32_t)CANx->sFilterRegister[FilterID].FR1>>3;
-	else if (FilterReg == 2)
-		return (uint32_t)CANx->sFilterRegister[FilterID].FR2>>3;
+	if (FilterReg == 1) /* FR1 */
+		return (uint32_t)CAN1->sFilterRegister[FilterID].FR1>>3;
+	else if (FilterReg == 2) /* FR2 */
+		return (uint32_t)CAN1->sFilterRegister[FilterID].FR2>>3;
 	else
 		return NULL;
 }
