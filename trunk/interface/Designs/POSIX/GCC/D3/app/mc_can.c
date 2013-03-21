@@ -183,6 +183,49 @@ void bus_param_can_spec_Print(portBASE_TYPE msgType, void *data,
 
 }
 
+/*----------------------------------------------------------------------------*/
+
+uint16_t CAN_GetFilterReg16(uint8_t FilterID, uint8_t FilterReg, uint8_t FilterPos)
+{
+/*
+	if (FilterPos == 0) // IDLow 
+	{
+		if (FilterReg == 1) // FR1
+			return (uint16_t)(CAN1->sFilterRegister[FilterID].FR1 & 0x0000FFFF)>>5;
+		else if (FilterReg == 2) // FR2
+			return (uint16_t)(CAN1->sFilterRegister[FilterID].FR2 & 0x0000FFFF)>>5;
+		else
+			return NULL;
+	}
+	else if (FilterPos == 1)// ID High
+	{
+		if (FilterReg == 1) // FR1
+			return (uint16_t)(CAN1->sFilterRegister[FilterID].FR1>>16 & 0x0000FFFF)>>5;
+		else if (FilterReg == 2) // FR2
+			return (uint16_t)(CAN1->sFilterRegister[FilterID].FR2>>16 & 0x0000FFFF)>>5;
+		else
+			return NULL;
+	}
+	else
+		return NULL;
+*/
+	return 0;
+}
+
+/*----------------------------------------------------------------------------*/
+
+uint32_t CAN_GetFilterReg32(uint8_t FilterID, uint8_t FilterReg)
+{
+/*
+	if (FilterReg == 1) // FR1
+		return (uint32_t)CAN1->sFilterRegister[FilterID].FR1>>3;
+	else if (FilterReg == 2) // FR2
+		return (uint32_t)CAN1->sFilterRegister[FilterID].FR2>>3;
+	else
+		return NULL;
+*/
+	return 0;
+}
 
 /*-----------------------------------------------------------*/
 portBASE_TYPE bus_param_can_spec(param_data * args)
@@ -395,4 +438,29 @@ void bus_clear_rx_count_can()
 void bus_clear_tx_count_can()
 {
     txCount = 0;
+}
+
+portBASE_TYPE bus_busoff_error_can() {
+	/* check for Bus-off flag */
+	return 0;
+}
+
+portBASE_TYPE bus_passive_error_can() {
+	/* check for Error passive flag */
+	return 0;
+}
+
+portBASE_TYPE bus_warning_error_can() {
+	/* check for Error Warning flag */
+	return 0;
+}
+
+portBASE_TYPE bus_tec_can() {
+	/* read Transmit Error Counter of CAN hardware */
+	return 0;
+}
+
+portBASE_TYPE bus_rec_can() {
+	/* read Receive Error Counter of CAN hardware */
+	return 0;
 }
