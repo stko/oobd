@@ -18,3 +18,21 @@ function Split(pString, pPattern)
    end
    return Table
 end
+
+
+-- helper function to translate a table identifier into its table data and the related ID,
+-- returns ID,  data
+	function translateTableID(id)
+	info = Split(id, "_")
+	-- print ("split into: tablename "..info[1].." and id "..info[2])
+	data =_G[info[1]]
+	--print (data)
+	data= data[info[1].."_"..info[2]]
+	--[[
+	print (data)
+	for n ,v in pairs(data) do
+		print (n,v)
+	end
+	--]]
+	return info[2] , _G[info[1]][info[1].."_"..info[2]] --nice trick to get a variable just by name :-)
+end
