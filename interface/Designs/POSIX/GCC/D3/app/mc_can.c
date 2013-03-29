@@ -185,7 +185,8 @@ void bus_param_can_spec_Print(portBASE_TYPE msgType, void *data,
 
 /*----------------------------------------------------------------------------*/
 
-uint16_t CAN_GetFilterReg16(uint8_t FilterID, uint8_t FilterReg, uint8_t FilterPos)
+uint16_t CAN_GetFilterReg16(uint8_t FilterID, uint8_t FilterReg,
+			    uint8_t FilterPos)
 {
 /*
 	if (FilterPos == 0) // IDLow 
@@ -209,7 +210,7 @@ uint16_t CAN_GetFilterReg16(uint8_t FilterID, uint8_t FilterReg, uint8_t FilterP
 	else
 		return NULL;
 */
-	return 0;
+    return 0;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -224,7 +225,7 @@ uint32_t CAN_GetFilterReg32(uint8_t FilterID, uint8_t FilterReg)
 	else
 		return NULL;
 */
-	return 0;
+    return 0;
 }
 
 /*-----------------------------------------------------------*/
@@ -440,27 +441,32 @@ void bus_clear_tx_count_can()
     txCount = 0;
 }
 
-portBASE_TYPE bus_busoff_error_can() {
-	/* check for Bus-off flag */
-	return 0;
+portBASE_TYPE bus_busoff_error_can()
+{
+    /* check for Bus-off flag */
+    return 0;
 }
 
-portBASE_TYPE bus_passive_error_can() {
-	/* check for Error passive flag */
-	return 0;
+portBASE_TYPE bus_passive_error_can()
+{
+    /* check for Error passive flag */
+    return 0;
 }
 
-portBASE_TYPE bus_warning_error_can() {
-	/* check for Error Warning flag */
-	return 0;
+portBASE_TYPE bus_warning_error_can()
+{
+    /* check for Error Warning flag */
+    return 0;
 }
 
-portBASE_TYPE bus_tec_can() {
-	/* read Transmit Error Counter of CAN hardware */
-	return 0;
+portBASE_TYPE bus_tec_can()
+{
+    /* read Transmit Error Counter of CAN hardware */
+    return 0;
 }
 
-portBASE_TYPE bus_rec_can() {
-	/* read Receive Error Counter of CAN hardware */
-	return 0;
+portBASE_TYPE bus_rec_can()
+{
+    /* read Receive Error Counter of CAN hardware */
+    return 0;
 }

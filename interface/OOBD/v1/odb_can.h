@@ -54,7 +54,8 @@ portBASE_TYPE bus_rx_count_can();
 portBASE_TYPE bus_tx_count_can();
 void bus_clear_rx_count_can();
 void bus_clear_tx_count_can();
-uint16_t CAN_GetFilterReg16(uint8_t FilterID, uint8_t FilterReg, uint8_t FilterPos);
+uint16_t CAN_GetFilterReg16(uint8_t FilterID, uint8_t FilterReg,
+			    uint8_t FilterPos);
 uint32_t CAN_GetFilterReg32(uint8_t FilterID, uint8_t FilterReg);
 
 // Add obd_uds_init() to the list of protocols to be initialized

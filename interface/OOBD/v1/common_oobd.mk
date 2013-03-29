@@ -10,4 +10,5 @@ OOBD_COMMON_SOURCE = $(OOBD_COMMON_DIR)/main.c \
 		$(OOBD_COMMON_DIR)/odp_uds.c \
 		$(OOBD_COMMON_DIR)/od_ilm.c \
 		$(OOBD_COMMON_DIR)/odp_canraw.c \
+		$(OOBD_COMMON_DIR)/odp_rtd.c \
 		$(OOBD_COMMON_DIR)/od_serial.c
