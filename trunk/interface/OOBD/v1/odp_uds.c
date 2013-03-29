@@ -280,7 +280,7 @@ void odp_uds_dumpFrame(data_packet * p, print_cbf print_data)
 /*!
 
 structure of UDS- CAN telegram taken fom http://www.canbushack.com/blog/index.php?title=iso-15765-2-can-transport-layer-yes-it-can-be-fun&more=1&c=1&tb=1&pb=1
-
+and http://en.wikipedia.org/wiki/ISO_15765-2
 */
 
 //>>>> oobdtemple protocol mainloop  >>>>

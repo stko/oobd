@@ -47,24 +47,24 @@ void initBusses();
 
 //! signature of the print function that will be called 
 //! if data has been received or an bus error occured
-typedef void (*print_cbf)(portBASE_TYPE msgType, void *data,
-		printChar_cbf printchar);
+typedef void (*print_cbf) (portBASE_TYPE msgType, void *data,
+			   printChar_cbf printchar);
 
 //! callback function for handle parameter commands
 
 //! signature of the  function that will be called in protocol or bus handler
 //! when a parameter command is given
-typedef portBASE_TYPE(*param_cbf)(void *param);
+typedef portBASE_TYPE(*param_cbf) (void *param);
 
 /* data packet structure
  * used to describe a generic data packet.
  * define before include busses and protocol headers, as definition is needed there
  */
 typedef struct data_packet {
-	portBASE_TYPE recv; //!< id of the receiver
-	portBASE_TYPE len; //!< data length
-	portBASE_TYPE err; //!< only when receiving data: contains ODB_ERR- Codes
-	unsigned char *data; //!< pointer to the data bytes
+    portBASE_TYPE recv;		//!< id of the receiver
+    portBASE_TYPE len;		//!< data length
+    portBASE_TYPE err;		//!< only when receiving data: contains ODB_ERR- Codes
+    unsigned char *data;	//!< pointer to the data bytes
 } DATA_PACKET;
 
 // first a forward declaration to keep the compiler happy ;-)
@@ -75,10 +75,10 @@ typedef struct error_data error_data;
  * used to send error message to output task.
  */
 typedef struct error_data {
-	portBASE_TYPE source; //!< Source task or handler, which throws the error
-	portBASE_TYPE errType; //!< classification of error type
-	portBASE_TYPE detail; //!< detailed error definition
-	char *text; //!< textual error description
+    portBASE_TYPE source;	//!< Source task or handler, which throws the error
+    portBASE_TYPE errType;	//!< classification of error type
+    portBASE_TYPE detail;	//!< detailed error definition
+    char *text;			//!< textual error description
 } ERROR_DATA;
 
 /*! \defgroup functionblocks Commands: Addressing the different Function Blocks
@@ -128,8 +128,8 @@ typedef struct error_data {
 #define VALUE_PARAM_INFO_BUS_MODE		( 3 )	//!< Displays actual Bus Mode
 #define VALUE_PARAM_INFO_BUS_CONFIG   			( 4 )	//!< Displays actual Bus Config
 #define VALUE_PARAM_INFO_BUS_ERROR   			( 5 )	//!< Displays actual rx/tx counters and resets counters. Display format is: rx-count tx-count rx-error-count tx-error-count
-#define VALUE_PARAM_INFO_Can11FilterID			(10)  //!< Displays actual CAN Filter IDs - 11bit
-#define VALUE_PARAM_INFO_Can29FilterID			(11)  //!< Displays actual CAN Filter IDs - 29bit
+#define VALUE_PARAM_INFO_Can11FilterID			(10)	//!< Displays actual CAN Filter IDs - 11bit
+#define VALUE_PARAM_INFO_Can29FilterID			(11)	//!< Displays actual CAN Filter IDs - 29bit
 
 /*! 
 
@@ -210,8 +210,8 @@ typedef struct param_data param_data;
  * used to let the output task make outputs about incoming parameters (or to handle them then)
  */
 typedef struct param_data {
-	portBASE_TYPE argv; //!< Nr of Args
-	portBASE_TYPE args[MAX_NUM_OF_ARGS]; //!< Array of Args
+    portBASE_TYPE argv;		//!< Nr of Args
+    portBASE_TYPE args[MAX_NUM_OF_ARGS];	//!< Array of Args
 } PARAM_DATA;
 
 // first a forward declaration to keep the compiler happy ;-)
@@ -220,24 +220,24 @@ typedef struct data_packet data_packet;
 
 /* generic messageTypes to put "everything" in a queue */
 typedef struct MsgData {
-	portBASE_TYPE len;
-	void *addr;
-	void *print; //!< callback function to output the data or error
+    portBASE_TYPE len;
+    void *addr;
+    void *print;		//!< callback function to output the data or error
 } MSGDATA;
 
 typedef struct MsgData MsgData;
 
 typedef struct OdMsg {
-	portBASE_TYPE msgType;
-	MsgData *msgPtr;
+    portBASE_TYPE msgType;
+    MsgData *msgPtr;
 } ODMSG;
 
 typedef struct OdMsg OdMsg;
 
 typedef struct ODPBuffer {
-	portBASE_TYPE len;
-	portBASE_TYPE size;
-	unsigned char *data;
+    portBASE_TYPE len;
+    portBASE_TYPE size;
+    unsigned char *data;
 } ODPBUFFER;
 
 typedef struct ODPBuffer ODPBuffer;
@@ -250,15 +250,18 @@ MsgData *createDataMsg(data_packet * data);
 MsgData *createMsg(void *data, size_t size);
 void disposeMsg(MsgData * p);
 void disposeDataMsg(MsgData * p);
-portBASE_TYPE sendMsg(portBASE_TYPE msgType, xQueueHandle recv, MsgData * msg);
+portBASE_TYPE sendMsg(portBASE_TYPE msgType, xQueueHandle recv,
+		      MsgData * msg);
 portBASE_TYPE sendMsgFromISR(portBASE_TYPE msgType, xQueueHandle recv,
-		MsgData * msg);
-portBASE_TYPE waitMsg(xQueueHandle recv, MsgData ** msg, portBASE_TYPE timeout);
+			     MsgData * msg);
+portBASE_TYPE waitMsg(xQueueHandle recv, MsgData ** msg,
+		      portBASE_TYPE timeout);
 
 void createCommandResultMsg(portBASE_TYPE eSource, portBASE_TYPE eType,
-		portBASE_TYPE eDetail, char *text);
-void createCommandResultMsgFromISR(portBASE_TYPE eSource, portBASE_TYPE eType,
-		portBASE_TYPE eDetail, char *text);
+			    portBASE_TYPE eDetail, char *text);
+void createCommandResultMsgFromISR(portBASE_TYPE eSource,
+				   portBASE_TYPE eType,
+				   portBASE_TYPE eDetail, char *text);
 void CreateParamOutputMsg(param_data * args, print_cbf printRoutine);
 void CreateEventMsg(portBASE_TYPE event, portBASE_TYPE value);
 // Print functions

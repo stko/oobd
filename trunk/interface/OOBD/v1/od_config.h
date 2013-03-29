@@ -77,7 +77,7 @@
    */
 
   // number of all OOBD globally known Protocols 
-#define SYS_NR_OF_PROTOCOLS 				(2)
+#define SYS_NR_OF_PROTOCOLS 				(4)
 #define VALUE_PARAM_PROTOCOL_CAN_RAW			(0)
 #define VALUE_PARAM_PROTOCOL_CAN_UDS			(1)
 #define VALUE_PARAM_PROTOCOL_KLINE_FASTINIT		(2)

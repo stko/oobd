@@ -38,19 +38,15 @@
 
 //<<<< oobdtemple protocol header <<<<
 /**
- * implementation of the CAN raw protocol
+ * implementation of the Real Time Data protocol
  */
 
-#include "odp_canraw.h"
+#include "odp_rtd.h"
 
 
 /* some defines only need internally */
 
-/* some defines only need internally */
-#define SM_CANRAW_STANDBY 			( 0 )
-#define SM_CANRAW_SEND			( 1 )
-
-#define CANRAWBUFFERSIZE ( 4095 )
+#define CMDBUFFERSIZE ( 8 )
 
 
 extern char *oobd_Error_Text_OS[];
@@ -64,30 +60,15 @@ extern char *oobd_Error_Text_OS[];
 */
 //<<<< oobdtemple protocol protocol2bus <<<<
 
-void
-odp_canraw_data2CAN(unsigned char *dataPtr, unsigned char *canPtr,
-		    portBASE_TYPE len, portBASE_TYPE start)
-{
-    portBASE_TYPE i;
-
-    // fill unused bytes first
-    for (i = start; i < 8; i++) {
-	canPtr[i] = 0;
-    }
-    canPtr = &canPtr[start];
-    for (; len > 0; len--) {
-	*canPtr++ = *dataPtr++;
-    }
-
-}
+// The Real Time Data (RTD) protocol does not send anything, so there's no function here in place
+// which would create any CAN output
 
 //>>>> oobdtemple protocol bus2protocol  >>>>
 /*!
 \brief move data from bus receive buffer into the protocol receive buffer
 */
 //<<<< oobdtemple protocol bus2protocol <<<<
-
-//not needed here, as the raw can does not handle any dedicated answers
+// not needed for RTD, because here the whole sorting of received data is already done in the ISR
 
 //>>>> oobdtemple protocol printdata_Buffer  >>>>
 /*!
@@ -97,8 +78,42 @@ This function is called through the output task, when the protocol sends a MSG_D
 */
 //<<<< oobdtemple protocol printdata_Buffer <<<<
 
-//not needed here, as the raw can does not handle any dedicated answers
+void
+odp_rtd_printdata_Buffer(portBASE_TYPE msgType, void *data,
+			 printChar_cbf printchar)
+{
+    extern xQueueHandle inputQueue;
+/*
+ * FK: 
+ * the source below is just a sample from another protocol
+ * this piece needs to be rewritten to print out the content of an RTDElement,
+ * where in the end the RTDElement needs to be un-locked again, so that the buffer cen be 
+ * re-filled again by new incoming data
+ */
+    ODPBuffer **doublePtr;
+    ODPBuffer *myUDSBuffer;
+    doublePtr = data;
+    myUDSBuffer = *doublePtr;
+    int i;
+    for (i = 0; i < myUDSBuffer->len; i++) {
+	printser_uint8ToHex(myUDSBuffer->data[i]);
+	if ((i % 8) == 0 && i > 0 && i < myUDSBuffer->len - 1) {
+	    printLF();
+	}
+    }
+    if (!((i % 8) == 0 && i > 0 && i < myUDSBuffer->len - 1)) {
+	printLF();
+    }
 
+    printEOT();
+    /* unlock buffer */
+    myUDSBuffer->len = 0;
+    /* release the input queue */
+    if (pdPASS != sendMsg(MSG_SERIAL_RELEASE, inputQueue, NULL)) {
+	DEBUGPRINT("FATAL ERROR: input queue is full!\n", "a");
+    }
+
+}
 
 //>>>> oobdtemple protocol printParam  >>>>
 /*!
@@ -109,14 +124,14 @@ This function is called through the output task, when the protocol sends a MSG_H
 //<<<< oobdtemple protocol printParam <<<<
 
 
-void odp_canraw_printParam(portBASE_TYPE msgType, void *data,
-			   printChar_cbf printchar)
+void odp_rtd_printParam(portBASE_TYPE msgType, void *data,
+			printChar_cbf printchar)
 {
     param_data *args = data;
     extern bus_paramPrint actBus_paramPrint;
     if (args->args[ARG_CMD] == PARAM_INFO
 	&& args->args[ARG_VALUE_1] == VALUE_PARAM_INFO_VERSION) {
-	printser_string("0 - Raw CAN");
+	printser_string("3 - Real Time Data");
 	printLF();
 	printEOT();
     } else {
@@ -136,17 +151,18 @@ transfers received telegrams into Msgqueue
  */
 //<<<< oobdtemple protocol recvdata <<<<
 
-void odp_canraw_recvdata(data_packet * p)
+void odp_rtd_recvdata(data_packet * p)
 {
-    MsgData *msg;
-    extern xQueueHandle protocolQueue;
-    if (NULL != (msg = createDataMsg(p))) {
-	if (pdPASS != sendMsg(MSG_BUS_RECV, protocolQueue, msg)) {
-	    DEBUGPRINT("FATAL ERROR: protocol queue is full!\n", 'a');
-	}
-    } else {
-	DEBUGPRINT("FATAL ERROR: Out of Heap space!l\n", 'a');
-    }
+/* FK:
+ * this is one of the exciting routines of  RTD:-)
+ * whenever a can frame comes in, this routine needs to distingluish, if the frame is needed,
+ * so it has to run through the RTDElement list to see if that frame belongs to any requested messages.
+ * if yes, than it has to be placed on the right place into the appropiate message buffer
+ * while doing that, it might have to switch between double buffers, check for consistancy and if the actual
+ * buffer is actual just locked, because the output task is just requested to output that buffer.
+ * 
+ * So quite a lot to do here, and all needs to happen as a interrupt service routine before the next can frame comes already in..
+ */
 }
 
 //>>>> oobdtemple protocol dumpFrame  >>>>
@@ -157,20 +173,8 @@ void odp_canraw_recvdata(data_packet * p)
  */
 //<<<< oobdtemple protocol dumpFrame <<<<
 
-void odp_canraw_dumpFrame(data_packet * p, print_cbf print_data)
-{
-    MsgData *msg;
-    extern xQueueHandle outputQueue;
-    if (NULL != (msg = createDataMsg(p))) {
-	msg->print = print_data;
-	if (pdPASS != sendMsg(MSG_BUS_RECV, outputQueue, msg)) {
-	    DEBUGPRINT("FATAL ERROR: output queue is full!\n", 'a');
-	}
-    } else {
-	DEBUGPRINT("FATAL ERROR: Out of Heap space!l\n", 'a');
-    }
-}
-
+//as the RTD task itself does not receive data from the can bus directly, there's also no output routine for such data here
+// to receive or to dump everything would be too time consuming
 
 //>>>> oobdtemple protocol mainloop  >>>>
 
@@ -182,7 +186,7 @@ void odp_canraw_dumpFrame(data_packet * p, print_cbf print_data)
 //<<<< oobdtemple protocol mainloop <<<<
 
 
-void obp_canraw(void *pvParameters)
+void odp_rtd(void *pvParameters)
 {
 //>>>> oobdtemple protocol initmain  >>>>
     int keeprunning = 1;
@@ -221,14 +225,12 @@ void obp_canraw(void *pvParameters)
     extern print_cbf printdata_CAN;
     portBASE_TYPE stateMachine_state = 0;
     portBASE_TYPE actBufferPos = 0;
-    struct CanRawConfig canRawConfig;
 
     /* Init default parameters */
-    canRawConfig.recvID = 0x7DF;
-    canRawConfig.separationTime = 0;
+
     /* tell the Rx-ISR about the function to use for received data */
-    busControl(ODB_CMD_RECV, odp_canraw_recvdata);
-    protocolBuffer = createODPBuffer(CANRAWBUFFERSIZE);
+    busControl(ODB_CMD_RECV, odp_rtd_recvdata);
+    protocolBuffer = createODPBuffer(CMDBUFFERSIZE);
     if (protocolBuffer == NULL) {
 	keeprunning = 0;
     }
@@ -246,30 +248,27 @@ void obp_canraw(void *pvParameters)
 		dp = msg->addr;
 //<<<< oobdtemple protocol MSG_BUS_RECV <<<<
 		if (showBusTransfer > 0) {
-		    odp_canraw_dumpFrame(dp, printdata_CAN);
+		    // no incoming dumps for RTD
+		    //odp_rtd_dumpFrame(dp, printdata_CAN);
 		}
-		// no more action, Raw CAN does not manage any answers from the bus
 //>>>> oobdtemple protocol MSG_SERIAL_DATA  >>>>    
 		break;
 	    case MSG_SERIAL_DATA:
-		if (stateMachine_state == SM_CANRAW_STANDBY) {	/* only if just nothing to do */
-		    dp = (data_packet *) msg->addr;
-		    // data block received from serial input which need to be handled now
+		dp = (data_packet *) msg->addr;
+		// data block received from serial input which need to be handled now
 //<<<< oobdtemple protocol MSG_SERIAL_DATA <<<<
-		    if (((protocolBuffer->len) + dp->len) <=
-			CANRAWBUFFERSIZE) {
-			/* copy the data into the uds- buffer */
-			for (i = 0; i < dp->len; i++) {
-			    protocolBuffer->data[protocolBuffer->len++] =
-				dp->data[i];
-			}
-		    } else {
-			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
-					       ERR_CODE_CANRAW_DATA_TOO_LONG_ERR,
-					       (protocolBuffer->len) +
-					       dp->len,
-					       ERR_CODE_CANRAW_DATA_TOO_LONG_ERR_TEXT);
+		if (((protocolBuffer->len) + dp->len) <= CMDBUFFERSIZE) {
+		    /* copy the data into the uds- buffer */
+		    for (i = 0; i < dp->len; i++) {
+			protocolBuffer->data[protocolBuffer->len++] =
+			    dp->data[i];
 		    }
+		} else {
+		    createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+					   ERR_CODE_RTD_CMD_TOO_LONG_ERR,
+					   ((protocolBuffer->len) +
+					    dp->len),
+					   ERR_CODE_RTD_CMD_TOO_LONG_ERR_TEXT);
 		}
 //>>>> oobdtemple protocol MSG_SERIAL_PARAM_1 >>>>    
 		break;
@@ -290,7 +289,7 @@ void obp_canraw(void *pvParameters)
 		    switch (args->args[ARG_CMD]) {
 		    case PARAM_INFO:
 //<<<< oobdtemple protocol MSG_SERIAL_PARAM_1 <<<<
-			CreateParamOutputMsg(args, odp_canraw_printParam);
+			CreateParamOutputMsg(args, odp_rtd_printParam);
 //>>>> oobdtemple protocol MSG_SERIAL_PARAM_2 >>>>    
 			break;
 			// and here we proceed all command parameters
@@ -311,23 +310,12 @@ void obp_canraw(void *pvParameters)
 		case FBID_PROTOCOL_SPEC:
 		    //DEBUGPRINT ("can raw protocol parameter received %ld %ld\n", args->args[ARG_CMD], args->args[ARG_VALUE_1]);
 		    switch (args->args[ARG_CMD]) {
-			// first we commend out all parameters  which are not used to generate the right "unknown parameter" message in the default - area
-			/*
-			   case PARAM_ECHO:
-			   break;
-			   case PARAM_TIMEOUT_PENDING:
-			   break;
-			   case PARAM_BLOCKSIZE:
-			   break;
+		    case PARAM_RTD_CLEAR_LIST:
+			/* 
+			 * FK:
+			 * clear the RTE-Element List here, means
+			 * free all allocated memory pieces ant the RTE-Elements itself
 			 */
-		    case PARAM_CANRAW_FRAME_DELAY:
-			canRawConfig.separationTime =
-			    args->args[ARG_VALUE_1] + 1;
-			createCommandResultMsg(FBID_PROTOCOL_SPEC,
-					       ERR_CODE_NO_ERR, 0, NULL);
-			break;
-		    case PARAM_CANRAW_SENDID:
-			canRawConfig.recvID = args->args[ARG_VALUE_1];
 			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
@@ -368,8 +356,17 @@ void obp_canraw(void *pvParameters)
 		/* let's Dance: Starting the transfer protocol */
 //<<<< oobdtemple protocol MSG_SEND_BUFFER <<<<
 		if (protocolBuffer->len > 0) {
-		    actBufferPos = 0;
-		    for (; sendMoreFrames(protocolBuffer, &actBufferPos, &showBusTransfer, &stateMachine_state, &timeout, printdata_CAN, actBus_send););	// fire all in one shot.
+		    /* FK:
+		     * check if the protocolBuffer contains valid data.
+		     * if yes, then:
+		     * if first Byte is 27:  create a new RTE-Element, allocate neccessary memory and add it to 
+		     * the list 
+		     * if first Byte is 22:
+		     * search in the RTDElement list for a matching element. Create output message, if found, otherways
+		     * prepare error messages
+		     */
+		    // reset the protocolBuffer to receive the next parameter set
+		    protocolBuffer->len = 0;
 //>>>> oobdtemple protocol MSG_SEND_BUFFER_2 >>>>    
 
 		} else {	/* no data to send? */
@@ -388,27 +385,13 @@ void obp_canraw(void *pvParameters)
 //>>>> oobdtemple protocol MSG_TICK >>>>    
 	    case MSG_TICK:
 //<<<< oobdtemple protocol MSG_TICK <<<<
-		if (timeout > 0) {	/* we just waiting for the next frame to send */
-		    if (timeout == 1) {	/* time's gone... */
-			for (; sendMoreFrames(protocolBuffer, &actBufferPos, &showBusTransfer, &stateMachine_state, &timeout, printdata_CAN, actBus_send););	// fire all in one shot.
-			if (timeout < 2) {	//
-			    protocolBuffer->len = 0;
-			    createCommandResultMsg
-				(FBID_PROTOCOL_GENERIC, ERR_CODE_NO_ERR, 0,
-				 NULL);
-			    stateMachine_state = SM_CANRAW_STANDBY;
-			    if (pdPASS !=
-				sendMsg(MSG_SERIAL_RELEASE, inputQueue,
-					NULL)) {
-				DEBUGPRINT
-				    ("FATAL ERROR: input queue is full!\n",
-				     'a');
-
-			    }
-			}
-		    }
-		    timeout--;
-		}
+		/* as in the Real time protocol there's nothing to be done after a time tick, we can commend it out
+		 */
+		/*
+		   if (timeout > 0) {   
+		   timeout--;
+		   }
+		 */
 //>>>> oobdtemple protocol final >>>>    
 		break;
 	    }
@@ -427,59 +410,9 @@ void obp_canraw(void *pvParameters)
 
 //<<<< oobdtemple protocol final <<<<
 
-int sendMoreFrames(ODPBuffer * protocolBuffer,
-		   portBASE_TYPE * actBufferPos_ptr,
-		   portBASE_TYPE * showBusTransfer_ptr,
-		   portBASE_TYPE * stateMachine_state_ptr,
-		   portBASE_TYPE * timeout_ptr,
-		   print_cbf printdata_CAN, bus_send actBus_send)
-{
-    unsigned char telegram[8];
-    data_packet actDataPacket;
-#define MINIMALBYTESTOSEND 3
-    if (protocolBuffer->len > 0
-	&& *actBufferPos_ptr + MINIMALBYTESTOSEND < protocolBuffer->len) {
-	actDataPacket.recv =
-	    protocolBuffer->data[*actBufferPos_ptr] * 256 * 256 * 256;
-	(*actBufferPos_ptr)++;
-	actDataPacket.recv +=
-	    protocolBuffer->data[*actBufferPos_ptr] * 256 * 256;
-	(*actBufferPos_ptr)++;
-	actDataPacket.recv +=
-	    protocolBuffer->data[*actBufferPos_ptr] * 256;
-	(*actBufferPos_ptr)++;
-	actDataPacket.recv += protocolBuffer->data[*actBufferPos_ptr];
-	(*actBufferPos_ptr)++;
-	actDataPacket.data = &telegram;
-	actDataPacket.len =
-	    protocolBuffer->data[*actBufferPos_ptr] >
-	    8 ? 8 : protocolBuffer->data[*actBufferPos_ptr];
-	(*actBufferPos_ptr)++;
-	odp_canraw_data2CAN(&protocolBuffer->data[*actBufferPos_ptr],
-			    &telegram, actDataPacket.len, 0);
-	(*actBufferPos_ptr) += actDataPacket.len;
-	if (*showBusTransfer_ptr > 0) {
-	    odp_canraw_dumpFrame(&actDataPacket, printdata_CAN);
-	}
-	actBus_send(&actDataPacket);
-	*stateMachine_state_ptr = SM_CANRAW_SEND;
-	if ((*actBufferPos_ptr) + MINIMALBYTESTOSEND < protocolBuffer->len) {	//some more to send?
-	    *timeout_ptr = protocolBuffer->data[*actBufferPos_ptr];
-	    (*actBufferPos_ptr)++;
-	    if (*timeout_ptr == 0) {	//send immediadly
-		return 1;
-	    } else {
-		return 0;	// break the send loop and wait
-	    }
-	} else {
-	    *timeout_ptr = 1;	//this will let the MSG_TICK event to do all the cleanup
-	    return 0;
-	}
-    }
-    return 0;
-}
 
-void obd_canraw_init()
+
+void odp_rtd_init()
 {
-    odparr[VALUE_PARAM_PROTOCOL_CAN_RAW] = obp_canraw;
+    odparr[VALUE_PARAM_PROTOCOL_CAN_RTD] = odp_rtd;
 }
