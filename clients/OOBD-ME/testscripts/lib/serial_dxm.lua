@@ -537,6 +537,7 @@ function identifyOOBDInterface()
 	  receive = receive_DXM
 	  setTimeout = doNothing
 	  setSendID = doNothing
+	  setCANFilter = doNothing
 	  hardwareID=1
 	end
 	print ("Hardware found: ", hardwareID, "Revision: ",firmware_revision,"Model",hardware_model, "Variant", hardware_variant)
