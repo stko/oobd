@@ -39,25 +39,22 @@
 #include "odb_can.h"
 #include "mc_can.h"
 #include "mc_sys_generic.h"
+#include "mc_sys.h"
 
-/* UDP Packet size to send/receive. */
-#define mainUDP_SEND_ADDRESS		"127.0.0.1"
-#define UDP_PORT_SEND			( 9998 )
-#define UDP_PORT_RECEIVE		( 9999 )
 
 /* global vars */
-struct sockaddr_in xReceiveAddress;
+struct sockaddr_can xReceiveAddress;
 int iSocketReceive = 0;
-xQueueHandle xUDPReceiveQueue = NULL;
-struct sockaddr_in xSendAddress;
+xQueueHandle xCANReceiveQueue = NULL;
+struct sockaddr_can xSendAddress;
 int iSocketSend = 0, iReturn = 0, iSendTaskList = pdTRUE;
 
 //callback function for received data
 recv_cbf reportReceicedData = NULL;
-/* Send/Receive UDP packets. */
-void prvUDPTask(void *pvParameters);
+/* Send/Receive CAN packets. */
+void prvCANTask(void *pvParameters);
 
-xTaskHandle xprvUDPTaskHandle;
+xTaskHandle xprvCANTaskHandle;
 portBASE_TYPE rxCount;
 portBASE_TYPE txCount;
 portBASE_TYPE errCount;
@@ -79,32 +76,24 @@ portBASE_TYPE bus_init_can()
     }
     canConfig->bus = VALUE_BUS_MODE_SILENT;	/* default */
     canConfig->busConfig = VALUE_BUS_CONFIG_11bit_500kbit;	/* default */
-// Initialise Receives sockets. 
-    xReceiveAddress.sin_family = AF_INET;
-    xReceiveAddress.sin_addr.s_addr = INADDR_ANY;
-    xReceiveAddress.sin_port = htons(UDP_PORT_RECEIVE);
 
     // Set-up the Receive Queue and open the socket ready to receive. 
-    xUDPReceiveQueue = xQueueCreate(2, sizeof(xUDPPacket));
+    xCANReceiveQueue = xQueueCreate(2, sizeof(struct can_frame));
     iSocketReceive =
-	iSocketOpenUDP(vUDPReceiveAndDeliverCallback, xUDPReceiveQueue,
+	iSocketOpenCAN(vCANReceiveAndDeliverCallback, xCANReceiveQueue,
 		       &xReceiveAddress);
 
     // Remember to open a whole in your Firewall to be able to receive!!!
 
 
-    iSocketSend = iSocketOpenUDP(NULL, NULL, NULL);
+// CAN use the same socket for send and receive
+//iSocketSend = iSocketOpenCAN(NULL, NULL, NULL);
+    iSocketSend = iSocketReceive;
 
     if (iSocketSend != 0) {
-	xSendAddress.sin_family = AF_INET;
-	/* Set the UDP main address to reflect your local subnet. */
-	iReturn =
-	    !inet_aton(mainUDP_SEND_ADDRESS,
-		       (struct in_addr *) &(xSendAddress.sin_addr.s_addr));
-	xSendAddress.sin_port = htons(UDP_PORT_SEND);
 	/* Create a Task which waits to receive messages and sends its own when it times out. */
-	xTaskCreate(prvUDPTask, "UDPRxTx", configMINIMAL_STACK_SIZE, NULL,
-		    TASK_PRIO_MID, &xprvUDPTaskHandle);
+	xTaskCreate(prvCANTask, "CANRxTx", configMINIMAL_STACK_SIZE, NULL,
+		    TASK_PRIO_MID, &xprvCANTaskHandle);
 
 	/* Remember to open a whole in your Firewall to be able to receive!!! */
 
@@ -112,7 +101,7 @@ portBASE_TYPE bus_init_can()
     } else {
 
 	vSocketClose(iSocketSend);
-	DEBUGPRINT("UDP Task: Unable to open a socket.\n", 'a');
+	DEBUGPRINT("CAN Task: Unable to open a socket.\n", 'a');
 	return pdFAIL;
     }
 
@@ -135,21 +124,20 @@ portBASE_TYPE bus_send_can(data_packet * data)
        }
        printser_string("\r");
      */
-    static xUDPPacket xPacket;
-    xPacket.ucPacket[0] = data->recv & 0xFF;	//just use the LByte
-    xPacket.ucPacket[1] = data->len;
-    xPacket.ucPacket[2] = 0;	// err not used here
-    xPacket.ucPacket[3] = data->data[0];
-    xPacket.ucPacket[4] = data->data[1];
-    xPacket.ucPacket[5] = data->data[2];
-    xPacket.ucPacket[6] = data->data[3];
-    xPacket.ucPacket[7] = data->data[4];
-    xPacket.ucPacket[8] = data->data[5];
-    xPacket.ucPacket[9] = data->data[6];
-    xPacket.ucPacket[10] = data->data[7];
-    iReturn = iSocketUDPSendTo(iSocketSend, &xPacket, &xSendAddress);
-    if (sizeof(xUDPPacket) != iReturn) {
-	DEBUGPRINT("UDP Failed to send whole packet: %d.\n", errno);
+    static struct can_frame frame;
+    frame.can_id = data->recv;
+    frame.can_dlc = data->len;
+    frame.data[0] = data->data[0];
+    frame.data[1] = data->data[1];
+    frame.data[2] = data->data[2];
+    frame.data[3] = data->data[3];
+    frame.data[4] = data->data[4];
+    frame.data[5] = data->data[5];
+    frame.data[6] = data->data[6];
+    frame.data[7] = data->data[7];
+    iReturn = iSocketCANSendTo(iSocketSend, &frame, &xSendAddress);
+    if (sizeof(frame) != iReturn) {
+	DEBUGPRINT("CAN Failed to send whole packet: %d.\n", errno);
     }
     txCount++;
     if (txCount > 100000) {
@@ -327,7 +315,7 @@ void bus_close_can()
     reportReceicedData = NULL;
     vSocketClose(iSocketSend);
     vSocketClose(iSocketReceive);
-    vTaskDelete(xprvUDPTaskHandle);
+    vTaskDelete(xprvCANTaskHandle);
     vPortFree(canConfig);
 }
 
@@ -335,17 +323,17 @@ void bus_close_can()
 
 /*-----------------------------------------------------------*/
 
-void prvUDPTask(void *pvParameters)
+void prvCANTask(void *pvParameters)
 {
-    static xUDPPacket xPacket;
+    static struct can_frame frame;
     static data_packet dp;
     //struct sockaddr_in xSendAddress;
     // int iSocketSend, iReturn = 0, iSendTaskList = pdTRUE;
-    //xQueueHandle xUDPReceiveQueue = (xQueueHandle) pvParameters;
+    //xQueueHandle xCANReceiveQueue = (xQueueHandle) pvParameters;
     /* Open a socket for sending. */
     for (;;) {
 	if (pdPASS ==
-	    xQueueReceive(xUDPReceiveQueue, &xPacket,
+	    xQueueReceive(xCANReceiveQueue, &frame,
 			  2500 / portTICK_RATE_MS)) {
 	    rxCount++;
 	    if (rxCount > 100000) {
@@ -355,9 +343,9 @@ void prvUDPTask(void *pvParameters)
 
 	    }
 	    /* Data received. Process it. */
-	    dp.recv = xPacket.ucPacket[0] + 0x700;	// add the HByte again
-	    dp.len = xPacket.ucPacket[1];
-	    dp.err = xPacket.ucPacket[2];	// use received value for error simulations
+	    dp.recv = frame.can_id;	// add the HByte again
+	    dp.len = frame.can_dlc;
+	    dp.err = 0;		// dammed, real can bus does not allow error simulation anymore :-(
 	    if (dp.err) {
 		errCount++;
 		if (errCount > 100000) {
@@ -366,9 +354,7 @@ void prvUDPTask(void *pvParameters)
 		    errCount /= 2;
 		}
 	    }
-	    dp.data = &xPacket.ucPacket[3];	// data starts here
-	    //xPacket.ucNull = 0; /* Ensure the string is terminated. */
-	    //DEBUGPRINT ("--%s", xPacket.ucPacket);
+	    dp.data = &frame.data[0];	// data starts here
 	    if (reportReceicedData)
 		reportReceicedData(&dp);
 	}
