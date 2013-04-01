@@ -39,9 +39,13 @@
 
 #include "mc_sys.h"
 #include "AsyncIO/AsyncIO.h"
-#include "AsyncIO/AsyncIOSocket.h"
+#include "AsyncIO/AsyncIOSocketCan.h"
 #include "AsyncIO/PosixMessageQueueIPC.h"
 
+
+//#include <linux/can.h>
+//#include <linux/can/raw.h>
+#include <string.h>
 
 
 #endif				/* INC_MC_CAN_H */
