@@ -40,7 +40,10 @@
 #include "mc_can.h"
 #include "mc_sys_generic.h"
 #include "mc_sys.h"
+#include "libsocketcan.h"
 
+extern char *oobd_Error_Text_OS[];
+extern struct CanConfig *canConfig;
 
 /* global vars */
 struct sockaddr_can xReceiveAddress;
@@ -54,20 +57,37 @@ recv_cbf reportReceicedData = NULL;
 /* Send/Receive CAN packets. */
 void prvCANTask(void *pvParameters);
 
+void CAN1_Configuration(uint8_t CAN_BusConfig, uint8_t CAN_ModeConfig);
+
+//some define copied from STM32 to have simular program layout
+#define CAN_Mode_Normal             ((uint8_t)0x00)	//!< normal mode
+#define CAN_Mode_LoopBack           ((uint8_t)0x01)	//!< loopback mode
+#define CAN_Mode_Silent             ((uint8_t)0x02)	//!< silent mode
+#define CAN_Mode_Silent_LoopBack    ((uint8_t)0x03)	//!< loopback combined with silent mode
+
+
+
 xTaskHandle xprvCANTaskHandle;
 portBASE_TYPE rxCount;
 portBASE_TYPE txCount;
 portBASE_TYPE errCount;
-extern char *oobd_Error_Text_OS[];
-extern struct CanConfig *canConfig;
-
-/*-----------------------------------------------------------*/
+portBASE_TYPE stCANBusOffErr;
+portBASE_TYPE stCANBusWarningErr;
+portBASE_TYPE stCANBusPassiveErr;
+portBASE_TYPE ctrCANTec;
+portBASE_TYPE ctrCANRec;
 
 portBASE_TYPE bus_init_can()
 {
     rxCount = 0;
     txCount = 0;
     errCount = 0;
+    stCANBusOffErr = 0;
+    stCANBusWarningErr = 0;
+    stCANBusPassiveErr = 0;
+    ctrCANTec = 0;
+    ctrCANRec = 0;
+
     canConfig = pvPortMalloc(sizeof(struct CanConfig));
     if (canConfig == NULL) {
 	DEBUGPRINT("Fatal error: Not enough heap to allocate CanConfig!\n",
@@ -89,6 +109,15 @@ portBASE_TYPE bus_init_can()
 // CAN use the same socket for send and receive
 //iSocketSend = iSocketOpenCAN(NULL, NULL, NULL);
     iSocketSend = iSocketReceive;
+    int mystate;
+    DEBUGPRINT("get CAN State returns %ld\n", can_get_state(CAN_INTERFACE, &mystate));
+   DEBUGPRINT("get CAN State mystate %ld\n", mystate);
+    struct can_ctrlmode cm;
+    memset(&cm, 0, sizeof(cm));
+    cm.mask = CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_LISTENONLY;
+    cm.flags = CAN_CTRLMODE_LOOPBACK;
+    DEBUGPRINT("can_set_ctrlmode: %ld\n", can_set_ctrlmode(CAN_INTERFACE, &cm));
+    DEBUGPRINT("can_set_bitrate: %ld\n", can_set_bitrate(CAN_INTERFACE,500000));
 
     if (iSocketSend != 0) {
 	/* Create a Task which waits to receive messages and sends its own when it times out. */
@@ -104,7 +133,6 @@ portBASE_TYPE bus_init_can()
 	DEBUGPRINT("CAN Task: Unable to open a socket.\n", 'a');
 	return pdFAIL;
     }
-
 }
 
 
@@ -117,7 +145,7 @@ portBASE_TYPE bus_send_can(data_packet * data)
 {
     int i;
     DEBUGPRINT("CAN- Send Buffer with len %ld\n", data->len);
-    /*++++++++++++++++++++
+    /*
        for (i = 0; i < data->len; i++) {
        printser_uint8ToHex(data->data[i]);
        printser_string(" ");
@@ -125,6 +153,17 @@ portBASE_TYPE bus_send_can(data_packet * data)
        printser_string("\r");
      */
     static struct can_frame frame;
+    if (canConfig->busConfig == VALUE_BUS_CONFIG_29bit_125kbit
+	|| canConfig->busConfig == VALUE_BUS_CONFIG_29bit_250kbit
+	|| canConfig->busConfig == VALUE_BUS_CONFIG_29bit_500kbit
+	|| canConfig->busConfig == VALUE_BUS_CONFIG_29bit_1000kbit) {
+	frame.can_id = 0x8000 & data->recv;	/* Bit 31=1 for Extended CAN identifier 29 bit */
+    } else {
+
+	frame.can_id = data->recv;	/* Standard CAN identifier 11bit */
+    }
+
+
     frame.can_id = data->recv;
     frame.can_dlc = data->len;
     frame.data[0] = data->data[0];
@@ -144,21 +183,19 @@ portBASE_TYPE bus_send_can(data_packet * data)
 	rxCount /= 2;
 	txCount /= 2;
 	errCount /= 2;
-
     }
 
     return pdPASS;
 }
 
+/*----------------------------------------------------------------------------*/
 
-/*-----------------------------------------------------------*/
 void bus_flush_can()
 {
     DEBUGPRINT("Flush CAN\n", 'a');
 }
 
-
-/*-----------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 
 void bus_param_can_spec_Print(portBASE_TYPE msgType, void *data,
 			      printChar_cbf printchar)
@@ -176,27 +213,34 @@ void bus_param_can_spec_Print(portBASE_TYPE msgType, void *data,
 uint16_t CAN_GetFilterReg16(uint8_t FilterID, uint8_t FilterReg,
 			    uint8_t FilterPos)
 {
-/*
-	if (FilterPos == 0) // IDLow 
-	{
-		if (FilterReg == 1) // FR1
-			return (uint16_t)(CAN1->sFilterRegister[FilterID].FR1 & 0x0000FFFF)>>5;
-		else if (FilterReg == 2) // FR2
-			return (uint16_t)(CAN1->sFilterRegister[FilterID].FR2 & 0x0000FFFF)>>5;
-		else
-			return NULL;
-	}
-	else if (FilterPos == 1)// ID High
-	{
-		if (FilterReg == 1) // FR1
-			return (uint16_t)(CAN1->sFilterRegister[FilterID].FR1>>16 & 0x0000FFFF)>>5;
-		else if (FilterReg == 2) // FR2
-			return (uint16_t)(CAN1->sFilterRegister[FilterID].FR2>>16 & 0x0000FFFF)>>5;
-		else
-			return NULL;
-	}
-	else
-		return NULL;
+
+/*    if (FilterPos == 0) {	// IDLow 
+    // Get the LowID of the 32bit Filter register Fx.FR1
+    if (FilterReg == 1)		// FR1
+	return (uint16_t) (CAN1->
+			   sFilterRegister[FilterID].FR1 & 0x0000FFFF) >>
+	    5;
+    else if (FilterReg == 2)	// FR2
+	return (uint16_t) (CAN1->
+			   sFilterRegister[FilterID].FR2 & 0x0000FFFF) >>
+	    5;
+    else
+	return NULL;
+}
+
+else
+if (FilterPos == 1) {		// ID High
+if (FilterReg == 1)		// FR1
+    return (uint16_t) (CAN1->
+		       sFilterRegister[FilterID].FR1 >> 16 & 0x0000FFFF) >>
+	5;
+else if (FilterReg == 2)	// FR2
+    return (uint16_t) (CAN1->
+		       sFilterRegister[FilterID].FR2 >> 16 & 0x0000FFFF) >>
+	5;
+else
+    return NULL;
+} else
 */
     return 0;
 }
@@ -219,7 +263,8 @@ uint32_t CAN_GetFilterReg32(uint8_t FilterID, uint8_t FilterReg)
 /*-----------------------------------------------------------*/
 portBASE_TYPE bus_param_can_spec(param_data * args)
 {
-
+//CAN_FilterInitTypeDef CAN_FilterInitStructure;
+    uint8_t i;
 
     switch (args->args[ARG_CMD]) {
     case PARAM_BUS_CONFIG:
@@ -227,7 +272,8 @@ portBASE_TYPE bus_param_can_spec(param_data * args)
 	txCount = 0;
 	errCount = 0;
 	if (args->args[ARG_VALUE_1] != 0)
-	    canConfig->busConfig = args->args[ARG_VALUE_1];
+	    CAN1_Configuration(args->args[ARG_VALUE_1], CAN_Mode_Silent);	/* reinitialization of CAN interface */
+	canConfig->busConfig = args->args[ARG_VALUE_1];
 	createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	break;
 
@@ -237,28 +283,36 @@ portBASE_TYPE bus_param_can_spec(param_data * args)
 	errCount = 0;
 	switch (args->args[ARG_VALUE_1]) {
 	case VALUE_BUS_MODE_SILENT:
+	    CAN1_Configuration((uint8_t) canConfig->busConfig, CAN_Mode_Silent);	/* set CAN interface to silent mode */
+	    canConfig->bus = args->args[ARG_VALUE_1];	/* set config.bus to current value of Paramter */
 	    // send event information to the ILM task
 	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_OFF);
-	    createCommandResultMsg(FBID_BUS_SPEC,
-				   ERR_CODE_NO_ERR, 0, NULL);
+	    createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
+				   NULL);
 	    break;
 	case VALUE_BUS_MODE_LOOP_BACK:
+	    CAN1_Configuration((uint8_t) canConfig->busConfig, CAN_Mode_LoopBack);	/* set CAN interface to loop back mode */
+	    canConfig->bus = args->args[ARG_VALUE_1];	/* set config.bus to current value of Paramter */
 	    // send event information to the ILM task
 	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
-	    createCommandResultMsg(FBID_BUS_SPEC,
-				   ERR_CODE_NO_ERR, 0, NULL);
+	    createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
+				   NULL);
 	    break;
 	case VALUE_BUS_MODE_LOOP_BACK_WITH_SILENT:
+	    CAN1_Configuration((uint8_t) canConfig->busConfig, CAN_Mode_Silent_LoopBack);	/* set CAN interface to loop back combined with silent mode */
+	    canConfig->bus = args->args[ARG_VALUE_1];	/* set config.bus to current value of Paramter */
 	    // send event information to the ILM task
 	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
-	    createCommandResultMsg(FBID_BUS_SPEC,
-				   ERR_CODE_NO_ERR, 0, NULL);
+	    createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
+				   NULL);
 	    break;
 	case VALUE_BUS_MODE_NORMAL:
+	    CAN1_Configuration((uint8_t) canConfig->busConfig, CAN_Mode_Normal);	/* set CAN interface to normal mode */
+	    canConfig->bus = args->args[ARG_VALUE_1];	/* set config.bus to current value of Paramter */
 	    // send event information to the ILM task
 	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
-	    createCommandResultMsg(FBID_BUS_SPEC,
-				   ERR_CODE_NO_ERR, 0, NULL);
+	    createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
+				   NULL);
 	    break;
 
 	default:
@@ -280,12 +334,9 @@ portBASE_TYPE bus_param_can_spec(param_data * args)
 	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_OFF);
 	    CreateEventMsg(MSG_EVENT_BUS_CHANNEL,
 			   args->args[ARG_VALUE_1] == 1 ? 1 : 2);
-	    sysIoCtrl(5000, 0, args->args[ARG_VALUE_1], 0,	//5000 is just a dummy value, as a channel switch is not part of the generic part at all
-		      0);
-	    //! \bug this delay causes the protocol task to sleep for this time, but dring that his message queue runs full
-	    vTaskDelay(250 / portTICK_RATE_MS);	// wait to give the mechanic relay time to switch
-	    createCommandResultMsg(FBID_BUS_SPEC,
-				   ERR_CODE_NO_ERR, 0, NULL);
+	    //! \todo anything to do to switch between the different sockets
+	    createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
+				   NULL);
 	    break;
 	default:
 	    createCommandResultMsg(FBID_BUS_SPEC,
@@ -295,7 +346,81 @@ portBASE_TYPE bus_param_can_spec(param_data * args)
 	    break;
 	}
 	break;
+    case PARAM_BUS_Can11FilterID:	/* 11bit CAN filter ID reconfig */
+	/* check CAN-ID */
+	if (args->args[ARG_VALUE_2] < 0x7FF) {
+	    /* check if Filter Number is odd */
+	    if ((args->args[ARG_VALUE_1] >= 1)
+		&& (args->args[ARG_VALUE_1] <= 10)) {
 
+	    } else {
+		createCommandResultMsg(FBID_BUS_SPEC,
+				       ERR_CODE_OS_COMMAND_NOT_SUPPORTED,
+				       args->args[ARG_VALUE_1],
+				       ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
+		break;
+	    }
+
+	    if (args->args[ARG_VALUE_1] & 1) {
+	    } else {
+	    }
+
+	    //CAN_FilterInit(&CAN_FilterInitStructure);
+	    createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
+				   NULL);
+	} else {
+	    createCommandResultMsg(FBID_BUS_SPEC,
+				   ERR_CODE_OS_COMMAND_NOT_SUPPORTED,
+				   args->args[ARG_VALUE_2],
+				   ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
+	}
+	break;
+
+    case PARAM_BUS_Can29FilterID:	/* 29bit CAN filter ID reconfig */
+	//CAN_FilterInit(&CAN_FilterInitStructure);
+	createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
+	break;
+
+    case PARAM_BUS_Can11MaskID:	/* 11bit CAN filter mask ID reconfig */
+	/* check CAN-ID */
+	if (args->args[ARG_VALUE_2] <= 0x7FF) {
+	    /* check filter mask number */
+	    if ((args->args[ARG_VALUE_1] >= 1)
+		&& (args->args[ARG_VALUE_1] <= 10)) {
+	    } else {
+		createCommandResultMsg(FBID_BUS_SPEC,
+				       ERR_CODE_OS_COMMAND_NOT_SUPPORTED,
+				       args->args[ARG_VALUE_1],
+				       ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
+		break;
+	    }
+
+	    /* CAN filter mask ID reconfig */
+	    if (args->args[ARG_VALUE_1] & 1) {
+	    } else {
+//      CAN_FilterInit(&CAN_FilterInitStructure);
+		createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
+				       NULL);
+	    }
+	} else {
+	    createCommandResultMsg(FBID_BUS_SPEC,
+				   ERR_CODE_OS_COMMAND_NOT_SUPPORTED,
+				   args->args[ARG_VALUE_2],
+				   ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
+	}
+	break;
+
+    case PARAM_BUS_Can29MaskID:	/* 29bit CAN filter mask ID reconfig */
+	//    CAN_FilterInit(&CAN_FilterInitStructure);
+	createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
+	break;
+
+    case PARAM_BUS_CanFilterReset:	/* 11bit CAN filter mask ID reconfig */
+	for (i = 0; i < 14; i++) {
+//      CAN_FilterInit(&CAN_FilterInitStructure);
+	}
+	createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
+	break;
 
     default:
 	createCommandResultMsg(FBID_BUS_SPEC,
@@ -380,47 +505,55 @@ portBASE_TYPE busControl(portBASE_TYPE cmd, void *param)
     }
 }
 
+/*----------------------------------------------------------------------------*/
 
 portBASE_TYPE bus_rx_error_can()
 {
     return errCount;
 }
 
+/*----------------------------------------------------------------------------*/
+
 portBASE_TYPE bus_tx_error_can()
 {
     return 0;
 }
 
+/*----------------------------------------------------------------------------*/
 
 void bus_clear_rx_error_can()
 {
     errCount = 0;
 }
 
+/*----------------------------------------------------------------------------*/
 
 void bus_clear_tx_error_can()
 {
 }
 
-
+/*----------------------------------------------------------------------------*/
 
 portBASE_TYPE bus_rx_count_can()
 {
     return rxCount;
 }
 
+/*----------------------------------------------------------------------------*/
 
 portBASE_TYPE bus_tx_count_can()
 {
     return txCount;
 }
 
+/*----------------------------------------------------------------------------*/
 
 void bus_clear_rx_count_can()
 {
     rxCount = 0;
 }
 
+/*----------------------------------------------------------------------------*/
 
 void bus_clear_tx_count_can()
 {
@@ -455,4 +588,41 @@ portBASE_TYPE bus_rec_can()
 {
     /* read Receive Error Counter of CAN hardware */
     return 0;
+}
+
+void CAN1_Configuration(uint8_t CAN_BusConfig, uint8_t CAN_ModeConfig)
+{
+
+    if (CAN_BusConfig == VALUE_BUS_CONFIG_11bit_125kbit || CAN_BusConfig
+	== VALUE_BUS_CONFIG_29bit_125kbit) {
+
+
+    }
+
+    else if (CAN_BusConfig == VALUE_BUS_CONFIG_11bit_250kbit
+	     || CAN_BusConfig == VALUE_BUS_CONFIG_29bit_250kbit) {
+
+
+    }
+
+    else if (CAN_BusConfig == VALUE_BUS_CONFIG_11bit_500kbit
+	     || CAN_BusConfig == VALUE_BUS_CONFIG_29bit_500kbit) {
+
+
+    }
+
+    else if (CAN_BusConfig == VALUE_BUS_CONFIG_11bit_1000kbit
+	     || CAN_BusConfig == VALUE_BUS_CONFIG_29bit_1000kbit) {
+
+
+    }
+
+    else {
+
+	/* default CAN bus speed is set to 500kbaud */
+
+    }
+
+    //   CAN_Init(CAN1, &CAN_InitStructure);
+
 }

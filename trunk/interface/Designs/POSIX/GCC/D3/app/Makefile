@@ -117,7 +117,8 @@ FREERTOS_SOURCE= $(RTOS_SOURCE_DIR)/list.c \
 PORT_INCLUDE_SOURCE= $(PORT_INCLUDE_DIR)/AsyncIO.c \
 		$(PORT_INCLUDE_DIR)/AsyncIOSerial.c \
 		$(PORT_INCLUDE_DIR)/AsyncIOSocketCan.c \
-		$(PORT_INCLUDE_DIR)/PosixMessageQueueIPC.c
+		$(PORT_INCLUDE_DIR)/PosixMessageQueueIPC.c \
+		libsocketcan.c
 
 
 SOURCE+=$(OOBD_COMMON_SOURCE)
