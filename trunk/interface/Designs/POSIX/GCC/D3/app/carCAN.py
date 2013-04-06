@@ -76,10 +76,6 @@ while True:
 	cf, addr = s.recvfrom( 16 ) # buffer size is 1024 bytes
 	print('Received: can_id=%x, can_dlc=%x, data=%s' % dissect_can_frame(cf))
 	can_id, can_dlc, data=dissect_can_frame(cf)
-	try:
-		s.send(cf)
-	except socket.error:
-		print('Error sending CAN frame')
 	msg+=data
 	print ("received: 0x%02X %d %02X %02X %02X %02X %02X %02X %02X %02X" % ( can_id, can_dlc, msg[0] , msg[1] , msg[2] , msg[3] , msg[4] , msg[5] , msg[6] , msg[7] ) )
 	if can_id == 0x7D0:
