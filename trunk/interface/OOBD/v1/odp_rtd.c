@@ -87,11 +87,12 @@ odp_rtd_printdata_Buffer(portBASE_TYPE msgType, void *data,
  * FK: 
  * the source below is just a sample from another protocol
  * this piece needs to be rewritten to print out the content of an RTDElement,
- * where in the end the RTDElement needs to be un-locked again, so that the buffer cen be 
+ * where in the end the RTDElement needs to be un-locked again, so that the buffer can be 
  * re-filled again by new incoming data
  */
     ODPBuffer **doublePtr;
     ODPBuffer *myUDSBuffer;
+
     doublePtr = data;
     myUDSBuffer = *doublePtr;
     int i;
@@ -190,6 +191,9 @@ void odp_rtd(void *pvParameters)
 {
 //>>>> oobdtemple protocol initmain  >>>>
     int keeprunning = 1;
+    int length_data_telegram = 0;
+    RTDElement *myRTDElement;
+    myRTDElement = NULL;
     data_packet *dp;
     data_packet actDataPacket;
     portBASE_TYPE busToUse = *(portBASE_TYPE *) pvParameters;
@@ -311,10 +315,12 @@ void odp_rtd(void *pvParameters)
 		    //DEBUGPRINT ("can raw protocol parameter received %ld %ld\n", args->args[ARG_CMD], args->args[ARG_VALUE_1]);
 		    switch (args->args[ARG_CMD]) {
 		    case PARAM_RTD_CLEAR_LIST:
+
+			freeRtdElement(myRTDElement);
 			/* 
 			 * FK:
-			 * clear the RTE-Element List here, means
-			 * free all allocated memory pieces ant the RTE-Elements itself
+			 * clear the RTD-Element List here, means
+			 * free all allocated memory pieces ant the RTD-Elements itself
 			 */
 			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_NO_ERR, 0, NULL);
@@ -356,17 +362,109 @@ void odp_rtd(void *pvParameters)
 		/* let's Dance: Starting the transfer protocol */
 //<<<< oobdtemple protocol MSG_SEND_BUFFER <<<<
 		if (protocolBuffer->len > 0) {
+
+// protocolBuffer->data[1] .. protocolBuffer->data[4] = id
+// protocolBuffer->data[5] .. protocolBuffer->data[6] = total length of data telegram  if == 0 (Null) then data length = 8
+// protocolBuffer->data[7]  Position of Sequence counter
+
+
+		    DEBUGPRINT
+			("\n\nprotocolBuffer->data 0x%02x  0x%02x 0x%02x 0x%02x 0x%02x \n 0x%02x  0x%02x\n\n",
+			 protocolBuffer->data[0], protocolBuffer->data[1],
+			 protocolBuffer->data[2], protocolBuffer->data[3],
+			 protocolBuffer->data[4], protocolBuffer->data[5],
+			 protocolBuffer->data[6]);
+
+		    switch (protocolBuffer->data[0]) {
+		    case 0x22:	// Return data from bus
+			DEBUGPRINT("\nprotocolBuffer = 0x22 !\n", 'a');
+			break;
+		    case 0x27:	// request for new RTD-Element
+			if (protocolBuffer->data[5] > 0
+			    || protocolBuffer->data[6] > 0)
+			    length_data_telegram =
+				(protocolBuffer->data[5] << 8) +
+				protocolBuffer->data[6];
+			else
+			    length_data_telegram = 8;
+
+			DEBUGPRINT
+			    ("\nprotocolBuffer = 0x27 !\n length_data_telegram = %u \n",
+			     length_data_telegram);
+
+			if (!test_ID_Exist(myRTDElement,protocolBuffer))  // If ID not in Buffer Create the ID
+			{
+			  long ID = 
+	  			(protocolBuffer->data[1] << 24) +
+				(protocolBuffer->data[2] << 16) +
+				(protocolBuffer->data[3] << 8) +
+				 protocolBuffer->data[4];
+
+			 myRTDElement = AppendRtdElement(myRTDElement,length_data_telegram,ID);
+//				myRTDElement =
+//				    createRtdElement(length_data_telegram);
+				    
+			}
+			else
+				return (RTDElement *) NULL;	// ID in the Buffer so leave here
+
+
+			break;
+		    default:
+			DEBUGPRINT
+			    ("\nprotocolBuffer <> 0x22 or 0x27  Buffer[0] = 0x%x ",
+			     protocolBuffer->data[0]);
+			myRTDElement = NULL;
+			break;
+
+		    }
+
+		    if (myRTDElement == NULL) {
+			DEBUGPRINT
+			    ("\nFatal error: Not enough heap to allocate myRTDElement!\n",
+			     'a');
+			return (RTDElement *) NULL;
+		    }
+
+		   DEBUGPRINT
+		    ("\nNumbers in rtdElement 0x%02x \n",rtdElement_length);
+
+/*		    
+		    myRTDElement->ID =
+			(protocolBuffer->data[1] << 24) +
+			(protocolBuffer->data[2] << 16) +
+			(protocolBuffer->data[3] << 8) +
+			protocolBuffer->data[4];
+		    myRTDElement->len = length_data_telegram;
+*/
+		    DEBUGPRINT
+			("\nmyRTDElement->ID 0x%06x   \n myRTDElement->len %02u \n",
+			 myRTDElement->ID,
+			 myRTDElement->len);
+
 		    /* FK:
 		     * check if the protocolBuffer contains valid data.
 		     * if yes, then:
-		     * if first Byte is 27:  create a new RTE-Element, allocate neccessary memory and add it to 
+		     * if first Byte is 27:  create a new RTD-Element, allocate neccessary memory and add it to 
 		     * the list 
 		     * if first Byte is 22:
 		     * search in the RTDElement list for a matching element. Create output message, if found, otherways
 		     * prepare error messages
 		     */
+
 		    // reset the protocolBuffer to receive the next parameter set
+
 		    protocolBuffer->len = 0;
+		    protocolBuffer->data[5]=0;
+		    protocolBuffer->data[6]=0;
+		    protocolBuffer->data[7]=0;
+
+		    /* just release the input again */
+		    if (pdPASS !=
+			sendMsg(MSG_SERIAL_RELEASE, inputQueue, NULL)) {
+			DEBUGPRINT("\nFATAL ERROR: input queue is full!\n",
+				   'a');
+		    }
 //>>>> oobdtemple protocol MSG_SEND_BUFFER_2 >>>>    
 
 		} else {	/* no data to send? */
@@ -376,7 +474,7 @@ void odp_rtd(void *pvParameters)
 		    /* just release the input again */
 		    if (pdPASS !=
 			sendMsg(MSG_SERIAL_RELEASE, inputQueue, NULL)) {
-			DEBUGPRINT("FATAL ERROR: input queue is full!\n",
+			DEBUGPRINT("\nFATAL ERROR: input queue is full!\n",
 				   'a');
 		    }
 		}
@@ -416,3 +514,120 @@ void odp_rtd_init()
 {
     odparr[VALUE_PARAM_PROTOCOL_CAN_RTD] = odp_rtd;
 }
+
+
+
+RTDElement *createRtdElement(portBASE_TYPE size)
+{
+    RTDElement *rtdBuffer = pvPortMalloc(sizeof(struct RTDElement));
+    if (rtdBuffer == NULL) {
+	DEBUGPRINT
+	    ("\nFatal error: Not enough heap to allocate rtdBuffer in createRtdElement!\n",
+	     'a');
+	return (RTDElement *) NULL;
+    } else {
+	rtdBuffer->data = pvPortMalloc(size);
+	if (rtdBuffer->data == NULL) {
+	    DEBUGPRINT
+		("\nFatal error: Not enough heap to allocate rtdBuffer->data in createRtdElement!\n",
+		 'a');
+	    return (RTDElement *) NULL;
+	}
+    }
+    return rtdBuffer;
+
+}
+
+
+RTDElement *AppendRtdElement(RTDElement ** headRef,portBASE_TYPE size,long ID)
+{
+  DEBUGPRINT("\nAppendRtdElement  -- 1!\n",'a');
+
+   RTDElement* current = *headRef;
+   RTDElement* newNode;
+   
+  DEBUGPRINT("\nAppendRtdElement  -- 2!\n",'a');
+  
+    newNode = pvPortMalloc(sizeof(struct RTDElement));
+
+    DEBUGPRINT("\nAppendRtdElement  -- 3!\n",'a');
+
+    if (newNode == NULL) {
+	DEBUGPRINT
+	    ("\nFatal error: Not enough heap to allocate newNode in AppendRtdElement!\n",
+	     'a');
+	return (RTDElement *) NULL;
+    } else {
+    
+       DEBUGPRINT("\nAppendRtdElement  -- 4!\n",'a');
+
+       newNode->next = NULL;
+       
+       // Special case for length 0
+       if(current == NULL)
+       {
+	 *headRef = newNode;
+       }
+       else
+       {// Locate the last Node
+	    while(current->next != NULL)
+	    {
+		current = current->next;
+	    }
+	 current->next = newNode;
+       }
+      
+  DEBUGPRINT("\nAppendRtdElement  -- 5!\n",'a');
+
+      newNode->data = pvPortMalloc(size);
+	if (newNode->data == NULL) {
+	    DEBUGPRINT
+		("\nFatal error: Not enough heap to allocate newNode->data in AppendRtdElement!\n",
+		 'a');
+	    return (RTDElement *) NULL;
+	}
+    }
+    
+    newNode->ID = ID;
+    newNode->len = size;
+    return newNode;
+
+}
+
+
+void freeRtdElement(RTDElement * rtdBuffer)
+{
+
+    if (rtdBuffer != NULL) {
+
+	if (rtdBuffer->data != NULL) {
+	    vPortFree(rtdBuffer->data);
+	}
+	vPortFree(rtdBuffer);
+    }
+}
+
+int rtdElement_length(struct RTDElement* start){
+ struct RTDElement* current = start;
+ int count = 0;
+ 
+ while (current != NULL){
+    count++;
+    current = current->next;
+ }
+ 
+ return count;
+  
+}
+
+unsigned char test_ID_Exist(RTDElement * rtdBuffer,ODPBuffer * protocolBuffer)
+{
+
+return ID_NOT_EXIST;
+//return ID_EXIST;
+
+
+}
+
+
+
