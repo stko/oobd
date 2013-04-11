@@ -44,6 +44,8 @@ void obd_rtd_init();
 #define LIST_OF_PROTOCOLS_TO_INITIALIZE #LIST_OF_PROTOCOLS_TO_INITIALIZE obd_rtd_init();
 
 
+#define ID_NOT_EXIST (0)
+#define ID_EXIST (1)
 
 //! RTD protocol Error constants and texts
 #define ERR_CODE_RTD_CMD_TOO_LONG_ERR 1
@@ -77,10 +79,30 @@ void obd_rtd_init();
 @} */
 
 /* struct to build joined list to store parameters*/
-struct RTDElement {
-    struct RTEElement *prev, *next;	//!< list pointers
+
+
+typedef struct RTDElement {
+    struct RTDElement *prev, *next;	//!< list pointers
     portBASE_TYPE len;
+    long ID;
+    long time_stamp;
+    unsigned char *data;
     // add all elements as needed
-} rteElement;
+} RTDELEMENT;
+
+typedef struct RTDElement RTDElement;
+
+
+
+RTDElement *createRtdElement(portBASE_TYPE size);
+
+RTDElement *AppendRtdElement(struct RTDElement ** headRef,portBASE_TYPE size,long ID);
+
+void freeRtdElement(RTDElement * rtdBuffer);
+
+int rtdElement_length(struct RTDElement * start);
+
+unsigned char test_ID_Exist(RTDElement * rtdBuffer,ODPBuffer * protocolBuffer);
+
 
 #endif				/* INC_ODP_RTD_H */
