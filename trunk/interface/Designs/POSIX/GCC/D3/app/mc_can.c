@@ -110,14 +110,17 @@ portBASE_TYPE bus_init_can()
 //iSocketSend = iSocketOpenCAN(NULL, NULL, NULL);
     iSocketSend = iSocketReceive;
     int mystate;
-    DEBUGPRINT("get CAN State returns %ld\n", can_get_state(CAN_INTERFACE, &mystate));
-   DEBUGPRINT("get CAN State mystate %ld\n", mystate);
+    DEBUGPRINT("get CAN State returns %ld\n",
+	       can_get_state(CAN_INTERFACE, &mystate));
+    DEBUGPRINT("get CAN State mystate %ld\n", mystate);
     struct can_ctrlmode cm;
     memset(&cm, 0, sizeof(cm));
     cm.mask = CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_LISTENONLY;
     cm.flags = CAN_CTRLMODE_LOOPBACK;
-    DEBUGPRINT("can_set_ctrlmode: %ld\n", can_set_ctrlmode(CAN_INTERFACE, &cm));
-    DEBUGPRINT("can_set_bitrate: %ld\n", can_set_bitrate(CAN_INTERFACE,500000));
+    DEBUGPRINT("can_set_ctrlmode: %ld\n",
+	       can_set_ctrlmode(CAN_INTERFACE, &cm));
+    DEBUGPRINT("can_set_bitrate: %ld\n",
+	       can_set_bitrate(CAN_INTERFACE, 500000));
 
     if (iSocketSend != 0) {
 	/* Create a Task which waits to receive messages and sends its own when it times out. */
