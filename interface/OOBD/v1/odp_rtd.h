@@ -81,13 +81,22 @@ void obd_rtd_init();
 /* struct to build joined list to store parameters*/
 
 
+
+typedef struct RTDBuffer {
+    portBASE_TYPE time_stamp;
+    portBASE_TYPE valid;
+    unsigned char *data;
+    // add all elements as needed
+} RTDBUFFER;
+
+typedef struct RTDBuffer RTDBuffer;
+
 typedef struct RTDElement {
     struct RTDElement *prev, *next;	//!< list pointers
     portBASE_TYPE len;
-    long ID;
-    long time_stamp;
-    unsigned char *data;
-    // add all elements as needed
+    portBASE_TYPE id;
+    struct RTDBuffer buffer[2]	//!< 2 input buffers (double buffering), to have one valid, just filled one and another to be actual filed
+	// add all elements as needed
 } RTDELEMENT;
 
 typedef struct RTDElement RTDElement;
@@ -96,13 +105,15 @@ typedef struct RTDElement RTDElement;
 
 RTDElement *createRtdElement(portBASE_TYPE size);
 
-RTDElement *AppendRtdElement(struct RTDElement ** headRef,portBASE_TYPE size,long ID);
+RTDElement *AppendRtdElement(struct RTDElement **headRef,
+			     portBASE_TYPE size, portBASE_TYPE ID);
 
 void freeRtdElement(RTDElement * rtdBuffer);
 
-int rtdElement_length(struct RTDElement * start);
+void debugDumpElementList(struct RTDElement *current);
 
-unsigned char test_ID_Exist(RTDElement * rtdBuffer,ODPBuffer * protocolBuffer);
+portBASE_TYPE test_ID_Exist(RTDElement * rtdBuffer, portBASE_TYPE ID);
 
+inline portBASE_TYPE otherBuffer(portBASE_TYPE bufferindex);
 
 #endif				/* INC_ODP_RTD_H */

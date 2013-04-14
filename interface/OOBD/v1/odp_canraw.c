@@ -252,10 +252,10 @@ void obp_canraw(void *pvParameters)
 //>>>> oobdtemple protocol MSG_SERIAL_DATA  >>>>    
 		break;
 	    case MSG_SERIAL_DATA:
+//<<<< oobdtemple protocol MSG_SERIAL_DATA <<<<
 		if (stateMachine_state == SM_CANRAW_STANDBY) {	/* only if just nothing to do */
 		    dp = (data_packet *) msg->addr;
 		    // data block received from serial input which need to be handled now
-//<<<< oobdtemple protocol MSG_SERIAL_DATA <<<<
 		    if (((protocolBuffer->len) + dp->len) <=
 			CANRAWBUFFERSIZE) {
 			/* copy the data into the uds- buffer */
