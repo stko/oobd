@@ -167,15 +167,36 @@ void odp_rtd_recvdata(data_packet * p)
      * So quite a lot to do here, and all needs to happen as a interrupt service routine before the next can frame comes already in..
      */
     DEBUGPRINT("ID: %4X len: %d \n", p->recv, p->len);
-	//searching for the element with the same ID as the received element
-	while (actElement != NULL && actElement->next != NULL && actElement->id < p->recv){
-		actElement=actElement->next;
+    actElement = findID(FirstRTDElement, p->recv);
+    //searching for the element with the same ID as the received element
+    // found the right ID?
+    if (actElement == NULL) {
+	return;
+    }
+    DEBUGPRINT("Found ID : %4X len: %d \n", p->recv, p->len);
+    DEBUGPRINT("Element len: %d \n", actElement->len);
+    //is it a one-frame message or a multiframe?
+    portBASE_TYPE writeBufferIndex = actElement->writeBufferIndex;
+    portBASE_TYPE len = actElement->len;
+    if (actElement->len < 9) {	// single frame
+	portBASE_TYPE i;
+	len = len > p->len ? p->len : len;
+	DEBUGPRINT("calculated len: %d \n", actElement->len);
+	for (i = 0; len > 0; i++) {
+	    actElement->buffer[writeBufferIndex].data[i] = p->data[i];
+	    DEBUGPRINT
+		("single frame: write %d to index %ld  with remaining length %ld \n",
+		 p->data[i], i, len);
+	    len--;
 	}
-	// found the right ID?
-	if(actElement != NULL && actElement->id == p->recv){
-		 DEBUGPRINT("Found ID : %4X len: %d \n", p->recv, p->len);
+	actElement->buffer[writeBufferIndex].valid = pdTRUE;
+	if (!actElement->buffer[writeBufferIndex].looked) {
+	    actElement->writeBufferIndex =
+		otherBuffer(actElement->writeBufferIndex);
 	}
-	
+    } else {
+
+    }
 }
 
 //>>>> oobdtemple protocol dumpFrame  >>>>
@@ -202,299 +223,316 @@ void odp_rtd_recvdata(data_packet * p)
 void odp_rtd(void *pvParameters)
 {
 //>>>> oobdtemple protocol initmain  >>>>
-int keeprunning = 1;
-data_packet *dp;
-data_packet actDataPacket;
-portBASE_TYPE busToUse = *(portBASE_TYPE *) pvParameters;
+    int keeprunning = 1;
+    data_packet *dp;
+    data_packet actDataPacket;
+    portBASE_TYPE busToUse = *(portBASE_TYPE *) pvParameters;
 /* function pointers to the bus interface */
-extern bus_init actBus_init;
-extern bus_send actBus_send;
-extern bus_flush actBus_flush;
-extern bus_param actBus_param;
-extern bus_close actBus_close;
-extern xQueueHandle protocolQueue;
-extern xQueueHandle outputQueue;
-extern xQueueHandle inputQueue;
+    extern bus_init actBus_init;
+    extern bus_send actBus_send;
+    extern bus_flush actBus_flush;
+    extern bus_param actBus_param;
+    extern bus_close actBus_close;
+    extern xQueueHandle protocolQueue;
+    extern xQueueHandle outputQueue;
+    extern xQueueHandle inputQueue;
 
-MsgData *msg;
-MsgData *ownMsg;
-param_data *args;
+    MsgData *msg;
+    MsgData *ownMsg;
+    param_data *args;
 
-extern xSemaphoreHandle protocollBinarySemaphore;
-portBASE_TYPE msgType;
-portBASE_TYPE timeout = 0;
-portBASE_TYPE showBusTransfer = 0;
-int i;
+    extern xSemaphoreHandle protocollBinarySemaphore;
+    portBASE_TYPE msgType;
+    portBASE_TYPE timeout = 0;
+    portBASE_TYPE showBusTransfer = 0;
+    int i;
     //catch the "Protocoll is running" Semaphore
-xSemaphoreTake(protocollBinarySemaphore, portMAX_DELAY);
+    xSemaphoreTake(protocollBinarySemaphore, portMAX_DELAY);
 
     /* activate the bus... */
-odbarr[busToUse] ();
-actBus_init();
-ODPBuffer *protocolBuffer;
-protocolBuffer = NULL;
+    odbarr[busToUse] ();
+    actBus_init();
+    ODPBuffer *protocolBuffer;
+    protocolBuffer = NULL;
     // start with the protocol specific initalisation
 //<<<< oobdtemple protocol initmain <<<<
-int length_data_telegram = 0;
-extern RTDElement *FirstRTDElement;
-FirstRTDElement = NULL;
-extern print_cbf printdata_CAN;
-portBASE_TYPE stateMachine_state = 0;
-portBASE_TYPE actBufferPos = 0;
+    int length_data_telegram = 0;
+    extern RTDElement *FirstRTDElement;
+    FirstRTDElement = NULL;
+    extern print_cbf printdata_CAN;
+    portBASE_TYPE stateMachine_state = 0;
+    portBASE_TYPE actBufferPos = 0;
 
     /* Init default parameters */
 
     /* tell the Rx-ISR about the function to use for received data */
-busControl(ODB_CMD_RECV, odp_rtd_recvdata);
-protocolBuffer = createODPBuffer(CMDBUFFERSIZE);
-if (protocolBuffer == NULL) {
-    keeprunning = 0;
-}
-protocolBuffer->len = 0;
+    busControl(ODB_CMD_RECV, odp_rtd_recvdata);
+    protocolBuffer = createODPBuffer(CMDBUFFERSIZE);
+    if (protocolBuffer == NULL) {
+	keeprunning = 0;
+    }
+    protocolBuffer->len = 0;
 //>>>> oobdtemple protocol mainloop_start  >>>>    
-for (; keeprunning;) {
+    for (; keeprunning;) {
 
-    if (MSG_NONE != (msgType = waitMsg(protocolQueue, &msg, portMAX_DELAY)))	// portMAX_DELAY
-	/* handle message */
-    {
-	switch (msgType) {
+	if (MSG_NONE != (msgType = waitMsg(protocolQueue, &msg, portMAX_DELAY)))	// portMAX_DELAY
+	    /* handle message */
+	{
+	    switch (msgType) {
 //<<<< oobdtemple protocol mainloop_start <<<<
 //>>>> oobdtemple protocol MSG_BUS_RECV  >>>>    
-	case MSG_BUS_RECV:
-	    dp = msg->addr;
+	    case MSG_BUS_RECV:
+		dp = msg->addr;
 //<<<< oobdtemple protocol MSG_BUS_RECV <<<<
-	    if (showBusTransfer > 0) {
-		// no incoming dumps for RTD
-		//odp_rtd_dumpFrame(dp, printdata_CAN);
-	    }
+		if (showBusTransfer > 0) {
+		    // no incoming dumps for RTD
+		    //odp_rtd_dumpFrame(dp, printdata_CAN);
+		}
 //>>>> oobdtemple protocol MSG_SERIAL_DATA  >>>>    
-	    break;
-	case MSG_SERIAL_DATA:
+		break;
+	    case MSG_SERIAL_DATA:
 //<<<< oobdtemple protocol MSG_SERIAL_DATA <<<<
-	    dp = (data_packet *) msg->addr;
-	    // data block received from serial input which need to be handled now
-	    if (((protocolBuffer->len) + dp->len) <= CMDBUFFERSIZE) {
-		/* copy the data into the uds- buffer */
-		for (i = 0; i < dp->len; i++) {
-		    protocolBuffer->data[protocolBuffer->len++] =
-			dp->data[i];
+		dp = (data_packet *) msg->addr;
+		// data block received from serial input which need to be handled now
+		if (((protocolBuffer->len) + dp->len) <= CMDBUFFERSIZE) {
+		    /* copy the data into the uds- buffer */
+		    for (i = 0; i < dp->len; i++) {
+			protocolBuffer->data[protocolBuffer->len++] =
+			    dp->data[i];
+		    }
+		} else {
+		    createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+					   ERR_CODE_RTD_CMD_TOO_LONG_ERR,
+					   ((protocolBuffer->len) +
+					    dp->len),
+					   ERR_CODE_RTD_CMD_TOO_LONG_ERR_TEXT);
 		}
-	    } else {
-		createCommandResultMsg(FBID_PROTOCOL_GENERIC,
-				       ERR_CODE_RTD_CMD_TOO_LONG_ERR,
-				       ((protocolBuffer->len) +
-					dp->len),
-				       ERR_CODE_RTD_CMD_TOO_LONG_ERR_TEXT);
-	    }
 //>>>> oobdtemple protocol MSG_SERIAL_PARAM_1 >>>>    
-	    break;
-	case MSG_SERIAL_PARAM:
-	    args = (portBASE_TYPE *) msg->addr;
-	    /*
-	     * DEBUGPRINT("protocol parameter received %ld %ld %ld\n",
-	     args->args[ARG_RECV], args->args[ARG_CMD],
-	     args->args[ARG_VALUE_1]);
-	     */
-	    switch (args->args[ARG_RECV]) {
-	    case FBID_PROTOCOL_GENERIC:
+		break;
+	    case MSG_SERIAL_PARAM:
+		args = (portBASE_TYPE *) msg->addr;
 		/*
-		 *    DEBUGPRINT
-		 ("generic protocol parameter received %ld %ld\n",
-		 args->args[ARG_CMD], args->args[ARG_VALUE_1]);
+		 * DEBUGPRINT("protocol parameter received %ld %ld %ld\n",
+		 args->args[ARG_RECV], args->args[ARG_CMD],
+		 args->args[ARG_VALUE_1]);
 		 */
-		switch (args->args[ARG_CMD]) {
-		case PARAM_INFO:
-//<<<< oobdtemple protocol MSG_SERIAL_PARAM_1 <<<<
-		    CreateParamOutputMsg(args, odp_rtd_printParam);
-//>>>> oobdtemple protocol MSG_SERIAL_PARAM_2 >>>>    
-		    break;
-		    // and here we proceed all command parameters
-		case PARAM_LISTEN:
-		    showBusTransfer = args->args[ARG_VALUE_1];
-		    createCommandResultMsg(FBID_PROTOCOL_GENERIC,
-					   ERR_CODE_NO_ERR, 0, NULL);
-		    break;
-		default:
-		    createCommandResultMsg(FBID_PROTOCOL_GENERIC,
-					   ERR_CODE_OS_UNKNOWN_COMMAND,
-					   0,
-					   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
-		    break;
-		}
-		break;
-//<<<< oobdtemple protocol MSG_SERIAL_PARAM_2 <<<<
-	    case FBID_PROTOCOL_SPEC:
-		//DEBUGPRINT ("can raw protocol parameter received %ld %ld\n", args->args[ARG_CMD], args->args[ARG_VALUE_1]);
-		switch (args->args[ARG_CMD]) {
-		case PARAM_RTD_CLEAR_LIST:
-
-		    freeRtdElement(FirstRTDElement);
-		    /* 
-		     * FK:
-		     * clear the RTD-Element List here, means
-		     * free all allocated memory pieces ant the RTD-Elements itself
+		switch (args->args[ARG_RECV]) {
+		case FBID_PROTOCOL_GENERIC:
+		    /*
+		     *    DEBUGPRINT
+		     ("generic protocol parameter received %ld %ld\n",
+		     args->args[ARG_CMD], args->args[ARG_VALUE_1]);
 		     */
-		    createCommandResultMsg(FBID_PROTOCOL_SPEC,
-					   ERR_CODE_NO_ERR, 0, NULL);
+		    switch (args->args[ARG_CMD]) {
+		    case PARAM_INFO:
+//<<<< oobdtemple protocol MSG_SERIAL_PARAM_1 <<<<
+			CreateParamOutputMsg(args, odp_rtd_printParam);
+//>>>> oobdtemple protocol MSG_SERIAL_PARAM_2 >>>>    
+			break;
+			// and here we proceed all command parameters
+		    case PARAM_LISTEN:
+			showBusTransfer = args->args[ARG_VALUE_1];
+			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+					       ERR_CODE_NO_ERR, 0, NULL);
+			break;
+		    default:
+			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+					       ERR_CODE_OS_UNKNOWN_COMMAND,
+					       0,
+					       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+			break;
+		    }
+		    break;
+//<<<< oobdtemple protocol MSG_SERIAL_PARAM_2 <<<<
+		case FBID_PROTOCOL_SPEC:
+		    //DEBUGPRINT ("can raw protocol parameter received %ld %ld\n", args->args[ARG_CMD], args->args[ARG_VALUE_1]);
+		    switch (args->args[ARG_CMD]) {
+		    case PARAM_RTD_CLEAR_LIST:
+
+			freeRtdElements(&FirstRTDElement);
+			/* 
+			 * FK:
+			 * clear the RTD-Element List here, means
+			 * free all allocated memory pieces ant the RTD-Elements itself
+			 */
+			createCommandResultMsg(FBID_PROTOCOL_SPEC,
+					       ERR_CODE_NO_ERR, 0, NULL);
+			break;
+		    default:
+			createCommandResultMsg(FBID_PROTOCOL_SPEC,
+					       ERR_CODE_OS_UNKNOWN_COMMAND,
+					       0,
+					       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+			break;
+		    }
+		    break;
+//>>>> oobdtemple protocol MSG_OTHERS >>>>    
+		case FBID_BUS_GENERIC:
+		case FBID_BUS_SPEC:
+		    actBus_param(args);	/* forward the received params to the underlying bus. */
 		    break;
 		default:
 		    createCommandResultMsg(FBID_PROTOCOL_SPEC,
-					   ERR_CODE_OS_UNKNOWN_COMMAND,
-					   0,
+					   ERR_CODE_OS_UNKNOWN_COMMAND, 0,
 					   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 		    break;
 		}
-		break;
-//>>>> oobdtemple protocol MSG_OTHERS >>>>    
-	    case FBID_BUS_GENERIC:
-	    case FBID_BUS_SPEC:
-		actBus_param(args);	/* forward the received params to the underlying bus. */
-		break;
-	    default:
-		createCommandResultMsg(FBID_PROTOCOL_SPEC,
-				       ERR_CODE_OS_UNKNOWN_COMMAND, 0,
-				       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
-		break;
-	    }
 //<<<< oobdtemple protocol MSG_OTHERS <<<<
 //>>>> oobdtemple protocol MSG_INIT >>>>    
-	case MSG_INIT:
-	    if (protocolBuffer != NULL) {
-		protocolBuffer->len = 0;
-	    }
+	    case MSG_INIT:
+		if (protocolBuffer != NULL) {
+		    protocolBuffer->len = 0;
+		}
 //<<<< oobdtemple protocol MSG_INIT <<<<
 //>>>> oobdtemple protocol MSG_PROTOCOL_STOP >>>>    
-	    break;
-	case MSG_PROTOCOL_STOP:
-	    keeprunning = 0;
-	    break;
+		break;
+	    case MSG_PROTOCOL_STOP:
+		keeprunning = 0;
+		break;
 //<<<< oobdtemple protocol MSG_PROTOCOL_STOP <<<<
 //>>>> oobdtemple protocol MSG_SEND_BUFFER >>>>    
-	case MSG_SEND_BUFFER:
-	    /* let's Dance: Starting the transfer protocol */
+	    case MSG_SEND_BUFFER:
+		/* let's Dance: Starting the transfer protocol */
 //<<<< oobdtemple protocol MSG_SEND_BUFFER <<<<
-	    if (protocolBuffer->len > 0) {
+		if (protocolBuffer->len > 0) {
 
 // protocolBuffer->data[1] .. protocolBuffer->data[4] = id
 // protocolBuffer->data[5] .. protocolBuffer->data[6] = total length of data telegram  if == 0 (Null) then data length = 8
 // protocolBuffer->data[7]  Position of Sequence counter
 
 
-		DEBUGPRINT
-		    ("\n\nprotocolBuffer->data 0x%02x  0x%02x 0x%02x 0x%02x 0x%02x \n 0x%02x  0x%02x\n\n",
-		     protocolBuffer->data[0], protocolBuffer->data[1],
-		     protocolBuffer->data[2], protocolBuffer->data[3],
-		     protocolBuffer->data[4], protocolBuffer->data[5],
-		     protocolBuffer->data[6]);
-
-		switch (protocolBuffer->data[0]) {
-		case 0x22:	// Return data from bus
-		    DEBUGPRINT("\nprotocolBuffer = 0x22 !\n", 'a');
-		    createCommandResultMsg(FBID_PROTOCOL_GENERIC,
-					   ERR_CODE_NO_ERR, 0, NULL);
-
-		    break;
-		case 0x27:	// request for new RTD-Element
-		    if (protocolBuffer->data[5] > 0
-			|| protocolBuffer->data[6] > 0)
-			length_data_telegram =
-			    (protocolBuffer->data[5] << 8) +
-			    protocolBuffer->data[6];
-		    else
-			length_data_telegram = 8;
-
 		    DEBUGPRINT
-			("\nprotocolBuffer = 0x27 !\n length_data_telegram = %u \n",
-			 length_data_telegram);
+			("\n\nprotocolBuffer->data 0x%02x  0x%02x 0x%02x 0x%02x 0x%02x \n 0x%02x  0x%02x\n\n",
+			 protocolBuffer->data[0], protocolBuffer->data[1],
+			 protocolBuffer->data[2], protocolBuffer->data[3],
+			 protocolBuffer->data[4], protocolBuffer->data[5],
+			 protocolBuffer->data[6]);
 
-		    portBASE_TYPE ID =
-			(protocolBuffer->data[1] << 24) +
-			(protocolBuffer->data[2] << 16) +
-			(protocolBuffer->data[3] << 8) +
-			protocolBuffer->data[4];
-		    if (!test_ID_Exist(FirstRTDElement, ID))	// If ID not in Buffer Create the ID
-		    {
-
-			AppendRtdElement(&FirstRTDElement,
-					     length_data_telegram, ID);
+		    switch (protocolBuffer->data[0]) {
+		    case 0x22:	// Return data from bus
+			DEBUGPRINT("\nprotocolBuffer = 0x22 !\n", 'a');
 			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 
+			break;
+		    case 0x27:	// request for new RTD-Element
+			if (protocolBuffer->data[5] > 0
+			    || protocolBuffer->data[6] > 0)
+			    length_data_telegram =
+				(protocolBuffer->data[5] << 8) +
+				protocolBuffer->data[6];
+			else
+			    length_data_telegram = 8;
 
-		    } else
-			createCommandResultMsg(FBID_PROTOCOL_SPEC,
-					       ERR_CODE_RTD_ID_EXIST_ERR,
-					       0,
-					       ERR_CODE_RTD_ID_EXIST_ERR_TEXT);
-		    break;
-		default:
-		    DEBUGPRINT
-			("\nprotocolBuffer <> 0x22 or 0x27  Buffer[0] = 0x%x ",
-			 protocolBuffer->data[0]);
-		    break;
+			DEBUGPRINT
+			    ("\nprotocolBuffer = 0x27 !\n length_data_telegram = %u \n",
+			     length_data_telegram);
 
-		}
+			portBASE_TYPE ID =
+			    (protocolBuffer->data[1] << 24) +
+			    (protocolBuffer->data[2] << 16) +
+			    (protocolBuffer->data[3] << 8) +
+			    protocolBuffer->data[4];
+			if (!findID(FirstRTDElement, ID))	// If ID not in Buffer Create the ID
+			{
 
-		debugDumpElementList(FirstRTDElement);
+			    RTDElement * newElement;
+			    newElement = AppendRtdElement(&FirstRTDElement,
+							  length_data_telegram,
+							  ID);
+			    if (newElement == NULL) {
+				createCommandResultMsg(FBID_PROTOCOL_SPEC,
+						       ERR_CODE_RTD_OOM_ERR,
+						       0,
+						       ERR_CODE_RTD_OOM_ERR_TEXT);
+			    } else {
+				newElement->counterPos =
+				    protocolBuffer->len >
+				    7 ? protocolBuffer->data[7] : 0;
+				createCommandResultMsg
+				    (FBID_PROTOCOL_GENERIC,
+				     ERR_CODE_NO_ERR, 0, NULL);
+			    }
 
 
-		/* FK:
-		 * check if the protocolBuffer contains valid data.
-		 * if yes, then:
-		 * if first Byte is 27:  create a new RTD-Element, allocate neccessary memory and add it to 
-		 * the list 
-		 * if first Byte is 22:
-		 * search in the RTDElement list for a matching element. Create output message, if found, otherways
-		 * prepare error messages
-		 */
+			} else
+			    createCommandResultMsg(FBID_PROTOCOL_SPEC,
+						   ERR_CODE_RTD_ID_EXIST_ERR,
+						   0,
+						   ERR_CODE_RTD_ID_EXIST_ERR_TEXT);
+			break;
+		    default:
+			DEBUGPRINT
+			    ("\nprotocolBuffer <> 0x22 or 0x27  Buffer[0] = 0x%x ",
+			     protocolBuffer->data[0]);
+			break;
 
-		// reset the protocolBuffer to receive the next parameter set
-		protocolBuffer->len = 0;
+		    }
 
-		/* just release the input again */
-		if (pdPASS !=
-		    sendMsg(MSG_SERIAL_RELEASE, inputQueue, NULL)) {
-		    DEBUGPRINT("FATAL ERROR: input queue is full!\n", 'a');
-		}
+		    debugDumpElementList(FirstRTDElement);
+
+
+		    /* FK:
+		     * check if the protocolBuffer contains valid data.
+		     * if yes, then:
+		     * if first Byte is 27:  create a new RTD-Element, allocate neccessary memory and add it to 
+		     * the list 
+		     * if first Byte is 22:
+		     * search in the RTDElement list for a matching element. Create output message, if found, otherways
+		     * prepare error messages
+		     */
+
+		    // reset the protocolBuffer to receive the next parameter set
+		    protocolBuffer->len = 0;
+
+		    /* just release the input again */
+		    if (pdPASS !=
+			sendMsg(MSG_SERIAL_RELEASE, inputQueue, NULL)) {
+			DEBUGPRINT("FATAL ERROR: input queue is full!\n",
+				   'a');
+		    }
 //>>>> oobdtemple protocol MSG_SEND_BUFFER_2 >>>>    
 
-	    } else {		/* no data to send? */
-		createCommandResultMsg
-		    (FBID_PROTOCOL_GENERIC, ERR_CODE_NO_ERR, 0, NULL);
+		} else {	/* no data to send? */
+		    createCommandResultMsg
+			(FBID_PROTOCOL_GENERIC, ERR_CODE_NO_ERR, 0, NULL);
 
-		/* just release the input again */
-		if (pdPASS !=
-		    sendMsg(MSG_SERIAL_RELEASE, inputQueue, NULL)) {
-		    DEBUGPRINT("FATAL ERROR: input queue is full!\n", 'a');
+		    /* just release the input again */
+		    if (pdPASS !=
+			sendMsg(MSG_SERIAL_RELEASE, inputQueue, NULL)) {
+			DEBUGPRINT("FATAL ERROR: input queue is full!\n",
+				   'a');
+		    }
 		}
-	    }
-	    break;
+		break;
 //<<<< oobdtemple protocol MSG_SEND_BUFFER_2 <<<<
 //>>>> oobdtemple protocol MSG_TICK >>>>    
-	case MSG_TICK:
+	    case MSG_TICK:
 //<<<< oobdtemple protocol MSG_TICK <<<<
-	    /* as in the Real time protocol there's nothing to be done after a time tick, we can commend it out
-	     */
-	    /*
-	       if (timeout > 0) {   
-	       timeout--;
-	       }
-	     */
+		/* as in the Real time protocol there's nothing to be done after a time tick, we can commend it out
+		 */
+		/*
+		   if (timeout > 0) {   
+		   timeout--;
+		   }
+		 */
 //>>>> oobdtemple protocol final >>>>    
-	    break;
+		break;
+	    }
+	    disposeMsg(msg);
 	}
-	disposeMsg(msg);
-    }
-    /* vTaskDelay (5000 / portTICK_RATE_MS); */
+	/* vTaskDelay (5000 / portTICK_RATE_MS); */
 
-}
+    }
 
     /* Do all cleanup here to finish task */
-actBus_close();
-freeODPBuffer(protocolBuffer);
-xSemaphoreGive(protocollBinarySemaphore);
-vTaskDelete(NULL);
+    freeRtdElements(&FirstRTDElement);
+    actBus_close();
+    freeODPBuffer(protocolBuffer);
+    xSemaphoreGive(protocollBinarySemaphore);
+    vTaskDelete(NULL);
 }
+
 //<<<< oobdtemple protocol final <<<<
 
 
@@ -523,6 +561,7 @@ RTDElement *AppendRtdElement(RTDElement ** headRef, portBASE_TYPE size,
 	     'a');
 	return (RTDElement *) NULL;
     }
+    newNode->writeBufferIndex = 0;
     newNode->buffer[0].valid = pdFALSE;
     newNode->buffer[0].data = pvPortMalloc(size);
     if (newNode->buffer[0].data == NULL) {
@@ -580,18 +619,29 @@ RTDElement *AppendRtdElement(RTDElement ** headRef, portBASE_TYPE size,
 }
 
 
-void freeRtdElement(RTDElement * rtdBuffer)
+void freeRtdElements(RTDElement ** firstElement)
 {
-
+    DEBUGPRINT("Clear element buffer \n", 'a');
+    RTDElement *rtdBuffer = *firstElement;
+    *firstElement = NULL;	//set the firstelement to Null
     if (rtdBuffer != NULL) {
+	RTDElement *next;
+	do {
+	    if (rtdBuffer != NULL) {
+		next = rtdBuffer->next;
 
-	if (rtdBuffer->buffer[0].data != NULL) {
-	    vPortFree(rtdBuffer->buffer[0].data);
-	}
-	if (rtdBuffer->buffer[1].data != NULL) {
-	    vPortFree(rtdBuffer->buffer[1].data);
-	}
-	vPortFree(rtdBuffer);
+		if (rtdBuffer->buffer[0].data != NULL) {
+		    vPortFree(rtdBuffer->buffer[0].data);
+		}
+		if (rtdBuffer->buffer[1].data != NULL) {
+		    vPortFree(rtdBuffer->buffer[1].data);
+		}
+		DEBUGPRINT("Clear element buffer %lX\n", rtdBuffer->id);
+
+		vPortFree(rtdBuffer);
+		rtdBuffer = next;
+	    }
+	} while (next != NULL);
     }
 }
 
@@ -603,7 +653,7 @@ void debugDumpElementList(struct RTDElement *current)
     while (current != NULL) {
 	count++;
 	DEBUGPRINT
-	    ("Element  %4X: Size of  %ld Bytes\n", current->id,
+	    ("Element  %4lX: Size of  %ld Bytes\n", current->id,
 	     current->len);
 
 	current = current->next;
@@ -613,16 +663,19 @@ void debugDumpElementList(struct RTDElement *current)
 
 }
 
-portBASE_TYPE test_ID_Exist(RTDElement * rtdBuffer, portBASE_TYPE id)
+RTDElement *findID(RTDElement * rtdBuffer, portBASE_TYPE id)
 {
 
-    while (rtdBuffer != NULL) {
-	if (rtdBuffer->id == id)
-	    return pdTRUE;
+
+    while (rtdBuffer != NULL && rtdBuffer->next != NULL
+	   && rtdBuffer->id < id) {
 	rtdBuffer = rtdBuffer->next;
     }
-    return pdFALSE;
-
+    // found the right ID?
+    if (rtdBuffer != NULL && rtdBuffer->id == id) {
+	return rtdBuffer;
+    }
+    return NULL;
 
 }
 
