@@ -85,6 +85,7 @@ void obd_rtd_init();
 typedef struct RTDBuffer {
     portBASE_TYPE time_stamp;
     portBASE_TYPE valid;
+    portBASE_TYPE looked;
     unsigned char *data;
     // add all elements as needed
 } RTDBUFFER;
@@ -95,6 +96,8 @@ typedef struct RTDElement {
     struct RTDElement *prev, *next;	//!< list pointers
     portBASE_TYPE len;
     portBASE_TYPE id;
+    portBASE_TYPE writeBufferIndex;
+   portBASE_TYPE counterPos;
     struct RTDBuffer buffer[2]	//!< 2 input buffers (double buffering), to have one valid, just filled one and another to be actual filed
 	// add all elements as needed
 } RTDELEMENT;
@@ -108,11 +111,11 @@ RTDElement *createRtdElement(portBASE_TYPE size);
 RTDElement *AppendRtdElement(struct RTDElement **headRef,
 			     portBASE_TYPE size, portBASE_TYPE ID);
 
-void freeRtdElement(RTDElement * rtdBuffer);
+void freeRtdElements(RTDElement ** firstElement);
 
 void debugDumpElementList(struct RTDElement *current);
 
-portBASE_TYPE test_ID_Exist(RTDElement * rtdBuffer, portBASE_TYPE ID);
+RTDElement *findID(RTDElement * rtdBuffer, portBASE_TYPE id);
 
 inline portBASE_TYPE otherBuffer(portBASE_TYPE bufferindex);
 
