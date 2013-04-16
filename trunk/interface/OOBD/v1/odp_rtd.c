@@ -173,15 +173,15 @@ void odp_rtd_recvdata(data_packet * p)
     if (actElement == NULL) {
 	return;
     }
-    DEBUGPRINT("Found ID : %4X len: %d \n", p->recv, p->len);
-    DEBUGPRINT("Element len: %d \n", actElement->len);
+    DEBUGPRINT("Found ID : %4X len: %ld \n", p->recv, p->len);
+    DEBUGPRINT("Element len: %ld \n", actElement->len);
     //is it a one-frame message or a multiframe?
     portBASE_TYPE writeBufferIndex = actElement->writeBufferIndex;
     portBASE_TYPE len = actElement->len;
+    portBASE_TYPE i;
     if (actElement->len < 9) {	// single frame
-	portBASE_TYPE i;
 	len = len > p->len ? p->len : len;
-	DEBUGPRINT("calculated len: %d \n", actElement->len);
+	DEBUGPRINT("calculated len: %ld \n", len);
 	for (i = 0; len > 0; i++) {
 	    actElement->buffer[writeBufferIndex].data[i] = p->data[i];
 	    DEBUGPRINT
@@ -193,9 +193,43 @@ void odp_rtd_recvdata(data_packet * p)
 	if (!actElement->buffer[writeBufferIndex].looked) {
 	    actElement->writeBufferIndex =
 		otherBuffer(actElement->writeBufferIndex);
+	    actElement->buffer[writeBufferIndex].valid = pdFALSE;
 	}
     } else {
-
+	unsigned char seq = p->data[0];
+	if ((seq == 0) || (seq == actElement->seqCount + 1)) {	// is that the right next sequence (seq=0 starts from scratch)
+	    if (seq == 0) {
+		actElement->buffer[writeBufferIndex].valid = pdFALSE;
+	    }
+	    if (seq <= actElement->len / 7) {	// if the incoming frame does not exeed the total length
+		len = (seq + 1) * 7 > len ? len - (seq * 7) : 7;	// make sure we write not over the buffer end
+		DEBUGPRINT("calculated multiframe len: %ld \n", len);
+		for (i = 1; len > 0; i++) {
+		    actElement->buffer[writeBufferIndex].data[i - 1 +
+							      (seq *
+							       7)] =
+			p->data[i];
+		    DEBUGPRINT
+			("multi frame: write %02X to index %ld  with remaining length %ld \n",
+			 p->data[i], i - 1 + (seq * 7), len);
+		    len--;
+		}
+		actElement->seqCount = seq;
+		if (seq == actElement->len / 7) {	//that was the last frame
+		    actElement->buffer[writeBufferIndex].valid = pdTRUE;
+		    actElement->seqCount = 0;	//reset the seqcount for the next time
+		    if (!actElement->buffer[writeBufferIndex].looked) {
+			actElement->writeBufferIndex =
+			    otherBuffer(actElement->writeBufferIndex);
+			DEBUGPRINT("switching buffer to : %ld \n",
+				   actElement->writeBufferIndex);
+		    }
+		}
+	    }
+	} else {		// wrong sequence? then reset the seqCount and start from scratch
+	    actElement->seqCount = 0;
+	    DEBUGPRINT("seq counter wrong: %ld \n", seq);
+	}
     }
 }
 
@@ -436,7 +470,7 @@ void odp_rtd(void *pvParameters)
 			if (!findID(FirstRTDElement, ID))	// If ID not in Buffer Create the ID
 			{
 
-			    RTDElement * newElement;
+			    RTDElement *newElement;
 			    newElement = AppendRtdElement(&FirstRTDElement,
 							  length_data_telegram,
 							  ID);
