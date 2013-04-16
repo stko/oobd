@@ -97,7 +97,8 @@ typedef struct RTDElement {
     portBASE_TYPE len;
     portBASE_TYPE id;
     portBASE_TYPE writeBufferIndex;
-   portBASE_TYPE counterPos;
+    portBASE_TYPE seqCount;
+    portBASE_TYPE counterPos;
     struct RTDBuffer buffer[2]	//!< 2 input buffers (double buffering), to have one valid, just filled one and another to be actual filed
 	// add all elements as needed
 } RTDELEMENT;
