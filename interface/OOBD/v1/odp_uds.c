@@ -480,9 +480,7 @@ void obp_uds(void *pvParameters)
 					timeout = 0;
 					/* to dump the  buffer, we send the address of the udsbuffer to the print routine */
 					ownMsg =
-					    createMsg(&protocolBuffer,
-						      sizeof
-						      (protocolBuffer));
+					    createMsg(&protocolBuffer, 0);
 					/* add correct print routine; */
 					ownMsg->print =
 					    odp_uds_printdata_Buffer;

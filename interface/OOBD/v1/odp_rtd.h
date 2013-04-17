@@ -83,9 +83,9 @@ void obd_rtd_init();
 
 
 typedef struct RTDBuffer {
-    portBASE_TYPE time_stamp;
+    portBASE_TYPE timeStamp;
     portBASE_TYPE valid;
-    portBASE_TYPE looked;
+    portBASE_TYPE locked;
     unsigned char *data;
     // add all elements as needed
 } RTDBUFFER;

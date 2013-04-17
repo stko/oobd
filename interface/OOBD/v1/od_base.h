@@ -247,6 +247,7 @@ typedef struct ODPBuffer ODPBuffer;
 void initILM();
 
 MsgData *createDataMsg(data_packet * data);
+//! creates a message structure. If size > 0, the data is copied into the message, otherways only the data pointer is been transmitted
 MsgData *createMsg(void *data, size_t size);
 void disposeMsg(MsgData * p);
 void disposeDataMsg(MsgData * p);
