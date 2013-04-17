@@ -95,21 +95,22 @@ void initBusses()
 MsgData *createMsg(void *data, size_t size)
 {
     // is there any msgdata at all?
-    if (data != NULL && size > 0) {
-	MsgData *dataDescr;
-	// get mem for the MsgData itself + the payload
-	dataDescr = pvPortMalloc(sizeof(struct MsgData) + size);
-	if (dataDescr != NULL) {
-	    // store the payload size
-	    dataDescr->len = size;
+
+    MsgData *dataDescr;
+    // get mem for the MsgData itself + the payload
+    dataDescr = pvPortMalloc(sizeof(struct MsgData) + size);
+    if (dataDescr != NULL) {
+	// store the payload size
+	dataDescr->len = size;
+	if (data != NULL && size > 0) {
 	    // store the payload address
 	    dataDescr->addr = (void *) dataDescr + sizeof(struct MsgData);
 	    // copy payload into the fresh mem
 	    memcpy(dataDescr->addr, data, size);
-	    return dataDescr;
 	} else {
-	    return NULL;
+	    dataDescr->addr = data;
 	}
+	return dataDescr;
     } else {
 	return NULL;
     }
@@ -292,8 +293,8 @@ ODPBuffer *createODPBuffer(portBASE_TYPE size)
 {
     ODPBuffer *odpBuffer = pvPortMalloc(sizeof(struct ODPBuffer));
     if (odpBuffer == NULL) {
-	DEBUGPRINT("Fatal error: Not enough heap to allocate ODPBuffer!\n",
-		   'a');
+	DEBUGPRINT
+	    ("Fatal error: Not enough heap to allocate ODPBuffer!\n", 'a');
 	return (ODPBuffer *) NULL;
     } else {
 	odpBuffer->data = pvPortMalloc(size);

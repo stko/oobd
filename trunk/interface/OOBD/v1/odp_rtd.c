@@ -83,32 +83,48 @@ odp_rtd_printdata_Buffer(portBASE_TYPE msgType, void *data,
 			 printChar_cbf printchar)
 {
     extern xQueueHandle inputQueue;
-/*
- * FK: 
- * the source below is just a sample from another protocol
- * this piece needs to be rewritten to print out the content of an RTDElement,
- * where in the end the RTDElement needs to be un-locked again, so that the buffer can be 
- * re-filled again by new incoming data
- */
-    ODPBuffer **doublePtr;
-    ODPBuffer *myUDSBuffer;
-
-    doublePtr = data;
-    myUDSBuffer = *doublePtr;
-    int i;
-    for (i = 0; i < myUDSBuffer->len; i++) {
-	printser_uint8ToHex(myUDSBuffer->data[i]);
-	if ((i % 8) == 0 && i > 0 && i < myUDSBuffer->len - 1) {
-	    printLF();
-	}
-    }
-    if (!((i % 8) == 0 && i > 0 && i < myUDSBuffer->len - 1)) {
+    RTDElement **doublePtr;
+    RTDElement *myRTDElement;
+    RTDBuffer *myRTDBuffer;
+    myRTDBuffer = NULL;
+    DEBUGPRINT("start the input buffer dump\n", "a");
+    if (data == NULL) {		// the requested CAN- ID does not exist, so we generate a faked general responce error
+	printser_string("7F000001");
 	printLF();
-    }
+    } else {
+//      doublePtr = data;
+//      myRTDElement = *doublePtr;
+	myRTDElement = data;
+	portBASE_TYPE bufferIndex;
+	DEBUGPRINT("geht noch 1\n", "a");
+	DEBUGPRINT("Element address %lX\n", myRTDElement);
 
+	bufferIndex = otherBuffer(myRTDElement->writeBufferIndex);
+	if (myRTDElement->buffer[bufferIndex].valid == pdFALSE) {	// the requested CAN- ID is not valid, so we generate a faked general responce error
+	    DEBUGPRINT("geht noch 2\n", "a");
+	    printser_string("7F000002");
+	    printLF();
+	} else {
+	    DEBUGPRINT("geht noch 3\n", "a");
+	    printser_string("62");
+	    printser_uint32ToHex(myRTDElement->buffer[bufferIndex].
+				 timeStamp);
+	    int i;
+	    for (i = 0; i < myRTDElement->len; i++) {
+		printser_uint8ToHex(myRTDElement->buffer[bufferIndex].
+				    data[i]);
+		if ((i % 8) == 0 && i > 0 && i < myRTDElement->len - 1) {
+		    printLF();
+		}
+	    }
+	    if (!((i % 8) == 0 && i > 0 && i < myRTDElement->len - 1)) {
+		printLF();
+	    }
+	}
+	/* unlock buffer */
+	myRTDElement->buffer[bufferIndex].locked = pdFALSE;
+    }
     printEOT();
-    /* unlock buffer */
-    myUDSBuffer->len = 0;
     /* release the input queue */
     if (pdPASS != sendMsg(MSG_SERIAL_RELEASE, inputQueue, NULL)) {
 	DEBUGPRINT("FATAL ERROR: input queue is full!\n", "a");
@@ -190,10 +206,9 @@ void odp_rtd_recvdata(data_packet * p)
 	    len--;
 	}
 	actElement->buffer[writeBufferIndex].valid = pdTRUE;
-	if (!actElement->buffer[writeBufferIndex].looked) {
+	if (!actElement->buffer[writeBufferIndex].locked) {
 	    actElement->writeBufferIndex =
 		otherBuffer(actElement->writeBufferIndex);
-	    actElement->buffer[writeBufferIndex].valid = pdFALSE;
 	}
     } else {
 	unsigned char seq = p->data[0];
@@ -218,7 +233,7 @@ void odp_rtd_recvdata(data_packet * p)
 		if (seq == actElement->len / 7) {	//that was the last frame
 		    actElement->buffer[writeBufferIndex].valid = pdTRUE;
 		    actElement->seqCount = 0;	//reset the seqcount for the next time
-		    if (!actElement->buffer[writeBufferIndex].looked) {
+		    if (!actElement->buffer[writeBufferIndex].locked) {
 			actElement->writeBufferIndex =
 			    otherBuffer(actElement->writeBufferIndex);
 			DEBUGPRINT("switching buffer to : %ld \n",
@@ -444,9 +459,44 @@ void odp_rtd(void *pvParameters)
 
 		    switch (protocolBuffer->data[0]) {
 		    case 0x22:	// Return data from bus
-			DEBUGPRINT("\nprotocolBuffer = 0x22 !\n", 'a');
-			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
-					       ERR_CODE_NO_ERR, 0, NULL);
+			if (protocolBuffer->len == 5) {
+			    DEBUGPRINT("\nprotocolBuffer = 0x22 !\n", 'a');
+			    portBASE_TYPE ID =
+				(protocolBuffer->data[1] << 24) +
+				(protocolBuffer->data[2] << 16) +
+				(protocolBuffer->data[3] << 8) +
+				protocolBuffer->data[4];
+			    RTDElement *myRTDElement;
+			    myRTDElement = findID(FirstRTDElement, ID);
+			    DEBUGPRINT("Element address %lX\n",
+				       myRTDElement);
+			    if (myRTDElement != NULL) {
+				/* lock buffer */
+				myRTDElement->
+				    buffer[otherBuffer
+					   (myRTDElement->
+					    writeBufferIndex)].locked =
+				    pdFALSE;
+			    }
+			    ownMsg = createMsg(myRTDElement, 0);
+			    /* add correct print routine; */
+			    ownMsg->print = odp_rtd_printdata_Buffer;
+			    // send event information to the ILM task
+			    CreateEventMsg(MSG_EVENT_PROTOCOL_RECEIVED, 0);
+			    /* forward data to the output task */
+			    if (pdPASS !=
+				sendMsg(MSG_DUMP_BUFFER,
+					outputQueue, ownMsg)) {
+				DEBUGPRINT
+				    ("FATAL ERROR: output queue is full!\n",
+				     'a');
+			    }
+			} else {
+			    createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+						   ERR_CODE_OS_UNKNOWN_COMMAND,
+						   0,
+						   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+			}
 
 			break;
 		    case 0x27:	// request for new RTD-Element
