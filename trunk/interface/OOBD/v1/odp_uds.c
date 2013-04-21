@@ -238,7 +238,6 @@ transfers received telegrams into Msgqueue
 
 void odp_uds_recvdata(data_packet * p)
 {
-    DEBUGPRINT("packet receivedl!\n", 'a');
     MsgData *msg;
     extern xQueueHandle protocolQueue;
     if (NULL != (msg = createDataMsg(p))) {

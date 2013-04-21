@@ -98,7 +98,7 @@ portBASE_TYPE bus_init_can()
     canConfig->busConfig = VALUE_BUS_CONFIG_11bit_500kbit;	/* default */
 
     // Set-up the Receive Queue and open the socket ready to receive. 
-    xCANReceiveQueue = xQueueCreate(2, sizeof(struct can_frame));
+    xCANReceiveQueue = xQueueCreate(20, sizeof(struct can_frame));
     iSocketReceive =
 	iSocketOpenCAN(vCANReceiveAndDeliverCallback, xCANReceiveQueue,
 		       &xReceiveAddress);
