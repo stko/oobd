@@ -61,7 +61,7 @@
 #define mainCPU_INTENSIVE_TASKS		0
 
 /* define Queue sizes */
-#define QUEUE_SIZE_PROTOCOL ( 5 )
+#define QUEUE_SIZE_PROTOCOL ( 25  )
 #define QUEUE_SIZE_OUTPUT   ( 5 )
 #define QUEUE_SIZE_INPUT    ( 5 )
 #define QUEUE_SIZE_ILM    ( 5 )

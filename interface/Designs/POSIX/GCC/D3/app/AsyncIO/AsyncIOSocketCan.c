@@ -142,7 +142,7 @@ void vCANReceiveAndDeliverCallback(int iSocket, void *pvContext)
 	if (pdPASS !=
 	    xQueueSendFromISR((xQueueHandle) pvContext, &xPacket,
 			      &xHigherTaskWoken)) {
-	    printf("CAN Rx failed\n");
+	    printf("CAN xQuere full!\n");
 	}
     } else {
 	printf("CAN Rx failed: %d\n", errno);
