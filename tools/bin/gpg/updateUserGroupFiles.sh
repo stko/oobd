@@ -4,7 +4,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo keyring $1
 echo signature $3
-gpg --no-default-keyring --keyring $1 --verify $3.sig
+gpg --status-fd 1 --no-default-keyring --keyring $1 --verify $3.sig | grep "GOODSIG"
 if [ $? -eq 0 ] ; then	
 	echo Signed
 	php $DIR/diffUserGroups.php $2 $3 > $TEMPUSERACCESS
