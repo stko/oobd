@@ -46,7 +46,7 @@
 
 /* some defines only need internally */
 
-#define CMDBUFFERSIZE ( 8 )
+#define CMDBUFFERSIZE ( 10 )
 
 
 extern char *oobd_Error_Text_OS[];
@@ -152,8 +152,8 @@ void odp_rtd_printParam(portBASE_TYPE msgType, void *data,
 	printLF();
 	printEOT();
     } else {
-	createCommandResultMsg(FBID_PROTOCOL_GENERIC,
-			       FBID_PROTOCOL_GENERIC, 0,
+	createCommandResultMsg(FBID_PROTOCOL_SPEC,
+			       FBID_PROTOCOL_SPEC, 0,
 			       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
     }
 }
@@ -195,6 +195,7 @@ void odp_rtd_recvdata(data_packet * p)
     portBASE_TYPE writeBufferIndex = actElement->writeBufferIndex;
     portBASE_TYPE len = actElement->len;
     portBASE_TYPE i;
+    unsigned char seq;
     if (actElement->len < 9) {	// single frame
 	len = len > p->len ? p->len : len;
 	DEBUGPRINT("calculated len: %ld \n", len);
@@ -211,39 +212,52 @@ void odp_rtd_recvdata(data_packet * p)
 		otherBuffer(actElement->writeBufferIndex);
 	}
     } else {
-	unsigned char seq = p->data[0];
-	if ((seq == 0) || (seq == actElement->seqCount + 1)) {	// is that the right next sequence (seq=0 starts from scratch)
-	    if (seq == 0) {
-		actElement->buffer[writeBufferIndex].valid = pdFALSE;
-	    }
-	    if (seq <= actElement->len / 7) {	// if the incoming frame does not exeed the total length
-		len = (seq + 1) * 7 > len ? len - (seq * 7) : 7;	// make sure we write not over the buffer end
-		DEBUGPRINT("calculated multiframe len: %ld \n", len);
-		for (i = 1; len > 0; i++) {
-		    actElement->buffer[writeBufferIndex].data[i - 1 +
-							      (seq *
-							       7)] =
-			p->data[i];
-		    DEBUGPRINT
-			("multi frame: write %02X to index %ld  with remaining length %ld \n",
-			 p->data[i], i - 1 + (seq * 7), len);
-		    len--;
+	switch (actElement->msgType) {
+	case 0:		//custom msg format
+	    seq = p->data[actElement->SeqCountPos];
+	    if ((seq == actElement->SeqCountStart) || (seq == actElement->buffer[writeBufferIndex].lastRecSeq + 1)) {	// is that the right next sequence (seq=0 starts from scratch)
+		if (seq == actElement->SeqCountStart) {
+		    actElement->buffer[writeBufferIndex].valid = pdFALSE;
 		}
-		actElement->seqCount = seq;
-		if (seq == actElement->len / 7) {	//that was the last frame
-		    actElement->buffer[writeBufferIndex].valid = pdTRUE;
-		    actElement->seqCount = 0;	//reset the seqcount for the next time
-		    if (!actElement->buffer[writeBufferIndex].locked) {
-			actElement->writeBufferIndex =
-			    otherBuffer(actElement->writeBufferIndex);
-			DEBUGPRINT("switching buffer to : %ld \n",
-				   actElement->writeBufferIndex);
+		seq -= actElement->SeqCountStart;	//if seq does not start with 0, then correct that offset
+		if (seq <= actElement->len / 7) {	// if the incoming frame does not exeed the total length
+		    len = (seq + 1) * 7 > len ? len - (seq * 7) : 7;	// make sure we write not over the buffer end
+		    DEBUGPRINT("calculated multiframe len: %ld \n", len);
+		    for (i = 1; len > 0; i++) {
+			actElement->buffer[writeBufferIndex].data[i - 1 +
+								  (seq *
+								   7)] =
+			    p->data[i];
+			DEBUGPRINT
+			    ("multi frame: write %02X to index %ld  with remaining length %ld \n",
+			     p->data[i], i - 1 + (seq * 7), len);
+			len--;
+		    }
+		    actElement->buffer[writeBufferIndex].lastRecSeq = seq;
+		    if (seq == actElement->len / 7) {	//that was the last frame
+			actElement->buffer[writeBufferIndex].valid =
+			    pdTRUE;
+			actElement->buffer[writeBufferIndex].lastRecSeq = 0;	//reset the seqcount for the next time
+			if (!actElement->buffer[writeBufferIndex].locked) {
+			    actElement->writeBufferIndex =
+				otherBuffer(actElement->writeBufferIndex);
+			    DEBUGPRINT("switching buffer to : %ld \n",
+				       actElement->writeBufferIndex);
+			}
 		    }
 		}
+	    } else {		// wrong sequence? then reset the seqCount and start from scratch
+		actElement->buffer[writeBufferIndex].lastRecSeq = 0;
+		DEBUGPRINT("seq counter wrong: %d \n", seq);
 	    }
-	} else {		// wrong sequence? then reset the seqCount and start from scratch
-	    actElement->seqCount = 0;
-	    DEBUGPRINT("seq counter wrong: %ld \n", seq);
+	    break;
+
+	case 1:		//ISO-TP format
+	    break;
+
+	default:
+	    break;
+
 	}
     }
 }
@@ -350,7 +364,7 @@ void odp_rtd(void *pvParameters)
 			    dp->data[i];
 		    }
 		} else {
-		    createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+		    createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					   ERR_CODE_RTD_CMD_TOO_LONG_ERR,
 					   ((protocolBuffer->len) +
 					    dp->len),
@@ -381,11 +395,11 @@ void odp_rtd(void *pvParameters)
 			// and here we proceed all command parameters
 		    case PARAM_LISTEN:
 			showBusTransfer = args->args[ARG_VALUE_1];
-			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
 		    default:
-			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_OS_UNKNOWN_COMMAND,
 					       0,
 					       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
@@ -431,6 +445,9 @@ void odp_rtd(void *pvParameters)
 	    case MSG_INIT:
 		if (protocolBuffer != NULL) {
 		    protocolBuffer->len = 0;
+		    portBASE_TYPE i;
+		    for (i = 0; i < CMDBUFFERSIZE; i++)
+			protocolBuffer->data[i] = 0;
 		}
 //<<<< oobdtemple protocol MSG_INIT <<<<
 //>>>> oobdtemple protocol MSG_PROTOCOL_STOP >>>>    
@@ -444,19 +461,6 @@ void odp_rtd(void *pvParameters)
 		/* let's Dance: Starting the transfer protocol */
 //<<<< oobdtemple protocol MSG_SEND_BUFFER <<<<
 		if (protocolBuffer->len > 0) {
-
-// protocolBuffer->data[1] .. protocolBuffer->data[4] = id
-// protocolBuffer->data[5] .. protocolBuffer->data[6] = total length of data telegram  if == 0 (Null) then data length = 8
-// protocolBuffer->data[7]  Position of Sequence counter
-
-
-		    DEBUGPRINT
-			("\n\nprotocolBuffer->data 0x%02x  0x%02x 0x%02x 0x%02x 0x%02x \n 0x%02x  0x%02x\n\n",
-			 protocolBuffer->data[0], protocolBuffer->data[1],
-			 protocolBuffer->data[2], protocolBuffer->data[3],
-			 protocolBuffer->data[4], protocolBuffer->data[5],
-			 protocolBuffer->data[6]);
-
 		    switch (protocolBuffer->data[0]) {
 		    case 0x22:	// Return data from bus
 			if (protocolBuffer->len == 5) {
@@ -472,11 +476,10 @@ void odp_rtd(void *pvParameters)
 				       myRTDElement);
 			    if (myRTDElement != NULL) {
 				/* lock buffer */
-				myRTDElement->
-				    buffer[otherBuffer
-					   (myRTDElement->
-					    writeBufferIndex)].locked =
-				    pdFALSE;
+				myRTDElement->buffer[otherBuffer
+						     (myRTDElement->
+						      writeBufferIndex)].locked
+				    = pdTRUE;
 			    }
 			    ownMsg = createMsg(myRTDElement, 0);
 			    /* add correct print routine; */
@@ -492,7 +495,7 @@ void odp_rtd(void *pvParameters)
 				     'a');
 			    }
 			} else {
-			    createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+			    createCommandResultMsg(FBID_PROTOCOL_SPEC,
 						   ERR_CODE_OS_UNKNOWN_COMMAND,
 						   0,
 						   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
@@ -500,50 +503,59 @@ void odp_rtd(void *pvParameters)
 
 			break;
 		    case 0x27:	// request for new RTD-Element
-			if (protocolBuffer->data[5] > 0
-			    || protocolBuffer->data[6] > 0)
-			    length_data_telegram =
-				(protocolBuffer->data[5] << 8) +
-				protocolBuffer->data[6];
-			else
-			    length_data_telegram = 8;
+			if (protocolBuffer->len < 11) {
+			    portBASE_TYPE ID =
+				(protocolBuffer->data[1] << 24) +
+				(protocolBuffer->data[2] << 16) +
+				(protocolBuffer->data[3] << 8) +
+				protocolBuffer->data[4];
+			    if (protocolBuffer->len > 6) {	// cmd contains length value
 
-			DEBUGPRINT
-			    ("\nprotocolBuffer = 0x27 !\n length_data_telegram = %u \n",
-			     length_data_telegram);
-
-			portBASE_TYPE ID =
-			    (protocolBuffer->data[1] << 24) +
-			    (protocolBuffer->data[2] << 16) +
-			    (protocolBuffer->data[3] << 8) +
-			    protocolBuffer->data[4];
-			if (!findID(FirstRTDElement, ID))	// If ID not in Buffer Create the ID
-			{
-
-			    RTDElement *newElement;
-			    newElement = AppendRtdElement(&FirstRTDElement,
-							  length_data_telegram,
-							  ID);
-			    if (newElement == NULL) {
-				createCommandResultMsg(FBID_PROTOCOL_SPEC,
-						       ERR_CODE_RTD_OOM_ERR,
-						       0,
-						       ERR_CODE_RTD_OOM_ERR_TEXT);
-			    } else {
-				newElement->counterPos =
+				length_data_telegram =
 				    protocolBuffer->len >
-				    7 ? protocolBuffer->data[7] : 0;
-				createCommandResultMsg
-				    (FBID_PROTOCOL_GENERIC,
-				     ERR_CODE_NO_ERR, 0, NULL);
+				    6 ? (protocolBuffer->data[5] << 8) +
+				    protocolBuffer->data[6] : 8;
 			    }
+			    portBASE_TYPE msgType =
+				DEBUGPRINT
+				("\nprotocolBuffer = 0x27 !\n length_data_telegram = %u \n",
+				 length_data_telegram);
 
+			    if (!findID(FirstRTDElement, ID))	// If ID not in Buffer Create the ID
+			    {
 
+				RTDElement *newElement;
+				newElement =
+				    AppendRtdElement(&FirstRTDElement,
+						     length_data_telegram,
+						     ID);
+				if (newElement == NULL) {
+				    createCommandResultMsg
+					(FBID_PROTOCOL_SPEC,
+					 ERR_CODE_RTD_OOM_ERR, 0,
+					 ERR_CODE_RTD_OOM_ERR_TEXT);
+				} else {
+				    newElement->msgType =
+					protocolBuffer->len >
+					7 ? protocolBuffer->data[7] : 0;
+				    newElement->SeqCountPos =
+					protocolBuffer->len >
+					8 ? protocolBuffer->data[8] : 0;
+				    newElement->SeqCountStart =
+					protocolBuffer->len >
+					9 ? protocolBuffer->data[9] : 0;
+
+				    createCommandResultMsg
+					(FBID_PROTOCOL_SPEC,
+					 ERR_CODE_NO_ERR, 0, NULL);
+				}
+
+			    }
 			} else
 			    createCommandResultMsg(FBID_PROTOCOL_SPEC,
-						   ERR_CODE_RTD_ID_EXIST_ERR,
+						   ERR_CODE_OS_COMMAND_NOT_SUPPORTED,
 						   0,
-						   ERR_CODE_RTD_ID_EXIST_ERR_TEXT);
+						   ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
 			break;
 		    default:
 			DEBUGPRINT
@@ -554,21 +566,8 @@ void odp_rtd(void *pvParameters)
 		    }
 
 		    debugDumpElementList(FirstRTDElement);
-
-
-		    /* FK:
-		     * check if the protocolBuffer contains valid data.
-		     * if yes, then:
-		     * if first Byte is 27:  create a new RTD-Element, allocate neccessary memory and add it to 
-		     * the list 
-		     * if first Byte is 22:
-		     * search in the RTDElement list for a matching element. Create output message, if found, otherways
-		     * prepare error messages
-		     */
-
 		    // reset the protocolBuffer to receive the next parameter set
 		    protocolBuffer->len = 0;
-
 		    /* just release the input again */
 		    if (pdPASS !=
 			sendMsg(MSG_SERIAL_RELEASE, inputQueue, NULL)) {
@@ -576,10 +575,14 @@ void odp_rtd(void *pvParameters)
 				   'a');
 		    }
 //>>>> oobdtemple protocol MSG_SEND_BUFFER_2 >>>>    
+		    portBASE_TYPE i;
+		    for (i = 0; i < CMDBUFFERSIZE; i++)
+			protocolBuffer->data[i] = 0;
+
 
 		} else {	/* no data to send? */
 		    createCommandResultMsg
-			(FBID_PROTOCOL_GENERIC, ERR_CODE_NO_ERR, 0, NULL);
+			(FBID_PROTOCOL_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 
 		    /* just release the input again */
 		    if (pdPASS !=

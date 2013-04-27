@@ -86,6 +86,8 @@ typedef struct RTDBuffer {
     portBASE_TYPE timeStamp;
     portBASE_TYPE valid;
     portBASE_TYPE locked;
+    portBASE_TYPE lastRecSeq;
+    portBASE_TYPE lastWrittenPos;
     unsigned char *data;
     // add all elements as needed
 } RTDBUFFER;
@@ -97,8 +99,9 @@ typedef struct RTDElement {
     portBASE_TYPE len;
     portBASE_TYPE id;
     portBASE_TYPE writeBufferIndex;
-    portBASE_TYPE seqCount;
-    portBASE_TYPE counterPos;
+    portBASE_TYPE SeqCountPos;
+    portBASE_TYPE SeqCountStart;
+    portBASE_TYPE msgType;
     struct RTDBuffer buffer[2]	//!< 2 input buffers (double buffering), to have one valid, just filled one and another to be actual filed
 	// add all elements as needed
 } RTDELEMENT;

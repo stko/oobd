@@ -321,7 +321,7 @@ void obp_uds(void *pvParameters)
     //catch the "Protocoll is running" Semaphore
     xSemaphoreTake(protocollBinarySemaphore, portMAX_DELAY);
 
-    DEBUGPRINT("Start Bus nr %d\n", busToUse);
+    DEBUGPRINT("Start Bus nr %ld\n", busToUse);
     /* activate the bus... */
     odbarr[busToUse] ();
     actBus_init();
