@@ -616,6 +616,7 @@ RTDElement *AppendRtdElement(RTDElement ** headRef, portBASE_TYPE size,
     }
     newNode->writeBufferIndex = 0;
     newNode->buffer[0].valid = pdFALSE;
+    newNode->buffer[0].locked = pdFALSE;
     newNode->buffer[0].data = pvPortMalloc(size);
     if (newNode->buffer[0].data == NULL) {
 	DEBUGPRINT
@@ -626,6 +627,7 @@ RTDElement *AppendRtdElement(RTDElement ** headRef, portBASE_TYPE size,
 	return (RTDElement *) NULL;
     }
     newNode->buffer[1].valid = pdFALSE;
+    newNode->buffer[1].locked = pdFALSE;
     newNode->buffer[1].data = pvPortMalloc(size);
     if (newNode->buffer[1].data == NULL) {
 	DEBUGPRINT
