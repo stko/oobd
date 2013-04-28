@@ -188,5 +188,6 @@ void mc_sys_idlehook()
     xTimeToSleep.tv_sec = 1;
     xTimeToSleep.tv_nsec = 0;
     nanosleep(&xTimeToSleep, &xTimeSlept);
+    //DEBUGPRINT("Idle..\n",'a');
 #endif
 }

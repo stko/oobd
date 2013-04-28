@@ -29,47 +29,32 @@
 	OOBD is using FreeRTOS (www.FreeRTOS.org)
 
 */
-
-
 /* OOBD headers. */
 #include "od_config.h"
 #include "od_base.h"
 #include "od_protocols.h"
-
 //<<<< oobdtemple protocol header <<<<
 /**
  * implementation of the Real Time Data protocol
  */
-
 #include "odp_rtd.h"
-
-
 /* some defines only need internally */
-
 #define CMDBUFFERSIZE ( 10 )
-
-
 extern char *oobd_Error_Text_OS[];
-
 RTDElement *FirstRTDElement;
-
-
 //>>>> oobdtemple protocol protocol2bus  >>>>
 /*!
 \brief move data from protocol buffer into the bus send buffer
 */
 //<<<< oobdtemple protocol protocol2bus <<<<
-
 // The Real Time Data (RTD) protocol does not send anything, so there's no function here in place
 // which would create any CAN output
-
 //>>>> oobdtemple protocol bus2protocol  >>>>
 /*!
 \brief move data from bus receive buffer into the protocol receive buffer
 */
 //<<<< oobdtemple protocol bus2protocol <<<<
 // not needed for RTD, because here the whole sorting of received data is already done in the ISR
-
 //>>>> oobdtemple protocol printdata_Buffer  >>>>
 /*!
 \brief prints the received protocol buffer as Hexdump to the serial port
@@ -77,7 +62,6 @@ RTDElement *FirstRTDElement;
 This function is called through the output task, when the protocol sends a MSG_DUMP_BUFFER message to request a buffer dump
 */
 //<<<< oobdtemple protocol printdata_Buffer <<<<
-
 void
 odp_rtd_printdata_Buffer(portBASE_TYPE msgType, void *data,
 			 printChar_cbf printchar)
@@ -98,7 +82,6 @@ odp_rtd_printdata_Buffer(portBASE_TYPE msgType, void *data,
 	portBASE_TYPE bufferIndex;
 	DEBUGPRINT("geht noch 1\n", "a");
 	DEBUGPRINT("Element address %lX\n", myRTDElement);
-
 	bufferIndex = otherBuffer(myRTDElement->writeBufferIndex);
 	if (myRTDElement->buffer[bufferIndex].valid == pdFALSE) {	// the requested CAN- ID is not valid, so we generate a faked general responce error
 	    DEBUGPRINT("geht noch 2\n", "a");
@@ -251,13 +234,10 @@ void odp_rtd_recvdata(data_packet * p)
 		DEBUGPRINT("seq counter wrong: %d \n", seq);
 	    }
 	    break;
-
 	case 1:		//ISO-TP format
 	    break;
-
 	default:
 	    break;
-
 	}
     }
 }
@@ -299,11 +279,9 @@ void odp_rtd(void *pvParameters)
     extern xQueueHandle protocolQueue;
     extern xQueueHandle outputQueue;
     extern xQueueHandle inputQueue;
-
     MsgData *msg;
     MsgData *ownMsg;
     param_data *args;
-
     extern xSemaphoreHandle protocollBinarySemaphore;
     portBASE_TYPE msgType;
     portBASE_TYPE timeout = 0;
@@ -311,7 +289,6 @@ void odp_rtd(void *pvParameters)
     int i;
     //catch the "Protocoll is running" Semaphore
     xSemaphoreTake(protocollBinarySemaphore, portMAX_DELAY);
-
     /* activate the bus... */
     odbarr[busToUse] ();
     actBus_init();
@@ -325,9 +302,7 @@ void odp_rtd(void *pvParameters)
     extern print_cbf printdata_CAN;
     portBASE_TYPE stateMachine_state = 0;
     portBASE_TYPE actBufferPos = 0;
-
     /* Init default parameters */
-
     /* tell the Rx-ISR about the function to use for received data */
     busControl(ODB_CMD_RECV, odp_rtd_recvdata);
     protocolBuffer = createODPBuffer(CMDBUFFERSIZE);
@@ -478,8 +453,8 @@ void odp_rtd(void *pvParameters)
 				/* lock buffer */
 				myRTDElement->buffer[otherBuffer
 						     (myRTDElement->
-						      writeBufferIndex)].locked
-				    = pdTRUE;
+						      writeBufferIndex)].
+				    locked = pdTRUE;
 			    }
 			    ownMsg = createMsg(myRTDElement, 0);
 			    /* add correct print routine; */
@@ -488,8 +463,8 @@ void odp_rtd(void *pvParameters)
 			    CreateEventMsg(MSG_EVENT_PROTOCOL_RECEIVED, 0);
 			    /* forward data to the output task */
 			    if (pdPASS !=
-				sendMsg(MSG_DUMP_BUFFER,
-					outputQueue, ownMsg)) {
+				sendMsg(MSG_DUMP_BUFFER, outputQueue,
+					ownMsg)) {
 				DEBUGPRINT
 				    ("FATAL ERROR: output queue is full!\n",
 				     'a');
@@ -509,18 +484,14 @@ void odp_rtd(void *pvParameters)
 				(protocolBuffer->data[2] << 16) +
 				(protocolBuffer->data[3] << 8) +
 				protocolBuffer->data[4];
-			    if (protocolBuffer->len > 6) {	// cmd contains length value
 
 				length_data_telegram =
 				    protocolBuffer->len >
 				    6 ? (protocolBuffer->data[5] << 8) +
 				    protocolBuffer->data[6] : 8;
-			    }
-			    portBASE_TYPE msgType =
-				DEBUGPRINT
-				("\nprotocolBuffer = 0x27 !\n length_data_telegram = %u \n",
+			    DEBUGPRINT
+				("\nprotocolBuffer = 0x27 !\n length_data_telegram = %d \n",
 				 length_data_telegram);
-
 			    if (!findID(FirstRTDElement, ID))	// If ID not in Buffer Create the ID
 			    {
 
@@ -544,7 +515,8 @@ void odp_rtd(void *pvParameters)
 				    newElement->SeqCountStart =
 					protocolBuffer->len >
 					9 ? protocolBuffer->data[9] : 0;
-
+			    DEBUGPRINT
+				("geht noch...\n",'a');
 				    createCommandResultMsg
 					(FBID_PROTOCOL_SPEC,
 					 ERR_CODE_NO_ERR, 0, NULL);
@@ -562,7 +534,6 @@ void odp_rtd(void *pvParameters)
 			    ("\nprotocolBuffer <> 0x22 or 0x27  Buffer[0] = 0x%x ",
 			     protocolBuffer->data[0]);
 			break;
-
 		    }
 
 		    debugDumpElementList(FirstRTDElement);
@@ -578,12 +549,9 @@ void odp_rtd(void *pvParameters)
 		    portBASE_TYPE i;
 		    for (i = 0; i < CMDBUFFERSIZE; i++)
 			protocolBuffer->data[i] = 0;
-
-
 		} else {	/* no data to send? */
-		    createCommandResultMsg
-			(FBID_PROTOCOL_SPEC, ERR_CODE_NO_ERR, 0, NULL);
-
+		    createCommandResultMsg(FBID_PROTOCOL_SPEC,
+					   ERR_CODE_NO_ERR, 0, NULL);
 		    /* just release the input again */
 		    if (pdPASS !=
 			sendMsg(MSG_SERIAL_RELEASE, inputQueue, NULL)) {
@@ -674,7 +642,7 @@ RTDElement *AppendRtdElement(RTDElement ** headRef, portBASE_TYPE size,
     newNode->next = NULL;
     newNode->id = id;
     newNode->len = size;
-
+    newNode->msgType = -1;
     // in case the list is empty, so this is just the first element
     if (current == NULL) {
 	*headRef = newNode;
@@ -702,7 +670,6 @@ RTDElement *AppendRtdElement(RTDElement ** headRef, portBASE_TYPE size,
     }
 
     return newNode;
-
 }
 
 
@@ -716,7 +683,6 @@ void freeRtdElements(RTDElement ** firstElement)
 	do {
 	    if (rtdBuffer != NULL) {
 		next = rtdBuffer->next;
-
 		if (rtdBuffer->buffer[0].data != NULL) {
 		    vPortFree(rtdBuffer->buffer[0].data);
 		}
@@ -724,7 +690,6 @@ void freeRtdElements(RTDElement ** firstElement)
 		    vPortFree(rtdBuffer->buffer[1].data);
 		}
 		DEBUGPRINT("Clear element buffer %lX\n", rtdBuffer->id);
-
 		vPortFree(rtdBuffer);
 		rtdBuffer = next;
 	    }
@@ -736,18 +701,15 @@ void debugDumpElementList(struct RTDElement *current)
 {
     int count = 0;
     DEBUGPRINT("Dump the actual element list:\n", 'a');
-
     while (current != NULL) {
 	count++;
 	DEBUGPRINT
 	    ("Element  %4lX: Size of  %ld Bytes\n", current->id,
 	     current->len);
-
 	current = current->next;
     }
 
     DEBUGPRINT("Total number of elements %d:\n", count);
-
 }
 
 RTDElement *findID(RTDElement * rtdBuffer, portBASE_TYPE id)
@@ -763,7 +725,6 @@ RTDElement *findID(RTDElement * rtdBuffer, portBASE_TYPE id)
 	return rtdBuffer;
     }
     return NULL;
-
 }
 
 /**! a little help function to make the code easier to read
