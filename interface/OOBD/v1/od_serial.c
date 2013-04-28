@@ -209,7 +209,7 @@ void inputParserTask(void *pvParameters)
 
 	if (MSG_NONE != (msgType = waitMsg(inputQueue, &incomingMsg,
 					   portMAX_DELAY))) {
-            DEBUGPRINT("InputParserTask received msg type %ld\n",msgType);
+	    DEBUGPRINT("InputParserTask received msg type %ld\n", msgType);
 	    switch (msgType) {
 	    case MSG_SERIAL_IN:
 		processFurther = 1;
