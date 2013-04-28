@@ -90,12 +90,12 @@ odp_rtd_printdata_Buffer(portBASE_TYPE msgType, void *data,
 	} else {
 	    DEBUGPRINT("geht noch 3\n", "a");
 	    printser_string("62");
-	    printser_uint32ToHex(myRTDElement->buffer[bufferIndex].
-				 timeStamp);
+	    printser_uint32ToHex(myRTDElement->
+				 buffer[bufferIndex].timeStamp);
 	    int i;
 	    for (i = 0; i < myRTDElement->len; i++) {
-		printser_uint8ToHex(myRTDElement->buffer[bufferIndex].
-				    data[i]);
+		printser_uint8ToHex(myRTDElement->
+				    buffer[bufferIndex].data[i]);
 		if ((i % 8) == 0 && i > 0 && i < myRTDElement->len - 1) {
 		    printLF();
 		}
@@ -216,7 +216,7 @@ void odp_rtd_recvdata(data_packet * p)
 			     p->data[i], i - 1 + (seq * 7), len);
 			len--;
 		    }
-		    actElement->buffer[writeBufferIndex].lastRecSeq = seq;
+		    actElement->buffer[writeBufferIndex].lastRecSeq = seq + actElement->SeqCountStart;	//save actual received seq inclunding its possible offset
 		    if (seq == actElement->len / 7) {	//that was the last frame
 			actElement->buffer[writeBufferIndex].valid =
 			    pdTRUE;
@@ -452,9 +452,8 @@ void odp_rtd(void *pvParameters)
 			    if (myRTDElement != NULL) {
 				/* lock buffer */
 				myRTDElement->buffer[otherBuffer
-						     (myRTDElement->
-						      writeBufferIndex)].
-				    locked = pdTRUE;
+						     (myRTDElement->writeBufferIndex)].locked
+				    = pdTRUE;
 			    }
 			    ownMsg = createMsg(myRTDElement, 0);
 			    /* add correct print routine; */
@@ -485,10 +484,10 @@ void odp_rtd(void *pvParameters)
 				(protocolBuffer->data[3] << 8) +
 				protocolBuffer->data[4];
 
-				length_data_telegram =
-				    protocolBuffer->len >
-				    6 ? (protocolBuffer->data[5] << 8) +
-				    protocolBuffer->data[6] : 8;
+			    length_data_telegram =
+				protocolBuffer->len >
+				6 ? (protocolBuffer->data[5] << 8) +
+				protocolBuffer->data[6] : 8;
 			    DEBUGPRINT
 				("\nprotocolBuffer = 0x27 !\n length_data_telegram = %d \n",
 				 length_data_telegram);
@@ -515,8 +514,7 @@ void odp_rtd(void *pvParameters)
 				    newElement->SeqCountStart =
 					protocolBuffer->len >
 					9 ? protocolBuffer->data[9] : 0;
-			    DEBUGPRINT
-				("geht noch...\n",'a');
+				    DEBUGPRINT("geht noch...\n", 'a');
 				    createCommandResultMsg
 					(FBID_PROTOCOL_SPEC,
 					 ERR_CODE_NO_ERR, 0, NULL);
