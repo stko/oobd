@@ -54,8 +54,6 @@ int iSocketSend = 0, iReturn = 0, iSendTaskList = pdTRUE;
 
 //callback function for received data
 recv_cbf reportReceicedData = NULL;
-/* Send/Receive CAN packets. */
-void prvCANTask(void *pvParameters);
 
 void CAN1_Configuration(uint8_t CAN_BusConfig, uint8_t CAN_ModeConfig);
 
@@ -67,7 +65,6 @@ void CAN1_Configuration(uint8_t CAN_BusConfig, uint8_t CAN_ModeConfig);
 
 
 
-xTaskHandle xprvCANTaskHandle;
 portBASE_TYPE rxCount;
 portBASE_TYPE txCount;
 portBASE_TYPE errCount;
@@ -100,7 +97,7 @@ portBASE_TYPE bus_init_can()
     // Set-up the Receive Queue and open the socket ready to receive. 
     xCANReceiveQueue = xQueueCreate(20, sizeof(struct can_frame));
     iSocketReceive =
-	iSocketOpenCAN(vCANReceiveAndDeliverCallback, xCANReceiveQueue,
+	iSocketOpenCAN(vCANReceiveAndDeliverCallbackOOBD, xCANReceiveQueue,
 		       &xReceiveAddress);
 
     // Remember to open a whole in your Firewall to be able to receive!!!
@@ -123,12 +120,6 @@ portBASE_TYPE bus_init_can()
 	       can_set_bitrate(CAN_INTERFACE, 500000));
 
     if (iSocketSend != 0) {
-	/* Create a Task which waits to receive messages and sends its own when it times out. */
-	xTaskCreate(prvCANTask, "CANRxTx", configMINIMAL_STACK_SIZE, NULL,
-		    TASK_PRIO_MID, &xprvCANTaskHandle);
-
-	/* Remember to open a whole in your Firewall to be able to receive!!! */
-
 	return pdPASS;
     } else {
 
@@ -443,7 +434,6 @@ void bus_close_can()
     reportReceicedData = NULL;
     vSocketClose(iSocketSend);
     vSocketClose(iSocketReceive);
-    vTaskDelete(xprvCANTaskHandle);
     vPortFree(canConfig);
 }
 
@@ -451,47 +441,42 @@ void bus_close_can()
 
 /*-----------------------------------------------------------*/
 
-void prvCANTask(void *pvParameters)
+
+
+void vCANReceiveAndDeliverCallbackOOBD(int iSocket)
 {
     static struct can_frame frame;
+    struct sockaddr_can xReceiveAddress;
     static data_packet dp;
-    //struct sockaddr_in xSendAddress;
-    // int iSocketSend, iReturn = 0, iSendTaskList = pdTRUE;
-    //xQueueHandle xCANReceiveQueue = (xQueueHandle) pvParameters;
-    /* Open a socket for sending. */
-    for (;;) {
-	if (pdPASS ==
-	    xQueueReceive(xCANReceiveQueue, &frame,
-			  2500 / portTICK_RATE_MS)) {
-	    rxCount++;
-	    if (rxCount > 100000) {
+
+    if (sizeof(struct can_frame) ==
+	iSocketCANReceiveISR(iSocket, &frame, &xReceiveAddress)) {
+
+	rxCount++;
+	if (rxCount > 100000) {
+	    rxCount /= 2;
+	    txCount /= 2;
+	    errCount /= 2;
+
+	}
+	/* Data received. Process it. */
+	dp.recv = frame.can_id;	// add the HByte again
+	dp.len = frame.can_dlc;
+	dp.err = frame.can_id && 80000000 != 0;
+	if (dp.err) {
+	    errCount++;
+	    if (errCount > 100000) {
 		rxCount /= 2;
 		txCount /= 2;
 		errCount /= 2;
-
 	    }
-	    /* Data received. Process it. */
-	    dp.recv = frame.can_id;	// add the HByte again
-	    dp.len = frame.can_dlc;
-	    dp.err = 0;		// dammed, real can bus does not allow error simulation anymore :-(
-	    if (dp.err) {
-		errCount++;
-		if (errCount > 100000) {
-		    rxCount /= 2;
-		    txCount /= 2;
-		    errCount /= 2;
-		}
-	    }
-	    dp.data = &frame.data[0];	// data starts here
-	    if (reportReceicedData)
-		reportReceicedData(&dp);
 	}
+	dp.data = &frame.data[0];	// data starts here
+	if (reportReceicedData)
+	    reportReceicedData(&dp);
     }
-
-
-    /* Unable to open the socket. Bail out. */
-    vTaskDelete(NULL);
 }
+
 
 
 

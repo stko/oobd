@@ -90,12 +90,12 @@ odp_rtd_printdata_Buffer(portBASE_TYPE msgType, void *data,
 	} else {
 	    DEBUGPRINT("geht noch 3\n", "a");
 	    printser_string("62");
-	    printser_uint32ToHex(myRTDElement->
-				 buffer[bufferIndex].timeStamp);
+	    printser_uint32ToHex(myRTDElement->buffer[bufferIndex].
+				 timeStamp);
 	    int i;
 	    for (i = 0; i < myRTDElement->len; i++) {
-		printser_uint8ToHex(myRTDElement->
-				    buffer[bufferIndex].data[i]);
+		printser_uint8ToHex(myRTDElement->buffer[bufferIndex].
+				    data[i]);
 		if ((i % 8) == 0 && i > 0 && i < myRTDElement->len - 1) {
 		    printLF();
 		}
@@ -165,7 +165,6 @@ void odp_rtd_recvdata(data_packet * p)
      * 
      * So quite a lot to do here, and all needs to happen as a interrupt service routine before the next can frame comes already in..
      */
-    DEBUGPRINT("ID: %4X len: %d \n", p->recv, p->len);
     actElement = findID(FirstRTDElement, p->recv);
     //searching for the element with the same ID as the received element
     // found the right ID?
@@ -180,19 +179,21 @@ void odp_rtd_recvdata(data_packet * p)
     portBASE_TYPE i;
     unsigned char seq;
     if (actElement->len < 9) {	// single frame
-	len = len > p->len ? p->len : len;
-	DEBUGPRINT("calculated len: %ld \n", len);
-	for (i = 0; len > 0; i++) {
-	    actElement->buffer[writeBufferIndex].data[i] = p->data[i];
-	    DEBUGPRINT
-		("single frame: write %d to index %ld  with remaining length %ld \n",
-		 p->data[i], i, len);
-	    len--;
-	}
-	actElement->buffer[writeBufferIndex].valid = pdTRUE;
-	if (!actElement->buffer[writeBufferIndex].locked) {
-	    actElement->writeBufferIndex =
-		otherBuffer(actElement->writeBufferIndex);
+	if (len == p->len) {	// check if received length equals expected length
+	    for (i = 0; len > 0; i++) {
+		actElement->buffer[writeBufferIndex].data[i] = p->data[i];
+		DEBUGPRINT
+		    ("single frame: write %d to index %ld  with remaining length %ld \n",
+		     p->data[i], i, len);
+		len--;
+	    }
+	    actElement->buffer[writeBufferIndex].valid = pdTRUE;
+	    actElement->buffer[writeBufferIndex].timeStamp =
+		xTaskGetTickCountFromISR();
+	    if (!actElement->buffer[writeBufferIndex].locked) {
+		actElement->writeBufferIndex =
+		    otherBuffer(actElement->writeBufferIndex);
+	    }
 	}
     } else {
 	switch (actElement->msgType) {
@@ -205,7 +206,6 @@ void odp_rtd_recvdata(data_packet * p)
 		seq -= actElement->SeqCountStart;	//if seq does not start with 0, then correct that offset
 		if (seq <= actElement->len / 7) {	// if the incoming frame does not exeed the total length
 		    len = (seq + 1) * 7 > len ? len - (seq * 7) : 7;	// make sure we write not over the buffer end
-		    DEBUGPRINT("calculated multiframe len: %ld \n", len);
 		    for (i = 1; len > 0; i++) {
 			actElement->buffer[writeBufferIndex].data[i - 1 +
 								  (seq *
@@ -220,6 +220,8 @@ void odp_rtd_recvdata(data_packet * p)
 		    if (seq == actElement->len / 7) {	//that was the last frame
 			actElement->buffer[writeBufferIndex].valid =
 			    pdTRUE;
+			actElement->buffer[writeBufferIndex].timeStamp =
+			    xTaskGetTickCountFromISR();
 			actElement->buffer[writeBufferIndex].lastRecSeq = 0;	//reset the seqcount for the next time
 			if (!actElement->buffer[writeBufferIndex].locked) {
 			    actElement->writeBufferIndex =
@@ -435,6 +437,8 @@ void odp_rtd(void *pvParameters)
 	    case MSG_SEND_BUFFER:
 		/* let's Dance: Starting the transfer protocol */
 //<<<< oobdtemple protocol MSG_SEND_BUFFER <<<<
+		DEBUGPRINT("\nprotocolBufferlength: %ld\n",
+			   protocolBuffer->len);
 		if (protocolBuffer->len > 0) {
 		    switch (protocolBuffer->data[0]) {
 		    case 0x22:	// Return data from bus
@@ -452,8 +456,9 @@ void odp_rtd(void *pvParameters)
 			    if (myRTDElement != NULL) {
 				/* lock buffer */
 				myRTDElement->buffer[otherBuffer
-						     (myRTDElement->writeBufferIndex)].locked
-				    = pdTRUE;
+						     (myRTDElement->
+						      writeBufferIndex)].
+				    locked = pdTRUE;
 			    }
 			    ownMsg = createMsg(myRTDElement, 0);
 			    /* add correct print routine; */

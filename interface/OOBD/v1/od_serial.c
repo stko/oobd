@@ -209,7 +209,6 @@ void inputParserTask(void *pvParameters)
 
 	if (MSG_NONE != (msgType = waitMsg(inputQueue, &incomingMsg,
 					   portMAX_DELAY))) {
-	    DEBUGPRINT("InputParserTask received msg type %ld\n", msgType);
 	    switch (msgType) {
 	    case MSG_SERIAL_IN:
 		processFurther = 1;
@@ -262,7 +261,15 @@ void inputParserTask(void *pvParameters)
 			    CreateEventMsg(MSG_EVENT_CMDLINE, 0);
 			    if (dp.len > 0) {
 				sendData(&dp);
-				/* tells the  protocol to send the buffer */
+			    }
+			    // tells the  protocol to send the buffer 
+			    sendMsg(MSG_SEND_BUFFER, protocolQueue, NULL);
+			    actState = S_SLEEP;
+
+
+/*			    if (dp.len > 0) {
+				sendData(&dp);
+				// tells the  protocol to send the buffer 
 				sendMsg(MSG_SEND_BUFFER, protocolQueue,
 					NULL);
 				actState = S_SLEEP;
@@ -272,6 +279,7 @@ void inputParserTask(void *pvParameters)
 				     ERR_CODE_NO_ERR, 0, NULL);
 				actState = S_INIT;
 			    }
+			    */
 			} else {	/* check for valid input */
 			    if (inChar < 16) {	/* valid char, already as it's hex value */
 				if (totalInCount == 0) {	/* reset the protocol */
