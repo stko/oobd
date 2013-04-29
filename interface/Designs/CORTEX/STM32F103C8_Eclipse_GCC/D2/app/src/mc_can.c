@@ -81,7 +81,7 @@ portBASE_TYPE bus_init_can()
     canConfig->bus = VALUE_BUS_MODE_SILENT;	/* default */
     canConfig->busConfig = VALUE_BUS_CONFIG_11bit_500kbit;	/* default */
 
-    /* Enable CAN1 Receive interrupts for UDS protocol */
+    /* Enable CAN1 Transmit interrupts for CAN messages */
     NVIC_InitStructure.NVIC_IRQChannel = USB_HP_CAN1_TX_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
 	= (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
@@ -89,8 +89,7 @@ portBASE_TYPE bus_init_can()
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 
-    if (startupProtocol == VALUE_PARAM_PROTOCOL_CAN_UDS) {
-	/* Enable CAN1 Receive interrupts for UDS protocol */
+	/* Enable CAN1 Receive interrupts for CAN messages */
 	NVIC_InitStructure.NVIC_IRQChannel = USB_LP_CAN1_RX0_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
 	    = (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
@@ -98,14 +97,13 @@ portBASE_TYPE bus_init_can()
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
-	/* Enable CAN1 Receive error interrupts for UDS protocol */
+	/* Enable CAN1 Receive error interrupts for CAN messages */
 	NVIC_InitStructure.NVIC_IRQChannel = CAN1_SCE_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
 	    = (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
-    }
 
     return pdPASS;
 }
@@ -557,7 +555,6 @@ portBASE_TYPE bus_param_can_spec(param_data * args)
 
 void bus_close_can()
 {
-
     NVIC_InitTypeDef NVIC_InitStructure;
 
     reportReceivedData = NULL;
@@ -570,7 +567,7 @@ void bus_close_can()
     NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
     NVIC_Init(&NVIC_InitStructure);
 
-    /* Disable CAN1 Receive interrupts for UDS protocol */
+    /* Disable CAN1 Receive interrupts for CAN messages */
     NVIC_InitStructure.NVIC_IRQChannel = USB_HP_CAN1_TX_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
 	= (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
@@ -578,6 +575,13 @@ void bus_close_can()
     NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
     NVIC_Init(&NVIC_InitStructure);
 
+	/* Disable CAN1 Receive error interrupts for CAN messages */
+	NVIC_InitStructure.NVIC_IRQChannel = CAN1_SCE_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
+	    = (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
+	NVIC_Init(&NVIC_InitStructure);
 }
 
 /*----------------------------------------------------------------------------*/

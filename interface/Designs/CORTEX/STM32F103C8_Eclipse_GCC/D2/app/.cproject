@@ -108,8 +108,8 @@
 					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1247246876" name="stm32f10x_bkp.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_bkp.h" toolsToInvoke=""/>
 					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.162889212" name="stm32f10x_cec.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_cec.h" toolsToInvoke=""/>
 					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.2121547152" name="stm32f10x_fsmc.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_fsmc.h" toolsToInvoke=""/>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1820036697" name="stm32f10x_dbgmcu.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_dbgmcu.h" toolsToInvoke=""/>
 					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1307654681" name="stm32f10x_dac.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_dac.h" toolsToInvoke=""/>
+					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1820036697" name="stm32f10x_dbgmcu.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_dbgmcu.h" toolsToInvoke=""/>
 					<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.186635418" name="/" resourcePath="Demo/POSIX_GCC">
 						<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug.1108738937" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug" unusedChildren="">
 							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1365641232.716788401" name="Debug level"/>
