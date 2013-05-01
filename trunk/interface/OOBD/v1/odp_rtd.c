@@ -202,33 +202,35 @@ void odp_rtd_recvdata(data_packet * p)
 	    if ((seq == actElement->SeqCountStart) || (seq == actElement->buffer[writeBufferIndex].lastRecSeq + 1)) {	// is that the right next sequence (seq=0 starts from scratch)
 		if (seq == actElement->SeqCountStart) {
 		    actElement->buffer[writeBufferIndex].valid = pdFALSE;
+		    actElement->buffer[writeBufferIndex].lastWrittenPos =
+			0;
 		}
-		seq -= actElement->SeqCountStart;	//if seq does not start with 0, then correct that offset
-		if (seq <= actElement->len / 7) {	// if the incoming frame does not exeed the total length
-		    len = (seq + 1) * 7 > len ? len - (seq * 7) : 7;	// make sure we write not over the buffer end
-		    for (i = 1; len > 0; i++) {
-			actElement->buffer[writeBufferIndex].data[i - 1 +
-								  (seq *
-								   7)] =
-			    p->data[i];
-			DEBUGPRINT
-			    ("multi frame: write %02X to index %ld  with remaining length %ld \n",
-			     p->data[i], i - 1 + (seq * 7), len);
-			len--;
-		    }
-		    actElement->buffer[writeBufferIndex].lastRecSeq = seq + actElement->SeqCountStart;	//save actual received seq inclunding its possible offset
-		    if (seq == actElement->len / 7) {	//that was the last frame
-			actElement->buffer[writeBufferIndex].valid =
-			    pdTRUE;
-			actElement->buffer[writeBufferIndex].timeStamp =
-			    xTaskGetTickCountFromISR();
-			actElement->buffer[writeBufferIndex].lastRecSeq = 0;	//reset the seqcount for the next time
-			if (!actElement->buffer[writeBufferIndex].locked) {
-			    actElement->writeBufferIndex =
-				otherBuffer(actElement->writeBufferIndex);
-			    DEBUGPRINT("switching buffer to : %ld \n",
-				       actElement->writeBufferIndex);
-			}
+		for (i = 1;
+		     i < p->len
+		     && actElement->
+		     buffer[writeBufferIndex].lastWrittenPos <
+		     actElement->len; i++) {
+		    DEBUGPRINT
+			("custom multi frame: sequence %02X: write %02X to index %ld\n",
+			 seq, p->data[i],
+			 actElement->
+			 buffer[writeBufferIndex].lastWrittenPos);
+		    actElement->buffer[writeBufferIndex].
+			data[actElement->buffer
+			     [writeBufferIndex].lastWrittenPos++]
+			= p->data[i];
+		}
+		actElement->buffer[writeBufferIndex].lastRecSeq = seq;	//save actual received seq
+		if (actElement->buffer[writeBufferIndex].lastWrittenPos >= actElement->len) {	//that was the last frame
+		    actElement->buffer[writeBufferIndex].valid = pdTRUE;
+		    actElement->buffer[writeBufferIndex].timeStamp =
+			xTaskGetTickCountFromISR();
+		    actElement->buffer[writeBufferIndex].lastRecSeq = 0;	//reset the seqcount for the next time
+		    if (!actElement->buffer[writeBufferIndex].locked) {
+			actElement->writeBufferIndex =
+			    otherBuffer(actElement->writeBufferIndex);
+			DEBUGPRINT("switching buffer to : %ld \n",
+				   actElement->writeBufferIndex);
 		    }
 		}
 	    } else {		// wrong sequence? then reset the seqCount and start from scratch
@@ -237,6 +239,60 @@ void odp_rtd_recvdata(data_packet * p)
 	    }
 	    break;
 	case 1:		//ISO-TP format
+	    seq = p->data[0];
+	    DEBUGPRINT("seq %02X , masked seq %02X , las seq %02X\n", seq,
+		       seq & 0xF0,
+		       actElement->buffer[writeBufferIndex].lastRecSeq);
+	    if (((seq & 0xF0) == 0x10) ||	//First Frame
+		(((seq & 0xF0) == 0x20) &&
+		 ((seq ==
+		   actElement->buffer[writeBufferIndex].lastRecSeq + 1)
+		  || ((actElement->buffer[writeBufferIndex].lastRecSeq ==
+		       0x2F) && (seq == 0x20))
+		 )
+		)
+		) {		// is that the right next sequence (seq=0 starts from scratch)
+		if ((seq & 0xF0) == 0x10) {
+		    actElement->buffer[writeBufferIndex].valid = pdFALSE;
+		    actElement->buffer[writeBufferIndex].lastWrittenPos =
+			0;
+		}
+		for (i = ((seq & 0xF0) == 0x10) ? 2 : 1;
+		     i < p->len
+		     && actElement->
+		     buffer[writeBufferIndex].lastWrittenPos <
+		     actElement->len; i++) {
+		    DEBUGPRINT
+			("ISO-TP frame: sequence %02X: write %02X to index %ld\n",
+			 seq, p->data[i],
+			 actElement->
+			 buffer[writeBufferIndex].lastWrittenPos);
+		    actElement->buffer[writeBufferIndex].
+			data[actElement->buffer
+			     [writeBufferIndex].lastWrittenPos++]
+			= p->data[i];
+		}
+		if ((seq & 0xF0) == 0x10) {
+		    actElement->buffer[writeBufferIndex].lastRecSeq = 0x20;
+		} else {
+		    actElement->buffer[writeBufferIndex].lastRecSeq = seq;	//save actual received seq
+		}
+		if (actElement->buffer[writeBufferIndex].lastWrittenPos >= actElement->len) {	//that was the last frame
+		    actElement->buffer[writeBufferIndex].valid = pdTRUE;
+		    actElement->buffer[writeBufferIndex].timeStamp =
+			xTaskGetTickCountFromISR();
+		    actElement->buffer[writeBufferIndex].lastRecSeq = 0;	//reset the seqcount for the next time
+		    if (!actElement->buffer[writeBufferIndex].locked) {
+			actElement->writeBufferIndex =
+			    otherBuffer(actElement->writeBufferIndex);
+			DEBUGPRINT("switching buffer to : %ld \n",
+				   actElement->writeBufferIndex);
+		    }
+		}
+	    } else {		// wrong sequence? then reset the seqCount and start from scratch
+		actElement->buffer[writeBufferIndex].lastRecSeq = 0;
+		DEBUGPRINT("seq counter wrong: %d \n", seq);
+	    }
 	    break;
 	default:
 	    break;
@@ -713,7 +769,6 @@ void debugDumpElementList(struct RTDElement *current)
 	     current->len);
 	current = current->next;
     }
-
     DEBUGPRINT("Total number of elements %d:\n", count);
 }
 
