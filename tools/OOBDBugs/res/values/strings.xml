@@ -18,14 +18,14 @@
 
 <resources>
 
-    <string name="app_name">NetworkUsage</string>
+    <string name="app_name">OOBDBugs</string>
 
     <!--  Menu items -->
     <string name="settings">Settings</string>
     <string name="refresh">Refresh</string>
 
     <!--  NetworkActivity -->
-    <string name="page_title">Newest StackOverflow questions tagged \'android\'</string>
+    <string name="page_title">Actual OOBD Bugs</string>
     <string name="updated">Last updated:</string>
     <string name="lost_connection">Lost connection.</string>
     <string name="wifi_connected">Wi-Fi reconnected.</string>
