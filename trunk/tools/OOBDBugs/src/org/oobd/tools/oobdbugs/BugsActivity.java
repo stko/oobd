@@ -65,11 +65,11 @@ import java.util.List;
  * o Monitors preferences and the device's network connection to determine whether
  *   to refresh the WebView content.
  */
-public class NetworkActivity extends Activity {
+public class BugsActivity extends Activity {
     public static final String WIFI = "Wi-Fi";
     public static final String ANY = "Any";
-    private static final String URL =
-            "http://stackoverflow.com/feeds/tag?tagnames=android&sort=newest";
+ //   private static final String URL =            "http://stackoverflow.com/feeds/tag?tagnames=android&sort=newest";
+    private static final String URL =            "https://code.google.com/feeds/issues/p/oobd/issues/full";
 
     // Whether there is a Wi-Fi connection.
     private static boolean wifiConnected = false;
@@ -163,9 +163,11 @@ public class NetworkActivity extends Activity {
 
         // The specified network connection is not available. Displays error message.
         WebView myWebView = (WebView) findViewById(R.id.webview);
-        myWebView.loadData(getResources().getString(R.string.connection_error),
-                "text/html", null);
-    }
+//        myWebView.loadData(getResources().getString(R.string.connection_error),"text/html", null);
+//        myWebView.loadData(getResources().getString(R.string.connection_error), "text/html; charset=utf-8", null);
+//        myWebView.loadData(getResources().getString(R.string.connection_error), "text/html", "utf-8");
+        myWebView.loadDataWithBaseURL(null, getResources().getString(R.string.connection_error), "text/html", "UTF-8", null);
+        }
 
     // Populates the activity's options menu.
     @Override
@@ -210,7 +212,9 @@ public class NetworkActivity extends Activity {
             setContentView(R.layout.main);
             // Displays the HTML string in the UI via a WebView
             WebView myWebView = (WebView) findViewById(R.id.webview);
-            myWebView.loadData(result, "text/html", null);
+            myWebView.loadDataWithBaseURL(null, result, "text/html", "UTF-8", null);
+
+           // myWebView.loadData(result, "text/html", null);
         }
     }
 
