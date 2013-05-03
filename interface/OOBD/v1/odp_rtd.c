@@ -93,14 +93,17 @@ odp_rtd_printdata_Buffer(portBASE_TYPE msgType, void *data,
 	    printser_uint32ToHex(myRTDElement->buffer[bufferIndex].
 				 timeStamp);
 	    int i;
-	    for (i = 0; i < myRTDElement->len; i++) {
+	    for (i = 0; i < myRTDElement->buffer[bufferIndex].len; i++) {
 		printser_uint8ToHex(myRTDElement->buffer[bufferIndex].
 				    data[i]);
-		if ((i % 8) == 0 && i > 0 && i < myRTDElement->len - 1) {
+		if ((i % 8) == 0 && i > 0
+		    && i < myRTDElement->buffer[bufferIndex].len - 1) {
 		    printLF();
 		}
 	    }
-	    if (!((i % 8) == 0 && i > 0 && i < myRTDElement->len - 1)) {
+	    if (!
+		((i % 8) == 0 && i > 0
+		 && i < myRTDElement->buffer[bufferIndex].len - 1)) {
 		printLF();
 	    }
 	}
@@ -172,13 +175,16 @@ void odp_rtd_recvdata(data_packet * p)
 	return;
     }
     DEBUGPRINT("Found ID : %4X len: %ld \n", p->recv, p->len);
-    DEBUGPRINT("Element len: %ld \n", actElement->len);
-    //is it a one-frame message or a multiframe?
     portBASE_TYPE writeBufferIndex = actElement->writeBufferIndex;
-    portBASE_TYPE len = actElement->len;
+    DEBUGPRINT("Element len: %ld \n",
+	       actElement->buffer[writeBufferIndex].len);
+    portBASE_TYPE len = actElement->buffer[writeBufferIndex].len;
     portBASE_TYPE i;
+    portBASE_TYPE newLen;
     unsigned char seq;
-    if (actElement->len < 9) {	// single frame
+
+    switch (actElement->msgType) {
+    case 0:			//single frames
 	if (len == p->len) {	// check if received length equals expected length
 	    for (i = 0; len > 0; i++) {
 		actElement->buffer[writeBufferIndex].data[i] = p->data[i];
@@ -195,73 +201,84 @@ void odp_rtd_recvdata(data_packet * p)
 		    otherBuffer(actElement->writeBufferIndex);
 	    }
 	}
-    } else {
-	switch (actElement->msgType) {
-	case 0:		//custom msg format
-	    seq = p->data[actElement->SeqCountPos];
-	    if ((seq == actElement->SeqCountStart) || (seq == actElement->buffer[writeBufferIndex].lastRecSeq + 1)) {	// is that the right next sequence (seq=0 starts from scratch)
-		if (seq == actElement->SeqCountStart) {
-		    actElement->buffer[writeBufferIndex].valid = pdFALSE;
-		    actElement->buffer[writeBufferIndex].lastWrittenPos =
-			0;
+	break;
+    case 1:			//custom msg format
+	seq = p->data[actElement->SeqCountPos];
+	if ((seq == actElement->SeqCountStart) || (seq == actElement->buffer[writeBufferIndex].lastRecSeq + 1)) {	// is that the right next sequence (seq=0 starts from scratch)
+	    if (seq == actElement->SeqCountStart) {
+		actElement->buffer[writeBufferIndex].valid = pdFALSE;
+		actElement->buffer[writeBufferIndex].lastWrittenPos = 0;
+	    }
+	    for (i = 1;
+		 i < p->len
+		 && actElement->buffer[writeBufferIndex].lastWrittenPos <
+		 len; i++) {
+		DEBUGPRINT
+		    ("custom multi frame: sequence %02X: write %02X to index %ld\n",
+		     seq, p->data[i],
+		     actElement->buffer[writeBufferIndex].lastWrittenPos);
+		actElement->buffer[writeBufferIndex].
+		    data[actElement->buffer
+			 [writeBufferIndex].lastWrittenPos++]
+		    = p->data[i];
+	    }
+	    actElement->buffer[writeBufferIndex].lastRecSeq = seq;	//save actual received seq
+	    if (actElement->buffer[writeBufferIndex].lastWrittenPos >= len) {	//that was the last frame
+		actElement->buffer[writeBufferIndex].valid = pdTRUE;
+		actElement->buffer[writeBufferIndex].timeStamp =
+		    xTaskGetTickCountFromISR();
+		actElement->buffer[writeBufferIndex].lastRecSeq = 0;	//reset the seqcount for the next time
+		if (!actElement->buffer[writeBufferIndex].locked) {
+		    actElement->writeBufferIndex =
+			otherBuffer(actElement->writeBufferIndex);
+		    DEBUGPRINT("switching buffer to : %ld \n",
+			       actElement->writeBufferIndex);
 		}
-		for (i = 1;
-		     i < p->len
-		     && actElement->
-		     buffer[writeBufferIndex].lastWrittenPos <
-		     actElement->len; i++) {
-		    DEBUGPRINT
-			("custom multi frame: sequence %02X: write %02X to index %ld\n",
-			 seq, p->data[i],
-			 actElement->
-			 buffer[writeBufferIndex].lastWrittenPos);
-		    actElement->buffer[writeBufferIndex].
-			data[actElement->buffer
-			     [writeBufferIndex].lastWrittenPos++]
-			= p->data[i];
-		}
-		actElement->buffer[writeBufferIndex].lastRecSeq = seq;	//save actual received seq
-		if (actElement->buffer[writeBufferIndex].lastWrittenPos >= actElement->len) {	//that was the last frame
-		    actElement->buffer[writeBufferIndex].valid = pdTRUE;
-		    actElement->buffer[writeBufferIndex].timeStamp =
-			xTaskGetTickCountFromISR();
-		    actElement->buffer[writeBufferIndex].lastRecSeq = 0;	//reset the seqcount for the next time
-		    if (!actElement->buffer[writeBufferIndex].locked) {
-			actElement->writeBufferIndex =
-			    otherBuffer(actElement->writeBufferIndex);
-			DEBUGPRINT("switching buffer to : %ld \n",
-				   actElement->writeBufferIndex);
+	    }
+	} else {		// wrong sequence? then reset the seqCount and start from scratch
+	    actElement->buffer[writeBufferIndex].lastRecSeq = 0;
+	    DEBUGPRINT("seq counter wrong: %d \n", seq);
+	}
+	break;
+    case 2:			//ISO-TP format
+	seq = p->data[0];
+	DEBUGPRINT("seq %02X , masked seq %02X , las seq %02X\n", seq,
+		   seq & 0xF0,
+		   actElement->buffer[writeBufferIndex].lastRecSeq);
+	if (((seq & 0xF0) == 0x10) ||	//First Frame
+	    (((seq & 0xF0) == 0x20) &&
+	     ((seq == actElement->buffer[writeBufferIndex].lastRecSeq + 1)
+	      || ((actElement->buffer[writeBufferIndex].lastRecSeq ==
+		   0x2F) && (seq == 0x20))
+	     )
+	    )
+	    ) {			// is that the right next sequence (seq=0 starts from scratch)
+	    if ((seq & 0xF0) == 0x10) {
+		actElement->buffer[writeBufferIndex].valid = pdFALSE;
+		actElement->buffer[writeBufferIndex].lastWrittenPos = 0;
+		// let's see if we have to adjust the Fuufer size....
+		newLen = (seq & 0x0F) * 256 + p->data[0];
+		if (actElement->buffer[writeBufferIndex].len != newLen) {
+		    DEBUGPRINT("old len: %02X new len %20X\n",
+			       actElement->buffer[writeBufferIndex].len,
+			       newLen);
+		    if (actElement->buffer[writeBufferIndex].data != NULL) {
+			vPortFree(actElement->
+				  buffer[writeBufferIndex].data);
+		    }
+		    actElement->buffer[writeBufferIndex].data =
+			pvPortMalloc(newLen);
+		    if (actElement->buffer[writeBufferIndex].data != NULL) {
+			actElement->buffer[writeBufferIndex].len = newLen;
+			len = newLen;
 		    }
 		}
-	    } else {		// wrong sequence? then reset the seqCount and start from scratch
-		actElement->buffer[writeBufferIndex].lastRecSeq = 0;
-		DEBUGPRINT("seq counter wrong: %d \n", seq);
 	    }
-	    break;
-	case 1:		//ISO-TP format
-	    seq = p->data[0];
-	    DEBUGPRINT("seq %02X , masked seq %02X , las seq %02X\n", seq,
-		       seq & 0xF0,
-		       actElement->buffer[writeBufferIndex].lastRecSeq);
-	    if (((seq & 0xF0) == 0x10) ||	//First Frame
-		(((seq & 0xF0) == 0x20) &&
-		 ((seq ==
-		   actElement->buffer[writeBufferIndex].lastRecSeq + 1)
-		  || ((actElement->buffer[writeBufferIndex].lastRecSeq ==
-		       0x2F) && (seq == 0x20))
-		 )
-		)
-		) {		// is that the right next sequence (seq=0 starts from scratch)
-		if ((seq & 0xF0) == 0x10) {
-		    actElement->buffer[writeBufferIndex].valid = pdFALSE;
-		    actElement->buffer[writeBufferIndex].lastWrittenPos =
-			0;
-		}
+	    if (actElement->buffer[writeBufferIndex].data != NULL) {
 		for (i = ((seq & 0xF0) == 0x10) ? 2 : 1;
 		     i < p->len
 		     && actElement->
-		     buffer[writeBufferIndex].lastWrittenPos <
-		     actElement->len; i++) {
+		     buffer[writeBufferIndex].lastWrittenPos < len; i++) {
 		    DEBUGPRINT
 			("ISO-TP frame: sequence %02X: write %02X to index %ld\n",
 			 seq, p->data[i],
@@ -277,7 +294,7 @@ void odp_rtd_recvdata(data_packet * p)
 		} else {
 		    actElement->buffer[writeBufferIndex].lastRecSeq = seq;	//save actual received seq
 		}
-		if (actElement->buffer[writeBufferIndex].lastWrittenPos >= actElement->len) {	//that was the last frame
+		if (actElement->buffer[writeBufferIndex].lastWrittenPos >= len) {	//that was the last frame
 		    actElement->buffer[writeBufferIndex].valid = pdTRUE;
 		    actElement->buffer[writeBufferIndex].timeStamp =
 			xTaskGetTickCountFromISR();
@@ -289,14 +306,17 @@ void odp_rtd_recvdata(data_packet * p)
 				   actElement->writeBufferIndex);
 		    }
 		}
-	    } else {		// wrong sequence? then reset the seqCount and start from scratch
-		actElement->buffer[writeBufferIndex].lastRecSeq = 0;
-		DEBUGPRINT("seq counter wrong: %d \n", seq);
+	    } else {
+		actElement->buffer[writeBufferIndex].len = 0;
 	    }
-	    break;
-	default:
-	    break;
+
+	} else {		// wrong sequence? then reset the seqCount and start from scratch
+	    actElement->buffer[writeBufferIndex].lastRecSeq = 0;
+	    DEBUGPRINT("seq counter wrong: %d \n", seq);
 	}
+	break;
+    default:
+	break;
     }
 }
 
@@ -545,16 +565,16 @@ void odp_rtd(void *pvParameters)
 				(protocolBuffer->data[3] << 8) +
 				protocolBuffer->data[4];
 
-			    length_data_telegram =
-				protocolBuffer->len >
-				6 ? (protocolBuffer->data[5] << 8) +
-				protocolBuffer->data[6] : 8;
 			    DEBUGPRINT
 				("\nprotocolBuffer = 0x27 !\n length_data_telegram = %d \n",
 				 length_data_telegram);
 			    if (!findID(FirstRTDElement, ID))	// If ID not in Buffer Create the ID
 			    {
 
+				length_data_telegram =
+				    protocolBuffer->len >
+				    7 ? (protocolBuffer->data[6] << 8) +
+				    protocolBuffer->data[7] : 8;
 				RTDElement *newElement;
 				newElement =
 				    AppendRtdElement(&FirstRTDElement,
@@ -568,19 +588,22 @@ void odp_rtd(void *pvParameters)
 				} else {
 				    newElement->msgType =
 					protocolBuffer->len >
-					7 ? protocolBuffer->data[7] : 0;
+					5 ? protocolBuffer->data[5] : 0;
 				    newElement->SeqCountPos =
 					protocolBuffer->len >
 					8 ? protocolBuffer->data[8] : 0;
 				    newElement->SeqCountStart =
 					protocolBuffer->len >
 					9 ? protocolBuffer->data[9] : 0;
-				    DEBUGPRINT("geht noch...\n", 'a');
 				    createCommandResultMsg
 					(FBID_PROTOCOL_SPEC,
 					 ERR_CODE_NO_ERR, 0, NULL);
 				}
-
+			    } else {
+				createCommandResultMsg(FBID_PROTOCOL_SPEC,
+						       ERR_CODE_RTD_ID_EXIST_ERR,
+						       0,
+						       ERR_CODE_RTD_ID_EXIST_ERR_TEXT);
 			    }
 			} else
 			    createCommandResultMsg(FBID_PROTOCOL_SPEC,
@@ -590,7 +613,7 @@ void odp_rtd(void *pvParameters)
 			break;
 		    default:
 			DEBUGPRINT
-			    ("\nprotocolBuffer <> 0x22 or 0x27  Buffer[0] = 0x%x ",
+			    ("protocolBuffer <> 0x22 or 0x27  Buffer[0] = 0x%x\n",
 			     protocolBuffer->data[0]);
 			break;
 		    }
@@ -678,31 +701,38 @@ RTDElement *AppendRtdElement(RTDElement ** headRef, portBASE_TYPE size,
     newNode->writeBufferIndex = 0;
     newNode->buffer[0].valid = pdFALSE;
     newNode->buffer[0].locked = pdFALSE;
-    newNode->buffer[0].data = pvPortMalloc(size);
-    if (newNode->buffer[0].data == NULL) {
-	DEBUGPRINT
-	    ("Fatal error: Not enough heap to allocate Buffer 0  in AppendRtdElement!\n",
-	     'a');
-	// free the Bufferelement itself
-	vPortFree(newNode);
-	return (RTDElement *) NULL;
+    newNode->buffer[0].len = size;
+    newNode->buffer[0].data = NULL;
+    if (size != 0) {
+	newNode->buffer[0].data = pvPortMalloc(size);
+	if (newNode->buffer[0].data == NULL) {
+	    DEBUGPRINT
+		("Fatal error: Not enough heap to allocate Buffer 0  in AppendRtdElement!\n",
+		 'a');
+	    // free the Bufferelement itself
+	    vPortFree(newNode);
+	    return (RTDElement *) NULL;
+	}
     }
     newNode->buffer[1].valid = pdFALSE;
     newNode->buffer[1].locked = pdFALSE;
-    newNode->buffer[1].data = pvPortMalloc(size);
-    if (newNode->buffer[1].data == NULL) {
-	DEBUGPRINT
-	    ("Fatal error: Not enough heap to allocate Buffer 1  in AppendRtdElement!\n",
-	     'a');
-	// free the Buffer 0 first
-	vPortFree(newNode->buffer[0].data);
-	// free the Bufferelement itself
-	vPortFree(newNode);
-	return (RTDElement *) NULL;
+    newNode->buffer[1].len = size;
+    newNode->buffer[1].data = NULL;
+    if (size != 0) {
+	newNode->buffer[1].data = pvPortMalloc(size);
+	if (newNode->buffer[1].data == NULL) {
+	    DEBUGPRINT
+		("Fatal error: Not enough heap to allocate Buffer 1  in AppendRtdElement!\n",
+		 'a');
+	    // free the Buffer 0 first
+	    vPortFree(newNode->buffer[0].data);
+	    // free the Bufferelement itself
+	    vPortFree(newNode);
+	    return (RTDElement *) NULL;
+	}
     }
     newNode->next = NULL;
     newNode->id = id;
-    newNode->len = size;
     newNode->msgType = -1;
     // in case the list is empty, so this is just the first element
     if (current == NULL) {
@@ -766,7 +796,7 @@ void debugDumpElementList(struct RTDElement *current)
 	count++;
 	DEBUGPRINT
 	    ("Element  %4lX: Size of  %ld Bytes\n", current->id,
-	     current->len);
+	     current->buffer[current->writeBufferIndex].len);
 	current = current->next;
     }
     DEBUGPRINT("Total number of elements %d:\n", count);
