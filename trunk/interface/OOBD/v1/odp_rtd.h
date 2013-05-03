@@ -49,7 +49,7 @@ void obd_rtd_init();
 
 //! RTD protocol Error constants and texts
 #define ERR_CODE_RTD_CMD_TOO_LONG_ERR 1
-#define ERR_CODE_RTD_CMD_TOO_LONG_ERR_TEXT "out of Memory"
+#define ERR_CODE_RTD_CMD_TOO_LONG_ERR_TEXT "Command too long"
 #define ERR_CODE_RTD_OOM_ERR 2
 #define ERR_CODE_RTD_OOM_ERR_TEXT "out of Memory"
 #define ERR_CODE_RTD_ID_EXIST_ERR 3
@@ -83,6 +83,7 @@ void obd_rtd_init();
 
 
 typedef struct RTDBuffer {
+    portBASE_TYPE len;
     portBASE_TYPE timeStamp;
     portBASE_TYPE valid;
     portBASE_TYPE locked;
@@ -96,7 +97,6 @@ typedef struct RTDBuffer RTDBuffer;
 
 typedef struct RTDElement {
     struct RTDElement *prev, *next;	//!< list pointers
-    portBASE_TYPE len;
     portBASE_TYPE id;
     portBASE_TYPE writeBufferIndex;
     portBASE_TYPE SeqCountPos;
