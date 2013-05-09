@@ -1,0 +1,268 @@
+<HTML>
+  <HEAD>
+    <TITLE>OOBDCopyShop by OOBD.org</TITLE>
+    <HTA:APPLICATION ID="OOBDCopyShop"
+       APPLICATIONNAME="OOBDCopyShop"
+       border="thin" borderstyle="static"
+       caption="yes" contextmenu="yes"
+       icon="oobd.ico" innerborder="no"
+       maximizebutton="no" minimizebutton="no"
+       navigable="yes" scroll="auto"
+       scrollflat="yes" selection="yes"
+       showintaskbar="no" singleinstance="yes"
+       sysmenu="yes" version="1.0"
+       windowState="normal" />
+  
+<SCRIPT Language="VBScript">
+option explicit
+Dim wshShell, fso, WshEnv
+
+' onClick-Routine für den "sourceDir"-Button
+sub browseSource
+	Dim aShell, shFld
+	Set aShell = CreateObject("Shell.Application")
+	' Den Standard-Ordner-Dialog anzeigen
+	set shFld = aShell.BrowseForFolder(0, "Select the path to the OOBD Script source main directory", 65)
+	if not (shFld Is nothing) then ' Abbrechen gedrückt?
+		SourceDir.innerText = shFld.Self.Path
+	end if
+	DeEnableUI
+end sub
+
+' onClick-Routine für den "Targetdir"-Button
+sub browseTarget
+	Dim aShell, shFld
+	Set aShell = CreateObject("Shell.Application")
+	' Den Standard-Ordner-Dialog anzeigen
+	set shFld = aShell.BrowseForFolder(0, "Select the path to your OOBD Script storage place", 65)
+	if not (shFld Is nothing) then ' Abbrechen gedrückt?
+		targetDir.innerText = shFld.Self.Path
+			if not fso.FileExists(targetDir.Value & "\OOBDgroups.lst") then 
+		MsgBox("No OOBDGroups.lst found in "&targetDir.Value & "\OOBDgroups.lst"&"!"&vbCRLF&"Please make sure that your Storage place also contains your OOBDgroups.lst -file!")
+		'Window.close
+	end if
+
+	end if
+	DeEnableUI
+end sub
+
+function copyf(filename, destdir)
+	If fso.FileExists(filename) Then
+		fso.CopyFile filename, DestDir
+		If Err <> 0 Then
+			MsgBox "Unable to copy file " & filename & ":" & Err.Description
+			Err.Clear
+			copyf=false
+		else
+			copyf=true
+		End If
+	End If
+end function
+
+function makedir(dirname)
+	If Not fso.FolderExists(dirname) Then
+		fso.CreateFolder(dirname)
+		If Err <> 0 Then
+			MsgBox "Failed to generate  Directory"  & dirname & ":" & Err.Description
+			makedir=false
+		else
+			makedir=true
+		End If
+	else
+		makedir=true
+	End If
+
+end function
+
+
+' onClick-Routine für den "Install"-Button
+sub Install
+	dim noOfFiles
+	on error resume next
+	WshShell.RegWrite "HKCU\Software\OOBD\OOBDCopyShop\sourceDir" , sourceDir.Value 
+	WshShell.RegWrite "HKCU\Software\OOBD\OOBDCopyShop\targetDir" , targetDir.Value 
+	on error goto 0
+
+	noOfFiles= copyScripts(sourceDir.Value, targetDir.Value)
+	MsgBox("Done:" & vbCRLF & noOfFiles & " files copied")
+end sub
+
+function isBigger(byval v1, byval v2)
+	v1=UCase(v1)
+	v2=Ucase(v2)
+	dim i, data, v1new, v2new, v1Ext, v2Ext, v1Rank, v2Rank, field
+	field="RTSW"
+	data=split(v1,"_")
+	if ubound(data)> 0 then
+		for i = 0 to ubound(data)-1
+			v1new = v1new &data(i) & "_"
+		next
+		v1Ext=data(ubound(data))
+	else
+		v1new=v1
+	end if
+	data=split(v2,"_")
+	if ubound(data)> 0 then
+		for i = 0 to ubound(data)-1
+			v2new = v2new &data(i) & "_"
+		next
+		v2Ext=data(ubound(data))
+	else
+		v2new=v2
+	end if
+
+	if v1new = v2new then ' both groups are the same
+		if v1Ext = v2Ext then
+			isBigger = false
+		else
+			v1rank = instr(field,v1Ext)
+			v2rank = instr(field,v2Ext)
+			'MsgBox("Bubbles:" & vbCRLF & v1new &"|"& v1Ext & vbCRLF & v2new &"|"& v2Ext & vbCRLF & v2Rank &"|"& v2Rank )
+			isBigger= v1Rank > v2Rank
+		end if
+	else 'both groups are totally diffent
+		if v1new > v2new then
+			isBigger = true
+		else
+			isBigger = false
+		end if
+	end if
+end function
+
+sub readAndSort(targetPath, byref rights)
+
+	Const ForReading = 1 
+	Dim objTextFile, strNextLine ,group,arrTemp
+	dim size
+	size = 0
+	Set objTextFile = fso.OpenTextFile(targetPath& "\OOBDgroups.lst", ForReading) 
+	 
+	Do Until objTextFile.AtEndOfStream 
+		strNextLine = objTextFile.Readline 
+		group = Split(strNextLine , ":") 
+		ReDim Preserve rights(size)
+		rights(size) = group(1)
+		size= size + 1
+	Loop 
+
+	dim i, j
+	for i = 0 to ubound(rights)
+		for j = i + 1 to ubound(rights)
+			if not isBigger(rights(i) , rights(j)) then
+				arrTemp = rights(i)
+				rights(i) = rights(j)
+				rights(j) = arrTemp
+			end if
+		next
+	next
+end sub
+
+
+
+function copyScripts(sourcePath ,targetPath)
+	Dim d   ' Create a variable.
+	Set d = CreateObject("Scripting.Dictionary")
+
+	dim rights(), i , res, count, actSourcePath, folder, files, folderIdx, actSourceFile, actTargetFile
+	readAndSort targetPath, rights
+	for i = 0 to ubound(rights)
+		res=res & rights(i) & vbCRLF
+	next
+	'MsgBox("Sorted List:"&vbCRLF & res)
+	for i = 0 to ubound(rights)
+		actSourcePath=sourcePath &  "\" & rights(i)
+		if fso.FolderExists(actSourcePath) then
+			Set folder = fso.GetFolder(actSourcePath)
+			'msgBox("Source folder:" & vbCRLF & actSourcePath ) 
+			Set files = folder.Files
+			For each folderIdx In files
+				actSourceFile=actSourcePath & "\" & folderIdx.Name
+				actTargetFile=UCase(targetPath & "\" & folderIdx.Name)
+				if not d.exists(actTargetFile) then
+					'msgBox("From" & vbCRLF & actSourceFile & vbCRLF & "to" & vbCRLF & targetPath) 
+					copyf actSourceFile , targetPath & "\"
+					d.add actTargetFile , 1
+					count = count +1
+				end if
+			Next
+		end if
+	next
+	
+	copyScripts=count
+end function
+
+' onChange-Routine für das Eingabefeld
+sub DeEnableUI
+	if sourceDir.Value = "" or not fso.FolderExists(sourceDir.Value) or targetDir.Value = "" or not fso.FolderExists(targetDir.Value) or not fso.FileExists(targetDir.Value & "\OOBDgroups.lst") then
+ 		btnInstall.disabled = True
+	else
+		btnInstall.disabled = False
+	end if
+end sub
+
+
+' Zur Initialisierung die onSize-Behandlungsroutine des Fensters
+' einklinken.
+sub initApp
+	window.resizeTo 600,300
+	Set wshShell = CreateObject("WScript.Shell")
+	Set fso = CreateObject("Scripting.FileSystemObject")
+	Set WshEnv = WshShell.Environment("PROCESS")
+	on error resume next
+	sourceDir.innerText = WshShell.RegRead("HKCU\Software\OOBD\OOBDCopyShop\sourceDir")
+	targetDir.innerText = WshShell.RegRead("HKCU\Software\OOBD\OOBDCopyShop\targetDir")
+	on error goto 0
+	DeEnableUI
+end sub
+
+
+
+</SCRIPT>
+  
+</HEAD>
+<BODY onLoad="initApp">
+<SPAN ID="kopf">
+<!-- <PRE ID="preDebug">
+</PRE> -->
+	<center>
+	<TABLE border=0>
+		<TR valign="top">
+			<TD>
+				<b>Source- Directory:</b><br><small>Please choose the main source directory<p></small>  
+			</TD>
+			<TD>
+				
+			</TD>
+		</TR>
+		<TR valign="top">
+			<TD colspan=2>
+				<INPUT type="text" ID="SourceDir" size="40" maxlength="254"
+				onChange="DeEnableUI" value="C:\" />
+				<BUTTON onClick="browseSource">Select...</BUTTON>
+			</TD>
+		</TR>
+		<TR valign="top">
+			<TD>
+				<b>Installation- Directory:</b><br><small>Please choose your OOBD Script storage directory (/sdcard/OOBD on Android devices)<p></small>  
+			</TD>
+			<TD>
+				
+			</TD>
+		</TR>
+		<TR valign="top">
+			<TD colspan=2>
+				<INPUT type="text" ID="targetDir" size="40" maxlength="254"
+				onChange="DeEnableUI" value="C:\" />
+				<BUTTON onClick="browseTarget">Select...</BUTTON>
+			</TD>
+		</TR>
+		<TR><TD colspan="2"><HR></TD><TR>
+      </TABLE>
+      <P>
+        <BUTTON ID="btnInstall" onclick="Install">Copy your personal files</BUTTON>&nbsp;
+
+       </P>
+ 	</center>
+	</SPAN>
+  </BODY>
+</HTML>
