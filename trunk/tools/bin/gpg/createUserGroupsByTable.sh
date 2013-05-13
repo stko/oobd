@@ -6,7 +6,6 @@ declare -A USERS
 while read line ; do
 	user=$(echo $line | cut -d':' -f1)
 	group=$(echo $line | cut -d':' -f2)
-	emailId=$(echo $user | md5sum)
 	USERS[$user]=$user
 	echo "user: [$user]"
 	echo "group:[$group]"
@@ -20,6 +19,8 @@ do
 
 	gpg --yes --batch --no-default-keyring --trust-model always  --keyring ./userkeyring.pub --recipient $user --output $user.groupkeys --encrypt $user.groupring
 #	gpg -v --yes --batch --no-default-keyring --trust-model always  --keyring ./userkeyring.pub --recipient $user --output $user.groupkeys --encrypt ./oobd_groups.sec
+	grep $user useraccess.txt > $user.grouplist
+
 done
  
 rm *.groupring
