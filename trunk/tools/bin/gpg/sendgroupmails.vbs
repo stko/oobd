@@ -1,5 +1,5 @@
 'On Error Resume Next
-Dim fso, folder, files, NewsFile,args,i,msgSubject,msgAttachName
+Dim fso, folder, files, NewsFile,args,i,msgSubject,msgAttachName,msgGrouplistName
 Const olByValue = 1
 Const olMailItem = 0
     
@@ -18,6 +18,7 @@ Set objFile = fso.OpenTextFile ("mailConfig.cfg", ForReading)
 i = 0
 msgSubject= objFile.Readline
 msgAttachName= objFile.Readline
+msgGrouplistName= objFile.Readline
 Do Until objFile.AtEndOfStream
 	strNextLine = objFile.Readline
 	If strNextLine <> "" Then
@@ -59,6 +60,7 @@ For each folderIdx In files
 		If match.SubMatches.Count > 0 Then
 			WScript.StdOut.WriteLine(folderIdx.Name+ " for " & match.SubMatches(0) & " with " & msgAttachName)
 			fso.CopyFile folderIdx.Name, msgAttachName
+			fso.CopyFile folderIdx.Name &".lst", msgGrouplistName
 			set fileHandle =fso.GetFile(msgAttachName)
 			Set oOMail = oOApp.CreateItem(olMailItem)
 
@@ -68,6 +70,7 @@ For each folderIdx In files
 			.Body = msgBody
 			.HTMLBody = msgBody
 			.Attachments.Add fso.GetAbsolutePathName(msgAttachName), olByValue, 1
+			.Attachments.Add fso.GetAbsolutePathName(msgGrouplistName), olByValue, 1
 			.Send
 			End With
 

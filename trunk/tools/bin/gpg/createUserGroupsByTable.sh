@@ -19,7 +19,7 @@ do
 
 	gpg --yes --batch --no-default-keyring --trust-model always  --keyring ./userkeyring.pub --recipient $user --output $user.groupkeys --encrypt $user.groupring
 #	gpg -v --yes --batch --no-default-keyring --trust-model always  --keyring ./userkeyring.pub --recipient $user --output $user.groupkeys --encrypt ./oobd_groups.sec
-	grep $user useraccess.txt > $user.grouplist
+	grep "$user" useraccess.txt > $user.groupkeys.lst
 
 done
  
