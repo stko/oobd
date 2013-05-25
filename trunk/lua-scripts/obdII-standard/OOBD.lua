@@ -5,8 +5,7 @@ OOBD.lua
 local BusID = "HS-CAN";
 
 
-dofile("lib/serial_dxm.lua")
---dofile("lib/json.lua")
+dofile("../../tools/lib_lua/serial_dxm.lua")
 
 ---------------------- Vehicle Info Menu --------------------------------------
 
@@ -252,7 +251,7 @@ function createCMD01Menu(oldvalue,id)
                                 createCall(availPIDs, 0x1F,"Run time since engine start", "getNumPIDs")
 
 				-----------------------------------------
-				addElement("<<< Main", "Start","<<<",0x10, "")
+				addElement("<<< Main", "Main","<<<",0x10, "")
 				pageDone()
 				return oldvalue
 			else
@@ -296,7 +295,7 @@ function createCMD02Menu(oldvalue,id)
                                 createCall(availPIDs, 0x28,"O2S5_WR_lambda(1): Equivalence Ratio Voltage", "getNumPIDs")
                                 createCall(availPIDs, 0x128,"O2S5_WR_lambda(1): Equivalence Ratio Voltage", "getNumPIDs")
 				-----------------------------------------
-				addElement("<<< Main", "Start","<<<",0x10, "")
+				addElement("<<< Main", "Main","<<<",0x10, "")
 				pageDone()
 				return oldvalue
 			else
@@ -360,7 +359,7 @@ function createCMD03Menu(oldvalue,id)
                                 createCall(availPIDs, 0x3E,"Catalyst Temperature Bank 1, Sensor 2", "getNumPIDs")
                                 createCall(availPIDs, 0x3F,"Catalyst Temperature Bank 2, Sensor 2", "getNumPIDs")
                         	-----------------------------------------
-				addElement("<<< Main", "Start","<<<",0x10, "")
+				addElement("<<< Main", "Main","<<<",0x10, "")
 				pageDone()
 				return oldvalue
 			else
@@ -422,6 +421,14 @@ end
 -- This function is called at start and at each re- coonect, so all neccesary (re-)initalisation needs to be done here
 function Start(oldvalue,id)
 	identifyOOBDInterface()
+	
+	-- do all the bus swttings in once
+	deactivateBus()
+	setBus(BusID)
+	setModuleID("7DF") -- set legislated OBD/WWH-OBD functional request ID
+	setCANFilter(1,"7E8","7F0") -- set CAN-Filter of ECU request/response CAN-ID range
+	setSendID("7E8") 	-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
+	-- start the mail loop
 	Main(oldvalue,id)
 	return oldvalue
 end
@@ -432,11 +439,6 @@ function CloseScript(oldvalue,id)
 end
 
 function Main(oldvalue,id)
-	deactivateBus()
-	setBus(BusID)
-	setModuleID("$7DF") -- set legislated OBD/WWH-OBD functional request ID
-	setSendID("$7E8") 	-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
-	setBus("HS-CAN")
 	openPage("OOBD-ME Main")
 	addElement("Sensor Data >", "createCMD01Menu",">>>",0x1, "")
         addElement("Snapshot Data >", "createCMD02Menu",">>>",0x1, "")
