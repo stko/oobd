@@ -503,25 +503,6 @@ DIN A4, landscape with location and doc. field</description>
 </library>
 <library name="diode">
 <packages>
-<package name="SOT23">
-<description>&lt;B&gt;DIODE&lt;/B&gt;</description>
-<wire x1="1.4224" y1="0.6604" x2="1.4224" y2="-0.6604" width="0.1524" layer="51"/>
-<wire x1="1.4224" y1="-0.6604" x2="-1.4224" y2="-0.6604" width="0.1524" layer="51"/>
-<wire x1="-1.4224" y1="-0.6604" x2="-1.4224" y2="0.6604" width="0.1524" layer="51"/>
-<wire x1="-1.4224" y1="0.6604" x2="1.4224" y2="0.6604" width="0.1524" layer="51"/>
-<wire x1="-1.4224" y1="-0.1524" x2="-1.4224" y2="0.6604" width="0.1524" layer="21"/>
-<wire x1="-1.4224" y1="0.6604" x2="-0.8636" y2="0.6604" width="0.1524" layer="21"/>
-<wire x1="1.4224" y1="0.6604" x2="1.4224" y2="-0.1524" width="0.1524" layer="21"/>
-<wire x1="0.8636" y1="0.6604" x2="1.4224" y2="0.6604" width="0.1524" layer="21"/>
-<smd name="3" x="0" y="1.1" dx="1" dy="1.4" layer="1"/>
-<smd name="2" x="0.95" y="-1.1" dx="1" dy="1.4" layer="1"/>
-<smd name="1" x="-0.95" y="-1.1" dx="1" dy="1.4" layer="1"/>
-<text x="-1.905" y="1.905" size="1.27" layer="25">&gt;NAME</text>
-<text x="-1.905" y="-3.175" size="1.27" layer="27">&gt;VALUE</text>
-<rectangle x1="-0.2286" y1="0.7112" x2="0.2286" y2="1.2954" layer="51"/>
-<rectangle x1="0.7112" y1="-1.2954" x2="1.1684" y2="-0.7112" layer="51"/>
-<rectangle x1="-1.1684" y1="-1.2954" x2="-0.7112" y2="-0.7112" layer="51"/>
-</package>
 <package name="SMB">
 <description>&lt;B&gt;DIODE&lt;/B&gt;</description>
 <wire x1="-2.2606" y1="1.905" x2="2.2606" y2="1.905" width="0.1016" layer="21"/>
@@ -2266,21 +2247,6 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 </package>
 </packages>
 <symbols>
-<symbol name="SCHOTTKY-1">
-<wire x1="-1.27" y1="-1.27" x2="1.27" y2="0" width="0.254" layer="94"/>
-<wire x1="1.27" y1="0" x2="-1.27" y2="1.27" width="0.254" layer="94"/>
-<wire x1="1.905" y1="1.27" x2="1.27" y2="1.27" width="0.254" layer="94"/>
-<wire x1="1.27" y1="1.27" x2="1.27" y2="0" width="0.254" layer="94"/>
-<wire x1="-1.27" y1="1.27" x2="-1.27" y2="-1.27" width="0.254" layer="94"/>
-<wire x1="1.27" y1="0" x2="1.27" y2="-1.27" width="0.254" layer="94"/>
-<wire x1="1.905" y1="1.27" x2="1.905" y2="1.016" width="0.254" layer="94"/>
-<wire x1="1.27" y1="-1.27" x2="0.635" y2="-1.27" width="0.254" layer="94"/>
-<wire x1="0.635" y1="-1.016" x2="0.635" y2="-1.27" width="0.254" layer="94"/>
-<text x="-2.286" y="1.905" size="1.778" layer="95">&gt;NAME</text>
-<text x="-2.286" y="-3.429" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="A" x="-2.54" y="0" visible="off" length="short" direction="pas"/>
-<pin name="C" x="2.54" y="0" visible="off" length="short" direction="pas" rot="R180"/>
-</symbol>
 <symbol name="SCHOTTKY">
 <wire x1="-1.27" y1="-1.27" x2="1.27" y2="0" width="0.254" layer="94"/>
 <wire x1="1.27" y1="0" x2="-1.27" y2="1.27" width="0.254" layer="94"/>
@@ -2309,24 +2275,6 @@ Source: http://www.diodes.com/datasheets/ds23001.pdf</description>
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="BAS40" prefix="D">
-<description>&lt;b&gt;Silicon Schottky Diodes&lt;/b&gt;&lt;p&gt;
-General-purpose diode for high-speed switching</description>
-<gates>
-<gate name="1" symbol="SCHOTTKY-1" x="0" y="0"/>
-</gates>
-<devices>
-<device name="" package="SOT23">
-<connects>
-<connect gate="1" pin="A" pad="1"/>
-<connect gate="1" pin="C" pad="3"/>
-</connects>
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
 <deviceset name="SCHOTTKY-DIODE" prefix="D" uservalue="yes">
 <description>Schottky Diode</description>
 <gates>
@@ -23820,15 +23768,14 @@ package type OT</description>
 <part name="R23" library="rcl" deviceset="R-EU_" device="R0805" value="1R"/>
 <part name="R24" library="rcl" deviceset="R-EU_" device="R0805" value="1R"/>
 <part name="R21" library="rcl" deviceset="R-EU_" device="R0603" value="3k3"/>
-<part name="D2" library="diode" deviceset="BAS40" device=""/>
-<part name="L2" library="Inductor-Fastron" deviceset="07HCP-XXXX-50" device="" value="100µH"/>
+<part name="L2" library="Inductor-Fastron" deviceset="07HCP-XXXX-50" device="" value="47µH"/>
 <part name="GND14" library="supply1" deviceset="GND" device=""/>
 <part name="GND15" library="supply1" deviceset="GND" device=""/>
 <part name="R25" library="rcl" deviceset="R-EU_" device="R0603" value="5k6"/>
 <part name="GND16" library="supply1" deviceset="GND" device=""/>
 <part name="GND17" library="supply1" deviceset="GND" device=""/>
 <part name="+3V4" library="supply1" deviceset="+3V3" device=""/>
-<part name="L1" library="Inductor-Fastron" deviceset="PIS2408" device="" value="100uH"/>
+<part name="L1" library="Inductor-Fastron" deviceset="PIS2408" device="" value="47uH"/>
 <part name="R22" library="rcl" deviceset="R-EU_" device="R0805" value="1R"/>
 <part name="IC3" library="can" deviceset="PCA82C250" device="T"/>
 <part name="JP1-OBD1" library="jumper" deviceset="JP4E" device=""/>
@@ -23914,6 +23861,7 @@ package type OT</description>
 <part name="R11" library="resistor" deviceset="R-EU_" device="R0603" value="4k7"/>
 <part name="R9" library="resistor" deviceset="R-EU_" device="R0603" value="4k7"/>
 <part name="+3V9" library="supply1" deviceset="+3V3" device=""/>
+<part name="D2" library="diode" deviceset="SCHOTTKY-DIODE" device="SMD" value="B140"/>
 </parts>
 <sheets>
 <sheet>
@@ -25052,10 +25000,6 @@ package type OT</description>
 <attribute name="NAME" x="96.52" y="130.2766" size="1.778" layer="95"/>
 <attribute name="VALUE" x="96.52" y="127.254" size="1.778" layer="96"/>
 </instance>
-<instance part="D2" gate="1" x="45.72" y="139.7" smashed="yes" rot="R90">
-<attribute name="NAME" x="45.085" y="143.764" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="37.211" y="136.271" size="1.778" layer="96"/>
-</instance>
 <instance part="L2" gate="G$1" x="39.37" y="149.86" smashed="yes">
 <attribute name="NAME" x="36.83" y="151.13" size="1.778" layer="95"/>
 <attribute name="VALUE" x="36.83" y="146.685" size="1.778" layer="96"/>
@@ -25125,6 +25069,10 @@ package type OT</description>
 <instance part="C19" gate="G$1" x="142.24" y="63.5"/>
 <instance part="GND27" gate="1" x="10.16" y="43.18"/>
 <instance part="GND28" gate="1" x="99.06" y="43.18"/>
+<instance part="D2" gate="G$1" x="45.72" y="139.7" smashed="yes" rot="R90">
+<attribute name="NAME" x="42.926" y="140.335" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="45.466" y="138.049" size="1.778" layer="96" rot="R180"/>
+</instance>
 </instances>
 <busses>
 </busses>
@@ -25184,11 +25132,11 @@ package type OT</description>
 <junction x="45.72" y="125.73"/>
 <junction x="20.32" y="125.73"/>
 <pinref part="GND14" gate="1" pin="GND"/>
-<pinref part="D2" gate="1" pin="A"/>
 <pinref part="C12" gate="G$1" pin="2"/>
 <pinref part="C15" gate="G$1" pin="2"/>
 <pinref part="IC4" gate="G$1" pin="GND"/>
 <pinref part="C14" gate="G$1" pin="-"/>
+<pinref part="D2" gate="G$1" pin="A"/>
 </segment>
 <segment>
 <wire x1="132.08" y1="128.27" x2="132.08" y2="121.92" width="0.1524" layer="91"/>
@@ -25360,10 +25308,10 @@ package type OT</description>
 <wire x1="44.45" y1="157.48" x2="45.72" y2="157.48" width="0.1524" layer="91"/>
 <wire x1="45.72" y1="157.48" x2="45.72" y2="149.86" width="0.1524" layer="91"/>
 <junction x="45.72" y="149.86"/>
-<pinref part="D2" gate="1" pin="C"/>
 <pinref part="L2" gate="G$1" pin="P$2"/>
 <pinref part="IC4" gate="G$1" pin="SWE"/>
 <pinref part="L1" gate="G$1" pin="P$2"/>
+<pinref part="D2" gate="G$1" pin="C"/>
 </segment>
 </net>
 <net name="HS_CAN-H" class="0">
