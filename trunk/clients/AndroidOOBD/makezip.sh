@@ -8,7 +8,7 @@ APKFILE=OOBDAndroid_R$1.apk
 ZIPFILE=OOBDAndroid_R$1.zip
 rm $ZIPFILE
 cp bin/OOBDAndroidSVN.apk OOBD/$APKFILE
-cp ../OOBD-ME/testscripts/OOBD.lbc ../OOBD-ME/testscripts/dtc.oodb OOBD
+cp ../../lua-scripts/obd-standard/OOBD.lbc ../../lua-scripts/obd-standard/dtc.oodb OOBD
 zip  $ZIPFILE OOBD/*
 
 
