@@ -62,7 +62,8 @@ public class EncodeDecodeAES {
 		KeyGenerator kgen = KeyGenerator.getInstance("AES"); // , "SC");
 		// KeyGenerator kgen = KeyGenerator.getInstance("AES" , "SC");
 		SecureRandom sr = null;
-		if (compareVersionStrings(android.os.Build.VERSION.RELEASE, "4.2") > -1) {
+                 Class<?> act = Class.forName("android.os.Build.VERSION");
+		if (act != null && compareVersionStrings(act.getField("RELEASE").get(null).toString(), "4.2") > -1) {
 			sr = SecureRandom.getInstance("SHA1PRNG", "Crypto");
 		} else {
 			sr = SecureRandom.getInstance("SHA1PRNG");
