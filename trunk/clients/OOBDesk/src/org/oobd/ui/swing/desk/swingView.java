@@ -258,6 +258,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         chooseScriptDirectoryButton = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         scriptDir = new javax.swing.JTextField();
+        pgpEnabled = new javax.swing.JCheckBox();
+        pgpImportKeys = new javax.swing.JButton();
+        pgpStatus = new javax.swing.JLabel();
         diagnose = new javax.swing.JPanel();
         toolPanelDiagnose = new javax.swing.JPanel();
         diagnoseTitle = new javax.swing.JLabel();
@@ -387,7 +390,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         jLabel1.setName("jLabel1"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         settings.add(jLabel1, gridBagConstraints);
 
@@ -395,7 +398,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         comportComboBox.setName("comportComboBox"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 3;
         settings.add(comportComboBox, gridBagConstraints);
 
         chooseScriptDirectoryButton.setIcon(resourceMap.getIcon("chooseScriptDirectoryButton.icon")); // NOI18N
@@ -409,14 +412,14 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 4;
         settings.add(chooseScriptDirectoryButton, gridBagConstraints);
 
         jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
         jLabel4.setName("jLabel4"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         settings.add(jLabel4, gridBagConstraints);
 
@@ -424,9 +427,30 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         scriptDir.setName("scriptDir"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(scriptDir, gridBagConstraints);
+
+        pgpEnabled.setText(resourceMap.getString("pgpEnabled.text")); // NOI18N
+        pgpEnabled.setName("pgpEnabled"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        settings.add(pgpEnabled, gridBagConstraints);
+
+        pgpImportKeys.setText(resourceMap.getString("pgpImportKeys.text")); // NOI18N
+        pgpImportKeys.setName("pgpImportKeys"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        settings.add(pgpImportKeys, gridBagConstraints);
+
+        pgpStatus.setText(resourceMap.getString("pgpStatus.text")); // NOI18N
+        pgpStatus.setName("pgpStatus"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        settings.add(pgpStatus, gridBagConstraints);
 
         mainPanel.add(settings, "card4");
 
@@ -922,6 +946,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JButton outputBackButton;
     private javax.swing.JPanel outputPanel;
     private javax.swing.JToolBar outputToolbar;
+    private javax.swing.JCheckBox pgpEnabled;
+    private javax.swing.JButton pgpImportKeys;
+    private javax.swing.JLabel pgpStatus;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JButton saveButton;
     private javax.swing.JTextField scriptDir;
