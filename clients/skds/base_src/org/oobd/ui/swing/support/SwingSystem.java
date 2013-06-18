@@ -25,7 +25,7 @@ import org.oobd.base.port.ComPort_Unix;
  * This class is the connection between the generic oobd system and the enviroment for e.g. IO operations
  * @author steffen
  */
-public class SwingSystem implements IFsystem {
+public class SwingSystem implements IFsystem, OOBDConstants {
 
     Core core;
 
@@ -89,8 +89,18 @@ public class SwingSystem implements IFsystem {
     }
 
     public String generateUIFilePath(int pathID, String fileName) {
+		switch (pathID) {
 
-        return fileName;
+		case FT_DATABASE:
+			return fileName;
+		case FT_KEY:
+			return System.getProperty("user.home") + "/" + fileName;
+
+		default:
+			return  fileName;
+
+		}
+
 
     }
 
