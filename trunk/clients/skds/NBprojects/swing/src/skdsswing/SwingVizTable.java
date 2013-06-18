@@ -144,4 +144,5 @@ public class SwingVizTable extends JTable implements IFvisualizer {
     public Visualizer getVisualizer() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+   
 }

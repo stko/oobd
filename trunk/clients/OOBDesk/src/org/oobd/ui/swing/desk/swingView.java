@@ -9,8 +9,6 @@ import java.io.IOException;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
 import org.jdesktop.application.SingleFrameApplication;
-import org.jdesktop.application.FrameView;
-import org.jdesktop.application.TaskMonitor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
@@ -20,15 +18,13 @@ import javax.swing.JFrame;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.io.FileOutputStream;
 
 import purejavacomm.CommPortIdentifier;
-import gnu.io.*;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.LayoutManager;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -45,7 +41,6 @@ import org.oobd.base.support.Onion;
 
 
 import java.util.Vector;
-import java.util.Iterator;
 import java.util.Properties;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -56,7 +51,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
 import javax.swing.filechooser.FileFilter;
 import org.json.JSONException;
 import org.oobd.base.archive.*;
@@ -433,6 +427,11 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
         pgpEnabled.setText(resourceMap.getString("pgpEnabled.text")); // NOI18N
         pgpEnabled.setName("pgpEnabled"); // NOI18N
+        pgpEnabled.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pgpEnabledActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
@@ -440,6 +439,11 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
         pgpImportKeys.setText(resourceMap.getString("pgpImportKeys.text")); // NOI18N
         pgpImportKeys.setName("pgpImportKeys"); // NOI18N
+        pgpImportKeys.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pgpImportKeysActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
@@ -727,6 +731,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }//GEN-LAST:event_jLabel3MouseClicked
 
     private void settingsComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_settingsComponentShown
+        updateUI();
 
         String osname = System.getProperty("os.name", "").toLowerCase();
         Enumeration pList = null;
@@ -760,6 +765,37 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             comportComboBox.setSelectedItem(port);
         }
         scriptDir.setText(appProbs.getProperty(OOBDConstants.PropName_ScriptDir, ""));
+//        updateUI();
+    }
+
+    private void updateUI() {
+        int pgp = checkKeyFiles();
+        String pgpStatusText = "";
+        if ((pgp & 0x01) > 0) {
+            pgpStatusText = "New Group Key File is waiting for import";
+        } else if ((pgp & 0x02) > 0) {
+            pgpStatusText = "New User Key File is waiting for import";
+
+        } else if ((pgp & 0x04) > 0) {
+            pgpStatusText = "Missing Group Key File !!";
+
+        } else if ((pgp & 0x08) > 0) {
+            pgpStatusText = "Missing User Key File !!";
+        } else {
+            pgpStatusText = "All Keys in place";
+        }
+        pgpStatus.setText("PGP Key Status: " + pgpStatusText);
+        if (pgp != 0) {
+            appProbs.setProperty(OOBDConstants.PropName_PGPEnabled, "false");
+            pgpEnabled.setSelected(false);
+            pgpEnabled.setEnabled(false);
+            pgpImportKeys.setText("Import PGP keys now");
+        } else {
+            pgpEnabled.setEnabled(true);
+            pgpImportKeys.setText("DELETE PGP keys now");
+        }
+
+
 
     }//GEN-LAST:event_settingsComponentShown
 
@@ -876,8 +912,29 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
     }//GEN-LAST:event_gridBiggerButtonActionPerformed
 
+    private void pgpEnabledActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pgpEnabledActionPerformed
+        appProbs.setProperty(OOBDConstants.PropName_PGPEnabled, pgpEnabled.isSelected() ? "true" : "false");
+
+    }//GEN-LAST:event_pgpEnabledActionPerformed
+
+    private void pgpImportKeysActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pgpImportKeysActionPerformed
+        if (checkKeyFiles() != 0) {
+            importKeyFiles();
+            updateUI();
+        } else {
+            int answer = JOptionPane.showConfirmDialog(settings, "Do you REALLY want to delete your PGP keys??");
+            if (answer == JOptionPane.YES_OPTION) {
+                            try {
+                                deleteKeyFiles();
+                                updateUI();
+                            } catch (Exception e) {
+                            }
+                        }
+        }
+    }//GEN-LAST:event_pgpImportKeysActionPerformed
+
     @Action
-    public void onClickButton_Back() {
+        public void onClickButton_Back() {
         IFvisualizer back = null;
         if (pageObjects != null) {
             for (IFvisualizer vis : pageObjects) {
@@ -895,21 +952,21 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }
 
     @Action
-    public void onClickButton_Start() {
+        public void onClickButton_Start() {
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         //cl.next(mainPanel);
         cl.show(mainPanel, DIAGNOSEPANEL);
     }
 
     @Action
-    public void onClickButton_BackSettings() {
+        public void onClickButton_BackSettings() {
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         //cl.next(mainPanel);
         cl.show(mainPanel, MAINPANEL);
     }
 
     @Action
-    public void onClickMenu_Settings() {
+        public void onClickMenu_Settings() {
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         //cl.next(mainPanel);
         cl.show(mainPanel, SETTINGSPANEL);
@@ -992,8 +1049,16 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
     }
 
-    public void announceScriptengine(String id, String visibleName) {
-        Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: Scriptengine-ID: {0} visibleName:{1}", new Object[]{id, visibleName});
+    public 
+
+
+
+void announceScriptengine(String id, String visibleName) {
+        Logger.getLogger(swingView.class  
+
+    .getName()).log(Level.CONFIG, "Interface announcement: Scriptengine-ID: {0} visibleName:{1}", new Object[]{id , visibleName
+}
+);
         // more as one scriptengine is not used in this app
         //scriptEngineMap.put(id, visibleName);
         if ("ScriptengineLua".equalsIgnoreCase(id)) {
@@ -1002,9 +1067,14 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
     }
 
-    public Class getVisualizerClass(String visualizerType, String theme) {
-        return TextVisualizerJPanel.class;
-    }
+    public Class 
+
+
+
+getVisualizerClass(String visualizerType, String theme) {
+        return TextVisualizerJPanel.class  
+;
+}
 
     public void visualize(Onion myOnion) {
         Visualizer newVisualizer = new Visualizer(myOnion);
@@ -1017,10 +1087,29 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
         Class<IFvisualizer> visualizerClass = getVisualizerClass(myOnion.getOnionString("type"), myOnion.getOnionString("theme"));
         Class[] argsClass = new Class[2]; // first we set up an pseudo - args - array for the scriptengine- constructor
-        argsClass[0] = String.class; // and fill it with the info, that the argument for the constructor will be first a String
-        argsClass[1] = String.class;
+        argsClass
+
+
+
+[0] = String.class  
+
+    ; // and fill it with the info, that the argument for the constructor will be first a String
+        argsClass 
+    [1] = String.
+
+    
+
+    class  
+
+        ;
         // and fill it with the info, that the argument for the constructor will be first a String
-        try {
+        
+
+        
+            
+
+        
+            try {
             Method classMethod = visualizerClass.getMethod("getInstance", argsClass); // and let Java find the correct constructor with one string as parameter
             Object[] args = {newVisualizer.getOwnerEngine(), newVisualizer.getName()}; //we will an args-array with our String parameter
             newJComponent = (JComponent) classMethod.invoke(null, args); // and finally create the object from the scriptengine class with its unique id as parameter
@@ -1054,7 +1143,12 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                  */            }
             ((IFvisualizer) newJComponent).initValue(newVisualizer, myOnion);
             newJComponent.addMouseListener(popupMenuHandle);
-        } catch (Exception e) {
+        }
+        
+        catch (Exception e
+
+        
+            ) {
             e.printStackTrace();
         }
     }
@@ -1184,6 +1278,93 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             }
         }
         JOptionPane.showMessageDialog(null, message);
+
+    }
+
+    private int checkKeyFiles() {
+        Boolean userKeyExist;
+        Boolean groupKeyExist;
+        Boolean newUserKeyExist;
+        Boolean newGroupKeyExist;
+        try {
+            InputStream keyfile = oobdCore.getSystemIF().generateResourceStream(
+                    OOBDConstants.FT_KEY, OOBDConstants.PGP_USER_KEYFILE_NAME);
+            userKeyExist = keyfile != null;
+            keyfile.close();
+        } catch (Exception e) {
+            userKeyExist = false;
+        }
+        try {
+            InputStream keyfile = oobdCore.getSystemIF().generateResourceStream(
+                    OOBDConstants.FT_KEY, OOBDConstants.PGP_GROUP_KEYFILE_NAME);
+            groupKeyExist = keyfile != null;
+            keyfile.close();
+        } catch (Exception e) {
+            groupKeyExist = false;
+        }
+        try {
+            InputStream keyfile = oobdCore.getSystemIF().generateResourceStream(
+                    OOBDConstants.FT_SCRIPT,
+                    OOBDConstants.PGP_USER_KEYFILE_NAME);
+            newUserKeyExist = keyfile != null;
+            keyfile.close();
+        } catch (Exception e) {
+            newUserKeyExist = false;
+        }
+        try {
+            InputStream keyfile = oobdCore.getSystemIF().generateResourceStream(
+                    OOBDConstants.FT_SCRIPT,
+                    OOBDConstants.PGP_GROUP_KEYFILE_NAME);
+            newGroupKeyExist = keyfile != null;
+            keyfile.close();
+        } catch (Exception e) {
+            newGroupKeyExist = false;
+        }
+        return (userKeyExist ? 0 : 8) + (groupKeyExist ? 0 : 4)
+                + (newUserKeyExist ? 2 : 0) + (newGroupKeyExist ? 1 : 0);
+    }
+
+    private void deleteKeyFiles() {
+
+        File f = new File(oobdCore.getSystemIF().generateUIFilePath(OOBDConstants.FT_KEY, OOBDConstants.PGP_USER_KEYFILE_NAME));
+        f.delete();
+        f = new File(oobdCore.getSystemIF().generateUIFilePath(OOBDConstants.FT_KEY, OOBDConstants.PGP_GROUP_KEYFILE_NAME));
+        f.delete();
+    }
+
+    private void importKeyFiles() {
+        if (importsingleKeyFile(OOBDConstants.PGP_USER_KEYFILE_NAME,
+                OOBDConstants.PGP_USER_KEYFILE_NAME)) {
+            File f = new File(oobdCore.getSystemIF().generateUIFilePath(
+                    OOBDConstants.FT_SCRIPT,
+                    OOBDConstants.PGP_USER_KEYFILE_NAME));
+            f.delete();
+        }
+        if (importsingleKeyFile(OOBDConstants.PGP_GROUP_KEYFILE_NAME,
+                OOBDConstants.PGP_GROUP_KEYFILE_NAME)) {
+            File f = new File(oobdCore.getSystemIF().generateUIFilePath(
+                    OOBDConstants.FT_SCRIPT,
+                    OOBDConstants.PGP_GROUP_KEYFILE_NAME));
+            f.delete();
+        }
+    }
+
+    private boolean importsingleKeyFile(String from, String to) {
+        FileOutputStream fos;
+        InputStream inFile = oobdCore.getSystemIF().generateResourceStream(
+                OOBDConstants.FT_SCRIPT, from);
+        if (inFile != null) {
+            try {
+                fos = new FileOutputStream(to);
+                org.apache.commons.io.IOUtils.copy(inFile, fos);
+                inFile.close();
+                fos.close();
+                return true;
+            } catch (IOException e) {
+                // e.printStackTrace(); no stacktrace needed
+            }
+        }
+        return false;
 
     }
 }
