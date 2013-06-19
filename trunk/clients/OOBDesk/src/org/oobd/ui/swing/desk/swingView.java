@@ -186,7 +186,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
         getFrame().setIconImage(Toolkit.getDefaultToolkit().createImage(swingView.class.getResource("/org/oobd/base/images/obd2_icon.png")));
 
-
     }
 
     void setStatusLine(String propertyName, Object content) {
@@ -731,41 +730,50 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }//GEN-LAST:event_jLabel3MouseClicked
 
     private void settingsComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_settingsComponentShown
-        updateUI();
-
         String osname = System.getProperty("os.name", "").toLowerCase();
         Enumeration pList = null;
         Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "OS detected: {0}", osname);
+        int portListIndex = -1;
+        String port = appProbs.getProperty(OOBDConstants.PropName_SerialPort, null);
         try {
             if (osname.startsWith("windows")) {
                 pList = purejavacomm.CommPortIdentifier.getPortIdentifiers();
+                // Process the list.
+                while (pList.hasMoreElements()) {
+                    purejavacomm.CommPortIdentifier cpi = (purejavacomm.CommPortIdentifier) pList.nextElement();
+                    if (cpi.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+                        comportComboBox.addItem(cpi.getName());
+                        if (cpi.getName().equalsIgnoreCase(port)) {
+                            portListIndex = comportComboBox.getItemCount() - 1;
+                        }
+                    }
+                }
             } else {
                 pList = gnu.io.CommPortIdentifier.getPortIdentifiers();
+                // Process the list.
+                while (pList.hasMoreElements()) {
+                    gnu.io.CommPortIdentifier cpi = (gnu.io.CommPortIdentifier) pList.nextElement();
+                    if (cpi.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+                        comportComboBox.addItem(cpi.getName());
+                        if (cpi.getName().equalsIgnoreCase(port)) {
+                            portListIndex = comportComboBox.getItemCount() - 1;
+                        }
+                    }
+                }
             }
 
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        String port = appProbs.getProperty(OOBDConstants.PropName_SerialPort, null);
-        int portListIndex = -1;
-        // Process the list.
-        while (pList.hasMoreElements()) {
-            CommPortIdentifier cpi = (CommPortIdentifier) pList.nextElement();
-            if (cpi.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-                comportComboBox.addItem(cpi.getName());
-                if (cpi.getName().equalsIgnoreCase(port)) {
-                    portListIndex = comportComboBox.getItemCount() - 1;
-                }
-            }
-        }
         if (portListIndex > -1) {
             comportComboBox.setSelectedIndex(portListIndex);
         } else {
             comportComboBox.setSelectedItem(port);
         }
         scriptDir.setText(appProbs.getProperty(OOBDConstants.PropName_ScriptDir, ""));
-//        updateUI();
+        pgpEnabled.setSelected("true".equalsIgnoreCase(appProbs.getProperty(OOBDConstants.PropName_PGPEnabled, "")));
+        updateUI();
     }
 
     private void updateUI() {
@@ -924,17 +932,17 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         } else {
             int answer = JOptionPane.showConfirmDialog(settings, "Do you REALLY want to delete your PGP keys??");
             if (answer == JOptionPane.YES_OPTION) {
-                            try {
-                                deleteKeyFiles();
-                                updateUI();
-                            } catch (Exception e) {
-                            }
-                        }
+                try {
+                    deleteKeyFiles();
+                    updateUI();
+                } catch (Exception e) {
+                }
+            }
         }
     }//GEN-LAST:event_pgpImportKeysActionPerformed
 
     @Action
-        public void onClickButton_Back() {
+    public void onClickButton_Back() {
         IFvisualizer back = null;
         if (pageObjects != null) {
             for (IFvisualizer vis : pageObjects) {
@@ -952,21 +960,21 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }
 
     @Action
-        public void onClickButton_Start() {
+    public void onClickButton_Start() {
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         //cl.next(mainPanel);
         cl.show(mainPanel, DIAGNOSEPANEL);
     }
 
     @Action
-        public void onClickButton_BackSettings() {
+    public void onClickButton_BackSettings() {
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         //cl.next(mainPanel);
         cl.show(mainPanel, MAINPANEL);
     }
 
     @Action
-        public void onClickMenu_Settings() {
+    public void onClickMenu_Settings() {
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         //cl.next(mainPanel);
         cl.show(mainPanel, SETTINGSPANEL);
@@ -1047,18 +1055,24 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         if (i > -1) {
             scriptSelectComboBox.setSelectedIndex(i);
         }
+        String str = JOptionPane.showInputDialog(null, "Enter your PGP PassPhrase : ",
+                "OOBD PGP Script Encryption", 1);
+        if (str != null) {
+            try {
+                oobdCore.getSystemIF().setUserPassPhrase(
+                        str);
+                str="";
+            } catch (Exception e) {
+                // e.printStackTrace();
+                oobdCore.getSystemIF().setUserPassPhrase("");
+            }
+        }
+
     }
 
-    public 
-
-
-
-void announceScriptengine(String id, String visibleName) {
-        Logger.getLogger(swingView.class  
-
-    .getName()).log(Level.CONFIG, "Interface announcement: Scriptengine-ID: {0} visibleName:{1}", new Object[]{id , visibleName
-}
-);
+    public void announceScriptengine(String id, String visibleName) {
+        Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: Scriptengine-ID: {0} visibleName:{1}", new Object[]{id, visibleName
+                });
         // more as one scriptengine is not used in this app
         //scriptEngineMap.put(id, visibleName);
         if ("ScriptengineLua".equalsIgnoreCase(id)) {
@@ -1067,14 +1081,9 @@ void announceScriptengine(String id, String visibleName) {
         }
     }
 
-    public Class 
-
-
-
-getVisualizerClass(String visualizerType, String theme) {
-        return TextVisualizerJPanel.class  
-;
-}
+    public Class getVisualizerClass(String visualizerType, String theme) {
+        return TextVisualizerJPanel.class;
+    }
 
     public void visualize(Onion myOnion) {
         Visualizer newVisualizer = new Visualizer(myOnion);
@@ -1087,29 +1096,16 @@ getVisualizerClass(String visualizerType, String theme) {
         }
         Class<IFvisualizer> visualizerClass = getVisualizerClass(myOnion.getOnionString("type"), myOnion.getOnionString("theme"));
         Class[] argsClass = new Class[2]; // first we set up an pseudo - args - array for the scriptengine- constructor
-        argsClass
-
-
-
-[0] = String.class  
-
-    ; // and fill it with the info, that the argument for the constructor will be first a String
-        argsClass 
-    [1] = String.
-
-    
-
-    class  
-
-        ;
+        argsClass[0] = String.class; // and fill it with the info, that the argument for the constructor will be first a String
+        argsClass[1] = String.class;
         // and fill it with the info, that the argument for the constructor will be first a String
-        
 
-        
-            
 
-        
-            try {
+
+
+
+
+        try {
             Method classMethod = visualizerClass.getMethod("getInstance", argsClass); // and let Java find the correct constructor with one string as parameter
             Object[] args = {newVisualizer.getOwnerEngine(), newVisualizer.getName()}; //we will an args-array with our String parameter
             newJComponent = (JComponent) classMethod.invoke(null, args); // and finally create the object from the scriptengine class with its unique id as parameter
@@ -1143,12 +1139,7 @@ getVisualizerClass(String visualizerType, String theme) {
                  */            }
             ((IFvisualizer) newJComponent).initValue(newVisualizer, myOnion);
             newJComponent.addMouseListener(popupMenuHandle);
-        }
-        
-        catch (Exception e
-
-        
-            ) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -1333,18 +1324,18 @@ getVisualizerClass(String visualizerType, String theme) {
     }
 
     private void importKeyFiles() {
-        if (importsingleKeyFile(OOBDConstants.PGP_USER_KEYFILE_NAME,
+        if (importsingleKeyFile(appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME,
                 OOBDConstants.PGP_USER_KEYFILE_NAME)) {
             File f = new File(oobdCore.getSystemIF().generateUIFilePath(
                     OOBDConstants.FT_SCRIPT,
-                    OOBDConstants.PGP_USER_KEYFILE_NAME));
+                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME));
             f.delete();
         }
-        if (importsingleKeyFile(OOBDConstants.PGP_GROUP_KEYFILE_NAME,
+        if (importsingleKeyFile(appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME,
                 OOBDConstants.PGP_GROUP_KEYFILE_NAME)) {
             File f = new File(oobdCore.getSystemIF().generateUIFilePath(
                     OOBDConstants.FT_SCRIPT,
-                    OOBDConstants.PGP_GROUP_KEYFILE_NAME));
+                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME));
             f.delete();
         }
     }
@@ -1355,7 +1346,8 @@ getVisualizerClass(String visualizerType, String theme) {
                 OOBDConstants.FT_SCRIPT, from);
         if (inFile != null) {
             try {
-                fos = new FileOutputStream(to);
+                fos = new FileOutputStream(oobdCore.getSystemIF().generateUIFilePath(
+                        OOBDConstants.FT_KEY, to));
                 org.apache.commons.io.IOUtils.copy(inFile, fos);
                 inFile.close();
                 fos.close();

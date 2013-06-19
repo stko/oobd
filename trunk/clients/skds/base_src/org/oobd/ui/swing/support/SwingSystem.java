@@ -15,6 +15,7 @@ import org.oobd.base.OOBDConstants;
 import java.net.URL;
 import java.net.URLClassLoader;
 import org.oobd.base.port.ComPort_Win;
+import org.oobd.crypt.AES.EncodeDecodeAES;
 
 //import java.io.FileInputStream;
 import java.io.*;
@@ -28,6 +29,7 @@ import org.oobd.base.port.ComPort_Unix;
 public class SwingSystem implements IFsystem, OOBDConstants {
 
     Core core;
+	private String userPassPhrase = "";
 
     public void registerOobdCore(Core thisCore) {
         core = thisCore;
@@ -169,14 +171,32 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     }
 
     public char[] getAppPassPhrase() {
-        throw new UnsupportedOperationException("Not supported yet.");
+		return PassPhraseProvider.getPassPhrase();
     }
 
     public String getUserPassPhrase() {
-        throw new UnsupportedOperationException("Not supported yet.");
+		if (userPassPhrase.equals("")) {
+			return "";
+		} else {
+			try {
+				return new String(EncodeDecodeAES.decrypt(new String(
+						getAppPassPhrase()), userPassPhrase));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return "";
+			}
+		}
     }
 
     public void setUserPassPhrase(String upp) {
-        throw new UnsupportedOperationException("Not supported yet.");
+ 		try {
+			userPassPhrase = EncodeDecodeAES.encrypt(new String(
+					getAppPassPhrase()), upp);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			userPassPhrase = "";
+		}
     }
 }
