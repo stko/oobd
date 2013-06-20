@@ -24,6 +24,9 @@ Write with verify and then start execution:
 General write with verify and then start execution:
 ./stm32flash -w <filename> -v -g 0x0 /dev/ttyS0
 
+Specific write with set stm32 to internal bootloader (Boot0), verify and then start execution:
+./stm32flash -t -w <filename> -v -g 0x0 /dev/ttyS0
+
 Read flash to file:
 ./stm32flash -r <filename> /dev/ttyS0
 
@@ -32,7 +35,8 @@ Start execution:
 
 Example to write OOBD Flashloader:
 ./stm32flash -w OOBD_Flashloader_SVN392.hex -v -g 0x0 /dev/ttyS0
-
+...or...
+./stm32flash -t -w OOBD_Flashloader_SVN392.hex -v -g 0x0 /dev/ttyS0
 
 --- WINDOWS ---
 Get device indormation:
@@ -48,7 +52,10 @@ Write bootloader, erase whole memory verify and then start execution:
 ./stm32flash -w <filename> -v -x -g 0x0 COM1
 
 Write firmware on offset 0x2F3C (0x08002F3C), verify and then start execution:
-./stm32flash -w <filename> -v -o 0x2f3C-g 0x0 /dev/COM1
+./stm32flash -w <filename> -v -o 0x2f3C-g 0x0 COM1
+
+Specific write with set stm32 to internal bootloader (Boot0), verify and then start execution:
+./stm32flash -t -w <filename> -v -g 0x0 COM1
 
 General write with verify and then start execution:
 stm32flash.exe -w <filename> -v -g 0x0 COM1
@@ -61,3 +68,5 @@ stm32flash.exe -g 0x0 COM1
 
 Example to write OOBD Flashloader:
 stm32flash.exe -w OOBD_Flashloader_SVN392.hex -v -g 0x0 COM1
+...or...
+stm32flash.exe -t -w OOBD_Flashloader_SVN392.hex -v -g 0x0 COM1
