@@ -2,6 +2,7 @@
 sudo apt-get update
 sudo apt-get install subversion
 sudo apt-get install python-easygui
+sudo apt-get install python-bluetooth
 sudo apt-get install ussp-push
 mkdir -p ~/.config/autostart
 mkdir ~/bin
