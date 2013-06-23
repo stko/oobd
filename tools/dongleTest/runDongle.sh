@@ -1,5 +1,5 @@
 #!/bin/sh
-DIALOG=${DIALOG=dialog}
+blueman-applet &
 while true
 do
 	tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
@@ -20,7 +20,7 @@ do
 	case $menuitem in
 		boot) dialog --msgbox "Not implemented yet" 10 50 ;;
 		flash) dialog --msgbox "Not implemented yet" 10 50 ;;
-		hwTest) ./hwTest.sh ;;
+		hwTest) cd ~/bin/dongleTest ; ./hwTest.sh ;;
 		Quit) rm $tempfile; exit;;
 	esac
 done

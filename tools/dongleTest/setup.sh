@@ -4,6 +4,7 @@ sudo apt-get install subversion
 sudo apt-get install python-easygui
 sudo apt-get install python-bluetooth
 sudo apt-get install ussp-push
+sudo apt-get install blueman
 mkdir -p ~/.config/autostart
 mkdir ~/bin
 rm -rf ~/bin/dongleTest
@@ -22,8 +23,8 @@ Version=1.0
 Type=Application
 Name=OOBD Dongle 
 Comment=OOBD Dongle Maintanance Tools
-TryExec=/home/knoppix/bin/dongleTest/runDongle.sh
-Exec=/home/knoppix/bin/dongleTest/runDongle.sh
+Path=/home/knoppix/bin/dongleTest
+Exec=lxterminal -e ./runDongle.sh
 Icon=/home/knoppix/bin/dongleTest/runDonglelogo_48.xpm
 EOF
 fi
