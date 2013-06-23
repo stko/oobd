@@ -2,6 +2,8 @@ import time
 import bluetooth
 import re
 import select
+import sys
+
 # to install easygui, use "sudo apt-get install python-easygui"
 from easygui import *
 
@@ -68,11 +70,11 @@ def testCommand(thisTest):
 		print "Empty read Buffer!"		
 		return thisTest['err']
 
-def connect():
+def connect(macAdress):
 	while(True):
 		try:
 			gaugeSocket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-			gaugeSocket.connect(('00:12:6F:22:4E:8E', 1))
+			gaugeSocket.connect((macAdress, 1))
 			#gaugeSocket.setblocking(0)
 			break;
 		except bluetooth.btcommon.BluetoothError as error:
@@ -81,7 +83,12 @@ def connect():
 			time.sleep(10)
 	return gaugeSocket;
 
-gaugeSocket = connect()
+
+if len(sys.argv) < 2:
+    sys.exit('Usage: %s database-name' % sys.argv[0])
+
+BTMAC=sys.argv[1]
+gaugeSocket = connect(BTMAC)
 try:
 	gaugeSocket.send('\r\r\r')
 	gaugeSocket.recv(1024)
