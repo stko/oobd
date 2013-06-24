@@ -15,6 +15,7 @@ sudo apt-get install subversion python-easygui python-bluetooth ussp-push bluema
 # setting the subversion proxy
 
 if test -n $HTTP_HOST -a -n $HTTP_PORT ; then
+  test ! -d ~/.subversion && mkdir ~/.subversion
 	echo "[global]" > ~/.subversion/servers
 	echo "http-proxy-host = "$HTTP_HOST >> ~/.subversion/servers
 	echo "http-proxy-port = "$HTTP_PORT >> ~/.subversion/servers
