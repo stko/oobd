@@ -1,4 +1,5 @@
 #!/bin/bash
+. settings.inc
 # delete old group rings first
 rm *.groupring
 rm *.groupring.tmp
@@ -16,8 +17,9 @@ do
 	echo "key :" $user
 	echo "value:" ${USERS[$user]}
 	gpg --yes --batch --no-default-keyring --secret-keyring ./$user.groupring.tmp  -o $user.groupring --export-secret-keys
+	echo "adninreader :" $ADMINREADER
 
-	gpg --yes --batch --no-default-keyring --trust-model always  --keyring ./userkeyring.pub --recipient $user --output $user.groupkeys --encrypt $user.groupring
+	gpg --yes --batch --no-default-keyring --trust-model always  --keyring ./userkeyring.pub --recipient $user $ADMINREADER --output $user.groupkeys --encrypt $user.groupring
 #	gpg -v --yes --batch --no-default-keyring --trust-model always  --keyring ./userkeyring.pub --recipient $user --output $user.groupkeys --encrypt ./oobd_groups.sec
 	grep "$user" useraccess.txt > $user.groupkeys.lst
 
