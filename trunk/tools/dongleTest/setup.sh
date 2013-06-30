@@ -1,7 +1,7 @@
 #!/bin/sh 
 
 test -f oobd.conf && source oobd.conf
-if test -n $HTTP_HOST -a -n $HTTP_PORT ; then
+if [ "$HTTP_HOST" -a "$HTTP_PORT" ]; then
 	export HTTP_PROXY=$HTTP_HOST:$HTTP_PORT
 
 fi
@@ -14,7 +14,7 @@ sudo apt-get install subversion python-easygui python-bluetooth ussp-push bluema
 
 # setting the subversion proxy
 
-if test -n $HTTP_HOST -a -n $HTTP_PORT ; then
+if [ "$HTTP_HOST" -a "$HTTP_PORT" ]; then
   test ! -d ~/.subversion && mkdir ~/.subversion
 	echo "[global]" > ~/.subversion/servers
 	echo "http-proxy-host = "$HTTP_HOST >> ~/.subversion/servers
