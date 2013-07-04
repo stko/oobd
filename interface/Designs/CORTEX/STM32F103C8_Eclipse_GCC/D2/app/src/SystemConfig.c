@@ -1265,7 +1265,7 @@ void TIM2_Configuration(int Frequency)
     TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
     TIM_OCInitStructure.TIM_Pulse = CCR4_Val;
-    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_Low;	/* default: PWM Output high */
+    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;	/* default: PWM Output high */
     TIM_OC4Init(TIM2, &TIM_OCInitStructure);
 
     TIM_OC4PreloadConfig(TIM2, TIM_OCPreload_Enable);
