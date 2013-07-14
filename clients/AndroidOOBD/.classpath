@@ -4,7 +4,8 @@
 	<classpathentry excluding="org/apache/|org/apache/commons/io/|org/oobd/base/port/ComPort_Unix.java|org/oobd/base/port/ComPort_Win.java|org/oobd/base/port/RXTXcomm.jar|org/oobd/base/port/jna.jar|org/oobd/base/port/librxtxSerial.jnilib|org/oobd/base/port/librxtxSerial.so|org/oobd/base/port/purejavacomm.jar|org/oobd/base/port/rxtxSerial.dll|org/oobd/ui/swing/support/|org/spongycastle/|org/oobd/crypt/AES/test/|org/oobd/crypt/gpg/test/|org/oobd/base/images/" kind="src" path="base_src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="lib" path="libs/commons-codec-1.4.jar"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
