@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 import org.oobd.base.*;
 import org.oobd.base.support.Onion;
 import org.json.JSONException;
+
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -14,11 +16,11 @@ import java.util.*;
  */
 public class AVLLookup extends OobdDB implements OOBDConstants {
 
-    //static Enumeration portList;
-    //static boolean outputBufferEmptyFlag = false;
+    static HashMap<String, byte[]> dbStore=null;
 
     public AVLLookup() {
         super("AVLLookup");
+        dbStore = new HashMap<String, byte[]>();
         Logger.getLogger(AVLLookup.class.getName()).log(Level.CONFIG, "AVLLookup  object created: " + id);
     }
 
@@ -45,7 +47,14 @@ public class AVLLookup extends OobdDB implements OOBDConstants {
                         "AVLLookup lookup in " + dbFilename + " for: >" + key + "<");
 
                 try {
-                    lookupResult = OODBDictionary.doLookUp(Core.UISystem.generateResourceStream(FT_DATABASE, dbFilename), key);
+                	byte[] myDBBByteArray=dbStore.get(dbFilename);
+                	ByteArrayInputStream myByteInputStream=null;
+                	if (myDBBByteArray==null){
+                		dbStore.put(dbFilename, org.apache.commons.io.IOUtils.toByteArray(Core.UISystem.generateResourceStream(FT_DATABASE, dbFilename)));
+                	}
+					myByteInputStream = new ByteArrayInputStream(
+							dbStore.get(dbFilename));
+                    lookupResult = OODBDictionary.doLookUp(myByteInputStream, key);
                 } catch (Exception ex) {
                     Logger.getLogger(AVLLookup.class.getName()).log(Level.SEVERE, null, ex);
                 }

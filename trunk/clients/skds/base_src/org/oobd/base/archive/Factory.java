@@ -54,6 +54,7 @@ public class Factory {
             Logger.getLogger(Factory.class.getName()).log(Level.INFO, "Length of file name array: {0}" + name.length );
             if (name.length > 1) {
                 if (name[name.length-1].equals("pgp")) {
+                    Logger.getLogger(Factory.class.getName()).log(Level.WARNING, "PGP File found: {0}" + file.getName() );
                     return new FileHandlerPGP(Core.getSingleInstance());
                 }else{
                 	return new FileHandlerLBC(Core.getSingleInstance());

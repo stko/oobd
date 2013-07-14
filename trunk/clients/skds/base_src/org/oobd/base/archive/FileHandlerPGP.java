@@ -82,6 +82,10 @@ public class FileHandlerPGP implements Archive {
 
 	public boolean bind(String filePath) {
 		File file = new File(filePath);
+        if (!file.exists()){
+        	filePath=filePath+".pgp";
+        	file = new File(filePath);
+        }
 		if (file.exists()) {
 			myFilePath = filePath;
 			myFileName = file.getName();
