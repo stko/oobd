@@ -3,6 +3,8 @@ import bluetooth
 import re
 import select
 import sys
+import subprocess
+
 from modem import YMODEM
 # to install easygui, use "sudo apt-get install python-easygui"
 from easygui import *
@@ -95,11 +97,14 @@ while(runstatus>0):
 		print "hard core flashing starts.."
 		if ccbox("ok to flash?", "Please Confirm"):
 			try:
-				ymodem = YMODEM(getc, putc)
+				# ymodem = YMODEM(getc, putc)
 				echoWrite("1")
 				print "no way back.."
-				print 'Modem instance', ymodem
-				status = ymodem.send([sys.argv[2]])
+				# print 'Modem instance', ymodem
+				# status = ymodem.send([sys.argv[2]])
+
+				status   = subprocess.call(['sb',  sys.argv[2]], stdin=gaugeSocket, stdout=gaugeSocket)
+
 				print  'sent status', status
 			except:
 				print "Unexpected error:", sys.exc_info()[0]
