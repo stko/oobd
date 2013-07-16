@@ -30,7 +30,6 @@ def readln():
 
 def echoWrite(cmd):
 	gaugeSocket.send(cmd)
-	#print len(cmd)
 	ready = select.select([gaugeSocket], [], [], 1) #waiting 1 sec for an answer
 	if ready[0]:
 		res=gaugeSocket.recv(len(cmd))
@@ -66,18 +65,17 @@ while(runstatus>0):
 	echoWrite("\r\n")
 	res=readln()
 	lines=res.splitlines()
-	print "res=",lines
 	if len(lines)>0 and lines[len(lines)-1]==">":
-		print "Normal Line detected"
+		print "Responce from Dongle detected, asking for Version string"
 		echoWrite("p 0 0\r")
 		res=readln()
 		lines=res.splitlines()
-		print "res=",lines
+		#print "res=",lines
 		if lines[len(lines)-1]==">":
 			version = lines[0].split()
-			print version
+			print "Dongle Version:", version
 			if version[0] == "OOBD":
-				print "start flashing"
+				print "OOBD Firmware identified - try to activate Bootloader"
 				echoWrite("p 0 99 2\r")
 				time.sleep(0.1)
 				#gaugeSocket.send("fff")
@@ -90,22 +88,22 @@ while(runstatus>0):
 				time.sleep(1)
 				res=readln()
 				lines=res.splitlines()
-				print "res=",lines
 
 	#in case the bootloader is active
 	if len(lines)>0 and lines[len(lines)-1]=="OOBD-Flashloader>":
-		print "hard core flashing starts.."
+		print "Bootloader active, flashing can start.."
 		if ccbox("ok to flash?", "Please Confirm"):
 			try:
 				# ymodem = YMODEM(getc, putc)
 				echoWrite("1")
-				print "no way back.."
+				print "start transfer  - no way back.."
 				# print 'Modem instance', ymodem
 				# status = ymodem.send([sys.argv[2]])
 
 				status   = subprocess.call(['sb',  sys.argv[2]], stdin=gaugeSocket, stdout=gaugeSocket)
 
 				print  'sent status', status
+				runstatus = 0
 			except:
 				print "Unexpected error:", sys.exc_info()[0]
 	else: # the dongle seems not answer

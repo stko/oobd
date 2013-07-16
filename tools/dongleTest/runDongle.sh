@@ -19,7 +19,7 @@ do
 	echo "menu=$menuitem"
 	case $menuitem in
 		boot) dialog --msgbox "Not implemented yet" 10 50 ;;
-		flash) dialog --msgbox "Not implemented yet" 10 50 ;;
+		flash) cd ~/bin/dongleTest ; ./downloadBins.sh ; ./flashfw.sh ;;
 		hwTest) cd ~/bin/dongleTest ; ./hwTest.sh ;;
 		Quit) rm $tempfile; exit;;
 	esac
