@@ -1,5 +1,5 @@
 #!/bin/sh
-
+. flash/Flashloader_Package/filelist
 echo Scanning for Dongles around- please wait...
 
 ./getBTMAC.sh
@@ -11,7 +11,7 @@ case $choice in
 	*)
 		echo Try to connect ...
 		echo $choice
-		python hwTest.py $choice
-		read  -p "Test done - press return to continue" inputline ;;
+		python flashfw.py $choice flash/Flashloader_Package/$FWBIN
+ 		read  -p "Flash finished - press return to continue" inputline ;;
 esac
 
