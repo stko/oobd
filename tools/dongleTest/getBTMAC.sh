@@ -13,7 +13,7 @@ case $retval in
 	0)
 		echo -n $choice > /tmp/BT ;;
 	1)
-		echo n "NONE" > /tmp/BT ;;
+		echo -n "NONE" > /tmp/BT ;;
 	255)
 		echo -n "NONE" > /tmp/BT ;;
 esac

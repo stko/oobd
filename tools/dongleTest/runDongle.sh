@@ -1,5 +1,5 @@
 #!/bin/sh
-blueman-applet &
+blueman-applet >/dev/null &
 while true
 do
 	tempfile=`tempfile 2>/dev/null` || tempfile=/tmp/test$$
@@ -18,8 +18,8 @@ do
 	menuitem=`cat $tempfile`
 	echo "menu=$menuitem"
 	case $menuitem in
-		boot) dialog --msgbox "Not implemented yet" 10 50 ;;
-		flash) cd ~/bin/dongleTest ; ./downloadBins.sh ; ./flashfw.sh ;;
+		boot) cd ~/bin/dongleTest ; ./burnBoot.sh ;;
+		flash) cd ~/bin/dongleTest ; ./downloadBins.sh ; if [ $? -eq 0 ]; then ./flashfw.sh ; fi  ;;
 		hwTest) cd ~/bin/dongleTest ; ./hwTest.sh ;;
 		Quit) rm $tempfile; exit;;
 	esac

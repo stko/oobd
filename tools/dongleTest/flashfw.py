@@ -103,6 +103,9 @@ while(runstatus>0):
 				status   = subprocess.call(['sb',  sys.argv[2]], stdin=gaugeSocket, stdout=gaugeSocket)
 
 				print  'sent status', status
+				if status==0:
+					#start the firmware
+					gaugeSocket.send("3")
 				runstatus = 0
 			except:
 				print "Unexpected error:", sys.exc_info()[0]
