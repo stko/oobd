@@ -64,7 +64,7 @@ public class EncodeDecodeAES {
 		SecureRandom sr = null;
                 Class<?> act =null;
                  try{
-                      act = Class.forName("android.os.Build.VERSION");
+                      act = Class.forName("android.os.Build$VERSION");
                  }
                  catch(Exception e){
                      
