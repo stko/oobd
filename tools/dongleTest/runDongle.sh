@@ -1,4 +1,8 @@
 #!/bin/sh
+export CFGFILE=~/.oobd.conf
+test -f $CFGFILE && source $CFGFILE
+
+
 blueman-applet >/dev/null &
 while true
 do
