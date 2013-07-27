@@ -1,10 +1,24 @@
 #!/bin/sh 
+export CFGFILE=~/.oobd.conf
 
-test -f oobd.conf && source oobd.conf
+if [ ! -f $CFGFILE ]; then
+echo "create initial settings file"
+cat << 'EOF' > $CFGFILE
+#Adapt your settings here
+#export HTTP_HOST=proxy.example.com
+#export HTTP_PORT=4711
+export USBMC=/dev/ttyUSB0
+EOF
+fi
+
+
+test -f $CFGFILE && source $CFGFILE
 if [ "$HTTP_HOST" -a "$HTTP_PORT" ]; then
 	export HTTP_PROXY=$HTTP_HOST:$HTTP_PORT
 
 fi
+
+
 
 echo "Acquire::http::Proxy \"http://"$HTTP_PROXY"\"/;" > /tmp/pp
 sudo cp /tmp/pp /etc/apt/apt.conf.d/10-proxy
@@ -15,7 +29,7 @@ sudo apt-get install subversion python-easygui python-bluetooth ussp-push bluema
 # setting the subversion proxy
 
 if [ "$HTTP_HOST" -a "$HTTP_PORT" ]; then
-  test ! -d ~/.subversion && mkdir ~/.subversion
+	test ! -d ~/.subversion && mkdir ~/.subversion
 	echo "[global]" > ~/.subversion/servers
 	echo "http-proxy-host = "$HTTP_HOST >> ~/.subversion/servers
 	echo "http-proxy-port = "$HTTP_PORT >> ~/.subversion/servers

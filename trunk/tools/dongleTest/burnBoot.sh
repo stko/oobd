@@ -1,7 +1,6 @@
 #!/bin/sh
 
 cd ~/bin/dongleTest
-export USBMC=/dev/ttyUSB0
 
 if [ ! -f flash/Flashloader_Package/filelist ]
 then
@@ -58,19 +57,19 @@ do
 	case $menuitem in
 		1)
 			echo flash bootloader
-			#../stm32flash/stm32flash -z $USBMC
-			#../stm32flash/stm32flash -w flash/Flashloader_Package/$BLHEX -v -x $USBMC
+			../stm32flash/stm32flash -z $USBMC
+			../stm32flash/stm32flash -w flash/Flashloader_Package/$BLHEX -v -x $USBMC
 			;;
 		2)
 			echo flash firmware
-			#../stm32flash/stm32flash -z $USBMC
-			#../stm32flash/stm32flash -w flash/Flashloader_Package/$FWHEX -v -o 0x23fC -g 0x0 $USBMC
+			../stm32flash/stm32flash -z $USBMC
+			../stm32flash/stm32flash -w flash/Flashloader_Package/$FWHEX -v -o 0x23fC -g 0x0 $USBMC
 			;;
 		3)
 			echo flash both
-			#../stm32flash/stm32flash -z $USBMC
-			#../stm32flash/stm32flash -w flash/Flashloader_Package/$BLHEX -v -x $USBMC
-			#../stm32flash/stm32flash -w flash/Flashloader_Package/$FWHEX -v -o 0x23fC -g 0x0 $USBMC
+			../stm32flash/stm32flash -z $USBMC
+			../stm32flash/stm32flash -w flash/Flashloader_Package/$BLHEX -v -x $USBMC
+			../stm32flash/stm32flash -w flash/Flashloader_Package/$FWHEX -v -o 0x23fC -g 0x0 $USBMC
 			;;
 		Quit) rm $tempfile; exit;;
 	esac
