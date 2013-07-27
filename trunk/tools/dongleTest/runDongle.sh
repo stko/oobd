@@ -18,7 +18,7 @@ do
 	menuitem=`cat $tempfile`
 	echo "menu=$menuitem"
 	case $menuitem in
-		boot) cd ~/bin/dongleTest ; ./burnBoot.sh ;;
+		boot) cd ~/bin/dongleTest ; ./downloadBins.sh ; if [ $? -eq 0 ]; then ./burnBoot.sh ; fi  ;;
 		flash) cd ~/bin/dongleTest ; ./downloadBins.sh ; if [ $? -eq 0 ]; then ./flashfw.sh ; fi  ;;
 		hwTest) cd ~/bin/dongleTest ; ./hwTest.sh ;;
 		Quit) rm $tempfile; exit;;
