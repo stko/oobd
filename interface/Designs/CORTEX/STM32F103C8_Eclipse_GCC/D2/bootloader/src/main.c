@@ -52,7 +52,6 @@ int main(void) {
 	/* Execute the IAP driver in order to re-program the Flash */
 	IAP_Init();
 
-	/* send OOBD-Flashloader Version string on USART1 */SerialPutString("\r\nOOBD-Flashloader ");
 	SerialPutString(OOBDDESIGN);
 	SerialPutString(" ");
 	SerialPutString(SVNREV);
@@ -124,31 +123,65 @@ void IAP_Init(void) {
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	/* configure PA8 as Input for Hardwareidentification
-	 * PA8 = 1 - Original DXM1
-	 * PA8 = 0 - OOBD-Cup v5
+	/* configure PA8, PA13, PA14, PC14 as Input for Hardwareidentification
+	 * PA8, PA13, PA14, PC14 = 1 - Original DXM1
+	 * PA8, PC14 = 0 & PA13, PA14 = 1 - OOBD-Cup v5
+	 * PA8, PA13, PC14 = 1 & PA14 = 0 - OOBD CAN Invader
 	 */
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
+	GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE); /* release alternative GPIO function of PA13/14/15 */
+
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+
 	/* identify on which hardware the flashloader is running */
-	if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_RESET) {
-		/* configure DXM1-Output (open drain) of LED1 - green (PB5) and LED2 - red (PB4) */
+	if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_RESET) &&
+		(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14) == Bit_RESET) &&
+		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET) &&
+		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14) == Bit_SET)) {
+		/* configure DXM1-Output (Push-Pull) of LED1 - green (PB5) and LED2 - red (PB4) */
 		GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE); /* release alternative GPIO function of PB4 */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
 		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 		GPIO_Init(GPIOB, &GPIO_InitStructure);
-		HardwareIdent = 2; /* OOBD-Cup v5 */
-	} else if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET) {
+		HardwareIdent = 4; /* OOBD-Cup v5 */
+	}
+	else if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET) &&
+		(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14) == Bit_SET) &&
+		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET) &&
+		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14) == Bit_SET)) { /* DXM1 */
 		/* configure DXM1-Output (open drain) of LED1 - green (PB5) and LED2 - red (PB4) */
 		GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE); /* release alternative GPIO function of PB4 */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
 		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
 		GPIO_Init(GPIOB, &GPIO_InitStructure);
-		HardwareIdent = 1; /* Original DXM1 */
+		HardwareIdent = 1; /* DXM 1*/
+	}
+	else if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET) &&
+		(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14) == Bit_SET) &&
+		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET) &&
+		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14) == Bit_RESET)) { /* DXM1 */
+		/* configure DXM1-Output (Push-Pull) of LED1 - green (PB5) and LED2 - red (PB4) */
+		GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE); /* release alternative GPIO function of PB4 */
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+		GPIO_Init(GPIOB, &GPIO_InitStructure);
+		HardwareIdent = 5; /* OOBD CAN Invader */
 	} else
 		HardwareIdent = 0;
 
@@ -156,7 +189,7 @@ void IAP_Init(void) {
 		GPIO_SetBits(GPIOB, GPIO_Pin_5); /* LED 1 - red OFF */
 		GPIO_ResetBits(GPIOB, GPIO_Pin_4); /* LED 2 - green ON */
 	}
-	if (HardwareIdent == 2) { /* OOBD-Cup v5 */
+	if (HardwareIdent == 4 || HardwareIdent == 5) { /* OOBD-Cup v5 or OOBD CAN Invader */
 		GPIO_ResetBits(GPIOB, GPIO_Pin_5); /* Duo-LED 2 - red OFF */
 		GPIO_SetBits(GPIOB, GPIO_Pin_4); /* Duo-LED 2 - green ON */
 	}
