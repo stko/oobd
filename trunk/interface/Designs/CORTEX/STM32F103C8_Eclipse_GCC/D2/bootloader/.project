@@ -83,12 +83,12 @@
 		<link>
 			<name>CMSIS</name>
 			<type>2</type>
-			<location>/mnt/drive_v/OOBD/interface/OS/FreeRTOSV6.1.0/Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS</location>
+			<locationURI>$%7BPARENT-5-PROJECT_LOC%7D/OS/FreeRTOSV6.1.0/Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS</locationURI>
 		</link>
 		<link>
 			<name>STM32F10x_StdPeriph_Driver</name>
 			<type>2</type>
-			<location>/mnt/drive_v/OOBD/interface/OS/FreeRTOSV6.1.0/Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver</location>
+			<locationURI>$%7BPARENT-5-PROJECT_LOC%7D/OS/FreeRTOSV6.1.0/Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
