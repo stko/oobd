@@ -52,6 +52,8 @@ int main(void) {
 	/* Execute the IAP driver in order to re-program the Flash */
 	IAP_Init();
 
+	/* send OOBD-Flashloader Version string on USART1 */
+	SerialPutString("\r\nOOBD-Flashloader ");
 	SerialPutString(OOBDDESIGN);
 	SerialPutString(" ");
 	SerialPutString(SVNREV);
@@ -162,7 +164,7 @@ void IAP_Init(void) {
 	else if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET) &&
 		(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14) == Bit_SET) &&
 		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET) &&
-		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14) == Bit_SET)) { /* DXM1 */
+		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14) == Bit_SET)) {
 		/* configure DXM1-Output (open drain) of LED1 - green (PB5) and LED2 - red (PB4) */
 		GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE); /* release alternative GPIO function of PB4 */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
@@ -172,9 +174,8 @@ void IAP_Init(void) {
 		HardwareIdent = 1; /* DXM 1*/
 	}
 	else if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET) &&
-		(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14) == Bit_SET) &&
 		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET) &&
-		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14) == Bit_RESET)) { /* DXM1 */
+		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14) == Bit_RESET)) {
 		/* configure DXM1-Output (Push-Pull) of LED1 - green (PB5) and LED2 - red (PB4) */
 		GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE); /* release alternative GPIO function of PB4 */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
