@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+<?fileVersion 4.0.0?>
+
+<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827" moduleId="org.eclipse.cdt.core.settings" name="Debug_STM32">
@@ -24,7 +26,7 @@
 							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1365641232" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.default" valueType="enumerated"/>
 							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.target.thumbinterwork.1453226764" name="Thumb interwork (-mthumb-interwork)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.target.thumbinterwork" value="false" valueType="boolean"/>
 							<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug.84136198" isAbstract="false" name="Linux Platform" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.platform.debug"/>
-							<builder buildPath="${workspace_loc:/DXM1_Firmware/Debug_STM32}" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.builder.base.1033511912" keepEnvironmentInBuildfile="false" name="ARM Sourcery Linux GNU Make builder" parallelBuildOn="true" parallelizationNumber="unlimited" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.builder.base"/>
+							<builder buildPath="${workspace_loc:/DXM1_Firmware/Debug_STM32}" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.builder.base.1033511912" keepEnvironmentInBuildfile="false" name="ARM Sourcery Linux GNU Make builder" parallelBuildOn="true" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.builder.base"/>
 							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug.204786713" name="ARM Sourcery Linux GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.assembler.debug">
 								<option id="org.eclipse.cdt.cross.arm.gnu.assembler.option.include.paths.262475803" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.assembler.option.include.paths"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.assembler.option.warnings.pedantic.583806377" name="Pedantic (-pedantic)" superClass="org.eclipse.cdt.cross.arm.gnu.assembler.option.warnings.pedantic" value="true" valueType="boolean"/>
@@ -106,8 +108,8 @@
 					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1247246876" name="stm32f10x_bkp.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_bkp.h" toolsToInvoke=""/>
 					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.162889212" name="stm32f10x_cec.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_cec.h" toolsToInvoke=""/>
 					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.2121547152" name="stm32f10x_fsmc.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_fsmc.h" toolsToInvoke=""/>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1820036697" name="stm32f10x_dbgmcu.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_dbgmcu.h" toolsToInvoke=""/>
 					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1307654681" name="stm32f10x_dac.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_dac.h" toolsToInvoke=""/>
+					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.1820036697" name="stm32f10x_dbgmcu.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_dbgmcu.h" toolsToInvoke=""/>
 					<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.debug.948029827.186635418" name="/" resourcePath="Demo/POSIX_GCC">
 						<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug.1108738937" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.debug" unusedChildren="">
 							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.1365641232.716788401" name="Debug level"/>
@@ -169,6 +171,7 @@
 			<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
 				<buildTargets/>
 			</storageModule>
+			<storageModule moduleId="scannerConfiguration"/>
 		</cconfiguration>
 		<cconfiguration id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922" moduleId="org.eclipse.cdt.core.settings" name="Release_STM32">
@@ -201,7 +204,6 @@
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def.475440251" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="GCC_ARMCM3"/>
 									<listOptionValue builtIn="false" value="BUILDDATE='&quot;$(shell date --rfc-822)&quot;' "/>
-									<listOptionValue builtIn="false" value="OOBDDESIGN='(const char *)(&quot;D2&quot;)'"/>
 									<listOptionValue builtIn="false" value="SVNREV='&quot;$(shell LC_ALL=C svnversion -cn ../../../../../../../interface | sed -e &quot;s/.*://&quot; -e &quot;s/\([0-9]*\).*/\1/&quot; | grep &quot;[0-9]&quot; )&quot;'"/>
 									<listOptionValue builtIn="false" value="OOBD_PLATFORM_STM32"/>
 								</option>
@@ -214,7 +216,7 @@
 									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV6.1.0/Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/inc&quot;"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.packstruct.1255251650" name="Pack structures (-fpack-struct)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.packstruct" value="false" valueType="boolean"/>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.datasections.2079295362" name="Data sections (-fdata-sections)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.datasections" value="false" valueType="boolean"/>
+								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.datasections.2079295362" name="Function sections (-fdata-sections)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.datasections" value="false" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.functionsections.464724274" name="Function sections (-ffunction-sections)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.functionsections" value="false" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.shortenums.1539126892" name="Short enumerations (-fshort-enums)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.shortenums" value="false" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.warnings.allwarn.1021360801" name="All warnings (-Wall)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.warnings.allwarn" value="true" valueType="boolean"/>
@@ -269,7 +271,6 @@
 						</toolChain>
 					</folderInfo>
 					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.1334737292" name="stm32f10x_bkp.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_bkp.h" toolsToInvoke=""/>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.531402787" name="stm32f10x_crc.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_crc.h" toolsToInvoke=""/>
 					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.1781780912" name="stm32f10x_cec.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_cec.h" toolsToInvoke="">
 						<tool customBuildStep="true" id="org.eclipse.cdt.managedbuilder.ui.rcbs.1438932414" name="Resource Custom Build Step">
 							<inputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype.1856029790" name="Resource Custom Build Step Input Type">
@@ -278,9 +279,10 @@
 							<outputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype.499424686" name="Resource Custom Build Step Output Type"/>
 						</tool>
 					</fileInfo>
+					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.531402787" name="stm32f10x_crc.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_crc.h" toolsToInvoke=""/>
 					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.595361136" name="stm32f10x_fsmc.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_fsmc.h" toolsToInvoke=""/>
-					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.995167040" name="stm32f10x_dbgmcu.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_dbgmcu.h" toolsToInvoke=""/>
 					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.990706619" name="stm32f10x_dac.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_dac.h" toolsToInvoke=""/>
+					<fileInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.995167040" name="stm32f10x_dbgmcu.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_dbgmcu.h" toolsToInvoke=""/>
 					<folderInfo id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.release.1497352922.1976714293" name="/" resourcePath="Demo/POSIX_GCC">
 						<toolChain id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.release.2018567353" name="ARM Linux GCC (Sourcery G++ Lite)" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.toolchain.release" unusedChildren="">
 							<option id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.option.debugging.level.2051012287.2116441145" name="Debug level"/>
@@ -342,6 +344,7 @@
 			<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
 				<buildTargets/>
 			</storageModule>
+			<storageModule moduleId="scannerConfiguration"/>
 		</cconfiguration>
 		<cconfiguration id="cdt.managedbuild.config.gnu.exe.debug.1870774293">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.debug.1870774293" moduleId="org.eclipse.cdt.core.settings" name="Debug_POSIX_Sim">
@@ -384,11 +387,11 @@
 						</toolChain>
 					</folderInfo>
 					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1870774293.742394883" name="stm32f10x_bkp.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_bkp.h" toolsToInvoke=""/>
-					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1870774293.2111155923" name="stm32f10x_crc.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_crc.h" toolsToInvoke=""/>
 					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1870774293.1592576649" name="stm32f10x_cec.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_cec.h" toolsToInvoke=""/>
+					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1870774293.2111155923" name="stm32f10x_crc.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_crc.h" toolsToInvoke=""/>
 					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1870774293.1931799462" name="stm32f10x_fsmc.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_fsmc.h" toolsToInvoke=""/>
-					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1870774293.1846675366" name="stm32f10x_dbgmcu.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_dbgmcu.h" toolsToInvoke=""/>
 					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1870774293.1608413832" name="stm32f10x_dac.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_dac.h" toolsToInvoke=""/>
+					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.1870774293.1846675366" name="stm32f10x_dbgmcu.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_dbgmcu.h" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry excluding="FreeRTOS/portable/MemMang/heap_3.c|FreeRTOS/portable/MemMang/heap_1.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_it.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_i2c.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_crc.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_can.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_adc.c|STM32F10x_StdPeriph_Driver/src/misc.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c|STM32F10x_StdPeriph_Driver/inc/stm32f10x_fsmc.h|STM32F10x_StdPeriph_Driver/inc/stm32f10x_dbgmcu.h|STM32F10x_StdPeriph_Driver/inc/stm32f10x_dac.h|STM32F10x_StdPeriph_Driver/inc/stm32f10x_crc.h|STM32F10x_StdPeriph_Driver/inc/stm32f10x_cec.h|STM32F10x_StdPeriph_Driver/inc/stm32f10x_bkp.h|STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_cec.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
@@ -400,6 +403,7 @@
 			<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
 				<buildTargets/>
 			</storageModule>
+			<storageModule moduleId="scannerConfiguration"/>
 		</cconfiguration>
 		<cconfiguration id="cdt.managedbuild.config.gnu.exe.release.1562554120">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.exe.release.1562554120" moduleId="org.eclipse.cdt.core.settings" name="Release_POSIX_Sim">
@@ -442,11 +446,11 @@
 						</toolChain>
 					</folderInfo>
 					<fileInfo id="cdt.managedbuild.config.gnu.exe.release.1562554120.205815553" name="stm32f10x_bkp.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_bkp.h" toolsToInvoke=""/>
-					<fileInfo id="cdt.managedbuild.config.gnu.exe.release.1562554120.1585985945" name="stm32f10x_crc.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_crc.h" toolsToInvoke=""/>
 					<fileInfo id="cdt.managedbuild.config.gnu.exe.release.1562554120.676931677" name="stm32f10x_cec.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_cec.h" toolsToInvoke=""/>
+					<fileInfo id="cdt.managedbuild.config.gnu.exe.release.1562554120.1585985945" name="stm32f10x_crc.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_crc.h" toolsToInvoke=""/>
 					<fileInfo id="cdt.managedbuild.config.gnu.exe.release.1562554120.313900113" name="stm32f10x_fsmc.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_fsmc.h" toolsToInvoke=""/>
-					<fileInfo id="cdt.managedbuild.config.gnu.exe.release.1562554120.1608989206" name="stm32f10x_dbgmcu.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_dbgmcu.h" toolsToInvoke=""/>
 					<fileInfo id="cdt.managedbuild.config.gnu.exe.release.1562554120.1842027309" name="stm32f10x_dac.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_dac.h" toolsToInvoke=""/>
+					<fileInfo id="cdt.managedbuild.config.gnu.exe.release.1562554120.1608989206" name="stm32f10x_dbgmcu.h" rcbsApplicability="disable" resourcePath="STM32F10x_StdPeriph_Driver/inc/stm32f10x_dbgmcu.h" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry excluding="FreeRTOS/portable/MemMang/heap_3.c|FreeRTOS/portable/MemMang/heap_1.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_rtc.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_pwr.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_exti.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_it.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_i2c.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_crc.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_can.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_adc.c|STM32F10x_StdPeriph_Driver/src/misc.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_wwdg.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_sdio.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_iwdg.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_dbgmcu.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_dac.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_fsmc.c|STM32F10x_StdPeriph_Driver/inc/stm32f10x_fsmc.h|STM32F10x_StdPeriph_Driver/inc/stm32f10x_dbgmcu.h|STM32F10x_StdPeriph_Driver/inc/stm32f10x_dac.h|STM32F10x_StdPeriph_Driver/inc/stm32f10x_crc.h|STM32F10x_StdPeriph_Driver/inc/stm32f10x_cec.h|STM32F10x_StdPeriph_Driver/inc/stm32f10x_bkp.h|STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_cec.c|STM32F10x_StdPeriph_Driver/src/stm32f10x_bkp.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
@@ -458,6 +462,7 @@
 			<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
 				<buildTargets/>
 			</storageModule>
+			<storageModule moduleId="scannerConfiguration"/>
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
