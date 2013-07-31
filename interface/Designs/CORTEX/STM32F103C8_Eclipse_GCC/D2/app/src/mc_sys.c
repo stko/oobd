@@ -73,15 +73,30 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 
 	case VALUE_PARAM_INFO_VERSION:
 	    printser_string("OOBD ");
-	    printser_string(OOBDDESIGN);
+	    if (GPIO_HardwareLevel() == 1 ||
+	    	GPIO_HardwareLevel() == 4 ||
+	    	GPIO_HardwareLevel() == 5)
+	    	printser_string("D2");
+	    else
+	    	printser_string("??");
 	    printser_string(" ");
 	    printser_string(SVNREV);
 	    printser_string(" ");
-	    if (GPIO_HardwareLevel() > 0) {
-		printser_string("Lux-Wolf");
-	    } else {
-		printser_string("dxm");
-	    }
+	    if (GPIO_HardwareLevel() == 1)
+			printser_string("dxm");
+	    else if (GPIO_HardwareLevel() == 4 || GPIO_HardwareLevel() == 5)
+	    	printser_string("Lux-Wolf");
+	    else
+	    	printser_string("unknown-HW");
+	    printser_string(" ");
+	    if (GPIO_HardwareLevel() == 1)
+			printser_string("dxm");
+	    else if (GPIO_HardwareLevel() == 4)
+	    	printser_string("Lux-Wolf");
+	    else if (GPIO_HardwareLevel() == 5)
+	    	printser_string("CAN-Invader");
+	    else
+	    	printser_string("FL?");
 	    printser_string(" ");
 	    printser_string(BUILDDATE);
 	    printLF();
