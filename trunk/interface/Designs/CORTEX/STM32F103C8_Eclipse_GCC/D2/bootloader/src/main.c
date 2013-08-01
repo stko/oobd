@@ -103,6 +103,9 @@ void IAP_Init(void) {
 			RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC
 					| RCC_APB2Periph_AFIO, ENABLE);
 
+	/* diesable JTAG and release alternative GPIO function of PA13/14/15 */
+	GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
+
 	/* Configure all unused GPIO port pins in Analog Input mode (floating input
 	 trigger OFF), this will reduce the power consumption and increase the
 	 device immunity against EMI/EMC ******************************************/
@@ -130,18 +133,13 @@ void IAP_Init(void) {
 	 * PA8, PC14 = 0 & PA13, PA14 = 1 - OOBD-Cup v5
 	 * PA8, PA13, PC14 = 1 & PA14 = 0 - OOBD CAN Invader
 	 */
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE); /* release alternative GPIO function of PA13/14/15 */
-
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
@@ -151,8 +149,8 @@ void IAP_Init(void) {
 	/* identify on which hardware the flashloader is running */
 	if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_RESET) &&
 		(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14) == Bit_RESET) &&
-		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET) &&
-		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14) == Bit_SET)) {
+		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET))
+	{
 		/* configure DXM1-Output (Push-Pull) of LED1 - green (PB5) and LED2 - red (PB4) */
 		GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE); /* release alternative GPIO function of PB4 */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
@@ -163,8 +161,8 @@ void IAP_Init(void) {
 	}
 	else if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET) &&
 		(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14) == Bit_SET) &&
-		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET) &&
-		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14) == Bit_SET)) {
+		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET))
+	{
 		/* configure DXM1-Output (open drain) of LED1 - green (PB5) and LED2 - red (PB4) */
 		GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE); /* release alternative GPIO function of PB4 */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
