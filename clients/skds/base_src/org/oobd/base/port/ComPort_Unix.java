@@ -37,7 +37,7 @@ public class ComPort_Unix implements OOBDPort {
     }
 
     public boolean connect(Onion options) {
-        Properties props = Core.getSingleInstance().getSystemIF().loadProperty(OOBDConstants.FT_IGNORE, OOBDConstants.AppPrefsFileName);
+        Properties props = Core.getSingleInstance().getSystemIF().loadProperty(OOBDConstants.FT_RAW, OOBDConstants.AppPrefsFileName);
          String defaultPort = "";
         Boolean portFound = false;
 

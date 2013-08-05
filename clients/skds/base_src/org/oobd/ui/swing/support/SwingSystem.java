@@ -19,6 +19,8 @@ import org.oobd.crypt.AES.EncodeDecodeAES;
 
 //import java.io.FileInputStream;
 import java.io.*;
+import org.oobd.base.archive.Archive;
+import org.oobd.base.archive.Factory;
 import org.oobd.base.support.Onion;
 import org.oobd.base.port.ComPort_Unix;
 import org.oobd.crypt.AES.PassPhraseProvider;
@@ -94,9 +96,11 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     public String generateUIFilePath(int pathID, String fileName) {
 		switch (pathID) {
 
+		case FT_RAW:
 		case FT_DATABASE:
 			return fileName;
 		case FT_KEY:
+                                    System.out.println("key path generated:"+System.getProperty("user.home") + "/" + fileName);
 			return System.getProperty("user.home") + "/" + fileName;
 
 		default:
@@ -107,14 +111,76 @@ public class SwingSystem implements IFsystem, OOBDConstants {
 
     }
 
-    public InputStream generateResourceStream(int pathID, String ResourceName) throws java.util.MissingResourceException {
-        try {
-            return new FileInputStream(generateUIFilePath(pathID, ResourceName));
-        } catch (FileNotFoundException ex) {
-            throw new java.util.MissingResourceException("Resource not found:" + ResourceName, "SwingSystem", ResourceName);
-        }
-    }
+ 
+    
+    	public InputStream generateResourceStream(int pathID, String resourceName)
+			throws java.util.MissingResourceException {
+		Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO,"Try to load: " + resourceName
+				+ " with path ID : " + pathID);
+		InputStream resource = null;
+		switch (pathID) {
+		case OOBDConstants.FT_PROPS:
+			try {
+				resource = new FileInputStream(generateUIFilePath(pathID,
+						resourceName));
+				Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
+						+ " loaded");
+			} catch (FileNotFoundException e) {
+				Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING,"File " + resourceName
+						+ " could not be loaded",e);
+			}
+			return resource;
+		case OOBDConstants.FT_RAW:
+			try {
+				resource = new FileInputStream(generateUIFilePath(pathID,
+						resourceName));
+				Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
+						+ " loaded");
+			} catch (FileNotFoundException e) {
+				Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING,"File " + resourceName
+						+ " could not be loaded",e);
+			}
+			return resource;
+		case OOBDConstants.FT_DATABASE:
+		case OOBDConstants.FT_SCRIPT:
+			try {
+				String filePath = generateUIFilePath(pathID, resourceName);
+				Archive achive = Factory.getArchive(filePath);
+				achive.bind(filePath);
+				resource = achive.getInputStream("");
+				Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
+						+ " loaded");
+			} catch (Exception e) {
+				Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING,"File " + resourceName
+						+ " could not been loaded",e);
+			}
+			return resource;
+		case OOBDConstants.FT_KEY:
+			try {
+				resource = new FileInputStream(System.getProperty("user.home") + "/" +resourceName);
+				Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO,"Key File "
+						+ resourceName + " loaded");
+			} catch (Exception e) {
+				Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "Key File "
+						+ resourceName
+						+ " not loaded",e);
+			}
+			return resource;
 
+		default:
+			throw new java.util.MissingResourceException("Resource not known",
+					"OOBDApp", resourceName);
+		}
+
+	}
+
+    
+    
+    
+    
+    
+    
+    
     public Object supplyHardwareHandle(Onion typ) {
         String osname = System.getProperty("os.name", "").toLowerCase();
         Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "OS detected: " + osname);
