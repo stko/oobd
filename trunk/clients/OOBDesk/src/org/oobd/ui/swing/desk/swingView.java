@@ -1295,8 +1295,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
         try {
             InputStream keyfile = oobdCore.getSystemIF().generateResourceStream(
-                    OOBDConstants.FT_SCRIPT,
-                    OOBDConstants.PGP_USER_KEYFILE_NAME);
+                    OOBDConstants.FT_RAW,
+                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + "/" +OOBDConstants.PGP_USER_KEYFILE_NAME);
             newUserKeyExist = keyfile != null;
             keyfile.close();
         } catch (Exception e) {
@@ -1304,8 +1304,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
         try {
             InputStream keyfile = oobdCore.getSystemIF().generateResourceStream(
-                    OOBDConstants.FT_SCRIPT,
-                    OOBDConstants.PGP_GROUP_KEYFILE_NAME);
+                    OOBDConstants.FT_RAW,
+                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + "/" +OOBDConstants.PGP_GROUP_KEYFILE_NAME);
             newGroupKeyExist = keyfile != null;
             keyfile.close();
         } catch (Exception e) {
@@ -1342,8 +1342,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     private boolean importsingleKeyFile(String from, String to) {
         FileOutputStream fos;
+        System.out.println("Import key file from " + from + " to "+to);
         InputStream inFile = oobdCore.getSystemIF().generateResourceStream(
-                OOBDConstants.FT_SCRIPT, from);
+                OOBDConstants.FT_RAW, from);
         if (inFile != null) {
             try {
                 fos = new FileOutputStream(oobdCore.getSystemIF().generateUIFilePath(

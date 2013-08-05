@@ -528,7 +528,7 @@ public class ScriptengineLua extends OobdScriptengine {
 	}
 
 	public boolean doScript(String fileName) throws IOException {
-
+                        System.out.println("Script to load:"+fileName);
 		InputStream resource = UISystem.generateResourceStream(FT_SCRIPT,
 				fileName);
 		if (resource == null) {
