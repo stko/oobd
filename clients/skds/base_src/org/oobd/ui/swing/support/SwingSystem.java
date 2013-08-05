@@ -21,6 +21,7 @@ import org.oobd.crypt.AES.EncodeDecodeAES;
 import java.io.*;
 import org.oobd.base.support.Onion;
 import org.oobd.base.port.ComPort_Unix;
+import org.oobd.crypt.AES.PassPhraseProvider;
 
 /**
  * This class is the connection between the generic oobd system and the enviroment for e.g. IO operations

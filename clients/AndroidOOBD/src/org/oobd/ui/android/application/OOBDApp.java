@@ -13,6 +13,7 @@ import org.oobd.base.archive.*;
 
 import org.oobd.base.support.Onion;
 import org.oobd.crypt.AES.EncodeDecodeAES;
+import org.oobd.crypt.AES.PassPhraseProvider;
 import org.oobd.ui.android.Diagnose;
 import org.oobd.ui.android.bus.ComPort;
 
