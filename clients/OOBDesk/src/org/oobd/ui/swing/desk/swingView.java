@@ -713,13 +713,16 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }//GEN-LAST:event_backButtonLabelMouseClicked
 
     private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
+        if (scriptSelectComboBox.getSelectedItem()==null){
+            return;
+        }
         String scriptName = scriptSelectComboBox.getSelectedItem().toString();
         appProbs.setProperty(OOBDConstants.PropName_ScriptName, scriptName);
         oobdCore.getSystemIF().saveProperty(FT_PROPS,
                 OOBDConstants.AppPrefsFileName, appProbs);
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         cl.show(mainPanel, DIAGNOSEPANEL);
-        try {
+       try {
             startScriptEngine(
                     new Onion("{" + "'scriptpath':'" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath().replace("\\", "/")
                     + "'" + "}"));
@@ -975,6 +978,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     @Action
     public void onClickMenu_Settings() {
+        System.out.println("Setting Menu selected");
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         //cl.next(mainPanel);
         cl.show(mainPanel, SETTINGSPANEL);
