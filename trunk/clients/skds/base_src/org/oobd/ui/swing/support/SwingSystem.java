@@ -32,7 +32,7 @@ import org.oobd.crypt.AES.PassPhraseProvider;
 public class SwingSystem implements IFsystem, OOBDConstants {
 
     Core core;
-	private String userPassPhrase = "";
+    private String userPassPhrase = "";
 
     public void registerOobdCore(Core thisCore) {
         core = thisCore;
@@ -94,93 +94,70 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     }
 
     public String generateUIFilePath(int pathID, String fileName) {
-		switch (pathID) {
+        switch (pathID) {
 
-		case FT_RAW:
-		case FT_DATABASE:
-			return fileName;
-		case FT_KEY:
-                                    System.out.println("key path generated:"+System.getProperty("user.home") + "/" + fileName);
-			return System.getProperty("user.home") + "/" + fileName;
+            case FT_RAW:
+            case FT_DATABASE:
+                return fileName;
+            case FT_KEY:
+                System.out.println("key path generated:" + System.getProperty("user.home") + "/" + fileName);
+                return System.getProperty("user.home") + "/" + fileName;
 
-		default:
-			return  fileName;
+            default:
+                return fileName;
 
-		}
+        }
 
 
     }
 
- 
-    
-    	public InputStream generateResourceStream(int pathID, String resourceName)
-			throws java.util.MissingResourceException {
-		Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO,"Try to load: " + resourceName
-				+ " with path ID : " + pathID);
-		InputStream resource = null;
-		switch (pathID) {
-		case OOBDConstants.FT_PROPS:
-			try {
-				resource = new FileInputStream(generateUIFilePath(pathID,
-						resourceName));
-				Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
-						+ " loaded");
-			} catch (FileNotFoundException e) {
-				Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING,"File " + resourceName
-						+ " could not be loaded",e);
-			}
-			return resource;
-		case OOBDConstants.FT_RAW:
-			try {
-				resource = new FileInputStream(generateUIFilePath(pathID,
-						resourceName));
-				Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
-						+ " loaded");
-			} catch (FileNotFoundException e) {
-				Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING,"File " + resourceName
-						+ " could not be loaded",e);
-			}
-			return resource;
-		case OOBDConstants.FT_DATABASE:
-		case OOBDConstants.FT_SCRIPT:
-			try {
-				String filePath = generateUIFilePath(pathID, resourceName);
-				Archive achive = Factory.getArchive(filePath);
-				achive.bind(filePath);
-				resource = achive.getInputStream("");
-				Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
-						+ " loaded");
-			} catch (Exception e) {
-				Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING,"File " + resourceName
-						+ " could not been loaded",e);
-			}
-			return resource;
-		case OOBDConstants.FT_KEY:
-			try {
-				resource = new FileInputStream(System.getProperty("user.home") + "/" +resourceName);
-				Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO,"Key File "
-						+ resourceName + " loaded");
-			} catch (Exception e) {
-				Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "Key File "
-						+ resourceName
-						+ " not loaded",e);
-			}
-			return resource;
+    public InputStream generateResourceStream(int pathID, String resourceName)
+            throws java.util.MissingResourceException {
+        Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "Try to load: " + resourceName
+                + " with path ID : " + pathID);
+        InputStream resource = null;
+        try {
+            switch (pathID) {
+                case OOBDConstants.FT_PROPS:
+                    resource = new FileInputStream(generateUIFilePath(pathID,
+                            resourceName));
+                    Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
+                            + " loaded");
 
-		default:
-			throw new java.util.MissingResourceException("Resource not known",
-					"OOBDApp", resourceName);
-		}
+                case OOBDConstants.FT_RAW:
+                    resource = new FileInputStream(generateUIFilePath(pathID,
+                            resourceName));
+                    Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
+                            + " loaded");
 
-	}
+                case OOBDConstants.FT_DATABASE:
+                case OOBDConstants.FT_SCRIPT:
+                    String filePath = generateUIFilePath(pathID, resourceName);
+                    Archive achive = Factory.getArchive(filePath);
+                    achive.bind(filePath);
+                    resource = achive.getInputStream("");
+                    Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
+                            + " loaded");
 
-    
-    
-    
-    
-    
-    
-    
+                case OOBDConstants.FT_KEY:
+                    resource = new FileInputStream(System.getProperty("user.home") + "/" + resourceName);
+                    Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "Key File "
+                            + resourceName + " loaded");
+
+
+                default:
+                    throw new java.util.MissingResourceException("Resource not known",
+                            "OOBDApp", resourceName);
+            }
+
+        } catch (Exception e) {
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "generateResourceStream: File "
+                    + resourceName
+                    + " not loaded");
+        }
+        return resource;
+    }
+
     public Object supplyHardwareHandle(Onion typ) {
         String osname = System.getProperty("os.name", "").toLowerCase();
         Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "OS detected: " + osname);
@@ -225,8 +202,8 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             properties.store(os, null);
             return true;
         } catch (Exception e) {
-             Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "could not save property file: {0}", filename);
-           return false;
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "could not save property file: {0}", filename);
+            return false;
         } finally {
             if (null != os) {
                 try {
@@ -238,32 +215,32 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     }
 
     public char[] getAppPassPhrase() {
-		return PassPhraseProvider.getPassPhrase();
+        return PassPhraseProvider.getPassPhrase();
     }
 
     public String getUserPassPhrase() {
-		if (userPassPhrase.equals("")) {
-			return "";
-		} else {
-			try {
-				return new String(EncodeDecodeAES.decrypt(new String(
-						getAppPassPhrase()), userPassPhrase));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return "";
-			}
-		}
+        if (userPassPhrase.equals("")) {
+            return "";
+        } else {
+            try {
+                return new String(EncodeDecodeAES.decrypt(new String(
+                        getAppPassPhrase()), userPassPhrase));
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return "";
+            }
+        }
     }
 
     public void setUserPassPhrase(String upp) {
- 		try {
-			userPassPhrase = EncodeDecodeAES.encrypt(new String(
-					getAppPassPhrase()), upp);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			userPassPhrase = "";
-		}
+        try {
+            userPassPhrase = EncodeDecodeAES.encrypt(new String(
+                    getAppPassPhrase()), upp);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            userPassPhrase = "";
+        }
     }
 }

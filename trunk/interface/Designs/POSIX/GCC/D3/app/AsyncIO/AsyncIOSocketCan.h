@@ -19,7 +19,7 @@
 
 
 /* CAN Packet size to send/receive. */
-#define CAN_INTERFACE			"can0"
+#define CAN_INTERFACE			"oobdcan0"
 
 
 /* At time of writing, these constants are not defined in the headers */
