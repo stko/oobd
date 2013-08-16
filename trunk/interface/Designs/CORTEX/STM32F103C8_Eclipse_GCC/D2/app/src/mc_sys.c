@@ -329,45 +329,52 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
     DEBUGPRINT("Pin: %ld to value %ld\n", pinID, upperValue);
     switch (pinID) {
     case IO_LED_WHITE:
-	DEBUGPRINT("IO_LED_WHITE set to %ld\n", upperValue);
-	if (GPIO_HardwareLevel() == 1) {
+	DEBUGPRINT("IO_LED_BLUE set to %ld\n", upperValue);
+	if (GPIO_HardwareLevel() == 4) { /* OOBD Cup v5 */
 	    upperValue ? GPIO_SetBits(GPIOB, GPIO_Pin_10) : GPIO_ResetBits(GPIOB, GPIO_Pin_10);	/* LED1 - yellow  */
-	} else {
+	} else if (GPIO_HardwareLevel() == 5) { /* OOBD CAN Invader */
+	    upperValue ? GPIO_SetBits(GPIOA, GPIO_Pin_7) : GPIO_ResetBits(GPIOA, GPIO_Pin_7);	/* LED1 - yellow  */
+	} else { /* DXM1 */
 	    upperValue ? GPIO_SetBits(GPIOB, GPIO_Pin_4) : GPIO_ResetBits(GPIOB, GPIO_Pin_4);	/* LED2 - green */
 	}
 	return pdTRUE;
 	break;
     case IO_LED_GREEN:
 	DEBUGPRINT("IO_LED_GREEN set to %ld\n", upperValue);
-	if (GPIO_HardwareLevel() == 1) {
+	if (GPIO_HardwareLevel() == 4 || GPIO_HardwareLevel() == 5) { /* OOBD-Cup v5 or OOBD CAN Invader */
 	    upperValue ? GPIO_SetBits(GPIOB, GPIO_Pin_4) : GPIO_ResetBits(GPIOB, GPIO_Pin_4);	/* Duo-LED2gr - green */
-	} else {
+	} else if (GPIO_HardwareLevel() == 1) { /* DXM1 */
 	    upperValue ? GPIO_SetBits(GPIOB, GPIO_Pin_4) : GPIO_ResetBits(GPIOB, GPIO_Pin_4);	/* LED2 - green */
 	}
 	return pdTRUE;
 	break;
     case IO_LED_RED:
 	DEBUGPRINT("IO_LED_RED set to %ld\n", upperValue);
-	if (GPIO_HardwareLevel() == 1) {
+	if (GPIO_HardwareLevel() == 4 || GPIO_HardwareLevel() == 5) { /* OOBD-Cup v5 or OOBD CAN Invader */
 	    upperValue ? GPIO_SetBits(GPIOB, GPIO_Pin_5) : GPIO_ResetBits(GPIOB, GPIO_Pin_5);	/* Duo-LED2rd - red */
-	} else {
+	} else if (GPIO_HardwareLevel() == 1) { /* DXM1 */
 	    upperValue ? GPIO_SetBits(GPIOB, GPIO_Pin_5) : GPIO_ResetBits(GPIOB, GPIO_Pin_5);	/* LED1 - red */
 	}
 	return pdTRUE;
 	break;
 
     case IO_REL1:
-	if (GPIO_HardwareLevel() == 1) {
+	if (GPIO_HardwareLevel() == 4) { /* OOBD-Cup v5 */
 	    upperValue ? GPIO_SetBits(GPIOC, GPIO_Pin_15) : GPIO_ResetBits(GPIOC, GPIO_Pin_15);	/* Rel1 */
 	    DEBUGPRINT("IO_REL1 set to %ld\n", upperValue);
 	    return pdTRUE;
-	} else {
+	} else if (GPIO_HardwareLevel() == 5) { /* OOBD CAN Invader */
+	    upperValue ? GPIO_SetBits(GPIOB, GPIO_Pin_3) : GPIO_ResetBits(GPIOB, GPIO_Pin_3);	/* Rel1 */
+	    DEBUGPRINT("IO_REL1 set to %ld\n", upperValue);
+	    return pdTRUE;
+    }
+	else {
 	    return pdFALSE;
 	}
 	break;
 
     case IO_BUZZER:
-	if (GPIO_HardwareLevel() == 1) {
+	if (GPIO_HardwareLevel() == 4 || GPIO_HardwareLevel() == 5) { /* OOBD-Cup v5 or OOBD CAN Invader */
 	    sysSound(upperValue, portMAX_DELAY);	/* Buzzer, full volume */
 	    DEBUGPRINT("Buzzer set to frequency of %ld\n", upperValue);
 	    return pdTRUE;
