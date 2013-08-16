@@ -148,47 +148,25 @@ void NVIC_Configuration(void)
 /**
  * @brief  returns peripherals hardware ID
  * @param  None
- * @retval 0 = standard DXM, 1 OOBD D2-V6
+ * @retval 1 = standard DXM, 4 = OOBD D2-V5, 5 = OOBD CAN Invader
  */ 
 portBASE_TYPE GPIO_HardwareLevel(void)
 {
-	uint8_t HardwareVariant;
+	portBASE_TYPE HardwareVariant = 0; /* default no valid hardware detected */
 	
-    if  (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) &&
-		GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) &&
-		GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14) &&
-		GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14))
+    if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET) &&
+		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET) &&
+		(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14) == Bit_SET))
 			HardwareVariant = 1; /* DXM1 */
-	else if  (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) &&
-		GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) &&
-		GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14) &&
-		!GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14))
-			HardwareVariant = 2; /* reserved for OOBD-Cup v5 subvariant */
-	else if  (!GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) &&
-		GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) &&
-		GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14) &&
-		GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14))
-			HardwareVariant = 3; /* reserved for OOBD-Cup v5 subvariant */
-	else if  (!GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) &&
-		GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) &&
-		GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14) &&
-		!GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14))
+	else if  ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_RESET) &&
+		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET) &&
+		(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14) == Bit_RESET))
 			HardwareVariant = 4; /* OOBD-Cup v5 */
-	else if  (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) &&
-		GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) &&
-		!GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14))
+	else if  ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET) &&
+		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET) &&
+		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14) == Bit_RESET))
 			HardwareVariant = 5; /* OOBD CAN Invader */
-	else if  (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) &&
-		!GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) &&
-		GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14))
-			HardwareVariant = 6; /* reserved for OOBD CAN Invader subvariant */
-	else if  (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) &&
-		!GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) &&
-		!GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14))
-			HardwareVariant = 7; /* reserved for OOBD CAN Invader subvariant */
-	else
-		HardwareVariant = 0;  /* default 0 = no valid hardware detected */
-	
+
 	return HardwareVariant;
 }
 
@@ -202,6 +180,9 @@ void GPIO_Configuration(void)
 {
 
     GPIO_InitTypeDef GPIO_InitStructure;
+
+    /* release alternative GPIO function of PA13/14/15 and PB4*/
+    GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
 
     /* TIM2 clock enable */
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
@@ -267,16 +248,14 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-    GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE); /* release alternative GPIO function of PA13/14/15 */
-
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
-	
+/*
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
-	
+*/
     /* Initialize USART1 on PA9 (USART1_Tx) and PA10 (USART1_Rx) for RS232 interface */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
@@ -331,7 +310,7 @@ void GPIO_Configuration(void)
     /* General settings for GPIOs of PORT C */
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
-	/* configure PA8, PA13, PA14 as Input for Hardwareidentifikaton
+	/* configure PC14 as Input for Hardwareidentifikaton
      * PC14 = 1 - Reserved for further variants of OOBD-Cup v5 (default)
      * PC14 = 0 - Reserved for further variants of OOBD-Cup v5
 	 */
@@ -359,37 +338,35 @@ void GPIO_Configuration(void)
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
 	/* initialize new PortB settings  */
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
 	GPIO_ResetBits(GPIOB, GPIO_Pin_3);	/* default PB3: REL1 - OFF */
     }
 	
 	/* LED configuration depending on hardware ident */
-	GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE);	/* release alternative GPIO function of PB4 */	
     if (GPIO_HardwareLevel() == 4) { /* OOBD-Cup v5 or OOBD-Cup v5 */
 		/* configure DXM1-Output (push pull) of Duo-LED2 - green (PB5) and LED2 - red (PB4)
-		* and LED2 - yellow (PB10) */
+		* and LED2 - blue (PB10) */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_10;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    } 
+		GPIO_Init(GPIOB, &GPIO_InitStructure);    
+	} 
 	else if (GPIO_HardwareLevel() == 5) { /* OOBD CAN Invader */
 		/* configure of Duo-LED - green (PB5) and LED2 - red (PB4) */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	}
-	else if (GPIO_HardwareLevel() == 1) {	/* Original DXM1 */
-		/* configure DXM1-Output (open drain) of LED1 - green (PB5) and LED2 - red (PB4) */
-		GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE);	/* release alternative GPIO function of PB4 */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
-	}
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	
-    if (GPIO_HardwareLevel() == 5) { /* OOBD CAN Invader */
+		GPIO_Init(GPIOB, &GPIO_InitStructure);
+
 		/* configure of LED2 - blue (PA7) */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-    } 
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+		GPIO_Init(GPIOA, &GPIO_InitStructure);
+	}
+	else if (GPIO_HardwareLevel() == 1) {	/* Original DXM1 */
+		/* configure DXM1-Output (open drain) of LED1 - green (PB5) and LED2 - red (PB4) */
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
+		GPIO_Init(GPIOB, &GPIO_InitStructure);
+	}
 
     /* CAN configuration depending on hardware ident */
     /* GPIO clock enable */
@@ -423,7 +400,6 @@ void GPIO_Configuration(void)
     /* Identify on which hardware the firmware is running */
     if (GPIO_HardwareLevel() == 4) { /* OOBD-Cup v5 */
 		/* configure PB11 PWM output for buzzer, TIM2 source for OOBD-Cup v5 */
-		GPIO_PinRemapConfig(GPIO_PartialRemap1_TIM2, DISABLE);	/* OOBD-Cup v5, use TIM2, Ch3 */
 		GPIO_PinRemapConfig(GPIO_PartialRemap2_TIM2, ENABLE);	/* OOBD-Cup v5, use TIM2, Ch3 */
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
@@ -431,8 +407,7 @@ void GPIO_Configuration(void)
     }
     else if (GPIO_HardwareLevel() == 5) { /* OOBD CAN Invader */
 		/* configure PA6 PWM output for buzzer, TIM2 source for OOBD CAN Invader */
-		GPIO_PinRemapConfig(GPIO_PartialRemap1_TIM2, DISABLE);	/* OOBD CAN Invader, use TIM2, Ch1 */
-		GPIO_PinRemapConfig(GPIO_PartialRemap2_TIM2, DISABLE);	/* OOBD CAN Invader, use TIM2, Ch1 */
+		GPIO_PinRemapConfig(GPIO_FullRemap_TIM2, ENABLE);	/* OOBD CAN Invader, use TIM2, Ch1 */
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
 		GPIO_Init(GPIOA, &GPIO_InitStructure);
