@@ -516,6 +516,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         jSeparator1.setName("jSeparator1"); // NOI18N
         diagnoseToolBar.add(jSeparator1);
 
+        gridSmallerButton.setIcon(resourceMap.getIcon("gridSmallerButton.icon")); // NOI18N
         gridSmallerButton.setText(resourceMap.getString("gridSmallerButton.text")); // NOI18N
         gridSmallerButton.setToolTipText(resourceMap.getString("gridSmallerButton.toolTipText")); // NOI18N
         gridSmallerButton.setFocusable(false);
@@ -529,6 +530,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         });
         diagnoseToolBar.add(gridSmallerButton);
 
+        gridBiggerButton.setIcon(resourceMap.getIcon("gridBiggerButton.icon")); // NOI18N
         gridBiggerButton.setText(resourceMap.getString("gridBiggerButton.text")); // NOI18N
         gridBiggerButton.setToolTipText(resourceMap.getString("gridBiggerButton.toolTipText")); // NOI18N
         gridBiggerButton.setFocusable(false);

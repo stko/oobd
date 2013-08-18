@@ -43,9 +43,9 @@ File "dist/OOBDesk.jar"
 File "oobd.url"
 File "jlogviewer.jar"
 File "logging.props"
-File /oname=OOBD.lbc "../OOBD-ME/res/OOBD.lbc"
-File "../OOBD-ME/testscripts/dtc.csv"
-File "../OOBD-ME/testscripts/dtc.oodb"
+File /oname=OOBD.lbc "../../lua-scripts/obdII-standard/OOBD.lbc"
+File "../../lua-scripts/obdII-standard/dtc.csv"
+File "../../lua-scripts/obdII-standard/dtc.oodb"
 File /oname=stdlib.lbc "../OOBD-ME/res/stdlib.lbc"
 CreateDirectory "$INSTDIR\logs"
 
@@ -69,6 +69,7 @@ Section "un.Uninstall"
 RMDir /r $INSTDIR\lib
 RMDir /r $INSTDIR\logs
 RMDir /r $INSTDIR\bus
+RMDir /r $INSTDIR\port
 RMDir /r $INSTDIR\db
 RMDir /r $INSTDIR\scriptengine
 RMDir /r $INSTDIR\protocol
