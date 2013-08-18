@@ -100,8 +100,8 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             case FT_DATABASE:
                 return fileName;
             case FT_KEY:
-                System.out.println("key path generated:" + System.getProperty("user.home") + "/" + fileName);
-                return System.getProperty("user.home") + "/" + fileName;
+                System.out.println("key path generated:" + System.getProperty("user.home") +java.io.File.separator+ fileName);
+                return System.getProperty("user.home") + java.io.File.separator + fileName;
 
             default:
                 return fileName;
@@ -140,7 +140,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                             + " loaded");
 
                 case OOBDConstants.FT_KEY:
-                    resource = new FileInputStream(System.getProperty("user.home") + "/" + resourceName);
+                    resource = new FileInputStream(System.getProperty("user.home") +java.io.File.separator+ resourceName);
                     Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "Key File "
                             + resourceName + " loaded");
 

@@ -373,6 +373,7 @@
                         </Component>
                         <Component class="javax.swing.JButton" name="gridSmallerButton">
                           <Properties>
+                            <Property name="icon" type="javax.swing.Icon" resourceKey="gridSmallerButton.icon"/>
                             <Property name="text" type="java.lang.String" resourceKey="gridSmallerButton.text"/>
                             <Property name="toolTipText" type="java.lang.String" resourceKey="gridSmallerButton.toolTipText"/>
                             <Property name="focusable" type="boolean" value="false"/>
@@ -386,6 +387,7 @@
                         </Component>
                         <Component class="javax.swing.JButton" name="gridBiggerButton">
                           <Properties>
+                            <Property name="icon" type="javax.swing.Icon" resourceKey="gridBiggerButton.icon"/>
                             <Property name="text" type="java.lang.String" resourceKey="gridBiggerButton.text"/>
                             <Property name="toolTipText" type="java.lang.String" resourceKey="gridBiggerButton.toolTipText"/>
                             <Property name="focusable" type="boolean" value="false"/>
