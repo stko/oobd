@@ -12,7 +12,7 @@ testSet=[
 {'cmd':'p 0 0 0\r','res':r'.*(OBD).*','next':4,'err':2,'descr':'Looking for OOBD ID','okText':'OK: OOBD String received','errText':'Error: No correct Answer'},
 {'cmd':'p 0 0 0\r','res':r'.*(OBD).*','next':4,'err':3,'descr':'Looking for OOBD ID','okText':'OK: OOBD String received','errText':'Error: No correct Answer'},
 {'cmd':'p 0 0 0\r','res':r'.*(OBD).*','next':4,'err':4,'descr':'Looking for OOBD ID','okText':'OK: OOBD String received','errText':'Error: No correct Answer'},
-{'cmd':'p 0 0 1\r','res':r'.*(:).*','next':5,'err':-1,'descr':'Looking for Serial Nr.','okText':'OK: Serial Nr. received','errText':'Error: No correct Answer'},
+{'cmd':'p 0 0 1\r','res':r'.*(:).*','next':5,'err':-1,'descr':'Looking for Serial Nr.','okText':'OK: Serial Nr received','errText':'Error: No correct Answer'},
 
 {'cmd':'p 1 2 0 0\r','res':r'.*(.).*','next':6,'err':-1,'descr':'Blue LED off','okText':'OK: Blue LED turned off','errText':'Error: No correct Answer'},
 {'cmd':'p 1 2 1 0\r','res':r'.*(.).*','next':7,'err':-1,'descr':'Green LED off','okText':'OK: Green LED turned off','errText':'Error: No correct Answer'},
@@ -21,7 +21,7 @@ testSet=[
 {'cmd':'p 1 2 1 1\r','res':r'.*(.).*','next':10,'err':-1,'descr':'Green LED on','okText':'OK: Green LED turned on','errText':'Error: No correct Answer','dialogtext':'Is the green LED on?'},
 {'cmd':'p 1 2 1 0\r','res':r'.*(.).*','next':11,'err':-1,'descr':'Green LED off','okText':'OK: Green LED turned off','errText':'Error: No correct Answer'},
 {'cmd':'p 1 2 2 1\r','res':r'.*(.).*','next':12,'err':-1,'descr':'Red LED on','okText':'OK: Red LED turned on','errText':'Error: No correct Answer','dialogtext':'Is the red LED on?'},
-{'cmd':'p 1 2 2 0\r','res':r'.*(.).*','next':13,'err':-1,'descr':'Red LED off','okText':'OK: Red LED turned off','errText':'Error: No correct Answer'},
+{'cmd':'p 1 2 2 0\r','res':r'.*(.).*','next':15,'err':-1,'descr':'Red LED off','okText':'OK: Red LED turned off','errText':'Error: No correct Answer'},
 {'cmd':'p 1 2 3 1000\r','res':r'.*(.).*','next':14,'err':-1,'descr':'Buzzer on','okText':'OK: Buzzer turned on','errText':'Error: No correct Answer','dialogtext':'Do you hear the Buzzer?'},
 {'cmd':'p 1 2 3 0\r','res':r'.*(.).*','next':15,'err':-1,'descr':'Buzzer off','okText':'OK: Red LED turned off','errText':'Error: No correct Answer'},
 
@@ -48,9 +48,17 @@ def testCommand(thisTest):
 	print thisTest['descr']
 	print thisTest['cmd']
 	echoWrite(thisTest['cmd'])
+	recvDone=False
+	res=""
+	while(not recvDone):
+		ready = select.select([gaugeSocket], [], [], 1) #waiting 1 sec for an answer
+		if ready[0]:
+		    	res+=gaugeSocket.recv(1024)
+			recvDone=res[-2:]=="\r>"
+		else:
+			recvDone=True
 	ready = select.select([gaugeSocket], [], [], 1) #waiting 1 sec for an answer
-	if ready[0]:
-	    	res=gaugeSocket.recv(1024)
+	if res!="":
 		print res
 		matchObj = re.match( thisTest['res'] , res, re.M|re.I)
 
@@ -77,6 +85,8 @@ def connect(macAdress):
 		try:
 			gaugeSocket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
 			gaugeSocket.connect((macAdress, 1))
+			print "Connected to",macAdress
+			time.sleep(0.5)
 			#gaugeSocket.setblocking(0)
 			break;
 		except bluetooth.btcommon.BluetoothError as error:
