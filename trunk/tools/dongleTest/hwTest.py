@@ -57,7 +57,6 @@ def testCommand(thisTest):
 			recvDone=res[-2:]=="\r>"
 		else:
 			recvDone=True
-	ready = select.select([gaugeSocket], [], [], 1) #waiting 1 sec for an answer
 	if res!="":
 		print res
 		matchObj = re.match( thisTest['res'] , res, re.M|re.I)
