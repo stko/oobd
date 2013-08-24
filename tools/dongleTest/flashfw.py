@@ -19,9 +19,16 @@ def putc(data, timeout=1):
 
 
 def readln():
-	ready = select.select([gaugeSocket], [], [], 1) #waiting 1 sec for an answer
-	if ready[0]:
-		res=gaugeSocket.recv(1024)
+	recvDone=False
+	res=""
+	while(not recvDone):
+		ready = select.select([gaugeSocket], [], [], 1) #waiting 1 sec for an answer
+		if ready[0]:
+		    	res+=gaugeSocket.recv(1024)
+			recvDone=res[-1:]=="\r"
+		else:
+			recvDone=True
+	if res!="":
 		print res
 		return res
 	else:
@@ -30,9 +37,8 @@ def readln():
 
 def echoWrite(cmd):
 	gaugeSocket.send(cmd)
-	ready = select.select([gaugeSocket], [], [], 1) #waiting 1 sec for an answer
-	if ready[0]:
-		res=gaugeSocket.recv(len(cmd))
+	#print len(cmd)
+	res=gaugeSocket.recv(len(cmd))
 
 
 def connect(macAdress):
@@ -41,6 +47,7 @@ def connect(macAdress):
 			gaugeSocket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
 			gaugeSocket.connect((macAdress, 1))
 			#gaugeSocket.setblocking(0)
+			print "Connected to ", macAdress
 			break;
 		except bluetooth.btcommon.BluetoothError as error:
 			gaugeSocket.close()
@@ -64,6 +71,7 @@ runstatus=2
 while(runstatus>0):
 	echoWrite("\r\n")
 	res=readln()
+	print "Read: ", res
 	lines=res.splitlines()
 	if len(lines)>0 and lines[len(lines)-1]==">":
 		print "Responce from Dongle detected, asking for Version string"
