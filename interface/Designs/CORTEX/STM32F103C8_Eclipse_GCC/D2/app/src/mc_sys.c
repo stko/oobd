@@ -98,8 +98,7 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 	    else
 	    	printser_string("FL?");
 	    printser_string(" ");
-	    printser_string(BUILDDATE);
-	    printLF();
+	    printser_string(BUILDDATE);    printLF();
 	    printEOT();
 	    break;
 
@@ -109,7 +108,10 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 	    printEOT();
 	    break;
 	case VALUE_PARAM_INFO_ADC_POWER:
-	    printser_int((readADC1(8) * (3.15 / 4096)) * 10000, 10);	/* result in mV */
+		if (GPIO_HardwareLevel() == 4)  /* OOBD Cup v5, R1=200k, R2=18k */
+			printser_int((readADC1(8) * (3.3 / 4096)) + ((12 / 200000) * 180000)*1000, 10);	/* result in mV */
+		else if (GPIO_HardwareLevel() == 5) /* OOBD CAN Invader, R1=130k, R2=27k */
+			printser_int((readADC1(8) * (3.3 / 4096)) + ((12 / 157000) * 130000)*1000, 10);	/* result in mV */
 	    printser_string(" mV");
 	    printLF();
 	    printEOT();
@@ -390,10 +392,21 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 
 portBASE_TYPE sysSound(portBASE_TYPE frequency, portBASE_TYPE volume)
 {
-    if (frequency != 0)
-	TIM2_Configuration(frequency);
-    /* if frequency=0 => disable buzzer, otherwise enable buzzer with frequency */
-    frequency ? TIM_Cmd(TIM2, ENABLE) : TIM_Cmd(TIM2, DISABLE);	/* Buzzer */
+
+    	/* if frequency=0 => disable buzzer, otherwise enable buzzer with frequency */
+    	if (GPIO_HardwareLevel() == 4) { /* OOBD-Cup v5 */
+    		if (frequency != 0)
+    			TIM2_Configuration(frequency);
+
+    		frequency ? TIM_Cmd(TIM2, ENABLE) : TIM_Cmd(TIM2, DISABLE);	/* Buzzer */
+    	}
+    	else if (GPIO_HardwareLevel() == 5) { /* OOBD CAN Invader */
+    		if (frequency != 0)
+    			TIM3_Configuration(frequency);
+
+    		frequency ? TIM_Cmd(TIM3, ENABLE) : TIM_Cmd(TIM3, DISABLE);	/* Buzzer */
+    	}
+
 }
 
 /*---------------------------------------------------------------------------*/
