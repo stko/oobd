@@ -82,8 +82,12 @@ void System_Configuration(void)
     /* Analog digitial converter configuration */
     ADC_Configuration();
 
-    /* Timer 2 configuration for PWM output, 3100Hz/50% duty cycle */
-    TIM2_Configuration(3100);	/* OOBD-Cup v5 only * */
+    if (GPIO_HardwareLevel() == 4)
+    	/* Timer 2 configuration for PWM output, 3100Hz/50% duty cycle */
+    	TIM2_Configuration(3100);	/* OOBD-Cup v5 only */
+    else if (GPIO_HardwareLevel() == 5)
+    	/* Timer 3 configuration for PWM output, 3100Hz/50% duty cycle */
+    	TIM3_Configuration(3100);	/* OOBD CAN Invader only */
 
     /* NVIC configuration */
     //  NVIC_Configuration();
@@ -184,9 +188,6 @@ void GPIO_Configuration(void)
     /* release alternative GPIO function of PA13/14/15 and PB4*/
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
 
-    /* TIM2 clock enable */
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
-
     /* GPIOx clocks enable */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB |
 			   RCC_APB2Periph_GPIOC | RCC_APB2Periph_AFIO,
@@ -216,8 +217,8 @@ void GPIO_Configuration(void)
 	 * PA 8 = DXM1 IO Pin 21  = GPIO_Mode_AIN - OOBD-Cup v5 hardware identification
 	 * PA 9 = USART1_Tx       = GPIO_Mode_AF_PP - Alternate Function output Push Pull
 	 * PA10 = USART1_Rx       = GPIO_Mode_AIN - Input floating for low power consumption
-	 * PA11 = USART1_CTS      = GPIO_Mode_AIN - currently unused
-	 * PA12 = USART1_RTS      = GPIO_Mode_AIN - currently unused
+	 * PA11 = USART1_CTS      = GPIO_Mode_AIN - CAN-RxD for STM32F103T8 (i.e. OOBD CAN Invader)
+	 * PA12 = USART1_RTS      = GPIO_Mode_AIN - CAN-TxD for STM32F103T8 (i.e. OOBD CAN Invader)
 	 * PA13 = HardwareIdent   = GPIO_Mode_AIN - OOBD CAN Invader hardware identification
 	 * PA14 = HardwareIdent   = GPIO_Mode_AIN - OOBD CAN Invader hardware identification
 	 * PA15 = ???             = GPIO_Mode_AIN - Input floating for low power consumption
@@ -396,22 +397,25 @@ void GPIO_Configuration(void)
 	}
 	/* CAN1 Periph clock enable */
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1, ENABLE);
-		
+
     /* Identify on which hardware the firmware is running */
     if (GPIO_HardwareLevel() == 4) { /* OOBD-Cup v5 */
-		/* configure PB11 PWM output for buzzer, TIM2 source for OOBD-Cup v5 */
+		/* TIM2 clock enable */
+		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+		/* configure PB11 PWM output for buzzer, TIM2_CH4 source for OOBD-Cup v5 */
 		GPIO_PinRemapConfig(GPIO_PartialRemap2_TIM2, ENABLE);	/* OOBD-Cup v5, use TIM2, Ch3 */
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
 		GPIO_Init(GPIOB, &GPIO_InitStructure);
     }
     else if (GPIO_HardwareLevel() == 5) { /* OOBD CAN Invader */
-		/* configure PA6 PWM output for buzzer, TIM2 source for OOBD CAN Invader */
-		GPIO_PinRemapConfig(GPIO_FullRemap_TIM2, ENABLE);	/* OOBD CAN Invader, use TIM2, Ch1 */
+		/* TIM3 clock enable */
+		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+		/* configure PA6 PWM output for buzzer, TIM3_CH1 source for OOBD CAN Invader */
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
 		GPIO_Init(GPIOA, &GPIO_InitStructure);
-    }
+	}
 }
 
 /*----------------------------------------------------------------------------*/
@@ -1329,7 +1333,7 @@ void TIM2_Configuration(int Frequency)
     TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
     TIM_OCInitTypeDef TIM_OCInitStructure;
     uint16_t PrescalerValue = 0;
-    uint16_t CCR4_Val = 322;	/* TIM2 Channel1 duty cycle = (TIM2_CCR4/ TIM2_ARR)* 100 = 50% */
+    uint16_t CCR4_Val = 322;	/* TIM2 Channel4 duty cycle = (TIM2_CCR4/ TIM2_ARR)* 100 = 50% */
 
     /* Compute the prescaler value, set TIM2CLK to 2MHz */
     PrescalerValue = (uint16_t) (SystemCoreClock / 2000000) - 1;
@@ -1352,6 +1356,40 @@ void TIM2_Configuration(int Frequency)
 
     /* TIM2 enable counter */
     TIM_Cmd(TIM2, DISABLE);	/* default */
+
+    TIM_CtrlPWMOutputs(TIM2, ENABLE);
+}
+
+void TIM3_Configuration(int Frequency)
+{
+    TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
+    TIM_OCInitTypeDef TIM_OCInitStructure;
+    uint16_t PrescalerValue = 0;
+    uint16_t CCR1_Val = 322;	/* TIM3 Channel1 duty cycle = (TIM3_CCR1/ TIM3_ARR)* 100 = 50% */
+
+    /* Compute the prescaler value, set TIM3CLK to 2MHz */
+    PrescalerValue = (uint16_t) (SystemCoreClock / 2000000) - 1;
+    /* PWM Time base configuration based on TIM3CLK of 2MHz */
+    TIM_TimeBaseStructure.TIM_Period = 2000000 / Frequency;
+    TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
+    TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+
+    TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+
+    /* PWM2 Mode configuration: Channel1 */
+    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+    TIM_OCInitStructure.TIM_Pulse = CCR1_Val;
+    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;	/* default: PWM Output high */
+    TIM_OC1Init(TIM3, &TIM_OCInitStructure); /* Channel1 init */
+
+    TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable); /* Channel1 Preload */
+
+    /* TIM3 enable counter */
+    TIM_Cmd(TIM3, DISABLE);	/* default */
+
+    TIM_CtrlPWMOutputs(TIM3, ENABLE);
 }
 
 /**
