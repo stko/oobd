@@ -1019,17 +1019,24 @@ void USART1_Configuration(void)
 	for (nCount = 0; nCount < nLength; nCount++) {
 	};			/* delay */
 
+
 	USART_SendData(USART1, 'C');
 
 	for (nCount = 0; nCount < nLength; nCount++) {
 	};			/* delay */
 
-	USART_SendData(USART1, 'u');
+	if (GPIO_HardwareLevel() == 4)
+		USART_SendData(USART1, 'u');
+	else if (GPIO_HardwareLevel() == 5)
+		USART_SendData(USART1, 'I');
 
 	for (nCount = 0; nCount < nLength; nCount++) {
 	};			/* delay */
 
-	USART_SendData(USART1, 'p');
+	if (GPIO_HardwareLevel() == 4)
+		USART_SendData(USART1, 'p');
+	else if (GPIO_HardwareLevel() == 5)
+		USART_SendData(USART1, 'V');
 
 	for (nCount = 0; nCount < nLength; nCount++) {
 	};			/* delay */
