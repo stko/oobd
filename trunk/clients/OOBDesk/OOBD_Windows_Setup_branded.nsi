@@ -7,7 +7,7 @@
 SetCompress force
 SetCompressor /SOLID lzma
 Name "OOBDesk"
-OutFile "OOBDesk_Setup.exe"
+OutFile "OOBDesk_Setup_Branded.exe"
 RequestExecutionLevel user
 XPStyle on
 
@@ -29,16 +29,24 @@ LicenseForceSelection checkbox
 
 Section "OOBDesk"
 SetOutPath $INSTDIR
-File /r  "dist/lib"
+CreateDirectory $INSTDIR\lib
+File /oname=$INSTDIR\lib\appframework-1.0.3.jar dist/lib/appframework-1.0.3.jar
+File /oname=$INSTDIR\lib\jna.jar dist/lib/jna.jar
+File /oname=$INSTDIR\lib\kahlua.jar dist/lib/kahlua.jar
+File /oname=$INSTDIR\lib\purejavacomm.jar dist/lib/purejavacomm.jar
+File /oname=$INSTDIR\lib\RXTXcomm.jar dist/lib/RXTXcomm.jar
+File /oname=$INSTDIR\lib\swing-worker-1.1.jar dist/lib/swing-worker-1.1.jar
+
+
+
 #File /r  "build/classes/skdsswing/bus"
 File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/bus"
 File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/port"
 File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/db"
 File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/scriptengine"
 File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/protocol"
-File "dist/OOBDesk.jar"
-#File  "app_dist.props"
-#File /oname=oobdcore.props  "oobdcore_dist.props"
+File /oname=OOBDesk.jar "dist/OOBDesk_Rxxx_Branded.jar"
+File /oname=oobdcore.props  "oobdcore_dist.props"
 #File  "enginelua_dist.props"
 File "oobd.url"
 File "jlogviewer.jar"
