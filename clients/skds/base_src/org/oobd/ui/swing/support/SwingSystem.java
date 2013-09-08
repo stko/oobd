@@ -100,7 +100,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             case FT_DATABASE:
                 return fileName;
             case FT_KEY:
-                System.out.println("key path generated:" + System.getProperty("user.home") +java.io.File.separator+ fileName);
+                System.out.println("key path generated:" + System.getProperty("user.home") + java.io.File.separator + fileName);
                 return System.getProperty("user.home") + java.io.File.separator + fileName;
 
             default:
@@ -123,12 +123,14 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                             resourceName));
                     Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
                             + " loaded");
+                    break;
 
                 case OOBDConstants.FT_RAW:
                     resource = new FileInputStream(generateUIFilePath(pathID,
                             resourceName));
                     Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
                             + " loaded");
+                    break;
 
                 case OOBDConstants.FT_DATABASE:
                 case OOBDConstants.FT_SCRIPT:
@@ -138,22 +140,23 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                     resource = achive.getInputStream("");
                     Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
                             + " loaded");
+                    break;
 
                 case OOBDConstants.FT_KEY:
-                    resource = new FileInputStream(System.getProperty("user.home") +java.io.File.separator+ resourceName);
+                    resource = new FileInputStream(System.getProperty("user.home") + java.io.File.separator + resourceName);
                     Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "Key File "
                             + resourceName + " loaded");
+                    break;
 
 
                 default:
                     throw new java.util.MissingResourceException("Resource not known",
                             "OOBDApp", resourceName);
+ 
             }
 
         } catch (Exception e) {
-            Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "generateResourceStream: File "
-                    + resourceName
-                    + " not loaded");
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "generateResourceStream: File {0} not loaded",resourceName);
         }
         return resource;
     }
@@ -182,7 +185,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             is = new FileInputStream(generateUIFilePath(pathID, filename));
             properties.load(is);
         } catch (Exception e) {
-            Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "could not load property file: {0}", filename);
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "could not load property file " + filename, e);
 
         } finally {
             if (null != is) {
@@ -202,7 +205,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             properties.store(os, null);
             return true;
         } catch (Exception e) {
-            Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "could not save property file: {0}", filename);
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "could not load property file " + filename, e);
             return false;
         } finally {
             if (null != os) {

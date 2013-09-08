@@ -1302,7 +1302,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         try {
             InputStream keyfile = oobdCore.getSystemIF().generateResourceStream(
                     OOBDConstants.FT_RAW,
-                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + "/" +OOBDConstants.PGP_USER_KEYFILE_NAME);
+                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator +OOBDConstants.PGP_USER_KEYFILE_NAME);
             newUserKeyExist = keyfile != null;
             keyfile.close();
         } catch (Exception e) {
@@ -1311,7 +1311,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         try {
             InputStream keyfile = oobdCore.getSystemIF().generateResourceStream(
                     OOBDConstants.FT_RAW,
-                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + "/" +OOBDConstants.PGP_GROUP_KEYFILE_NAME);
+                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator +OOBDConstants.PGP_GROUP_KEYFILE_NAME);
             newGroupKeyExist = keyfile != null;
             keyfile.close();
         } catch (Exception e) {
@@ -1330,18 +1330,18 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }
 
     private void importKeyFiles() {
-        if (importsingleKeyFile(appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME,
+        if (importsingleKeyFile(appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_USER_KEYFILE_NAME,
                 OOBDConstants.PGP_USER_KEYFILE_NAME)) {
             File f = new File(oobdCore.getSystemIF().generateUIFilePath(
                     OOBDConstants.FT_SCRIPT,
-                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME));
+                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_USER_KEYFILE_NAME));
             f.delete();
         }
-        if (importsingleKeyFile(appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME,
+        if (importsingleKeyFile(appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_GROUP_KEYFILE_NAME,
                 OOBDConstants.PGP_GROUP_KEYFILE_NAME)) {
             File f = new File(oobdCore.getSystemIF().generateUIFilePath(
                     OOBDConstants.FT_SCRIPT,
-                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME));
+                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_GROUP_KEYFILE_NAME));
             f.delete();
         }
     }
