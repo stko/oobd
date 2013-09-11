@@ -385,7 +385,6 @@ void GPIO_Configuration(void)
 	}
 	else {	/* DXM1 or OOBD-Cup v5 */
 		GPIO_PinRemapConfig(GPIO_Remap1_CAN1, ENABLE);
-		GPIO_PinRemapConfig(GPIO_Remap2_CAN1, DISABLE);
 		/* Configure CAN pin: RX */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
