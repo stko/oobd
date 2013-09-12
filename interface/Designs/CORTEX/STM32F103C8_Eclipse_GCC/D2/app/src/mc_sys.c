@@ -196,6 +196,58 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 	    printEOT();
 	    break;
 
+	case VALUE_PARAM_INFO_KLINE_FAST_INIT:
+		/* K-Line High for 300ms */
+		GPIO_ResetBits(GPIOA, GPIO_Pin_2);
+		vTaskDelay( 300 / portTICK_RATE_MS );
+		/* K-Line Low for 25ms */
+		GPIO_SetBits(GPIOA, GPIO_Pin_2);
+		vTaskDelay( 25 / portTICK_RATE_MS );
+		/* K-Line High for 25ms */
+		GPIO_ResetBits(GPIOA, GPIO_Pin_2);
+		vTaskDelay( 25 / portTICK_RATE_MS );
+		/* init UART2 to 10k4 baud, 8N1 */
+		USART2_Configuration();
+
+		/* send start communication request */
+		USART_SendData(USART2, 0xc1);
+		USART_SendData(USART2, 0x33);
+		USART_SendData(USART2, 0xf1);
+		USART_SendData(USART2, 0x81);
+		USART_SendData(USART2, 0x66);
+
+		printser_string("K-Line Fast Init completed!");
+	    printLF();
+	    printEOT();
+	    break;
+
+	case VALUE_PARAM_INFO_KLINE:
+		if ( GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_3) == Bit_SET)
+			printser_string("active - low");
+		else
+			printser_string("inactive - high");
+		printLF();
+	    printEOT();
+	    break;
+
+	case VALUE_PARAM_INFO_LLINE:
+		if ( GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_4) == Bit_SET)
+			printser_string("active - low");
+		else
+			printser_string("inactive - high");
+		printLF();
+	    printEOT();
+	    break;
+
+	case VALUE_PARAM_INFO_KLINE_TX:
+		if ( GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2) == Bit_SET)
+			printser_string("active - Receive mode");
+		else
+			printser_string("inactive - Transmit mode");
+		printLF();
+	    printEOT();
+	    break;
+
 	default:
 	    evalResult(FBID_SYS_SPEC, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT, 0,
 		       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
@@ -384,6 +436,18 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 	} else {
 	    return pdFALSE;
 	}
+	break;
+
+    case IO_K_LINE:
+	    upperValue ? GPIO_SetBits(GPIOA, GPIO_Pin_2) : GPIO_ResetBits(GPIOA, GPIO_Pin_2);	/* set K-Line */
+		return pdTRUE;
+	    break;
+
+    case IO_L_LINE:
+	    upperValue ? GPIO_SetBits(GPIOA, GPIO_Pin_4) : GPIO_ResetBits(GPIOA, GPIO_Pin_4);	/* set L-Line */
+		return pdTRUE;
+	    break;
+
     default:
 	DEBUGPRINT("unknown output pin\n", upperValue);
 	return pdFALSE;
