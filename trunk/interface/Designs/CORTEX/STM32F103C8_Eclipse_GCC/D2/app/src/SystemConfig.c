@@ -74,7 +74,7 @@ void System_Configuration(void)
     USART1_Configuration();
 
     /* USART1 configuration */
-    USART2_Configuration();
+//    USART2_Configuration();
 
     /* USART1 configuration */
     CAN1_Configuration(VALUE_BUS_CONFIG_11bit_500kbit, CAN_Mode_Silent);	/* default initialization */
@@ -209,7 +209,7 @@ void GPIO_Configuration(void)
 	 * PA 1 = ???             = GPIO_Mode_AIN - Input floating for low power consumption
 	 * PA 2 = USART2_Tx 	  = GPIO_Mode_AF_PP - Alternate Function output Push Pull (L9637D RX, Pin1)
 	 * PA 3 = USART2_Rx 	  = GPIO_Mode_AIN - Input floating for low power consumption (L9637D TX, Pin4)
-	 * PA 4 = ???             = GPIO_Mode_AIN - Input floating for low power consumption
+	 * PA 4 = L-LINE Output   = GPIO_Mode_Out_PP - Output Push Pull
 	 * PA 5 = ???             = GPIO_Mode_AIN - Input floating for low power consumption
 	 * PA 6 = LM393 Out, Pin1 = GPIO_Mode_AIN - currently unused
 	 * PA 7 = LM393 Out, Pin7 = GPIO_Mode_AIN - currently unused
@@ -232,15 +232,22 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
     /* Initialize USART2 on PA2 (USART2_Tx) and PA3 (USART2_Rx) for K-Line interface */
-    /*
-       GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-       GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
-       GPIO_Init(GPIOA, &GPIO_InitStructure);
+//    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    GPIO_ResetBits(GPIOA, GPIO_Pin_2);
 
-       GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-       GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
-       GPIO_Init(GPIOA, &GPIO_InitStructure);
-     */
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+    /* configure L-Line output */
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    GPIO_ResetBits(GPIOA, GPIO_Pin_4);
+
     /* configure PA8, PA13, PA14 as Input for Hardwareidentifikaton
      * PA8 & PA13 & PA14 = 1 - Original DXM1
      * PA8 = 0, PA13 & PA14 = 1 - OOBD-Cup v5
@@ -252,11 +259,7 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
-/*
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
-*/
+
     /* Initialize USART1 on PA9 (USART1_Tx) and PA10 (USART1_Rx) for RS232 interface */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;

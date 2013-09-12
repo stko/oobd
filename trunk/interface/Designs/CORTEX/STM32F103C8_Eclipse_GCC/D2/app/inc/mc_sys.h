@@ -54,6 +54,10 @@
 #define VALUE_PARAM_INFO_CRC32					( 7 )	//!< Outputs the firmware CRC checksum result
 #define VALUE_PARAM_INFO_BTM222_DEVICENAME 		( 8 )	//!< Outputs the BT Devicename
 #define VALUE_PARAM_INFO_BTM222_UART_SPEED 		( 9 )	//!< Outputs the BT UART Speed
+#define VALUE_PARAM_INFO_KLINE_FAST_INIT 		( 10 )	//!< Initiate K-Line Fast init procedure
+#define VALUE_PARAM_INFO_KLINE					( 11 )	//!< Get K-Line status
+#define VALUE_PARAM_INFO_LLINE					( 12 )	//!< Get L-Line status
+#define VALUE_PARAM_INFO_KLINE_TX				( 13 )  //!< Get TX K-Line status
 
 /*System specific IO- Pins */
 #define IO_REL1 	(0) + SYS_SPECIFIC_IO_OFFSET
