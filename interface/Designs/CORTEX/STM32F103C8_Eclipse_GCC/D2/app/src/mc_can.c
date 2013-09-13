@@ -30,7 +30,7 @@
  */
 
 /**
- * MC specific can routines
+ * MC specific CAN routines
  */
 
 #include "stm32f10x.h"

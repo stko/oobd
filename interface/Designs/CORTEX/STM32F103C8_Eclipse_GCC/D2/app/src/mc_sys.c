@@ -438,12 +438,12 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 	}
 	break;
 
-    case IO_K_LINE:
+    case IO_KLINE:
 	    upperValue ? GPIO_SetBits(GPIOA, GPIO_Pin_2) : GPIO_ResetBits(GPIOA, GPIO_Pin_2);	/* set K-Line */
 		return pdTRUE;
 	    break;
 
-    case IO_L_LINE:
+    case IO_LLINE:
 	    upperValue ? GPIO_SetBits(GPIOA, GPIO_Pin_4) : GPIO_ResetBits(GPIOA, GPIO_Pin_4);	/* set L-Line */
 		return pdTRUE;
 	    break;

@@ -104,6 +104,7 @@ void (*odparr[SYS_NR_OF_PROTOCOLS]) (void *pvParameters);
 //enumeration for identifiers for all available busses
 enum busses {
     ODB_CAN,
+    ODB_KLINE,
     // ODB_SIZE defines the number of available busses
     SYS_NR_OF_BUSSES
 };
