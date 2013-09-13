@@ -42,8 +42,8 @@
 #define IO_LED_GREEN (1)
 #define IO_LED_RED (2)
 #define IO_BUZZER 	(3)
-#define IO_K_LINE	(4)
-#define IO_L_LINE	(5)
+#define IO_KLINE	(4)
+#define IO_LLINE	(5)
 
   /*! \defgroup system_generic_parm Commands: Generic System Commands
      Generic (implementation independent) system commands, where the command is as P 0 x ...

@@ -63,7 +63,6 @@
 #define IO_REL1 	(0) + SYS_SPECIFIC_IO_OFFSET
 #define IO_REL2 	(1) + SYS_SPECIFIC_IO_OFFSET
 
-
   /*! @} */
 // debugging macros so we can pin down message origin at a glance
 #ifdef  DEBUG_SERIAL_STM32
