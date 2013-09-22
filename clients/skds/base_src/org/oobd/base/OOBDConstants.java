@@ -75,8 +75,10 @@ public interface OOBDConstants {
     public final static int FT_DATABASE = 4;
     public final static int FT_RAW = 5;
     public final static int FT_KEY = 6;
+    // interval counter, after how many timer ticks the timer button items shall be refreshed
+    public final static int LV_UPDATE_INTERVAL = 10;
     // loop time for timer triggered List- Updates in ms
-    public final static int LV_UPDATE = 100;
+    public final static int LV_UPDATE_UI = 10;
     // loop time for status Updates in ms
     public final static int LV_STATUS = 1000;
 }
