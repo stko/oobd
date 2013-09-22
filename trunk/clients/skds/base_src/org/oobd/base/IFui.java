@@ -71,6 +71,16 @@ public interface IFui  {
                 public void visualize(Onion myOnion);
 
     /**
+     * \brief update the UI
+     * \ingroup visualisation
+     *
+     * on most java implementations the UI thread need to do all updates of the UI elements, otherways the program likes to crash
+                 * call this function regulary to transfer changes between UI and oobd core
+     *
+     */
+                public void updateOobdUI();
+
+    /**
      * \brief Adds a new canvas to the pane of the given ScriptEngine
      * \ingroup visualisation
      * @param seID ID of the ScriptEngine

@@ -50,18 +50,26 @@ public class Diagnose extends ListActivity {
 	public static Diagnose myDiagnoseInstance = null;
 	public static Handler myRefreshHandler;
 	private ToggleButton myTimerButton;
+	private static int timerTickCounter=0;
 	private ProgressDialog myProgressDialog;
 	private Handler myTimerHandler = new Handler();
 	private PowerManager.WakeLock wl;
 
 	private Runnable mUpdateTimeTask = new Runnable() {
 		public void run() {
-			if (myTimerButton.isChecked()) {
-				refreshView(OOBDConstants.VE_TIMER, OOBDConstants.VE_TIMER);
-				myTimerHandler.postDelayed(this, OOBDConstants.LV_UPDATE);
-			} else {
-				myTimerHandler.removeCallbacks(mUpdateTimeTask);
+			if (timerTickCounter >OOBDConstants.LV_UPDATE_INTERVAL){
+				timerTickCounter=0;
 			}
+			if (timerTickCounter ==0 && myTimerButton.isChecked()) {
+				refreshView(OOBDConstants.VE_TIMER, OOBDConstants.VE_TIMER);
+				// myTimerHandler.postDelayed(this, OOBDConstants.LV_UPDATE);
+			}
+			timerTickCounter++;
+			/*
+			 * else { myTimerHandler.removeCallbacks(mUpdateTimeTask); }
+			 */
+			myTimerHandler.postDelayed(this, OOBDConstants.LV_UPDATE_UI);
+			AndroidGui.getInstance().updateOobdUI();
 		}
 	};
 
@@ -134,7 +142,7 @@ public class Diagnose extends ListActivity {
 				if (((ToggleButton) v).isChecked()) {
 					myTimerHandler.removeCallbacks(mUpdateTimeTask);
 					myTimerHandler.postDelayed(mUpdateTimeTask,
-							OOBDConstants.LV_UPDATE);
+							OOBDConstants.LV_UPDATE_UI);
 					wl.acquire();
 				} else {
 					wl.release();
@@ -153,6 +161,7 @@ public class Diagnose extends ListActivity {
 		}
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
+		myTimerHandler.postDelayed(mUpdateTimeTask, OOBDConstants.LV_UPDATE_UI);
 	}
 
 	@Override
@@ -315,7 +324,8 @@ public class Diagnose extends ListActivity {
 						.getLastVisiblePosition(); i++) {
 					if (i < mDiagnoseListView.getCount()) {
 						try {
-							Visualizer myVisualizer =  (Visualizer) mDiagnoseListView.getItemAtPosition(i);
+							Visualizer myVisualizer = (Visualizer) mDiagnoseListView
+									.getItemAtPosition(i);
 
 							if (myVisualizer.getUpdateFlag(bitNr)) {
 								myVisualizer.updateRequest(updateType);

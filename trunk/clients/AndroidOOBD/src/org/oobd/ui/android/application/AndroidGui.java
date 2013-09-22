@@ -49,43 +49,44 @@ public class AndroidGui implements IFui {
 		// DiagnoseTab.getInstance().outputToFront();
 	}
 
-	public void requestParamInput(Onion msg){
+	public void requestParamInput(Onion msg) {
 
-		   class OneShotTask implements Runnable {
-		        Onion thisOnion;
-		        OneShotTask(Onion o) { thisOnion = o; }
-		        public void run() {
-		        	String message = "internal error: Invalid cmd parameters";
-		        	ArrayList<Onion> params = thisOnion.getOnionArray("PARAM","param");
-		        	if (params != null){
-		        		Onion p0Onion=params.get(0);
-		        		if (p0Onion!=null){
-		        			message=Base64Coder.decodeString(p0Onion.getOnionString("tooltip"));
-		        		}
-		        	}
-					OutputActivity.getInstance().addText(message + "\n");
-					AlertDialog alertDialog = new AlertDialog.Builder(
-							Diagnose.getInstance()).create();
-					alertDialog.setTitle("OOBD Message");
-					alertDialog
-							.setMessage(message);
-					alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
-							"OK",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int which) {
-									dialog.cancel();
-								}
-							});
-					alertDialog.show();
-					return;
-		        }
-		    }
-		
+		class OneShotTask implements Runnable {
+			Onion thisOnion;
+
+			OneShotTask(Onion o) {
+				thisOnion = o;
+			}
+
+			public void run() {
+				String message = "internal error: Invalid cmd parameters";
+				ArrayList<Onion> params = thisOnion.getOnionArray("PARAM",
+						"param");
+				if (params != null) {
+					Onion p0Onion = params.get(0);
+					if (p0Onion != null) {
+						message = Base64Coder.decodeString(p0Onion
+								.getOnionString("tooltip"));
+					}
+				}
+				OutputActivity.getInstance().addText(message + "\n");
+				AlertDialog alertDialog = new AlertDialog.Builder(
+						Diagnose.getInstance()).create();
+				alertDialog.setTitle("OOBD Message");
+				alertDialog.setMessage(message);
+				alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "OK",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+								dialog.cancel();
+							}
+						});
+				alertDialog.show();
+				return;
+			}
+		}
+
 		Diagnose.getInstance().runOnUiThread(new OneShotTask(msg));
-
-		
-		
 
 	}
 
@@ -108,6 +109,17 @@ public class AndroidGui implements IFui {
 
 	public Class getVisualizerClass(String visualizerType, String theme) {
 		return VizTable.class;
+	}
+
+	public void updateOobdUI() {
+
+		MainActivity.getMyMainActivity().runOnUiThread(new Runnable() {
+
+			public void run() {
+				OOBDApp.getInstance().getCore().updateVisualizers();
+			}
+		});
+
 	}
 
 	public void visualize(Onion myOnion) {
@@ -173,7 +185,7 @@ public class AndroidGui implements IFui {
 						.getListView()
 						.setAdapter(
 								new DiagnoseAdapter(Diagnose.getInstance(),
-										VizTable.getInstance("", "") ));
+										VizTable.getInstance("", "")));
 			}
 		});
 
@@ -199,7 +211,6 @@ public class AndroidGui implements IFui {
 				Diagnose.getInstance().stopProgressDialog();
 			}
 		});
-
 
 		Log.v(this.getClass().getSimpleName(), "...open page completed");
 		Intent broadcast = new Intent(OOBDApp.VISUALIZER_UPDATE);

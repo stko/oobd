@@ -892,7 +892,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	 */
 	public void coreTick() {
 		ticker.enable(false);
-		updateVisualizers();
+		//updateVisualizers();
 		ticker.enable(true);
 	}
 

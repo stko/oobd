@@ -1087,6 +1087,11 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
     }
 
+    public void updateOobdUI(){
+        oobdCore.updateVisualizers();
+    }
+    
+    
     public Class getVisualizerClass(String visualizerType, String theme) {
         return TextVisualizerJPanel.class;
     }
@@ -1249,6 +1254,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (timerButton.isSelected() && pageObjects != null) {
             synchronized (pageObjects) {
@@ -1260,9 +1266,19 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
             }
         }
+          SwingUtilities.invokeLater(new Runnable() {
+            @Override
+    public void run() {
+      // Here, we can safely update the GUI
+      // because we'll be called from the
+      // event dispatch thread
+      updateOobdUI();
+    }
+  });
         timer.restart();
     }
 
+    @Override
     public void requestParamInput(Onion msg) {
         System.out.println("Onion received:" + msg.toString());
 

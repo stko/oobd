@@ -144,7 +144,7 @@ public class Visualizer {
 	int overflowProtectionCounter;
 	int averageOverflowProtection = 1;
 	int thisOverflowProtection = 1;
-	int nrOfTrials=0;
+	int nrOfTrials = 0;
 	IFvisualizer myObject;
 	boolean updateNeeded = false;
 	boolean obsulete = false;
@@ -198,10 +198,12 @@ public class Visualizer {
 				// as this is an actual value, we can reset the overflow
 				// protection for now and switch the protection delay one step
 				// downwards
-				averageOverflowProtection = (averageOverflowProtection *nrOfTrials + thisOverflowProtection) / 2;
-				nrOfTrials=0;
+				averageOverflowProtection = (averageOverflowProtection
+						* nrOfTrials + thisOverflowProtection) / 2;
+				nrOfTrials = 0;
 				if (averageOverflowProtection < 1)
-					averageOverflowProtection = 1; //otherways the average calc won't work
+					averageOverflowProtection = 1; // otherways the average calc
+													// won't work
 				thisOverflowProtection = 0;
 				System.out.println("set overflow delay to"
 						+ Integer.toString(averageOverflowProtection));
@@ -264,8 +266,13 @@ public class Visualizer {
 	 * do update 0: start 1: update data 2: finish
 	 */
 	public void doUpdate(int updateLevel) {
-		if (myObject != null && updateNeeded && !obsulete) {
-			updateNeeded = !myObject.update(updateLevel);
+		if (obsulete) {
+			myObject = null; // set object reference to null, so that the
+								// garbage collection can remove it
+		} else {
+			if (myObject != null && updateNeeded) {
+				updateNeeded = !myObject.update(updateLevel);
+			}
 		}
 	}
 
@@ -279,8 +286,7 @@ public class Visualizer {
 			if (type != OOBDConstants.UR_TIMER
 					|| overflowProtectionCounter == 0) {
 				Logger.getLogger(Visualizer.class.getName())
-						.log(
-								Level.INFO,
+						.log(Level.INFO,
 								"Update request" + Integer.toString(type)
 										+ " my ownwer is: "
 										+ ownerEngine.toString()
