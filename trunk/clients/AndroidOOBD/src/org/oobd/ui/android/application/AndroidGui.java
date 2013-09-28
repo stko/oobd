@@ -122,84 +122,96 @@ public class AndroidGui implements IFui {
 
 	}
 
-	public void visualize(Onion myOnion) {
-		IFvisualizer visualComponent;
+	public void visualize(final Onion myOnion) {
 
-		Visualizer newVisualizer = new Visualizer(myOnion);
-		Class<IFvisualizer> visualizerClass = getVisualizerClass(
-				myOnion.getOnionString("type"), myOnion.getOnionString("theme"));
-		String debugText = myOnion.toString();
-		Class[] argsClass = new Class[2]; // first we set up an pseudo - args -
-											// array for the scriptengine-
-											// constructor
-		argsClass[0] = String.class; // and fill it with the info, that the
-										// argument for the constructor will be
-										// first a String
-		argsClass[1] = String.class;
-		// and fill it with the info, that the argument for the constructor will
-		// be first a String
-		try {
-			Method classMethod = visualizerClass.getMethod("getInstance",
-					argsClass); // and let Java find the correct constructor
-								// with one string as parameter
-			Object[] args = { newVisualizer.getOwnerEngine(),
-					newVisualizer.getName() }; // we will an args-array with our
-												// String parameter
-			// now call getInstance() in class VizTable
-			visualComponent = (IFvisualizer) classMethod.invoke(null, args); // and
-																				// finally
-																				// create
-																				// the
-																				// object
-																				// from
-																				// the
-																				// scriptengine
-																				// class
-																				// with
-																				// its
-																				// unique
-																				// id
-																				// as
-																				// parameter
-			// add new Visualizer object to already existing VizTable object
-			newVisualizer.setOwner(visualComponent);
+				IFvisualizer visualComponent;
+				Visualizer newVisualizer = new Visualizer(myOnion);
+				Class<IFvisualizer> visualizerClass = getVisualizerClass(
+						myOnion.getOnionString("type"),
+						myOnion.getOnionString("theme"));
+				String debugText = myOnion.toString();
+				Class[] argsClass = new Class[2]; // first we set up an pseudo -
+													// args -
+													// array for the
+													// scriptengine-
+													// constructor
+				argsClass[0] = String.class; // and fill it with the info, that
+												// the
+												// argument for the constructor
+												// will be
+												// first a String
+				argsClass[1] = String.class;
+				// and fill it with the info, that the argument for the
+				// constructor will
+				// be first a String
+				try {
+					Method classMethod = visualizerClass.getMethod(
+							"getInstance", argsClass); // and let Java find the
+														// correct constructor
+														// with one string as
+														// parameter
+					Object[] args = { newVisualizer.getOwnerEngine(),
+							newVisualizer.getName() }; // we will an args-array
+														// with our
+														// String parameter
+					// now call getInstance() in class VizTable
+					visualComponent = (IFvisualizer) classMethod.invoke(null,
+							args); // and
+									// finally
+									// create
+									// the
+									// object
+									// from
+									// the
+									// scriptengine
+									// class
+									// with
+									// its
+									// unique
+									// id
+									// as
+									// parameter
+					// add new Visualizer object to already existing VizTable
+					// object
+					newVisualizer.setOwner(visualComponent);
 
-			// add to internal list
-			(visualComponent).initValue(newVisualizer, myOnion);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+					// add to internal list
+					(visualComponent).initValue(newVisualizer, myOnion);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 
 	}
 
-	public void openPage(String seID, String Name, int colcount, int rowcount) {
-		Diagnose.getInstance().stopProgressDialog();
-		DiagnoseTab.getInstance().setMenuTitle(Name);
-		Diagnose.getInstance().startProgressDialog("Build Page...");
-		Log.v(this.getClass().getSimpleName(), "open page ..");
-		Diagnose.getInstance().stopVisibility();
+	public void openPage(String seID, final String Name, int colcount,
+			int rowcount) {
 		MainActivity.getMyMainActivity().runOnUiThread(new Runnable() {
 
 			public void run() {
+				Diagnose.getInstance().stopProgressDialog();
+				DiagnoseTab.getInstance().setMenuTitle(Name);
+				Diagnose.getInstance().startProgressDialog("Build Page...");
+				Log.v(this.getClass().getSimpleName(), "open page ..");
+				Diagnose.getInstance().stopVisibility();
 				Diagnose.getInstance()
 						.getListView()
 						.setAdapter(
 								new DiagnoseAdapter(Diagnose.getInstance(),
 										VizTable.getInstance("", "")));
+
+				VizTable vizTable = VizTable.getInstance("", "");
+				if (vizTable != null) {
+					if (!vizTable.isEmpty()) {
+						vizTable.setRemove("");
+						vizTable.clear();
+					}
+					Intent broadcast = new Intent(OOBDApp.VISUALIZER_UPDATE);
+					broadcast.putExtra(OOBDApp.UPDATE_LEVEL, 1);
+					Diagnose.myDiagnoseInstance.getApplicationContext()
+							.sendBroadcast(broadcast);
+				}
 			}
 		});
-
-		VizTable vizTable = VizTable.getInstance("", "");
-		if (vizTable != null) {
-			if (!vizTable.isEmpty()) {
-				vizTable.setRemove("");
-				vizTable.clear();
-			}
-			Intent broadcast = new Intent(OOBDApp.VISUALIZER_UPDATE);
-			broadcast.putExtra(OOBDApp.UPDATE_LEVEL, 1);
-			Diagnose.myDiagnoseInstance.getApplicationContext().sendBroadcast(
-					broadcast);
-		}
 
 	}
 
@@ -209,14 +221,14 @@ public class AndroidGui implements IFui {
 			public void run() {
 				Diagnose.getInstance().setItems(VizTable.getInstance("", ""));
 				Diagnose.getInstance().stopProgressDialog();
+
+				Log.v(this.getClass().getSimpleName(), "...open page completed");
+				Intent broadcast = new Intent(OOBDApp.VISUALIZER_UPDATE);
+				broadcast.putExtra(OOBDApp.UPDATE_LEVEL, 1);
+				Diagnose.myDiagnoseInstance.getApplicationContext()
+						.sendBroadcast(broadcast);
 			}
 		});
-
-		Log.v(this.getClass().getSimpleName(), "...open page completed");
-		Intent broadcast = new Intent(OOBDApp.VISUALIZER_UPDATE);
-		broadcast.putExtra(OOBDApp.UPDATE_LEVEL, 1);
-		Diagnose.myDiagnoseInstance.getApplicationContext().sendBroadcast(
-				broadcast);
 
 	}
 

@@ -61,6 +61,7 @@ typedef portBASE_TYPE(*param_cbf) (void *param);
  * define before include busses and protocol headers, as definition is needed there
  */
 typedef struct data_packet {
+    portBASE_TYPE timestamp;	//!< systemticks, when the message was received
     portBASE_TYPE recv;		//!< id of the receiver
     portBASE_TYPE len;		//!< data length
     portBASE_TYPE err;		//!< only when receiving data: contains ODB_ERR- Codes

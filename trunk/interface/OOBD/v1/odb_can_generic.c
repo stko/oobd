@@ -50,7 +50,9 @@ void print_telegram(portBASE_TYPE msgType, void *data,
 {
     static data_packet *dp;
     dp = data;
-    printser_string("# 0x");
+    printser_string("# ");
+    printser_int(dp->timestamp, 10);
+    printser_string(" 0x");
     printser_int(dp->recv, 16);
     printser_string("  0x");
     printser_int(dp->err, 16);
