@@ -140,6 +140,7 @@ void odp_canraw_recvdata(data_packet * p)
 {
     MsgData *msg;
     extern xQueueHandle protocolQueue;
+    p->timestamp = xTaskGetTickCountFromISR();
     if (NULL != (msg = createDataMsg(p))) {
 	if (pdPASS != sendMsg(MSG_BUS_RECV, protocolQueue, msg)) {
 	    DEBUGPRINT("FATAL ERROR: protocol queue is full!\n", 'a');
