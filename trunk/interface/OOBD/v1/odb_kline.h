@@ -64,9 +64,9 @@ void bus_clear_tx_count_kline();
 portBASE_TYPE bus_param_kline_spec(param_data * args);
 portBASE_TYPE bus_param_kline_generic(param_data * args);
 void bus_param_kline_generic_Print(portBASE_TYPE msgType, void *data,
-				 printChar_cbf printchar);
+				   printChar_cbf printchar);
 void bus_param_kline_spec_Print(portBASE_TYPE msgType, void *data,
-			      printChar_cbf printchar);
+				printChar_cbf printchar);
 
   /*! \defgroup prot_can_generic_parm Commands: Generic CAN Commands
      The generic CAN commands are as follows, where the command is as P 9 value ...

@@ -67,7 +67,7 @@ void print_telegram(portBASE_TYPE msgType, void *data,
 */
 /*-----------------------------------------------------------*/
 void bus_param_kline_generic_Print(portBASE_TYPE msgType, void *data,
-				 printChar_cbf printchar)
+				   printChar_cbf printchar)
 {
     param_data *args = data;
     uint8_t FiltCntr;
