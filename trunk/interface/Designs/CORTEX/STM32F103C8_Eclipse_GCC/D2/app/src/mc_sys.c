@@ -498,10 +498,10 @@ uint32_t CheckCrc32(void)
 
     /* size is the calculation result of the linker minus application start address offset */
     size = (uint32_t) ((uint32_t) & _etext + (uint32_t) & _edata
-		       - (uint32_t) & _sdata) - 0x8002400;
+		       - (uint32_t) & _sdata) - 0x8002500;
     CRC_ResetDR();
-    /* 0x8002400 is the application start address and size = application code size */
-    crc = CRC_CalcBlockCRC((uint32_t *) 0x8002400, size / 4 + 1);
+    /* 0x8002500 is the application start address and size = application code size */
+    crc = CRC_CalcBlockCRC((uint32_t *) 0x8002500, size / 4 + 1);
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, DISABLE);
 
     return crc;

@@ -108,11 +108,10 @@ void System_Configuration(void)
  */
 void NVIC_Configuration(void)
 {
-
     NVIC_InitTypeDef NVIC_InitStructure;
 
-    /* Set the Vector Table base location at 0x2400 */
-    NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x2400);
+    /* Set the Vector Table base location to FLASH */
+    NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x2500);
 
     /* Setting the priority grouping bits length */
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
