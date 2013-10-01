@@ -60,7 +60,7 @@ void print_telegram(portBASE_TYPE msgType, void *data,
     printser_int(dp->len, 10);
     printser_string("  ");
     int i;
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < dp->len; i++) {
 	printser_uint8ToHex(dp->data[i]);
 	printser_string("  ");
     }
