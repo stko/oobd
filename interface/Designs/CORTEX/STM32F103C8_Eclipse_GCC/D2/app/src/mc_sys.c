@@ -76,7 +76,7 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 	    if (GPIO_HardwareLevel() == 1 ||
 	    	GPIO_HardwareLevel() == 4 ||
 	    	GPIO_HardwareLevel() == 5)
-	    	printser_string("D2");
+	    	printser_string("D2a");
 	    else
 	    	printser_string("??");
 	    printser_string(" ");
