@@ -52,13 +52,7 @@ int main(void) {
 	/* Execute the IAP driver in order to re-program the Flash */
 	IAP_Init();
 
-	/* send OOBD-Flashloader Version string on USART1 */
-	SerialPutString("\r\nOOBD-Flashloader ");
-	SerialPutString(OOBDDESIGN);
-	SerialPutString(" ");
-	SerialPutString(SVNREV);
-	SerialPutString(" ");
-	SerialPutString(BUILDDATE);
+	OOBD_BL_Version();
 
 	while (1) {
 		for (nCount = 0; nCount < nLength; nCount++) /* delay */
@@ -75,6 +69,7 @@ int main(void) {
 		/* Test if user code is programmed starting from address "ApplicationAddress" */
 		if ((*(__IO uint32_t*) ApplicationAddress == 0x20005000)
 				&& (CheckCrc32() == 0)) {
+
 			/* Jump to user application */
 			JumpAddress = *(__IO uint32_t*) (ApplicationAddress + 4);
 			Jump_To_Application = (pFunction) JumpAddress;
@@ -103,9 +98,6 @@ void IAP_Init(void) {
 			RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC
 					| RCC_APB2Periph_AFIO, ENABLE);
 
-	/* diesable JTAG and release alternative GPIO function of PA13/14/15 */
-	GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
-
 	/* Configure all unused GPIO port pins in Analog Input mode (floating input
 	 trigger OFF), this will reduce the power consumption and increase the
 	 device immunity against EMI/EMC ******************************************/
@@ -118,8 +110,9 @@ void IAP_Init(void) {
 	/* Enable USART1 Clock */
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 
-	/* initialize USART1 on PA9 (USART1_TX) and PA10 (USART1_RX) */
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+
+	/* initialize USART1 on PA9 (USART1_TX) and PA10 (USART1_RX) */
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
@@ -128,59 +121,54 @@ void IAP_Init(void) {
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
+	/* disable JTAG and release alternative GPIO function of PA13/14/15 */
+	GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
+
 	/* configure PA8, PA13, PA14, PC14 as Input for Hardwareidentification
-	 * PA8, PA13, PA14, PC14 = 1 - Original DXM1
-	 * PA8, PC14 = 0 & PA13, PA14 = 1 - OOBD-Cup v5
-	 * PA8, PA13, PC14 = 1 & PA14 = 0 - OOBD CAN Invader
+	 * PA8, PA13, PC14 = 1 - Original DXM1
+	 * PA8, PC14 = 0 & PA13 = 1 - OOBD-Cup v5
+	 * PA8, PA13, PC14 = 1 - OOBD CAN Invader
 	 */
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
 	/* identify on which hardware the flashloader is running */
 	if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_RESET) &&
 		(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14) == Bit_RESET) &&
-		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET))
-	{
-		/* configure DXM1-Output (Push-Pull) of LED1 - green (PB5) and LED2 - red (PB4) */
-		GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE); /* release alternative GPIO function of PB4 */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
-		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-		GPIO_Init(GPIOB, &GPIO_InitStructure);
-		HardwareIdent = 4; /* OOBD-Cup v5 */
-	}
-	else if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET) &&
-		(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14) == Bit_SET) &&
-		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET))
-	{
+		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET)) {
 		/* configure DXM1-Output (open drain) of LED1 - green (PB5) and LED2 - red (PB4) */
 		GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE); /* release alternative GPIO function of PB4 */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
-		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
-		GPIO_Init(GPIOB, &GPIO_InitStructure);
-		HardwareIdent = 1; /* DXM 1*/
-	}
-	else if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET) &&
-		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET) &&
-		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14) == Bit_RESET)) {
-		/* configure DXM1-Output (Push-Pull) of LED1 - green (PB5) and LED2 - red (PB4) */
-		GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE); /* release alternative GPIO function of PB4 */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
-		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 		GPIO_Init(GPIOB, &GPIO_InitStructure);
-		HardwareIdent = 5; /* OOBD CAN Invader */
+		HardwareIdent = 4; /* OOBD-Cup v5 */
+	} else if (	(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET) &&
+				(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14) == Bit_SET) &&
+				(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET)) {
+		/* configure DXM1-Output (open drain) of LED1 - green (PB5) and LED2 - red (PB4) */
+		GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE); /* release alternative GPIO function of PB4 */
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
+		GPIO_Init(GPIOB, &GPIO_InitStructure);
+		HardwareIdent = 1; /* Original DXM1 */
+	} else if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET) &&
+			(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET) &&
+			(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14) == Bit_RESET)) {
+			/* configure DXM1-Output (Push-Pull) of LED1 - green (PB5) and LED2 - red (PB4) */
+			GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE); /* release alternative GPIO function of PB4 */
+			GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
+			GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+			GPIO_Init(GPIOB, &GPIO_InitStructure);
+			HardwareIdent = 5; /* OOBD CAN Invader */
 	} else
 		HardwareIdent = 0;
 

@@ -189,8 +189,8 @@ int32_t Ymodem_Receive(uint8_t *buf) {
 								/* Erase the needed pages where the user application will be loaded */
 								/* Define the number of page to be erased */
 								NbrOfPage = FLASH_PagesMask(size);
-								/* Erase one more page as the CRC is filesize is located at the end of the previous flash page */
-								NbrOfPage = NbrOfPage + 1;
+								/* Erase one more page as the filesize is located at the end of the previous flash page */
+//								NbrOfPage = NbrOfPage + 1;
 
 								/* Erase the FLASH pages */
 								for (EraseCounter = 0; (EraseCounter
@@ -217,8 +217,7 @@ int32_t Ymodem_Receive(uint8_t *buf) {
 									packet_length);
 							RamSource = (uint32_t) buf;
 							for (j = 0; (j < packet_length)
-									&& (FlashDestination < (ApplicationAddress
-											- 4) + size); j += 4) {
+									&& (FlashDestination < (ApplicationAddress - 4) + size); j += 4) {
 								/* Program the data received into STM32F10x Flash */
 								FLASH_ProgramWord(FlashDestination,
 										*(uint32_t*) RamSource);
