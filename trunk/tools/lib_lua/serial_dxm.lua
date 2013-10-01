@@ -499,7 +499,7 @@ function identifyOOBDInterface()
 
 	  --[[ Original DXM1, with old OOBD firmware <= Revision 346 ]]--
 	  hardwareID=2
-	  if hardware_model=="POSIX" or hardware_model=="D2" then
+	  if hardware_model=="POSIX" or hardware_model=="D2" or hardware_model=="D2a" then
 	    if hardware_variant=="POSIX" or hardware_variant=="dxm" then
 		  --[[ Original DXM1, with new firmware paramater set > Revision 346 ]]--
 		  hardwareID=3
