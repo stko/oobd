@@ -22,7 +22,7 @@ def readln():
 	recvDone=False
 	res=""
 	while(not recvDone):
-		ready = select.select([gaugeSocket], [], [], 1) #waiting 1 sec for an answer
+		ready = select.select([gaugeSocket], [], [], 0.5) #waiting 0.5 sec for an answer
 		if ready[0]:
 		    	res+=gaugeSocket.recv(1024)
 			recvDone=res[-1:]=="\r"
@@ -62,12 +62,12 @@ BTMAC=sys.argv[1]
 gaugeSocket = connect(BTMAC)
 try:
 	gaugeSocket.send('\r\r\r')
-	ready = select.select([gaugeSocket], [], [], 1) #waiting 1 sec for an answer
+	ready = select.select([gaugeSocket], [], [], 0.5) #waiting 1 sec for an answer
 	if ready[0]:
 		res=gaugeSocket.recv(1024)
 except bluetooth.btcommon.BluetoothError as error:
 	print "Caught inital BluetoothError: ", error
-runstatus=2
+runstatus=3
 while(runstatus>0):
 	echoWrite("\r\n")
 	res=readln()
@@ -122,6 +122,8 @@ while(runstatus>0):
 	if runstatus==1: # it seems serious, the dongle does not answer. Last chance is to kill a potential running ymodem- transfer..
 		print("Try to send YMODEM cancel signal 0x18 a few times..")
 		gaugeSocket.send("\x18\x18\x18\x18\x18\x18")
+		print("Try to send YMODEM cancel signal 'a' a few times..")
+		gaugeSocket.send("aaaa")
 
 
 gaugeSocket.close()
@@ -131,4 +133,5 @@ def exitHandler(signum = 0, frame = 0):
 	print("Kill Process..")
 	gaugeSocket.close()
 	sys.exit(0)
+
 
