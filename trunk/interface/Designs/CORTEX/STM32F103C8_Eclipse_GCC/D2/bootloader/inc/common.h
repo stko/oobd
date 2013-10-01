@@ -36,7 +36,7 @@ typedef  void (*pFunction)(void);
 /* Constants used by Serial Command Line Mode */
 #define CMD_STRING_SIZE       128
 
-#define ApplicationAddress    0x8002400
+#define ApplicationAddress    0x8002500
 
 #if defined (STM32F10X_MD) || defined (STM32F10X_MD_VL)
  #define PAGE_SIZE                         (0x400)    /* 1 Kbyte */
@@ -85,6 +85,10 @@ void FLASH_DisableWriteProtectionPages(void);
 void Main_Menu(void);
 void SerialDownload(void);
 void SerialUpload(void);
+void CRC_ResetDR(void);
+uint32_t CRC_CalcBlockCRC(uint32_t [], uint32_t);
+uint32_t CheckCrc32(void);
+void OOBD_BL_Version(void);
 
 #endif  /* _COMMON_H */
 
