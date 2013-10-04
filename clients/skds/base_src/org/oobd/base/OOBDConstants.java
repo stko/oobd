@@ -59,6 +59,7 @@ public interface OOBDConstants {
     public final static String PGP_GROUP_KEYFILE_NAME = "groupkey.sec";
     //Mailbox names
    public final static String CoreMailboxName = "core";
+  public final static String UIHandlerMailboxName = "UIHandler";
    public final static String BusMailboxName = "BusCom";
     public final static String DBName = "AVLLookup";
     // definitions of the Visual Elements Handling flags (=bitpositions)

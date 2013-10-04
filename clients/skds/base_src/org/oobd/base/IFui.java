@@ -1,4 +1,3 @@
-
 package org.oobd.base;
 
 import org.oobd.base.support.Onion;
@@ -6,10 +5,9 @@ import org.oobd.base.support.Onion;
 /**
  * \brief Interface for the application object who does the graphical User Interface to communicate with the OOBD core
  */
+public interface IFui {
 
-public interface IFui  {
-
-	   /**
+    /**
      * \brief append and shows a string in the output area
      *
      * The string is added to the content of the output area and the output area is made visible to the user
@@ -40,12 +38,35 @@ public interface IFui  {
      * \brief tells the UserInterface about the existence of a scriptengine
      * \ingroup init
      * 
+     * The userinterface must collect these information and present this to the
+     * user, as the first step of the user interaction would be, that the user
+     * selects the scriptengine he wants to work with and start their
+     * functionality by calling startScriptEngine()
+     * 
+     * 
      * During startup, the core looks for all scriptengines the user might want to use and these
      * through this function to the user interface, e.g. to add this to a selection menu
      * @param id the key of the scriptengines hash array where the loaded instances are been stored
      * @param visibleName
      */
     public void announceScriptengine(String id, String visibleName);
+
+   /**
+     * \brief tells the UserInterface about the existence of a UIHandler
+     * \ingroup init
+     * 
+     * The userinterface must collect these information and present this to the
+     * user, as the first step of the user interaction would be, that the user
+     * selects the UIHandler he wants to use and start their
+     * functionality by calling startUIHandler()
+     * 
+     * 
+     * During startup, the core looks for all available UIHandler and announce these
+     * through this function to the user interface, e.g. to add this to a selection menu
+     * @param id the key of the UIHandler hash array where the loaded instances are been stored
+     * @param visibleName
+     */
+    public void announceUIHandler(String id, String visibleName);
 
     /**
      * \brief search for a specific vizualizer type
@@ -59,7 +80,6 @@ public interface IFui  {
      */
     public Class getVisualizerClass(String visualizerType, String theme);
 
-
     /**
      * \brief places a visualizer onto an canvas
      * \ingroup visualisation
@@ -68,17 +88,17 @@ public interface IFui  {
      *
      * @param myOnion
      */
-                public void visualize(Onion myOnion);
+    public void visualize(Onion myOnion);
 
     /**
      * \brief update the UI
      * \ingroup visualisation
      *
      * on most java implementations the UI thread need to do all updates of the UI elements, otherways the program likes to crash
-                 * call this function regulary to transfer changes between UI and oobd core
+     * call this function regulary to transfer changes between UI and oobd core
      *
      */
-                public void updateOobdUI();
+    public void updateOobdUI();
 
     /**
      * \brief Adds a new canvas to the pane of the given ScriptEngine
@@ -88,7 +108,6 @@ public interface IFui  {
      */
     public void openPage(String seID, String Name, int colcount, int rowcount);
 
-
     /**
      * \brief Deletes a canvas from the pane of the given ScriptEngine
      * \ingroup visualisation
@@ -96,13 +115,11 @@ public interface IFui  {
      * @param Name of the new canvas
      */
     public void openPageCompleted(String seID, String Name);
-    
+
     /**
      * \brief Starts an Scriptengine
      * \ingroup visualisation
      * @param onion 
      */
-     public void startScriptEngine (Onion onion);
-    
-    
-}
+    public void startScriptEngine(Onion onion);
+ }

@@ -59,6 +59,7 @@ public class Diagnose extends ListActivity {
 		public void run() {
 			if (timerTickCounter >OOBDConstants.LV_UPDATE_INTERVAL){
 				timerTickCounter=0;
+				AndroidGui.getInstance().updateOobdUI();
 			}
 			if (timerTickCounter ==0 && myTimerButton.isChecked()) {
 				refreshView(OOBDConstants.VE_TIMER, OOBDConstants.VE_TIMER);
@@ -69,7 +70,6 @@ public class Diagnose extends ListActivity {
 			 * else { myTimerHandler.removeCallbacks(mUpdateTimeTask); }
 			 */
 			myTimerHandler.postDelayed(this, OOBDConstants.LV_UPDATE_UI);
-			AndroidGui.getInstance().updateOobdUI();
 		}
 	};
 

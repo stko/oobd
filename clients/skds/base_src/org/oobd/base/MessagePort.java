@@ -99,7 +99,7 @@ public class MessagePort {
      * @param onion the content of the message
      * @return message
      */
-    protected void replyMsg(Message msg, Onion content) {
+    public void replyMsg(Message msg, Onion content) {
         String rec = msg.rec;
         msg.rec = msg.sender;
         msg.sender = rec;
@@ -132,7 +132,7 @@ public class MessagePort {
      * @param timeout in ms to wait for an message  . 0: wait forever, <0 don't wait
      * @return message
      */
-    protected Message getMsg(int timeout) {
+    public Message getMsg(int timeout) {
 
         if (myMsgs.isEmpty() || waitingforID != 0) {
             if (timeout < 0) { // wait forever

@@ -107,7 +107,7 @@ public class ScriptengineLua extends OobdScriptengine {
 				initRPC(callFrame, nArguments);
 				// cellList = new List();
 				try {
-					core.transferMsg(new Message(myself, CoreMailboxName,
+					core.transferMsg(new Message(myself, UIHandlerMailboxName,
 							new Onion("" + "{'type':'" + CM_PAGE + "',"
 									+ "'owner':'" + myself.getId() + "',"
 									+ "'name':'" + getString(0) + "'}")));
@@ -138,7 +138,7 @@ public class ScriptengineLua extends OobdScriptengine {
 					if (optid.length() != 0) {
 						optid = "'optid':'" + optid + "',";
 					}
-					core.transferMsg(new Message(myself, CoreMailboxName,
+					core.transferMsg(new Message(myself, UIHandlerMailboxName,
 							new Onion("" + "{'type':'" + CM_VISUALIZE + "',"
 									+ "'owner':" + "{'name':'" + myself.getId()
 									+ "'}," + updevent + optid + "'tooltip':'"
@@ -164,7 +164,7 @@ public class ScriptengineLua extends OobdScriptengine {
 				initRPC(callFrame, nArguments);
 				// cellList = new List();
 				try {
-					core.transferMsg(new Message(myself, CoreMailboxName,
+					core.transferMsg(new Message(myself, UIHandlerMailboxName,
 							new Onion("" + "{'type':'" + CM_PAGEDONE + "',"
 									+ "'owner':'" + myself.getId() + "',"
 									+ "'name':'Canvastest_1'}")));
@@ -341,7 +341,7 @@ public class ScriptengineLua extends OobdScriptengine {
 				// BaseLib.luaAssert(nArguments >0, "not enough args");
 				initRPC(callFrame, nArguments);
 				try {
-					core.transferMsg(new Message(myself, CoreMailboxName,
+					core.transferMsg(new Message(myself, UIHandlerMailboxName,
 							new Onion("{" + "'type':'" + CM_WRITESTRING + "',"
 									+ "'owner':" + "{'name':'" + myself.getId()
 									+ "'}," + "'command':'serDisplayWrite',"
@@ -471,7 +471,7 @@ public class ScriptengineLua extends OobdScriptengine {
 					if (!doScript(scriptFileName)){ //fire an page done event 
 						keepRunning=false;
 						try {
-							core.transferMsg(new Message(myself, CoreMailboxName,
+							core.transferMsg(new Message(myself, UIHandlerMailboxName,
 									new Onion("" + "{'type':'" + CM_PAGEDONE + "',"
 											+ "'owner':'" + myself.getId() + "',"
 											+ "'name':'Canvastest_1'}")));
@@ -495,7 +495,7 @@ public class ScriptengineLua extends OobdScriptengine {
 				if (CM_UPDATE.equals(on.get("type"))) {
 					core.transferMsg(new Message(
 							this,
-							CoreMailboxName,
+							UIHandlerMailboxName,
 							new Onion(
 									""
 											+ "{'type':'"
@@ -515,7 +515,7 @@ public class ScriptengineLua extends OobdScriptengine {
 											+ Base64Coder.encodeString(callFunction(
 													vis,
 													new Object[] {
-															on.getOnionString("vis"),
+															Base64Coder.decodeString(on.getOnionString("actValue")),
 															on.getOnionString("optid") }))
 											+ "'}")));
 				}
@@ -528,7 +528,6 @@ public class ScriptengineLua extends OobdScriptengine {
 	}
 
 	public boolean doScript(String fileName) throws IOException {
-                        System.out.println("Script to load:"+fileName);
 		InputStream resource = UISystem.generateResourceStream(FT_SCRIPT,
 				fileName);
 		if (resource == null) {

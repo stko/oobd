@@ -47,6 +47,7 @@ import org.oobd.base.scriptengine.OobdScriptengine;
 import org.oobd.base.scriptengine.ScriptengineLua;
 import org.oobd.base.support.OnionNoEntryException;
 import org.oobd.base.support.History;
+import org.oobd.base.uihandler.OobdUIHandler;
 import org.oobd.base.visualizer.Visualizer;
 
 /**
@@ -99,25 +100,31 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
 	IFui userInterface;
 	IFsystem systemInterface;
+	OobdUIHandler uiHandler = null;
 	HashMap<String, OobdBus> busses; // /<stores all available busses
 	HashMap<String, OobdConnector> connectors; // /<stores all available
 	// connectors
 	HashMap<String, OobdProtocol> protocols; // /<stores all available protocols
-	HashMap<String, Class<?>> scriptengines; // /<stores all available
+	HashMap<String, Class<OobdUIHandler>> uiHandlers; // /<stores all available
+														// UI-handlers
+	HashMap<String, Class<OobdScriptengine>> scriptengines; // /<stores all
+															// available
 	// scriptengine classes
 	HashMap<String, OobdDB> databases; // /<stores all available
 	// database classes
 	HashMap<String, OobdScriptengine> activeEngines; // /<stores all active
 	// (instanced)
 	// scriptengine objects
+	HashMap<String, OobdUIHandler> activeUIHandlers; // /<stores all active
+	// (instanced)
+	// UIHandlers objects
 	/**
 	 * The assingnments - hashtable works as a poor mens registry, where
 	 * everything, which needs to stored somehow, is kept as a string => object
 	 * pair
 	 */
 	HashMap<String, Object> assignments;
-	HashMap<String, ArrayList<Visualizer>> visualizers;// /<stores all available
-	// visalizers
+	String uiHandlerID = "";
 	static Core thisInstance = null; // Class variable points to only instance
 	CoreTick ticker;
 	Properties props;
@@ -151,18 +158,15 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		busses = new HashMap<String, OobdBus>();
 		connectors = new HashMap<String, OobdConnector>();
 		protocols = new HashMap<String, OobdProtocol>();
-		scriptengines = new HashMap<String, Class<?>>();
+		uiHandlers = new HashMap<String, Class<OobdUIHandler>>();
+		scriptengines = new HashMap<String, Class<OobdScriptengine>>();
 		activeEngines = new HashMap<String, OobdScriptengine>();
+		activeUIHandlers = new HashMap<String, OobdUIHandler>();
 		assignments = new HashMap<String, Object>();
-		visualizers = new HashMap<String, ArrayList<Visualizer>>();
 		databases = new HashMap<String, OobdDB>();
-		System.out.println("Try to set the Systeminterface -callback...");
 		systemInterface.registerOobdCore(this); // Anounce itself at the
 		// Systeminterface
-		System.out.println("Systeminterface set");
-		System.out.println("Try to set the userinterface -callback...");
 		userInterface.registerOobdCore(this); // Anounce itself at the
-		System.out.println("Userinterface set");
 		// Userinterface
 
 		// userInterface.sm("Moin");
@@ -188,11 +192,15 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
 		// ----------- load Busses -------------------------------
 		try {
-			Logger.getLogger(Core.class.getName()).log(Level.CONFIG,
-					"Try to load: " + props.getProperty("BusClassPath", "org.oobd.base.bus.BusCom"));
+			Logger.getLogger(Core.class.getName()).log(
+					Level.CONFIG,
+					"Try to load: "
+							+ props.getProperty("BusClassPath",
+									"org.oobd.base.bus.BusCom"));
 			HashMap<String, Class<?>> classObjects = loadOobdClasses(
-					props.getProperty("BusClassPath", "org.oobd.base.bus.BusCom"),
-					props.getProperty("BusClassPrefix", "org.oobd.base.bus."),
+					props.getProperty("BusClassPath",
+							"org.oobd.base.bus.BusCom"), props.getProperty(
+							"BusClassPrefix", "org.oobd.base.bus."),
 					Class.forName("org.oobd.base.bus.OobdBus"));
 			for (Iterator iter = classObjects.keySet().iterator(); iter
 					.hasNext();) {
@@ -208,11 +216,15 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 				} catch (InstantiationException ex) {
 					// Wird geworfen, wenn die Klasse nicht "instanziert" werden
 					// kann
-					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-							"InstantiationException: can't instance of Bus " + element);
+					Logger.getLogger(Core.class.getName()).log(
+							Level.WARNING,
+							"InstantiationException: can't instance of Bus "
+									+ element);
 				} catch (IllegalAccessException ex) {
-					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-							"IllegalAccessException: can't create instance of Bus " + element);
+					Logger.getLogger(Core.class.getName()).log(
+							Level.WARNING,
+							"IllegalAccessException: can't create instance of Bus "
+									+ element);
 				}
 
 			}
@@ -223,7 +235,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		// ----------- load Connectors -------------------------------
 		try {
 			HashMap<String, Class<?>> classObjects = loadOobdClasses(
-					props.getProperty("ConnectorClassPath", "org.oobd.base.connector.ConnectorLocal"),
+					props.getProperty("ConnectorClassPath",
+							"org.oobd.base.connector.ConnectorLocal"),
 					"org.oobd.base.connector.",
 					Class.forName("org.oobd.base.connector.OobdConnector"));
 			for (Iterator iter = classObjects.keySet().iterator(); iter
@@ -239,11 +252,15 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 				} catch (InstantiationException ex) {
 					// Wird geworfen, wenn die Klasse nicht "instanziert" werden
 					// kann
-					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-							"InstantiationException: can't instance of Connector " + element);
+					Logger.getLogger(Core.class.getName()).log(
+							Level.WARNING,
+							"InstantiationException: can't instance of Connector "
+									+ element);
 				} catch (IllegalAccessException ex) {
-					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-							"IllegalAccessException: can't create instance of Connector " + element);
+					Logger.getLogger(Core.class.getName()).log(
+							Level.WARNING,
+							"IllegalAccessException: can't create instance of Connector "
+									+ element);
 				}
 
 			}
@@ -254,7 +271,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		// ----------- load Protocols -------------------------------
 		try {
 			HashMap<String, Class<?>> classObjects = loadOobdClasses(
-					props.getProperty("ProtocolClassPath", "org.oobd.base.protocol.ProtocolUDS"),
+					props.getProperty("ProtocolClassPath",
+							"org.oobd.base.protocol.ProtocolUDS"),
 					"org.oobd.base.protocol.",
 					Class.forName("org.oobd.base.protocol.OobdProtocol"));
 			for (Iterator iter = classObjects.keySet().iterator(); iter
@@ -269,11 +287,15 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 				} catch (InstantiationException ex) {
 					// Wird geworfen, wenn die Klasse nicht "instanziert" werden
 					// kann
-					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-							"InstantiationException: can't instance of Protocol " + element);
+					Logger.getLogger(Core.class.getName()).log(
+							Level.WARNING,
+							"InstantiationException: can't instance of Protocol "
+									+ element);
 				} catch (IllegalAccessException ex) {
-					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-							"IllegalAccessException: can't create instance of Protocol " + element);
+					Logger.getLogger(Core.class.getName()).log(
+							Level.WARNING,
+							"IllegalAccessException: can't create instance of Protocol "
+									+ element);
 				}
 
 			}
@@ -284,8 +306,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		// ----------- load Databases -------------------------------
 		try {
 			HashMap<String, Class<?>> classObjects = loadOobdClasses(
-					props.getProperty("DatabaseClassPath", "org.oobd.base.db.AVLLookup"),
-					"org.oobd.base.db.",
+					props.getProperty("DatabaseClassPath",
+							"org.oobd.base.db.AVLLookup"), "org.oobd.base.db.",
 					Class.forName("org.oobd.base.db.OobdDB"));
 			for (Iterator iter = classObjects.keySet().iterator(); iter
 					.hasNext();) {
@@ -300,11 +322,15 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 				} catch (InstantiationException ex) {
 					// Wird geworfen, wenn die Klasse nicht "instanziert" werden
 					// kann
-					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-							"InstantiationException: can't instance of Database " + element);
+					Logger.getLogger(Core.class.getName()).log(
+							Level.WARNING,
+							"InstantiationException: can't instance of Database "
+									+ element);
 				} catch (IllegalAccessException ex) {
-					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-							"IllegalAccessException: can't create instance of Database " + element);
+					Logger.getLogger(Core.class.getName()).log(
+							Level.WARNING,
+							"IllegalAccessException: can't create instance of Database "
+									+ element);
 				}
 
 			}
@@ -316,13 +342,14 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		// INSTANCES!-------------------------------
 		try {
 			scriptengines = loadOobdClasses(
-					props.getProperty("EngineClassPath", "org.oobd.base.scriptengine.ScriptengineLua"),
+					props.getProperty("EngineClassPath",
+							"org.oobd.base.scriptengine.ScriptengineLua"),
 					"org.oobd.base.scriptengine.",
 					Class.forName("org.oobd.base.scriptengine.OobdScriptengine"));
 			for (Iterator iter = scriptengines.keySet().iterator(); iter
 					.hasNext();) {
 				String element = (String) iter.next();
-				Class<?> value = scriptengines.get(element);
+				Class<OobdScriptengine> value = scriptengines.get(element);
 				scriptengines.put(element, value);
 				// now I need to be a little bit tricky to involve the static
 				// class method of an untypized class
@@ -336,11 +363,51 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 					// Android: String.isEmpty() not available
 					// if (!result.isEmpty()) {
 					if (result.length() != 0) {
-						announceScriptEngine(element, result);
+						userInterface.announceScriptengine(element, result);
 					}
 				} catch (Exception ex) {
-					Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-							"can't call static method 'publicName' of " + element); 
+					Logger.getLogger(Core.class.getName()).log(
+							Level.WARNING,
+							"can't call static method 'publicName' of "
+									+ element);
+					ex.printStackTrace();
+
+				}
+			}
+		} catch (ClassNotFoundException ex) {
+			Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
+					"Error while trying to load class", ex);
+		}
+		// ----------- load UIHandlers AS CLASSES, NOT AS
+		// INSTANCES!-------------------------------
+		try {
+			uiHandlers = loadOobdClasses(props.getProperty(
+					"UIHandlerClassPath", "org.oobd.ui.uihandler.UIHandler"),
+					"org.oobd.ui.uihandler.",
+					Class.forName("org.oobd.base.uihandler.OobdUIHandler"));
+			for (Iterator iter = uiHandlers.keySet().iterator(); iter.hasNext();) {
+				String element = (String) iter.next();
+				Class<OobdUIHandler> value = uiHandlers.get(element);
+				uiHandlers.put(element, value);
+				// now I need to be a little bit tricky to involve the static
+				// class method of an untypized class
+				try {
+					Class[] parameterTypes = new Class[] {};
+					java.lang.reflect.Method method = value.getMethod(
+							"publicName", new Class[] {}); // no parameters
+					Object instance = null;
+					String result = (String) method.invoke(instance,
+							new Object[] {}); // no parameters
+					// Android: String.isEmpty() not available
+					// if (!result.isEmpty()) {
+					if (result.length() != 0) {
+						userInterface.announceUIHandler(element, result);
+					}
+				} catch (Exception ex) {
+					Logger.getLogger(Core.class.getName()).log(
+							Level.WARNING,
+							"can't call static method 'publicName' of "
+									+ element);
 					ex.printStackTrace();
 
 				}
@@ -376,6 +443,24 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	}
 
 	/**
+	 * a help routine which returns the UI Interface of the Core class
+	 * 
+	 * @return UI-Interface
+	 */
+	public IFui getUiIF() {
+		return userInterface;
+	}
+
+	/**
+	 * a help routine which returns the UI Handler of the Core class
+	 * 
+	 * @return Core
+	 */
+	public OobdUIHandler getUiHandler() {
+		return uiHandler;
+	}
+
+	/**
 	 * supply Objects which binds to system specific hardware
 	 * 
 	 * @param typ
@@ -383,27 +468,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	 */
 	public Object supplyHardwareHandle(Onion typ) {
 		return systemInterface.supplyHardwareHandle(typ);
-	}
-
-	/**
-	 * \brief add generated visualizers to global list
-	 * 
-	 * several owners (=scriptengines) do have their own visualizers. This is
-	 * stored in the visualizers hash
-	 * 
-	 * @param owner
-	 *            who owns the visualizer
-	 * @param vis
-	 *            the visualizer
-	 */
-	public void addVisualizer(String owner, Visualizer vis) {
-		if (visualizers.containsKey(owner)) {
-			((ArrayList) visualizers.get(owner)).add(vis);
-		} else {
-			ArrayList ar = new ArrayList();
-			ar.add(vis);
-			visualizers.put(owner, ar);
-		}
 	}
 
 	@Override
@@ -495,6 +559,96 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	}
 
 	/**
+	 * \brief create ScriptEngine identified by its public Name
+	 * 
+	 * Returns a unique ID which is used from now on for all communication
+	 * between the core and the UI
+	 * 
+	 * @param id
+	 *            public name of scriptengine to be created
+	 * @param onion
+	 *            additional params
+	 * @param classtype
+	 * @return unique id of this class, made out of its public name and counter.
+	 *         Needed to link UI canvas to this object
+	 * 
+	 */
+	public String createUIHandler(String id, Onion onion) {
+		Logger.getLogger(Core.class.getName()).log(Level.CONFIG,
+				"Core should create UIHandler: " + id);
+		Integer i = 1;
+		while (activeUIHandlers.containsKey(id + "." + i.toString())) { // searching
+			// for a
+			// free
+			// id
+			i++;
+		}
+		String seID = id + "." + i.toString();
+
+		OobdUIHandler o = null;
+		Class[] argsClass = new Class[3]; // first we set up an pseudo - args -
+		// array for the scriptengine-
+		// constructor
+		argsClass[0] = seID.getClass(); // and fill it with the info of the
+		// arguments classes
+		argsClass[1] = this.getClass();
+		argsClass[2] = IFsystem.class;
+		Class classRef = (Class) uiHandlers.get(id); // then we get the class of
+														// the
+		// wanted scriptengine
+		try {
+			Constructor con = classRef.getConstructor(argsClass); // and let
+			// Java find
+			// the
+			// correct
+			// constructor
+			// matching
+			// to the
+			// args
+			// classes
+			Object[] args = { seID, this, systemInterface }; // creating the
+			// args-array
+			o = (OobdUIHandler) con.newInstance(args); // and finally create
+			// the object from
+			// the scriptengine
+			// class with its
+			// unique id as
+			// parameter
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		activeUIHandlers.put(seID, o); // store the new created scriptengine
+		uiHandlerID = seID;
+		return seID;
+	}
+
+	/**
+	 * \brief starts the UIHandler
+	 * 
+	 * During startup, the core reports all available UIHandler to the User
+	 * Interface to let the user choose with which one he wants to work with.
+	 * 
+	 * When all initalisation is been done, it's started with startUIHandler()
+	 * \ingroup visualisation
+	 * 
+	 * @param onion
+	 *            addional param
+	 */
+	public void startUIHandler(String id, Onion onion) {
+		if (uiHandler == null) {
+			Logger.getLogger(Core.class.getName()).log(Level.CONFIG,
+					"Start UIHandler: " + id);
+			uiHandler = activeUIHandlers.get(id);
+			uiHandler.setStartupParameter(onion);
+			// uiHandler is not a thread, it's called by the UI-Thread instead,
+			// so we
+			// Thread t1 = new Thread(uiHandler);
+			// t1.start();
+			uiHandler.start();
+		}
+	}
+
+	/**
 	 * \brief generate the lists of available OOBD classes for scriptengines,
 	 * busses etc. Loads different dynamic classes via an URLClassLoader. As an
 	 * URLClassloader is generic and can handle URLs, file systems and also jar
@@ -527,29 +681,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	}
 
 	/**
-	 * \brief Tells the UserInterface about the existence of a scriptengine
-	 * 
-	 * During startup, the core identifies all available scriptengines and
-	 * report them by this function to the Userinterface e.g. to add this to a
-	 * selection menu.
-	 * 
-	 * The userinterface must collect these information and present this to the
-	 * user, as the first step of the user interaction would be, that the user
-	 * selects the scriptengine he wants to work with and start their
-	 * functionality by calling startScriptEngine()
-	 * 
-	 * @param id
-	 *            the key of the scriptengines hash array where the loaded
-	 *            instances are been stored
-	 * @param visibleName
-	 * @todo is the description here correct, that the user interface starts an
-	 *       engine with startscriptEngine()? \ingroup init
-	 */
-	void announceScriptEngine(String id, String visibleName) {
-		userInterface.announceScriptengine(id, visibleName);
-	}
-
-	/**
 	 * main entry point for all actions required by the different components.
 	 * Can be called either with a onion or with an json-String containing the
 	 * onion data
@@ -573,36 +704,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	}
 
 	/**
-	 * \brief Tells Value to all visualizers of a scriptengine
-	 * 
-	 * @param value
-	 *            Onion containing value and scriptengine
-	 * 
-	 */
-	public void handleValue(Onion value) {
-		String owner = value.getOnionString("owner/name"); // who's the owner of
-		// that value?
-		if (owner == null) {
-			Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-					"onion id does not contain name");
-		} else {
-			ArrayList affectedVisualizers = visualizers.get(owner); // which
-			// visualizers
-			// belong to
-			// that
-			// owner
-			if (affectedVisualizers != null) {
-				Iterator visItr = affectedVisualizers.iterator();
-				while (visItr.hasNext()) {
-					Visualizer vis = (Visualizer) visItr.next();
-					vis.setValue(value); // send the value to all visualisers of
-					// that owner
-				}
-			}
-		}
-	}
-
-	/**
 	 * main entry point for all actions required by the different components.
 	 * Can be called either with a onion or with an json-String containing the
 	 * onion data
@@ -613,19 +714,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	 */
 	public boolean actionRequest(Onion myOnion) {
 		try {
-			if (myOnion.isType(CM_VISUALIZE)) {
-				userInterface.visualize(myOnion);
-				return false;
-			}
-			if (myOnion.isType(CM_VALUE)) {
-				handleValue(myOnion);
-				return false;
-			}
-			if (myOnion.isType(CM_UPDATE)) {
-				transferMsg(new Message(this, myOnion.getString("to"), myOnion));
-
-				return false;
-			}
 			if (myOnion.isType(CM_CHANNEL)) {
 				this.getMsgPort()
 						.sendAndWait(
@@ -643,28 +731,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 				// ~30sec
 				// Timeout)
 				return true;
-			}
-
-			if (myOnion.isType(CM_PAGE)) {
-				String dummy = myOnion.getOnionString("owner");
-				userInterface.openPage(myOnion.getOnionString("owner"),
-						myOnion.getOnionString("name"), 1, 1);
-				return false;
-			}
-			if (myOnion.isType(CM_PAGEDONE)) {
-				userInterface.openPageCompleted(
-						myOnion.getOnionString("owner"),
-						myOnion.getOnionString("name"));
-				return false;
-			}
-			if (myOnion.isType(CM_WRITESTRING)) {
-				userInterface.sm(Base64Coder.decodeString(myOnion
-						.getOnionString("data")));
-				return false;
-			}
-			if (myOnion.isType(CM_PARAM)) {
-				userInterface.requestParamInput(myOnion);
-				return false;
 			}
 		} catch (org.json.JSONException e) {
 			Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
@@ -714,66 +780,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	}
 
 	/**
-	 * \brief updates all visualizers
-	 * 
-	 * to not having several UI refreshes in parallel, update requests are only
-	 * be collected for each visualizer and only been refreshed when the central
-	 * core raises this update event.
-	 * 
-	 * 
-	 * 
-	 */
-	public void updateVisualizers() {
-		synchronized (visualizers) { // Collection<ArrayList<Visualizer>> c =
-			// Collections
-			// .synchronizedCollection(visualizers.values());
-			Collection<ArrayList<Visualizer>> c = visualizers.values();
-			// synchronized (c) {
-			// obtain an Iterator for Collection
-			Iterator<ArrayList<Visualizer>> itr;
-
-			// iterate through HashMap values iterator
-			// run through the 3 update states: 0: start 1: update data 2:
-			// finish
-			for (int i = 0; i < 3; i++) {
-				itr = c.iterator();
-				while (itr.hasNext()) {
-					ArrayList<Visualizer> engineVisualizers = itr.next();
-					boolean somethingToRemove = false;
-					Iterator<Visualizer> visItr = engineVisualizers.iterator();
-					// synchronized (visItr) {
-					while (visItr.hasNext()) {
-						Visualizer vis = visItr.next();
-						if (vis != null) {
-							synchronized (vis) {
-								if (vis.getRemoved()) {
-									somethingToRemove = true;
-								} else {
-									vis.doUpdate(i);
-								}
-							}
-						}
-					}
-					// }
-					synchronized (engineVisualizers) {
-						if (somethingToRemove) {
-							int del = 0;
-							while (del < engineVisualizers.size()) {
-								if (engineVisualizers.get(del).getRemoved()) {
-									engineVisualizers.remove(del);
-								}
-								del++;
-							}
-
-						}
-					}
-				}
-			}
-			// }
-		}
-	}
-
-	/**
 	 * \brief transfer a message to the receiver
 	 * 
 	 * @param msg
@@ -792,8 +798,12 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 			// receiver?
 			this.sendMsg(msg);
 			return true;
-		} else { // find receipient
+		} else {// find receipient
 			OobdPlugin receiver = activeEngines.get(msg.rec);
+			if (receiver == null
+					&& OOBDConstants.UIHandlerMailboxName.equals(msg.rec)) {
+				receiver = activeUIHandlers.get(uiHandlerID);
+			}
 			if (receiver == null) {
 				receiver = busses.get(msg.rec);
 			}
@@ -828,7 +838,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	 */
 	public void outputText(String output) {
 		try {
-			sendMsg(new Message(Core.getSingleInstance(), CoreMailboxName,
+			sendMsg(new Message(Core.getSingleInstance(), UIHandlerMailboxName,
 					new Onion("{" + "'type':'" + CM_WRITESTRING + "',"
 							+ "'owner':" + "{'name':'"
 							+ Core.getSingleInstance().getId() + "'},"
@@ -856,7 +866,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 					+ "'owner':" + "{'name':'"
 					+ Core.getSingleInstance().getId() + "'}" + "}");
 			thisOnion.setValue(CM_PARAM, msg);
-			sendMsg(new Message(Core.getSingleInstance(), CoreMailboxName,
+			sendMsg(new Message(Core.getSingleInstance(), UIHandlerMailboxName,
 					thisOnion));
 		} catch (JSONException ex) {
 			Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE,
@@ -872,11 +882,11 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	 * @param msg
 	 *            the text to show
 	 */
-
 	public void userAlert(String msg) {
 		try {
-			core.requestParamInput(new Onion("{" + "'param' : [{ " + "'type':'a',"
-					+ "'tooltip':'" + Base64Coder.encodeString(msg) + "'" + "}]}"));
+			core.requestParamInput(new Onion("{" + "'param' : [{ "
+					+ "'type':'a'," + "'tooltip':'"
+					+ Base64Coder.encodeString(msg) + "'" + "}]}"));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -892,7 +902,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	 */
 	public void coreTick() {
 		ticker.enable(false);
-		//updateVisualizers();
+		// updateVisualizers();
 		ticker.enable(true);
 	}
 
