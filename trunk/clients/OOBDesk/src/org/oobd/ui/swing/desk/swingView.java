@@ -37,6 +37,7 @@ import org.oobd.base.*;
 import org.oobd.base.Core;
 import org.oobd.base.IFui;
 import org.oobd.base.visualizer.*;
+import org.oobd.base.uihandler.OobdUIHandler;
 import org.oobd.base.support.Onion;
 
 
@@ -715,7 +716,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }//GEN-LAST:event_backButtonLabelMouseClicked
 
     private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
-        if (scriptSelectComboBox.getSelectedItem()==null){
+        if (scriptSelectComboBox.getSelectedItem() == null) {
             return;
         }
         String scriptName = scriptSelectComboBox.getSelectedItem().toString();
@@ -724,7 +725,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                 OOBDConstants.AppPrefsFileName, appProbs);
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         cl.show(mainPanel, DIAGNOSEPANEL);
-       try {
+        try {
             startScriptEngine(
                     new Onion("{" + "'scriptpath':'" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath().replace("\\", "/")
                     + "'" + "}"));
@@ -1067,7 +1068,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             try {
                 oobdCore.getSystemIF().setUserPassPhrase(
                         str);
-                str="";
+                str = "";
             } catch (Exception e) {
                 // e.printStackTrace();
                 oobdCore.getSystemIF().setUserPassPhrase("");
@@ -1076,6 +1077,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     }
 
+    @Override
     public void announceScriptengine(String id, String visibleName) {
         Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: Scriptengine-ID: {0} visibleName:{1}", new Object[]{id, visibleName
                 });
@@ -1087,11 +1089,26 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
     }
 
-    public void updateOobdUI(){
-        oobdCore.updateVisualizers();
+    @Override
+    public void announceUIHandler(String id, String visibleName) {
+        Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: UIHandler-ID: {0} visibleName:{1}", new Object[]{id, visibleName
+                });
+        Onion onion = new Onion();
+        String seID = oobdCore.createUIHandler(id, onion);
+
+        oobdCore.startUIHandler(seID, onion);
+
     }
-    
-    
+
+    @Override
+    public void updateOobdUI() {
+        OobdUIHandler uiHandler = oobdCore.getUiHandler();
+        if (uiHandler != null) {
+            uiHandler.handleMsg();
+        }
+    }
+
+    @Override
     public Class getVisualizerClass(String visualizerType, String theme) {
         return TextVisualizerJPanel.class;
     }
@@ -1221,6 +1238,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
     }
 
+    @Override
     public void startScriptEngine(Onion onion) {
 
         if (scriptEngineID != null) {
@@ -1266,22 +1284,21 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
             }
         }
-          SwingUtilities.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
+
             @Override
-    public void run() {
-      // Here, we can safely update the GUI
-      // because we'll be called from the
-      // event dispatch thread
-      updateOobdUI();
-    }
-  });
+            public void run() {
+                // Here, we can safely update the GUI
+                // because we'll be called from the
+                // event dispatch thread
+                updateOobdUI();
+            }
+        });
         timer.restart();
     }
 
     @Override
     public void requestParamInput(Onion msg) {
-        System.out.println("Onion received:" + msg.toString());
-
         String message = "internal error: Invalid cmd parameters";
         ArrayList<Onion> params = msg.getOnionArray("PARAM", "param");
         if (params != null) {
@@ -1318,7 +1335,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         try {
             InputStream keyfile = oobdCore.getSystemIF().generateResourceStream(
                     OOBDConstants.FT_RAW,
-                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator +OOBDConstants.PGP_USER_KEYFILE_NAME);
+                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_USER_KEYFILE_NAME);
             newUserKeyExist = keyfile != null;
             keyfile.close();
         } catch (Exception e) {
@@ -1327,7 +1344,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         try {
             InputStream keyfile = oobdCore.getSystemIF().generateResourceStream(
                     OOBDConstants.FT_RAW,
-                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator +OOBDConstants.PGP_GROUP_KEYFILE_NAME);
+                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_GROUP_KEYFILE_NAME);
             newGroupKeyExist = keyfile != null;
             keyfile.close();
         } catch (Exception e) {
@@ -1364,8 +1381,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     private boolean importsingleKeyFile(String from, String to) {
         FileOutputStream fos;
-        System.out.println("Import key file from " + from + " to "+to);
-        InputStream inFile = oobdCore.getSystemIF().generateResourceStream(
+         InputStream inFile = oobdCore.getSystemIF().generateResourceStream(
                 OOBDConstants.FT_RAW, from);
         if (inFile != null) {
             try {

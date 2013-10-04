@@ -35,5 +35,11 @@ public class Message {
     public Onion getContent(){
         return content;
     }
+   /**
+     * \brief set the message content
+     */
+    public void setContent(Onion content){
+        this.content=content;
+    }
 
 }

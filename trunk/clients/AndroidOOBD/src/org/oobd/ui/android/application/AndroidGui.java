@@ -9,6 +9,7 @@ import org.oobd.base.Base64Coder;
 import org.oobd.base.Core;
 import org.oobd.base.IFui;
 import org.oobd.base.support.Onion;
+import org.oobd.base.uihandler.OobdUIHandler;
 import org.oobd.base.visualizer.IFvisualizer;
 import org.oobd.base.visualizer.Visualizer;
 import org.oobd.ui.android.Diagnose;
@@ -113,73 +114,84 @@ public class AndroidGui implements IFui {
 
 	public void updateOobdUI() {
 
-		MainActivity.getMyMainActivity().runOnUiThread(new Runnable() {
+		if (true) {
+			MainActivity.getMyMainActivity().runOnUiThread(new Runnable() {
 
-			public void run() {
-				OOBDApp.getInstance().getCore().updateVisualizers();
+				public void run() {
+					OobdUIHandler uiHandler = OOBDApp.getInstance().getCore()
+							.getUiHandler();
+					if (uiHandler != null) {
+						OOBDApp.getInstance().getCore().getUiHandler()
+								.handleMsg();
+					}
+				}
+			});
+		} else {
+			OobdUIHandler uiHandler = OOBDApp.getInstance().getCore()
+					.getUiHandler();
+			if (uiHandler != null) {
+				OOBDApp.getInstance().getCore().getUiHandler().handleMsg();
 			}
-		});
+		}
 
 	}
 
 	public void visualize(final Onion myOnion) {
 
-				IFvisualizer visualComponent;
-				Visualizer newVisualizer = new Visualizer(myOnion);
-				Class<IFvisualizer> visualizerClass = getVisualizerClass(
-						myOnion.getOnionString("type"),
-						myOnion.getOnionString("theme"));
-				String debugText = myOnion.toString();
-				Class[] argsClass = new Class[2]; // first we set up an pseudo -
-													// args -
-													// array for the
-													// scriptengine-
-													// constructor
-				argsClass[0] = String.class; // and fill it with the info, that
-												// the
-												// argument for the constructor
-												// will be
-												// first a String
-				argsClass[1] = String.class;
-				// and fill it with the info, that the argument for the
-				// constructor will
-				// be first a String
-				try {
-					Method classMethod = visualizerClass.getMethod(
-							"getInstance", argsClass); // and let Java find the
-														// correct constructor
-														// with one string as
-														// parameter
-					Object[] args = { newVisualizer.getOwnerEngine(),
-							newVisualizer.getName() }; // we will an args-array
-														// with our
-														// String parameter
-					// now call getInstance() in class VizTable
-					visualComponent = (IFvisualizer) classMethod.invoke(null,
-							args); // and
-									// finally
-									// create
-									// the
-									// object
-									// from
-									// the
-									// scriptengine
-									// class
-									// with
-									// its
-									// unique
-									// id
-									// as
-									// parameter
-					// add new Visualizer object to already existing VizTable
-					// object
-					newVisualizer.setOwner(visualComponent);
+		IFvisualizer visualComponent;
+		Visualizer newVisualizer = new Visualizer(myOnion);
+		Class<IFvisualizer> visualizerClass = getVisualizerClass(
+				myOnion.getOnionString("type"), myOnion.getOnionString("theme"));
+		String debugText = myOnion.toString();
+		Class[] argsClass = new Class[2]; // first we set up an pseudo -
+											// args -
+											// array for the
+											// scriptengine-
+											// constructor
+		argsClass[0] = String.class; // and fill it with the info, that
+										// the
+										// argument for the constructor
+										// will be
+										// first a String
+		argsClass[1] = String.class;
+		// and fill it with the info, that the argument for the
+		// constructor will
+		// be first a String
+		try {
+			Method classMethod = visualizerClass.getMethod("getInstance",
+					argsClass); // and let Java find the
+								// correct constructor
+								// with one string as
+								// parameter
+			Object[] args = { newVisualizer.getOwnerEngine(),
+					newVisualizer.getName() }; // we will an args-array
+												// with our
+												// String parameter
+			// now call getInstance() in class VizTable
+			visualComponent = (IFvisualizer) classMethod.invoke(null, args); // and
+																				// finally
+																				// create
+																				// the
+																				// object
+																				// from
+																				// the
+																				// scriptengine
+																				// class
+																				// with
+																				// its
+																				// unique
+																				// id
+																				// as
+																				// parameter
+			// add new Visualizer object to already existing VizTable
+			// object
+			newVisualizer.setOwner(visualComponent);
 
-					// add to internal list
-					(visualComponent).initValue(newVisualizer, myOnion);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			// add to internal list
+			(visualComponent).initValue(newVisualizer, myOnion);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -252,6 +264,15 @@ public class AndroidGui implements IFui {
 		// stop the Progress Dialog BEFORE the script starts
 		// Diagnose.getInstance().stopProgressDialog();
 		OOBDApp.getInstance().getCore().startScriptEngine(seID, onion);
+
+	}
+
+	public void announceUIHandler(String id, String visibleName) {
+		Onion onion = new Onion();
+		String seID = OOBDApp.getInstance().getCore()
+				.createUIHandler(id, onion);
+
+		OOBDApp.getInstance().getCore().startUIHandler(seID, onion);
 
 	}
 

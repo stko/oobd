@@ -161,7 +161,7 @@ public class Visualizer {
 		}
 		value = onion;
 		// this.myObject=myObject;
-		Core.getSingleInstance().addVisualizer(
+		Core.getSingleInstance().getUiHandler().addVisualizer(
 				ownerEngine.getOnionString(OOBDConstants.FN_NAME), this);
 	}
 
@@ -295,7 +295,7 @@ public class Visualizer {
 				try {
 					Core.getSingleInstance().transferMsg(
 							new Message(Core.getSingleInstance(),
-									OOBDConstants.CoreMailboxName, new Onion(""
+									OOBDConstants.UIHandlerMailboxName, new Onion(""
 											+ "{" + "'type':'"
 											+ OOBDConstants.CM_UPDATE + "',"
 											+ "'vis':'" + this.name + "',"
