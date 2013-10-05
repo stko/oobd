@@ -4,3 +4,4 @@ EngineClassPath=scriptengine
 ProtocolClassPath=protocol
 BusClassPath=bus
 #BusClassPrefix=skdsswing.bus.
+UIHandlerClassPath=uihandler
