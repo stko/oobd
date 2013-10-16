@@ -108,10 +108,12 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 	    printEOT();
 	    break;
 	case VALUE_PARAM_INFO_ADC_POWER:
-		if (GPIO_HardwareLevel() == 4)  /* OOBD Cup v5, R1=200k, R2=18k */
+		if (GPIO_HardwareLevel() == 4 || GPIO_HardwareLevel() == 1)  /* OOBD Cup v5, R1=200k, R2=18k */
 			printser_int((readADC1(8) * (3.15 / 4096) * 11 * 1000), 10); /* result in mV */
 		else if (GPIO_HardwareLevel() == 5) /* OOBD CAN Invader, R1=130k, R2=27k */
 			printser_int((readADC1(8) * (3.3 / 4096) * 5 * 1000), 10); /* result in mV */
+		else
+			printser_string("0"); /* result in mV */
 
 	    printser_string(" mV");
 	    printLF();
