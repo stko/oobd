@@ -192,16 +192,8 @@ end
 function createCall(availPIDs, id, title, func)
     smallId= id % 256
  
-	smallId= smallId-1
- 
-	if smallId > 32 then smallId = smallId - 32 end -- PID 21-40
-	if smallId > 64 then smallId = smallId - 64 end -- PID 41-60
-	if smallId > 96 then smallId = smallId - 96 end -- PID 61-80
-	if smallId > 128 then smallId = smallId - 128 end -- PID 81-A0
-	if smallId > 160 then smallId = smallId - 160 end -- PID A1-C0
-	if smallId > 192 then smallId = smallId - 192 end -- PID C1-E0
-	if smallId > 224 then smallId = smallId - 224 end -- PID E1-FF
-
+	smallId= (smallId-1) % 32 -- limit id to 32bit to get ByteNr0-3 for each PID01-FF
+  	
 	byteNr=(smallId - (smallId % 8))/8
     bitNr = 7- (smallId - byteNr *8)
     if hasBit(availPIDs[byteNr], bitNr) then
