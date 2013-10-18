@@ -190,15 +190,24 @@ end
 
 
 function createCall(availPIDs, id, title, func)
-      smallId= id % 256
-      if smallId > 31 then smallId = smallId % 31 end
-      byteNr=(smallId - (smallId % 8))/8
-      bitNr = 7- (smallId - byteNr *8)
-      if hasBit(availPIDs[byteNr], bitNr) then
-                idstring=string.format("%X",id)
-                print("Id-String=",idstring,id)
-		addElement(title, func,"-",0x6, "0x"..string.format("%X",id))
+    smallId= id % 256
+ 
+	smallId= smallId-1
+ 
+	if smallId > 32 then smallId = smallId - 32 end -- PID 21-40
+	if smallId > 64 then smallId = smallId - 64 end -- PID 41-60
+	if smallId > 96 then smallId = smallId - 96 end -- PID 61-80
+	if smallId > 128 then smallId = smallId - 128 end -- PID 81-A0
+	if smallId > 160 then smallId = smallId - 160 end -- PID A1-C0
+	if smallId > 192 then smallId = smallId - 192 end -- PID C1-E0
+	if smallId > 224 then smallId = smallId - 224 end -- PID E1-FF
 
+	byteNr=(smallId - (smallId % 8))/8
+    bitNr = 7- (smallId - byteNr *8)
+    if hasBit(availPIDs[byteNr], bitNr) then
+		idstring=string.format("%X",id)
+		print("Id-String=",idstring,id)
+		addElement(title, func,"-",0x6, "0x"..string.format("%X",id))
 	end
 end
 
