@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">OpenOnBoardDiagnostics</string>
     <string name="app_name_short">OOBD</string>
-    <string name="app_svnversion">689</string>
+    <string name="app_svnversion">691</string>
     <string name="select_your_bt_device_">Select your BT-Device:</string>
     <string name="pgp_checkbox">enable PGP support</string>
     <string name="pgpimportKeybutton">Import PGP Keys now</string>

@@ -54,6 +54,7 @@ public interface OOBDConstants {
      public final static String PropName_ScriptName ="Script";
      public final static String PropName_OutputDir ="OutputDir";
      public final static String PropName_PGPEnabled ="PGPEnabled";
+     public final static String PropName_UIHander ="UIHandler";
      //PGP key file  names
     public final static String PGP_USER_KEYFILE_NAME = "userkey.sec";
     public final static String PGP_GROUP_KEYFILE_NAME = "groupkey.sec";

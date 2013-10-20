@@ -1,0 +1,17 @@
+# downloaded accourding 
+#
+# http://angelozerr.wordpress.com/2011/07/26/websockets_jetty_step3/
+#
+# from
+#
+# http://download.eclipse.org/jetty/stable-7/dist/
+#
+# out of the ketty-distribution-7.6.13 Archive, directory lib
+#
+jetty-continuation-7.6.13.v20130916.jar
+jetty-http-7.6.13.v20130916.jar
+jetty-io-7.6.13.v20130916.jar
+jetty-server-7.6.13.v20130916.jar
+jetty-util-7.6.13.v20130916.jar
+jetty-websocket-7.6.13.v20130916.jar
+servlet-api-2.5.jar

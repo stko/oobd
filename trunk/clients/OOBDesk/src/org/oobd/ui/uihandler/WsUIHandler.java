@@ -1,4 +1,3 @@
-
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -9,20 +8,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.oobd.base.Core;
 import org.oobd.base.IFsystem;
-import org.oobd.base.uihandler.LocalOobdUIHandler;
+import org.oobd.base.uihandler.WSOobdUIHandler;
 import org.oobd.base.OOBDConstants;
+import org.oobd.base.visualizer.Visualizer;
 
 /**
  *
  * @author steffen
  */
-public class UIHandler extends LocalOobdUIHandler {
+public class WsUIHandler extends WSOobdUIHandler {
 
-    private UIHandler myself;
+    private WsUIHandler myself;
 
-    public UIHandler(String id, Core myCore, IFsystem mySystem) {
+    public WsUIHandler(String id, Core myCore, IFsystem mySystem) {
         super(id, myCore, mySystem, "Swing Desk UI id " + id);
-        Logger.getLogger(UIHandler.class.getName()).log(Level.CONFIG,
+        Logger.getLogger(WsUIHandler.class.getName()).log(Level.CONFIG,
                 "Construct Swing Desk UI instance " + id);
         myself = this;
 
@@ -30,15 +30,20 @@ public class UIHandler extends LocalOobdUIHandler {
 
     @Override
     public String getPluginName() {
-        return "uh:swingdesk";
+        return "uh:ws-swing";
     }
 
     public static String publicName() {
-        return OOBDConstants.UIHandlerMailboxName;
+        return "ws";
     }
 
     @Override
     public void run() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void addVisualizer(String owner, Visualizer vis) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }
