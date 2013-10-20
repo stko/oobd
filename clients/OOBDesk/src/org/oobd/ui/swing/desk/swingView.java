@@ -1093,10 +1093,12 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     public void announceUIHandler(String id, String visibleName) {
         Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: UIHandler-ID: {0} visibleName:{1}", new Object[]{id, visibleName
                 });
-        Onion onion = new Onion();
-        String seID = oobdCore.createUIHandler(id, onion);
+        if (appProbs.getProperty(OOBDConstants.PropName_UIHander, "UIHandler").equalsIgnoreCase(visibleName)) {
+            Onion onion = new Onion();
+            String seID = oobdCore.createUIHandler(id, onion);
 
-        oobdCore.startUIHandler(seID, onion);
+            oobdCore.startUIHandler(seID, onion);
+        }
 
     }
 
@@ -1381,7 +1383,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     private boolean importsingleKeyFile(String from, String to) {
         FileOutputStream fos;
-         InputStream inFile = oobdCore.getSystemIF().generateResourceStream(
+        InputStream inFile = oobdCore.getSystemIF().generateResourceStream(
                 OOBDConstants.FT_RAW, from);
         if (inFile != null) {
             try {

@@ -106,9 +106,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	// connectors
 	HashMap<String, OobdProtocol> protocols; // /<stores all available protocols
 	HashMap<String, Class<OobdUIHandler>> uiHandlers; // /<stores all available
-														// UI-handlers
+	// UI-handlers
 	HashMap<String, Class<OobdScriptengine>> scriptengines; // /<stores all
-															// available
+	// available
 	// scriptengine classes
 	HashMap<String, OobdDB> databases; // /<stores all available
 	// database classes
@@ -594,7 +594,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		argsClass[1] = this.getClass();
 		argsClass[2] = IFsystem.class;
 		Class classRef = (Class) uiHandlers.get(id); // then we get the class of
-														// the
+		// the
 		// wanted scriptengine
 		try {
 			Constructor con = classRef.getConstructor(argsClass); // and let
@@ -838,15 +838,14 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	 */
 	public void outputText(String output) {
 		try {
-			sendMsg(new Message(Core.getSingleInstance(), UIHandlerMailboxName,
-					new Onion("{" + "'type':'" + CM_WRITESTRING + "',"
-							+ "'owner':" + "{'name':'"
+			core.transferMsg(new Message(Core.getSingleInstance(),
+					UIHandlerMailboxName, new Onion("{" + "'type':'"
+							+ CM_WRITESTRING + "'," + "'owner':" + "{'name':'"
 							+ Core.getSingleInstance().getId() + "'},"
 							+ "'command':'serDisplayWrite'," + "'data':'"
 							+ Base64Coder.encodeString(output) + "'" + "}")));
 		} catch (JSONException ex) {
-			Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE,
-					null, ex);
+			Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
 	}
@@ -862,15 +861,15 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	 */
 	public void requestParamInput(Onion msg) {
 		try {
+
 			Onion thisOnion = new Onion("{" + "'type':'" + CM_PARAM + "',"
 					+ "'owner':" + "{'name':'"
 					+ Core.getSingleInstance().getId() + "'}" + "}");
 			thisOnion.setValue(CM_PARAM, msg);
-			sendMsg(new Message(Core.getSingleInstance(), UIHandlerMailboxName,
-					thisOnion));
+			core.transferMsg(new Message(Core.getSingleInstance(),
+					UIHandlerMailboxName, thisOnion));
 		} catch (JSONException ex) {
-			Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE,
-					null, ex);
+			Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
 	}
@@ -884,9 +883,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	 */
 	public void userAlert(String msg) {
 		try {
-			core.requestParamInput(new Onion("{" + "'param' : [{ "
-					+ "'type':'a'," + "'tooltip':'"
-					+ Base64Coder.encodeString(msg) + "'" + "}]}"));
+			requestParamInput(new Onion("{" + "'param' : [{ " + "'type':'a',"
+					+ "'tooltip':'" + Base64Coder.encodeString(msg) + "'"
+					+ "}]}"));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

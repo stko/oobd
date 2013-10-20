@@ -73,6 +73,8 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                         if (classType.isAssignableFrom(source)) {
                             // save unitialized class object in hashmap
                             myInstances.put(name[0], source);
+                        }else{
+                             Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, classPrefix + name[0]+"can not be inherited from "+classType.getName());
                         }
 
                     } catch (ClassNotFoundException ex) {
