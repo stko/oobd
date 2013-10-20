@@ -8,14 +8,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.oobd.base.Core;
 import org.oobd.base.IFsystem;
-import org.oobd.base.uihandler.OobdUIHandler;
+import org.oobd.base.uihandler.LocalOobdUIHandler;
 import org.oobd.base.OOBDConstants;
 
 /**
  *
  * @author steffen
  */
-public class UIHandler extends OobdUIHandler {
+public class UIHandler extends LocalOobdUIHandler {
 
     private UIHandler myself;
 

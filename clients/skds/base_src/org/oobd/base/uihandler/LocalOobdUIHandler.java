@@ -40,7 +40,6 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
     }
 
     boolean actionRequest(Onion myOnion) {
-        System.out.println("UI Handler action request type:" + myOnion.getOnionString("type"));
         try {
             if (myOnion.isType(CM_VISUALIZE)) {
                 userInterface.visualize(myOnion);
@@ -85,11 +84,9 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
 
     public void handleMsg() {
         Message thisMsg;
-        System.out.println("Looking into UI Handler msg quere");
         while ((thisMsg = this.getMsgPort().getMsg(0)) != null) { // just waiting
             // and handling
             // messages
-            System.out.println("UI Handler: msg found");
             if (actionRequest(thisMsg.getContent()) == true) {
                 try {
                     thisMsg.setContent(thisMsg.getContent().setValue("replyID",
