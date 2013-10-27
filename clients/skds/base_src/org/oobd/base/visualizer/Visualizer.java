@@ -251,6 +251,12 @@ public class Visualizer {
 		return toolTip;
 	}
 
+        
+public void inputNewValue(String newValue)        {
+    		if (value != null) {
+			value.setValue("value", Base64Coder.encodeString(newValue));
+		} 
+}
 	@Override
 	public String toString() {
 		String val = getValue("value");

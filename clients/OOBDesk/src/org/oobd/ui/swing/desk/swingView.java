@@ -1111,7 +1111,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }
 
     @Override
-    public Class getVisualizerClass(String visualizerType, String theme) {
+    public Class getVisualizerClass(Onion myOnion) {
         return TextVisualizerJPanel.class;
     }
 
@@ -1124,20 +1124,12 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             pageObjects = new Vector<IFvisualizer>();
             oobdCore.setAssign(newVisualizer.getOwnerEngine(), org.oobd.base.OOBDConstants.CL_OBJECTS, pageObjects);
         }
-        Class<IFvisualizer> visualizerClass = getVisualizerClass(myOnion.getOnionString("type"), myOnion.getOnionString("theme"));
-        Class[] argsClass = new Class[2]; // first we set up an pseudo - args - array for the scriptengine- constructor
-        argsClass[0] = String.class; // and fill it with the info, that the argument for the constructor will be first a String
-        argsClass[1] = String.class;
-        // and fill it with the info, that the argument for the constructor will be first a String
-
-
-
-
-
-
-        try {
+        Class<IFvisualizer> visualizerClass = getVisualizerClass( myOnion);
+        Class[] argsClass = new Class[1]; // first we set up an pseudo - args - array for the scriptengine- constructor
+        argsClass[0] = Onion.class; // and fill it with the info, that the argument for the constructor will be an Onion
+          try {
             Method classMethod = visualizerClass.getMethod("getInstance", argsClass); // and let Java find the correct constructor with one string as parameter
-            Object[] args = {newVisualizer.getOwnerEngine(), newVisualizer.getName()}; //we will an args-array with our String parameter
+            Object[] args = {myOnion}; //we will an args-array with our String parameter
             newJComponent = (JComponent) classMethod.invoke(null, args); // and finally create the object from the scriptengine class with its unique id as parameter
             newVisualizer.setOwner((IFvisualizer) newJComponent);
             ((IFvisualizer) newJComponent).setVisualizer(newVisualizer);

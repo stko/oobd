@@ -108,7 +108,7 @@ public class AndroidGui implements IFui {
 
 	}
 
-	public Class getVisualizerClass(String visualizerType, String theme) {
+	public Class getVisualizerClass(Onion thisOnion) {
 		return VizTable.class;
 	}
 
@@ -140,33 +140,27 @@ public class AndroidGui implements IFui {
 
 		IFvisualizer visualComponent;
 		Visualizer newVisualizer = new Visualizer(myOnion);
-		Class<IFvisualizer> visualizerClass = getVisualizerClass(
-				myOnion.getOnionString("type"), myOnion.getOnionString("theme"));
+		Class<IFvisualizer> visualizerClass = getVisualizerClass(myOnion);
 		String debugText = myOnion.toString();
-		Class[] argsClass = new Class[2]; // first we set up an pseudo -
+		Class[] argsClass = new Class[1]; // first we set up an pseudo -
 											// args -
 											// array for the
 											// scriptengine-
 											// constructor
-		argsClass[0] = String.class; // and fill it with the info, that
+		argsClass[0] = Onion.class; // and fill it with the info, that
 										// the
 										// argument for the constructor
 										// will be
-										// first a String
-		argsClass[1] = String.class;
-		// and fill it with the info, that the argument for the
-		// constructor will
-		// be first a String
+										// an Onion
 		try {
 			Method classMethod = visualizerClass.getMethod("getInstance",
 					argsClass); // and let Java find the
 								// correct constructor
-								// with one string as
+								// with one Onoin as
 								// parameter
-			Object[] args = { newVisualizer.getOwnerEngine(),
-					newVisualizer.getName() }; // we will an args-array
+			Object[] args = { myOnion }; // we will an args-array
 												// with our
-												// String parameter
+												// Onion parameter
 			// now call getInstance() in class VizTable
 			visualComponent = (IFvisualizer) classMethod.invoke(null, args); // and
 																				// finally
