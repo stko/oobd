@@ -78,7 +78,7 @@ public interface IFui {
      * @param theme
      * @return Visulizerclass, if found
      */
-    public Class getVisualizerClass(String visualizerType, String theme);
+    public Class getVisualizerClass(Onion myOnion);
 
     /**
      * \brief places a visualizer onto an canvas

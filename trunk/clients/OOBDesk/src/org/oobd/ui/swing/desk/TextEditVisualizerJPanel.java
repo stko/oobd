@@ -21,7 +21,7 @@ import org.oobd.base.support.Onion;
  *
  * @author steffen
  */
-public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisualizer {
+public class TextEditVisualizerJPanel extends javax.swing.JPanel implements IFvisualizer {
 
     boolean toBePlaced = true; //indicates, if the actual instance is already been placed on an canvas or not
     boolean awaitingUpdate = false;
@@ -30,7 +30,7 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
     static private final Icon[] myIcons = new Icon[6];
 
     /** Creates new form TextVisualizerJPanel */
-    public TextVisualizerJPanel() {
+    public TextEditVisualizerJPanel() {
         super();
         initComponents();
         if (myIcons[0] == null) { //initial setup
@@ -41,13 +41,22 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
             myIcons[4] = new ImageIcon(swingView.class.getResource("/org/oobd/base/images/text_16.png"));
             myIcons[5] = new ImageIcon(swingView.class.getResource("/org/oobd/base/images/back_16.png"));
         }
+        valueTextEdit.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                getVisualizer().inputNewValue(valueTextEdit.getText());
+                getVisualizer().updateRequest(OOBDConstants.UR_USER);
+
+            }
+        });
+
     }
 
     @Override
     public void paintComponent(Graphics g) {
         if (value != null) {
             functionName.setText("<html>" + value.getToolTip() + "</html>");
-            functionValue.setText("<html>" + value.toString() + "</html>");
+            valueTextEdit.setText(value.toString());
         }
         if (value.getUpdateFlag(4)) {
 
@@ -84,16 +93,13 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
         super.paintComponent(g);
     }
 
-    public static IFvisualizer getInstance(Onion myOnion) {
-        String thisType=myOnion.getOnionString("opts/type");
-        System.out.println("Onion="+myOnion.toString());
-       System.out.println("Visualizer Type="+thisType);
+    public static IFvisualizer getInstance(String pageID, String vizName) {
 
-        if ("TextEdit".equalsIgnoreCase(thisType)) {
-            return new TextEditVisualizerJPanel();
-        } else {
-            return new TextVisualizerJPanel();
-        }
+        return new TextEditVisualizerJPanel();
+        /*    if (evt.getClickCount() == 2) {
+        
+        value.updateRequest(OOBDConstants.UR_USER);}
+         */
     }
 
     /** This method is called from within the constructor to
@@ -105,7 +111,7 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        functionValue = new javax.swing.JLabel();
+        valueTextEdit = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         functionName = new javax.swing.JLabel();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
@@ -121,11 +127,10 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
         setName("Form"); // NOI18N
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.PAGE_AXIS));
 
-        functionValue.setFont(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getFont("functionValue.font")); // NOI18N
-        functionValue.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        functionValue.setText(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getString("functionValue.text")); // NOI18N
-        functionValue.setName("functionValue"); // NOI18N
-        add(functionValue);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextEditVisualizerJPanel.class);
+        valueTextEdit.setText(resourceMap.getString("valueTextEdit.text")); // NOI18N
+        valueTextEdit.setName("valueTextEdit"); // NOI18N
+        add(valueTextEdit);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         jPanel1.setMinimumSize(new java.awt.Dimension(14, 20));
@@ -133,16 +138,16 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
         jPanel1.setPreferredSize(new java.awt.Dimension(14, 20));
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.LINE_AXIS));
 
-        functionName.setFont(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getFont("titleLable.font")); // NOI18N
-        functionName.setForeground(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getColor("titleLable.foreground")); // NOI18N
-        functionName.setText(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getString("titleLable.text")); // NOI18N
+        functionName.setFont(resourceMap.getFont("titleLable.font")); // NOI18N
+        functionName.setForeground(resourceMap.getColor("titleLable.foreground")); // NOI18N
+        functionName.setText(resourceMap.getString("titleLable.text")); // NOI18N
         functionName.setName("titleLable"); // NOI18N
         jPanel1.add(functionName);
 
         filler1.setName("filler1"); // NOI18N
         jPanel1.add(filler1);
 
-        backImageLabel.setIcon(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getIcon("backImageLabel.icon")); // NOI18N
+        backImageLabel.setIcon(resourceMap.getIcon("backImageLabel.icon")); // NOI18N
         backImageLabel.setName("backImageLabel"); // NOI18N
         jPanel1.add(backImageLabel);
 
@@ -173,11 +178,11 @@ public class TextVisualizerJPanel extends javax.swing.JPanel implements IFvisual
     private javax.swing.Box.Filler filler3;
     private javax.swing.JLabel forwardImageLabel;
     private javax.swing.JLabel functionName;
-    private javax.swing.JLabel functionValue;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel logImageLabel;
     private javax.swing.JLabel timerImageLabel;
     private javax.swing.JLabel updateImageLabel;
+    private javax.swing.JTextField valueTextEdit;
     // End of variables declaration//GEN-END:variables
 
     public boolean isGroup() {
