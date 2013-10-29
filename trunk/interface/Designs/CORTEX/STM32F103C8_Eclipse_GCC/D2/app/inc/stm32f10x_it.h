@@ -26,7 +26,7 @@
 #ifdef __cplusplus
 extern "C" {
     
-#endif	/*  */
+#endif				/*  */
     
 /* Includes ------------------------------------------------------------------*/ 
 #include "stm32f10x.h"
@@ -35,7 +35,7 @@ extern "C" {
 /* Exported constants --------------------------------------------------------*/ 
 /* Exported macro ------------------------------------------------------------*/ 
 /* Exported functions ------------------------------------------------------- */ 
-     void NMI_Handler(void);
+    void NMI_Handler(void);
     void HardFault_Handler(void);
     void MemManage_Handler(void);
     void BusFault_Handler(void);
@@ -47,7 +47,7 @@ extern "C" {
     
 #ifdef __cplusplus
 } 
-#endif	/*  */
+#endif				/*  */
 
 #endif	/* __STM32F10x_IT_H */
 

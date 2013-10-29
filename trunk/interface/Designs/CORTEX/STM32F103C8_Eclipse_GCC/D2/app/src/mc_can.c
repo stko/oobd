@@ -89,21 +89,21 @@ portBASE_TYPE bus_init_can()
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
 
-	/* Enable CAN1 Receive interrupts for CAN messages */
-	NVIC_InitStructure.NVIC_IRQChannel = USB_LP_CAN1_RX0_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
-	    = (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
+    /* Enable CAN1 Receive interrupts for CAN messages */
+    NVIC_InitStructure.NVIC_IRQChannel = USB_LP_CAN1_RX0_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
+	= (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
 
-	/* Enable CAN1 Receive error interrupts for CAN messages */
-	NVIC_InitStructure.NVIC_IRQChannel = CAN1_SCE_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
-	    = (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
+    /* Enable CAN1 Receive error interrupts for CAN messages */
+    NVIC_InitStructure.NVIC_IRQChannel = CAN1_SCE_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
+	= (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
 
     return pdPASS;
 }
@@ -186,19 +186,21 @@ uint16_t CAN_GetFilterReg16(uint8_t FilterID, uint8_t FilterReg,
 	/* Get the LowID of the 32bit Filter register Fx.FR1 */
 	if (FilterReg == 1)	/* FR1 */
 	    return (uint16_t) (CAN1->sFilterRegister[FilterID].
-			       FR1 & 0x0000FFFF) >> 5;
+			       FR1 & 0x0000FFFF)
+		>> 5;
 	else if (FilterReg == 2)	/* FR2 */
 	    return (uint16_t) (CAN1->sFilterRegister[FilterID].
-			       FR2 & 0x0000FFFF) >> 5;
+			       FR2 & 0x0000FFFF)
+		>> 5;
 	else
 	    return NULL;
     } else if (FilterPos == 1) {	/* ID High */
 	if (FilterReg == 1)	/* FR1 */
-	    return (uint16_t) (CAN1->sFilterRegister[FilterID].
-			       FR1 >> 16 & 0x0000FFFF) >> 5;
+	    return (uint16_t) (CAN1->sFilterRegister[FilterID].FR1 >> 16 &
+			       0x0000FFFF) >> 5;
 	else if (FilterReg == 2)	/* FR2 */
-	    return (uint16_t) (CAN1->sFilterRegister[FilterID].
-			       FR2 >> 16 & 0x0000FFFF) >> 5;
+	    return (uint16_t) (CAN1->sFilterRegister[FilterID].FR2 >> 16 &
+			       0x0000FFFF) >> 5;
 	else
 	    return NULL;
     } else
@@ -353,30 +355,26 @@ portBASE_TYPE bus_param_can_spec(param_data * args)
 		CAN_FilterInitStructure.CAN_FilterIdLow =
 		    args->args[ARG_VALUE_2] << 5;
 		CAN_FilterInitStructure.CAN_FilterIdHigh =
-		    (uint16_t) (CAN1->
-				sFilterRegister[CAN_FilterInitStructure.
-						CAN_FilterNumber].
+		    (uint16_t) (CAN1->sFilterRegister
+				[CAN_FilterInitStructure.CAN_FilterNumber].
 				FR2 & 0x0000FFFF);
 	    } else {
 		CAN_FilterInitStructure.CAN_FilterIdLow =
-		    (uint16_t) (CAN1->
-				sFilterRegister[CAN_FilterInitStructure.
-						CAN_FilterNumber].
+		    (uint16_t) (CAN1->sFilterRegister
+				[CAN_FilterInitStructure.CAN_FilterNumber].
 				FR1 & 0x0000FFFF);
 		CAN_FilterInitStructure.CAN_FilterIdHigh =
 		    args->args[ARG_VALUE_2] << 5;
 	    }
 
 	    CAN_FilterInitStructure.CAN_FilterMaskIdLow =
-		(uint16_t) (CAN1->
-			    sFilterRegister[CAN_FilterInitStructure.
-					    CAN_FilterNumber].
-			    FR1 >> 16 & 0x0000FFFF);
+		(uint16_t) (CAN1->sFilterRegister
+			    [CAN_FilterInitStructure.CAN_FilterNumber].FR1
+			    >> 16 & 0x0000FFFF);
 	    CAN_FilterInitStructure.CAN_FilterMaskIdHigh =
-		(uint16_t) (CAN1->
-			    sFilterRegister[CAN_FilterInitStructure.
-					    CAN_FilterNumber].
-			    FR2 >> 16 & 0x0000FFFF);
+		(uint16_t) (CAN1->sFilterRegister
+			    [CAN_FilterInitStructure.CAN_FilterNumber].FR2
+			    >> 16 & 0x0000FFFF);
 	    CAN_FilterInitStructure.CAN_FilterScale =
 		CAN_FilterScale_16bit;
 	    CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
@@ -401,15 +399,13 @@ portBASE_TYPE bus_param_can_spec(param_data * args)
 	CAN_FilterInitStructure.CAN_FilterIdHigh =
 	    (uint16_t) (args->args[ARG_VALUE_2] >> 13) & 0x0000FFFF;
 	CAN_FilterInitStructure.CAN_FilterMaskIdLow =
-	    (uint16_t) (CAN1->
-			sFilterRegister[CAN_FilterInitStructure.
-					CAN_FilterNumber].
-			FR2 & 0x0000FFFF);
+	    (uint16_t) (CAN1->sFilterRegister
+			[CAN_FilterInitStructure.CAN_FilterNumber].FR2 &
+			0x0000FFFF);
 	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =
-	    (uint16_t) (CAN1->
-			sFilterRegister[CAN_FilterInitStructure.
-					CAN_FilterNumber].
-			FR2 >> 16 & 0x0000FFFF);
+	    (uint16_t) (CAN1->sFilterRegister
+			[CAN_FilterInitStructure.CAN_FilterNumber].FR2 >>
+			16 & 0x0000FFFF);
 	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
 	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
 	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = 0;
@@ -461,29 +457,25 @@ portBASE_TYPE bus_param_can_spec(param_data * args)
 		CAN_FilterInitStructure.CAN_FilterMaskIdLow =
 		    (uint16_t) args->args[ARG_VALUE_2] << 5;
 		CAN_FilterInitStructure.CAN_FilterMaskIdHigh =
-		    (uint16_t) (CAN1->
-				sFilterRegister[CAN_FilterInitStructure.
-						CAN_FilterNumber].
+		    (uint16_t) (CAN1->sFilterRegister
+				[CAN_FilterInitStructure.CAN_FilterNumber].
 				FR2 >> 16 & 0x0000FFFF);
 	    } else {
 		CAN_FilterInitStructure.CAN_FilterMaskIdLow =
-		    (uint16_t) (CAN1->
-				sFilterRegister[CAN_FilterInitStructure.
-						CAN_FilterNumber].
+		    (uint16_t) (CAN1->sFilterRegister
+				[CAN_FilterInitStructure.CAN_FilterNumber].
 				FR1 >> 16 & 0x0000FFFF);
 		CAN_FilterInitStructure.CAN_FilterMaskIdHigh =
 		    (uint16_t) args->args[ARG_VALUE_2] << 5;
 	    }
 	    CAN_FilterInitStructure.CAN_FilterIdLow =
-		(uint16_t) (CAN1->
-			    sFilterRegister[CAN_FilterInitStructure.
-					    CAN_FilterNumber].
-			    FR1 & 0x0000FFFF);
+		(uint16_t) (CAN1->sFilterRegister
+			    [CAN_FilterInitStructure.CAN_FilterNumber].FR1
+			    & 0x0000FFFF);
 	    CAN_FilterInitStructure.CAN_FilterIdHigh =
-		(uint16_t) (CAN1->
-			    sFilterRegister[CAN_FilterInitStructure.
-					    CAN_FilterNumber].
-			    FR2 & 0x0000FFFF);
+		(uint16_t) (CAN1->sFilterRegister
+			    [CAN_FilterInitStructure.CAN_FilterNumber].FR2
+			    & 0x0000FFFF);
 	    CAN_FilterInitStructure.CAN_FilterScale =
 		CAN_FilterScale_16bit;
 	    CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
@@ -504,15 +496,13 @@ portBASE_TYPE bus_param_can_spec(param_data * args)
 	CAN_FilterInitStructure.CAN_FilterNumber =
 	    args->args[ARG_VALUE_1] - 1;
 	CAN_FilterInitStructure.CAN_FilterIdLow =
-	    (uint16_t) (CAN1->
-			sFilterRegister[CAN_FilterInitStructure.
-					CAN_FilterNumber].
-			FR1 & 0x0000FFFF);
+	    (uint16_t) (CAN1->sFilterRegister
+			[CAN_FilterInitStructure.CAN_FilterNumber].FR1 &
+			0x0000FFFF);
 	CAN_FilterInitStructure.CAN_FilterIdHigh =
-	    (uint16_t) (CAN1->
-			sFilterRegister[CAN_FilterInitStructure.
-					CAN_FilterNumber].
-			FR1 >> 16 & 0x0000FFFF);
+	    (uint16_t) (CAN1->sFilterRegister
+			[CAN_FilterInitStructure.CAN_FilterNumber].FR1 >>
+			16 & 0x0000FFFF);
 	CAN_FilterInitStructure.CAN_FilterMaskIdLow =
 	    (uint16_t) (args->args[ARG_VALUE_2] & 0x0000FFFF) << 3;
 	CAN_FilterInitStructure.CAN_FilterMaskIdHigh =
@@ -575,13 +565,13 @@ void bus_close_can()
     NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
     NVIC_Init(&NVIC_InitStructure);
 
-	/* Disable CAN1 Receive error interrupts for CAN messages */
-	NVIC_InitStructure.NVIC_IRQChannel = CAN1_SCE_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
-	    = (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
-	NVIC_Init(&NVIC_InitStructure);
+    /* Disable CAN1 Receive error interrupts for CAN messages */
+    NVIC_InitStructure.NVIC_IRQChannel = CAN1_SCE_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority
+	= (configMAX_SYSCALL_INTERRUPT_PRIORITY >> 4) + 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
+    NVIC_Init(&NVIC_InitStructure);
 }
 
 /*----------------------------------------------------------------------------*/

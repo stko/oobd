@@ -31,8 +31,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "FreeRTOSConfig.h"
-#include "SystemConfig.h"
 #include "stm32f10x.h"
+#include "SystemConfig.h"
 #include "od_config.h"
 #include "mc_serial.h"
 #include "odp_uds.h"
@@ -83,11 +83,11 @@ void System_Configuration(void)
     ADC_Configuration();
 
     if (GPIO_HardwareLevel() == 4)
-    	/* Timer 2 configuration for PWM output, 3100Hz/50% duty cycle */
-    	TIM2_Configuration(3100);	/* OOBD-Cup v5 only */
+	/* Timer 2 configuration for PWM output, 3100Hz/50% duty cycle */
+	TIM2_Configuration(3100);	/* OOBD-Cup v5 only */
     else if (GPIO_HardwareLevel() == 5)
-    	/* Timer 3 configuration for PWM output, 3100Hz/50% duty cycle */
-    	TIM3_Configuration(3100);	/* OOBD CAN Invader only */
+	/* Timer 3 configuration for PWM output, 3100Hz/50% duty cycle */
+	TIM3_Configuration(3100);	/* OOBD CAN Invader only */
 
     /* NVIC configuration */
     //  NVIC_Configuration();
@@ -152,25 +152,25 @@ void NVIC_Configuration(void)
  * @brief  returns peripherals hardware ID
  * @param  None
  * @retval 1 = standard DXM, 4 = OOBD D2-V5, 5 = OOBD CAN Invader
- */ 
+ */
 portBASE_TYPE GPIO_HardwareLevel(void)
 {
-	portBASE_TYPE HardwareVariant = 0; /* default no valid hardware detected */
-	
-    if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET) &&
-		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET) &&
-		(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14) == Bit_SET))
-			HardwareVariant = 1; /* DXM1 */
-	else if  ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_RESET) &&
-		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET))
-//		(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14) == Bit_RESET))
-			HardwareVariant = 4; /* OOBD-Cup v5 */
-	else if  ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET) &&
-		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET) &&
-		(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14) == Bit_RESET))
-			HardwareVariant = 5; /* OOBD CAN Invader */
+    portBASE_TYPE HardwareVariant = 0;	/* default no valid hardware detected */
 
-	return HardwareVariant;
+    if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET) &&
+	(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET) &&
+	(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14) == Bit_SET))
+	HardwareVariant = 1;	/* DXM1 */
+    else if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_RESET) &&
+	     (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET))
+//              (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14) == Bit_RESET))
+	HardwareVariant = 4;	/* OOBD-Cup v5 */
+    else if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET) &&
+	     (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET) &&
+	     (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_14) == Bit_RESET))
+	HardwareVariant = 5;	/* OOBD CAN Invader */
+
+    return HardwareVariant;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -184,7 +184,7 @@ void GPIO_Configuration(void)
 
     GPIO_InitTypeDef GPIO_InitStructure;
 
-    /* release alternative GPIO function of PA13/14/15 and PB4*/
+    /* release alternative GPIO function of PA13/14/15 and PB4 */
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_Disable, ENABLE);
 
     /* GPIOx clocks enable */
@@ -250,7 +250,7 @@ void GPIO_Configuration(void)
     /* configure PA8, PA13, PA14 as Input for Hardwareidentifikaton
      * PA8 & PA13 & PA14 = 1 - Original DXM1
      * PA8 = 0, PA13 & PA14 = 1 - OOBD-Cup v5
-	 */
+     */
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
@@ -313,14 +313,14 @@ void GPIO_Configuration(void)
     /* General settings for GPIOs of PORT C */
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
-	/* configure PC14 as Input for Hardwareidentifikaton
+    /* configure PC14 as Input for Hardwareidentifikaton
      * PC14 = 1 - Reserved for further variants of OOBD-Cup v5 (default)
      * PC14 = 0 - Reserved for further variants of OOBD-Cup v5
-	 */
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+     */
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
-	
+
 	/** --------------------------------------------------------------------------
 	 * Port specific configuration depending on hardware ident
 	 * --------------------------------------------------------------------------
@@ -330,93 +330,89 @@ void GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
     /* CAN-Relay switching depending on hardware ident */
-    if (GPIO_HardwareLevel() == 4) { /* OOBD-Cup v5 */
+    if (GPIO_HardwareLevel() == 4) {	/* OOBD-Cup v5 */
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
 	/* initialize new PortC settings  */
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 	GPIO_ResetBits(GPIOC, GPIO_Pin_15);	/* default: REL1 - OFF */
-    }
-	else if (GPIO_HardwareLevel() == 5) { /* OOBD CAN Invader */
+    } else if (GPIO_HardwareLevel() == 5) {	/* OOBD CAN Invader */
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
 	/* initialize new PortB settings  */
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 	GPIO_ResetBits(GPIOB, GPIO_Pin_3);	/* default PB3: REL1 - OFF */
     }
-	
-	/* LED configuration depending on hardware ident */
-    if (GPIO_HardwareLevel() == 4) { /* OOBD-Cup v5 or OOBD-Cup v5 */
-		/* configure DXM1-Output (push pull) of Duo-LED2 - green (PB5) and LED2 - red (PB4)
-		* and LED2 - blue (PB10) */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_10;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-		GPIO_Init(GPIOB, &GPIO_InitStructure);    
-	} 
-	else if (GPIO_HardwareLevel() == 5) { /* OOBD CAN Invader */
-		/* configure of Duo-LED - green (PB5) and LED2 - red (PB4) */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-		GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-		/* configure of LED2 - blue (PA7) */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-		GPIO_Init(GPIOA, &GPIO_InitStructure);
-	}
-	else if (GPIO_HardwareLevel() == 1) {	/* Original DXM1 */
-		/* configure DXM1-Output (open drain) of LED1 - green (PB5) and LED2 - red (PB4) */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
-		GPIO_Init(GPIOB, &GPIO_InitStructure);
-	}
+    /* LED configuration depending on hardware ident */
+    if (GPIO_HardwareLevel() == 4) {	/* OOBD-Cup v5 or OOBD-Cup v5 */
+	/* configure DXM1-Output (push pull) of Duo-LED2 - green (PB5) and LED2 - red (PB4)
+	 * and LED2 - blue (PB10) */
+	GPIO_InitStructure.GPIO_Pin =
+	    GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_10;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+    } else if (GPIO_HardwareLevel() == 5) {	/* OOBD CAN Invader */
+	/* configure of Duo-LED - green (PB5) and LED2 - red (PB4) */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	/* configure of LED2 - blue (PA7) */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+    } else if (GPIO_HardwareLevel() == 1) {	/* Original DXM1 */
+	/* configure DXM1-Output (open drain) of LED1 - green (PB5) and LED2 - red (PB4) */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+    }
 
     /* CAN configuration depending on hardware ident */
     /* GPIO clock enable */
-    if (GPIO_HardwareLevel() == 5) { /* OOBD CAN Invader */
-		GPIO_PinRemapConfig(GPIO_Remap1_CAN1, DISABLE);
-		GPIO_PinRemapConfig(GPIO_Remap2_CAN1, DISABLE);
-		/* Configure CAN pin: RX */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-		GPIO_Init(GPIOA, &GPIO_InitStructure);
-		/* Configure CAN pin: TX */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-		GPIO_Init(GPIOA, &GPIO_InitStructure);
-	}
-	else {	/* DXM1 or OOBD-Cup v5 */
-		GPIO_PinRemapConfig(GPIO_Remap1_CAN1, ENABLE);
-		/* Configure CAN pin: RX */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-		GPIO_Init(GPIOB, &GPIO_InitStructure);
-		/* Configure CAN pin: TX */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-		GPIO_Init(GPIOB, &GPIO_InitStructure);
-	}
-	/* CAN1 Periph clock enable */
+    if (GPIO_HardwareLevel() == 5) {	/* OOBD CAN Invader */
+	GPIO_PinRemapConfig(GPIO_Remap1_CAN1, DISABLE);
+	GPIO_PinRemapConfig(GPIO_Remap2_CAN1, DISABLE);
+	/* Configure CAN pin: RX */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	/* Configure CAN pin: TX */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+    } else {			/* DXM1 or OOBD-Cup v5 */
+	GPIO_PinRemapConfig(GPIO_Remap1_CAN1, ENABLE);
+	/* Configure CAN pin: RX */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	/* Configure CAN pin: TX */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+    }
+    /* CAN1 Periph clock enable */
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1, ENABLE);
 
     /* Identify on which hardware the firmware is running */
-    if (GPIO_HardwareLevel() == 4) { /* OOBD-Cup v5 */
-		/* TIM2 clock enable */
-		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
-		/* configure PB11 PWM output for buzzer, TIM2_CH4 source for OOBD-Cup v5 */
-		GPIO_PinRemapConfig(GPIO_PartialRemap2_TIM2, ENABLE);	/* OOBD-Cup v5, use TIM2, Ch3 */
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
-		GPIO_Init(GPIOB, &GPIO_InitStructure);
+    if (GPIO_HardwareLevel() == 4) {	/* OOBD-Cup v5 */
+	/* TIM2 clock enable */
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+	/* configure PB11 PWM output for buzzer, TIM2_CH4 source for OOBD-Cup v5 */
+	GPIO_PinRemapConfig(GPIO_PartialRemap2_TIM2, ENABLE);	/* OOBD-Cup v5, use TIM2, Ch3 */
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+    } else if (GPIO_HardwareLevel() == 5) {	/* OOBD CAN Invader */
+	/* TIM3 clock enable */
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	/* configure PA6 PWM output for buzzer, TIM3_CH1 source for OOBD CAN Invader */
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
     }
-    else if (GPIO_HardwareLevel() == 5) { /* OOBD CAN Invader */
-		/* TIM3 clock enable */
-		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
-		/* configure PA6 PWM output for buzzer, TIM3_CH1 source for OOBD CAN Invader */
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
-		GPIO_Init(GPIOA, &GPIO_InitStructure);
-	}
 }
 
 /*----------------------------------------------------------------------------*/
@@ -481,158 +477,69 @@ void USART1_Configuration(void)
     BTM222_UartAutobaudControl = 0;
 
     USART_SendData(USART1, '\r');	/* clear command line from Bootloader String first */
-    for (nCount = 0; nCount < 9000000; nCount++) {
-    };				/* delay for waiting of BTM182/BTM222 power up */
+    delay_ms(1500);		/* delay for waiting of BTM182/BTM222 power up - 1500ms */
 
     while (BTM222_UartAutobaudControl != 9) {
 	USART_SendData(USART1, 'a');
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, 't');
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, '\r');
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-	for (nCount = 0; nCount < 150000; nCount++) {
-	};			/* delay */
-	BufCnt = 0;
+	btm_uart_delay_ms(100);
+
+	BufCnt = 0;		/* set BTM222_RespBuffer back to zero */
 	BTM222_UART_Rx_Flag = pdFALSE;
 
 	USART_SendData(USART1, 'a');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, 't');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-	USART_SendData(USART1, 'l');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
+	btm_uart_delay_ms(40);
+	USART_SendData(USART1, 'q');
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, '?');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, '\r');
+	btm_uart_delay_ms(100);
 
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
+	BufCnt = 0;		/* set BTM222_RespBuffer back to zero */
+	BTM222_UART_Rx_Flag = pdFALSE;
 
-	for (nCount = 0; nCount < 500000; nCount++) {
-	};			/* delay */
+	USART_SendData(USART1, 'a');
+	btm_uart_delay_ms(40);
+	USART_SendData(USART1, 't');
+	btm_uart_delay_ms(40);
+	USART_SendData(USART1, 'l');
+	btm_uart_delay_ms(40);
+	USART_SendData(USART1, '?');
+	btm_uart_delay_ms(40);
+	USART_SendData(USART1, '\r');
+	btm_uart_delay_ms(100);
 
 	/* check received response character from BTM222 */
 	switch (BTM222_UartSpeed) {
 
 	case '0':
 	    DEBUGUARTPRINT("\r\n*** BTM222 - L1 = 4800bps detected! ***");
-	    USART_SendData(USART1, 'a');
 
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-	    USART_SendData(USART1, 't');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-	    USART_SendData(USART1, 'l');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, '5');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, '\r');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
+	    btm_uart_speed('5');	/* set BT-Module UART to default 115200 bit/s */
 
 	    BTM222_UartAutobaudControl = 6;
-
 	    break;
 
 	case '1':
 
 	    DEBUGUARTPRINT("\r\n*** BTM222 - L1 = 9600bps detected! ***");
 
-	    USART_SendData(USART1, 'a');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, 't');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, 'l');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, '5');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, '\r');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
+	    btm_uart_speed('5');	/* set BT-Module UART to default 115200 bit/s */
 
 	    BTM222_UartAutobaudControl = 6;
-
 	    break;
 
 	case '2':
 
 	    DEBUGUARTPRINT("\r\n*** BTM222 - L2 = 19200bps detected! ***");
 
-	    USART_SendData(USART1, 'a');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, 't');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, 'l');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, '5');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, '\r');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
+	    btm_uart_speed('5');	/* set BT-Module UART to default 115200 bit/s */
 
 	    BTM222_UartAutobaudControl = 6;
 
@@ -644,35 +551,7 @@ void USART1_Configuration(void)
 
 	    BTM222_UART_Rx_Flag = pdFALSE;
 
-	    USART_SendData(USART1, 'a');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, 't');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, 'l');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, '5');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, '\r');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
+	    btm_uart_speed('5');	/* set BT-Module UART to default 115200 bit/s */
 
 	    BTM222_UartAutobaudControl = 6;
 
@@ -684,35 +563,7 @@ void USART1_Configuration(void)
 
 	    DEBUGUARTPRINT("\r\n*** BTM222 - L4 = 57600bps detected! ***");
 
-	    USART_SendData(USART1, 'a');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, 't');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, 'l');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, '5');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, '\r');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
+	    btm_uart_speed('5');	/* set BT-Module UART to default 115200 bit/s */
 
 	    BTM222_UartAutobaudControl = 6;
 
@@ -732,35 +583,7 @@ void USART1_Configuration(void)
 	    DEBUGUARTPRINT
 		("\r\n*** BTM222 - L6 = 230400bps detected! ***");
 
-	    USART_SendData(USART1, 'a');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, 't');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, 'l');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, '5');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, '\r');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
+	    btm_uart_speed('5');	/* set BT-Module UART to default 115200 bit/s */
 
 	    BTM222_UartAutobaudControl = 6;
 
@@ -771,35 +594,7 @@ void USART1_Configuration(void)
 	    DEBUGUARTPRINT
 		("\r\n*** BTM222 - L7 = 460800bps detected! ***");
 
-	    USART_SendData(USART1, 'a');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, 't');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, 'l');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, '5');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
-
-	    USART_SendData(USART1, '\r');
-
-	    for (nCount = 0; nCount < nLength; nCount++) {
-	    }
-	    ;			/* delay */
+	    btm_uart_speed('5');	/* set BT-Module UART to default 115200 bit/s */
 
 	    BTM222_UartAutobaudControl = 6;
 
@@ -898,36 +693,22 @@ void USART1_Configuration(void)
 
     BTM222_UART_Rx_Flag = pdFALSE;
 
-    BufCnt = 0;
+    USART_SendData(USART1, '\r');
+    btm_uart_delay_ms(40);
+
+    BufCnt = 0;			/* set BTM222_RespBuffer back to zero */
 
     /* send "atb?"-command to get Bluetooth MAC address of BTM222 */
     USART_SendData(USART1, 'a');
-
-    for (nCount = 0; nCount < nLength; nCount++) {
-    };				/* delay */
-
+    btm_uart_delay_ms(40);
     USART_SendData(USART1, 't');
-
-    for (nCount = 0; nCount < nLength; nCount++) {
-    };				/* delay */
-
+    btm_uart_delay_ms(40);
     USART_SendData(USART1, 'b');
-
-    for (nCount = 0; nCount < nLength; nCount++) {
-    };				/* delay */
-
+    btm_uart_delay_ms(40);
     USART_SendData(USART1, '?');
-
-    for (nCount = 0; nCount < nLength; nCount++) {
-    };				/* delay */
-
+    btm_uart_delay_ms(40);
     USART_SendData(USART1, '\r');
-
-    for (nCount = 0; nCount < nLength; nCount++) {
-    };				/* delay */
-
-    for (nCount = 0; nCount < 500000; nCount++) {
-    };				/* delay */
+    btm_uart_delay_ms(100);
 
     BTM222_UART_Rx_Flag = pdTRUE;
 
@@ -936,37 +717,19 @@ void USART1_Configuration(void)
     DEBUGUARTPRINT("\r\n*** Get BTM222 BT device name! ***");
 
     BTM222_UART_Rx_Flag = pdFALSE;
-
-    BufCnt = 0;
+    BufCnt = 0;			/* set BTM222_RespBuffer back to zero */
 
     /* send "atn?"-command to get BTM222 device name */
     USART_SendData(USART1, 'a');
-
-    for (nCount = 0; nCount < nLength; nCount++) {
-    };				/* delay */
-
+    btm_uart_delay_ms(40);
     USART_SendData(USART1, 't');
-
-    for (nCount = 0; nCount < nLength; nCount++) {
-    };				/* delay */
-
+    btm_uart_delay_ms(40);
     USART_SendData(USART1, 'n');
-
-    for (nCount = 0; nCount < nLength; nCount++) {
-    };				/* delay */
-
+    btm_uart_delay_ms(40);
     USART_SendData(USART1, '?');
-
-    for (nCount = 0; nCount < nLength; nCount++) {
-    };				/* delay */
-
+    btm_uart_delay_ms(40);
     USART_SendData(USART1, '\r');
-
-    for (nCount = 0; nCount < nLength; nCount++) {
-    };				/* delay */
-
-    for (nCount = 0; nCount < 500000; nCount++) {
-    };				/* delay */
+    btm_uart_delay_ms(100);
 
     BTM222_UART_Rx_Flag = pdTRUE;
 
@@ -976,149 +739,71 @@ void USART1_Configuration(void)
     if (BTM222_DeviceNameFlag == pdFALSE) {
 
 	USART_SendData(USART1, 'a');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, 't');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, 'n');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, '=');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, 'O');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, 'O');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, 'B');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, 'D');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, '-');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, 'C');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	if (GPIO_HardwareLevel() == 4)
-		USART_SendData(USART1, 'u');
+	    USART_SendData(USART1, 'u');
 	else if (GPIO_HardwareLevel() == 5)
-		USART_SendData(USART1, 'I');
+	    USART_SendData(USART1, 'I');
 
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	if (GPIO_HardwareLevel() == 4)
-		USART_SendData(USART1, 'p');
+	    USART_SendData(USART1, 'p');
 	else if (GPIO_HardwareLevel() == 5)
-		USART_SendData(USART1, 'V');
+	    USART_SendData(USART1, 'V');
 
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, ' ');
 
 	for (nCount = 0; nCount < nLength; nCount++) {
 	};			/* delay */
-
 	USART_SendData(USART1, BTM222_BtAddress[9]);
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, BTM222_BtAddress[10]);
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, BTM222_BtAddress[12]);
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, BTM222_BtAddress[13]);
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, BTM222_BtAddress[15]);
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, BTM222_BtAddress[16]);
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, '\r');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
-	for (nCount = 0; nCount < 500000; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(100);
 	DEBUGUARTPRINT("\r\n*** BTM222 device name set to 'OOBD-Cup' ***");
 
-	BufCnt = 0;
-
+	BufCnt = 0;		/* set BTM222_RespBuffer back to zero */
 	BTM222_UART_Rx_Flag = pdFALSE;
 
 	/* send "atn?"-command to get BTM222 device name */
 	USART_SendData(USART1, 'a');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, 't');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, 'n');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, '?');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
+	btm_uart_delay_ms(40);
 	USART_SendData(USART1, '\r');
-
-	for (nCount = 0; nCount < nLength; nCount++) {
-	};			/* delay */
-
-	for (nCount = 0; nCount < 500000; nCount++) {
-	};			/* delay */
+	btm_uart_delay_ms(100);
 
 	BTM222_UART_Rx_Flag = pdTRUE;
 
@@ -1390,9 +1075,9 @@ void TIM3_Configuration(int Frequency)
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
     TIM_OCInitStructure.TIM_Pulse = CCR1_Val;
     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;	/* default: PWM Output high */
-    TIM_OC1Init(TIM3, &TIM_OCInitStructure); /* Channel1 init */
+    TIM_OC1Init(TIM3, &TIM_OCInitStructure);	/* Channel1 init */
 
-    TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable); /* Channel1 Preload */
+    TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);	/* Channel1 Preload */
 
     /* TIM3 enable counter */
     TIM_Cmd(TIM3, DISABLE);	/* default */
@@ -1548,4 +1233,44 @@ void sEE_LowLevel_DMAConfig(uint32_t pBuffer, uint32_t BufferSize,
 	DMA_Init(sEE_I2C_DMA_CHANNEL_RX, &sEEDMA_InitStructure);
     }
 
+}
+
+void btm_uart_delay_ms(uint16_t mSecs)
+{
+    while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET) {
+    }
+    delay_ms(mSecs);
+}
+
+void btm_uart_speed(char speed)
+{
+    USART_SendData(USART1, 'a');
+    btm_uart_delay_ms(40);
+    USART_SendData(USART1, 't');
+    btm_uart_delay_ms(40);
+    USART_SendData(USART1, 'l');
+    btm_uart_delay_ms(40);
+    USART_SendData(USART1, speed);
+    btm_uart_delay_ms(40);
+    USART_SendData(USART1, '\r');
+    btm_uart_delay_ms(100);
+}
+
+/* 72MHz = each clock cycle is 14ns. Loop is always 6 clock cycles?
+ * These can get clock stretched if we have interrupts in the background.
+ */
+void delay_ms(const uint16_t ms)
+{
+    uint32_t i = ms * 11905;
+    while (i-- > 0) {
+	asm("nop");
+    }
+}
+
+void delay_us(const uint16_t us)
+{
+    uint32_t i = us * 12;
+    while (i-- > 0) {
+	asm("nop");
+    }
 }

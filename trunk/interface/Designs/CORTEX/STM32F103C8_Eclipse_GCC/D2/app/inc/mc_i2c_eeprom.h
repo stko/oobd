@@ -181,12 +181,12 @@ extern "C" {
 #endif				/* __STM32_EVAL_I2C_EE_H */
 /**
   * @}
-																																																																																																																															      *//**
+																																																																																																																																																																																																																																																															      *//**
   * @}
-																																																																																																																															      *//**
+																																																																																																																																																																																																																																																															      *//**
   * @}
-																																																																																																																															      *//**
+																																																																																																																																																																																																																																																															      *//**
   * @}
-																																																																																																																															      *//**
+																																																																																																																																																																																																																																																															      *//**
   * @}
-																																																																																																																															      *//******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+																																																																																																																																																																																																																																																															      *//******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
