@@ -48,6 +48,13 @@ void NVIC_Configuration(void);
 void SysTick_Configuration(void);
 void ADC_Configuration(void);
 portBASE_TYPE GPIO_HardwareLevel(void);
+void delay_us(const uint16_t);
+void delay_ms(const uint16_t);
+void btm_uart_delay_ms(const uint16_t);
+void btm_uart_speed(char);
+void TIM2_Configuration(int);
+void TIM3_Configuration(int);
+void TIM4_Configuration(void);
 
 /* void        SPI_Configuration(void);  */
 

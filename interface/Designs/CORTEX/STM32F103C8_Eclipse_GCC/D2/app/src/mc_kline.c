@@ -89,7 +89,7 @@ void bus_flush_kline()
 /*----------------------------------------------------------------------------*/
 
 void bus_param_kline_spec_Print(portBASE_TYPE msgType, void *data,
-			      printChar_cbf printchar)
+				printChar_cbf printchar)
 {
     param_data *args;
     args = data;
@@ -228,7 +228,7 @@ void USART2_IRQHandler(void)
 
     /* Check for received Data */
     if (USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) {
-    	ch = USART_ReceiveData(USART2);
+	ch = USART_ReceiveData(USART2);
     }
 
     DEBUGUARTPRINT("\r\n*** USART2_IRQHandler finished ***");

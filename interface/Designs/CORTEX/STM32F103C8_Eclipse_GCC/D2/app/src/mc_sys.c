@@ -74,31 +74,32 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 	case VALUE_PARAM_INFO_VERSION:
 	    printser_string("OOBD ");
 	    if (GPIO_HardwareLevel() == 1 ||
-	    	GPIO_HardwareLevel() == 4 ||
-	    	GPIO_HardwareLevel() == 5)
-	    	printser_string("D2a");
+		GPIO_HardwareLevel() == 4 || GPIO_HardwareLevel() == 5)
+		printser_string("D2a");
 	    else
-	    	printser_string("??");
+		printser_string("??");
 	    printser_string(" ");
 	    printser_string(SVNREV);
 	    printser_string(" ");
 	    if (GPIO_HardwareLevel() == 1)
-			printser_string("dxm");
-	    else if (GPIO_HardwareLevel() == 4 || GPIO_HardwareLevel() == 5)
-	    	printser_string("Lux-Wolf");
+		printser_string("dxm");
+	    else if (GPIO_HardwareLevel() == 4
+		     || GPIO_HardwareLevel() == 5)
+		printser_string("Lux-Wolf");
 	    else
-	    	printser_string("unknown-HW");
+		printser_string("unknown-HW");
 	    printser_string(" ");
 	    if (GPIO_HardwareLevel() == 1)
-			printser_string("dxm");
+		printser_string("dxm");
 	    else if (GPIO_HardwareLevel() == 4)
-	    	printser_string("Lux-Wolf");
+		printser_string("Lux-Wolf");
 	    else if (GPIO_HardwareLevel() == 5)
-	    	printser_string("CAN-Invader");
+		printser_string("CAN-Invader");
 	    else
-	    	printser_string("FL?");
+		printser_string("FL?");
 	    printser_string(" ");
-	    printser_string(BUILDDATE);    printLF();
+	    printser_string(BUILDDATE);
+	    printLF();
 	    printEOT();
 	    break;
 
@@ -108,12 +109,12 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 	    printEOT();
 	    break;
 	case VALUE_PARAM_INFO_ADC_POWER:
-		if (GPIO_HardwareLevel() == 4 || GPIO_HardwareLevel() == 1)  /* OOBD Cup v5, R1=200k, R2=18k */
-			printser_int((readADC1(8) * (3.15 / 4096) * 11 * 1000), 10); /* result in mV */
-		else if (GPIO_HardwareLevel() == 5) /* OOBD CAN Invader, R1=130k, R2=27k */
-			printser_int((readADC1(8) * (3.3 / 4096) * 5 * 1000), 10); /* result in mV */
-		else
-			printser_string("0"); /* result in mV */
+	    if (GPIO_HardwareLevel() == 4 || GPIO_HardwareLevel() == 1)	/* OOBD Cup v5, R1=200k, R2=18k */
+		printser_int((readADC1(8) * (3.15 / 4096) * 11 * 1000), 10);	/* result in mV */
+	    else if (GPIO_HardwareLevel() == 5)	/* OOBD CAN Invader, R1=130k, R2=27k */
+		printser_int((readADC1(8) * (3.3 / 4096) * 5 * 1000), 10);	/* result in mV */
+	    else
+		printser_string("0");	/* result in mV */
 
 	    printser_string(" mV");
 	    printLF();
@@ -199,54 +200,54 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 	    break;
 
 	case VALUE_PARAM_INFO_KLINE_FAST_INIT:
-		/* K-Line High for 300ms */
-		GPIO_ResetBits(GPIOA, GPIO_Pin_2);
-		vTaskDelay( 300 / portTICK_RATE_MS );
-		/* K-Line Low for 25ms */
-		GPIO_SetBits(GPIOA, GPIO_Pin_2);
-		vTaskDelay( 25 / portTICK_RATE_MS );
-		/* K-Line High for 25ms */
-		GPIO_ResetBits(GPIOA, GPIO_Pin_2);
-		vTaskDelay( 25 / portTICK_RATE_MS );
-		/* init UART2 to 10k4 baud, 8N1 */
-		USART2_Configuration();
+	    /* K-Line High for 300ms */
+	    GPIO_ResetBits(GPIOA, GPIO_Pin_2);
+	    vTaskDelay(300 / portTICK_RATE_MS);
+	    /* K-Line Low for 25ms */
+	    GPIO_SetBits(GPIOA, GPIO_Pin_2);
+	    vTaskDelay(25 / portTICK_RATE_MS);
+	    /* K-Line High for 25ms */
+	    GPIO_ResetBits(GPIOA, GPIO_Pin_2);
+	    vTaskDelay(25 / portTICK_RATE_MS);
+	    /* init UART2 to 10k4 baud, 8N1 */
+	    USART2_Configuration();
 
-		/* send start communication request */
-		USART_SendData(USART2, 0xc1);
-		USART_SendData(USART2, 0x33);
-		USART_SendData(USART2, 0xf1);
-		USART_SendData(USART2, 0x81);
-		USART_SendData(USART2, 0x66);
+	    /* send start communication request */
+	    USART_SendData(USART2, 0xc1);
+	    USART_SendData(USART2, 0x33);
+	    USART_SendData(USART2, 0xf1);
+	    USART_SendData(USART2, 0x81);
+	    USART_SendData(USART2, 0x66);
 
-		printser_string("K-Line Fast Init completed!");
+	    printser_string("K-Line Fast Init completed!");
 	    printLF();
 	    printEOT();
 	    break;
 
 	case VALUE_PARAM_INFO_KLINE:
-		if ( GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_3) == Bit_SET)
-			printser_string("active - low");
-		else
-			printser_string("inactive - high");
-		printLF();
+	    if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_3) == Bit_SET)
+		printser_string("active - low");
+	    else
+		printser_string("inactive - high");
+	    printLF();
 	    printEOT();
 	    break;
 
 	case VALUE_PARAM_INFO_LLINE:
-		if ( GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_4) == Bit_SET)
-			printser_string("active - low");
-		else
-			printser_string("inactive - high");
-		printLF();
+	    if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_4) == Bit_SET)
+		printser_string("active - low");
+	    else
+		printser_string("inactive - high");
+	    printLF();
 	    printEOT();
 	    break;
 
 	case VALUE_PARAM_INFO_KLINE_TX:
-		if ( GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2) == Bit_SET)
-			printser_string("active - Receive mode");
-		else
-			printser_string("inactive - Transmit mode");
-		printLF();
+	    if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_2) == Bit_SET)
+		printser_string("active - Receive mode");
+	    else
+		printser_string("inactive - Transmit mode");
+	    printLF();
 	    printEOT();
 	    break;
 
@@ -387,51 +388,50 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
     switch (pinID) {
     case IO_LED_WHITE:
 	DEBUGPRINT("IO_LED_BLUE set to %ld\n", upperValue);
-	if (GPIO_HardwareLevel() == 4) { /* OOBD Cup v5 */
+	if (GPIO_HardwareLevel() == 4) {	/* OOBD Cup v5 */
 	    upperValue ? GPIO_SetBits(GPIOB, GPIO_Pin_10) : GPIO_ResetBits(GPIOB, GPIO_Pin_10);	/* LED1 - yellow  */
-	} else if (GPIO_HardwareLevel() == 5) { /* OOBD CAN Invader */
+	} else if (GPIO_HardwareLevel() == 5) {	/* OOBD CAN Invader */
 	    upperValue ? GPIO_SetBits(GPIOA, GPIO_Pin_7) : GPIO_ResetBits(GPIOA, GPIO_Pin_7);	/* LED1 - yellow  */
-	} else { /* DXM1 */
+	} else {		/* DXM1 */
 	    upperValue ? GPIO_SetBits(GPIOB, GPIO_Pin_4) : GPIO_ResetBits(GPIOB, GPIO_Pin_4);	/* LED2 - green */
 	}
 	return pdTRUE;
 	break;
     case IO_LED_GREEN:
 	DEBUGPRINT("IO_LED_GREEN set to %ld\n", upperValue);
-	if (GPIO_HardwareLevel() == 4 || GPIO_HardwareLevel() == 5) { /* OOBD-Cup v5 or OOBD CAN Invader */
+	if (GPIO_HardwareLevel() == 4 || GPIO_HardwareLevel() == 5) {	/* OOBD-Cup v5 or OOBD CAN Invader */
 	    upperValue ? GPIO_SetBits(GPIOB, GPIO_Pin_4) : GPIO_ResetBits(GPIOB, GPIO_Pin_4);	/* Duo-LED2gr - green */
-	} else if (GPIO_HardwareLevel() == 1) { /* DXM1 */
+	} else if (GPIO_HardwareLevel() == 1) {	/* DXM1 */
 	    upperValue ? GPIO_SetBits(GPIOB, GPIO_Pin_4) : GPIO_ResetBits(GPIOB, GPIO_Pin_4);	/* LED2 - green */
 	}
 	return pdTRUE;
 	break;
     case IO_LED_RED:
 	DEBUGPRINT("IO_LED_RED set to %ld\n", upperValue);
-	if (GPIO_HardwareLevel() == 4 || GPIO_HardwareLevel() == 5) { /* OOBD-Cup v5 or OOBD CAN Invader */
+	if (GPIO_HardwareLevel() == 4 || GPIO_HardwareLevel() == 5) {	/* OOBD-Cup v5 or OOBD CAN Invader */
 	    upperValue ? GPIO_SetBits(GPIOB, GPIO_Pin_5) : GPIO_ResetBits(GPIOB, GPIO_Pin_5);	/* Duo-LED2rd - red */
-	} else if (GPIO_HardwareLevel() == 1) { /* DXM1 */
+	} else if (GPIO_HardwareLevel() == 1) {	/* DXM1 */
 	    upperValue ? GPIO_SetBits(GPIOB, GPIO_Pin_5) : GPIO_ResetBits(GPIOB, GPIO_Pin_5);	/* LED1 - red */
 	}
 	return pdTRUE;
 	break;
 
     case IO_REL1:
-	if (GPIO_HardwareLevel() == 4) { /* OOBD-Cup v5 */
+	if (GPIO_HardwareLevel() == 4) {	/* OOBD-Cup v5 */
 	    upperValue ? GPIO_SetBits(GPIOC, GPIO_Pin_15) : GPIO_ResetBits(GPIOC, GPIO_Pin_15);	/* Rel1 */
 	    DEBUGPRINT("IO_REL1 set to %ld\n", upperValue);
 	    return pdTRUE;
-	} else if (GPIO_HardwareLevel() == 5) { /* OOBD CAN Invader */
+	} else if (GPIO_HardwareLevel() == 5) {	/* OOBD CAN Invader */
 	    upperValue ? GPIO_SetBits(GPIOB, GPIO_Pin_3) : GPIO_ResetBits(GPIOB, GPIO_Pin_3);	/* Rel1 */
 	    DEBUGPRINT("IO_REL1 set to %ld\n", upperValue);
 	    return pdTRUE;
-    }
-	else {
+	} else {
 	    return pdFALSE;
 	}
 	break;
 
     case IO_BUZZER:
-	if (GPIO_HardwareLevel() == 4 || GPIO_HardwareLevel() == 5) { /* OOBD-Cup v5 or OOBD CAN Invader */
+	if (GPIO_HardwareLevel() == 4 || GPIO_HardwareLevel() == 5) {	/* OOBD-Cup v5 or OOBD CAN Invader */
 	    sysSound(upperValue, portMAX_DELAY);	/* Buzzer, full volume */
 	    DEBUGPRINT("Buzzer set to frequency of %ld\n", upperValue);
 	    return pdTRUE;
@@ -441,14 +441,14 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 	break;
 
     case IO_KLINE:
-	    upperValue ? GPIO_SetBits(GPIOA, GPIO_Pin_2) : GPIO_ResetBits(GPIOA, GPIO_Pin_2);	/* set K-Line */
-		return pdTRUE;
-	    break;
+	upperValue ? GPIO_SetBits(GPIOA, GPIO_Pin_2) : GPIO_ResetBits(GPIOA, GPIO_Pin_2);	/* set K-Line */
+	return pdTRUE;
+	break;
 
     case IO_LLINE:
-	    upperValue ? GPIO_SetBits(GPIOA, GPIO_Pin_4) : GPIO_ResetBits(GPIOA, GPIO_Pin_4);	/* set L-Line */
-		return pdTRUE;
-	    break;
+	upperValue ? GPIO_SetBits(GPIOA, GPIO_Pin_4) : GPIO_ResetBits(GPIOA, GPIO_Pin_4);	/* set L-Line */
+	return pdTRUE;
+	break;
 
     default:
 	DEBUGPRINT("unknown output pin\n", upperValue);
@@ -460,19 +460,18 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 portBASE_TYPE sysSound(portBASE_TYPE frequency, portBASE_TYPE volume)
 {
 
-    	/* if frequency=0 => disable buzzer, otherwise enable buzzer with frequency */
-    	if (GPIO_HardwareLevel() == 4) { /* OOBD-Cup v5 */
-    		if (frequency != 0)
-    			TIM2_Configuration(frequency);
+    /* if frequency=0 => disable buzzer, otherwise enable buzzer with frequency */
+    if (GPIO_HardwareLevel() == 4) {	/* OOBD-Cup v5 */
+	if (frequency != 0)
+	    TIM2_Configuration(frequency);
 
-    		frequency ? TIM_Cmd(TIM2, ENABLE) : TIM_Cmd(TIM2, DISABLE);	/* Buzzer */
-    	}
-    	else if (GPIO_HardwareLevel() == 5) { /* OOBD CAN Invader */
-    		if (frequency != 0)
-    			TIM3_Configuration(frequency);
+	frequency ? TIM_Cmd(TIM2, ENABLE) : TIM_Cmd(TIM2, DISABLE);	/* Buzzer */
+    } else if (GPIO_HardwareLevel() == 5) {	/* OOBD CAN Invader */
+	if (frequency != 0)
+	    TIM3_Configuration(frequency);
 
-    		frequency ? TIM_Cmd(TIM3, ENABLE) : TIM_Cmd(TIM3, DISABLE);	/* Buzzer */
-    	}
+	frequency ? TIM_Cmd(TIM3, ENABLE) : TIM_Cmd(TIM3, DISABLE);	/* Buzzer */
+    }
 
 }
 

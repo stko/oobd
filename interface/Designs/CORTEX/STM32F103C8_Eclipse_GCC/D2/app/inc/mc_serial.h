@@ -38,6 +38,7 @@
 #define INC_MC_SERIAL_H
 
 unsigned char BTM222_RespBuffer[25];
-unsigned int BufCnt, BTM222_UART_Rx_Flag, BTM222_DeviceNameFlag;
+unsigned int BufCnt, BTM222_UART_Rx_Flag, BTM222_UART_Rx_Confirm,
+    BTM222_DeviceNameFlag;
 
 #endif				/* INC_MC_SERIAL_H */
