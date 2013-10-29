@@ -116,14 +116,14 @@ void BTM222_Rx_getc(char c)
 	    == '?') {
 
 	    /* create Bluetooth MAC-Address of BTM222 Response of "atb?" request */
-	    BTM222_BtAddress[0] = BTM222_RespBuffer[BufCnt - 12];
-	    BTM222_BtAddress[1] = BTM222_RespBuffer[BufCnt - 11];
+	    BTM222_BtAddress[0] = BTM222_RespBuffer[BufCnt - 14];
+	    BTM222_BtAddress[1] = BTM222_RespBuffer[BufCnt - 13];
 	    BTM222_BtAddress[2] = ':';
-	    BTM222_BtAddress[3] = BTM222_RespBuffer[BufCnt - 10];
-	    BTM222_BtAddress[4] = BTM222_RespBuffer[BufCnt - 9];
+	    BTM222_BtAddress[3] = BTM222_RespBuffer[BufCnt - 12];
+	    BTM222_BtAddress[4] = BTM222_RespBuffer[BufCnt - 11];
 	    BTM222_BtAddress[5] = ':';
-	    BTM222_BtAddress[6] = BTM222_RespBuffer[BufCnt - 8];
-	    BTM222_BtAddress[7] = BTM222_RespBuffer[BufCnt - 7];
+	    BTM222_BtAddress[6] = BTM222_RespBuffer[BufCnt - 9];
+	    BTM222_BtAddress[7] = BTM222_RespBuffer[BufCnt - 8];
 	    BTM222_BtAddress[8] = ':';
 	    BTM222_BtAddress[9] = BTM222_RespBuffer[BufCnt - 6];
 	    BTM222_BtAddress[10] = BTM222_RespBuffer[BufCnt - 5];
