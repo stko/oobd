@@ -449,7 +449,7 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 		return pdTRUE;
 		break;
 
-	case BTM_RESET:
+	case IO_BTM_RESET:
 		if (GPIO_HardwareLevel() == 4) /* OOBD-Cup v5 */
 			upperValue ? GPIO_SetBits(GPIOC, GPIO_Pin_13) : GPIO_ResetBits(GPIOC,
 						GPIO_Pin_13); /* reset BT-Module */
