@@ -11,9 +11,15 @@
 package org.oobd.ui.swing.desk;
 
 import java.awt.Graphics;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import org.oobd.base.*;
+import org.oobd.base.support.OnionNoEntryException;
 import org.oobd.base.visualizer.*;
 import org.oobd.base.support.Onion;
 
@@ -21,20 +27,22 @@ import org.oobd.base.support.Onion;
  *
  * @author steffen
  */
-public class TextVisualizerJPanel extends VisualizerJPanel implements IFvisualizer {
+public class SliderVisualizerJPanel extends VisualizerJPanel implements IFvisualizer, ChangeListener {
 
- 
     /** Creates new form TextVisualizerJPanel */
-    public TextVisualizerJPanel() {
+    public SliderVisualizerJPanel() {
         super();
         initComponents();
-     }
+        valueSlider.addChangeListener(this);
+    }
 
     @Override
     public void paintComponent(Graphics g) {
         if (value != null) {
             functionName.setText("<html>" + value.getToolTip() + "</html>");
-            functionValue.setText("<html>" + value.toString() + "</html>");
+            if (!valueSlider.getValueIsAdjusting()) {
+                valueSlider.setValue(safeInt(value.toString()));
+            }
         }
         if (value.getUpdateFlag(4)) {
 
@@ -80,7 +88,7 @@ public class TextVisualizerJPanel extends VisualizerJPanel implements IFvisualiz
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        functionValue = new javax.swing.JLabel();
+        valueSlider = new javax.swing.JSlider();
         jPanel1 = new javax.swing.JPanel();
         functionName = new javax.swing.JLabel();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
@@ -96,11 +104,10 @@ public class TextVisualizerJPanel extends VisualizerJPanel implements IFvisualiz
         setName("Form"); // NOI18N
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.PAGE_AXIS));
 
-        functionValue.setFont(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getFont("functionValue.font")); // NOI18N
-        functionValue.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        functionValue.setText(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getString("functionValue.text")); // NOI18N
-        functionValue.setName("functionValue"); // NOI18N
-        add(functionValue);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(SliderVisualizerJPanel.class);
+        valueSlider.setFont(resourceMap.getFont("valueSlider.font")); // NOI18N
+        valueSlider.setName("valueSlider"); // NOI18N
+        add(valueSlider);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         jPanel1.setMinimumSize(new java.awt.Dimension(14, 20));
@@ -108,16 +115,16 @@ public class TextVisualizerJPanel extends VisualizerJPanel implements IFvisualiz
         jPanel1.setPreferredSize(new java.awt.Dimension(14, 20));
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.LINE_AXIS));
 
-        functionName.setFont(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getFont("titleLable.font")); // NOI18N
-        functionName.setForeground(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getColor("titleLable.foreground")); // NOI18N
-        functionName.setText(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getString("titleLable.text")); // NOI18N
+        functionName.setFont(resourceMap.getFont("titleLable.font")); // NOI18N
+        functionName.setForeground(resourceMap.getColor("titleLable.foreground")); // NOI18N
+        functionName.setText(resourceMap.getString("titleLable.text")); // NOI18N
         functionName.setName("titleLable"); // NOI18N
         jPanel1.add(functionName);
 
         filler1.setName("filler1"); // NOI18N
         jPanel1.add(filler1);
 
-        backImageLabel.setIcon(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getIcon("backImageLabel.icon")); // NOI18N
+        backImageLabel.setIcon(resourceMap.getIcon("backImageLabel.icon")); // NOI18N
         backImageLabel.setName("backImageLabel"); // NOI18N
         jPanel1.add(backImageLabel);
 
@@ -148,16 +155,50 @@ public class TextVisualizerJPanel extends VisualizerJPanel implements IFvisualiz
     private javax.swing.Box.Filler filler3;
     private javax.swing.JLabel forwardImageLabel;
     private javax.swing.JLabel functionName;
-    private javax.swing.JLabel functionValue;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel logImageLabel;
     private javax.swing.JLabel timerImageLabel;
     private javax.swing.JLabel updateImageLabel;
+    private javax.swing.JSlider valueSlider;
     // End of variables declaration//GEN-END:variables
 
     public void initValue(Visualizer viz, Onion onion) {
         functionName.setText(onion.getOnionString("tooltip"));
+        try {
+            valueSlider.setMaximum(safeInt(onion.getOnionObject("opts/max")));
+        } catch (OnionNoEntryException ex) {
+            valueSlider.setMaximum(0);
+        }
+        try {
+            valueSlider.setMinimum(safeInt(onion.getOnionObject("opts/min")));
+        } catch (OnionNoEntryException ex) {
+            valueSlider.setMinimum(0);
+        }
         this.value = viz;
     }
 
+    private int safeInt(Object value) {
+        if (value instanceof Integer) {
+            return (Integer) value;
+        }
+        try {
+            return Integer.parseInt(value.toString());
+        } catch (NumberFormatException ex) {
+            return 0;
+        }
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        JSlider source = (JSlider) e.getSource();
+        System.out.println("Ping" + new Integer((int) source.getValue()).toString());
+        if (!source.getValueIsAdjusting()) {
+            int fps = (int) source.getValue();
+            System.out.println("Pong" + new Integer(fps).toString());
+            getVisualizer().inputNewValue(new Integer(fps).toString());
+            getVisualizer().updateRequest(OOBDConstants.UR_USER);
+
+
+        }
+    }
 }
