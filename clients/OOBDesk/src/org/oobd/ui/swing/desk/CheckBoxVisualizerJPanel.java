@@ -21,20 +21,31 @@ import org.oobd.base.support.Onion;
  *
  * @author steffen
  */
-public class TextVisualizerJPanel extends VisualizerJPanel implements IFvisualizer {
+public class CheckBoxVisualizerJPanel extends VisualizerJPanel implements IFvisualizer {
 
  
     /** Creates new form TextVisualizerJPanel */
-    public TextVisualizerJPanel() {
+    public CheckBoxVisualizerJPanel() {
         super();
         initComponents();
-     }
+         valueCheckBox.addActionListener(new java.awt.event.ActionListener() {
+
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                getVisualizer().inputNewValue(new Boolean(valueCheckBox.isSelected()).toString());
+                getVisualizer().updateRequest(OOBDConstants.UR_USER);
+
+            }
+        });
+
+    }
 
     @Override
     public void paintComponent(Graphics g) {
         if (value != null) {
-            functionName.setText("<html>" + value.getToolTip() + "</html>");
-            functionValue.setText("<html>" + value.toString() + "</html>");
+            //functionName.setText("<html>" + value.getToolTip() + "</html>");
+            valueCheckBox.setText(value.getToolTip());
+            valueCheckBox.setSelected(new Boolean(value.toString()));
         }
         if (value.getUpdateFlag(4)) {
 
@@ -71,6 +82,11 @@ public class TextVisualizerJPanel extends VisualizerJPanel implements IFvisualiz
         super.paintComponent(g);
     }
 
+/*    public static IFvisualizer getInstance(String pageID, String vizName) {
+
+        return new TextEditVisualizerJPanel();
+    }
+*/
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -80,9 +96,8 @@ public class TextVisualizerJPanel extends VisualizerJPanel implements IFvisualiz
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        functionValue = new javax.swing.JLabel();
+        valueCheckBox = new javax.swing.JCheckBox();
         jPanel1 = new javax.swing.JPanel();
-        functionName = new javax.swing.JLabel();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
         backImageLabel = new javax.swing.JLabel();
         updateImageLabel = new javax.swing.JLabel();
@@ -93,14 +108,13 @@ public class TextVisualizerJPanel extends VisualizerJPanel implements IFvisualiz
         filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        setName("Form"); // NOI18N
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.PAGE_AXIS));
 
-        functionValue.setFont(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getFont("functionValue.font")); // NOI18N
-        functionValue.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        functionValue.setText(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getString("functionValue.text")); // NOI18N
-        functionValue.setName("functionValue"); // NOI18N
-        add(functionValue);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(CheckBoxVisualizerJPanel.class);
+        valueCheckBox.setFont(resourceMap.getFont("valueCheckBox.font")); // NOI18N
+        valueCheckBox.setText(resourceMap.getString("valueCheckBox.text")); // NOI18N
+        valueCheckBox.setName("valueCheckBox"); // NOI18N
+        add(valueCheckBox);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         jPanel1.setMinimumSize(new java.awt.Dimension(14, 20));
@@ -108,16 +122,10 @@ public class TextVisualizerJPanel extends VisualizerJPanel implements IFvisualiz
         jPanel1.setPreferredSize(new java.awt.Dimension(14, 20));
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.LINE_AXIS));
 
-        functionName.setFont(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getFont("titleLable.font")); // NOI18N
-        functionName.setForeground(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getColor("titleLable.foreground")); // NOI18N
-        functionName.setText(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getString("titleLable.text")); // NOI18N
-        functionName.setName("titleLable"); // NOI18N
-        jPanel1.add(functionName);
-
         filler1.setName("filler1"); // NOI18N
         jPanel1.add(filler1);
 
-        backImageLabel.setIcon(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getIcon("backImageLabel.icon")); // NOI18N
+        backImageLabel.setIcon(resourceMap.getIcon("backImageLabel.icon")); // NOI18N
         backImageLabel.setName("backImageLabel"); // NOI18N
         jPanel1.add(backImageLabel);
 
@@ -147,16 +155,16 @@ public class TextVisualizerJPanel extends VisualizerJPanel implements IFvisualiz
     private javax.swing.Box.Filler filler2;
     private javax.swing.Box.Filler filler3;
     private javax.swing.JLabel forwardImageLabel;
-    private javax.swing.JLabel functionName;
-    private javax.swing.JLabel functionValue;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel logImageLabel;
     private javax.swing.JLabel timerImageLabel;
     private javax.swing.JLabel updateImageLabel;
+    private javax.swing.JCheckBox valueCheckBox;
     // End of variables declaration//GEN-END:variables
 
-    public void initValue(Visualizer viz, Onion onion) {
-        functionName.setText(onion.getOnionString("tooltip"));
+    @Override
+     public void initValue(Visualizer viz, Onion onion) {
+        valueCheckBox.setText(onion.getOnionString("tooltip"));
         this.value = viz;
     }
 

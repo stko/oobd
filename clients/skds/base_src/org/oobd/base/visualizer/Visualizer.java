@@ -254,6 +254,7 @@ public class Visualizer {
         
 public void inputNewValue(String newValue)        {
     		if (value != null) {
+                    System.out.println("Set visualizer value to "+ newValue);
 			value.setValue("value", Base64Coder.encodeString(newValue));
 		} 
 }

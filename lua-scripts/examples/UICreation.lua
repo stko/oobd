@@ -4,12 +4,22 @@ dofile("../../tools/lib_lua/serial_dxm.lua")
 
 myedit=""
 
-function donothing(oldvalue,id)
+function showlastValue(oldvalue,id)
+	return myedit
+end
+
+function bool(oldvalue,id)
+	myedit =oldvalue
 	return myedit
 end
 
 function edittext(oldvalue,id)
-	myedit =oldvalue.."+"
+	myedit =oldvalue
+	return myedit
+end
+
+function donothing(oldvalue,id)
+	myedit =oldvalue
 	return myedit
 end
 
@@ -30,8 +40,11 @@ end
 
 function Main(oldvalue,id)
 	openPage("OOBD UI Test")
-	addElement("Simple Element", "donothing",myedit,0x0, "")
-        addElement("Text Input", "edittext",">>>",0x1, "",{  type="TextEdit"})
+        addElement("Text Input", "edittext","Input some Text here", 0x0, "", {  type="TextEdit" } )
+	addElement("Click here to see last input value", "showlastValue", myedit, 0x0, "")
+        addElement("Checkbox with longer Text...", "bool","True",0x0, "",{ type="CheckBox" } )
+        addElement("Value Slider", "donothing","40",0x0, "",{  type="Slider", min=10, max=60})
+        addElement("Gauge with last Slider Value", "donothing","40",0x0, "",{  type="Gauge", min=10, max=60, unit=" km/h"} )
 	pageDone()
 	return oldvalue
 end

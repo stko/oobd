@@ -21,27 +21,14 @@ import org.oobd.base.support.Onion;
  *
  * @author steffen
  */
-public class TextEditVisualizerJPanel extends javax.swing.JPanel implements IFvisualizer {
+public class TextEditVisualizerJPanel extends VisualizerJPanel implements IFvisualizer {
 
-    boolean toBePlaced = true; //indicates, if the actual instance is already been placed on an canvas or not
-    boolean awaitingUpdate = false;
-    boolean removalState = false;
-    Visualizer value;
-    static private final Icon[] myIcons = new Icon[6];
-
+ 
     /** Creates new form TextVisualizerJPanel */
     public TextEditVisualizerJPanel() {
         super();
         initComponents();
-        if (myIcons[0] == null) { //initial setup
-            myIcons[0] = new ImageIcon(swingView.class.getResource("/org/oobd/base/images/blank_16.png"));
-            myIcons[1] = new ImageIcon(swingView.class.getResource("/org/oobd/base/images/forward_16.png"));
-            myIcons[2] = new ImageIcon(swingView.class.getResource("/org/oobd/base/images/update_16.png"));
-            myIcons[3] = new ImageIcon(swingView.class.getResource("/org/oobd/base/images/timer_16.png"));
-            myIcons[4] = new ImageIcon(swingView.class.getResource("/org/oobd/base/images/text_16.png"));
-            myIcons[5] = new ImageIcon(swingView.class.getResource("/org/oobd/base/images/back_16.png"));
-        }
-        valueTextEdit.addActionListener(new java.awt.event.ActionListener() {
+         valueTextEdit.addActionListener(new java.awt.event.ActionListener() {
 
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 getVisualizer().inputNewValue(valueTextEdit.getText());
@@ -93,15 +80,11 @@ public class TextEditVisualizerJPanel extends javax.swing.JPanel implements IFvi
         super.paintComponent(g);
     }
 
-    public static IFvisualizer getInstance(String pageID, String vizName) {
+/*    public static IFvisualizer getInstance(String pageID, String vizName) {
 
         return new TextEditVisualizerJPanel();
-        /*    if (evt.getClickCount() == 2) {
-        
-        value.updateRequest(OOBDConstants.UR_USER);}
-         */
     }
-
+*/
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -124,10 +107,11 @@ public class TextEditVisualizerJPanel extends javax.swing.JPanel implements IFvi
         filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        setName("Form"); // NOI18N
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.PAGE_AXIS));
 
+        valueTextEdit.setColumns(1);
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextEditVisualizerJPanel.class);
+        valueTextEdit.setFont(resourceMap.getFont("valueTextEdit.font")); // NOI18N
         valueTextEdit.setText(resourceMap.getString("valueTextEdit.text")); // NOI18N
         valueTextEdit.setName("valueTextEdit"); // NOI18N
         add(valueTextEdit);
@@ -185,49 +169,5 @@ public class TextEditVisualizerJPanel extends javax.swing.JPanel implements IFvi
     private javax.swing.JTextField valueTextEdit;
     // End of variables declaration//GEN-END:variables
 
-    public boolean isGroup() {
-        return false;
-    }
-
-    public void setVisualizer(Visualizer viz) {
-        this.value = viz;
-    }
-
-    public Visualizer getVisualizer() {
-        return this.value;
-    }
-
-    public void initValue(Visualizer viz, Onion onion) {
-        functionName.setText(onion.getOnionString("tooltip"));
-        this.value = viz;
-    }
-
-    public boolean update(int level) {
-        if (!removalState) {
-            switch (level) {
-                case 0: {
-                    awaitingUpdate = true;
-                    return false;
-                }
-                case 2: {
-                    if (awaitingUpdate == true) {
-                        this.invalidate();
-                        this.validate();
-                        this.repaint();
-                        awaitingUpdate = false;
-                        return true;
-                    }
-                }
-                default:
-                    return false;
-            }
-        } else {
-            return true;
-        }
-    }
-
-    public void setRemove(String pageID) {
-        removalState = true;
-        value.setRemove();
-    }
+ 
 }

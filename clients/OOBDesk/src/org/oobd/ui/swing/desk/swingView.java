@@ -1112,7 +1112,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     @Override
     public Class getVisualizerClass(Onion myOnion) {
-        return TextVisualizerJPanel.class;
+        return VisualizerJPanel.class;
     }
 
     public void visualize(Onion myOnion) {
