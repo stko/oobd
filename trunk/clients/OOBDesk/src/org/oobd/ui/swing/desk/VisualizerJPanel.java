@@ -62,6 +62,8 @@ public class VisualizerJPanel extends javax.swing.JPanel implements IFvisualizer
             return new CheckBoxVisualizerJPanel();
         } else if ("Slider".equalsIgnoreCase(thisType)) {
             return new SliderVisualizerJPanel();
+       } else if ("Combo".equalsIgnoreCase(thisType)) {
+            return new ComboBoxVisualizerJPanel();
         } else if ("Gauge".equalsIgnoreCase(thisType)) {
             return new ProcessBarVisualizerJPanel();
         } else {
@@ -132,8 +134,21 @@ public class VisualizerJPanel extends javax.swing.JPanel implements IFvisualizer
         }
     }
 
+    @Override
     public void setRemove(String pageID) {
         removalState = true;
         value.setRemove();
     }
+    
+        protected int safeInt(Object value) {
+        if (value instanceof Integer) {
+            return (Integer) value;
+        }
+        try {
+            return Integer.parseInt(value.toString());
+        } catch (NumberFormatException ex) {
+            return 0;
+        }
+    }
+
 }

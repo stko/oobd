@@ -37,7 +37,7 @@ public class ProcessBarVisualizerJPanel extends VisualizerJPanel implements IFvi
         if (value != null) {
             functionName.setText("<html>" + value.getToolTip() + "</html>");
             valueProgressBar.setValue(safeInt(value.toString()));
-            valueProgressBar.setString(value.toString()+value.getValue("opts/unit"));
+            valueProgressBar.setString(value.toString()+value.getValue("opts/unit")+"lll");
         }
         if (value.getUpdateFlag(4)) {
 
@@ -106,7 +106,6 @@ public class ProcessBarVisualizerJPanel extends VisualizerJPanel implements IFvi
         valueProgressBar.setMinimumSize(new java.awt.Dimension(10, 26));
         valueProgressBar.setName("valueProgressBar"); // NOI18N
         valueProgressBar.setPreferredSize(new java.awt.Dimension(148, 26));
-        valueProgressBar.setString(resourceMap.getString("valueProgressBar.string")); // NOI18N
         add(valueProgressBar);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
@@ -169,23 +168,13 @@ public class ProcessBarVisualizerJPanel extends VisualizerJPanel implements IFvi
         } catch (OnionNoEntryException ex) {
             valueProgressBar.setMaximum(0);
         }
-       try {
+        try {
             valueProgressBar.setMinimum(safeInt(onion.getOnionObject("opts/min")));
         } catch (OnionNoEntryException ex) {
             valueProgressBar.setMinimum(0);
         }
-       this.value = viz;
-       valueProgressBar.setStringPainted(true);
+        this.value = viz;
+        valueProgressBar.setStringPainted(true);
     }
 
-    private int safeInt(Object value) {
-        if (value instanceof Integer) {
-            return (Integer) value;
-        }
-        try {
-            return Integer.parseInt(value.toString());
-        } catch (NumberFormatException ex) {
-            return 0;
-        }
-    }
 }
