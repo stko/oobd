@@ -673,7 +673,7 @@ public class ScriptengineLua extends OobdScriptengine {
         Onion newOnion = new Onion();
         Object hash = input.next(null);
         while (hash != null) {
-            String key = (String) hash;
+            String key =  hash.toString();
             Object value = input.rawget(hash);
             try {
                 if (value instanceof String) {

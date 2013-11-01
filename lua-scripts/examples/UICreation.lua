@@ -23,6 +23,11 @@ function donothing(oldvalue,id)
 	return myedit
 end
 
+function donothing2(oldvalue,id)
+	myedit =oldvalue
+	return myedit
+end
+
 
 
 ---------------------- Main Menu --------------------------------------
@@ -41,10 +46,12 @@ end
 function Main(oldvalue,id)
 	openPage("OOBD UI Test")
         addElement("Text Input", "edittext","Input some Text here", 0x0, "", {  type="TextEdit" } )
+        addElement("Text Input with Regex (\\d\\d)", "edittext","Input some Text here", 0x0, "", {  type="TextEdit" , regex ="\\d\\d" } )
 	addElement("Click here to see last input value", "showlastValue", myedit, 0x0, "")
         addElement("Checkbox with longer Text...", "bool","True",0x0, "",{ type="CheckBox" } )
         addElement("Value Slider", "donothing","40",0x0, "",{  type="Slider", min=10, max=60})
         addElement("Gauge with last Slider Value", "donothing","40",0x0, "",{  type="Gauge", min=10, max=60, unit=" km/h"} )
+        addElement("Combobox", "donothing2","2",0x0, "",{  type="Combo", content={"one","two","three","four","five","six"}} )
 	pageDone()
 	return oldvalue
 end

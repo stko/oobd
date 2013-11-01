@@ -10,14 +10,25 @@
  */
 package org.oobd.ui.swing.desk;
 
-import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.event.DocumentEvent;
+import javax.swing.JComboBox;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.oobd.base.*;
+import org.oobd.base.support.OnionNoEntryException;
 import org.oobd.base.visualizer.*;
 import org.oobd.base.support.Onion;
 
@@ -25,58 +36,23 @@ import org.oobd.base.support.Onion;
  *
  * @author steffen
  */
-public class TextEditVisualizerJPanel extends VisualizerJPanel implements IFvisualizer {
+public class ComboBoxVisualizerJPanel extends VisualizerJPanel implements IFvisualizer, ActionListener {
 
-    private String regex;
+    private Boolean justPainting = false;
 
-    /** Creates new form TextVisualizerJPanel */
-    public TextEditVisualizerJPanel() {
+    public ComboBoxVisualizerJPanel() {
         super();
         initComponents();
-        valueTextEdit.addActionListener(new java.awt.event.ActionListener() {
-
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                String value = valueTextEdit.getText();
-                if (regex == null || (value != null && value.matches(regex))) {
-                    getVisualizer().inputNewValue(valueTextEdit.getText());
-                    getVisualizer().updateRequest(OOBDConstants.UR_USER);
-                }
-            }
-        });
-
-        valueTextEdit.addKeyListener(new KeyListener() {
-
-            @Override
-            public void keyPressed(KeyEvent keyEvent) {
-            }
-
-            @Override
-            public void keyReleased(KeyEvent keyEvent) {
-                String value = valueTextEdit.getText();
-                 if (regex == null || (value != null && value.matches(regex))) {
-                     valueTextEdit.setForeground(Color.black);
-                }else{
-                    valueTextEdit.setForeground(Color.red);
-                }           }
-
-            @Override
-            public void keyTyped(KeyEvent keyEvent) {
- 
-            }
-        });
-
-    }
-
-    public void initValue(Visualizer viz, Onion onion) {
-        regex = onion.getOnionString("opts/regex");
-        this.value = viz;
+        valueComboBox.addActionListener(this);
     }
 
     @Override
     public void paintComponent(Graphics g) {
         if (value != null) {
             functionName.setText("<html>" + value.getToolTip() + "</html>");
-            valueTextEdit.setText(value.toString());
+            justPainting = true;
+            valueComboBox.setSelectedIndex(safeInt(value.toString()));
+            justPainting = false;
         }
         if (value.getUpdateFlag(4)) {
 
@@ -113,11 +89,6 @@ public class TextEditVisualizerJPanel extends VisualizerJPanel implements IFvisu
         super.paintComponent(g);
     }
 
-    /*    public static IFvisualizer getInstance(String pageID, String vizName) {
-    
-    return new TextEditVisualizerJPanel();
-    }
-     */
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -127,7 +98,7 @@ public class TextEditVisualizerJPanel extends VisualizerJPanel implements IFvisu
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        valueTextEdit = new javax.swing.JTextField();
+        valueComboBox = new javax.swing.JComboBox();
         jPanel1 = new javax.swing.JPanel();
         functionName = new javax.swing.JLabel();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
@@ -140,14 +111,14 @@ public class TextEditVisualizerJPanel extends VisualizerJPanel implements IFvisu
         filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        setName("Form"); // NOI18N
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.PAGE_AXIS));
 
-        valueTextEdit.setColumns(1);
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextEditVisualizerJPanel.class);
-        valueTextEdit.setFont(resourceMap.getFont("valueTextEdit.font")); // NOI18N
-        valueTextEdit.setText(resourceMap.getString("valueTextEdit.text")); // NOI18N
-        valueTextEdit.setName("valueTextEdit"); // NOI18N
-        add(valueTextEdit);
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(ComboBoxVisualizerJPanel.class);
+        valueComboBox.setFont(resourceMap.getFont("valueComboBox.font")); // NOI18N
+        valueComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        valueComboBox.setName("valueComboBox"); // NOI18N
+        add(valueComboBox);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         jPanel1.setMinimumSize(new java.awt.Dimension(14, 20));
@@ -199,6 +170,39 @@ public class TextEditVisualizerJPanel extends VisualizerJPanel implements IFvisu
     private javax.swing.JLabel logImageLabel;
     private javax.swing.JLabel timerImageLabel;
     private javax.swing.JLabel updateImageLabel;
-    private javax.swing.JTextField valueTextEdit;
+    private javax.swing.JComboBox valueComboBox;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void initValue(Visualizer viz, Onion onion) {
+        functionName.setText(onion.getOnionString("tooltip"));
+        try {
+            Onion items = (Onion) onion.getOnionObject("opts/content");
+            System.out.println("Onion:" + items.toString());
+            Vector al = new Vector<String>();
+            Iterator itr = items.sortedKeys();
+            while (itr.hasNext()) {
+                Object element = itr.next();
+                System.out.print(element + " ");
+
+                al.add(items.get(element.toString()));
+            }
+            valueComboBox.setModel(new DefaultComboBoxModel(al));
+        } catch (OnionNoEntryException ex) {
+            Logger.getLogger(ComboBoxVisualizerJPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JSONException ex) {
+            Logger.getLogger(ComboBoxVisualizerJPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        valueComboBox.setSelectedIndex(safeInt(value.toString()));
+        this.value = viz;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (!justPainting) {
+            JComboBox cb = (JComboBox) e.getSource();
+            getVisualizer().inputNewValue(new Integer(cb.getSelectedIndex()).toString());
+            getVisualizer().updateRequest(OOBDConstants.UR_USER);
+        }
+    }
 }

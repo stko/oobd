@@ -177,24 +177,12 @@ public class SliderVisualizerJPanel extends VisualizerJPanel implements IFvisual
         this.value = viz;
     }
 
-    private int safeInt(Object value) {
-        if (value instanceof Integer) {
-            return (Integer) value;
-        }
-        try {
-            return Integer.parseInt(value.toString());
-        } catch (NumberFormatException ex) {
-            return 0;
-        }
-    }
-
+    
     @Override
     public void stateChanged(ChangeEvent e) {
         JSlider source = (JSlider) e.getSource();
-        System.out.println("Ping" + new Integer((int) source.getValue()).toString());
         if (!source.getValueIsAdjusting()) {
             int fps = (int) source.getValue();
-            System.out.println("Pong" + new Integer(fps).toString());
             getVisualizer().inputNewValue(new Integer(fps).toString());
             getVisualizer().updateRequest(OOBDConstants.UR_USER);
 
