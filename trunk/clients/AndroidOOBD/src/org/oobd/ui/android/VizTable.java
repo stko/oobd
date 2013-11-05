@@ -20,7 +20,7 @@ import android.content.Intent;
 	boolean awaitingUpdate = false;
      boolean removalState = false;
 	
-	public static VizTable getInstance(String pageID, String vizName) {
+	public static VizTable getInstance(Onion myOnion) {
 		if (thisVizTable == null)
 			thisVizTable = new VizTable();
 		return thisVizTable;

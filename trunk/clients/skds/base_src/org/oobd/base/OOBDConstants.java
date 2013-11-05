@@ -39,7 +39,9 @@ public interface OOBDConstants {
     public static final String FN_VALUESTRING = "ValueString";
     public static final String FN_TOOLTIP = "tooltip";
     public static final String FN_UPDATEOPS = "updevents";
-    // Types of the different visualizer update requests
+    public static final String FN_OPTTYPE = "opts/type";
+    public static final String FN_OPTREGEX = "opts/regex";
+     // Types of the different visualizer update requests
     public static final Integer UR_USER = 0;
     public static final Integer UR_UPDATE = 1;
     public static final Integer UR_TIMER = 2;

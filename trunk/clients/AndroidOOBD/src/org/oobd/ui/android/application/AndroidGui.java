@@ -148,10 +148,10 @@ public class AndroidGui implements IFui {
 											// scriptengine-
 											// constructor
 		argsClass[0] = Onion.class; // and fill it with the info, that
-										// the
-										// argument for the constructor
-										// will be
-										// an Onion
+									// the
+									// argument for the constructor
+									// will be
+									// an Onion
 		try {
 			Method classMethod = visualizerClass.getMethod("getInstance",
 					argsClass); // and let Java find the
@@ -159,8 +159,8 @@ public class AndroidGui implements IFui {
 								// with one Onoin as
 								// parameter
 			Object[] args = { myOnion }; // we will an args-array
-												// with our
-												// Onion parameter
+											// with our
+											// Onion parameter
 			// now call getInstance() in class VizTable
 			visualComponent = (IFvisualizer) classMethod.invoke(null, args); // and
 																				// finally
@@ -198,19 +198,18 @@ public class AndroidGui implements IFui {
 				DiagnoseTab.getInstance().setMenuTitle(Name);
 				Diagnose.getInstance().startProgressDialog("Build Page...");
 				Log.v(this.getClass().getSimpleName(), "open page ..");
+				VizTable vizTable = VizTable.getInstance(null);
+				if (vizTable != null && !vizTable.isEmpty()) {
+					vizTable.setRemove("");
+					vizTable.clear();
+				}
 				Diagnose.getInstance().stopVisibility();
 				Diagnose.getInstance()
 						.getListView()
 						.setAdapter(
 								new DiagnoseAdapter(Diagnose.getInstance(),
-										VizTable.getInstance("", "")));
-
-				VizTable vizTable = VizTable.getInstance("", "");
+										vizTable));
 				if (vizTable != null) {
-					if (!vizTable.isEmpty()) {
-						vizTable.setRemove("");
-						vizTable.clear();
-					}
 					Intent broadcast = new Intent(OOBDApp.VISUALIZER_UPDATE);
 					broadcast.putExtra(OOBDApp.UPDATE_LEVEL, 1);
 					Diagnose.myDiagnoseInstance.getApplicationContext()
@@ -225,7 +224,7 @@ public class AndroidGui implements IFui {
 		MainActivity.getMyMainActivity().runOnUiThread(new Runnable() {
 
 			public void run() {
-				Diagnose.getInstance().setItems(VizTable.getInstance("", ""));
+				Diagnose.getInstance().setItems(VizTable.getInstance(null));
 				Diagnose.getInstance().stopProgressDialog();
 
 				Log.v(this.getClass().getSimpleName(), "...open page completed");

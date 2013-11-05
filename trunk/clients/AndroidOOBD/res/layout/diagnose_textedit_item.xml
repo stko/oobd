@@ -7,16 +7,16 @@
     android:padding="1dp">
     <TableRow android:id="@+id/tableRow1" android:layout_width="wrap_content" android:layout_height="wrap_content">
 
-        <TextView
+        <EditText
             android:id="@+id/diagnose_function_value"
-            android:layout_width="fill_parent"
+            android:layout_width="100sp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10sp"
             android:tag="value"
             android:text="100"
             android:textSize="20sp"
             android:textStyle="bold" >
-</TextView>
+</EditText>
     </TableRow>
     <TableRow android:id="@+id/tableRow2" android:layout_width="wrap_content" android:layout_height="wrap_content">
 
