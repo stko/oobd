@@ -89,7 +89,7 @@ public class Diagnose extends ListActivity {
 		// receive main menu from Lua Script Engine
 		// mDiagnoseItems = OOBDApp.getInstance().getDiagnoseItems("INIT");
 
-		mDiagnoseItems = VizTable.getInstance("", "");
+		mDiagnoseItems = VizTable.getInstance(null);
 
 		mDiagnoseAdapter = new DiagnoseAdapter(Diagnose.this, mDiagnoseItems);
 		mDiagnoseListView.setAdapter(mDiagnoseAdapter);

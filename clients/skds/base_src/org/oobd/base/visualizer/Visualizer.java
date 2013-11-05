@@ -138,6 +138,8 @@ public class Visualizer {
 	Onion value;
 	String name;
 	String optId;
+	String optType;
+	String regex;
 	String toolTip;
 	String lastValue = "";
 	int updateEvents;
@@ -153,6 +155,8 @@ public class Visualizer {
 		ownerEngine = onion.getOnion(OOBDConstants.FN_OWNER);
 		name = onion.getOnionString(OOBDConstants.FN_NAME);
 		optId = onion.getOnionString(OOBDConstants.FN_OPTID);
+		optType = onion.getOnionString(OOBDConstants.FN_OPTTYPE);
+		regex = onion.getOnionString(OOBDConstants.FN_OPTREGEX);
 		toolTip = onion.getOnionBase64String(OOBDConstants.FN_TOOLTIP);
 		try {
 			updateEvents = onion.getInt(OOBDConstants.FN_UPDATEOPS);
@@ -243,6 +247,28 @@ public class Visualizer {
 		return ownerEngine.getOnionString(OOBDConstants.FN_NAME);
 	}
 
+	/**
+	 * returns if the visualizer is if requested, where "" and "Label" equals the default type "Label"
+	 * 
+	 * @return 
+	 */
+	public boolean isTypeOf(String requestedType) {
+		if (requestedType!=null){
+			if ((requestedType.equals("") || requestedType.equalsIgnoreCase("Label")) && (optType==null || optType.equals("")|| optType.equalsIgnoreCase("Label"))) {
+				return true;
+			}else{
+				return requestedType.equalsIgnoreCase(optType);
+			}
+		}else{
+			return false;
+		}
+	}
+
+	
+	public String getRegex(){
+		return regex;
+	}
+	
 	public String getName() {
 		return name;
 	}
