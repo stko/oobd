@@ -38,6 +38,7 @@
 #include "od_base.h"
 #include "mc_sys_generic.h"
 #include "mc_sys.h"
+#include "mc_serial.h"
 
 // STM headers
 #include "stm32f10x.h"		/* ST Library v3.5.0 specific header files */
@@ -255,7 +256,13 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 	}
 }
 
-portBASE_TYPE eval_param_sys_specific(param_data * args) {
+/* evaluation of p 0 x x x commands */
+portBASE_TYPE eval_param_sys_specific(
+		param_data * args) {
+
+	uint32_t BTMpin;
+
+
 	switch (args->args[ARG_CMD]) {
 	case PARAM_INFO:
 		CreateParamOutputMsg(args, printParam_sys_specific);
@@ -275,6 +282,75 @@ portBASE_TYPE eval_param_sys_specific(param_data * args) {
 		}
 		return pdTRUE;
 		break;
+
+	case PARAM_SET_BTM:
+		if (args->args[ARG_VALUE_2] > 99999999) {
+			createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_OS_UNKNOWN_COMMAND,
+					0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+			return pdFALSE;
+		}
+
+
+		sysIoCtrl(6, 0, 0, 0, 0); /* Reset BT-Module */
+		delay_ms(250);
+		sysIoCtrl(6, 0, 1, 0, 0); /* Release Reset-Pin of BT-Module */
+		delay_ms(2500);
+
+		switch (args->args[ARG_VALUE_1]) {
+		case BTM_PIN:
+
+			BTM222_UART_Rx_Flag = pdFALSE;
+			USART_SendData(USART1, '\r');
+			btm_uart_delay_ms(100);
+			USART_SendData(USART1, 'a');
+			btm_uart_delay_ms(40);
+			USART_SendData(USART1, 't');
+			btm_uart_delay_ms(40);
+			USART_SendData(USART1, '\r');
+			btm_uart_delay_ms(100);
+
+			USART_SendData(USART1, 'a');
+			btm_uart_delay_ms(40);
+			USART_SendData(USART1, 't');
+			btm_uart_delay_ms(40);
+			USART_SendData(USART1, 'p');
+			btm_uart_delay_ms(40);
+			USART_SendData(USART1, '=');
+			btm_uart_delay_ms(40);
+
+			BTMpin = 10000000;
+
+			/* transmit PIN number from input stream to BT-Module */
+			while ( 0 != BTMpin )
+			{
+				/* check if value is available on current position */
+				/* BT-Module supports only character 0-9 with 4-8 digit for the BT-PIN */
+				if ( 0 != args->args[ARG_VALUE_2] / BTMpin)
+					USART_SendData(USART1, (args->args[ARG_VALUE_2] % (BTMpin*10) / BTMpin) + 48);
+				BTMpin = BTMpin / 10;
+				btm_uart_delay_ms(40);
+			}
+
+			USART_SendData(USART1, '\r');
+			btm_uart_delay_ms(200);
+
+			sysIoCtrl(6, 0, 0, 0, 0); /* Reset BT-Module */
+			delay_ms(250);
+			sysIoCtrl(6, 0, 1, 0, 0); /* Release Reset-Pin of BT-Module */
+			delay_ms(500);
+			printEOT();
+			BTM222_UART_Rx_Flag = pdTRUE;
+			return pdTRUE;
+			break;
+
+		default:
+			createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_OS_UNKNOWN_COMMAND,
+					0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+			return pdFALSE;
+		}
+		return pdTRUE;
+		break;
+
 	case PARAM_RESET:
 		mc_init_sys_shutdown_specific(); // Reset
 		return pdTRUE;
@@ -285,6 +361,7 @@ portBASE_TYPE eval_param_sys_specific(param_data * args) {
 				ERR_CODE_OS_COMMAND_NOT_SUPPORTED, 0,
 				ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
 		return pdFALSE;
+
 	default:
 		createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_OS_UNKNOWN_COMMAND, 0,
 				ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
@@ -451,14 +528,13 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 
 	case IO_BTM_RESET:
 		if (GPIO_HardwareLevel() == 4) /* OOBD-Cup v5 */
-			upperValue ? GPIO_SetBits(GPIOC, GPIO_Pin_13) : GPIO_ResetBits(GPIOC,
-						GPIO_Pin_13); /* reset BT-Module */
-		else if ( GPIO_HardwareLevel() == 5) /* OOBD CAN Invader */
-			upperValue ? GPIO_SetBits(GPIOA, GPIO_Pin_15) : GPIO_ResetBits(GPIOA,
-				GPIO_Pin_15); /* reset BT-Module */
+			upperValue ? GPIO_SetBits(GPIOC, GPIO_Pin_13) : GPIO_ResetBits(
+					GPIOC, GPIO_Pin_13); /* reset BT-Module */
+		else if (GPIO_HardwareLevel() == 5) /* OOBD CAN Invader */
+			upperValue ? GPIO_SetBits(GPIOA, GPIO_Pin_15) : GPIO_ResetBits(
+					GPIOA, GPIO_Pin_15); /* reset BT-Module */
 		return pdTRUE;
 		break;
-
 
 	default:
 		DEBUGPRINT("unknown output pin\n", upperValue);
