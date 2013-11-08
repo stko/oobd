@@ -85,10 +85,12 @@ printParam_sys(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
     }
 }
 
+/* evaluation of p 1 x x x commands */
 portBASE_TYPE eval_param_sys(param_data * args)
 {
     int i;
     switch (args->args[ARG_CMD]) {
+
     case PARAM_SET_OUTPUT:
 	if (sysIoCtrl(args->args[ARG_VALUE_1], 0,
 		      args->args[ARG_VALUE_2], 0, 0) == pdTRUE) {
@@ -104,6 +106,7 @@ portBASE_TYPE eval_param_sys(param_data * args)
 	    return pdFALSE;
 	}
 	break;
+
     case PARAM_PROTOCOL:
 	startupProtocol = args->args[ARG_VALUE_1];
 	startupBus = args->args[ARG_VALUE_2];
