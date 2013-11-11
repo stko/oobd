@@ -141,14 +141,8 @@ portBASE_TYPE bus_send_can(data_packet * data)
     TxMessage.Data[7] = data->data[7];
 
     /* transmit whole CAN frame as specified above on CAN1 */
+    /* Tx-Counter is increased in CAN-Tx interrupt routine */
     CAN_Transmit(CAN1, &TxMessage);
-
-    txCount++;
-    if (txCount > 100000) {
-	rxCount /= 2;
-	txCount /= 2;
-	errCount /= 2;
-    }
 
     DEBUGUARTPRINT("\r\n*** bus_send_can finished! ***");
     return pdPASS;
