@@ -555,13 +555,13 @@ void USART1_Configuration(void) {
 
 			DEBUGUARTPRINT("\r\n*** BTM222 - L3 = 38400bps detected! ***");
 
-			BTM222_UART_Rx_Flag = pdFALSE;
+//			BTM222_UART_Rx_Flag = pdFALSE;
 
 			btm_uart_speed('5'); /* set BT-Module UART to default 115200 bit/s */
 
 			BTM222_UartAutobaudControl = 6;
 
-			BTM222_UART_Rx_Flag = pdTRUE;
+//			BTM222_UART_Rx_Flag = pdTRUE;
 
 			break;
 
@@ -695,14 +695,11 @@ void USART1_Configuration(void) {
 
 	DEBUGUARTPRINT("\r\n*** Starting to get BTM222 BT address! ***");
 
-	//  BTM222_BtAddress[18] = {'0','0',':','0','0',':','0','0',':','0','0',':','0','0',':','0','0','\0'};
-
-	BTM222_UART_Rx_Flag = pdFALSE;
-
 	USART_SendData(USART1, '\r');
 	btm_uart_delay_ms(40);
 
 	BufCnt = 0; /* set BTM222_RespBuffer back to zero */
+	BTM222_UART_Rx_Flag = pdFALSE;
 
 	/* send "atb?"-command to get Bluetooth MAC address of BTM222 */
 	USART_SendData(USART1, 'a');
@@ -716,14 +713,14 @@ void USART1_Configuration(void) {
 	USART_SendData(USART1, '\r');
 	btm_uart_delay_ms(100);
 
-	BTM222_UART_Rx_Flag = pdTRUE;
+//	BTM222_UART_Rx_Flag = pdTRUE;
 
 	DEBUGUARTPRINT("\r\n*** Get BTM222 BT address finished! ***");
 
 	DEBUGUARTPRINT("\r\n*** Get BTM222 BT device name! ***");
 
-	BTM222_UART_Rx_Flag = pdFALSE;
 	BufCnt = 0; /* set BTM222_RespBuffer back to zero */
+	BTM222_UART_Rx_Flag = pdFALSE;
 
 	/* send "atn?"-command to get BTM222 device name */
 	USART_SendData(USART1, 'a');
@@ -737,12 +734,13 @@ void USART1_Configuration(void) {
 	USART_SendData(USART1, '\r');
 	btm_uart_delay_ms(100);
 
-	BTM222_UART_Rx_Flag = pdTRUE;
-
 	DEBUGUARTPRINT("\r\n*** Get BTM222 BT device name finished! ***");
 
 	/* set "OOBD-Cup" as BTM222 Bluetooth device name if needed */
 	if (BTM222_DeviceNameFlag == pdFALSE) {
+
+		BufCnt = 0; /* set BTM222_RespBuffer back to zero */
+		BTM222_UART_Rx_Flag = pdFALSE;
 
 		USART_SendData(USART1, 'a');
 		btm_uart_delay_ms(40);
@@ -764,22 +762,20 @@ void USART1_Configuration(void) {
 		btm_uart_delay_ms(40);
 		USART_SendData(USART1, 'C');
 		btm_uart_delay_ms(40);
-		if (GPIO_HardwareLevel() == 4)
+		if (GPIO_HardwareLevel() == 4 || GPIO_HardwareLevel() == 1)
 			USART_SendData(USART1, 'u');
 		else if (GPIO_HardwareLevel() == 5)
 			USART_SendData(USART1, 'I');
 
 		btm_uart_delay_ms(40);
-		if (GPIO_HardwareLevel() == 4)
+		if (GPIO_HardwareLevel() == 4 || GPIO_HardwareLevel() == 1)
 			USART_SendData(USART1, 'p');
 		else if (GPIO_HardwareLevel() == 5)
 			USART_SendData(USART1, 'V');
 
 		btm_uart_delay_ms(40);
 		USART_SendData(USART1, ' ');
-
-		for (nCount = 0; nCount < nLength; nCount++) {
-		}; /* delay */
+		btm_uart_delay_ms(40);
 		USART_SendData(USART1, BTM222_BtAddress[9]);
 		btm_uart_delay_ms(40);
 		USART_SendData(USART1, BTM222_BtAddress[10]);
@@ -811,10 +807,10 @@ void USART1_Configuration(void) {
 		USART_SendData(USART1, '\r');
 		btm_uart_delay_ms(100);
 
-		BTM222_UART_Rx_Flag = pdTRUE;
-
 	}
 
+	/* activate normal UART IRQ input stream handling */
+	BTM222_UART_Rx_Flag = pdTRUE;
 }
 
 /*----------------------------------------------------------------------------*/
