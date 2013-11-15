@@ -158,7 +158,7 @@ void BTM222_Rx_getc(char c) {
 				&& BTM222_RespBuffer[2] == 'n' && BTM222_RespBuffer[3] == '?') {
 
 			/* verify name */
-			if ((BTM222_RespBuffer[BufCnt - 15] == 'O'
+			if (((GPIO_HardwareLevel() == 1 || GPIO_HardwareLevel() == 4) && (BTM222_RespBuffer[BufCnt - 15] == 'O'
 							&& BTM222_RespBuffer[BufCnt - 14] == 'O'
 							&& BTM222_RespBuffer[BufCnt - 13] == 'B'
 							&& BTM222_RespBuffer[BufCnt - 12] == 'D'
@@ -178,8 +178,8 @@ void BTM222_Rx_getc(char c) {
 							&& BTM222_RespBuffer[BufCnt - 2]
 							== BTM222_BtAddress[15]
 							&& BTM222_RespBuffer[BufCnt - 1]
-							== BTM222_BtAddress[16]) ||
-					(BTM222_RespBuffer[BufCnt - 15] == 'O'
+							== BTM222_BtAddress[16])) ||
+							((GPIO_HardwareLevel() == 1) && (BTM222_RespBuffer[BufCnt - 15] == 'O'
 							&& BTM222_RespBuffer[BufCnt - 14] == 'O'
 							&& BTM222_RespBuffer[BufCnt - 13] == 'B'
 							&& BTM222_RespBuffer[BufCnt - 12] == 'D'
@@ -197,7 +197,7 @@ void BTM222_Rx_getc(char c) {
 							&& BTM222_RespBuffer[BufCnt - 2]
 							== BTM222_BtAddress[15]
 							&& BTM222_RespBuffer[BufCnt - 1]
-							== BTM222_BtAddress[16]))
+							== BTM222_BtAddress[16])))
 
 					{
 
