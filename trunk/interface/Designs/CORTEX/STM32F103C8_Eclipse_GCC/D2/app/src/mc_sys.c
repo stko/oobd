@@ -533,6 +533,10 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 		else if (GPIO_HardwareLevel() == 5) /* OOBD CAN Invader */
 			upperValue ? GPIO_SetBits(GPIOA, GPIO_Pin_15) : GPIO_ResetBits(
 					GPIOA, GPIO_Pin_15); /* reset BT-Module */
+		else {
+			return pdFALSE; /* BT-Module Reset Pin not supported */
+		}
+
 		return pdTRUE;
 		break;
 
