@@ -54,15 +54,15 @@ void print_telegram(portBASE_TYPE msgType, void *data,
     printser_int(dp->timestamp * portTICK_RATE_MS, 10);
     printser_string(" 0x");
     printser_int(dp->recv, 16);
-    printser_string("  0x");
+    printser_string(" 0x");
     printser_int(dp->err, 16);
-    printser_string("  ");
+    printser_string(" ");
     printser_int(dp->len, 10);
-    printser_string("  ");
+    printser_string(" ");
     int i;
     for (i = 0; i < dp->len; i++) {
 	printser_uint8ToHex(dp->data[i]);
-	printser_string("  ");
+	printser_string(" ");
     }
     printLF();
 }
