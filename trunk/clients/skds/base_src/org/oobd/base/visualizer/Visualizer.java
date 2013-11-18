@@ -126,6 +126,7 @@ import java.util.logging.Logger;
 import org.json.JSONException;
 import org.oobd.base.scriptengine.ScriptengineLua;
 import org.oobd.base.support.Onion;
+import org.oobd.base.support.OnionNoEntryException;
 import org.oobd.base.*;
 
 /**
@@ -140,6 +141,10 @@ public class Visualizer {
 	String optId;
 	String optType;
 	String regex;
+	int min;
+	int max;
+	int step;
+	String unit;
 	String toolTip;
 	String lastValue = "";
 	int updateEvents;
@@ -157,6 +162,26 @@ public class Visualizer {
 		optId = onion.getOnionString(OOBDConstants.FN_OPTID);
 		optType = onion.getOnionString(OOBDConstants.FN_OPTTYPE);
 		regex = onion.getOnionString(OOBDConstants.FN_OPTREGEX);
+		try {
+			min = safeInt(onion.getOnionObject(OOBDConstants.FN_OPTMIN));
+		} catch (OnionNoEntryException e1) {
+			min = 0;
+		}
+		try {
+			max = safeInt(onion.getOnionObject(OOBDConstants.FN_OPTMAX));
+		} catch (OnionNoEntryException e1) {
+			max =0;
+		}
+		System.out.println("slider_regex="+regex);
+		System.out.println("slider_max="+max);
+		System.out.println("slider_min="+min);
+		try {
+			step = safeInt(onion.getOnionObject(OOBDConstants.FN_OPTSTEP));
+		} catch (OnionNoEntryException e1) {
+			step =0;
+		}
+		unit = onion.getOnionString(OOBDConstants.FN_OPTUNIT);
+		
 		toolTip = onion.getOnionBase64String(OOBDConstants.FN_TOOLTIP);
 		try {
 			updateEvents = onion.getInt(OOBDConstants.FN_UPDATEOPS);
@@ -269,6 +294,22 @@ public class Visualizer {
 		return regex;
 	}
 	
+	public int getMin(){
+		return safeInt(min);
+	}
+	
+	public int getMax(){
+		return  safeInt(max);
+	}
+	
+	public int getStep(){
+		return  safeInt(step);
+	}
+	
+	public String getUnit(){
+		return unit;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -377,4 +418,24 @@ public void inputNewValue(String newValue)        {
 	public boolean getRemoved() {
 		return obsulete;
 	}
+
+	public void inputNewValue(int progress) {
+		inputNewValue(new Integer(progress).toString());
+		
+	}
+	
+	public static int safeInt(Object value) {
+		if (value ==null) {
+			return 0;
+		}
+		if (value instanceof Integer) {
+			return (Integer) value;
+		}
+		try {
+			return Integer.parseInt(value.toString());
+		} catch (NumberFormatException ex) {
+			return 0;
+		}
+	}
+	
 }

@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.oobd.base.OOBDConstants;
+import org.oobd.base.support.OnionNoEntryException;
 import org.oobd.base.visualizer.Visualizer;
 import org.oobd.ui.android.application.OOBDApp;
 
@@ -26,6 +27,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.TextView.OnEditorActionListener;
@@ -111,13 +114,14 @@ public class DiagnoseAdapter extends ArrayAdapter<Visualizer> {
 				if (item.isTypeOf("TextEdit")) {
 					// optimization: reuse diagnose items
 
-					// if (convertView == null) {
-					// if there is no old view to reuse, a new one is created
-					// based on
-					// layout diagnose_item
-					convertView = mlayoutInflater.inflate(
-							R.layout.diagnose_textedit_item, parent, false);
-					// }
+					if (convertView == null) {
+						// if there is no old view to reuse, a new one is
+						// created
+						// based on
+						// layout diagnose_item
+						convertView = mlayoutInflater.inflate(
+								R.layout.diagnose_textedit_item, parent, false);
+					}
 					EditText functionValue = (EditText) convertView
 							.findViewWithTag("value");
 					functionValue.setText(item.toString());
@@ -129,13 +133,15 @@ public class DiagnoseAdapter extends ArrayAdapter<Visualizer> {
 										KeyEvent event) {
 									String value = textView.getText()
 											.toString();
-								
-									boolean inputOk = (item.getRegex() == null || item.getRegex().equalsIgnoreCase(""))
+
+									boolean inputOk = (item.getRegex() == null || item
+											.getRegex().equalsIgnoreCase(""))
 											|| (value != null && value
 													.matches(item.getRegex()));
-									System.out.println("input ok:"+item.getRegex());
-									if (actionId == EditorInfo.IME_NULL  
-										      && event.getAction() == KeyEvent.ACTION_DOWN) { 
+									System.out.println("input ok:"
+											+ item.getRegex());
+									if (actionId == EditorInfo.IME_NULL
+											&& event.getAction() == KeyEvent.ACTION_DOWN) {
 										if (inputOk) {
 											textView.clearFocus();
 											item.inputNewValue(value);
@@ -147,34 +153,78 @@ public class DiagnoseAdapter extends ArrayAdapter<Visualizer> {
 									return false;
 								}
 							});
-					//functionValue.setImeOptions(EditorInfo.IME_ACTION_DONE);
-					functionValue.addTextChangedListener(new myTextWatcher(functionValue){
-				        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-				        public void onTextChanged(CharSequence s, int start, int before, int count){}
+					// functionValue.setImeOptions(EditorInfo.IME_ACTION_DONE);
+					functionValue.addTextChangedListener(new myTextWatcher(
+							functionValue) {
+						public void beforeTextChanged(CharSequence s,
+								int start, int count, int after) {
+						}
+
+						public void onTextChanged(CharSequence s, int start,
+								int before, int count) {
+						}
+
 						public void afterTextChanged(Editable v) {
-							
-							String value = myEditView.getText()
-									.toString();
-						
-							boolean inputOk = (item.getRegex() == null || item.getRegex().equalsIgnoreCase(""))
-									|| (value != null && value
-											.matches(item.getRegex()));
-							System.out.println("input ok:"+item.getRegex());
-							if (inputOk){
+
+							String value = myEditView.getText().toString();
+
+							boolean inputOk = (item.getRegex() == null || item
+									.getRegex().equalsIgnoreCase(""))
+									|| (value != null && value.matches(item
+											.getRegex()));
+							System.out.println("input ok:" + item.getRegex());
+							if (inputOk) {
 								myEditView.setTextColor(Color.GREEN);
-							}else{
+							} else {
 								myEditView.setTextColor(Color.RED);
 							}
 						}
-				    }); 
+					});
 					TextView functionName = (TextView) convertView
 							.findViewWithTag("name");
 					functionName.setText(item.getToolTip());
 					/*
 					 * } else if (item.isTypeOf("CheckBox")) {
-					 * 
-					 * } else if (item.isTypeOf("Slider")) {
-					 * 
+					 */
+				} else if (item.isTypeOf("Slider")) {
+					// optimization: reuse diagnose items
+
+					if (convertView == null) {
+						// if there is no old view to reuse, a new one is
+						// created
+						// based on
+						// layout diagnose_item
+						convertView = mlayoutInflater.inflate(
+								R.layout.diagnose_slider_item, parent, false);
+					}
+					SeekBar functionValue = (SeekBar) convertView
+							.findViewWithTag("value");
+					functionValue.setMax(item.getMax());
+					functionValue.setProgress(Visualizer.safeInt(item.toString()));
+					functionValue
+							.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+								public void onProgressChanged(SeekBar seekBar,
+										int progress, boolean fromUser) {
+									item.inputNewValue(progress);
+									item.updateRequest(OOBDConstants.UR_USER);
+								}
+
+								public void onStartTrackingTouch(SeekBar arg0) {
+									// TODO Auto-generated method stub
+
+								}
+
+								public void onStopTrackingTouch(SeekBar arg0) {
+									// TODO Auto-generated method stub
+
+								}
+							});
+
+					TextView functionName = (TextView) convertView
+							.findViewWithTag("name");
+					functionName.setText(item.getToolTip());
+					/*
 					 * } else if (item.isTypeOf("Combo")) {
 					 * 
 					 * } else if (item.isTypeOf("Gauge")) {
@@ -182,13 +232,14 @@ public class DiagnoseAdapter extends ArrayAdapter<Visualizer> {
 				} else { // default label
 					// optimization: reuse diagnose items
 
-					// if (convertView == null) {
-					// if there is no old view to reuse, a new one is created
-					// based on
-					// layout diagnose_item
-					convertView = mlayoutInflater.inflate(
-							R.layout.diagnose_item, parent, false);
-					// }
+					if (convertView == null) {
+						// if there is no old view to reuse, a new one is
+						// created
+						// based on
+						// layout diagnose_item
+						convertView = mlayoutInflater.inflate(
+								R.layout.diagnose_item, parent, false);
+					}
 					TextView functionValue = (TextView) convertView
 							.findViewWithTag("value");
 					functionValue.setText(item.toString());
@@ -248,14 +299,17 @@ public class DiagnoseAdapter extends ArrayAdapter<Visualizer> {
 		return convertView;
 
 	}
+
+
+
 }
 
 abstract class myTextWatcher implements TextWatcher {
 	EditText myEditView;
-	
-	myTextWatcher(EditText myView){
+
+	myTextWatcher(EditText myView) {
 		super();
-		myEditView=myView;
-	
-}
+		myEditView = myView;
+
+	}
 }
