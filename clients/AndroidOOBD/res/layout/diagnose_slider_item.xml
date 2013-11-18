@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout android:id="@+id/TableLayout1"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:stretchColumns="0"
+    android:padding="1dp">
+    <TableRow android:id="@+id/tableRow1" android:layout_width="wrap_content" android:layout_height="wrap_content">
+
+        <SeekBar
+            android:id="@+id/diagnose_slider_function_value"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:tag="value" />
+
+    </TableRow>
+    <TableRow android:id="@+id/tableRow2" android:layout_width="wrap_content" android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/diagnose_function_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10sp"
+            android:tag="name"
+            android:text="RPM"
+            android:textSize="12sp" >
+</TextView>
+
+        <ImageView
+            android:id="@+id/backImageView"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/back"
+            android:tag="back" >
+</ImageView>
+
+        <ImageView
+            android:id="@+id/updateImageView"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/update"
+            android:tag="update" >
+</ImageView>
+
+        <ImageView
+            android:id="@+id/timerImageView"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/timer"
+            android:tag="timer" >
+</ImageView>
+
+        <ImageView
+            android:id="@+id/LogImageView"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/text"
+            android:tag="log" >
+</ImageView>
+
+        <ImageView
+            android:id="@+id/forwardImageView"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/forward"
+            android:tag="forward" >
+</ImageView>
+    </TableRow>
+
+</TableLayout>
+

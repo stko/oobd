@@ -41,6 +41,10 @@ public interface OOBDConstants {
     public static final String FN_UPDATEOPS = "updevents";
     public static final String FN_OPTTYPE = "opts/type";
     public static final String FN_OPTREGEX = "opts/regex";
+    public static final String FN_OPTMIN = "opts/min";
+    public static final String FN_OPTMAX = "opts/max";
+    public static final String FN_OPTSTEP = "opts/step";
+    public static final String FN_OPTUNIT = "opts/unit";
      // Types of the different visualizer update requests
     public static final Integer UR_USER = 0;
     public static final Integer UR_UPDATE = 1;
