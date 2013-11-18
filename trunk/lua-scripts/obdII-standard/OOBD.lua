@@ -81,20 +81,20 @@ id0x11 = { byte = 1 , size =  1 , mult = 0.392156862745 , offset = 0, unit = " 
 
 id0x14 = { byte = 1 , size =  1 , mult = 0.5 , offset = 0, unit = "Volts"} ,
 id0x114 = { byte = 2 , size =  1 , mult = 0.78125 , offset = -100, unit = "%"} ,
-id0x15 = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts%"} ,
-id0x115 = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "Volts%"} ,
-id0x16 = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts%"} ,
-id0x116 = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "Volts%"} ,
-id0x17 = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts%"} ,
-id0x117 = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "Volts%"} ,
-id0x18 = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts%"} ,
-id0x118 = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "Volts%"} ,
-id0x19 = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts%"} ,
-id0x119 = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "Volts%"} ,
-id0x1A = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts%"} ,
-id0x11A = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "Volts%"} ,
-id0x1B = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts%"} ,
-id0x11B = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "Volts%"} ,
+id0x15 = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts"} ,
+id0x115 = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "%"} ,
+id0x16 = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts"} ,
+id0x116 = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "%"} ,
+id0x17 = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts"} ,
+id0x117 = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "%"} ,
+id0x18 = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts"} ,
+id0x118 = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "%"} ,
+id0x19 = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts"} ,
+id0x119 = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "%"} ,
+id0x1A = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts"} ,
+id0x11A = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "%"} ,
+id0x1B = { byte = 1 , size = 1 , mult = 0.005 , offset = 0, unit = "Volts"} ,
+id0x11B = { byte = 2 , size = 1 , mult = 0.78125 , offset = -100, unit = "%"} ,
 id0x1F = { byte = 1 , size = 2 , mult = 1 , offset = 0, unit = "seconds"} ,
 -------------- 2 section -----------------------------------------------
 id0x21 = { byte = 1 , size = 2 , mult = 1 , offset = 0, unit = "km"} ,
@@ -235,21 +235,21 @@ function createCMD01Menu(oldvalue,id)
 				createCall(availPIDs, 0x11,"Throttle position", "getNumPIDs")
 				createCall(availPIDs, 0x14,"Bank 1, Sensor 1: Oxygen sensor voltage", "getNumPIDs")
 				createCall(availPIDs, 0x114,"Bank 1, Sensor 1: Short term fuel trim", "getNumPIDs")
-                                createCall(availPIDs, 0x15,"Bank 1, Sensor 2: Oxygen sensor voltage", "getNumPIDs")
-                                createCall(availPIDs, 0x115,"Bank 1, Sensor 2: Short term fuel trim", "getNumPIDs")
-                                createCall(availPIDs, 0x16,"Bank 1, Sensor 3: Oxygen sensor voltage", "getNumPIDs")
-                                createCall(availPIDs, 0x116,"Bank 1, Sensor 3: Short term fuel trim", "getNumPIDs")
-                                createCall(availPIDs, 0x17,"Bank 1, Sensor 4: Oxygen sensor voltage", "getNumPIDs")
-                                createCall(availPIDs, 0x117,"Bank 1, Sensor 4: Short term fuel trim", "getNumPIDs")
-                                createCall(availPIDs, 0x18,"Bank 2, Sensor 1: Oxygen sensor voltage", "getNumPIDs")
-                                createCall(availPIDs, 0x118,"Bank 2, Sensor 1: Short term fuel trim", "getNumPIDs")
-                                createCall(availPIDs, 0x19,"Bank 2, Sensor 2: Oxygen sensor voltage", "getNumPIDs")
-                                createCall(availPIDs, 0x119,"Bank 2, Sensor 2: Short term fuel trim", "getNumPIDs")
-                                createCall(availPIDs, 0x1A,"Bank 2, Sensor 3: Oxygen sensor voltage", "getNumPIDs")
-                                createCall(availPIDs, 0x11A,"Bank 2, Sensor 3: Short term fuel trim", "getNumPIDs")
-                                createCall(availPIDs, 0x1B,"Bank 2, Sensor 4: Oxygen sensor voltage", "getNumPIDs")
-                                createCall(availPIDs, 0x11B,"Bank 2, Sensor 4: Short term fuel trim", "getNumPIDs")
-                                createCall(availPIDs, 0x1F,"Run time since engine start", "getNumPIDs")
+				createCall(availPIDs, 0x15,"Bank 1, Sensor 2: Oxygen sensor voltage", "getNumPIDs")
+				createCall(availPIDs, 0x115,"Bank 1, Sensor 2: Short term fuel trim", "getNumPIDs")
+				createCall(availPIDs, 0x16,"Bank 1, Sensor 3: Oxygen sensor voltage", "getNumPIDs")
+				createCall(availPIDs, 0x116,"Bank 1, Sensor 3: Short term fuel trim", "getNumPIDs")
+				createCall(availPIDs, 0x17,"Bank 1, Sensor 4: Oxygen sensor voltage", "getNumPIDs")
+				createCall(availPIDs, 0x117,"Bank 1, Sensor 4: Short term fuel trim", "getNumPIDs")
+				createCall(availPIDs, 0x18,"Bank 2, Sensor 1: Oxygen sensor voltage", "getNumPIDs")
+				createCall(availPIDs, 0x118,"Bank 2, Sensor 1: Short term fuel trim", "getNumPIDs")
+				createCall(availPIDs, 0x19,"Bank 2, Sensor 2: Oxygen sensor voltage", "getNumPIDs")
+				createCall(availPIDs, 0x119,"Bank 2, Sensor 2: Short term fuel trim", "getNumPIDs")
+				createCall(availPIDs, 0x1A,"Bank 2, Sensor 3: Oxygen sensor voltage", "getNumPIDs")
+				createCall(availPIDs, 0x11A,"Bank 2, Sensor 3: Short term fuel trim", "getNumPIDs")
+				createCall(availPIDs, 0x1B,"Bank 2, Sensor 4: Oxygen sensor voltage", "getNumPIDs")
+				createCall(availPIDs, 0x11B,"Bank 2, Sensor 4: Short term fuel trim", "getNumPIDs")
+				createCall(availPIDs, 0x1F,"Run time since engine start", "getNumPIDs")
 
 				-----------------------------------------
 				addElement("<<< Main", "Main","<<<",0x10, "")
