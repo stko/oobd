@@ -27,6 +27,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -227,8 +228,31 @@ public class DiagnoseAdapter extends ArrayAdapter<Visualizer> {
 					/*
 					 * } else if (item.isTypeOf("Combo")) {
 					 * 
-					 * } else if (item.isTypeOf("Gauge")) {
 					 */
+					} else if (item.isTypeOf("Gauge")) {
+						// optimization: reuse diagnose items
+
+						if (convertView == null) {
+							// if there is no old view to reuse, a new one is
+							// created
+							// based on
+							// layout diagnose_item
+							convertView = mlayoutInflater.inflate(
+									R.layout.diagnose_gauge_item, parent, false);
+						}
+						ProgressBar functionValue = (ProgressBar) convertView
+								.findViewWithTag("value");
+						functionValue.setMax(item.getMax());
+						functionValue.setProgress(Visualizer.safeInt(item.toString()));
+						
+						TextView functionName = (TextView) convertView
+								.findViewWithTag("name");
+						functionName.setText(item.getToolTip());
+						/*
+						 * } else if (item.isTypeOf("Combo")) {
+						 * 
+						 */
+					 
 				} else { // default label
 					// optimization: reuse diagnose items
 
