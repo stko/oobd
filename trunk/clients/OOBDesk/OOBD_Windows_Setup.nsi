@@ -39,15 +39,12 @@ File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/protocol"
 File /r  "build/classes/org/oobd/ui/uihandler"
 File "dist/OOBDesk.jar"
 #File  "app_dist.props"
-#File /oname=oobdcore.props  "oobdcore_dist.props"
+File /oname=oobdcore.props  "oobdcore_dist.props"
 #File  "enginelua_dist.props"
 File "oobd.url"
 File "jlogviewer.jar"
 File "logging.props"
-File /oname=OOBD.lbc "../../lua-scripts/obdII-standard/OOBD.lbc"
-File "../../lua-scripts/obdII-standard/dtc.csv"
-File "../../lua-scripts/obdII-standard/dtc.oodb"
-File /oname=stdlib.lbc "../OOBD-ME/res/stdlib.lbc"
+
 CreateDirectory "$INSTDIR\logs"
 
 #FileOpen $0 $INSTDIR\file.dat w
@@ -62,6 +59,16 @@ CreateShortCut "$SMPROGRAMS\OOBD\OOBDesk\View Log Files.lnk" "javaw" "-jar jlogv
 CreateShortCut "$SMPROGRAMS\OOBD\OOBDesk\OOBDesk Homepage.lnk" "$INSTDIR\oobd.url"
 CreateShortCut "$SMPROGRAMS\OOBD\OOBDesk\Uninstall OOBDesk.lnk" "$INSTDIR\uninstaller.exe"
 WriteRegStr HKCU "SOFTWARE\OOBD\OOBDesk" "InstDir" $INSTDIR
+
+# create the sample files
+SetOutPath "$DOCUMENTS\OOBD-Scripts"
+File "../../lua-scripts/obdII-standard/OOBD.lbc"
+File "../../lua-scripts/obdII-standard/OOBD.lua"
+File "../../lua-scripts/obdII-standard/dtc.csv"
+File "../../lua-scripts/obdII-standard/dtc.oodb"
+File "../../lua-scripts/examples/UICreation.lua"
+File "../../lua-scripts/examples/UICreation.lbc"
+File /oname=stdlib.lbc "../OOBD-ME/res/stdlib.lbc"
 
 
 SectionEnd
