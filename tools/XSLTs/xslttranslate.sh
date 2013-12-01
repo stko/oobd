@@ -1,5 +1,4 @@
 #!/bin/bash
-echo $1
 FILE=$1
 XSLT=$2
 if [ ! -f "$FILE" ] || [ ! -f "$XSLT" ]
@@ -8,6 +7,6 @@ then
     echo "Usage: $0 xlst-file xml-file" ;
     exit ;
 fi
-xmlstarlet tr  $1 $2
+xmlstarlet tr --omit-decl  $1 $2
 
 
