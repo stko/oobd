@@ -20,6 +20,10 @@ message-----
 <xsl:template match="my:Signal">
 Signal----
 msgname=<xsl:value-of select="../@name"/>, msgid=<xsl:value-of select="../@id"/>, msglen=<xsl:value-of select="../@length"/>, signame=<xsl:value-of select="@name"/>
+<xsl:choose>
+ <xsl:when test="@endianess='big'">, intel=false</xsl:when>
+ <xsl:otherwise>, intel=true</xsl:otherwise>
+</xsl:choose>
 <xsl:if test="my:Value">
 <xsl:apply-templates select="my:Value" />
 </xsl:if>
