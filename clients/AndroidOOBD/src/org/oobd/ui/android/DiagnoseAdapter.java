@@ -25,6 +25,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CheckedTextView;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -201,7 +204,8 @@ public class DiagnoseAdapter extends ArrayAdapter<Visualizer> {
 					SeekBar functionValue = (SeekBar) convertView
 							.findViewWithTag("value");
 					functionValue.setMax(item.getMax());
-					functionValue.setProgress(Visualizer.safeInt(item.toString()));
+					functionValue.setProgress(Visualizer.safeInt(item
+							.toString()));
 					functionValue
 							.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
@@ -227,32 +231,77 @@ public class DiagnoseAdapter extends ArrayAdapter<Visualizer> {
 					functionName.setText(item.getToolTip());
 					/*
 					 * } else if (item.isTypeOf("Combo")) {
-					 * 
 					 */
-					} else if (item.isTypeOf("Gauge")) {
-						// optimization: reuse diagnose items
+				} else if (item.isTypeOf("Checkbox")) {
+					// optimization: reuse diagnose items
 
-						if (convertView == null) {
-							// if there is no old view to reuse, a new one is
-							// created
-							// based on
-							// layout diagnose_item
-							convertView = mlayoutInflater.inflate(
-									R.layout.diagnose_gauge_item, parent, false);
-						}
-						ProgressBar functionValue = (ProgressBar) convertView
-								.findViewWithTag("value");
-						functionValue.setMax(item.getMax());
-						functionValue.setProgress(Visualizer.safeInt(item.toString()));
-						
-						TextView functionName = (TextView) convertView
-								.findViewWithTag("name");
-						functionName.setText(item.getToolTip());
-						/*
-						 * } else if (item.isTypeOf("Combo")) {
-						 * 
-						 */
-					 
+					if (convertView == null) {
+						// if there is no old view to reuse, a new one is
+						// created
+						// based on
+						// layout diagnose_item
+						convertView = mlayoutInflater.inflate(
+								R.layout.diagnose_checkbox_item, parent, false);
+					}
+					CheckBox functionValue = (CheckBox) convertView
+							.findViewWithTag("value");
+					functionValue.setText(item.getToolTip());
+					functionValue.setSelected(new Boolean(item.toString()));
+/*					functionValue
+							.setOnClickListener(new View.OnClickListener() {
+								public void onClick(View v) {
+
+									item.inputNewValue(new Boolean(
+											((CheckedTextView) v).isSelected())
+											.toString());
+									item.updateRequest(OOBDConstants.UR_USER);
+									// ((CheckedTextView) v).toggle();
+								}
+
+							});*/
+					functionValue
+							.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+								@Override
+								public void onCheckedChanged(
+										CompoundButton buttonView,
+										boolean isChecked) {
+									item.inputNewValue(new Boolean(buttonView
+											.isChecked()).toString());
+									item.updateRequest(OOBDConstants.UR_USER);
+
+								}
+							});
+					TextView functionName = (TextView) convertView
+							.findViewWithTag("name");
+					functionName.setText(item.getToolTip());
+					/*
+					 * } else if (item.isTypeOf("Combo")) {
+					 */
+				} else if (item.isTypeOf("Gauge")) {
+					// optimization: reuse diagnose items
+
+					if (convertView == null) {
+						// if there is no old view to reuse, a new one is
+						// created
+						// based on
+						// layout diagnose_item
+						convertView = mlayoutInflater.inflate(
+								R.layout.diagnose_gauge_item, parent, false);
+					}
+					ProgressBar functionValue = (ProgressBar) convertView
+							.findViewWithTag("value");
+					functionValue.setMax(item.getMax());
+					functionValue.setProgress(Visualizer.safeInt(item
+							.toString()));
+
+					TextView functionName = (TextView) convertView
+							.findViewWithTag("name");
+					functionName.setText(item.getToolTip());
+					/*
+					 * } else if (item.isTypeOf("Combo")) {
+					 */
+
 				} else { // default label
 					// optimization: reuse diagnose items
 
@@ -323,8 +372,6 @@ public class DiagnoseAdapter extends ArrayAdapter<Visualizer> {
 		return convertView;
 
 	}
-
-
 
 }
 
