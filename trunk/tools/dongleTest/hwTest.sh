@@ -11,7 +11,9 @@ case $choice in
 	*)
 		echo Try to connect ...
 		echo $choice
+		bluez-simple-agent hci0 $choice
 		python hwTest.py $choice
+		bluez-simple-agent hci0 $choice remove
 		read  -p "Test done - press return to continue" inputline ;;
 esac
 
