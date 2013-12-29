@@ -134,7 +134,7 @@ public class MainActivity extends FragmentActivity implements
 								}
 							});
 					alertDialog.show();
-					return;
+					// return;
 				} else {
 					if (!mBluetoothAdapter.isEnabled()) {
 						AlertDialog alertDialog = new AlertDialog.Builder(
@@ -151,31 +151,35 @@ public class MainActivity extends FragmentActivity implements
 									}
 								});
 						alertDialog.show();
-						return;
+						// return;
+					} else {
+
+						Set<BluetoothDevice> pairedDevices = mBluetoothAdapter
+								.getBondedDevices();
+						Log.v(this.getClass().getSimpleName(),
+								"Anzahl paired devices: "
+										+ pairedDevices.size());
+
+						// If there are paired devices
+						if (pairedDevices.size() < 1) {
+							AlertDialog alertDialog = new AlertDialog.Builder(
+									myMainActivity).create();
+							alertDialog.setTitle("No Paired Devides");
+							alertDialog.setMessage("No Paired Devices found!");
+							alertDialog.setButton(
+									DialogInterface.BUTTON_NEUTRAL,
+									"I'll change that",
+									new DialogInterface.OnClickListener() {
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											dialog.cancel();
+										}
+									});
+							alertDialog.show();
+							return;
+						}
 					}
-				}
-
-				Set<BluetoothDevice> pairedDevices = mBluetoothAdapter
-						.getBondedDevices();
-				Log.v(this.getClass().getSimpleName(),
-						"Anzahl paired devices: " + pairedDevices.size());
-
-				// If there are paired devices
-				if (pairedDevices.size() < 1) {
-					AlertDialog alertDialog = new AlertDialog.Builder(
-							myMainActivity).create();
-					alertDialog.setTitle("No Paired Devides");
-					alertDialog.setMessage("No Paired Devices found!");
-					alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
-							"I'll change that",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int which) {
-									dialog.cancel();
-								}
-							});
-					alertDialog.show();
-					return;
 				}
 				BTDeviceName = preferences.getString("BTDEVICE", "");
 				if (BTDeviceName.equalsIgnoreCase("")) {
@@ -192,7 +196,7 @@ public class MainActivity extends FragmentActivity implements
 								}
 							});
 					alertDialog.show();
-					return;
+					//return;
 				}
 				createDisclaimerDialog();
 			}
@@ -302,25 +306,24 @@ public class MainActivity extends FragmentActivity implements
 
 	}
 
-	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-	    if ( keyCode == KeyEvent.KEYCODE_MENU ) {
+		if (keyCode == KeyEvent.KEYCODE_MENU) {
 			startActivity(new Intent(this, Settings.class));
-	        return true;
-	    }
-	    return super.onKeyDown(keyCode, event);
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
-	
-	
+
 	/**
 	 * Create Option menu with link to settings
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// please note: This "menu starter" is disabled through the onKeyDown - handler above..
-  		super.onCreateOptionsMenu(menu);
- 		MenuInflater inflater = getMenuInflater();
+		// please note: This "menu starter" is disabled through the onKeyDown -
+		// handler above..
+		super.onCreateOptionsMenu(menu);
+		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.home_menu, menu);
 		return true;
 	}
@@ -376,8 +379,5 @@ public class MainActivity extends FragmentActivity implements
 		// TODO Auto-generated method stub
 
 	}
-	
-	
-	
 
 }

@@ -155,6 +155,7 @@ public class Visualizer {
 	IFvisualizer myObject;
 	boolean updateNeeded = false;
 	boolean obsulete = false;
+	Object relatedObject = null;
 
 	public Visualizer(Onion onion) {
 		ownerEngine = onion.getOnion(OOBDConstants.FN_OWNER);
@@ -204,6 +205,24 @@ public class Visualizer {
 	}
 
 	/**
+	 * sets a generic object reference to this visualizer
+	 * 
+	 * @param myObject
+	 */
+	public void setReleatedObject(Object myObject) {
+		this.relatedObject = myObject;
+	}
+
+	/**
+	 * gets a generic object reference to this visualizer
+	 * 
+	 * @param myObject
+	 */
+	public Object getReleatedObject() {
+		return this.relatedObject;
+	}
+
+	/**
 	 * sets the Value for this visualizer
 	 * 
 	 * @param myObject
@@ -246,6 +265,18 @@ public class Visualizer {
 	public String getValue(String name) {
 		if (value != null) {
 			return value.getOnionString(name);
+		} else {
+			return null;
+		}
+	}
+
+	public Object getValueOnion(String name) {
+		if (value != null) {
+			try {
+				return value.getOnionObject(name);
+			} catch (OnionNoEntryException e) {
+				return null;
+			}
 		} else {
 			return null;
 		}
