@@ -3,6 +3,7 @@ OOBD.lua
 --]]
 
 local BusID = "HS-CAN";
+local ModuleID = "7DF";  -- default functionl request ID for emission related ECUs
 
 dofile("../../tools/lib_lua/serial_dxm.lua")
 
@@ -44,7 +45,7 @@ nrcCodes = {
 	[0x8A] = 'Throttle pedal too high',
 	[0x8B] = 'Throttle pedal too low',
 	[0x8C] = 'Transmission range not in neutral',
-	[0x8D] = 'Transmissuin range not in gear',
+	[0x8D] = 'Transmission range not in gear',
 	[0x8F] = 'Brake not closed',
 	[0x90] = 'Sifter lever not in park',
 	[0x91] = 'Torque converter clutch locked',
@@ -253,12 +254,12 @@ function selectModuleID(oldvalue,id)
 		setModuleID("7DF") -- set legislated OBD/WWH-OBD functional request ID
 		setCANFilter(1,"7E8","7FF") -- set CAN-Filter of ECU request/response CAN-ID range
 		setSendID("7E8") 	-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
-		print ("index: "..index..", ModuleID: 7DF, SendID: 7E8")
+		ModuleID = oldvalue;
 	else
 		setModuleID(string.format("%3X",index+0x7E0-1)) -- set legislated OBD/WWH-OBD functional request ID
 		setCANFilter(1,string.format("%3X",index+0x7E8-1),"7FF") -- set CAN-Filter of ECU request/response CAN-ID range
-		setSendID(string.format("%3X",index+0x7E8-1)) 	-- set default to legislated OBD/WWH-OBD physical response ID	
-		print ("index: "..index..", ModuleID: "..string.format("%3X",index+0x7E0-1)..", SendID: "..string.format("%3X",index+0x7E8-1))
+		setSendID(string.format("%3X",index+0x7E8-1)) 	-- set default to legislated OBD/WWH-OBD physical response ID
+		ModuleID = oldvalue;
 	end
 
 	return oldvalue 
@@ -514,7 +515,7 @@ function Main(oldvalue,id)
 	addElement("Trouble Codes", "showdtcs","-",0x0, "")
 	addElement("VIN Number", "vin","-",0x2, "")
 	addElement("Clear Trouble Codes", "clearDTC","-",0x0, "")
-	addElement("Request-ID", "selectModuleID", "0" ,0x0, "",{  type="Combo", 
+	addElement("ECU Request-ID", "selectModuleID", ModuleID ,0x0, "",{  type="Combo", 
 				content={"7DF - all", 
 						 "7E0 - ECM",
 						 "7E1 - TCM",
