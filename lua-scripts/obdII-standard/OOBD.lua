@@ -4,17 +4,61 @@ OOBD.lua
 
 local BusID = "HS-CAN";
 
-
 dofile("../../tools/lib_lua/serial_dxm.lua")
 
----------------------- Vehicle Info Menu --------------------------------------
+---------------------- Negative response codes (NRC) --------------------------------------
+-- see: http://www.autosar.org  => R4.0 AUTOSAR_SWS_DiagnosticCommunicationManager
 
+nrcCodes = {
+	[0x10] = 'General reject',
+	[0x11] = 'Service not supported (in active Diag session)',
+	[0x12] = 'Subfunction not supported (in active Diag session)',
+	[0x13] = 'Incorrect message length or invalid format',
+	[0x14] = 'Response to long',
+	[0x21] = 'Busy - Repeat request',
+	[0x22] = 'Conditions not correct',
+	[0x24] = 'Request sequence error',
+	[0x25] = 'No response from subnet component',
+	[0x26] = 'Failure prevents execution of requested action',
+	[0x31] = 'Request out of range',
+	[0x33] = 'Securtiy access denied',
+	[0x35] = 'Invalid key',
+	[0x36] = 'Exceed number of attempts',
+	[0x37] = 'Required time delay not expired',
+	[0x70] = 'Upload download not accepted',
+	[0x71] = 'Transfer data suspended',
+	[0x72] = 'General programming failure',
+	[0x73] = 'Wrong block sequence counter',
+	[0x78] = 'Reqeust correctly received - Response pending',
+	[0x7E] = 'Subfunction not supported in active session',
+	[0x7F] = 'System internal error',
+	[0x81] = 'RPM too high',
+	[0x82] = 'RPM too low',
+	[0x83] = 'Engine running',
+	[0x84] = 'Engine not running',
+	[0x85] = 'Engine runtime too low',
+	[0x86] = 'Temperature too high',
+	[0x87] = 'Temperature too low',
+	[0x88] = 'Vehicle speed too high',
+	[0x89] = 'Vehicle speed too low',
+	[0x8A] = 'Throttle pedal too high',
+	[0x8B] = 'Throttle pedal too low',
+	[0x8C] = 'Transmission range not in neutral',
+	[0x8D] = 'Transmissuin range not in gear',
+	[0x8F] = 'Brake not closed',
+	[0x90] = 'Sifter lever not in park',
+	[0x91] = 'Torque converter clutch locked',
+	[0x92] = 'Voltage too high',
+	[0x93] = 'Voltage too low',
+}
+
+---------------------- Vehicle Info Menu --------------------------------------
 
 function vin(oldvalue,id)
 	echoWrite("0902\r")
 	udsLen=receive()
 	if udsLen>0 then
-		if udsBuffer[1]==73 then
+		if udsBuffer[1]==tonumber(9)+40 then
 			local pos=4
 			local res=""
 			while pos <= udsLen and pos < 36 do
@@ -24,6 +68,9 @@ function vin(oldvalue,id)
 				pos= pos +1
 			end
 			return res
+		elseif udsBuffer[1]== 0x7F then
+			nrcCode= nrcCodes[udsBuffer[3]]			
+			return "NRC: "..string.format("0x%x",udsBuffer[3]).." = "..nrcCode
 		else
 			return "Error"
 		end
@@ -33,12 +80,10 @@ function vin(oldvalue,id)
 end
 ---------------------- Clear Trouble Codes --------------------------------------
 
-
 function clearDTC(oldvalue,id)
 	echoWrite("04\r")
 	return "Codes Deleted"
 end
-
 
 ---------------------- Sensor Data Menu --------------------------------------
 
@@ -52,13 +97,9 @@ function CalcNumPid( byteNr , nrOfBytes, multiplier, offset, unit)
 	return value ..unit
 end
 
-
-
-
 -- here it becomes tricky: store the necessary function calls as a id- indexed hash table
 
 -- parameter taken from http://en.wikipedia.org/wiki/OBD-II_PIDs
-
 
 local PID01CMDs = {
 	------------------------ these are the lines copied from the "CalcNumPid" section in the OBD2_PIDs - OpenOffice- File
@@ -153,7 +194,6 @@ id0x44 = { byte = 1 , size = 1 , mult = 0 , offset = 0, unit = "N/A"} ,
   }
 
 
-
 function getNumPIDs(oldvalue,id)
         print(" anfang getNumPIDs")
 	id = string.sub(id,3)  -- remove the leading 0x
@@ -174,6 +214,9 @@ function getNumPIDs(oldvalue,id)
 			paramList=PID01CMDs["id0x"..id]
 			res= paramList ~= null and CalcNumPid( paramList.byte , paramList.size , paramList.mult , paramList.offset, paramList.unit)  or "index error"
 			return res
+		elseif udsBuffer[1]== 0x7F then
+			nrcCode= nrcCodes[udsBuffer[3]]			
+			return "NRC: "..string.format("0x%x",udsBuffer[3]).." = "..nrcCode
 		else
 			return "Error"
 		end
@@ -203,6 +246,23 @@ function createCall(availPIDs, id, title, func)
 	end
 end
 
+function selectModuleID(oldvalue,id)
+	index = tonumber(oldvalue)
+
+	if index == 0 then
+		setModuleID("7DF") -- set legislated OBD/WWH-OBD functional request ID
+		setCANFilter(1,"7E8","7FF") -- set CAN-Filter of ECU request/response CAN-ID range
+		setSendID("7E8") 	-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
+		print ("index: "..index..", ModuleID: 7DF, SendID: 7E8")
+	else
+		setModuleID(string.format("%3X",index+0x7E0-1)) -- set legislated OBD/WWH-OBD functional request ID
+		setCANFilter(1,string.format("%3X",index+0x7E8-1),"7FF") -- set CAN-Filter of ECU request/response CAN-ID range
+		setSendID(string.format("%3X",index+0x7E8-1)) 	-- set default to legislated OBD/WWH-OBD physical response ID	
+		print ("index: "..index..", ModuleID: "..string.format("%3X",index+0x7E0-1)..", SendID: "..string.format("%3X",index+0x7E8-1))
+	end
+
+	return oldvalue 
+end
 
 function createCMD01Menu(oldvalue,id)
 	echoWrite("0100\r")
@@ -258,7 +318,9 @@ function createCMD01Menu(oldvalue,id)
 			else
 				return "No avail. PIDs found"
 			end
-
+		elseif udsBuffer[1]== 0x7F then
+			nrcCode= nrcCodes[udsBuffer[3]]			
+			return "NRC: "..string.format("0x%x",udsBuffer[3]).." = "..nrcCode
 		else
 			return "Error"
 		end
@@ -302,7 +364,9 @@ function createCMD02Menu(oldvalue,id)
 			else
 				return "No avail. PIDs found"
 			end
-
+		elseif udsBuffer[1]== 0x7F then
+			nrcCode= nrcCodes[udsBuffer[3]]			
+			return "NRC: "..string.format("0x%x",udsBuffer[3]).." = "..nrcCode
 		else
 			return "Error"
 		end
@@ -366,7 +430,9 @@ function createCMD03Menu(oldvalue,id)
 			else
 				return "No avail. PIDs found"
 			end
-
+		elseif udsBuffer[1]== 0x7F then
+			nrcCode= nrcCodes[udsBuffer[3]]			
+			return "NRC: "..string.format("0x%x",udsBuffer[3]).." = "..nrcCode
 		else
 			return "Error"
 		end
@@ -408,6 +474,9 @@ function showdtcs(oldvalue,id)
 				end
 				return tostring(nrOfDTC).." DTC(s)"
 			end
+		elseif udsBuffer[1]== 0x7F then
+			nrcCode= nrcCodes[udsBuffer[3]]			
+			return "NRC: "..string.format("0x%x",udsBuffer[3]).." = "..nrcCode
 		else
 			return "Error"
 		end
@@ -426,9 +495,7 @@ function Start(oldvalue,id)
 	-- do all the bus swttings in once
 	deactivateBus()
 	setBus(BusID)
-	setModuleID("7DF") -- set legislated OBD/WWH-OBD functional request ID
-	setCANFilter(1,"7E8","7F0") -- set CAN-Filter of ECU request/response CAN-ID range
-	setSendID("7E8") 	-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
+	-- settings for module specific Request/Response IDs are done within the Combobox from the Mainscreen (selectModuleID)
 	-- start the mail loop
 	Main(oldvalue,id)
 	return oldvalue
@@ -442,11 +509,21 @@ end
 function Main(oldvalue,id)
 	openPage("OOBD-ME Main")
 	addElement("Sensor Data >", "createCMD01Menu",">>>",0x1, "")
-        addElement("Snapshot Data >", "createCMD02Menu",">>>",0x1, "")
-        addElement("Dynamic Menu3 >", "createCMD03Menu",">>>",0x1, "")
+    addElement("Snapshot Data >", "createCMD02Menu",">>>",0x1, "")
+    addElement("Dynamic Menu3 >", "createCMD03Menu",">>>",0x1, "")
 	addElement("Trouble Codes", "showdtcs","-",0x0, "")
 	addElement("VIN Number", "vin","-",0x2, "")
 	addElement("Clear Trouble Codes", "clearDTC","-",0x0, "")
+	addElement("Request-ID", "selectModuleID", "0" ,0x0, "",{  type="Combo", 
+				content={"7DF - all", 
+						 "7E0 - ECM",
+						 "7E1 - TCM",
+						 "7E2 - Reserved",
+						 "7E3 - Reserved",
+						 "7E4 - Reserved",
+						 "7E5 - Reserved",
+						 "7E6 - Reserved",
+						 "7E7 - Reserved"}} )
 	addElement("System Info >>>", "SysInfo_Menu",">>>",0x1, "")
 	addElement("Greetings", "greet","",0x0, "")
 	pageDone()
