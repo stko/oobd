@@ -11,6 +11,17 @@ OutFile "OOBDesk_Setup_Branded.exe"
 RequestExecutionLevel user
 XPStyle on
 
+var fileToMake
+
+Function createDummy 
+	ClearErrors
+	FileOpen $0 $fileToMake w
+	IfErrors noFile
+	FileWrite $0 "just a dummy file to satisfy the class loader"
+	FileClose $0
+noFile:
+FunctionEnd
+
 
 InstallDir "$APPDATA\OOBD\OOBDesk"
 InstallDirRegKey HKCU "SOFTWARE\OOBD\OOBDesk" "InstDir"
@@ -29,6 +40,7 @@ LicenseForceSelection checkbox
 
 Section "OOBDesk"
 SetOutPath $INSTDIR
+
 CreateDirectory $INSTDIR\lib
 File /oname=$INSTDIR\lib\appframework-1.0.3.jar dist/lib/appframework-1.0.3.jar
 File /oname=$INSTDIR\lib\jna.jar dist/lib/jna.jar
@@ -37,15 +49,34 @@ File /oname=$INSTDIR\lib\purejavacomm.jar dist/lib/purejavacomm.jar
 File /oname=$INSTDIR\lib\RXTXcomm.jar dist/lib/RXTXcomm.jar
 File /oname=$INSTDIR\lib\swing-worker-1.1.jar dist/lib/swing-worker-1.1.jar
 
+File /oname=$INSTDIR\lib\jetty-continuation-7.6.13.v20130916.jar dist/lib/jetty-continuation-7.6.13.v20130916.jar
+File /oname=$INSTDIR\lib\jetty-http-7.6.13.v20130916.jar dist/lib/jetty-http-7.6.13.v20130916.jar
+File /oname=$INSTDIR\lib\jetty-io-7.6.13.v20130916.jar dist/lib/jetty-io-7.6.13.v20130916.jar
+File /oname=$INSTDIR\lib\jetty-server-7.6.13.v20130916.jar dist/lib/jetty-server-7.6.13.v20130916.jar
+File /oname=$INSTDIR\lib\jetty-util-7.6.13.v20130916.jar dist/lib/jetty-util-7.6.13.v20130916.jar
+File /oname=$INSTDIR\lib\jetty-websocket-7.6.13.v20130916.jar dist/lib/jetty-websocket-7.6.13.v20130916.jar
+File /oname=$INSTDIR\lib\servlet-api-2.5.jar dist/lib/servlet-api-2.5.jar
+#File /r dist/lib
 
+
+
+CreateDirectory $INSTDIR\bus
+StrCpy $fileToMake "$INSTDIR\bus\BusCom.class"
+Call createDummy 
+CreateDirectory $INSTDIR\scriptengine
+StrCpy $fileToMake  "$INSTDIR\scriptengine\ScriptengineLua.class"
+Call createDummy
+CreateDirectory $INSTDIR\uihandler
+StrCpy $fileToMake  "$INSTDIR\uihandler\UIHandler.class"
+Call createDummy
 
 #File /r  "build/classes/skdsswing/bus"
-File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/bus"
-File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/port"
-File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/db"
-File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/scriptengine"
-File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/protocol"
-File /r  "build/classes/org/oobd/ui/uihandler"
+#File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/bus"
+#File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/port"
+#File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/db"
+#File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/scriptengine"
+#File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/protocol"
+#File /r  "build/classes/org/oobd/ui/uihandler"
 File /oname=OOBDesk.jar "dist/OOBDesk_Rxxx_Branded.jar"
 File /oname=oobdcore.props  "oobdcore_dist.props"
 #File  "enginelua_dist.props"
