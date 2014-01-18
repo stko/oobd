@@ -17,11 +17,10 @@
 </target>
 <target name="-post-init" description="Sets the buildversion for the current build">
     <exec outputproperty="svna.version" executable="svnversion">
-        <arg value="-c" />
         <redirector>
             <outputfilterchain>
                 <tokenfilter>
-                    <replaceregex pattern="^[0-9]*:?" replace="" flags="g"/>
+                    <replaceregex pattern="^[0-9]*:" replace="" flags="g"/>
                     <replaceregex pattern="M" replace="" flags="g"/>
                 </tokenfilter>
             </outputfilterchain>
