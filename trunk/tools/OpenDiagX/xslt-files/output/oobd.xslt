@@ -22,9 +22,9 @@ dofile("../lib_protocol/module-uds.lua")
 <xsl:template match="oobdobx">
 moduleName = '<xsl:value-of select="./Name"/>'
 shortName = '<xsl:value-of select="./ShortName"/>'
-ModuleID = "0x<xsl:call-template name="trim4"><xsl:with-param name="string" select="./PhysAdress"/></xsl:call-template>"
-ResponseID = "0x<xsl:call-template name="trim4"><xsl:with-param name="string" select="./RespAdress"/></xsl:call-template>"
-FunctionalID = "0x<xsl:call-template name="trim4"><xsl:with-param name="string" select="./FuncAdress"/></xsl:call-template>"
+ModuleID = "id0x<xsl:call-template name="trim4"><xsl:with-param name="string" select="./PhysAdress"/></xsl:call-template>"
+ResponseID = "id0x<xsl:call-template name="trim4"><xsl:with-param name="string" select="./RespAdress"/></xsl:call-template>"
+FunctionalID = "id0x<xsl:call-template name="trim4"><xsl:with-param name="string" select="./FuncAdress"/></xsl:call-template>"
 BusID = "<xsl:value-of select="./Bus"/>";
 
 secCodes= {}
