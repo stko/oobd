@@ -2,6 +2,12 @@
 <xsl:stylesheet version="1.0"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
+<xsl:template name="trim4">
+<xsl:param name="string" select="'left'" />
+<xsl:value-of select="substring(concat('0000',normalize-space($string)), (string-length(normalize-space($string))+1))"/>
+</xsl:template>
+
+
 <xsl:template match="/">
   <xsl:apply-templates/>
 
@@ -16,9 +22,9 @@ dofile("../lib_protocol/module-uds.lua")
 <xsl:template match="oobdobx">
 moduleName = '<xsl:value-of select="./Name"/>'
 shortName = '<xsl:value-of select="./ShortName"/>'
-ModuleID = "<xsl:value-of select="./PhysAdress"/>"
-ResponseID = "<xsl:value-of select="./RespAdress"/>"
-FunctionalID = "<xsl:value-of select="./FuncAdress"/>"
+ModuleID = "0x<xsl:call-template name="trim4"><xsl:with-param name="string" select="./PhysAdress"/></xsl:call-template>"
+ResponseID = "0x<xsl:call-template name="trim4"><xsl:with-param name="string" select="./RespAdress"/></xsl:call-template>"
+FunctionalID = "0x<xsl:call-template name="trim4"><xsl:with-param name="string" select="./FuncAdress"/></xsl:call-template>"
 BusID = "<xsl:value-of select="./Bus"/>";
 
 secCodes= {}
