@@ -285,54 +285,55 @@ function setModuleID(id)
   end
 end
 
-function deactivateBus()
-  if hardwareID == 2 then
-   echoWrite("p 5 0\r")
-   elseif hardwareID==3 or hardwareID==4 then
-    echoWrite("p 8 2 0\r")
+function activateBus()
+	if hardwareID == 2 then
+		echoWrite("p 5 3\r")
+	elseif hardwareID==3 or hardwareID==4 then
+		echoWrite("p 8 2 3\r")
   end
 end
 
+function deactivateBus()
+	if hardwareID == 2 then
+		echoWrite("p 5 0\r")
+	elseif hardwareID==3 or hardwareID==4 then
+		echoWrite("p 8 2 0\r")
+  end
+end
 
 function setBus(bus)
   if lastSwitchedBus ~= bus then
     if hardwareID == 2 then
       if bus == "HS-CAN" then
-	echoWrite("p 6 3\r")
+		echoWrite("p 6 3\r")
       end
       if bus == "IMS-CAN" then
-	echoWrite("p 6 3\r")
+		echoWrite("p 6 3\r")
       end
       if bus == "MS-CAN" then
-	echoWrite("p 6 1\r")
+		echoWrite("p 6 1\r")
       end
-    -- activate bus
-	echoWrite("p 5 3\r")
     elseif hardwareID == 3 then
       if bus == "HS-CAN" then
-	echoWrite("p 8 3 3\r")
+		echoWrite("p 8 3 3\r")
       elseif bus == "IMS-CAN" then
-	echoWrite("p 8 3 3\r")
+		echoWrite("p 8 3 3\r")
       elseif bus == "MS-CAN" then
-	echoWrite("p 8 3 1\r")
+		echoWrite("p 8 3 1\r")
       end
-      serWait(".|:",2000) -- wait 2 secs for an response
-    -- activate bus
-      echoWrite("p 8 2 3\r")
+		serWait(".|:",2000) -- wait 2 secs for an response
     elseif hardwareID == 4 then
       if bus == "HS-CAN" then
-	echoWrite("p 8 3 3\r")
-	echoWrite("p 8 4 0\r")
+		echoWrite("p 8 3 3\r")
+		echoWrite("p 8 4 0\r")
       elseif bus == "IMS-CAN" then
-	echoWrite("p 8 3 3\r")
-	echoWrite("p 8 4 0\r")
+		echoWrite("p 8 3 3\r")
+		echoWrite("p 8 4 0\r")
       elseif bus == "MS-CAN" then
-	echoWrite("p 8 3 1\r")
-	echoWrite("p 8 4 1\r")
+		echoWrite("p 8 3 1\r")
+		echoWrite("p 8 4 1\r")
       end
-      serWait(".|:",2000) -- wait 2 secs for an response
-    -- activate bus
-      echoWrite("p 8 2 3\r")
+		serWait(".|:",2000) -- wait 2 secs for an response
     end
     lastSwitchedBus = bus
   end
