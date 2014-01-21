@@ -430,9 +430,10 @@ end
 function Start(oldvalue,id)
 	identifyOOBDInterface()
 	
-	-- do all the bus swttings in once
+	-- do all the bus settings in once
 	deactivateBus()
 	setBus(BusID)
+	activateBus()
 	-- settings for module specific Request/Response IDs are done within the Combobox from the Mainscreen (selectModuleID)
 	-- start the mail loop
 	Main(oldvalue,id)
