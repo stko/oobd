@@ -548,8 +548,8 @@ end
 
 function SysInfo_Menu(oldvalue,id)
 	openPage("Sysinfo")
-	addElement("DXM Serial", "interface_serial","-",0x2, "")
-	addElement("DXM BIOS", "interface_version","-",0x2, "")
+	addElement("Serial", "interface_serial","-",0x2, "")
+	addElement("BIOS", "interface_version","-",0x2, "")
 	addElement("Power", "interface_voltage","-",0x6, "")
 	addElement("Which Bus?", "interface_bus","-",0x2, "")
 	addElement("<<< Main", "Main","<<<",0x10, "")
