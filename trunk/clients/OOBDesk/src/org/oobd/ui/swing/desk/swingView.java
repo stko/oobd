@@ -42,7 +42,7 @@ import org.oobd.base.support.Onion;
 
 
 import java.util.Vector;
-import java.util.Properties;
+import java.util.prefs.Preferences;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -65,7 +65,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     final static String DIAGNOSEPANEL = "card3";
     final static String SETTINGSPANEL = "card4";
     Core oobdCore;
-    Properties appProbs;
+    Preferences appProbs;
     private String scriptEngineID = null;
     private String scriptEngineVisibleName;
     private Vector<IFvisualizer> pageObjects = null;
@@ -694,14 +694,14 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     private void backButtonLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonLabelMouseClicked
 
-        appProbs.setProperty(OOBDConstants.PropName_ScriptDir, scriptDir.getText());
-        appProbs.setProperty(OOBDConstants.PropName_SerialPort, comportComboBox.getEditor().getItem().toString());
-        oobdCore.getSystemIF().saveProperty(FT_PROPS,
+        appProbs.put(OOBDConstants.PropName_ScriptDir, scriptDir.getText());
+        appProbs.put(OOBDConstants.PropName_SerialPort, comportComboBox.getEditor().getItem().toString());
+        oobdCore.getSystemIF().savePreferences(FT_PROPS,
                 OOBDConstants.AppPrefsFileName, appProbs);
-        String script = appProbs.getProperty(OOBDConstants.PropName_ScriptName, null);
+        String script = appProbs.get(OOBDConstants.PropName_ScriptName, null);
         scriptSelectComboBox.removeAllItems();
         int i = -1;
-        ArrayList<Archive> files = Factory.getDirContent(appProbs.getProperty(OOBDConstants.PropName_ScriptDir, null));
+        ArrayList<Archive> files = Factory.getDirContent(appProbs.get(OOBDConstants.PropName_ScriptDir, null));
         for (Archive file : files) {
             scriptSelectComboBox.addItem(file);
             if (file.toString().equalsIgnoreCase(script)) {
@@ -720,8 +720,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             return;
         }
         String scriptName = scriptSelectComboBox.getSelectedItem().toString();
-        appProbs.setProperty(OOBDConstants.PropName_ScriptName, scriptName);
-        oobdCore.getSystemIF().saveProperty(FT_PROPS,
+        appProbs.put(OOBDConstants.PropName_ScriptName, scriptName);
+        oobdCore.getSystemIF().savePreferences(FT_PROPS,
                 OOBDConstants.AppPrefsFileName, appProbs);
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         cl.show(mainPanel, DIAGNOSEPANEL);
@@ -740,7 +740,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         Enumeration pList = null;
         Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "OS detected: {0}", osname);
         int portListIndex = -1;
-        String port = appProbs.getProperty(OOBDConstants.PropName_SerialPort, null);
+        String port = appProbs.get(OOBDConstants.PropName_SerialPort, null);
         try {
             if (osname.startsWith("windows")) {
                 pList = purejavacomm.CommPortIdentifier.getPortIdentifiers();
@@ -777,8 +777,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         } else {
             comportComboBox.setSelectedItem(port);
         }
-        scriptDir.setText(appProbs.getProperty(OOBDConstants.PropName_ScriptDir, ""));
-        pgpEnabled.setSelected("true".equalsIgnoreCase(appProbs.getProperty(OOBDConstants.PropName_PGPEnabled, "")));
+        scriptDir.setText(appProbs.get(OOBDConstants.PropName_ScriptDir, ""));
+        pgpEnabled.setSelected("true".equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_PGPEnabled, "")));
         updateUI();
     }
 
@@ -800,7 +800,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
         pgpStatus.setText("PGP Key Status: " + pgpStatusText);
         if (pgp != 0) {
-            appProbs.setProperty(OOBDConstants.PropName_PGPEnabled, "false");
+            appProbs.putBoolean(OOBDConstants.PropName_PGPEnabled, false);
             pgpEnabled.setSelected(false);
             pgpEnabled.setEnabled(false);
             pgpImportKeys.setText("Import PGP keys now");
@@ -816,7 +816,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private void chooseScriptDirectoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseScriptDirectoryButtonActionPerformed
         JFileChooser chooser = new JFileChooser();
         File oldDir = null;
-        String oldDirName = appProbs.getProperty(OOBDConstants.PropName_ScriptDir, null);
+        String oldDirName = appProbs.get(OOBDConstants.PropName_ScriptDir, null);
         if (oldDirName != null) {
             oldDir = new File(oldDirName);
         }
@@ -838,7 +838,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (chooser.showOpenDialog(this.getFrame())
                 == JFileChooser.APPROVE_OPTION) {
-            appProbs.setProperty(OOBDConstants.PropName_ScriptDir, chooser.getSelectedFile().toString());
+            appProbs.put(OOBDConstants.PropName_ScriptDir, chooser.getSelectedFile().toString());
             scriptDir.setText(chooser.getSelectedFile().toString());
         }
     }//GEN-LAST:event_chooseScriptDirectoryButtonActionPerformed
@@ -854,7 +854,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         JFileChooser chooser = new JFileChooser();
         File oldDir = null;
-        String oldDirName = appProbs.getProperty(OOBDConstants.PropName_OutputDir, null);
+        String oldDirName = appProbs.get(OOBDConstants.PropName_OutputDir, null);
         if (oldDirName != null) {
             oldDir = new File(oldDirName);
         }
@@ -881,8 +881,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                 FileWriter os = new FileWriter(chooser.getSelectedFile().toString());
                 os.write(jTextAreaOutput.getText());
                 os.close();
-                appProbs.setProperty(OOBDConstants.PropName_OutputDir, chooser.getCurrentDirectory().toString());
-                oobdCore.getSystemIF().saveProperty(FT_PROPS,
+                appProbs.put(OOBDConstants.PropName_OutputDir, chooser.getCurrentDirectory().toString());
+                oobdCore.getSystemIF().savePreferences(FT_PROPS,
                         OOBDConstants.AppPrefsFileName, appProbs);
 
             } catch (IOException ex) {
@@ -927,7 +927,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }//GEN-LAST:event_gridBiggerButtonActionPerformed
 
     private void pgpEnabledActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pgpEnabledActionPerformed
-        appProbs.setProperty(OOBDConstants.PropName_PGPEnabled, pgpEnabled.isSelected() ? "true" : "false");
+        appProbs.putBoolean(OOBDConstants.PropName_PGPEnabled, pgpEnabled.isSelected());
 
     }//GEN-LAST:event_pgpEnabledActionPerformed
 
@@ -1048,11 +1048,11 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     public void registerOobdCore(Core core) {
         oobdCore = core;
-        appProbs = oobdCore.getSystemIF().loadProperty(FT_PROPS,
+        appProbs = oobdCore.getSystemIF().loadPreferences(FT_PROPS,
                 OOBDConstants.AppPrefsFileName);
-        String script = appProbs.getProperty(OOBDConstants.PropName_ScriptName, null);
+        String script = appProbs.get(OOBDConstants.PropName_ScriptName, null);
         int i = -1;
-        ArrayList<Archive> files = Factory.getDirContent(appProbs.getProperty(OOBDConstants.PropName_ScriptDir, null));
+        ArrayList<Archive> files = Factory.getDirContent(appProbs.get(OOBDConstants.PropName_ScriptDir, null));
         for (Archive file : files) {
             scriptSelectComboBox.addItem(file);
             if (file.toString().equalsIgnoreCase(script)) {
@@ -1093,7 +1093,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     public void announceUIHandler(String id, String visibleName) {
         Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: UIHandler-ID: {0} visibleName:{1}", new Object[]{id, visibleName
                 });
-        if (appProbs.getProperty(OOBDConstants.PropName_UIHander, "UIHandler").equalsIgnoreCase(visibleName)) {
+        if (appProbs.get(OOBDConstants.PropName_UIHander, "UIHandler").equalsIgnoreCase(visibleName)) {
             Onion onion = new Onion();
             String seID = oobdCore.createUIHandler(id, onion);
 
@@ -1329,7 +1329,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         try {
             InputStream keyfile = oobdCore.getSystemIF().generateResourceStream(
                     OOBDConstants.FT_RAW,
-                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_USER_KEYFILE_NAME);
+                    appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_USER_KEYFILE_NAME);
             newUserKeyExist = keyfile != null;
             keyfile.close();
         } catch (Exception e) {
@@ -1338,7 +1338,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         try {
             InputStream keyfile = oobdCore.getSystemIF().generateResourceStream(
                     OOBDConstants.FT_RAW,
-                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_GROUP_KEYFILE_NAME);
+                    appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_GROUP_KEYFILE_NAME);
             newGroupKeyExist = keyfile != null;
             keyfile.close();
         } catch (Exception e) {
@@ -1357,18 +1357,18 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }
 
     private void importKeyFiles() {
-        if (importsingleKeyFile(appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_USER_KEYFILE_NAME,
+        if (importsingleKeyFile(appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_USER_KEYFILE_NAME,
                 OOBDConstants.PGP_USER_KEYFILE_NAME)) {
             File f = new File(oobdCore.getSystemIF().generateUIFilePath(
                     OOBDConstants.FT_SCRIPT,
-                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_USER_KEYFILE_NAME));
+                    appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_USER_KEYFILE_NAME));
             f.delete();
         }
-        if (importsingleKeyFile(appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_GROUP_KEYFILE_NAME,
+        if (importsingleKeyFile(appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_GROUP_KEYFILE_NAME,
                 OOBDConstants.PGP_GROUP_KEYFILE_NAME)) {
             File f = new File(oobdCore.getSystemIF().generateUIFilePath(
                     OOBDConstants.FT_SCRIPT,
-                    appProbs.getProperty(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_GROUP_KEYFILE_NAME));
+                    appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_GROUP_KEYFILE_NAME));
             f.delete();
         }
     }

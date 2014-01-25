@@ -5,7 +5,7 @@
 package org.oobd.ui.swing.support;
 
 import java.io.FileNotFoundException;
-import java.util.Properties;
+import java.util.prefs.Preferences;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.FileHandler;
@@ -73,8 +73,8 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                         if (classType.isAssignableFrom(source)) {
                             // save unitialized class object in hashmap
                             myInstances.put(name[0], source);
-                        }else{
-                             Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, classPrefix + name[0]+"can not be inherited from "+classType.getName());
+                        } else {
+                            Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, classPrefix + name[0] + "can not be inherited from " + classType.getName());
                         }
 
                     } catch (ClassNotFoundException ex) {
@@ -154,11 +154,11 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                 default:
                     throw new java.util.MissingResourceException("Resource not known",
                             "OOBDApp", resourceName);
- 
+
             }
 
         } catch (Exception e) {
-            Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "generateResourceStream: File {0} not loaded",resourceName);
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "generateResourceStream: File {0} not loaded", resourceName);
         }
         return resource;
     }
@@ -180,42 +180,35 @@ public class SwingSystem implements IFsystem, OOBDConstants {
 
     }
 
-    public Properties loadProperty(int pathID, String filename) {
-        Properties properties = new Properties();
-        InputStream is = null;
-        try {
-            is = new FileInputStream(generateUIFilePath(pathID, filename));
-            properties.load(is);
-        } catch (Exception e) {
-            Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "could not load property file " + filename, e);
+    public Preferences loadPreferences(int pathID, String filename) {
+        Preferences myPrefs = null;
 
-        } finally {
-            if (null != is) {
-                try {
-                    is.close();
-                } catch (Exception e) {
-                }
+        try {
+            Preferences prefsRoot;
+            prefsRoot = Preferences.userRoot();
+            prefsRoot.sync();
+            myPrefs = prefsRoot.node("com.oobd.preference." + filename);
+            if (myPrefs.keys().length == 0 && OOBDConstants.CorePrefsFileName.equalsIgnoreCase(filename)) { //no entries yet
+                myPrefs.put("EngineClassPath", "scriptengine");
+                myPrefs.put("ProtocolClassPath", "protocol");
+                myPrefs.put("BusClassPath", "bus");
+                myPrefs.put("DatabaseClassPath", "db");
+                myPrefs.put("UIHandlerClassPath", "uihandler");
             }
+            return myPrefs;
+        } catch (Exception e) {
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "could not load property id " + filename, e);
         }
-        return properties;
+        return myPrefs;
     }
 
-    public boolean saveProperty(int pathID, String filename, Properties properties) {
-        OutputStream os = null;
+    public boolean savePreferences(int pathID, String filename, Preferences properties) {
         try {
-            os = new FileOutputStream(generateUIFilePath(pathID, filename));
-            properties.store(os, null);
+            properties.flush();
             return true;
         } catch (Exception e) {
-            Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "could not load property file " + filename, e);
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "could not load property id " + filename, e);
             return false;
-        } finally {
-            if (null != os) {
-                try {
-                    os.close();
-                } catch (Exception e) {
-                }
-            }
         }
     }
 
