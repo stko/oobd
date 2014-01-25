@@ -189,11 +189,13 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             prefsRoot.sync();
             myPrefs = prefsRoot.node("com.oobd.preference." + filename);
             if (myPrefs.keys().length == 0 && OOBDConstants.CorePrefsFileName.equalsIgnoreCase(filename)) { //no entries yet
+                //generate system specific settings
                 myPrefs.put("EngineClassPath", "scriptengine");
                 myPrefs.put("ProtocolClassPath", "protocol");
                 myPrefs.put("BusClassPath", "bus");
                 myPrefs.put("DatabaseClassPath", "db");
                 myPrefs.put("UIHandlerClassPath", "uihandler");
+                myPrefs.flush();
             }
             return myPrefs;
         } catch (Exception e) {
