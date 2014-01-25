@@ -38,7 +38,7 @@ public class OOBDFlash {
                     OOBDFlashHandler.close();
                 }
             }
-            System.out.println("\nNr. of Dongles found: "+Integer.toString(serviceFound.size()));
+            System.out.println("--------------------------------------------------------\nNr. of Dongles found: "+Integer.toString(serviceFound.size()));
             if (serviceFound.size()>0) {
                 System.out.println("Select the number of the dongle to flash");
                 for (int i =0; i<serviceFound.size(); i++) {

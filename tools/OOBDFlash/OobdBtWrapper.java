@@ -7,7 +7,7 @@ import java.util.Vector;
 import javax.bluetooth.*;
 import java.io.*;
 import javax.microedition.io.*;
-
+import com.intel.bluetooth.RemoteDeviceHelper;
 
 
 /**
@@ -37,6 +37,10 @@ public class OobdBtWrapper {
         listener = new DiscoveryListener() {
 
             public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
+                try {
+                    RemoteDeviceHelper.authenticate(btDevice, "1234");
+                } catch (IOException CantAuthenticate) {
+                }
             }
 
             public void inquiryCompleted(int discType) {
