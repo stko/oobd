@@ -26,18 +26,24 @@ class OOBDFlashHandler {
             byte buffer[] = new byte[1024];
             int bytes_read;
             String greeting = "p 0 0 0\r";
-            os.write("\r".getBytes());
-            sleep(500);
+            os.write("\r\rp 0 0 0\r".getBytes());
+            sleep(200);
+            while (is.available()>0) {
+                is.read(buffer);
+                sleep(200);
+            }
             echoWrite( greeting);
             String received = readln();
+            echoWrite( greeting);
+            received = readln();
             received=received.replace("\r","\n");
             String[] temp = received.split("\\s+");
             /* print substrings */
             /*
-            for(int i =0; i < temp.length ; i++) {
-                          System.out.println(Integer.toString(i)+":"+ temp[i]);
-                      }
-            */
+                for(int i =0; i < temp.length ; i++) {
+                    System.out.println(Integer.toString(i)+":"+ temp[i]);
+                }
+                */
             if (temp.length>4 && "OOBD".equals(temp[0])) {
                 dongle.hardwareID=temp[1];
                 dongle.revision=temp[2];
@@ -68,17 +74,15 @@ class OOBDFlashHandler {
             byte buffer[] = new byte[1024];
             int bytes_read;
             while(runstatus>0) {
-                System.out.println("service found " + dongle.url);
-
                 os.write("\r\n".getBytes());
                 sleep(500);
 
                 String received = readln();
                 received=received.replace("\r","\n");
-                System.out.println("received: " + received);
+
                 String[] temp = received.split("\\s+");
                 if (temp.length>0 & temp[temp.length-1].equals(">")) {
-                    System.out.println("OOBD Firmware identified - try to activate Bootloader");
+                    System.out.print("Firmware found-");
                     echoWrite("p 0 99 2\r");
                     sleep(100);
                     echoWrite("fff");
@@ -92,7 +96,8 @@ class OOBDFlashHandler {
                     temp = received.split("\\s+");
                 }
                 if (temp.length>0 & temp[temp.length-1].equals("OOBD-Flashloader>")) {
-                    System.out.println("OOBD-Flashloader identified - try to start firmware again");
+                    System.out.print("bootloader active-");
+                    System.out.println("try to start firmware again");
                     echoWrite("3");
                     return true;
 
@@ -135,7 +140,6 @@ class OOBDFlashHandler {
 
 
     public static void close() {
-        System.out.println("Close BT device");
         try {
             if (os!=null) {
                 os.close();

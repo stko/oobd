@@ -62,13 +62,13 @@ public class OOBDFileHandler {
                         long size=zipEntryFilelist.getSize();
                         byte[] buffer= new byte[(int) size];
                         int bytes_read = zipFile.getInputStream(zipEntryFilelist).read(buffer); //read filelist into buffer
-			zipFile.getInputStream(zipEntryFilelist).close();
+                        zipFile.getInputStream(zipEntryFilelist).close();
                         FilelistContent = new String(buffer, 0, bytes_read);
                         System.out.println("Filelist content:\n"+FilelistContent);
-			Matcher matcher = Pattern.compile( "(export FWBIN=)(.+)\\n" ).matcher( FilelistContent );
-		        if (matcher.find()) {
-				System.out.println("prefered Firmware: " + matcher.group(2));
-			}
+                        Matcher matcher = Pattern.compile( "(export FWBIN=)(.+)\\n" ).matcher( FilelistContent );
+                        if (matcher.find()) {
+                            System.out.println("prefered Firmware: " + matcher.group(2));
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
