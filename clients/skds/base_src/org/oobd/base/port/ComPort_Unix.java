@@ -14,6 +14,7 @@ import gnu.io.*; // for rxtxSerial library
 //import purejavacomm.*;
 import java.io.*;
 import java.util.*;
+import java.util.prefs.Preferences;
 
 /**
  *
@@ -37,7 +38,7 @@ public class ComPort_Unix implements OOBDPort {
     }
 
     public boolean connect(Onion options) {
-        Properties props = Core.getSingleInstance().getSystemIF().loadProperty(OOBDConstants.FT_RAW, OOBDConstants.AppPrefsFileName);
+        Preferences props = Core.getSingleInstance().getSystemIF().loadPreferences(OOBDConstants.FT_RAW, OOBDConstants.AppPrefsFileName);
          String defaultPort = "";
         Boolean portFound = false;
 
@@ -57,8 +58,8 @@ public class ComPort_Unix implements OOBDPort {
             return false;
         }
 
-        defaultPort = props.getProperty(OOBDConstants.PropName_SerialPort, defaultPort);
-        boolean hwFlowControl = props.getProperty("HardwareFlowControl", "true").equalsIgnoreCase("true");
+        defaultPort = props.get(OOBDConstants.PropName_SerialPort, defaultPort);
+        boolean hwFlowControl = props.getBoolean("HardwareFlowControl", true);
 
         // parse ports and if the default port is found, initialized the reader
         // first set a workaround to find special devices like ttyACM0 , accourding to https://bugs.launchpad.net/ubuntu/+source/rxtx/+bug/367833

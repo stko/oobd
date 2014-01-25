@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Properties;
 import java.util.Iterator;
+import java.util.prefs.Preferences;
 
 import org.oobd.base.*;
 import org.oobd.base.support.Onion;
@@ -460,8 +461,8 @@ public class ScriptengineLua extends OobdScriptengine {
         }
         // given filename overrides config settings
         if (scriptFileName == null) {
-            Properties props = Core.getSingleInstance().getSystemIF().loadProperty(FT_PROPS, "enginelua.props");
-            scriptFileName = props.getProperty("LuaDefaultScript",
+            Preferences props = Core.getSingleInstance().getSystemIF().loadPreferences(FT_PROPS, "enginelua.props");
+            scriptFileName = props.get("LuaDefaultScript",
                     ENG_LUA_DEFAULT);
         }
         try {

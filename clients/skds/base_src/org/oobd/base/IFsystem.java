@@ -3,7 +3,7 @@ package org.oobd.base;
 import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.io.InputStream;
-import java.util.Properties;
+import java.util.prefs.Preferences;
 import org.oobd.base.support.Onion;
 
 /**
@@ -47,7 +47,7 @@ public interface IFsystem {
      * @param filename  the wanted proberty file itself
      * @return an empty (if new) of filled property object
      */
-    public Properties loadProperty(int pathID, String filename);
+    public Preferences loadPreferences(int pathID, String filename);
 
     /**
      * \brief saves a Property file
@@ -57,7 +57,7 @@ public interface IFsystem {
      * @param filename the wanted proberty file itself
      * @param prop  the proberty to save
     */
-    public boolean saveProperty(int pathID, String filename, Properties prop);
+    public boolean savePreferences(int pathID, String filename, Preferences prop);
 
     /**
      * \brief supplies a resource as Inputstream

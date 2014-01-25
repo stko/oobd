@@ -8,11 +8,16 @@ SetCompress force
 SetCompressor /SOLID lzma
 Name "OOBDesk"
 OutFile "OOBDesk_Setup_Branded.exe"
-RequestExecutionLevel user
+RequestExecutionLevel highest
 XPStyle on
 
-var fileToMake
 
+
+
+
+
+var fileToMake
+var menutype
 Function createDummy 
 	ClearErrors
 	FileOpen $0 $fileToMake w
@@ -22,9 +27,31 @@ Function createDummy
 noFile:
 FunctionEnd
 
+function .onInit
+	ClearErrors
+	UserInfo::GetName
+	IfErrors Continue
+	Pop $R1
+	UserInfo::GetAccountType
+	Pop $R2
+	 
+	StrCmp $R2 "Admin" 0 Continue
+	StrCpy $INSTDIR  "$PROGRAMFILES\OOBD\OOBDesk"
+	StrCpy $menutype  "OOBDesk"
+	SetShellVarContext all
+	WriteRegStr HKLM "SOFTWARE\OOBD\OOBDesk" "InstDir" $INSTDIR
+	Goto Done
+	 
+	Continue:
+	StrCpy $INSTDIR  "$APPDATA\OOBD\OOBDesk"
+	StrCpy $menutype  "OOBDesk(local)"
+	WriteRegStr HKCU "SOFTWARE\OOBD\OOBDesk" "InstDir" $INSTDIR
 
-InstallDir "$APPDATA\OOBD\OOBDesk"
-InstallDirRegKey HKCU "SOFTWARE\OOBD\OOBDesk" "InstDir"
+	 
+	Done:
+FunctionEnd
+
+
 #!include "ZipDLL.nsh"
 Page license
 Page directory
@@ -38,7 +65,9 @@ LicenseData gpl-2.0.txt
 LicenseForceSelection checkbox
 
 
+
 Section "OOBDesk"
+
 SetOutPath $INSTDIR
 
 CreateDirectory $INSTDIR\lib
@@ -69,6 +98,9 @@ Call createDummy
 CreateDirectory $INSTDIR\uihandler
 StrCpy $fileToMake  "$INSTDIR\uihandler\UIHandler.class"
 Call createDummy
+CreateDirectory $INSTDIR\db
+StrCpy $fileToMake  "$INSTDIR\db\AVLLookup.class"
+Call createDummy
 
 #File /r  "build/classes/skdsswing/bus"
 #File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/bus"
@@ -83,21 +115,23 @@ File /oname=oobdcore.props  "oobdcore_dist.props"
 File "oobd.url"
 File "jlogviewer.jar"
 File "logging.props"
+File "../../tools/bin/OOBDCopyShop.hta"
 
-CreateDirectory "$INSTDIR\logs"
+#CreateDirectory "$DOCUMENTS\OOBD-logs"
 
 #FileOpen $0 $INSTDIR\file.dat w
 #FileClose $0
 
 WriteUninstaller "$INSTDIR\uninstaller.exe"
-CreateDirectory "$SMPROGRAMS\OOBD\OOBDesk"
-#CreateShortCut "$SMPROGRAMS\OOBD\OOBDesk\OOBDesk.lnk" "javaw" "-jar -Djava.library.path=bus/lib -Djava.util.logging.config.file=logging.props OOBDesk.jar"
-#CreateShortCut "$SMPROGRAMS\OOBD\OOBDesk\OOBDesk.lnk" "java" "-jar -Djava.library.path=bus/lib -Djava.util.logging.config.file=logging.props OOBDesk.jar"
-CreateShortCut "$SMPROGRAMS\OOBD\OOBDesk\OOBDesk.lnk" "java" "-jar -Djava.library.path=port -Djava.util.logging.config.file=logging.props OOBDesk.jar"
-CreateShortCut "$SMPROGRAMS\OOBD\OOBDesk\View Log Files.lnk" "javaw" "-jar jlogviewer.jar logs\oobd0.xml"
-CreateShortCut "$SMPROGRAMS\OOBD\OOBDesk\OOBDesk Homepage.lnk" "$INSTDIR\oobd.url"
-CreateShortCut "$SMPROGRAMS\OOBD\OOBDesk\Uninstall OOBDesk.lnk" "$INSTDIR\uninstaller.exe"
-WriteRegStr HKCU "SOFTWARE\OOBD\OOBDesk" "InstDir" $INSTDIR
+CreateDirectory "$SMPROGRAMS\OOBD\$menutype"
+#CreateShortCut "$SMPROGRAMS\OOBD\$menutype\OOBDesk.lnk" "javaw" "-jar -Djava.library.path=bus/lib -Djava.util.logging.config.file=logging.props OOBDesk.jar"
+#CreateShortCut "$SMPROGRAMS\OOBD\$menutype\OOBDesk.lnk" "java" "-jar -Djava.library.path=bus/lib -Djava.util.logging.config.file=logging.props OOBDesk.jar"
+CreateShortCut "$SMPROGRAMS\OOBD\$menutype\OOBDesk.lnk" "java" "-jar -Djava.library.path=port -Djava.util.logging.config.file=logging.props OOBDesk.jar"
+CreateShortCut "$SMPROGRAMS\OOBD\$menutype\OOBDCopyShop.lnk" "$INSTDIR\OOBDCopyShop.hta"
+CreateShortCut "$SMPROGRAMS\OOBD\$menutype\View Log Files.lnk" "javaw" "-jar jlogviewer.jar"
+CreateShortCut "$SMPROGRAMS\OOBD\$menutype\OOBDesk Homepage.lnk" "$INSTDIR\oobd.url"
+CreateShortCut "$SMPROGRAMS\OOBD\$menutype\Uninstall OOBDesk.lnk" "$INSTDIR\uninstaller.exe"
+
 
 # create the sample files
 SetOutPath "$DOCUMENTS\OOBD-Scripts"
@@ -113,6 +147,7 @@ File /oname=stdlib.lbc "../OOBD-ME/res/stdlib.lbc"
 SectionEnd
 
 Section "un.Uninstall"
+SetOutPath "$INSTDIR"
 RMDir /r $INSTDIR\lib
 RMDir /r $INSTDIR\logs
 RMDir /r $INSTDIR\bus
@@ -120,7 +155,7 @@ RMDir /r $INSTDIR\port
 RMDir /r $INSTDIR\db
 RMDir /r $INSTDIR\scriptengine
 RMDir /r $INSTDIR\protocol
-RMDir /r $INSTDIR\SKDSesk
+RMDir /r $INSTDIR\uihandler
 RMDir /r $INSTDIR\OOBDesk
 Delete "$INSTDIR\jlogviewer.jar"
 Delete "$INSTDIR\OOBDesk.jar"
@@ -133,12 +168,12 @@ Delete "$INSTDIR\dtc.*"
 Delete "$INSTDIR\stdlib.lbc"
 Delete "$INSTDIR\uninstaller.exe"
 RMDir $INSTDIR
-Delete "$SMPROGRAMS\OOBD\OOBDesk\OOBDesk.lnk"
-Delete "$SMPROGRAMS\OOBD\OOBDesk\OOBDesk Homepage.lnk"
-Delete "$SMPROGRAMS\OOBD\OOBDesk\View Log Files.lnk"
-Delete "$SMPROGRAMS\OOBD\OOBDesk\Uninstall OOBDesk.lnk"
-RMDir "$SMPROGRAMS\OOBD\OOBDesk"
-RMDir "$SMPROGRAMS\OOBD"
+Delete "$SMPROGRAMS\OOBD\$menutype\OOBDesk.lnk"
+Delete "$SMPROGRAMS\OOBD\$menutype\OOBDesk Homepage.lnk"
+Delete "$SMPROGRAMS\OOBD\$menutype\View Log Files.lnk"
+Delete "$SMPROGRAMS\OOBD\$menutype\Uninstall OOBDesk.lnk"
+RMDir "$SMPROGRAMS\OOBD\$menutype"
+
 DeleteRegKey HKCU "SOFTWARE\OOBD\OOBDesk" 
 DeleteRegKey /ifempty HKCU "SOFTWARE\OOBD" 
 SectionEnd

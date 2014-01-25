@@ -35,7 +35,7 @@ import java.util.Iterator;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Properties;
+import java.util.prefs.Preferences;
 
 import org.json.JSONException;
 import org.oobd.base.support.Onion;
@@ -127,8 +127,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	String uiHandlerID = "";
 	static Core thisInstance = null; // Class variable points to only instance
 	CoreTick ticker;
-	Properties props;
-	History history;
+	Preferences props;
 	boolean runCore = true;
 
 	/**
@@ -168,38 +167,18 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		// Systeminterface
 		userInterface.registerOobdCore(this); // Anounce itself at the
 		// Userinterface
-
-		// userInterface.sm("Moin");
-		props = new Properties();
-		/*
-		 * InputStream inStream =
-		 * systemInterface.generateResourceStream(FT_PROPS,
-		 * systemInterface.generateUIFilePath(FT_PROPS,
-		 * OOBDConstants.CorePrefsFileName));
-		 */
-		try {
-			InputStream inStream = systemInterface.generateResourceStream(
-					FT_PROPS, OOBDConstants.CorePrefsFileName);
-			if (inStream != null) {
-
-				props.load(inStream);
-			}
-		} catch (Exception ignored) {
-			Logger.getLogger(Core.class.getName()).log(Level.INFO,
-					"OOBDCore.props not found");
-		}
-		history = new History();
+		props =  systemInterface.loadPreferences(FT_PROPS, OOBDConstants.CorePrefsFileName);
 
 		// ----------- load Busses -------------------------------
 		try {
 			Logger.getLogger(Core.class.getName()).log(
 					Level.CONFIG,
 					"Try to load: "
-							+ props.getProperty("BusClassPath",
+							+ props.get("BusClassPath",
 									"org.oobd.base.bus.BusCom"));
 			HashMap<String, Class<?>> classObjects = loadOobdClasses(
-					props.getProperty("BusClassPath",
-							"org.oobd.base.bus.BusCom"), props.getProperty(
+					props.get("BusClassPath",
+							"org.oobd.base.bus.BusCom"), props.get(
 							"BusClassPrefix", "org.oobd.base.bus."),
 					Class.forName("org.oobd.base.bus.OobdBus"));
 			for (Iterator iter = classObjects.keySet().iterator(); iter
@@ -235,7 +214,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		// ----------- load Connectors -------------------------------
 		try {
 			HashMap<String, Class<?>> classObjects = loadOobdClasses(
-					props.getProperty("ConnectorClassPath",
+					props.get("ConnectorClassPath",
 							"org.oobd.base.connector.ConnectorLocal"),
 					"org.oobd.base.connector.",
 					Class.forName("org.oobd.base.connector.OobdConnector"));
@@ -271,7 +250,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		// ----------- load Protocols -------------------------------
 		try {
 			HashMap<String, Class<?>> classObjects = loadOobdClasses(
-					props.getProperty("ProtocolClassPath",
+					props.get("ProtocolClassPath",
 							"org.oobd.base.protocol.ProtocolUDS"),
 					"org.oobd.base.protocol.",
 					Class.forName("org.oobd.base.protocol.OobdProtocol"));
@@ -306,7 +285,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		// ----------- load Databases -------------------------------
 		try {
 			HashMap<String, Class<?>> classObjects = loadOobdClasses(
-					props.getProperty("DatabaseClassPath",
+					props.get("DatabaseClassPath",
 							"org.oobd.base.db.AVLLookup"), "org.oobd.base.db.",
 					Class.forName("org.oobd.base.db.OobdDB"));
 			for (Iterator iter = classObjects.keySet().iterator(); iter
@@ -342,7 +321,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		// INSTANCES!-------------------------------
 		try {
 			scriptengines = loadOobdClasses(
-					props.getProperty("EngineClassPath",
+					props.get("EngineClassPath",
 							"org.oobd.base.scriptengine.ScriptengineLua"),
 					"org.oobd.base.scriptengine.",
 					Class.forName("org.oobd.base.scriptengine.OobdScriptengine"));
@@ -381,7 +360,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 		// ----------- load UIHandlers AS CLASSES, NOT AS
 		// INSTANCES!-------------------------------
 		try {
-			uiHandlers = loadOobdClasses(props.getProperty(
+			uiHandlers = loadOobdClasses(props.get(
 					"UIHandlerClassPath", "org.oobd.ui.uihandler.UIHandler"),
 					"org.oobd.ui.uihandler.",
 					Class.forName("org.oobd.base.uihandler.OobdUIHandler"));
