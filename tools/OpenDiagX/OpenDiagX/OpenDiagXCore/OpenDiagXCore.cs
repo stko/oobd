@@ -498,12 +498,16 @@ namespace org.oobd.tools.OpenDiagX
                 try2addTextnode(thisDIDEntry, iterator.Current, "Offset", "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET", "0");
                 //addTextnode(thisDIDEntry, "Units", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS"));
                 try2addTextnode(thisDIDEntry, iterator.Current, "Units", "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS", "");
+                try2addTextnode(thisDIDEntry, iterator.Current, "Min", "DATA_DEFINITION/NUMERIC_PARAMETERS/RANGE_LOW", "-");
+                try2addTextnode(thisDIDEntry, iterator.Current, "Max", "DATA_DEFINITION/NUMERIC_PARAMETERS/RANGE_HIGH", "-");
             }
             else
             {
                 addTextnode(thisDIDEntry, "Resolution", "1");
                 addTextnode(thisDIDEntry, "Offset", "0");
                 addTextnode(thisDIDEntry, "Units", "");
+                addTextnode(thisDIDEntry, "Min", "-");
+                addTextnode(thisDIDEntry, "Max", "-");
             }
         }
         private void handleSigned(XPathNodeIterator iterator)
@@ -535,12 +539,16 @@ namespace org.oobd.tools.OpenDiagX
                 try2addTextnode(thisDIDEntry, iterator.Current, "Offset", "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET", "0");
                 //addTextnode(thisDIDEntry, "Units", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS"));
                 try2addTextnode(thisDIDEntry, iterator.Current, "Units", "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS", "");
+                try2addTextnode(thisDIDEntry, iterator.Current, "Min", "DATA_DEFINITION/NUMERIC_PARAMETERS/RANGE_LOW", "-");
+                try2addTextnode(thisDIDEntry, iterator.Current, "Max", "DATA_DEFINITION/NUMERIC_PARAMETERS/RANGE_HIGH", "-");
             }
             else
             {
                 addTextnode(thisDIDEntry, "Resolution", "1");
                 addTextnode(thisDIDEntry, "Offset", "0");
                 addTextnode(thisDIDEntry, "Units", "");
+                addTextnode(thisDIDEntry, "Min", "-");
+                addTextnode(thisDIDEntry, "Max", "-");
             }
         }
         private void handleBCD(XPathNodeIterator iterator)
@@ -572,14 +580,17 @@ namespace org.oobd.tools.OpenDiagX
                 try2addTextnode(thisDIDEntry, iterator.Current, "Offset", "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET", "0");
                 //addTextnode(thisDIDEntry, "Units", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS"));
                 try2addTextnode(thisDIDEntry, iterator.Current, "Units", "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS", "");
+                try2addTextnode(thisDIDEntry, iterator.Current, "Min", "DATA_DEFINITION/NUMERIC_PARAMETERS/RANGE_LOW", "-");
+                try2addTextnode(thisDIDEntry, iterator.Current, "Max", "DATA_DEFINITION/NUMERIC_PARAMETERS/RANGE_HIGH", "-");
             }
             else
             {
                 addTextnode(thisDIDEntry, "Resolution", "1");
                 addTextnode(thisDIDEntry, "Offset", "0");
                 addTextnode(thisDIDEntry, "Units", "");
+                addTextnode(thisDIDEntry, "Min", "-");
+                addTextnode(thisDIDEntry, "Max", "-");
             }
-
         }
         private void handleFloat(XPathNodeIterator iterator)
         {
@@ -610,12 +621,16 @@ namespace org.oobd.tools.OpenDiagX
                 try2addTextnode(thisDIDEntry, iterator.Current, "Offset", "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET", "0");
                 //addTextnode(thisDIDEntry, "Units", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS"));
                 try2addTextnode(thisDIDEntry, iterator.Current, "Units", "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS", "");
+                try2addTextnode(thisDIDEntry, iterator.Current, "Min", "DATA_DEFINITION/NUMERIC_PARAMETERS/RANGE_LOW", "-");
+                try2addTextnode(thisDIDEntry, iterator.Current, "Max", "DATA_DEFINITION/NUMERIC_PARAMETERS/RANGE_HIGH", "-");
             }
             else
             {
                 addTextnode(thisDIDEntry, "Resolution", "1");
                 addTextnode(thisDIDEntry, "Offset", "0");
                 addTextnode(thisDIDEntry, "Units", "");
+                addTextnode(thisDIDEntry, "Min", "-");
+                addTextnode(thisDIDEntry, "Max", "-");
             }
         }
 
@@ -680,12 +695,16 @@ namespace org.oobd.tools.OpenDiagX
                 try2addTextnode(thisDIDEntry, iterator.Current, "Offset", "DATA_DEFINITION/NUMERIC_PARAMETERS/OFFSET", "0");
                 //addTextnode(thisDIDEntry, "Units", getpath(iterator2.Current, "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS"));
                 try2addTextnode(thisDIDEntry, iterator.Current, "Units", "DATA_DEFINITION/NUMERIC_PARAMETERS/UNITS", "");
+                try2addTextnode(thisDIDEntry, iterator.Current, "Min", "DATA_DEFINITION/NUMERIC_PARAMETERS/RANGE_LOW", "-");
+                try2addTextnode(thisDIDEntry, iterator.Current, "Max", "DATA_DEFINITION/NUMERIC_PARAMETERS/RANGE_HIGH", "-");
             }
             else
             {
                 addTextnode(thisDIDEntry, "Resolution", "1");
                 addTextnode(thisDIDEntry, "Offset", "0 ");
                 addTextnode(thisDIDEntry, "Units", "");
+                addTextnode(thisDIDEntry, "Min", "-");
+                addTextnode(thisDIDEntry, "Max", "-");
             }
         }
         private Boolean try2addTextnode(XmlElement outputNode, XPathNavigator currentNode, String tagName, String path, String defaultValue)
