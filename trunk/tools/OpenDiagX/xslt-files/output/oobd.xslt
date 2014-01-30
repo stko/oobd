@@ -121,19 +121,19 @@ selftest = {
 </xsl:template>
 
 <xsl:template match="UNSIGNED">
-<xsl:variable name="corrByteNr" select="0+number(./BytePos)"/>sd_<xsl:value-of select="number($corrByteNr)"/><xsl:value-of select="./BitPos"/> = {  bpos = <xsl:value-of select="./BytePos"/> , blen = <xsl:value-of select="./ByteNr"/> , Bpos = <xsl:value-of select="./BitPos"/> , Blen = <xsl:value-of select="./BitNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "UNSIGNED" , t = "<xsl:value-of select="./Name"/>"} ,
+<xsl:variable name="corrByteNr" select="0+number(./BytePos)"/>sd_<xsl:value-of select="number($corrByteNr)"/><xsl:value-of select="./BitPos"/> = {  bpos = <xsl:value-of select="./BytePos"/> , blen = <xsl:value-of select="./ByteNr"/> , Bpos = <xsl:value-of select="./BitPos"/> , Blen = <xsl:value-of select="./BitNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , min = "<xsl:value-of select="./Min"/>" , max = "<xsl:value-of select="./Max"/>" , unit = "<xsl:value-of select="./Units"/>" , dtype = "UNSIGNED" , t = "<xsl:value-of select="./Name"/>"} ,
 </xsl:template>
 
 <xsl:template match="SIGNED">
-<xsl:variable name="corrByteNr" select="0+number(./BytePos)"/>sd_<xsl:value-of select="number($corrByteNr)"/><xsl:value-of select="./BitPos"/> = {  bpos = <xsl:value-of select="./BytePos"/> , blen = <xsl:value-of select="./ByteNr"/> , Bpos = <xsl:value-of select="./BitPos"/> , Blen = <xsl:value-of select="./BitNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "SIGNED", t = "<xsl:value-of select="./Name"/>"} ,
+<xsl:variable name="corrByteNr" select="0+number(./BytePos)"/>sd_<xsl:value-of select="number($corrByteNr)"/><xsl:value-of select="./BitPos"/> = {  bpos = <xsl:value-of select="./BytePos"/> , blen = <xsl:value-of select="./ByteNr"/> , Bpos = <xsl:value-of select="./BitPos"/> , Blen = <xsl:value-of select="./BitNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , min = "<xsl:value-of select="./Min"/>" , max = "<xsl:value-of select="./Max"/>" , unit = "<xsl:value-of select="./Units"/>" , dtype = "SIGNED", t = "<xsl:value-of select="./Name"/>"} ,
 </xsl:template>
 
 <xsl:template match="FLOAT">
-<xsl:variable name="corrByteNr" select="0+number(./BytePos)"/>sd_<xsl:value-of select="number($corrByteNr)"/><xsl:value-of select="./BitPos"/> = {  bpos = <xsl:value-of select="./BytePos"/> , blen = <xsl:value-of select="./ByteNr"/> , Bpos = <xsl:value-of select="./BitPos"/> , Blen = <xsl:value-of select="./BitNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "FLOAT", t = "<xsl:value-of select="./Name"/>"} ,
+<xsl:variable name="corrByteNr" select="0+number(./BytePos)"/>sd_<xsl:value-of select="number($corrByteNr)"/><xsl:value-of select="./BitPos"/> = {  bpos = <xsl:value-of select="./BytePos"/> , blen = <xsl:value-of select="./ByteNr"/> , Bpos = <xsl:value-of select="./BitPos"/> , Blen = <xsl:value-of select="./BitNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , min = "<xsl:value-of select="./Min"/>" , max = "<xsl:value-of select="./Max"/>" , unit = "<xsl:value-of select="./Units"/>" , dtype = "FLOAT", t = "<xsl:value-of select="./Name"/>"} ,
 </xsl:template>
 
 <xsl:template match="BCD">
-<xsl:variable name="corrByteNr" select="0+number(./BytePos)"/>sd_<xsl:value-of select="number($corrByteNr)"/><xsl:value-of select="./BitPos"/> = {  bpos = <xsl:value-of select="./BytePos"/> , blen = <xsl:value-of select="./ByteNr"/> , Bpos = <xsl:value-of select="./BitPos"/> , Blen = <xsl:value-of select="./BitNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "BCD", t = "<xsl:value-of select="./Name"/>"} ,
+<xsl:variable name="corrByteNr" select="0+number(./BytePos)"/>sd_<xsl:value-of select="number($corrByteNr)"/><xsl:value-of select="./BitPos"/> = {  bpos = <xsl:value-of select="./BytePos"/> , blen = <xsl:value-of select="./ByteNr"/> , Bpos = <xsl:value-of select="./BitPos"/> , Blen = <xsl:value-of select="./BitNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , min = "<xsl:value-of select="./Min"/>" , max = "<xsl:value-of select="./Max"/>" , unit = "<xsl:value-of select="./Units"/>" , dtype = "BCD", t = "<xsl:value-of select="./Name"/>"} ,
 </xsl:template>
 
 <xsl:template match="ASCII">
@@ -141,7 +141,7 @@ selftest = {
 </xsl:template>
 
 <xsl:template match="BYTE">
-<xsl:variable name="corrByteNr" select="0+number(./BytePos)"/>sd_<xsl:value-of select="number($corrByteNr)"/><xsl:value-of select="./BitPos"/> = {  bpos = <xsl:value-of select="./BytePos"/> , blen = <xsl:value-of select="./ByteNr"/> , Bpos = <xsl:value-of select="./BitPos"/> , Blen = <xsl:value-of select="./BitNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , unit = "<xsl:value-of select="./Units"/>" , dtype = "BYTE", t = "<xsl:value-of select="./Name"/>"} ,
+<xsl:variable name="corrByteNr" select="0+number(./BytePos)"/>sd_<xsl:value-of select="number($corrByteNr)"/><xsl:value-of select="./BitPos"/> = {  bpos = <xsl:value-of select="./BytePos"/> , blen = <xsl:value-of select="./ByteNr"/> , Bpos = <xsl:value-of select="./BitPos"/> , Blen = <xsl:value-of select="./BitNr"/> , mult = <xsl:value-of select="./Resolution"/> , offset = <xsl:value-of select="./Offset"/> , min = "<xsl:value-of select="./Min"/>" , max = "<xsl:value-of select="./Max"/>" , unit = "<xsl:value-of select="./Units"/>" , dtype = "BYTE", t = "<xsl:value-of select="./Name"/>"} ,
 </xsl:template>
 
 <xsl:template match="ENUM">
