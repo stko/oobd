@@ -53,7 +53,7 @@ struct sockaddr_can xSendAddress;
 int iSocketSend = 0, iReturn = 0, iSendTaskList = pdTRUE;
 
 //callback function for received data
-recv_cbf reportReceicedData = NULL;
+recv_cbf reportReceivedData = NULL;
 
 void CAN1_Configuration(uint8_t CAN_BusConfig, uint8_t CAN_ModeConfig);
 
@@ -106,6 +106,7 @@ portBASE_TYPE bus_init_can()
 // CAN use the same socket for send and receive
 //iSocketSend = iSocketOpenCAN(NULL, NULL, NULL);
     iSocketSend = iSocketReceive;
+/*
     int mystate;
     DEBUGPRINT("get CAN State returns %ld\n",
 	       can_get_state(CAN_INTERFACE, &mystate));
@@ -118,7 +119,7 @@ portBASE_TYPE bus_init_can()
 	       can_set_ctrlmode(CAN_INTERFACE, &cm));
     DEBUGPRINT("can_set_bitrate: %ld\n",
 	       can_set_bitrate(CAN_INTERFACE, 500000));
-
+*/
     if (iSocketSend != 0) {
 	return pdPASS;
     } else {
@@ -431,7 +432,7 @@ portBASE_TYPE bus_param_can_spec(param_data * args)
 void bus_close_can()
 {
     extern struct CanConfig *canConfig;
-    reportReceicedData = NULL;
+    reportReceivedData = NULL;
     vSocketClose(iSocketSend);
     vSocketClose(iSocketReceive);
     vPortFree(canConfig);
@@ -452,6 +453,8 @@ void vCANReceiveAndDeliverCallbackOOBD(int iSocket)
     if (sizeof(struct can_frame) ==
 	iSocketCANReceiveISR(iSocket, &frame, &xReceiveAddress)) {
 
+
+	DEBUGPRINT("can frame received\n", 0);
 	rxCount++;
 	if (rxCount > 100000) {
 	    rxCount /= 2;
@@ -472,8 +475,8 @@ void vCANReceiveAndDeliverCallbackOOBD(int iSocket)
 	    }
 	}
 	dp.data = &frame.data[0];	// data starts here
-	if (reportReceicedData)
-	    reportReceicedData(&dp);
+	if (reportReceivedData)
+	    reportReceivedData(&dp, pdFALSE);
     }
 }
 
@@ -484,7 +487,7 @@ portBASE_TYPE busControl(portBASE_TYPE cmd, void *param)
 {
     switch (cmd) {
     case ODB_CMD_RECV:
-	reportReceicedData = param;
+	reportReceivedData = param;
 	return pdPASS;
 	break;
     default:

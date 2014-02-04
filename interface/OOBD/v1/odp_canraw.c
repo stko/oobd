@@ -136,14 +136,22 @@ transfers received telegrams into Msgqueue
  */
 //<<<< oobdtemple protocol recvdata <<<<
 
-void odp_canraw_recvdata(data_packet * p)
+void odp_canraw_recvdata(data_packet * p, portBASE_TYPE callFromISR)
 {
     MsgData *msg;
     extern xQueueHandle protocolQueue;
-    p->timestamp = xTaskGetTickCountFromISR();
     if (NULL != (msg = createDataMsg(p))) {
-	if (pdPASS != sendMsg(MSG_BUS_RECV, protocolQueue, msg)) {
+	portBASE_TYPE res = 0;
+	if (callFromISR) {
+	    res = sendMsgFromISR(MSG_BUS_RECV, protocolQueue, msg);
+	} else {
+	    res = sendMsg(MSG_BUS_RECV, protocolQueue, msg);
+	}
+	if (res != pdPASS) {
 	    DEBUGPRINT("FATAL ERROR: protocol queue is full!\n", 'a');
+	} else {
+	    DEBUGUARTPRINT
+		("\r\n*** odp_uds_recvdata: sendMsg - protocolQueue ***");
 	}
     } else {
 	DEBUGPRINT("FATAL ERROR: Out of Heap space!l\n", 'a');
