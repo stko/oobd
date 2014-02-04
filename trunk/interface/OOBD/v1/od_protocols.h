@@ -82,7 +82,7 @@
 
 //! signature of the protocol function that will be called 
 //! if data has been received or an bus error occured
-typedef void (*recv_cbf) (data_packet * p);
+typedef void (*recv_cbf) (data_packet * p, portBASE_TYPE calledFromISR);
 
 
 

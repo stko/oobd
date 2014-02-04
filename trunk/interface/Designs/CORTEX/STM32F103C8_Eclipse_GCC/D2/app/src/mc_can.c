@@ -624,7 +624,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 	dp.err = 0x00;		/* use received value for error simulations */
 	dp.data = &RxMessage.Data[0];	/* data starts here */
 	if (reportReceivedData)
-	    reportReceivedData(&dp);
+	    reportReceivedData(&dp,pdTRUE);
     }
     //  portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
     DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler finished ***");

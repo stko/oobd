@@ -350,7 +350,11 @@ sendMsgFromISR(portBASE_TYPE msgType, xQueueHandle recv, MsgData * msg)
     OdMsg odMsg;
     odMsg.msgType = msgType;
     odMsg.msgPtr = msg;
-    return xQueueSendFromISR(recv, &odMsg, 0);
+    portBASE_TYPE xTaskPreviouslyWoken = pdFALSE;
+    portBASE_TYPE res;
+    res = xQueueSendFromISR(recv, &odMsg, &xTaskPreviouslyWoken);
+    portEND_SWITCHING_ISR(xTaskPreviouslyWoken);
+    return res;
 }
 
 portBASE_TYPE

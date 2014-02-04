@@ -61,7 +61,7 @@
 #define PARAM_PROTOCOL 		    ( 1 )	//!< switch to protocol y, accourding to the available protocol table \ref protocol_table
 #define PARAM_SET_OUTPUT 		( 2 )	//!< switch to protocol y, accourding to the available protocol table \ref protocol_table
 #define PARAM_SET_PROTOCOL_AND_BUS_DEFAULT	( 3 )	//!< store default protocol and bus for next boot
-#define PARAM_SET_BTM			( 4 )  //!<
+#define PARAM_SET_BTM			( 4 )	//!<
 #define PARAM_RESET           ( 99 )	//!<  performs a soft reset
 
   /*! @} */
