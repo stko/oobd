@@ -78,9 +78,9 @@ end
 
 udsBuffer = {}
 udslen =0
-receive = null
-setTimeout = null
-setSendID = null
+receive = nil
+setTimeout = nil
+setSendID = nil
 
 -- actual hardware 
 -- 0 ELM 
