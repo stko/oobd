@@ -251,7 +251,6 @@ MsgData *createDataMsg(data_packet * data);
 //! creates a message structure. If size > 0, the data is copied into the message, otherways only the data pointer is been transmitted
 MsgData *createMsg(void *data, size_t size);
 void disposeMsg(MsgData * p);
-void disposeDataMsg(MsgData * p);
 portBASE_TYPE sendMsg(portBASE_TYPE msgType, xQueueHandle recv,
 		      MsgData * msg);
 portBASE_TYPE sendMsgFromISR(portBASE_TYPE msgType, xQueueHandle recv,

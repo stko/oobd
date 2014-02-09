@@ -51,6 +51,6 @@
  * call back function which simply delivers the received packet 
  * @param iSocket A socket desicriptor to receive the packet from.
  */
-void vCANReceiveAndDeliverCallbackOOBD(int iSocket);
+void vCANReceiveAndDeliverCallbackOOBD(int iSocket, void *pvContext);
 
 #endif				/* INC_MC_CAN_H */
