@@ -324,17 +324,6 @@ void freeODPBuffer(ODPBuffer * odpBuffer)
 
 
 
-/*
-void
-disposeDataMsg (MsgData * p)
-{
-  data_packet * dp;
-  dp=p->addr;
-  vPortFree (dp->data);
-  vPortFree (p);
-}
-*/
-
 portBASE_TYPE
 sendMsg(portBASE_TYPE msgType, xQueueHandle recv, MsgData * msg)
 {

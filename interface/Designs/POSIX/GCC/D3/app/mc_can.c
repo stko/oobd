@@ -444,7 +444,7 @@ void bus_close_can()
 
 
 
-void vCANReceiveAndDeliverCallbackOOBD(int iSocket)
+void vCANReceiveAndDeliverCallbackOOBD(int iSocket, void *pvContext)
 {
     static struct can_frame frame;
     struct sockaddr_can xReceiveAddress;
@@ -452,9 +452,6 @@ void vCANReceiveAndDeliverCallbackOOBD(int iSocket)
 
     if (sizeof(struct can_frame) ==
 	iSocketCANReceiveISR(iSocket, &frame, &xReceiveAddress)) {
-
-
-	DEBUGPRINT("can frame received\n", 0);
 	rxCount++;
 	if (rxCount > 100000) {
 	    rxCount /= 2;
@@ -476,7 +473,7 @@ void vCANReceiveAndDeliverCallbackOOBD(int iSocket)
 	}
 	dp.data = &frame.data[0];	// data starts here
 	if (reportReceivedData)
-	    reportReceivedData(&dp, pdFALSE);
+	    reportReceivedData(&dp, pdTRUE);
     }
 }
 
