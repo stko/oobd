@@ -19,6 +19,7 @@ i = 0
 msgSubject= objFile.Readline
 msgAttachName= objFile.Readline
 msgGrouplistName= objFile.Readline
+msgFingerprintName= objFile.Readline
 Do Until objFile.AtEndOfStream
 	strNextLine = objFile.Readline
 	If strNextLine <> "" Then
@@ -61,6 +62,7 @@ For each folderIdx In files
 			WScript.StdOut.WriteLine(folderIdx.Name+ " for " & match.SubMatches(0) & " with " & msgAttachName)
 			fso.CopyFile folderIdx.Name, msgAttachName
 			fso.CopyFile folderIdx.Name &".lst", msgGrouplistName
+			fso.CopyFile folderIdx.Name &".fingerprint", msgFingerprintName
 			set fileHandle =fso.GetFile(msgAttachName)
 			Set oOMail = oOApp.CreateItem(olMailItem)
 
@@ -71,6 +73,7 @@ For each folderIdx In files
 			.HTMLBody = msgBody
 			.Attachments.Add fso.GetAbsolutePathName(msgAttachName), olByValue, 1
 			.Attachments.Add fso.GetAbsolutePathName(msgGrouplistName), olByValue, 1
+			.Attachments.Add fso.GetAbsolutePathName(msgFingerprintName), olByValue, 1
 			.Send
 			End With
 

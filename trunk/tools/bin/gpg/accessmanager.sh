@@ -22,7 +22,15 @@ case $command in
 	;;
 	"deluser")
 		echo "delete " $2 " from keyring"
-		gpg --no-default-keyring --keyring ./userkey.pub --delete-key $2
+		gpg --no-default-keyring --keyring ./userkeyring.pub --delete-key $2
+	;;
+	"userfingerprint")
+		echo "show fingerprint of user " $2 
+		gpg --no-default-keyring --keyring ./userkeyring.pub --fingerprint $2
+	;;
+	"groupfingerprint")
+		echo "show fingerprint of actual groups "  
+		gpg --no-default-keyring --keyring ../oobd_groups.pub --fingerprint | more
 	;;
 	"update")
 		echo "Updating user groupkey files"
@@ -66,6 +74,12 @@ case $command in
 		echo
 		echo $SCRIPTNAME " groupkeys"
 		echo "generate group keys out of the grouplist file"
+		echo
+		echo $SCRIPTNAME " userfingerprint user"
+		echo "show fingerprint of user"
+		echo
+		echo $SCRIPTNAME " groupfingerprint"
+		echo "show fingerprints of actual groups"
 		echo
 		echo $SCRIPTNAME " sendkeys"
 		echo "send actual generated group files to users. Caution: Works only in Windows"
