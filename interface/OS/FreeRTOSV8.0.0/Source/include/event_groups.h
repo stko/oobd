@@ -1,5 +1,5 @@
 /*
-    FreeRTOS V8.0.0:rc2 - Copyright (C) 2014 Real Time Engineers Ltd.
+    FreeRTOS V8.0.0 - Copyright (C) 2014 Real Time Engineers Ltd.
     All rights reserved
 
     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
@@ -482,7 +482,11 @@ EventBits_t xEventGroupSetBits( EventGroupHandle_t xEventGroup, const EventBits_
  * \defgroup xEventGroupSetBitsFromISR xEventGroupSetBitsFromISR
  * \ingroup EventGroup
  */
-#define xEventGroupSetBitsFromISR( xEventGroup, uxBitsToSet, pxHigherPriorityTaskWoken ) xTimerPendFunctionCallFromISR( vEventGroupSetBitsCallback, ( void * ) xEventGroup, ( uint32_t ) uxBitsToSet, pxHigherPriorityTaskWoken )
+#if( configUSE_TRACE_FACILITY == 1 )
+	BaseType_t xEventGroupSetBitsFromISR( EventGroupHandle_t xEventGroup, const EventBits_t uxBitsToSet, BaseType_t *pxHigherPriorityTaskWoken );
+#else
+	#define xEventGroupSetBitsFromISR( xEventGroup, uxBitsToSet, pxHigherPriorityTaskWoken ) xTimerPendFunctionCallFromISR( vEventGroupSetBitsCallback, ( void * ) xEventGroup, ( uint32_t ) uxBitsToSet, pxHigherPriorityTaskWoken )
+#endif
 
 /**
  * event_groups.h
@@ -663,6 +667,9 @@ void vEventGroupDelete( EventGroupHandle_t xEventGroup );
 /* For internal use only. */
 void vEventGroupSetBitsCallback( void *pvEventGroup, const uint32_t ulBitsToSet );
 
+#if (configUSE_TRACE_FACILITY == 1)
+	UBaseType_t uxEventGroupGetNumber( void* xEventGroup );
+#endif
 
 #ifdef __cplusplus
 }

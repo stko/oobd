@@ -1,5 +1,5 @@
 /*
-    FreeRTOS V8.0.0:rc2 - Copyright (C) 2014 Real Time Engineers Ltd.
+    FreeRTOS V8.0.0 - Copyright (C) 2014 Real Time Engineers Ltd.
     All rights reserved
 
     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
@@ -66,12 +66,29 @@
 #ifndef INC_FREERTOS_H
 #define INC_FREERTOS_H
 
-
 /*
  * Include the generic headers required for the FreeRTOS port being used.
  */
 #include <stddef.h>
-#include <stdint.h>
+
+/*
+ * If stdint.h cannot be located then:
+ *   + If using GCC ensure the -nostdint options is *not* being used.
+ *   + Ensure the project's include path includes the directory in which your
+ *     compiler stores stdint.h.
+ *   + Set any compiler options necessary for it to support C99, as technically
+ *     stdint.h is only mandatory with C99 (FreeRTOS does not require C99 in any
+ *     other way).
+ *   + The FreeRTOS download includes a simple stdint.h definition that can be
+ *     used in cases where none is provided by the compiler.  The files only
+ *     contains the typedefs required to build FreeRTOS.  Read the instructions
+ *     in FreeRTOS/source/stdint.readme for more information.
+ */
+#include <stdint.h> /* READ COMMENT ABOVE. */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Basic FreeRTOS definitions. */
 #include "projdefs.h"
@@ -232,8 +249,8 @@ is included as it is used by the port layer. */
 	#define INCLUDE_xEventGroupSetBitFromISR 0
 #endif
 
-#ifndef INCLUDE_xTimerPendFunctionCallFromISR
-	#define INCLUDE_xTimerPendFunctionCallFromISR 0
+#ifndef INCLUDE_xTimerPendFunctionCall
+	#define INCLUDE_xTimerPendFunctionCall 0
 #endif
 
 #ifndef configASSERT
@@ -550,20 +567,20 @@ is included as it is used by the port layer. */
 	#define traceEVENT_GROUP_CREATE_FAILED()
 #endif
 
-#ifndef traceEVENT_GROUP_SYNC_START
-	#define traceEVENT_GROUP_SYNC_START( xEventGroup, uxBitsToSet )
+#ifndef traceEVENT_GROUP_SYNC_BLOCK
+	#define traceEVENT_GROUP_SYNC_BLOCK( xEventGroup, uxBitsToSet, uxBitsToWaitFor )
 #endif
 
 #ifndef traceEVENT_GROUP_SYNC_END
-	#define traceEVENT_GROUP_SYNC_END( xEventGroup, uxReturn )
+	#define traceEVENT_GROUP_SYNC_END( xEventGroup, uxBitsToSet, uxBitsToWaitFor, xTimeoutOccurred ) ( void ) xTimeoutOccurred
 #endif
 
-#ifndef traceEVENT_GROUP_WAIT_BITS_START
-	#define traceEVENT_GROUP_WAIT_BITS_START( xEventGroup, uxBitsToWaitFor )
+#ifndef traceEVENT_GROUP_WAIT_BITS_BLOCK
+	#define traceEVENT_GROUP_WAIT_BITS_BLOCK( xEventGroup, uxBitsToWaitFor )
 #endif
 
 #ifndef traceEVENT_GROUP_WAIT_BITS_END
-	#define traceEVENT_GROUP_WAIT_BITS_END( xEventGroup, uxReturn )
+	#define traceEVENT_GROUP_WAIT_BITS_END( xEventGroup, uxBitsToWaitFor, xTimeoutOccurred ) ( void ) xTimeoutOccurred
 #endif
 
 #ifndef traceEVENT_GROUP_CLEAR_BITS
@@ -578,8 +595,24 @@ is included as it is used by the port layer. */
 	#define traceEVENT_GROUP_SET_BITS( xEventGroup, uxBitsToSet )
 #endif
 
+#ifndef traceEVENT_GROUP_SET_BITS_FROM_ISR
+	#define traceEVENT_GROUP_SET_BITS_FROM_ISR( xEventGroup, uxBitsToSet )
+#endif
+
 #ifndef traceEVENT_GROUP_DELETE
 	#define traceEVENT_GROUP_DELETE( xEventGroup )
+#endif
+
+#ifndef tracePEND_FUNC_CALL
+	#define tracePEND_FUNC_CALL(xFunctionToPend, pvParameter1, ulParameter2, ret)
+#endif
+
+#ifndef tracePEND_FUNC_CALL_FROM_ISR
+	#define tracePEND_FUNC_CALL_FROM_ISR(xFunctionToPend, pvParameter1, ulParameter2, ret)
+#endif 
+
+#ifndef traceQUEUE_REGISTRY_ADD
+	#define traceQUEUE_REGISTRY_ADD(xQueue, pcQueueName)
 #endif
 
 #ifndef configGENERATE_RUN_TIME_STATS
@@ -684,29 +717,40 @@ is included as it is used by the port layer. */
 	#define mtCOVERAGE_TEST_MARKER()
 #endif
 
-/* For backward compatibility. */
-#define eTaskStateGet eTaskGetState
-#define portTickType TickType_t
-#define xTaskHandle TaskHandle_t
-#define xQueueHandle QueueHandle_t
-#define xSemaphoreHandle SemaphoreHandle_t
-#define xQueueSetHandle QueueSetHandle_t
-#define xQueueSetMemberHandle QueueSetMemberHandle_t
-#define xTimeOutType TimeOut_t
-#define xMemoryRegion MemoryRegion_t
-#define xTaskParameters TaskParameters_t
-#define xTaskStatusType	TaskStatus_t
-#define xTimerHandle TimerHandle_t
-#define xCoRoutineHandle CoRoutineHandle_t
-#define pdTASK_HOOK_CODE TaskHookFunction_t
-#define portTICK_RATE_MS portTICK_PERIOD_MS
+/* Definitions to allow backward compatibility with FreeRTOS versions prior to
+V8 if desired. */
+#ifndef configENABLE_BACKWARD_COMPATIBILITY
+	#define configENABLE_BACKWARD_COMPATIBILITY 1
+#endif
 
-/* Backward compatibility within the scheduler code only - these definitions
-are not really required but are included for completeness. */
-#define tmrTIMER_CALLBACK TimerCallbackFunction_t
-#define pdTASK_CODE TaskFunction_t
-#define xListItem ListItem_t
-#define xList List_t
+#if configENABLE_BACKWARD_COMPATIBILITY == 1
+	#define eTaskStateGet eTaskGetState
+	#define portTickType TickType_t
+	#define xTaskHandle TaskHandle_t
+	#define xQueueHandle QueueHandle_t
+	#define xSemaphoreHandle SemaphoreHandle_t
+	#define xQueueSetHandle QueueSetHandle_t
+	#define xQueueSetMemberHandle QueueSetMemberHandle_t
+	#define xTimeOutType TimeOut_t
+	#define xMemoryRegion MemoryRegion_t
+	#define xTaskParameters TaskParameters_t
+	#define xTaskStatusType	TaskStatus_t
+	#define xTimerHandle TimerHandle_t
+	#define xCoRoutineHandle CoRoutineHandle_t
+	#define pdTASK_HOOK_CODE TaskHookFunction_t
+	#define portTICK_RATE_MS portTICK_PERIOD_MS
+
+	/* Backward compatibility within the scheduler code only - these definitions
+	are not really required but are included for completeness. */
+	#define tmrTIMER_CALLBACK TimerCallbackFunction_t
+	#define pdTASK_CODE TaskFunction_t
+	#define xListItem ListItem_t
+	#define xList List_t
+#endif /* configENABLE_BACKWARD_COMPATIBILITY */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* INC_FREERTOS_H */
 

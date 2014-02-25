@@ -1,5 +1,5 @@
 /*
-    FreeRTOS V8.0.0:rc2 - Copyright (C) 2014 Real Time Engineers Ltd.
+    FreeRTOS V8.0.0 - Copyright (C) 2014 Real Time Engineers Ltd.
     All rights reserved
 
     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
@@ -76,8 +76,8 @@ task.h is included from an application file. */
 #include "queue.h"
 #include "timers.h"
 
-#if ( INCLUDE_xTimerPendFunctionCallFromISR == 1 ) && ( configUSE_TIMERS == 0 )
-	#error configUSE_TIMERS must be set to 1 to make the INCLUDE_xTimerPendFunctionCallFromISR() function available.
+#if ( INCLUDE_xTimerPendFunctionCall == 1 ) && ( configUSE_TIMERS == 0 )
+	#error configUSE_TIMERS must be set to 1 to make the xTimerPendFunctionCall() function available.
 #endif
 
 /* Lint e961 and e750 are suppressed as a MISRA exception justified because the
@@ -105,7 +105,14 @@ typedef struct tmrTimerControl
 	UBaseType_t				uxAutoReload;		/*<< Set to pdTRUE if the timer should be automatically restarted once expired.  Set to pdFALSE if the timer is, in effect, a one-shot timer. */
 	void 					*pvTimerID;			/*<< An ID to identify the timer.  This allows the timer to be identified when the same callback is used for multiple timers. */
 	TimerCallbackFunction_t	pxCallbackFunction;	/*<< The function that will be called when the timer expires. */
-} Timer_t;
+	#if( configUSE_TRACE_FACILITY == 1 )
+		UBaseType_t			uxTimerNumber;		/*<< An ID assigned by trace tools such as FreeRTOS+Trace */
+	#endif
+} xTIMER;
+
+/* The old xTIMER name is maintained above then typedefed to the new Timer_t
+name below to enable the use of older kernel aware debuggers. */
+typedef xTIMER Timer_t;
 
 /* The definition of messages that can be sent and received on the timer queue.
 Two types of message can be queued - messages that manipulate a software timer,
@@ -137,9 +144,9 @@ typedef struct tmrTimerQueueMessage
 
 		/* Don't include xCallbackParameters if it is not going to be used as
 		it makes the structure (and therefore the timer queue) larger. */
-		#if ( INCLUDE_xTimerPendFunctionCallFromISR == 1 )
+		#if ( INCLUDE_xTimerPendFunctionCall == 1 )
 			CallbackParameters_t xCallbackParameters;
-		#endif /* INCLUDE_xTimerPendFunctionCallFromISR */
+		#endif /* INCLUDE_xTimerPendFunctionCall */
 	} u;
 } DaemonTaskMessage_t;
 
@@ -302,7 +309,7 @@ Timer_t *pxNewTimer;
 }
 /*-----------------------------------------------------------*/
 
-BaseType_t xTimerGenericCommand( TimerHandle_t xTimer, const BaseType_t xCommandID, const TickType_t xOptionalValue, BaseType_t * const pxHigherPriorityTaskWoken, const TickType_t xBlockTime )
+BaseType_t xTimerGenericCommand( TimerHandle_t xTimer, const BaseType_t xCommandID, const TickType_t xOptionalValue, BaseType_t * const pxHigherPriorityTaskWoken, const TickType_t xTicksToWait )
 {
 BaseType_t xReturn = pdFAIL;
 DaemonTaskMessage_t xMessage;
@@ -316,11 +323,11 @@ DaemonTaskMessage_t xMessage;
 		xMessage.u.xTimerParameters.xMessageValue = xOptionalValue;
 		xMessage.u.xTimerParameters.pxTimer = ( Timer_t * ) xTimer;
 
-		if( pxHigherPriorityTaskWoken == NULL )
+		if( xCommandID < tmrFIRST_FROM_ISR_COMMAND )
 		{
 			if( xTaskGetSchedulerState() == taskSCHEDULER_RUNNING )
 			{
-				xReturn = xQueueSendToBack( xTimerQueue, &xMessage, xBlockTime );
+				xReturn = xQueueSendToBack( xTimerQueue, &xMessage, xTicksToWait );
 			}
 			else
 			{
@@ -377,7 +384,7 @@ Timer_t * const pxTimer = ( Timer_t * ) listGET_OWNER_OF_HEAD_ENTRY( pxCurrentTi
 		{
 			/* The timer expired before it was added to the active timer
 			list.  Reload it now.  */
-			xResult = xTimerGenericCommand( pxTimer, tmrCOMMAND_START, xNextExpireTime, NULL, tmrNO_DELAY );
+			xResult = xTimerGenericCommand( pxTimer, tmrCOMMAND_START_DONT_TRACE, xNextExpireTime, NULL, tmrNO_DELAY );
 			configASSERT( xResult );
 			( void ) xResult;
 		}
@@ -572,9 +579,11 @@ TickType_t xTimeNow;
 
 	while( xQueueReceive( xTimerQueue, &xMessage, tmrNO_DELAY ) != pdFAIL ) /*lint !e603 xMessage does not have to be initialised as it is passed out, not in, and it is not used unless xQueueReceive() returns pdTRUE. */
 	{
-		#if ( INCLUDE_xTimerPendFunctionCallFromISR == 1 )
+		#if ( INCLUDE_xTimerPendFunctionCall == 1 )
 		{
-			if( xMessage.xMessageID == tmrCOMMAND_EXECUTE_CALLBACK )
+			/* Negative commands are pended function calls rather than timer
+			commands. */
+			if( xMessage.xMessageID < 0 )
 			{
 				const CallbackParameters_t * const pxCallback = &( xMessage.u.xCallbackParameters );
 
@@ -590,9 +599,11 @@ TickType_t xTimeNow;
 				mtCOVERAGE_TEST_MARKER();
 			}
 		}
-		#endif /* INCLUDE_xTimerPendFunctionCallFromISR */
+		#endif /* INCLUDE_xTimerPendFunctionCall */
 
-		if( xMessage.xMessageID != tmrCOMMAND_EXECUTE_CALLBACK )
+		/* Commands that are positive are timer commands rather than pended
+		function calls. */
+		if( xMessage.xMessageID >= ( BaseType_t ) 0 )
 		{
 			/* The messages uses the xTimerParameters member to work on a
 			software timer. */
@@ -621,6 +632,10 @@ TickType_t xTimeNow;
 			switch( xMessage.xMessageID )
 			{
 				case tmrCOMMAND_START :
+			    case tmrCOMMAND_START_FROM_ISR :
+			    case tmrCOMMAND_RESET :
+			    case tmrCOMMAND_RESET_FROM_ISR :
+				case tmrCOMMAND_START_DONT_TRACE :
 					/* Start or restart a timer. */
 					if( prvInsertTimerInActiveList( pxTimer,  xMessage.u.xTimerParameters.xMessageValue + pxTimer->xTimerPeriodInTicks, xTimeNow, xMessage.u.xTimerParameters.xMessageValue ) == pdTRUE )
 					{
@@ -631,7 +646,7 @@ TickType_t xTimeNow;
 
 						if( pxTimer->uxAutoReload == ( UBaseType_t ) pdTRUE )
 						{
-							xResult = xTimerGenericCommand( pxTimer, tmrCOMMAND_START, xMessage.u.xTimerParameters.xMessageValue + pxTimer->xTimerPeriodInTicks, NULL, tmrNO_DELAY );
+							xResult = xTimerGenericCommand( pxTimer, tmrCOMMAND_START_DONT_TRACE, xMessage.u.xTimerParameters.xMessageValue + pxTimer->xTimerPeriodInTicks, NULL, tmrNO_DELAY );
 							configASSERT( xResult );
 							( void ) xResult;
 						}
@@ -647,11 +662,13 @@ TickType_t xTimeNow;
 					break;
 
 				case tmrCOMMAND_STOP :
+				case tmrCOMMAND_STOP_FROM_ISR :
 					/* The timer has already been removed from the active list.
 					There is nothing to do here. */
 					break;
 
 				case tmrCOMMAND_CHANGE_PERIOD :
+				case tmrCOMMAND_CHANGE_PERIOD_FROM_ISR :
 					pxTimer->xTimerPeriodInTicks = xMessage.u.xTimerParameters.xMessageValue;
 					configASSERT( ( pxTimer->xTimerPeriodInTicks > 0 ) );
 
@@ -721,7 +738,7 @@ BaseType_t xResult;
 			}
 			else
 			{
-				xResult = xTimerGenericCommand( pxTimer, tmrCOMMAND_START, xNextExpireTime, NULL, tmrNO_DELAY );
+				xResult = xTimerGenericCommand( pxTimer, tmrCOMMAND_START_DONT_TRACE, xNextExpireTime, NULL, tmrNO_DELAY );
 				configASSERT( xResult );
 				( void ) xResult;
 			}
@@ -792,7 +809,7 @@ Timer_t *pxTimer = ( Timer_t * ) xTimer;
 	taskEXIT_CRITICAL();
 
 	return xTimerIsInActiveList;
-}
+} /*lint !e818 Can't be pointer to const due to the typedef. */
 /*-----------------------------------------------------------*/
 
 void *pvTimerGetTimerID( const TimerHandle_t xTimer )
@@ -803,9 +820,33 @@ Timer_t * const pxTimer = ( Timer_t * ) xTimer;
 }
 /*-----------------------------------------------------------*/
 
-#if( INCLUDE_xTimerPendFunctionCallFromISR == 1 )
+#if( INCLUDE_xTimerPendFunctionCall == 1 )
 
 	BaseType_t xTimerPendFunctionCallFromISR( PendedFunction_t xFunctionToPend, void *pvParameter1, uint32_t ulParameter2, BaseType_t *pxHigherPriorityTaskWoken )
+	{
+	DaemonTaskMessage_t xMessage;
+	BaseType_t xReturn;
+
+		/* Complete the message with the function parameters and post it to the
+		daemon task. */
+		xMessage.xMessageID = tmrCOMMAND_EXECUTE_CALLBACK_FROM_ISR;
+		xMessage.u.xCallbackParameters.pxCallbackFunction = xFunctionToPend;
+		xMessage.u.xCallbackParameters.pvParameter1 = pvParameter1;
+		xMessage.u.xCallbackParameters.ulParameter2 = ulParameter2;
+
+		xReturn = xQueueSendFromISR( xTimerQueue, &xMessage, pxHigherPriorityTaskWoken );
+		
+		tracePEND_FUNC_CALL_FROM_ISR( xFunctionToPend, pvParameter1, ulParameter2, xReturn );
+
+		return xReturn;
+	}
+
+#endif /* INCLUDE_xTimerPendFunctionCall */
+/*-----------------------------------------------------------*/
+
+#if( INCLUDE_xTimerPendFunctionCall == 1 )
+
+	BaseType_t xTimerPendFunctionCall( PendedFunction_t xFunctionToPend, void *pvParameter1, uint32_t ulParameter2, TickType_t xTicksToWait )
 	{
 	DaemonTaskMessage_t xMessage;
 	BaseType_t xReturn;
@@ -817,12 +858,14 @@ Timer_t * const pxTimer = ( Timer_t * ) xTimer;
 		xMessage.u.xCallbackParameters.pvParameter1 = pvParameter1;
 		xMessage.u.xCallbackParameters.ulParameter2 = ulParameter2;
 
-		xReturn = xQueueSendFromISR( xTimerQueue, &xMessage, pxHigherPriorityTaskWoken );
+		xReturn = xQueueSendToBack( xTimerQueue, &xMessage, xTicksToWait );
 
+		tracePEND_FUNC_CALL( xFunctionToPend, pvParameter1, ulParameter2, xReturn );
+		
 		return xReturn;
 	}
 
-#endif /* INCLUDE_xTimerPendFunctionCallFromISR */
+#endif /* INCLUDE_xTimerPendFunctionCall */
 /*-----------------------------------------------------------*/
 
 /* This entire source file will be skipped if the application is not configured

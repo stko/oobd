@@ -1,5 +1,5 @@
 /*
-    FreeRTOS V8.0.0:rc2 - Copyright (C) 2014 Real Time Engineers Ltd.
+    FreeRTOS V8.0.0 - Copyright (C) 2014 Real Time Engineers Ltd.
     All rights reserved
 
     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
@@ -86,7 +86,7 @@ privileged Vs unprivileged linkage and placement. */
 #undef MPU_WRAPPERS_INCLUDED_FROM_API_FILE /*lint !e961 !e750. */
 
 
-/* Constants used with the cRxLock and xTxLock structure members. */
+/* Constants used with the xRxLock and xTxLock structure members. */
 #define queueUNLOCKED					( ( BaseType_t ) -1 )
 #define queueLOCKED_UNMODIFIED			( ( BaseType_t ) 0 )
 
@@ -153,7 +153,12 @@ typedef struct QueueDefinition
 		struct QueueDefinition *pxQueueSetContainer;
 	#endif
 
-} Queue_t;
+} xQUEUE;
+
+/* The old xQUEUE name is maintained above then typedefed to the new Queue_t
+name below to enable the use of older kernel aware debuggers. */
+typedef xQUEUE Queue_t;
+
 /*-----------------------------------------------------------*/
 
 /*
@@ -167,9 +172,14 @@ typedef struct QueueDefinition
 	more user friendly. */
 	typedef struct QUEUE_REGISTRY_ITEM
 	{
-		char *pcQueueName; /*lint !e971 Unqualified char types are allowed for strings and single characters only. */
+		const char *pcQueueName; /*lint !e971 Unqualified char types are allowed for strings and single characters only. */
 		QueueHandle_t xHandle;
-	} QueueRegistryItem_t;
+	} xQueueRegistryItem;
+
+	/* The old xQueueRegistryItem name is maintained above then typedefed to the
+	new xQueueRegistryItem name below to enable the use of older kernel aware
+	debuggers. */
+	typedef xQueueRegistryItem QueueRegistryItem_t;
 
 	/* The queue registry is simply an array of QueueRegistryItem_t structures.
 	The pcQueueName member of a structure being NULL is indicative of the
@@ -512,7 +522,7 @@ QueueHandle_t xReturn = NULL;
 
 #if ( configUSE_RECURSIVE_MUTEXES == 1 )
 
-	BaseType_t xQueueTakeMutexRecursive( QueueHandle_t xMutex, TickType_t xBlockTime )
+	BaseType_t xQueueTakeMutexRecursive( QueueHandle_t xMutex, TickType_t xTicksToWait )
 	{
 	BaseType_t xReturn;
 	Queue_t * const pxMutex = ( Queue_t * ) xMutex;
@@ -531,7 +541,7 @@ QueueHandle_t xReturn = NULL;
 		}
 		else
 		{
-			xReturn = xQueueGenericReceive( pxMutex, NULL, xBlockTime, pdFALSE );
+			xReturn = xQueueGenericReceive( pxMutex, NULL, xTicksToWait, pdFALSE );
 
 			/* pdPASS will only be returned if we successfully obtained the mutex,
 			we may have blocked to reach here. */
@@ -1038,11 +1048,11 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 	link: http://www.freertos.org/RTOS-Cortex-M3-M4.html */
 	portASSERT_IF_INTERRUPT_PRIORITY_INVALID();
 
-	/* Similar to xQueueGenericSend, except we don't block if there is no room
-	in the queue.  Also we don't directly wake a task that was blocked on a
-	queue read, instead we return a flag to say whether a context switch is
-	required or not (i.e. has a task with a higher priority than us been woken
-	by this	post). */
+	/* Similar to xQueueGenericSend, except without blocking if there is no room
+	in the queue.  Also don't directly wake a task that was blocked on a queue
+	read, instead return a flag to say whether a context switch is required or
+	not (i.e. has a task with a higher priority than us been woken by this
+	post). */
 	uxSavedInterruptStatus = portSET_INTERRUPT_MASK_FROM_ISR();
 	{
 		if( ( pxQueue->uxMessagesWaiting < pxQueue->uxLength ) || ( xCopyPosition == queueOVERWRITE ) )
@@ -1051,7 +1061,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 
 			prvCopyDataToQueue( pxQueue, pvItemToQueue, xCopyPosition );
 
-			/* If the queue is locked we do not alter the event list.  This will
+			/* The event list is not altered if the queue is locked.  This will
 			be done when the queue is unlocked later. */
 			if( pxQueue->xTxLock == queueUNLOCKED )
 			{
@@ -2143,7 +2153,7 @@ BaseType_t xReturn;
 
 #if ( configQUEUE_REGISTRY_SIZE > 0 )
 
-	void vQueueAddToRegistry( QueueHandle_t xQueue, char *pcQueueName ) /*lint !e971 Unqualified char types are allowed for strings and single characters only. */
+	void vQueueAddToRegistry( QueueHandle_t xQueue, const char *pcQueueName ) /*lint !e971 Unqualified char types are allowed for strings and single characters only. */
 	{
 	UBaseType_t ux;
 
@@ -2156,6 +2166,8 @@ BaseType_t xReturn;
 				/* Store the information on this queue. */
 				xQueueRegistry[ ux ].pcQueueName = pcQueueName;
 				xQueueRegistry[ ux ].xHandle = xQueue;
+
+				traceQUEUE_REGISTRY_ADD( xQueue, pcQueueName );
 				break;
 			}
 			else
@@ -2251,26 +2263,26 @@ BaseType_t xReturn;
 	{
 	BaseType_t xReturn;
 
-		if( ( ( Queue_t * ) xQueueOrSemaphore )->pxQueueSetContainer != NULL )
+		taskENTER_CRITICAL();
 		{
-			/* Cannot add a queue/semaphore to more than one queue set. */
-			xReturn = pdFAIL;
-		}
-		else if( ( ( Queue_t * ) xQueueOrSemaphore )->uxMessagesWaiting != ( UBaseType_t ) 0 )
-		{
-			/* Cannot add a queue/semaphore to a queue set if there are already
-			items in the queue/semaphore. */
-			xReturn = pdFAIL;
-		}
-		else
-		{
-			taskENTER_CRITICAL();
+			if( ( ( Queue_t * ) xQueueOrSemaphore )->pxQueueSetContainer != NULL )
+			{
+				/* Cannot add a queue/semaphore to more than one queue set. */
+				xReturn = pdFAIL;
+			}
+			else if( ( ( Queue_t * ) xQueueOrSemaphore )->uxMessagesWaiting != ( UBaseType_t ) 0 )
+			{
+				/* Cannot add a queue/semaphore to a queue set if there are already
+				items in the queue/semaphore. */
+				xReturn = pdFAIL;
+			}
+			else
 			{
 				( ( Queue_t * ) xQueueOrSemaphore )->pxQueueSetContainer = xQueueSet;
+				xReturn = pdPASS;
 			}
-			taskEXIT_CRITICAL();
-			xReturn = pdPASS;
 		}
+		taskEXIT_CRITICAL();
 
 		return xReturn;
 	}
@@ -2316,11 +2328,11 @@ BaseType_t xReturn;
 
 #if ( configUSE_QUEUE_SETS == 1 )
 
-	QueueSetMemberHandle_t xQueueSelectFromSet( QueueSetHandle_t xQueueSet, TickType_t const xBlockTimeTicks )
+	QueueSetMemberHandle_t xQueueSelectFromSet( QueueSetHandle_t xQueueSet, TickType_t const xTicksToWait )
 	{
 	QueueSetMemberHandle_t xReturn = NULL;
 
-		( void ) xQueueGenericReceive( ( QueueHandle_t ) xQueueSet, &xReturn, xBlockTimeTicks, pdFALSE ); /*lint !e961 Casting from one typedef to another is not redundant. */
+		( void ) xQueueGenericReceive( ( QueueHandle_t ) xQueueSet, &xReturn, xTicksToWait, pdFALSE ); /*lint !e961 Casting from one typedef to another is not redundant. */
 		return xReturn;
 	}
 
@@ -2346,6 +2358,8 @@ BaseType_t xReturn;
 	{
 	Queue_t *pxQueueSetContainer = pxQueue->pxQueueSetContainer;
 	BaseType_t xReturn = pdFALSE;
+
+		/* This function must be called form a critical section. */
 
 		configASSERT( pxQueueSetContainer );
 		configASSERT( pxQueueSetContainer->uxMessagesWaiting < pxQueueSetContainer->uxLength );
