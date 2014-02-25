@@ -1,5 +1,5 @@
 /*
-    FreeRTOS V8.0.0:rc2 - Copyright (C) 2014 Real Time Engineers Ltd.
+    FreeRTOS V8.0.0 - Copyright (C) 2014 Real Time Engineers Ltd.
     All rights reserved
 
     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
@@ -218,7 +218,7 @@ typedef struct xLIST
 /*
  * Return the list item at the head of the list.
  *
- * \page listGET_HEAD_ENTRY listGET_HEAD_ENTRY
+ * \page listGET_NEXT listGET_NEXT
  * \ingroup LinkedList
  */
 #define listGET_NEXT( pxListItem )	( ( pxListItem )->pxNext )

@@ -1,5 +1,5 @@
 /*
-    FreeRTOS V8.0.0:rc2 - Copyright (C) 2014 Real Time Engineers Ltd.
+    FreeRTOS V8.0.0 - Copyright (C) 2014 Real Time Engineers Ltd.
     All rights reserved
 
     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
@@ -81,7 +81,10 @@ extern "C" {
  * MACROS AND DEFINITIONS
  *----------------------------------------------------------*/
 
-#define tskKERNEL_VERSION_NUMBER "V8.0.0 release candidate 2"
+#define tskKERNEL_VERSION_NUMBER "V8.0.0"
+#define tskKERNEL_VERSION_MAJOR 8
+#define tskKERNEL_VERSION_MINOR 0
+#define tskKERNEL_VERSION_BUILD 0
 
 /**
  * task. h
@@ -1024,17 +1027,6 @@ void vTaskSuspendAll( void ) PRIVILEGED_FUNCTION;
  * \ingroup SchedulerControl
  */
 BaseType_t xTaskResumeAll( void ) PRIVILEGED_FUNCTION;
-
-/**
- * task. h
- * <pre>BaseType_t xTaskIsTaskSuspended( const TaskHandle_t xTask );</pre>
- *
- * Utility task that simply returns pdTRUE if the task referenced by xTask is
- * currently in the Suspended state, or pdFALSE if the task referenced by xTask
- * is in any other state.
- *
- */
-BaseType_t xTaskIsTaskSuspended( const TaskHandle_t xTask ) PRIVILEGED_FUNCTION;
 
 /*-----------------------------------------------------------
  * TASK UTILITIES
