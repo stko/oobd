@@ -35,10 +35,10 @@
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths.1721390873" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;../inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../../OOBD/v1&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV6.1.0/Source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV6.1.0/Source/portable/GCC/ARM_CM3&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV6.1.0/Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS/Core/CM3&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV6.1.0/Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV8.0.0/Source/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV8.0.0/Source/portable/GCC/ARM_CM3&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV8.0.0/Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS/Core/CM3&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV8.0.0/Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/inc&quot;"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def.939664628" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="SVNREV='&quot;$(shell LC_ALL=C svnversion -cn ../ | sed -e &quot;s/.*://&quot; -e &quot;s/\([0-9]*\).*/\1/&quot; | grep &quot;[0-9]&quot; )&quot;'"/>
@@ -63,7 +63,7 @@
 									<listOptionValue builtIn="false" value=""/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.otherobjs.525660672" name="Other objects" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.otherobjs" valueType="userObjs">
-									<listOptionValue builtIn="false" value="../../../../../../OS/FreeRTOSV6.1.0/Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS/Core/CM3/startup/gcc/startup_stm32f10x_md.s"/>
+									<listOptionValue builtIn="false" value="../../../../../../OS/FreeRTOSV8.0.0/Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS/Core/CM3/startup/gcc/startup_stm32f10x_md.s"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.gcsections.500584255" name="Remove unused sections (-Xlinker --gc-sections)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.gcsections" value="true" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.link.option.nostart.1042070869" name="Do not use standard start files (-nostartfiles)" superClass="org.eclipse.cdt.cross.arm.gnu.c.link.option.nostart" value="true" valueType="boolean"/>
