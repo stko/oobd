@@ -49,16 +49,16 @@ extern struct CanConfig *canConfig;
 /* callback function for received data */
 recv_cbf reportReceivedData = NULL;
 
-portBASE_TYPE rxCount;
-portBASE_TYPE txCount;
-portBASE_TYPE errCount;
-portBASE_TYPE stCANBusOffErr;
-portBASE_TYPE stCANBusWarningErr;
-portBASE_TYPE stCANBusPassiveErr;
-portBASE_TYPE ctrCANTec;
-portBASE_TYPE ctrCANRec;
+UBaseType_t rxCount;
+UBaseType_t txCount;
+UBaseType_t errCount;
+UBaseType_t stCANBusOffErr;
+UBaseType_t stCANBusWarningErr;
+UBaseType_t stCANBusPassiveErr;
+UBaseType_t ctrCANTec;
+UBaseType_t ctrCANRec;
 
-portBASE_TYPE bus_init_can()
+UBaseType_t bus_init_can()
 {
     NVIC_InitTypeDef NVIC_InitStructure;
     extern startupProtocol;
@@ -110,7 +110,7 @@ portBASE_TYPE bus_init_can()
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_send_can(data_packet * data)
+UBaseType_t bus_send_can(data_packet * data)
 {
 
     DEBUGUARTPRINT("\r\n*** bus_send_can entered! ***");
@@ -157,7 +157,7 @@ void bus_flush_can()
 
 /*----------------------------------------------------------------------------*/
 
-void bus_param_can_spec_Print(portBASE_TYPE msgType, void *data,
+void bus_param_can_spec_Print(UBaseType_t msgType, void *data,
 			      printChar_cbf printchar)
 {
     param_data *args;
@@ -219,7 +219,7 @@ uint32_t CAN_GetFilterReg32(uint8_t FilterID, uint8_t FilterReg)
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_param_can_spec(param_data * args)
+UBaseType_t bus_param_can_spec(param_data * args)
 {
     CAN_FilterInitTypeDef CAN_FilterInitStructure;
     uint8_t i;
@@ -570,7 +570,7 @@ void bus_close_can()
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE busControl(portBASE_TYPE cmd, void *param)
+UBaseType_t busControl(UBaseType_t cmd, void *param)
 {
     switch (cmd) {
     case ODB_CMD_RECV:
@@ -588,7 +588,7 @@ portBASE_TYPE busControl(portBASE_TYPE cmd, void *param)
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {
     DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler entered ***");
-    portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+    UBaseType_t xHigherPriorityTaskWoken = pdFALSE;
     uint8_t i;
     uint16_t LedDuration;
     CanRxMsg RxMessage;
@@ -634,7 +634,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 void CAN1_SCE_IRQHandler(void)
 {
     DEBUGUARTPRINT("\r\n*** CAN1_SCE_IRQHandler entered ***");
-    portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+    UBaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
     /* check for receive errors */
     if (CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_StuffErr
@@ -675,14 +675,14 @@ void USB_HP_CAN1_TX_IRQHandler(void)
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_rx_error_can()
+UBaseType_t bus_rx_error_can()
 {
     return errCount;
 }
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_tx_error_can()
+UBaseType_t bus_tx_error_can()
 {
     return 0;
 }
@@ -702,14 +702,14 @@ void bus_clear_tx_error_can()
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_rx_count_can()
+UBaseType_t bus_rx_count_can()
 {
     return rxCount;
 }
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_tx_count_can()
+UBaseType_t bus_tx_count_can()
 {
     return txCount;
 }
@@ -728,35 +728,35 @@ void bus_clear_tx_count_can()
     txCount = 0;
 }
 
-portBASE_TYPE bus_busoff_error_can()
+UBaseType_t bus_busoff_error_can()
 {
     /* check for Bus-off flag */
     stCANBusOffErr = CAN_GetFlagStatus(CAN1, CAN_FLAG_BOF);
     return stCANBusOffErr;
 }
 
-portBASE_TYPE bus_passive_error_can()
+UBaseType_t bus_passive_error_can()
 {
     /* check for Error passive flag */
     stCANBusPassiveErr = CAN_GetFlagStatus(CAN1, CAN_FLAG_EPV);
     return stCANBusPassiveErr;
 }
 
-portBASE_TYPE bus_warning_error_can()
+UBaseType_t bus_warning_error_can()
 {
     /* check for Error Warning flag */
     stCANBusWarningErr = CAN_GetFlagStatus(CAN1, CAN_FLAG_EWG);
     return stCANBusWarningErr;
 }
 
-portBASE_TYPE bus_tec_can()
+UBaseType_t bus_tec_can()
 {
     /* read Transmit Error Counter of CAN hardware */
     ctrCANTec = CAN_GetLSBTransmitErrorCounter(CAN1);
     return ctrCANTec;
 }
 
-portBASE_TYPE bus_rec_can()
+UBaseType_t bus_rec_can()
 {
     /* read Receive Error Counter of CAN hardware */
     ctrCANRec = CAN_GetReceiveErrorCounter(CAN1);

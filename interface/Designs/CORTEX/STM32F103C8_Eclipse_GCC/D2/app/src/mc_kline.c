@@ -49,16 +49,16 @@ extern char *oobd_Error_Text_OS;
 /* callback function for received data */
 // recv_cbf reportReceivedData = NULL;
 
-portBASE_TYPE rxCount;
-portBASE_TYPE txCount;
-portBASE_TYPE errCount;
-portBASE_TYPE stKlineBusOffErr;
-portBASE_TYPE stKlineBusWarningErr;
-portBASE_TYPE stKlineBusPassiveErr;
-portBASE_TYPE ctrKlineTec;
-portBASE_TYPE ctrKlineRec;
+UBaseType_t rxCount;
+UBaseType_t txCount;
+UBaseType_t errCount;
+UBaseType_t stKlineBusOffErr;
+UBaseType_t stKlineBusWarningErr;
+UBaseType_t stKlineBusPassiveErr;
+UBaseType_t ctrKlineTec;
+UBaseType_t ctrKlineRec;
 
-portBASE_TYPE bus_init_kline()
+UBaseType_t bus_init_kline()
 {
     NVIC_InitTypeDef NVIC_InitStructure;
     extern startupProtocol;
@@ -70,7 +70,7 @@ portBASE_TYPE bus_init_kline()
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_send_kline(data_packet * data)
+UBaseType_t bus_send_kline(data_packet * data)
 {
     DEBUGUARTPRINT("\r\n*** bus_send_kline entered! ***");
 
@@ -88,7 +88,7 @@ void bus_flush_kline()
 
 /*----------------------------------------------------------------------------*/
 
-void bus_param_kline_spec_Print(portBASE_TYPE msgType, void *data,
+void bus_param_kline_spec_Print(UBaseType_t msgType, void *data,
 				printChar_cbf printchar)
 {
     param_data *args;
@@ -101,7 +101,7 @@ void bus_param_kline_spec_Print(portBASE_TYPE msgType, void *data,
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_param_kline_spec(param_data * args)
+UBaseType_t bus_param_kline_spec(param_data * args)
 {
 
     uint8_t i;
@@ -201,7 +201,7 @@ void bus_close_kline()
 
 /*----------------------------------------------------------------------------*/
 /*
-portBASE_TYPE busControl(portBASE_TYPE cmd, void *param)
+UBaseType_t busControl(UBaseType_t cmd, void *param)
 {
     switch (cmd) {
     case ODB_CMD_RECV:
@@ -220,7 +220,7 @@ portBASE_TYPE busControl(portBASE_TYPE cmd, void *param)
 void USART2_IRQHandler(void)
 {
     DEBUGUARTPRINT("\r\n*** USART2_IRQHandler starting ***");
-    portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+    UBaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
     char ch;
 //    KlineRxMsg RxMessage;
@@ -236,14 +236,14 @@ void USART2_IRQHandler(void)
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_rx_error_kline()
+UBaseType_t bus_rx_error_kline()
 {
     return errCount;
 }
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_tx_error_kline()
+UBaseType_t bus_tx_error_kline()
 {
     return 0;
 }
@@ -263,14 +263,14 @@ void bus_clear_tx_error_kline()
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_rx_count_kline()
+UBaseType_t bus_rx_count_kline()
 {
     return rxCount;
 }
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_tx_count_kline()
+UBaseType_t bus_tx_count_kline()
 {
     return txCount;
 }
@@ -289,21 +289,21 @@ void bus_clear_tx_count_kline()
     txCount = 0;
 }
 
-portBASE_TYPE bus_busoff_error_kline()
+UBaseType_t bus_busoff_error_kline()
 {
     /* check for Bus-off flag */
 
     return stKlineBusOffErr;
 }
 
-portBASE_TYPE bus_passive_error_kline()
+UBaseType_t bus_passive_error_kline()
 {
     /* check for Error passive flag */
 
     return stKlineBusPassiveErr;
 }
 
-portBASE_TYPE bus_warning_error_kline()
+UBaseType_t bus_warning_error_kline()
 {
     /* check for Error Warning flag */
 

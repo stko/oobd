@@ -46,16 +46,16 @@
 
 extern char *oobd_Error_Text_OS;
 
-portBASE_TYPE mc_sys_get_startupProtocol() {
+UBaseType_t mc_sys_get_startupProtocol() {
 	return VALUE_PARAM_PROTOCOL_CAN_UDS;
 }
 
-portBASE_TYPE mc_sys_get_startupBus() {
+UBaseType_t mc_sys_get_startupBus() {
 
 	return ODB_CAN;
 }
 
-void printParam_sys_specific(portBASE_TYPE msgType, void *data,
+void printParam_sys_specific(UBaseType_t msgType, void *data,
 		printChar_cbf printchar) {
 	param_data *args;
 	args = data;
@@ -257,7 +257,7 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
 }
 
 /* evaluation of p 0 x x x commands */
-portBASE_TYPE eval_param_sys_specific(
+UBaseType_t eval_param_sys_specific(
 		param_data * args) {
 
 	uint32_t BTMpin;
@@ -446,9 +446,9 @@ void mc_init_sys_shutdown_specific() {
 	SCB->AIRCR = 0x05FA0604; /* soft reset */
 }
 
-portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
-		portBASE_TYPE upperValue, portBASE_TYPE duration,
-		portBASE_TYPE waveType) {
+UBaseType_t sysIoCtrl(UBaseType_t pinID, UBaseType_t lowerValue,
+		UBaseType_t upperValue, UBaseType_t duration,
+		UBaseType_t waveType) {
 	DEBUGPRINT("Pin: %ld to value %ld\n", pinID, upperValue);
 	switch (pinID) {
 	case IO_LED_WHITE:
@@ -547,7 +547,7 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 	}
 }
 
-portBASE_TYPE sysSound(portBASE_TYPE frequency, portBASE_TYPE volume) {
+UBaseType_t sysSound(UBaseType_t frequency, UBaseType_t volume) {
 
 	/* if frequency=0 => disable buzzer, otherwise enable buzzer with frequency */
 	if (GPIO_HardwareLevel() == 4) { /* OOBD-Cup v5 */

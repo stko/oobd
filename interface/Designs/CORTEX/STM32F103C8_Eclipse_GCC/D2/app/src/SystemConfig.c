@@ -93,9 +93,9 @@ void System_Configuration(void) {
 
 	// move to hardware init function as well as LEDTask
 	//xQueueCreate = xQueueCreate (2, sizeof (boolean));
-	extern xQueueHandle Led1Queue;
+	extern QueueHandle_t Led1Queue;
 
-	extern xQueueHandle Led2Queue;
+	extern QueueHandle_t Led2Queue;
 
 }
 
@@ -150,8 +150,8 @@ void NVIC_Configuration(void) {
  * @brief  returns peripherals hardware ID
  * @param  None
  * @retval 1 = standard DXM, 4 = OOBD D2-V5, 5 = OOBD CAN Invader
- */portBASE_TYPE GPIO_HardwareLevel(void) {
-	portBASE_TYPE HardwareVariant = 0; /* default no valid hardware detected */
+ */UBaseType_t GPIO_HardwareLevel(void) {
+	UBaseType_t HardwareVariant = 0; /* default no valid hardware detected */
 
 	if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET)
 			&& (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_13) == Bit_SET)
