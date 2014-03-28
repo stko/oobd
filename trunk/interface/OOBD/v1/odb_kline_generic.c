@@ -45,7 +45,7 @@ print_cbf printdata_KLINE = NULL;
 //struct CanConfig *canConfig;
 /*-----------------------------------------------------------*/
 /*
-void print_telegram(portBASE_TYPE msgType, void *data,
+void print_telegram(UBaseType_t msgType, void *data,
 		    printChar_cbf printchar)
 {
     static data_packet *dp;
@@ -66,7 +66,7 @@ void print_telegram(portBASE_TYPE msgType, void *data,
 }
 */
 /*-----------------------------------------------------------*/
-void bus_param_kline_generic_Print(portBASE_TYPE msgType, void *data,
+void bus_param_kline_generic_Print(UBaseType_t msgType, void *data,
 				   printChar_cbf printchar)
 {
     param_data *args = data;
@@ -121,7 +121,7 @@ void bus_param_kline_generic_Print(portBASE_TYPE msgType, void *data,
 
 /*-----------------------------------------------------------*/
 
-portBASE_TYPE bus_param_kline_generic(param_data * args)
+UBaseType_t bus_param_kline_generic(param_data * args)
 {
 
     switch (args->args[ARG_RECV]) {

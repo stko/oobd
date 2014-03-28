@@ -39,8 +39,8 @@
 #include "od_ilm.h"
 
 typedef struct {
-    portBASE_TYPE freq;
-    portBASE_TYPE duration;
+    UBaseType_t freq;
+    UBaseType_t duration;
 } Tone;
   /* this f**cking trick of how to nest arrays took me two days of trying and googleing. It calls "anonymous arrays"
      thanks to http://www.run.montefiore.ulg.ac.be/~martin/resources/kung-f00.html !!
@@ -62,12 +62,12 @@ void ilmTask(void *pvParameters)
 {
     DEBUGPRINT("ILM Task started\n", 'a');
 
-    extern xQueueHandle ilmQueue;
+    extern QueueHandle_t ilmQueue;
     MsgData *msg;
-    portBASE_TYPE msgType;
-    portBASE_TYPE activeBus = 2;
+    UBaseType_t msgType;
+    UBaseType_t activeBus = 2;
     Tone *tone = NULL;
-    portBASE_TYPE toneDuration;
+    UBaseType_t toneDuration;
     enum ledMode {
 	LED_OFF,
 	LED_FLASH,
@@ -75,13 +75,13 @@ void ilmTask(void *pvParameters)
     };
 
     typedef struct {
-	portBASE_TYPE actualOnStatus;
-	portBASE_TYPE prevOnStatus;	//this just to avoid to set the outputs new with each tick
-	portBASE_TYPE mode;
-	portBASE_TYPE flickerTime;
-	portBASE_TYPE lostConnectionFlag;
-	portBASE_TYPE foundConnectionFlag;
-	portBASE_TYPE backwardTickCounterSinceLastIncomingEvent;
+	UBaseType_t actualOnStatus;
+	UBaseType_t prevOnStatus;	//this just to avoid to set the outputs new with each tick
+	UBaseType_t mode;
+	UBaseType_t flickerTime;
+	UBaseType_t lostConnectionFlag;
+	UBaseType_t foundConnectionFlag;
+	UBaseType_t backwardTickCounterSinceLastIncomingEvent;
     } LEDStatus;
     LEDStatus Leds[3];
     int ledTick = 0;
@@ -181,14 +181,14 @@ void ilmTask(void *pvParameters)
 			("ILM Handler: MSG_EVENT_BUS_MODE event received\n",
 			 'a');
 		    Leds[activeBus].mode =
-			(*(portBASE_TYPE *) msg->addr) ==
+			(*(UBaseType_t *) msg->addr) ==
 			MSG_EVENT_BUS_MODE_ON ? LED_ON : LED_OFF;
 		    break;
 		case MSG_EVENT_BUS_CHANNEL:
 		    DEBUGPRINT
 			("ILM Handler: MSG_EVENT_BUS_CHANNEL event received\n",
 			 'a');
-		    activeBus = (*(portBASE_TYPE *) msg->addr);
+		    activeBus = (*(UBaseType_t *) msg->addr);
 		    break;
 		case MSG_EVENT_CMDLINE:
 		    DEBUGPRINT
@@ -220,7 +220,7 @@ void ilmTask(void *pvParameters)
 
 void initILM()
 {
-    extern xQueueHandle ilmQueue;
+    extern QueueHandle_t ilmQueue;
     ilmQueue = xQueueCreate(QUEUE_SIZE_ILM, sizeof(struct OdMsg));
 
     /* Create a Task which waits to receive bytes. */

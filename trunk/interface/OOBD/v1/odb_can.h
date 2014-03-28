@@ -38,20 +38,20 @@
 #define INC_ODB_CAN_H
 #include "od_base.h"
 
-portBASE_TYPE bus_init_can();
-portBASE_TYPE bus_send_can(data_packet * data);
+UBaseType_t bus_init_can();
+UBaseType_t bus_send_can(data_packet * data);
 void bus_flush_can();
 void bus_close_can();
 
 void odb_can_init();
 
-portBASE_TYPE bus_rx_error_can();
-portBASE_TYPE bus_tx_error_can();
+UBaseType_t bus_rx_error_can();
+UBaseType_t bus_tx_error_can();
 void bus_clear_rx_error_can();
 void bus_clear_tx_error_can();
 
-portBASE_TYPE bus_rx_count_can();
-portBASE_TYPE bus_tx_count_can();
+UBaseType_t bus_rx_count_can();
+UBaseType_t bus_tx_count_can();
 void bus_clear_rx_count_can();
 void bus_clear_tx_count_can();
 uint16_t CAN_GetFilterReg16(uint8_t FilterID, uint8_t FilterReg,
@@ -64,11 +64,11 @@ uint32_t CAN_GetFilterReg32(uint8_t FilterID, uint8_t FilterReg);
 
 
 
-portBASE_TYPE bus_param_can_spec(param_data * args);
-portBASE_TYPE bus_param_can_generic(param_data * args);
-void bus_param_can_generic_Print(portBASE_TYPE msgType, void *data,
+UBaseType_t bus_param_can_spec(param_data * args);
+UBaseType_t bus_param_can_generic(param_data * args);
+void bus_param_can_generic_Print(UBaseType_t msgType, void *data,
 				 printChar_cbf printchar);
-void bus_param_can_spec_Print(portBASE_TYPE msgType, void *data,
+void bus_param_can_spec_Print(UBaseType_t msgType, void *data,
 			      printChar_cbf printchar);
 
 
@@ -171,7 +171,7 @@ Default: 11bit 500kb
 
 /* store all parameter in one single struct to maybe later store such param sets in EEPROM */
 struct CanConfig {
-    portBASE_TYPE recvID,	//!< Module ID
+    UBaseType_t recvID,	//!< Module ID
      bus,			//!< id of actual used bus
      mode,			//!< id of actual used Tranceiver mode
      busConfig			//!< nr of actual used bus configuration

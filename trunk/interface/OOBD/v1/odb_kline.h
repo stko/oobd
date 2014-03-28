@@ -38,21 +38,21 @@
 #define INC_ODB_KLINE_H
 #include "od_base.h"
 
-portBASE_TYPE bus_init_kline();
-portBASE_TYPE bus_send_kline(data_packet * data);
+UBaseType_t bus_init_kline();
+UBaseType_t bus_send_kline(data_packet * data);
 void bus_flush_kline();
 void bus_close_kline();
 
 void odb_kline_init();
 
 
-portBASE_TYPE bus_rx_error_kline();
-portBASE_TYPE bus_tx_error_kline();
+UBaseType_t bus_rx_error_kline();
+UBaseType_t bus_tx_error_kline();
 void bus_clear_rx_error_kline();
 void bus_clear_tx_error_kline();
 
-portBASE_TYPE bus_rx_count_kline();
-portBASE_TYPE bus_tx_count_kline();
+UBaseType_t bus_rx_count_kline();
+UBaseType_t bus_tx_count_kline();
 void bus_clear_rx_count_kline();
 void bus_clear_tx_count_kline();
 
@@ -61,11 +61,11 @@ void bus_clear_tx_count_kline();
 
 #define LIST_OF_BUSSES_TO_INITIALIZE #LIST_OF_BUSSES_TO_INITIALIZE odb_can_init();
 
-portBASE_TYPE bus_param_kline_spec(param_data * args);
-portBASE_TYPE bus_param_kline_generic(param_data * args);
-void bus_param_kline_generic_Print(portBASE_TYPE msgType, void *data,
+UBaseType_t bus_param_kline_spec(param_data * args);
+UBaseType_t bus_param_kline_generic(param_data * args);
+void bus_param_kline_generic_Print(UBaseType_t msgType, void *data,
 				   printChar_cbf printchar);
-void bus_param_kline_spec_Print(portBASE_TYPE msgType, void *data,
+void bus_param_kline_spec_Print(UBaseType_t msgType, void *data,
 				printChar_cbf printchar);
 
   /*! \defgroup prot_can_generic_parm Commands: Generic CAN Commands
@@ -117,7 +117,7 @@ Default: off
 /* store all parameter in one single struct to maybe later store such param sets in EEPROM */
 /*
 struct KlineConfig {
-     portBASE_TYPE recvID,	//!< Module ID
+     UBaseType_t recvID,	//!< Module ID
      bus,			//!< id of actual used bus
      mode,			//!< id of actual used Tranceiver mode
      busConfig			//!< nr of actual used bus configuration

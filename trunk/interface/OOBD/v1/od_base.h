@@ -47,24 +47,24 @@ void initBusses();
 
 //! signature of the print function that will be called 
 //! if data has been received or an bus error occured
-typedef void (*print_cbf) (portBASE_TYPE msgType, void *data,
+typedef void (*print_cbf) (UBaseType_t msgType, void *data,
 			   printChar_cbf printchar);
 
 //! callback function for handle parameter commands
 
 //! signature of the  function that will be called in protocol or bus handler
 //! when a parameter command is given
-typedef portBASE_TYPE(*param_cbf) (void *param);
+typedef UBaseType_t(*param_cbf) (void *param);
 
 /* data packet structure
  * used to describe a generic data packet.
  * define before include busses and protocol headers, as definition is needed there
  */
 typedef struct data_packet {
-    portBASE_TYPE timestamp;	//!< systemticks, when the message was received
-    portBASE_TYPE recv;		//!< id of the receiver
-    portBASE_TYPE len;		//!< data length
-    portBASE_TYPE err;		//!< only when receiving data: contains ODB_ERR- Codes
+    UBaseType_t timestamp;	//!< systemticks, when the message was received
+    UBaseType_t recv;		//!< id of the receiver
+    UBaseType_t len;		//!< data length
+    UBaseType_t err;		//!< only when receiving data: contains ODB_ERR- Codes
     unsigned char *data;	//!< pointer to the data bytes
 } DATA_PACKET;
 
@@ -76,9 +76,9 @@ typedef struct error_data error_data;
  * used to send error message to output task.
  */
 typedef struct error_data {
-    portBASE_TYPE source;	//!< Source task or handler, which throws the error
-    portBASE_TYPE errType;	//!< classification of error type
-    portBASE_TYPE detail;	//!< detailed error definition
+    UBaseType_t source;	//!< Source task or handler, which throws the error
+    UBaseType_t errType;	//!< classification of error type
+    UBaseType_t detail;	//!< detailed error definition
     char *text;			//!< textual error description
 } ERROR_DATA;
 
@@ -211,8 +211,8 @@ typedef struct param_data param_data;
  * used to let the output task make outputs about incoming parameters (or to handle them then)
  */
 typedef struct param_data {
-    portBASE_TYPE argv;		//!< Nr of Args
-    portBASE_TYPE args[MAX_NUM_OF_ARGS];	//!< Array of Args
+    UBaseType_t argv;		//!< Nr of Args
+    UBaseType_t args[MAX_NUM_OF_ARGS];	//!< Array of Args
 } PARAM_DATA;
 
 // first a forward declaration to keep the compiler happy ;-)
@@ -221,7 +221,7 @@ typedef struct data_packet data_packet;
 
 /* generic messageTypes to put "everything" in a queue */
 typedef struct MsgData {
-    portBASE_TYPE len;
+    UBaseType_t len;
     void *addr;
     void *print;		//!< callback function to output the data or error
 } MSGDATA;
@@ -229,15 +229,15 @@ typedef struct MsgData {
 typedef struct MsgData MsgData;
 
 typedef struct OdMsg {
-    portBASE_TYPE msgType;
+    UBaseType_t msgType;
     MsgData *msgPtr;
 } ODMSG;
 
 typedef struct OdMsg OdMsg;
 
 typedef struct ODPBuffer {
-    portBASE_TYPE len;
-    portBASE_TYPE size;
+    UBaseType_t len;
+    UBaseType_t size;
     unsigned char *data;
 } ODPBUFFER;
 
@@ -251,20 +251,20 @@ MsgData *createDataMsg(data_packet * data);
 //! creates a message structure. If size > 0, the data is copied into the message, otherways only the data pointer is been transmitted
 MsgData *createMsg(void *data, size_t size);
 void disposeMsg(MsgData * p);
-portBASE_TYPE sendMsg(portBASE_TYPE msgType, xQueueHandle recv,
+UBaseType_t sendMsg(UBaseType_t msgType, QueueHandle_t recv,
 		      MsgData * msg);
-portBASE_TYPE sendMsgFromISR(portBASE_TYPE msgType, xQueueHandle recv,
+UBaseType_t sendMsgFromISR(UBaseType_t msgType, QueueHandle_t recv,
 			     MsgData * msg);
-portBASE_TYPE waitMsg(xQueueHandle recv, MsgData ** msg,
-		      portBASE_TYPE timeout);
+UBaseType_t waitMsg(QueueHandle_t recv, MsgData ** msg,
+		      UBaseType_t timeout);
 
-void createCommandResultMsg(portBASE_TYPE eSource, portBASE_TYPE eType,
-			    portBASE_TYPE eDetail, char *text);
-void createCommandResultMsgFromISR(portBASE_TYPE eSource,
-				   portBASE_TYPE eType,
-				   portBASE_TYPE eDetail, char *text);
+void createCommandResultMsg(UBaseType_t eSource, UBaseType_t eType,
+			    UBaseType_t eDetail, char *text);
+void createCommandResultMsgFromISR(UBaseType_t eSource,
+				   UBaseType_t eType,
+				   UBaseType_t eDetail, char *text);
 void CreateParamOutputMsg(param_data * args, print_cbf printRoutine);
-void CreateEventMsg(portBASE_TYPE event, portBASE_TYPE value);
+void CreateEventMsg(UBaseType_t event, UBaseType_t value);
 // Print functions
 
 void printser_string(char const *str);
@@ -279,12 +279,12 @@ void printser_uint8ToHex(uint8_t value);
 
 void printLF();
 
-void evalResult(portBASE_TYPE source, portBASE_TYPE errType,
-		portBASE_TYPE detail, char *text);
+void evalResult(UBaseType_t source, UBaseType_t errType,
+		UBaseType_t detail, char *text);
 
 void printEOT();
 
-ODPBuffer *createODPBuffer(portBASE_TYPE size);
+ODPBuffer *createODPBuffer(UBaseType_t size);
 
 void freeODPBuffer(ODPBuffer * odpBuffer);
 

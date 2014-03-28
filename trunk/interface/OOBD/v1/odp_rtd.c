@@ -63,10 +63,10 @@ This function is called through the output task, when the protocol sends a MSG_D
 */
 //<<<< oobdtemple protocol printdata_Buffer <<<<
 void
-odp_rtd_printdata_Buffer(portBASE_TYPE msgType, void *data,
+odp_rtd_printdata_Buffer(UBaseType_t msgType, void *data,
 			 printChar_cbf printchar)
 {
-    extern xQueueHandle inputQueue;
+    extern QueueHandle_t inputQueue;
     RTDElement **doublePtr;
     RTDElement *myRTDElement;
     RTDBuffer *myRTDBuffer;
@@ -79,7 +79,7 @@ odp_rtd_printdata_Buffer(portBASE_TYPE msgType, void *data,
 //      doublePtr = data;
 //      myRTDElement = *doublePtr;
 	myRTDElement = data;
-	portBASE_TYPE bufferIndex;
+	UBaseType_t bufferIndex;
 	DEBUGPRINT("geht noch 1\n", "a");
 	DEBUGPRINT("Element address %lX\n", myRTDElement);
 	bufferIndex = otherBuffer(myRTDElement->writeBufferIndex);
@@ -127,7 +127,7 @@ This function is called through the output task, when the protocol sends a MSG_H
 //<<<< oobdtemple protocol printParam <<<<
 
 
-void odp_rtd_printParam(portBASE_TYPE msgType, void *data,
+void odp_rtd_printParam(UBaseType_t msgType, void *data,
 			printChar_cbf printchar)
 {
     param_data *args = data;
@@ -154,7 +154,7 @@ transfers received telegrams into Msgqueue
  */
 //<<<< oobdtemple protocol recvdata <<<<
 
-void odp_rtd_recvdata(data_packet * p, portBASE_TYPE callFromISR)
+void odp_rtd_recvdata(data_packet * p, UBaseType_t callFromISR)
 {
     extern RTDElement *FirstRTDElement;
     RTDElement *actElement = FirstRTDElement;
@@ -175,12 +175,12 @@ void odp_rtd_recvdata(data_packet * p, portBASE_TYPE callFromISR)
 	return;
     }
     DEBUGPRINT("Found ID : %4X len: %ld \n", p->recv, p->len);
-    portBASE_TYPE writeBufferIndex = actElement->writeBufferIndex;
+    UBaseType_t writeBufferIndex = actElement->writeBufferIndex;
     DEBUGPRINT("Element len: %ld \n",
 	       actElement->buffer[writeBufferIndex].len);
-    portBASE_TYPE len = actElement->buffer[writeBufferIndex].len;
-    portBASE_TYPE i;
-    portBASE_TYPE newLen;
+    UBaseType_t len = actElement->buffer[writeBufferIndex].len;
+    UBaseType_t i;
+    UBaseType_t newLen;
     unsigned char seq;
 
     switch (actElement->msgType) {
@@ -347,23 +347,23 @@ void odp_rtd(void *pvParameters)
     int keeprunning = 1;
     data_packet *dp;
     data_packet actDataPacket;
-    portBASE_TYPE busToUse = *(portBASE_TYPE *) pvParameters;
+    UBaseType_t busToUse = *(UBaseType_t *) pvParameters;
 /* function pointers to the bus interface */
     extern bus_init actBus_init;
     extern bus_send actBus_send;
     extern bus_flush actBus_flush;
     extern bus_param actBus_param;
     extern bus_close actBus_close;
-    extern xQueueHandle protocolQueue;
-    extern xQueueHandle outputQueue;
-    extern xQueueHandle inputQueue;
+    extern QueueHandle_t protocolQueue;
+    extern QueueHandle_t outputQueue;
+    extern QueueHandle_t inputQueue;
     MsgData *msg;
     MsgData *ownMsg;
     param_data *args;
-    extern xSemaphoreHandle protocollBinarySemaphore;
-    portBASE_TYPE msgType;
-    portBASE_TYPE timeout = 0;
-    portBASE_TYPE showBusTransfer = 0;
+    extern SemaphoreHandle_t protocollBinarySemaphore;
+    UBaseType_t msgType;
+    UBaseType_t timeout = 0;
+    UBaseType_t showBusTransfer = 0;
     int i;
     //catch the "Protocoll is running" Semaphore
     xSemaphoreTake(protocollBinarySemaphore, portMAX_DELAY);
@@ -378,8 +378,8 @@ void odp_rtd(void *pvParameters)
     extern RTDElement *FirstRTDElement;
     FirstRTDElement = NULL;
     extern print_cbf printdata_CAN;
-    portBASE_TYPE stateMachine_state = 0;
-    portBASE_TYPE actBufferPos = 0;
+    UBaseType_t stateMachine_state = 0;
+    UBaseType_t actBufferPos = 0;
     /* Init default parameters */
     /* tell the Rx-ISR about the function to use for received data */
     busControl(ODB_CMD_RECV, odp_rtd_recvdata);
@@ -426,7 +426,7 @@ void odp_rtd(void *pvParameters)
 //>>>> oobdtemple protocol MSG_SERIAL_PARAM_1 >>>>    
 		break;
 	    case MSG_SERIAL_PARAM:
-		args = (portBASE_TYPE *) msg->addr;
+		args = (UBaseType_t *) msg->addr;
 		/*
 		 * DEBUGPRINT("protocol parameter received %ld %ld %ld\n",
 		 args->args[ARG_RECV], args->args[ARG_CMD],
@@ -498,7 +498,7 @@ void odp_rtd(void *pvParameters)
 	    case MSG_INIT:
 		if (protocolBuffer != NULL) {
 		    protocolBuffer->len = 0;
-		    portBASE_TYPE i;
+		    UBaseType_t i;
 		    for (i = 0; i < CMDBUFFERSIZE; i++)
 			protocolBuffer->data[i] = 0;
 		}
@@ -520,7 +520,7 @@ void odp_rtd(void *pvParameters)
 		    case 0x22:	// Return data from bus
 			if (protocolBuffer->len == 5) {
 			    DEBUGPRINT("\nprotocolBuffer = 0x22 !\n", 'a');
-			    portBASE_TYPE ID =
+			    UBaseType_t ID =
 				(protocolBuffer->data[1] << 24) +
 				(protocolBuffer->data[2] << 16) +
 				(protocolBuffer->data[3] << 8) +
@@ -559,7 +559,7 @@ void odp_rtd(void *pvParameters)
 			break;
 		    case 0x27:	// request for new RTD-Element
 			if (protocolBuffer->len < 11) {
-			    portBASE_TYPE ID =
+			    UBaseType_t ID =
 				(protocolBuffer->data[1] << 24) +
 				(protocolBuffer->data[2] << 16) +
 				(protocolBuffer->data[3] << 8) +
@@ -628,7 +628,7 @@ void odp_rtd(void *pvParameters)
 				   'a');
 		    }
 //>>>> oobdtemple protocol MSG_SEND_BUFFER_2 >>>>    
-		    portBASE_TYPE i;
+		    UBaseType_t i;
 		    for (i = 0; i < CMDBUFFERSIZE; i++)
 			protocolBuffer->data[i] = 0;
 		} else {	/* no data to send? */
@@ -681,8 +681,8 @@ void odp_rtd_init()
 
 
 
-RTDElement *AppendRtdElement(RTDElement ** headRef, portBASE_TYPE size,
-			     portBASE_TYPE id)
+RTDElement *AppendRtdElement(RTDElement ** headRef, UBaseType_t size,
+			     UBaseType_t id)
 {
     // first we create the new element itself
     DEBUGPRINT("AppendRtdElement  -- start\n", 'a');
@@ -802,7 +802,7 @@ void debugDumpElementList(struct RTDElement *current)
     DEBUGPRINT("Total number of elements %d:\n", count);
 }
 
-RTDElement *findID(RTDElement * rtdBuffer, portBASE_TYPE id)
+RTDElement *findID(RTDElement * rtdBuffer, UBaseType_t id)
 {
 
 
@@ -822,7 +822,7 @@ RTDElement *findID(RTDElement * rtdBuffer, portBASE_TYPE id)
 */
 
 
-inline portBASE_TYPE otherBuffer(portBASE_TYPE bufferindex)
+inline UBaseType_t otherBuffer(UBaseType_t bufferindex)
 {
     return (bufferindex & 1) ? 0 : 1;
 }

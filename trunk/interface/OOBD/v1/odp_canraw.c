@@ -66,9 +66,9 @@ extern char *oobd_Error_Text_OS[];
 
 void
 odp_canraw_data2CAN(unsigned char *dataPtr, unsigned char *canPtr,
-		    portBASE_TYPE len, portBASE_TYPE start)
+		    UBaseType_t len, UBaseType_t start)
 {
-    portBASE_TYPE i;
+    UBaseType_t i;
 
     // fill unused bytes first
     for (i = start; i < 8; i++) {
@@ -109,7 +109,7 @@ This function is called through the output task, when the protocol sends a MSG_H
 //<<<< oobdtemple protocol printParam <<<<
 
 
-void odp_canraw_printParam(portBASE_TYPE msgType, void *data,
+void odp_canraw_printParam(UBaseType_t msgType, void *data,
 			   printChar_cbf printchar)
 {
     param_data *args = data;
@@ -136,12 +136,13 @@ transfers received telegrams into Msgqueue
  */
 //<<<< oobdtemple protocol recvdata <<<<
 
-void odp_canraw_recvdata(data_packet * p, portBASE_TYPE callFromISR)
+void odp_canraw_recvdata(data_packet * p, UBaseType_t callFromISR)
 {
     MsgData *msg;
-    extern xQueueHandle protocolQueue;
+    extern QueueHandle_t protocolQueue;
+    p->timestamp = xTaskGetTickCountFromISR();
     if (NULL != (msg = createDataMsg(p))) {
-	portBASE_TYPE res = 0;
+	UBaseType_t res = 0;
 	if (callFromISR) {
 	    res = sendMsgFromISR(MSG_BUS_RECV, protocolQueue, msg);
 	} else {
@@ -169,7 +170,7 @@ void odp_canraw_recvdata(data_packet * p, portBASE_TYPE callFromISR)
 void odp_canraw_dumpFrame(data_packet * p, print_cbf print_data)
 {
     MsgData *msg;
-    extern xQueueHandle outputQueue;
+    extern QueueHandle_t outputQueue;
     if (NULL != (msg = createDataMsg(p))) {
 	msg->print = print_data;
 	if (pdPASS != sendMsg(MSG_BUS_RECV, outputQueue, msg)) {
@@ -197,25 +198,25 @@ void obp_canraw(void *pvParameters)
     int keeprunning = 1;
     data_packet *dp;
     data_packet actDataPacket;
-    portBASE_TYPE busToUse = *(portBASE_TYPE *) pvParameters;
+    UBaseType_t busToUse = *(UBaseType_t *) pvParameters;
 /* function pointers to the bus interface */
     extern bus_init actBus_init;
     extern bus_send actBus_send;
     extern bus_flush actBus_flush;
     extern bus_param actBus_param;
     extern bus_close actBus_close;
-    extern xQueueHandle protocolQueue;
-    extern xQueueHandle outputQueue;
-    extern xQueueHandle inputQueue;
+    extern QueueHandle_t protocolQueue;
+    extern QueueHandle_t outputQueue;
+    extern QueueHandle_t inputQueue;
 
     MsgData *msg;
     MsgData *ownMsg;
     param_data *args;
 
-    extern xSemaphoreHandle protocollBinarySemaphore;
-    portBASE_TYPE msgType;
-    portBASE_TYPE timeout = 0;
-    portBASE_TYPE showBusTransfer = 0;
+    extern SemaphoreHandle_t protocollBinarySemaphore;
+    UBaseType_t msgType;
+    UBaseType_t timeout = 0;
+    UBaseType_t showBusTransfer = 0;
     int i;
     //catch the "Protocoll is running" Semaphore
     xSemaphoreTake(protocollBinarySemaphore, portMAX_DELAY);
@@ -228,8 +229,8 @@ void obp_canraw(void *pvParameters)
     // start with the protocol specific initalisation
 //<<<< oobdtemple protocol initmain <<<<
     extern print_cbf printdata_CAN;
-    portBASE_TYPE stateMachine_state = 0;
-    portBASE_TYPE actBufferPos = 0;
+    UBaseType_t stateMachine_state = 0;
+    UBaseType_t actBufferPos = 0;
     struct CanRawConfig canRawConfig;
 
     /* Init default parameters */
@@ -283,7 +284,7 @@ void obp_canraw(void *pvParameters)
 //>>>> oobdtemple protocol MSG_SERIAL_PARAM_1 >>>>    
 		break;
 	    case MSG_SERIAL_PARAM:
-		args = (portBASE_TYPE *) msg->addr;
+		args = (UBaseType_t *) msg->addr;
 		/*
 		 * DEBUGPRINT("protocol parameter received %ld %ld %ld\n",
 		 args->args[ARG_RECV], args->args[ARG_CMD],
@@ -437,10 +438,10 @@ void obp_canraw(void *pvParameters)
 //<<<< oobdtemple protocol final <<<<
 
 int sendMoreFrames(ODPBuffer * protocolBuffer,
-		   portBASE_TYPE * actBufferPos_ptr,
-		   portBASE_TYPE * showBusTransfer_ptr,
-		   portBASE_TYPE * stateMachine_state_ptr,
-		   portBASE_TYPE * timeout_ptr,
+		   UBaseType_t * actBufferPos_ptr,
+		   UBaseType_t * showBusTransfer_ptr,
+		   UBaseType_t * stateMachine_state_ptr,
+		   UBaseType_t * timeout_ptr,
 		   print_cbf printdata_CAN, bus_send actBus_send)
 {
     unsigned char telegram[8];

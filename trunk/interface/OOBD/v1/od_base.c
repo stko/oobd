@@ -49,14 +49,14 @@ bus_param actBus_param = NULL;
 bus_param actBus_paramPrint = NULL;
 bus_close actBus_close = NULL;
 
-portBASE_TYPE lfType = VALUE_LF_CR;
+UBaseType_t lfType = VALUE_LF_CR;
 
 
 
 
-xQueueHandle outputQueue = NULL;
-xQueueHandle protocolQueue = NULL;
-xQueueHandle ilmQueue = NULL;
+QueueHandle_t outputQueue = NULL;
+QueueHandle_t protocolQueue = NULL;
+QueueHandle_t ilmQueue = NULL;
 
 char outputBuffer[100];
 
@@ -185,8 +185,8 @@ void disposeMsg(MsgData * p)
 }
 
 
-void evalResult(portBASE_TYPE source, portBASE_TYPE errType,
-		portBASE_TYPE detail, char *text)
+void evalResult(UBaseType_t source, UBaseType_t errType,
+		UBaseType_t detail, char *text)
 {
     if (errType) {
 	printser_string(":Error: ");
@@ -214,7 +214,7 @@ void printEOT()
 
 
 
-void printCommandResult(portBASE_TYPE msgType, void *data,
+void printCommandResult(UBaseType_t msgType, void *data,
 			printChar_cbf printchar)
 {
     error_data eData;
@@ -222,8 +222,8 @@ void printCommandResult(portBASE_TYPE msgType, void *data,
     evalResult(eData.source, eData.errType, eData.detail, eData.text);
 }
 
-void createCommandResultMsg(portBASE_TYPE eSource, portBASE_TYPE eType,
-			    portBASE_TYPE eDetail, char *text)
+void createCommandResultMsg(UBaseType_t eSource, UBaseType_t eType,
+			    UBaseType_t eDetail, char *text)
 {
     MsgData *msg;
     error_data eData;
@@ -240,9 +240,9 @@ void createCommandResultMsg(portBASE_TYPE eSource, portBASE_TYPE eType,
 
 
 
-void createCommandResultMsgFromISR(portBASE_TYPE eSource,
-				   portBASE_TYPE eType,
-				   portBASE_TYPE eDetail, char *text)
+void createCommandResultMsgFromISR(UBaseType_t eSource,
+				   UBaseType_t eType,
+				   UBaseType_t eDetail, char *text)
 {
     MsgData *msg;
     error_data eData;
@@ -260,7 +260,7 @@ void createCommandResultMsgFromISR(portBASE_TYPE eSource,
 void CreateParamOutputMsg(param_data * args, print_cbf printRoutine)
 {
     MsgData *msg;
-    extern xQueueHandle protocolQueue;
+    extern QueueHandle_t protocolQueue;
     if (NULL != (msg = createMsg(args, sizeof(param_data)))) {
 	msg->print = printRoutine;
 	if (pdPASS != sendMsg(MSG_HANDLE_PARAM, outputQueue, msg)) {
@@ -274,11 +274,11 @@ void CreateParamOutputMsg(param_data * args, print_cbf printRoutine)
 }
 
 
-void CreateEventMsg(portBASE_TYPE event, portBASE_TYPE value)
+void CreateEventMsg(UBaseType_t event, UBaseType_t value)
 {
     MsgData *msg;
-    extern xQueueHandle protocolQueue;
-    if (NULL != (msg = createMsg(&value, sizeof(portBASE_TYPE)))) {
+    extern QueueHandle_t protocolQueue;
+    if (NULL != (msg = createMsg(&value, sizeof(UBaseType_t)))) {
 	if (pdPASS != sendMsg(event, ilmQueue, msg)) {
 	    DEBUGPRINT("FATAL ERROR: ilm queue is full!\n", 'a');
 
@@ -289,7 +289,7 @@ void CreateEventMsg(portBASE_TYPE event, portBASE_TYPE value)
 
 }
 
-ODPBuffer *createODPBuffer(portBASE_TYPE size)
+ODPBuffer *createODPBuffer(UBaseType_t size)
 {
     ODPBuffer *odpBuffer = pvPortMalloc(sizeof(struct ODPBuffer));
     if (odpBuffer == NULL) {
@@ -324,8 +324,8 @@ void freeODPBuffer(ODPBuffer * odpBuffer)
 
 
 
-portBASE_TYPE
-sendMsg(portBASE_TYPE msgType, xQueueHandle recv, MsgData * msg)
+UBaseType_t
+sendMsg(UBaseType_t msgType, QueueHandle_t recv, MsgData * msg)
 {
     OdMsg odMsg;
     odMsg.msgType = msgType;
@@ -333,24 +333,24 @@ sendMsg(portBASE_TYPE msgType, xQueueHandle recv, MsgData * msg)
     return xQueueSend(recv, &odMsg, 0);
 }
 
-portBASE_TYPE
-sendMsgFromISR(portBASE_TYPE msgType, xQueueHandle recv, MsgData * msg)
+UBaseType_t
+sendMsgFromISR(UBaseType_t msgType, QueueHandle_t recv, MsgData * msg)
 {
     OdMsg odMsg;
     odMsg.msgType = msgType;
     odMsg.msgPtr = msg;
-    portBASE_TYPE xTaskPreviouslyWoken = pdFALSE;
-    portBASE_TYPE res;
+    UBaseType_t xTaskPreviouslyWoken = pdFALSE;
+    UBaseType_t res;
     res = xQueueSendFromISR(recv, &odMsg, &xTaskPreviouslyWoken);
     portEND_SWITCHING_ISR(xTaskPreviouslyWoken);
     return res;
 }
 
-portBASE_TYPE
-waitMsg(xQueueHandle recv, MsgData ** msgdata, portBASE_TYPE timeout)
+UBaseType_t
+waitMsg(QueueHandle_t recv, MsgData ** msgdata, UBaseType_t timeout)
 {
     OdMsg odMsg;
-    portBASE_TYPE recvStatus;
+    UBaseType_t recvStatus;
     if (pdPASS == (recvStatus = xQueueReceive(recv, &odMsg, timeout))) {
 	*msgdata = odMsg.msgPtr;
 	return odMsg.msgType;

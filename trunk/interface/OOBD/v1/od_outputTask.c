@@ -46,10 +46,10 @@ void outputTask(void *pvParameters)
     DEBUGUARTPRINT("\r\n*** outputTask entered! ***");
 
     extern printChar_cbf printChar;
-    extern xQueueHandle outputQueue;
+    extern QueueHandle_t outputQueue;
     MsgData *msg;
     print_cbf printdata;
-    portBASE_TYPE msgType;
+    UBaseType_t msgType;
 
     if (NULL != outputQueue) {
 	for (;;) {
@@ -118,7 +118,7 @@ void initOutput()
 {
     DEBUGUARTPRINT("\r\n*** initOutput() entered! ***");
 
-    extern xQueueHandle outputQueue;
+    extern QueueHandle_t outputQueue;
     outputQueue = xQueueCreate(QUEUE_SIZE_OUTPUT, sizeof(struct OdMsg));
 
     /* Create a Task which waits to receive bytes. */

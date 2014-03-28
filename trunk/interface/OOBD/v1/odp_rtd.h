@@ -83,12 +83,12 @@ void obd_rtd_init();
 
 
 typedef struct RTDBuffer {
-    portBASE_TYPE len;
-    portBASE_TYPE timeStamp;
-    portBASE_TYPE valid;
-    portBASE_TYPE locked;
-    portBASE_TYPE lastRecSeq;
-    portBASE_TYPE lastWrittenPos;
+    UBaseType_t len;
+    UBaseType_t timeStamp;
+    UBaseType_t valid;
+    UBaseType_t locked;
+    UBaseType_t lastRecSeq;
+    UBaseType_t lastWrittenPos;
     unsigned char *data;
     // add all elements as needed
 } RTDBUFFER;
@@ -97,11 +97,11 @@ typedef struct RTDBuffer RTDBuffer;
 
 typedef struct RTDElement {
     struct RTDElement *prev, *next;	//!< list pointers
-    portBASE_TYPE id;
-    portBASE_TYPE writeBufferIndex;
-    portBASE_TYPE SeqCountPos;
-    portBASE_TYPE SeqCountStart;
-    portBASE_TYPE msgType;
+    UBaseType_t id;
+    UBaseType_t writeBufferIndex;
+    UBaseType_t SeqCountPos;
+    UBaseType_t SeqCountStart;
+    UBaseType_t msgType;
     struct RTDBuffer buffer[2]	//!< 2 input buffers (double buffering), to have one valid, just filled one and another to be actual filed
 	// add all elements as needed
 } RTDELEMENT;
@@ -110,17 +110,17 @@ typedef struct RTDElement RTDElement;
 
 
 
-RTDElement *createRtdElement(portBASE_TYPE size);
+RTDElement *createRtdElement(UBaseType_t size);
 
 RTDElement *AppendRtdElement(struct RTDElement **headRef,
-			     portBASE_TYPE size, portBASE_TYPE ID);
+			     UBaseType_t size, UBaseType_t ID);
 
 void freeRtdElements(RTDElement ** firstElement);
 
 void debugDumpElementList(struct RTDElement *current);
 
-RTDElement *findID(RTDElement * rtdBuffer, portBASE_TYPE id);
+RTDElement *findID(RTDElement * rtdBuffer, UBaseType_t id);
 
-inline portBASE_TYPE otherBuffer(portBASE_TYPE bufferindex);
+inline UBaseType_t otherBuffer(UBaseType_t bufferindex);
 
 #endif				/* INC_ODP_RTD_H */
