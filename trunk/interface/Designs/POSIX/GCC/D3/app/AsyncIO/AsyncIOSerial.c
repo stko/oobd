@@ -49,7 +49,7 @@ long lAsyncIOSerialOpen(const char *pcDevice, int *piDeviceDescriptor)
 /* Define a callback function which is called when data is available. */
 void vAsyncSerialIODataAvailableISR(int iFileDescriptor, void *pContext)
 {
-    portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     ssize_t iReadResult = -1;
     unsigned char ucRx;
 
@@ -59,7 +59,7 @@ void vAsyncSerialIODataAvailableISR(int iFileDescriptor, void *pContext)
 	if (NULL != pContext) {
 	    /* Send the received byte to the queue. */
 	    if (pdTRUE !=
-		xQueueSendFromISR((xQueueHandle) pContext, &ucRx,
+		xQueueSendFromISR((QueueHandle_t) pContext, &ucRx,
 				  &xHigherPriorityTaskWoken)) {
 		/* the queue is full. */
 	    }

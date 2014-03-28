@@ -58,12 +58,12 @@ void mc_init_sys_shutdown_specific()
 }
 
 
-portBASE_TYPE mc_sys_get_startupProtocol()
+BaseType_t mc_sys_get_startupProtocol()
 {
     return VALUE_PARAM_PROTOCOL_CAN_UDS;
 }
 
-portBASE_TYPE mc_sys_get_startupBus()
+BaseType_t mc_sys_get_startupBus()
 {
 
     return ODB_CAN;
@@ -71,7 +71,7 @@ portBASE_TYPE mc_sys_get_startupBus()
 
 
 
-void printParam_sys_specific(portBASE_TYPE msgType, void *data,
+void printParam_sys_specific(BaseType_t msgType, void *data,
 			     printChar_cbf printchar)
 {
     param_data *args;
@@ -110,7 +110,7 @@ void printParam_sys_specific(portBASE_TYPE msgType, void *data,
     }
 }
 
-portBASE_TYPE eval_param_sys_specific(param_data * args)
+BaseType_t eval_param_sys_specific(param_data * args)
 {
     switch (args->args[ARG_CMD]) {
     case PARAM_INFO:
@@ -139,9 +139,9 @@ portBASE_TYPE eval_param_sys_specific(param_data * args)
 }
 
 
-portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
-			portBASE_TYPE upperValue, portBASE_TYPE duration,
-			portBASE_TYPE waveType)
+BaseType_t sysIoCtrl(BaseType_t pinID, BaseType_t lowerValue,
+			BaseType_t upperValue, BaseType_t duration,
+			BaseType_t waveType)
 {
 //    DEBUGPRINT("Pin: %ld to value %ld\n", pinID, upperValue);
     switch (pinID) {
@@ -170,7 +170,7 @@ portBASE_TYPE sysIoCtrl(portBASE_TYPE pinID, portBASE_TYPE lowerValue,
 
 
 
-portBASE_TYPE sysSound(portBASE_TYPE frequency, portBASE_TYPE volume)
+BaseType_t sysSound(BaseType_t frequency, BaseType_t volume)
 {
     DEBUGPRINT("Play frequency of %d Hz for %d ticks duration\n",
 	       frequency, volume);
