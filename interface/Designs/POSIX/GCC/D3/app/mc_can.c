@@ -48,7 +48,7 @@ extern struct CanConfig *canConfig;
 /* global vars */
 struct sockaddr_can xReceiveAddress;
 int iSocketReceive = 0;
-xQueueHandle xCANReceiveQueue = NULL;
+QueueHandle_t xCANReceiveQueue = NULL;
 struct sockaddr_can xSendAddress;
 int iSocketSend = 0, iReturn = 0, iSendTaskList = pdTRUE;
 
@@ -65,16 +65,16 @@ void CAN1_Configuration(uint8_t CAN_BusConfig, uint8_t CAN_ModeConfig);
 
 
 
-portBASE_TYPE rxCount;
-portBASE_TYPE txCount;
-portBASE_TYPE errCount;
-portBASE_TYPE stCANBusOffErr;
-portBASE_TYPE stCANBusWarningErr;
-portBASE_TYPE stCANBusPassiveErr;
-portBASE_TYPE ctrCANTec;
-portBASE_TYPE ctrCANRec;
+BaseType_t rxCount;
+BaseType_t txCount;
+BaseType_t errCount;
+BaseType_t stCANBusOffErr;
+BaseType_t stCANBusWarningErr;
+BaseType_t stCANBusPassiveErr;
+BaseType_t ctrCANTec;
+BaseType_t ctrCANRec;
 
-portBASE_TYPE bus_init_can()
+BaseType_t bus_init_can()
 {
     rxCount = 0;
     txCount = 0;
@@ -136,7 +136,7 @@ portBASE_TYPE bus_init_can()
 
 /*-----------------------------------------------------------*/
 
-portBASE_TYPE bus_send_can(data_packet * data)
+BaseType_t bus_send_can(data_packet * data)
 {
     int i;
     DEBUGPRINT("CAN- Send Buffer with len %ld\n", data->len);
@@ -192,7 +192,7 @@ void bus_flush_can()
 
 /*----------------------------------------------------------------------------*/
 
-void bus_param_can_spec_Print(portBASE_TYPE msgType, void *data,
+void bus_param_can_spec_Print(BaseType_t msgType, void *data,
 			      printChar_cbf printchar)
 {
     param_data *args;
@@ -256,7 +256,7 @@ uint32_t CAN_GetFilterReg32(uint8_t FilterID, uint8_t FilterReg)
 }
 
 /*-----------------------------------------------------------*/
-portBASE_TYPE bus_param_can_spec(param_data * args)
+BaseType_t bus_param_can_spec(param_data * args)
 {
 //CAN_FilterInitTypeDef CAN_FilterInitStructure;
     uint8_t i;
@@ -480,7 +480,7 @@ void vCANReceiveAndDeliverCallbackOOBD(int iSocket, void *pvContext)
 
 
 
-portBASE_TYPE busControl(portBASE_TYPE cmd, void *param)
+BaseType_t busControl(BaseType_t cmd, void *param)
 {
     switch (cmd) {
     case ODB_CMD_RECV:
@@ -495,14 +495,14 @@ portBASE_TYPE busControl(portBASE_TYPE cmd, void *param)
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_rx_error_can()
+BaseType_t bus_rx_error_can()
 {
     return errCount;
 }
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_tx_error_can()
+BaseType_t bus_tx_error_can()
 {
     return 0;
 }
@@ -522,14 +522,14 @@ void bus_clear_tx_error_can()
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_rx_count_can()
+BaseType_t bus_rx_count_can()
 {
     return rxCount;
 }
 
 /*----------------------------------------------------------------------------*/
 
-portBASE_TYPE bus_tx_count_can()
+BaseType_t bus_tx_count_can()
 {
     return txCount;
 }
@@ -548,31 +548,31 @@ void bus_clear_tx_count_can()
     txCount = 0;
 }
 
-portBASE_TYPE bus_busoff_error_can()
+BaseType_t bus_busoff_error_can()
 {
     /* check for Bus-off flag */
     return 0;
 }
 
-portBASE_TYPE bus_passive_error_can()
+BaseType_t bus_passive_error_can()
 {
     /* check for Error passive flag */
     return 0;
 }
 
-portBASE_TYPE bus_warning_error_can()
+BaseType_t bus_warning_error_can()
 {
     /* check for Error Warning flag */
     return 0;
 }
 
-portBASE_TYPE bus_tec_can()
+BaseType_t bus_tec_can()
 {
     /* read Transmit Error Counter of CAN hardware */
     return 0;
 }
 
-portBASE_TYPE bus_rec_can()
+BaseType_t bus_rec_can()
 {
     /* read Receive Error Counter of CAN hardware */
     return 0;

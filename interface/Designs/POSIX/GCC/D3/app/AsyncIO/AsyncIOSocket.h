@@ -68,7 +68,7 @@ int iSocketUDPReceiveFrom(int iSocket, xUDPPacket * pxPacket,
 /**
  * Typical implementation of a call back function which simply delivers the received packet to a Queue which it is passed.
  * @param iSocket A socket desicriptor to receive the packet from.
- * @param pvQueueHandle An xQueueHandle which is waiting to receive the just received packet.
+ * @param pvQueueHandle An QueueHandle_t which is waiting to receive the just received packet.
  */
 void vUDPReceiveAndDeliverCallback(int iSocket, void *pvQueueHandle);
 

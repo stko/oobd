@@ -133,14 +133,14 @@ int iSocketCANReceiveFrom(int iSocket, struct can_frame *pxPacket,
 
 void vCANReceiveAndDeliverCallback(int iSocket, void *pvContext)
 {
-    portBASE_TYPE xHigherTaskWoken = pdFALSE;
+    BaseType_t xHigherTaskWoken = pdFALSE;
     static struct can_frame xPacket;
     struct sockaddr_can xReceiveAddress;
 
     if (sizeof(struct can_frame) ==
 	iSocketCANReceiveISR(iSocket, &xPacket, &xReceiveAddress)) {
 	if (pdPASS !=
-	    xQueueSendFromISR((xQueueHandle) pvContext, &xPacket,
+	    xQueueSendFromISR((QueueHandle_t) pvContext, &xPacket,
 			      &xHigherTaskWoken)) {
 	    printf("CAN xQuere full!\n");
 	}

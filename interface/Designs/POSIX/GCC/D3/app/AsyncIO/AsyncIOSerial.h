@@ -21,9 +21,9 @@ long lAsyncIOSerialOpen(const char *pcDevice, int *piDeviceDescriptor);
  * The 'ISR' callback function that is triggered when there is data waiting.
  * This function is intended to be registered using lAsyncIORegisterCallback().
  * It collects as many bytes as possible, delivering them one byte at a time to
- * the ( xQueueHandle )pContext.
+ * the ( QueueHandle_t )pContext.
  * @param iFileDescriptor The file descriptor for the serial port.
- * @param pContext A Handle to a queue. Cast to xQueueHandle.
+ * @param pContext A Handle to a queue. Cast to QueueHandle_t.
  */
 void vAsyncSerialIODataAvailableISR(int iFileDescriptor, void *pContext);
 

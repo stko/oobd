@@ -119,14 +119,14 @@ int iSocketUDPReceiveFrom(int iSocket, xUDPPacket * pxPacket,
 
 void vUDPReceiveAndDeliverCallback(int iSocket, void *pvContext)
 {
-    portBASE_TYPE xHigherTaskWoken = pdFALSE;
+    BaseType_t xHigherTaskWoken = pdFALSE;
     static xUDPPacket xPacket;
     struct sockaddr_in xReceiveAddress;
 
     if (sizeof(xUDPPacket) ==
 	iSocketUDPReceiveISR(iSocket, &xPacket, &xReceiveAddress)) {
 	if (pdPASS !=
-	    xQueueSendFromISR((xQueueHandle) pvContext, &xPacket,
+	    xQueueSendFromISR((QueueHandle_t) pvContext, &xPacket,
 			      &xHigherTaskWoken)) {
 	    printf("UDP Rx failed\n");
 	}

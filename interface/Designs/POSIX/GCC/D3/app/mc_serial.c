@@ -38,7 +38,7 @@
 #include "mc_serial_generic.h"
 #include "mc_serial.h"
 
-xTaskHandle hSerialTask;
+TaskHandle_t hSerialTask;
 /* file handle to communicate with the oobd side. */
 static int oobdIOHandle = 0;
 
@@ -56,11 +56,11 @@ void writeChar(char a)
 
 
 
-portBASE_TYPE serial_init_mc()
+BaseType_t serial_init_mc()
 {
 
     extern printChar_cbf printChar;
-    extern xQueueHandle internalSerialRxQueue;
+    extern QueueHandle_t internalSerialRxQueue;
     printChar = writeChar;
 
     // Set-up the Serial Console Echo task
