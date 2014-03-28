@@ -42,8 +42,8 @@ extern char *oobd_Error_Text_OS[];
 
 
 /* global message queues */
-xQueueHandle internalSerialRxQueue = NULL;
-xQueueHandle inputQueue = NULL;
+QueueHandle_t internalSerialRxQueue = NULL;
+QueueHandle_t inputQueue = NULL;
 
 //! pointer to writeChar() function
 printChar_cbf printChar = NULL;
@@ -58,7 +58,7 @@ printChar_cbf printChar = NULL;
 
 void inputRedirectTask(void *pvParameters)
 {
-    extern xQueueHandle internalSerialRxQueue;
+    extern QueueHandle_t internalSerialRxQueue;
     unsigned char ucRx;
     MsgData *msg;
 
@@ -94,7 +94,7 @@ void inputRedirectTask(void *pvParameters)
 void sendData(data_packet * dp)
 {
     MsgData *msg;
-    extern xQueueHandle protocolQueue;
+    extern QueueHandle_t protocolQueue;
     int i;
     for (i = dp->len; i < 8; i++) {
 	dp->data[i] = 0;
@@ -112,7 +112,7 @@ void sendData(data_packet * dp)
 void sendParam(param_data * args)
 {
     MsgData *msg;
-    extern xQueueHandle protocolQueue;
+    extern QueueHandle_t protocolQueue;
     if (NULL != (msg = createMsg(args, sizeof(param_data)))) {
 	if (pdPASS != sendMsg(MSG_SERIAL_PARAM, protocolQueue, msg)) {
 	    DEBUGPRINT("FATAL ERROR: protocol queue is full!\n", 'a');
@@ -164,7 +164,7 @@ char checkValidChar(char a)
 /**! a little help function
   \return pdRTUE if value is odd
 */
-inline portBASE_TYPE odd(portBASE_TYPE value)
+inline UBaseType_t odd(UBaseType_t value)
 {
     return (value & 1) ? pdTRUE : pdFALSE;
 }
@@ -172,7 +172,7 @@ inline portBASE_TYPE odd(portBASE_TYPE value)
 /**! a little help function
   \return pdRTUE if value is even
 */
-inline portBASE_TYPE even(portBASE_TYPE value)
+inline UBaseType_t even(UBaseType_t value)
 {
     return (value & 1) ? pdFALSE : pdTRUE;
 }
@@ -183,13 +183,13 @@ void inputParserTask(void *pvParameters)
 {
     DEBUGUARTPRINT("\r\n*** inputParserTask entered! ***");
 
-    extern xQueueHandle inputQueue;
-    extern xQueueHandle protocolQueue;
-    extern portBASE_TYPE lfType;
+    extern QueueHandle_t inputQueue;
+    extern QueueHandle_t protocolQueue;
+    extern UBaseType_t lfType;
 
     MsgData *incomingMsg;
     char inChar;
-    portBASE_TYPE msgType = 0, lastErr = 0, processFurther = 1, hexInput =
+    UBaseType_t msgType = 0, lastErr = 0, processFurther = 1, hexInput =
 	0;
     param_data args;		/* !< containts the arguments given as command */
     static data_packet dp;
@@ -202,7 +202,7 @@ void inputParserTask(void *pvParameters)
 	S_INIT
 	    /* !< initial state, waiting for input */
     };
-    portBASE_TYPE actState = S_INIT, totalInCount = 0, argCount = 0;
+    UBaseType_t actState = S_INIT, totalInCount = 0, argCount = 0;
     dp.data = &buffer;
     int i;
     for (;;) {
@@ -448,12 +448,12 @@ void inputParserTask(void *pvParameters)
 
 /*-----------------------------------------------------------*/
 
-portBASE_TYPE serial_init()
+UBaseType_t serial_init()
 {
     DEBUGUARTPRINT("\r\n*** serial_init() entered! ***");
 
-    extern xQueueHandle protocolQueue;
-    extern xQueueHandle inputQueue;
+    extern QueueHandle_t protocolQueue;
+    extern QueueHandle_t inputQueue;
     //! \todo die Abfragen auf erfolgreiche Queue- Erzeugung sind falsch (Pointer statt 
     if (NULL != (protocolQueue = xQueueCreate(QUEUE_SIZE_PROTOCOL,
 					      sizeof(struct OdMsg))))
@@ -468,14 +468,14 @@ portBASE_TYPE serial_init()
     if (pdPASS == xTaskCreate(inputRedirectTask,
 			      (const signed portCHAR *) "SerialRedirect",
 			      configMINIMAL_STACK_SIZE, (void *) NULL,
-			      TASK_PRIO_LOW, (xTaskHandle *) NULL))
+			      TASK_PRIO_LOW, (TaskHandle_t *) NULL))
 	DEBUGUARTPRINT("\r\n*** inputRedirectTask created ***");
 
     if (pdPASS
 	== xTaskCreate(inputParserTask,
 		       (const signed portCHAR *) "InputParser",
 		       configMINIMAL_STACK_SIZE, (void *) NULL,
-		       TASK_PRIO_MID, (xTaskHandle *) NULL))
+		       TASK_PRIO_MID, (TaskHandle_t *) NULL))
 	DEBUGUARTPRINT("\r\n*** inputParserTask created ***");
 
     DEBUGUARTPRINT("\r\n*** serial_init() finished! ***");

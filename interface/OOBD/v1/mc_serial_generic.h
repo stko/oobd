@@ -87,9 +87,9 @@ Default: Carriage Return CR hex. 0x0D dec. 10
 #define ERR_CODE_SERIAL_SYNTAX_ERR 1
 #define ERR_CODE_SERIAL_SYNTAX_ERR_TEXT "Syntax Error"
 
-portBASE_TYPE serial_init_mc();
+UBaseType_t serial_init_mc();
 
-portBASE_TYPE serial_init();
+UBaseType_t serial_init();
 
 void initOutput();
 

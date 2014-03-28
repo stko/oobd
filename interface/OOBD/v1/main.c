@@ -89,8 +89,8 @@ void tickTask(void *pvParameters)
 {
     DEBUGUARTPRINT("\r\n*** tickTask entered! ***");
 
-    extern xQueueHandle protocolQueue;
-    extern xQueueHandle ilmQueue;
+    extern QueueHandle_t protocolQueue;
+    extern QueueHandle_t ilmQueue;
 
     for (;;) {
 /*
@@ -138,7 +138,7 @@ int main(void)
 
     if (pdPASS == xTaskCreate(tickTask, (const signed portCHAR *) "Tick",
 			      configMINIMAL_STACK_SIZE, (void *) NULL,
-			      TASK_PRIO_LOW, (xTaskHandle *) NULL))
+			      TASK_PRIO_LOW, (TaskHandle_t *) NULL))
 	DEBUGPRINT("*** 'Tick' Task created ***\n", 'a');
     else
 	DEBUGPRINT("*** 'Tick' Task NOT created ***\n", 'a');

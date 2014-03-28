@@ -41,7 +41,7 @@
 
 
 
-xQueueHandle protocolQueue;
+QueueHandle_t protocolQueue;
 
 
 //! All Errormessages of the OS Function Block
@@ -55,9 +55,9 @@ char *oobd_Error_Text_OS[] = {
 
 
 //startupProtocol and startupBus need to be static to "be there" when another task get started with their address as parameter
-portBASE_TYPE startupProtocol;
-portBASE_TYPE startupBus;
-xSemaphoreHandle protocollBinarySemaphore;
+UBaseType_t startupProtocol;
+UBaseType_t startupBus;
+SemaphoreHandle_t protocollBinarySemaphore;
 
 void mc_init_sys_boot()
 {
@@ -71,7 +71,7 @@ void mc_init_sys_boot()
 
 
 void
-printParam_sys(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
+printParam_sys(UBaseType_t msgType, void *data, printChar_cbf printchar)
 {
     param_data *args;
     args = data;
@@ -86,7 +86,7 @@ printParam_sys(portBASE_TYPE msgType, void *data, printChar_cbf printchar)
 }
 
 /* evaluation of p 1 x x x commands */
-portBASE_TYPE eval_param_sys(param_data * args)
+UBaseType_t eval_param_sys(param_data * args)
 {
     int i;
     switch (args->args[ARG_CMD]) {
@@ -171,7 +171,7 @@ void mc_init_sys_shutdown()
 }
 
 
-portBASE_TYPE mc_start_protocol(portBASE_TYPE protocol, portBASE_TYPE bus)
+UBaseType_t mc_start_protocol(UBaseType_t protocol, UBaseType_t bus)
 {
     if (protocol < SYS_NR_OF_PROTOCOLS && bus < SYS_NR_OF_BUSSES
 	&& odparr[protocol] != NULL && odbarr[bus] != NULL) {

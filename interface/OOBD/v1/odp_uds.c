@@ -69,7 +69,7 @@ but as half of the address range is reserved for the tester answer IDs, we can s
 
 */
 
-portBASE_TYPE odp_uds_reduceID(portBASE_TYPE id)
+UBaseType_t odp_uds_reduceID(UBaseType_t id)
 {
     return ((id & 0xF0) >> 1) + ((id & 0xFF) & 0x07);	// remove bit 3 (=8) out of the id
 
@@ -84,9 +84,9 @@ portBASE_TYPE odp_uds_reduceID(portBASE_TYPE id)
 
 void
 odp_uds_data2CAN(unsigned char *dataPtr, unsigned char *canPtr,
-		 portBASE_TYPE len, portBASE_TYPE start)
+		 UBaseType_t len, UBaseType_t start)
 {
-    portBASE_TYPE i;
+    UBaseType_t i;
 
     // fill unused bytes first
     for (i = start; i < 8; i++) {
@@ -107,7 +107,7 @@ odp_uds_data2CAN(unsigned char *dataPtr, unsigned char *canPtr,
 
 void
 udp_uds_CAN2data(ODPBuffer * udsPtr, unsigned char *canPtr,
-		 portBASE_TYPE startFrom, portBASE_TYPE len)
+		 UBaseType_t startFrom, UBaseType_t len)
 {
     int i;
     for (i = 0; i < len; i++) {
@@ -129,10 +129,10 @@ void
 odp_uds_generateTesterPresents(unsigned char *tpArray,
 			       unsigned char *canBuffer,
 			       bus_send actBus_send,
-			       portBASE_TYPE actTPFreq)
+			       UBaseType_t actTPFreq)
 {
     data_packet dp;
-    portBASE_TYPE i;
+    UBaseType_t i;
     int actAddr;
     // first we fill the telegram with the tester present data
     dp.len = 8;			/* Tester present message must be 8 bytes */
@@ -170,10 +170,10 @@ This function is called through the output task, when the protocol sends a MSG_D
 //<<<< oobdtemple protocol printdata_Buffer <<<<
 
 void
-odp_uds_printdata_Buffer(portBASE_TYPE msgType, void *data,
+odp_uds_printdata_Buffer(UBaseType_t msgType, void *data,
 			 printChar_cbf printchar)
 {
-    extern xQueueHandle inputQueue;
+    extern QueueHandle_t inputQueue;
 
     ODPBuffer **doublePtr;
     ODPBuffer *myUDSBuffer;
@@ -209,7 +209,7 @@ This function is called through the output task, when the protocol sends a MSG_H
 //<<<< oobdtemple protocol printParam <<<<
 
 
-void odp_uds_printParam(portBASE_TYPE msgType, void *data,
+void odp_uds_printParam(UBaseType_t msgType, void *data,
 			printChar_cbf printchar)
 {
     param_data *args = data;
@@ -236,12 +236,12 @@ transfers received telegrams into Msgqueue
  */
 //<<<< oobdtemple protocol recvdata <<<<
 
-void odp_uds_recvdata(data_packet * p, portBASE_TYPE callFromISR)
+void odp_uds_recvdata(data_packet * p, UBaseType_t callFromISR)
 {
     MsgData *msg;
-    extern xQueueHandle protocolQueue;
+    extern QueueHandle_t protocolQueue;
     if (NULL != (msg = createDataMsg(p))) {
-	portBASE_TYPE res = 0;
+	UBaseType_t res = 0;
 	if (callFromISR) {
 	    res = sendMsgFromISR(MSG_BUS_RECV, protocolQueue, msg);
 	} else {
@@ -269,7 +269,7 @@ void odp_uds_recvdata(data_packet * p, portBASE_TYPE callFromISR)
 void odp_uds_dumpFrame(data_packet * p, print_cbf print_data)
 {
     MsgData *msg;
-    extern xQueueHandle outputQueue;
+    extern QueueHandle_t outputQueue;
     if (NULL != (msg = createDataMsg(p))) {
 	msg->print = print_data;
 	if (pdPASS != sendMsg(MSG_BUS_RECV, outputQueue, msg)) {
@@ -304,25 +304,25 @@ void obp_uds(void *pvParameters)
     int keeprunning = 1;
     data_packet *dp;
     data_packet actDataPacket;
-    portBASE_TYPE busToUse = *(portBASE_TYPE *) pvParameters;
+    UBaseType_t busToUse = *(UBaseType_t *) pvParameters;
 /* function pointers to the bus interface */
     extern bus_init actBus_init;
     extern bus_send actBus_send;
     extern bus_flush actBus_flush;
     extern bus_param actBus_param;
     extern bus_close actBus_close;
-    extern xQueueHandle protocolQueue;
-    extern xQueueHandle outputQueue;
-    extern xQueueHandle inputQueue;
+    extern QueueHandle_t protocolQueue;
+    extern QueueHandle_t outputQueue;
+    extern QueueHandle_t inputQueue;
 
     MsgData *msg;
     MsgData *ownMsg;
     param_data *args;
 
-    extern xSemaphoreHandle protocollBinarySemaphore;
-    portBASE_TYPE msgType;
-    portBASE_TYPE timeout = 0;
-    portBASE_TYPE showBusTransfer = 0;
+    extern SemaphoreHandle_t protocollBinarySemaphore;
+    UBaseType_t msgType;
+    UBaseType_t timeout = 0;
+    UBaseType_t showBusTransfer = 0;
     int i;
     //catch the "Protocoll is running" Semaphore
     xSemaphoreTake(protocollBinarySemaphore, portMAX_DELAY);
@@ -336,13 +336,13 @@ void obp_uds(void *pvParameters)
     // start with the protocol specific initalisation
 //<<<< oobdtemple protocol initmain <<<<
     extern print_cbf printdata_CAN;
-    portBASE_TYPE sequenceCounter;
-    portBASE_TYPE remainingBytes;
-    portBASE_TYPE actBufferPos;
-    portBASE_TYPE actFrameLen;
-    portBASE_TYPE blockSize_BS;
-    portBASE_TYPE separationTime_ST;
-    portBASE_TYPE stateMachine_state = 0;
+    UBaseType_t sequenceCounter;
+    UBaseType_t remainingBytes;
+    UBaseType_t actBufferPos;
+    UBaseType_t actFrameLen;
+    UBaseType_t blockSize_BS;
+    UBaseType_t separationTime_ST;
+    UBaseType_t stateMachine_state = 0;
     unsigned char telegram[8];
     /* Memory eater Nr. 1: The UDS message buffer */
     /* Memory eater Nr. 2: The Tester Present Marker Flags */
@@ -631,7 +631,7 @@ void obp_uds(void *pvParameters)
 //>>>> oobdtemple protocol MSG_SERIAL_PARAM_1 >>>>    
 		break;
 	    case MSG_SERIAL_PARAM:
-		args = (portBASE_TYPE *) msg->addr;
+		args = (UBaseType_t *) msg->addr;
 		DEBUGPRINT("protocol parameter received %ld %ld %ld\n",
 			   args->args[ARG_RECV], args->args[ARG_CMD],
 			   args->args[ARG_VALUE_1]);

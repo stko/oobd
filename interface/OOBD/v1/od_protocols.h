@@ -82,17 +82,17 @@
 
 //! signature of the protocol function that will be called 
 //! if data has been received or an bus error occured
-typedef void (*recv_cbf) (data_packet * p, portBASE_TYPE calledFromISR);
+typedef void (*recv_cbf) (data_packet * p, UBaseType_t calledFromISR);
 
 
 
 //! function pointer prototypes to enable bus driver switching
 
-typedef portBASE_TYPE(*bus_init) ();
-typedef portBASE_TYPE(*bus_send) (data_packet * data);
+typedef UBaseType_t(*bus_init) ();
+typedef UBaseType_t(*bus_send) (data_packet * data);
 typedef void (*bus_flush) ();
-typedef portBASE_TYPE(*bus_param) (param_data * args);
-typedef portBASE_TYPE(*bus_paramPrint) (param_data * args);
+typedef UBaseType_t(*bus_param) (param_data * args);
+typedef UBaseType_t(*bus_paramPrint) (param_data * args);
 typedef void (*bus_close) ();
 
 
@@ -113,11 +113,11 @@ enum busses {
 void (*odbarr[SYS_NR_OF_BUSSES]) ();
 
 /* Variable to holf the handle of xTaksCreate from "prot"-Task */
-xTaskHandle xTaskProtHandle;
+TaskHandle_t xTaskProtHandle;
 
 
 // function prototype for the bus interface
-portBASE_TYPE busControl(portBASE_TYPE cmd, void *param);
+UBaseType_t busControl(UBaseType_t cmd, void *param);
 
 
 
