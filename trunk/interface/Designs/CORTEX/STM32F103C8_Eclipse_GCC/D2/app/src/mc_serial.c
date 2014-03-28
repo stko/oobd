@@ -48,11 +48,12 @@
 
 void uart1_putc(char c);
 
-/*---------------------------------------------------------------------------*/portBASE_TYPE serial_init_mc() {
+/*---------------------------------------------------------------------------*/
+UBaseType_t serial_init_mc() {
 
 	extern printChar_cbf printChar; /* callback function */
 
-	extern xQueueHandle internalSerialRxQueue;
+	extern QueueHandle_t internalSerialRxQueue;
 
 	printChar = uart1_putc;
 	;
@@ -292,11 +293,11 @@ void BTM222_Rx_getc(char c) {
 
 			DEBUGUARTPRINT("\r\n*** USART1_IRQHandler starting ***");
 
-			extern xQueueHandle internalSerialRxQueue;
+			extern QueueHandle_t internalSerialRxQueue;
 
 			char ch;
 
-			static portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+			static UBaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
 			/* Check for received Data */
 			if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) {
