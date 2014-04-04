@@ -186,7 +186,7 @@ void disposeMsg(MsgData * p)
 
 
 void evalResult(UBaseType_t source, UBaseType_t errType,
-		UBaseType_t detail, char *text)
+		UBaseType_t detail, unsigned char *text)
 {
     if (errType) {
 	printser_string(":Error: ");

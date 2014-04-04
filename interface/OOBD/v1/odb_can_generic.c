@@ -51,7 +51,7 @@ void print_telegram(UBaseType_t msgType, void *data,
     static data_packet *dp;
     dp = data;
     printser_string("# ");
-    printser_int(dp->timestamp * portTICK_RATE_MS, 10);
+    printser_int(dp->timestamp * portTICK_PERIOD_MS, 10);
     printser_string(" 0x");
     printser_int(dp->recv, 16);
     printser_string(" 0x");

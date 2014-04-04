@@ -150,7 +150,8 @@ void NVIC_Configuration(void) {
  * @brief  returns peripherals hardware ID
  * @param  None
  * @retval 1 = standard DXM, 4 = OOBD D2-V5, 5 = OOBD CAN Invader
- */UBaseType_t GPIO_HardwareLevel(void) {
+ */
+UBaseType_t GPIO_HardwareLevel(void) {
 	UBaseType_t HardwareVariant = 0; /* default no valid hardware detected */
 
 	if ((GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == Bit_SET)

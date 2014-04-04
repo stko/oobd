@@ -42,7 +42,7 @@
 #define TX_QUEUE_SIZE	2
 #define RX_QUEUE_SIZE	2
 
-#define ONE_SECOND_DELAY					( ( portTickType ) 1000 / portTICK_RATE_MS )
+#define ONE_SECOND_DELAY					( ( portTickType ) 1000 / portTICK_PERIOD_MS )
 
 #define SERIAL_COMM_TASK_PRIORITY			( tskIDLE_PRIORITY + 3 )
 

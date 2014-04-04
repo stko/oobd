@@ -105,7 +105,7 @@ void tickTask(void *pvParameters)
 	if (pdPASS != sendMsg(MSG_TICK, ilmQueue, NULL)) {
 	    DEBUGPRINT("FATAL ERROR: ilm queue is full!\n", 'a');
 	}
-	vTaskDelay(10 / portTICK_RATE_MS);	// 10ms tick time
+	vTaskDelay(10 / portTICK_PERIOD_MS);	// 10ms tick time
 
     }
 }
