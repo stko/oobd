@@ -123,8 +123,8 @@
 
 /* Interrupt nesting behaviour configuration. */
 #define configKERNEL_INTERRUPT_PRIORITY         255
-//#define configMAX_SYSCALL_INTERRUPT_PRIORITY    191	/* equivalent to 0xb0, or priority 11. */
-#define configMAX_API_CALL_INTERRUPT_PRIORITY   191 /* new name for configMAX_SYSCALL_INTERRUPT_PRIORITY */
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY    191	/* equivalent to 0xb0, or priority 11. */
+//#define configMAX_API_CALL_INTERRUPT_PRIORITY   191 /* only used for newer ports */
 /* This is the value being used as per the ST library which permits 16
 priority values, 0 to 15.  This must correspond to the
 configKERNEL_INTERRUPT_PRIORITY setting.  Here 15 corresponds to the lowest
@@ -132,7 +132,7 @@ NVIC value of 255. */
 #define configLIBRARY_KERNEL_INTERRUPT_PRIORITY	15
 
 /* Define to trap errors during development. */
-#define configASSERT( ( x ) )     if( ( x ) == 0 ) vAssertCalled( __FILE__, __LINE__ )
+//#define configASSERT( ( x ) )     if( ( x ) == 0 ) vAssertCalled( __FILE__, __LINE__ )
 
 /* FreeRTOS MPU specific definitions. */
 #define configINCLUDE_APPLICATION_DEFINED_PRIVILEGED_FUNCTIONS 0
@@ -153,7 +153,7 @@ NVIC value of 255. */
 #define INCLUDE_pcTaskGetTaskName               0
 #define INCLUDE_eTaskGetState                   0
 #define INCLUDE_xEventGroupSetBitFromISR        1
-#define INCLUDE_xTimerPendFunctionCall          0
+#define INCLUDE_xTimerPendFunctionCall          1
 
 /* A header file that defines trace macro can be included here. */
 

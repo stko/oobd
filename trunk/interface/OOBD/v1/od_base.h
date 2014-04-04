@@ -280,7 +280,7 @@ void printser_uint8ToHex(uint8_t value);
 void printLF();
 
 void evalResult(UBaseType_t source, UBaseType_t errType,
-		UBaseType_t detail, char *text);
+		UBaseType_t detail, unsigned char *text);
 
 void printEOT();
 

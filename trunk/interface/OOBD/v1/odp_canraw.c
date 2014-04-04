@@ -424,7 +424,7 @@ void obp_canraw(void *pvParameters)
 	    }
 	    disposeMsg(msg);
 	}
-	/* vTaskDelay (5000 / portTICK_RATE_MS); */
+	/* vTaskDelay (5000 / portTICK_PERIOD_MS); */
 
     }
 

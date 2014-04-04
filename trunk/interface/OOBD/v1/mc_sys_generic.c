@@ -116,7 +116,7 @@ UBaseType_t eval_param_sys(param_data * args)
 	    && odparr[startupProtocol] != NULL
 	    && odbarr[startupBus] != NULL) {
 	    sendMsg(MSG_PROTOCOL_STOP, protocolQueue, NULL);
-	    if (xSemaphoreTake(protocollBinarySemaphore, 2000 / portTICK_RATE_MS) == pdPASS) {	// wait 2s for the protocol task to finish
+	    if (xSemaphoreTake(protocollBinarySemaphore, 2000 / portTICK_PERIOD_MS) == pdPASS) {	// wait 2s for the protocol task to finish
 		//job done, free semaphore again for the new protocol task
 		xSemaphoreGive(protocollBinarySemaphore);
 		// and start new protocol..

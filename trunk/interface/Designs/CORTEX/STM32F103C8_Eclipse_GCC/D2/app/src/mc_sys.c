@@ -199,13 +199,13 @@ void printParam_sys_specific(UBaseType_t msgType, void *data,
 		case VALUE_PARAM_INFO_KLINE_FAST_INIT:
 			/* K-Line High for 300ms */
 			GPIO_ResetBits(GPIOA, GPIO_Pin_2);
-			vTaskDelay(300 / portTICK_RATE_MS);
+			vTaskDelay(300 / portTICK_PERIOD_MS);
 			/* K-Line Low for 25ms */
 			GPIO_SetBits(GPIOA, GPIO_Pin_2);
-			vTaskDelay(25 / portTICK_RATE_MS);
+			vTaskDelay(25 / portTICK_PERIOD_MS);
 			/* K-Line High for 25ms */
 			GPIO_ResetBits(GPIOA, GPIO_Pin_2);
-			vTaskDelay(25 / portTICK_RATE_MS);
+			vTaskDelay(25 / portTICK_PERIOD_MS);
 			/* init UART2 to 10k4 baud, 8N1 */
 			USART2_Configuration();
 

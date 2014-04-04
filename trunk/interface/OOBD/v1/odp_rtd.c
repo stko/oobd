@@ -91,7 +91,7 @@ odp_rtd_printdata_Buffer(UBaseType_t msgType, void *data,
 	    DEBUGPRINT("geht noch 3\n", "a");
 	    printser_string("62");
 	    printser_uint32ToHex(myRTDElement->buffer[bufferIndex].
-				 timeStamp * portTICK_RATE_MS);
+				 timeStamp * portTICK_PERIOD_MS);
 	    int i;
 	    for (i = 0; i < myRTDElement->buffer[bufferIndex].len; i++) {
 		printser_uint8ToHex(myRTDElement->buffer[bufferIndex].
@@ -658,7 +658,7 @@ void odp_rtd(void *pvParameters)
 	    }
 	    disposeMsg(msg);
 	}
-	/* vTaskDelay (5000 / portTICK_RATE_MS); */
+	/* vTaskDelay (5000 / portTICK_PERIOD_MS); */
 
     }
 
