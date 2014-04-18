@@ -76,9 +76,9 @@ typedef struct error_data error_data;
  * used to send error message to output task.
  */
 typedef struct error_data {
-    UBaseType_t source;	//!< Source task or handler, which throws the error
+    UBaseType_t source;		//!< Source task or handler, which throws the error
     UBaseType_t errType;	//!< classification of error type
-    UBaseType_t detail;	//!< detailed error definition
+    UBaseType_t detail;		//!< detailed error definition
     char *text;			//!< textual error description
 } ERROR_DATA;
 
@@ -252,11 +252,11 @@ MsgData *createDataMsg(data_packet * data);
 MsgData *createMsg(void *data, size_t size);
 void disposeMsg(MsgData * p);
 UBaseType_t sendMsg(UBaseType_t msgType, QueueHandle_t recv,
-		      MsgData * msg);
+		    MsgData * msg);
 UBaseType_t sendMsgFromISR(UBaseType_t msgType, QueueHandle_t recv,
-			     MsgData * msg);
+			   MsgData * msg);
 UBaseType_t waitMsg(QueueHandle_t recv, MsgData ** msg,
-		      UBaseType_t timeout);
+		    UBaseType_t timeout);
 
 void createCommandResultMsg(UBaseType_t eSource, UBaseType_t eType,
 			    UBaseType_t eDetail, char *text);

@@ -74,7 +74,7 @@ BaseType_t stCANBusPassiveErr;
 BaseType_t ctrCANTec;
 BaseType_t ctrCANRec;
 
-BaseType_t bus_init_can()
+UBaseType_t bus_init_can()
 {
     rxCount = 0;
     txCount = 0;
@@ -136,11 +136,11 @@ BaseType_t bus_init_can()
 
 /*-----------------------------------------------------------*/
 
-BaseType_t bus_send_can(data_packet * data)
+UBaseType_t bus_send_can(data_packet * data)
 {
-    int i;
     DEBUGPRINT("CAN- Send Buffer with len %ld\n", data->len);
     /*
+       int i;
        for (i = 0; i < data->len; i++) {
        printser_uint8ToHex(data->data[i]);
        printser_string(" ");
@@ -192,7 +192,7 @@ void bus_flush_can()
 
 /*----------------------------------------------------------------------------*/
 
-void bus_param_can_spec_Print(BaseType_t msgType, void *data,
+void bus_param_can_spec_Print(UBaseType_t msgType, void *data,
 			      printChar_cbf printchar)
 {
     param_data *args;
@@ -256,7 +256,7 @@ uint32_t CAN_GetFilterReg32(uint8_t FilterID, uint8_t FilterReg)
 }
 
 /*-----------------------------------------------------------*/
-BaseType_t bus_param_can_spec(param_data * args)
+UBaseType_t bus_param_can_spec(param_data * args)
 {
 //CAN_FilterInitTypeDef CAN_FilterInitStructure;
     uint8_t i;
@@ -447,7 +447,7 @@ void bus_close_can()
 void vCANReceiveAndDeliverCallbackOOBD(int iSocket, void *pvContext)
 {
     static struct can_frame frame;
-    struct sockaddr_can xReceiveAddress;
+    //struct sockaddr_can xReceiveAddress;
     static data_packet dp;
 
     if (sizeof(struct can_frame) ==
@@ -480,7 +480,7 @@ void vCANReceiveAndDeliverCallbackOOBD(int iSocket, void *pvContext)
 
 
 
-BaseType_t busControl(BaseType_t cmd, void *param)
+UBaseType_t busControl(UBaseType_t cmd, void *param)
 {
     switch (cmd) {
     case ODB_CMD_RECV:
@@ -495,14 +495,14 @@ BaseType_t busControl(BaseType_t cmd, void *param)
 
 /*----------------------------------------------------------------------------*/
 
-BaseType_t bus_rx_error_can()
+UBaseType_t bus_rx_error_can()
 {
     return errCount;
 }
 
 /*----------------------------------------------------------------------------*/
 
-BaseType_t bus_tx_error_can()
+UBaseType_t bus_tx_error_can()
 {
     return 0;
 }
@@ -522,14 +522,14 @@ void bus_clear_tx_error_can()
 
 /*----------------------------------------------------------------------------*/
 
-BaseType_t bus_rx_count_can()
+UBaseType_t bus_rx_count_can()
 {
     return rxCount;
 }
 
 /*----------------------------------------------------------------------------*/
 
-BaseType_t bus_tx_count_can()
+UBaseType_t bus_tx_count_can()
 {
     return txCount;
 }

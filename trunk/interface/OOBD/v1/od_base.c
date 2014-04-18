@@ -324,8 +324,7 @@ void freeODPBuffer(ODPBuffer * odpBuffer)
 
 
 
-UBaseType_t
-sendMsg(UBaseType_t msgType, QueueHandle_t recv, MsgData * msg)
+UBaseType_t sendMsg(UBaseType_t msgType, QueueHandle_t recv, MsgData * msg)
 {
     OdMsg odMsg;
     odMsg.msgType = msgType;
@@ -342,7 +341,8 @@ sendMsgFromISR(UBaseType_t msgType, QueueHandle_t recv, MsgData * msg)
     UBaseType_t xTaskPreviouslyWoken = pdFALSE;
     UBaseType_t res;
     res = xQueueSendFromISR(recv, &odMsg, &xTaskPreviouslyWoken);
-    portEND_SWITCHING_ISR(xTaskPreviouslyWoken);
+    //portEND_SWITCHING_ISR seems to crash the posix port so it's been taken out again...
+    //portEND_SWITCHING_ISR(xTaskPreviouslyWoken);
     return res;
 }
 

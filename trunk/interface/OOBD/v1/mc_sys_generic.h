@@ -91,8 +91,8 @@ UBaseType_t mc_start_protocol(UBaseType_t protocol, UBaseType_t bus);	//!< start
 UBaseType_t eval_param_sys(param_data * args);
 UBaseType_t eval_param_sys_specific(param_data * args);
 UBaseType_t sysIoCtrl(UBaseType_t pinID, UBaseType_t lowerValue,
-			UBaseType_t upperValue, UBaseType_t duration,
-			UBaseType_t waveType);
+		      UBaseType_t upperValue, UBaseType_t duration,
+		      UBaseType_t waveType);
 UBaseType_t sysSound(UBaseType_t frequency, UBaseType_t volume);
 #endif
 /* INC_MC_SYS_GENERIC_H */

@@ -128,8 +128,7 @@ important variables instead to allow subroutines, otherways these subroutines wo
 void
 odp_uds_generateTesterPresents(unsigned char *tpArray,
 			       unsigned char *canBuffer,
-			       bus_send actBus_send,
-			       UBaseType_t actTPFreq)
+			       bus_send actBus_send, UBaseType_t actTPFreq)
 {
     data_packet dp;
     UBaseType_t i;

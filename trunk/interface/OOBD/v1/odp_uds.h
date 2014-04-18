@@ -84,7 +84,7 @@ void obd_uds_init();
 
 /* store all parameter in one single struct to maybe later store such param sets in EEPROM */
 struct UdsConfig {
-    UBaseType_t recvID,	//!< Module ID
+    UBaseType_t recvID,		//!< Module ID
      sendID,			//!< sender ID, used when the expected answer ID <> recvID || 8
      timeout,			//!< timeout in systemticks
      timeoutPending,		//!< timeout for response pending delays in system ticks

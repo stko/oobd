@@ -58,12 +58,12 @@ void mc_init_sys_shutdown_specific()
 }
 
 
-BaseType_t mc_sys_get_startupProtocol()
+UBaseType_t mc_sys_get_startupProtocol()
 {
     return VALUE_PARAM_PROTOCOL_CAN_UDS;
 }
 
-BaseType_t mc_sys_get_startupBus()
+UBaseType_t mc_sys_get_startupBus()
 {
 
     return ODB_CAN;
@@ -71,7 +71,7 @@ BaseType_t mc_sys_get_startupBus()
 
 
 
-void printParam_sys_specific(BaseType_t msgType, void *data,
+void printParam_sys_specific(UBaseType_t msgType, void *data,
 			     printChar_cbf printchar)
 {
     param_data *args;
@@ -101,7 +101,7 @@ void printParam_sys_specific(BaseType_t msgType, void *data,
 	    break;
 	default:
 	    evalResult
-		(FBID_SYS_SPEC, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT, 0,
+		(FBID_SYS_SPEC, ERR_CODE_OS_UNKNOWN_COMMAND, 0,
 		 ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 	}
 	break;
@@ -110,7 +110,7 @@ void printParam_sys_specific(BaseType_t msgType, void *data,
     }
 }
 
-BaseType_t eval_param_sys_specific(param_data * args)
+UBaseType_t eval_param_sys_specific(param_data * args)
 {
     switch (args->args[ARG_CMD]) {
     case PARAM_INFO:
@@ -139,9 +139,9 @@ BaseType_t eval_param_sys_specific(param_data * args)
 }
 
 
-BaseType_t sysIoCtrl(BaseType_t pinID, BaseType_t lowerValue,
-			BaseType_t upperValue, BaseType_t duration,
-			BaseType_t waveType)
+UBaseType_t sysIoCtrl(UBaseType_t pinID, UBaseType_t lowerValue,
+		      UBaseType_t upperValue, UBaseType_t duration,
+		      UBaseType_t waveType)
 {
 //    DEBUGPRINT("Pin: %ld to value %ld\n", pinID, upperValue);
     switch (pinID) {
@@ -170,10 +170,11 @@ BaseType_t sysIoCtrl(BaseType_t pinID, BaseType_t lowerValue,
 
 
 
-BaseType_t sysSound(BaseType_t frequency, BaseType_t volume)
+UBaseType_t sysSound(UBaseType_t frequency, UBaseType_t volume)
 {
     DEBUGPRINT("Play frequency of %d Hz for %d ticks duration\n",
 	       frequency, volume);
+    return pdTRUE;
 }
 
 

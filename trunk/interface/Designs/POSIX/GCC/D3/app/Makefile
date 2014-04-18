@@ -109,6 +109,7 @@ include $(OOBD_COMMON_DIR)/common_oobd.mk
 
 # FreeRTOS source files.
 FREERTOS_SOURCE= $(RTOS_SOURCE_DIR)/list.c \
+		$(RTOS_SOURCE_DIR)/timers.c \
 		$(RTOS_SOURCE_DIR)/queue.c \
 		$(RTOS_SOURCE_DIR)/tasks.c \
 		$(RTOS_PORT_DIR)/port.c \
