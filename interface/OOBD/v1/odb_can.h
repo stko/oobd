@@ -171,7 +171,7 @@ Default: 11bit 500kb
 
 /* store all parameter in one single struct to maybe later store such param sets in EEPROM */
 struct CanConfig {
-    UBaseType_t recvID,	//!< Module ID
+    UBaseType_t recvID,		//!< Module ID
      bus,			//!< id of actual used bus
      mode,			//!< id of actual used Tranceiver mode
      busConfig			//!< nr of actual used bus configuration

@@ -189,8 +189,7 @@ void inputParserTask(void *pvParameters)
 
     MsgData *incomingMsg;
     char inChar;
-    UBaseType_t msgType = 0, lastErr = 0, processFurther = 1, hexInput =
-	0;
+    UBaseType_t msgType = 0, lastErr = 0, processFurther = 1, hexInput = 0;
     param_data args;		/* !< containts the arguments given as command */
     static data_packet dp;
     static unsigned char buffer[8];

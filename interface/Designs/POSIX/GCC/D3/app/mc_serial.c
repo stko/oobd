@@ -56,7 +56,7 @@ void writeChar(char a)
 
 
 
-BaseType_t serial_init_mc()
+UBaseType_t serial_init_mc()
 {
 
     extern printChar_cbf printChar;

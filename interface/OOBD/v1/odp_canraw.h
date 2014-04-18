@@ -71,7 +71,7 @@ inline int sendMoreFrames();
 
 /* store all parameter in one single struct to maybe later store such param sets in EEPROM */
 struct CanRawConfig {
-    UBaseType_t recvID,	//!< receiver ID
+    UBaseType_t recvID,		//!< receiver ID
      separationTime;		//!< delay between two frames
 };
 
