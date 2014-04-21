@@ -80,15 +80,15 @@ odp_rtd_printdata_Buffer(UBaseType_t msgType, void *data,
 //      myRTDElement = *doublePtr;
 	myRTDElement = data;
 	UBaseType_t bufferIndex;
-	DEBUGPRINT("geht noch 1\n", "a");
-	DEBUGPRINT("Element address %lX\n", myRTDElement);
 	bufferIndex = otherBuffer(myRTDElement->writeBufferIndex);
+	DEBUGPRINT("Element address %lX, Buffer %d \n", myRTDElement,
+		   bufferIndex);
 	if (myRTDElement->buffer[bufferIndex].valid == pdFALSE) {	// the requested CAN- ID is not valid, so we generate a faked general responce error
-	    DEBUGPRINT("geht noch 2\n", "a");
+	    DEBUGPRINT("buffer invalid\n", "a");
 	    printser_string("7F000002");
 	    printLF();
 	} else {
-	    DEBUGPRINT("geht noch 3\n", "a");
+	    DEBUGPRINT("dump buffer:\n", "a");
 	    printser_string("62");
 	    printser_uint32ToHex(myRTDElement->
 				 buffer[bufferIndex].timeStamp *
@@ -97,6 +97,8 @@ odp_rtd_printdata_Buffer(UBaseType_t msgType, void *data,
 	    for (i = 0; i < myRTDElement->buffer[bufferIndex].len; i++) {
 		printser_uint8ToHex(myRTDElement->
 				    buffer[bufferIndex].data[i]);
+		DEBUGPRINT(" buffer[%d]:%02X\n", i,
+			   myRTDElement->buffer[bufferIndex].data[i]);
 		if ((i % 8) == 0 && i > 0
 		    && i < myRTDElement->buffer[bufferIndex].len - 1) {
 		    printLF();
@@ -190,13 +192,18 @@ void odp_rtd_recvdata(data_packet * p, UBaseType_t callFromISR)
 	    for (i = 0; len > 0; i++) {
 		actElement->buffer[writeBufferIndex].data[i] = p->data[i];
 		DEBUGPRINT
-		    ("single frame: write %d to index %ld  with remaining length %ld \n",
-		     p->data[i], i, len);
+		    ("single frame: write %02X to index %ld in Buffer %d  with remaining length %ld \n",
+		     p->data[i], i, writeBufferIndex, len);
 		len--;
 	    }
 	    actElement->buffer[writeBufferIndex].valid = pdTRUE;
-	    actElement->buffer[writeBufferIndex].timeStamp =
-		xTaskGetTickCountFromISR();
+	    if (callFromISR) {
+		actElement->buffer[writeBufferIndex].timeStamp =
+		    xTaskGetTickCountFromISR();
+	    } else {
+		actElement->buffer[writeBufferIndex].timeStamp =
+		    xTaskGetTickCount();
+	    }
 	    if (!actElement->buffer[writeBufferIndex].locked) {
 		actElement->writeBufferIndex =
 		    otherBuffer(actElement->writeBufferIndex);
