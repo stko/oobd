@@ -18,19 +18,19 @@ dofile("../lib_protocol/standard-uds.lua")
 dofile("../lib_protocol/realtimedata.lua")
 	</xsl:template>
 	<xsl:template match="my:Message">
-rtdArray_NOP_00000<xsl:value-of select="substring(@id,3)"/> = { rtdinit="2700000<xsl:value-of select="substring(@id,3)"/>000<xsl:value-of select="@length"/>)", t= <xsl:value-of select="@name"/>, bus=HS-CAN, cid=<xsl:value-of select="@id"/>, sd = { <xsl:apply-templates select="my:Signal" />
+
+	<xsl:variable name="canid" select="concat(substring('000000000',string-length(@id)), substring(@id,3))"/>
+rtdArray_NOP_<xsl:value-of select="$canid"/> = { rtdinit="27<xsl:value-of select="$canid"/>000<xsl:value-of select="@length"/>", t="<xsl:value-of select="@name"/>", bus="HS-CAN", cid=<xsl:value-of select="@id"/>, sd = { <xsl:apply-templates select="my:Signal" />
 	dummy=0}
-	},
-	</xsl:template>
+	},</xsl:template>
 	<xsl:template match="my:Signal"><xsl:if test="my:Value">
-	sd_<xsl:value-of select="position()"/> = { <xsl:apply-templates select="my:Value" /></xsl:if>}, </xsl:template>
+	sd_<xsl:value-of select="format-number(position(),'00')"/> = { <xsl:apply-templates select="my:Value" /></xsl:if>}, </xsl:template>
 
 	<xsl:template match="my:Value">
 		<xsl:variable name="bytesize" select="round(../@length div 8)"/>
 		<xsl:variable name="bitsize" select="../@length"/>
 		<xsl:variable name="bitpos" select="../@offset"/>
-		<xsl:variable name="bytepos" select="floor($bitpos div 8)"/>t=<xsl:value-of select="../@name"/>, cid=<xsl:value-of select="../../@id"/>
-		<xsl:choose>
+		<xsl:variable name="bytepos" select="floor($bitpos div 8)"/>t="<xsl:value-of select="../@name"/>"<xsl:choose>
 			<xsl:when test="../@length">, bpos=<xsl:value-of select="$bytepos"/></xsl:when><xsl:otherwise>, bpos=0</xsl:otherwise>
 		</xsl:choose>
 		<xsl:choose>
@@ -46,7 +46,7 @@ rtdArray_NOP_00000<xsl:value-of select="substring(@id,3)"/> = { rtdinit="2700000
 	,	Startbit=<xsl:value-of select="../@offset"/>,	Priority=1
 -->
 		<xsl:choose>
-			<xsl:when test="../@endianess='big'">, endianess=Motorola</xsl:when><xsl:otherwise>, endianess=Intel</xsl:otherwise>
+			<xsl:when test="../@endianess='big'">, endianess="Motorola"</xsl:when><xsl:otherwise>, endianess="Intel"</xsl:otherwise>
 		</xsl:choose>
 		<xsl:choose>
 			<xsl:when test="@slope">, mult=<xsl:value-of select="@slope"/></xsl:when><xsl:otherwise>, mult=1</xsl:otherwise>
@@ -64,10 +64,10 @@ rtdArray_NOP_00000<xsl:value-of select="substring(@id,3)"/> = { rtdinit="2700000
 			<xsl:when test="@min">,	min_val=<xsl:value-of select="@min"/></xsl:when><xsl:otherwise>, min_val=0</xsl:otherwise>
 		</xsl:choose>
 		<xsl:choose>
-			<xsl:when test="@max">,	max_val=<xsl:value-of select="@max"/></xsl:when><xsl:otherwise>, max_val=0</xsl:otherwise>
+			<xsl:when test="@max">, max_val=<xsl:value-of select="@max"/></xsl:when><xsl:otherwise>, max_val=0</xsl:otherwise>
 		</xsl:choose>
 		<xsl:choose>
-			<xsl:when test="@signed">, dtype=<xsl:value-of select="@max"/></xsl:when><xsl:otherwise>, dtype=UNSIGNED</xsl:otherwise>
+			<xsl:when test="@signed">, dtype="<xsl:value-of select="@signed"/>"</xsl:when><xsl:otherwise>, dtype="UNSIGNED"</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 
