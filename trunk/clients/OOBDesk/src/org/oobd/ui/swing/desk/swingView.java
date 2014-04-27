@@ -25,7 +25,11 @@ import purejavacomm.CommPortIdentifier;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Toolkit;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -44,12 +48,17 @@ import org.oobd.base.support.Onion;
 import java.util.Vector;
 import java.util.prefs.Preferences;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
@@ -1062,8 +1071,10 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         if (i > -1) {
             scriptSelectComboBox.setSelectedIndex(i);
         }
-        String str = JOptionPane.showInputDialog(null, "Enter your PGP PassPhrase : ",
-                "OOBD PGP Script Encryption", 1);
+        PWDialog pwDialog = new PWDialog(null);
+        String str = pwDialog.showDialog();
+        System.out.printf("Password: %s\n", str);
+        //       String str = JOptionPane.showInputDialog(null, "Enter your PGP PassPhrase : ",                "OOBD PGP Script Encryption", 1);
         if (str != null) {
             try {
                 oobdCore.getSystemIF().setUserPassPhrase(
@@ -1124,10 +1135,10 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             pageObjects = new Vector<IFvisualizer>();
             oobdCore.setAssign(newVisualizer.getOwnerEngine(), org.oobd.base.OOBDConstants.CL_OBJECTS, pageObjects);
         }
-        Class<IFvisualizer> visualizerClass = getVisualizerClass( myOnion);
+        Class<IFvisualizer> visualizerClass = getVisualizerClass(myOnion);
         Class[] argsClass = new Class[1]; // first we set up an pseudo - args - array for the scriptengine- constructor
         argsClass[0] = Onion.class; // and fill it with the info, that the argument for the constructor will be an Onion
-          try {
+        try {
             Method classMethod = visualizerClass.getMethod("getInstance", argsClass); // and let Java find the correct constructor with one string as parameter
             Object[] args = {myOnion}; //we will an args-array with our String parameter
             newJComponent = (JComponent) classMethod.invoke(null, args); // and finally create the object from the scriptengine class with its unique id as parameter
@@ -1208,26 +1219,25 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         alreadyRefreshing = false;
         if (pageObjects != null && !alreadyRefreshing) {
             alreadyRefreshing = true;
-            diagnoseButtonPanel.getParent().invalidate();
-            diagnoseButtonPanel.invalidate();
+            Dimension panel = diagnoseButtonPanel.getSize();
+            Dimension s = diagnoseScrollPanel.getSize();
+            panel.setSize(s.getWidth(), panel.getHeight());
+            diagnoseButtonPanel.setSize(panel);
             GridLayout thisGrid = (GridLayout) diagnoseButtonPanel.getLayout();
-            Dimension s = diagnose.getSize();
+
             int cols = s.width / defaultGridWidth;
             if (cols < 1) {
                 cols = 1;
             }
             thisGrid = new GridLayout(0, cols);
-            diagnoseButtonPanel.setLayout(thisGrid);
-
             diagnoseButtonPanel.removeAll();
+            diagnoseButtonPanel.setLayout(thisGrid);
             for (IFvisualizer vis : pageObjects) {
                 JComponent newJComponent = (JComponent) vis;
                 diagnoseButtonPanel.add(newJComponent);
             }
-            diagnoseButtonPanel.validate();
+            thisGrid.layoutContainer(diagnoseButtonPanel);
             diagnoseButtonPanel.repaint();
-            diagnoseButtonPanel.getParent().validate();
-            diagnoseButtonPanel.getParent().repaint();
             alreadyRefreshing = false;
         }
     }
@@ -1391,5 +1401,93 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
         return false;
 
+    }
+}
+
+class PWDialog extends JDialog implements ActionListener {
+
+    private JPanel myPanel = null;
+    private JButton yesButton = null;
+    private JButton noButton = null;
+    final JPasswordField pgpPassword = new JPasswordField("");
+    
+
+    public PWDialog(JFrame frame) {
+        super(frame, true);
+        myPanel = new JPanel();
+        myPanel.setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+
+        getContentPane().add(myPanel);
+
+        JLabel text = new JLabel("Enter PGP passphrase");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.0;
+        c.gridwidth = 2;
+        c.gridx = 0;
+        c.gridy = 0;
+
+        myPanel.add(text, c);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.0;
+        c.gridwidth = 2;
+        c.gridx = 0;
+        c.gridy = 1;
+
+        myPanel.add(pgpPassword, c);
+        JCheckBox pgpShowPW = new JCheckBox("show Passphrase");
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.0;
+        c.gridwidth = 2;
+        c.gridx = 0;
+        c.gridy = 2;
+
+
+        myPanel.add(pgpShowPW, c);
+        pgpShowPW.addItemListener(new ItemListener() {
+
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    pgpPassword.setEchoChar((char) 0);
+                } else {
+                    pgpPassword.setEchoChar('*');
+                }
+            }
+        });
+
+        yesButton = new JButton("Ok");
+        yesButton.addActionListener(this);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.0;
+        c.gridwidth = 1;
+        c.gridx = 0;
+        c.gridy = 3;
+
+        myPanel.add(yesButton, c);
+        noButton = new JButton("Not Today");
+        noButton.addActionListener(this);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.0;
+        c.gridwidth = 1;
+        c.gridx = 1;
+        c.gridy = 3;
+        myPanel.add(noButton, c);
+        pack();
+        setLocationRelativeTo(frame);
+
+    }
+
+    public String showDialog() {
+        setVisible(true);
+        return new String(pgpPassword.getPassword());
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        if (yesButton == e.getSource()) {
+            setVisible(false);
+        } else if (noButton == e.getSource()) {
+            pgpPassword.setText("");
+            setVisible(false);
+        }
     }
 }

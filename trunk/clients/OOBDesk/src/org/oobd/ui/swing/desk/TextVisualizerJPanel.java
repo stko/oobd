@@ -94,11 +94,14 @@ public class TextVisualizerJPanel extends VisualizerJPanel implements IFvisualiz
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         setName("Form"); // NOI18N
-        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.PAGE_AXIS));
+        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
 
-        functionValue.setFont(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getFont("functionValue.font")); // NOI18N
-        functionValue.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        functionValue.setText(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getString("functionValue.text")); // NOI18N
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class);
+        functionValue.setFont(resourceMap.getFont("functionValue.font")); // NOI18N
+        functionValue.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        functionValue.setText(resourceMap.getString("functionValue.text")); // NOI18N
+        functionValue.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        functionValue.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         functionValue.setName("functionValue"); // NOI18N
         add(functionValue);
 
@@ -106,18 +109,18 @@ public class TextVisualizerJPanel extends VisualizerJPanel implements IFvisualiz
         jPanel1.setMinimumSize(new java.awt.Dimension(14, 20));
         jPanel1.setName("jPanel1"); // NOI18N
         jPanel1.setPreferredSize(new java.awt.Dimension(14, 20));
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.LINE_AXIS));
+        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.X_AXIS));
 
-        functionName.setFont(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getFont("titleLable.font")); // NOI18N
-        functionName.setForeground(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getColor("titleLable.foreground")); // NOI18N
-        functionName.setText(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getString("titleLable.text")); // NOI18N
+        functionName.setFont(resourceMap.getFont("titleLable.font")); // NOI18N
+        functionName.setForeground(resourceMap.getColor("titleLable.foreground")); // NOI18N
+        functionName.setText(resourceMap.getString("titleLable.text")); // NOI18N
         functionName.setName("titleLable"); // NOI18N
         jPanel1.add(functionName);
 
         filler1.setName("filler1"); // NOI18N
         jPanel1.add(filler1);
 
-        backImageLabel.setIcon(org.jdesktop.application.Application.getInstance(org.oobd.ui.swing.desk.swing.class).getContext().getResourceMap(TextVisualizerJPanel.class).getIcon("backImageLabel.icon")); // NOI18N
+        backImageLabel.setIcon(resourceMap.getIcon("backImageLabel.icon")); // NOI18N
         backImageLabel.setName("backImageLabel"); // NOI18N
         jPanel1.add(backImageLabel);
 

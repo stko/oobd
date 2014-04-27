@@ -119,9 +119,12 @@ public class VisualizerJPanel extends javax.swing.JPanel implements IFvisualizer
                 }
                 case 2: {
                     if (awaitingUpdate == true) {
+
                         this.invalidate();
                         this.validate();
                         this.repaint();
+
+                        this.getParent().getLayout().layoutContainer(this.getParent());
                         awaitingUpdate = false;
                         return true;
                     }
