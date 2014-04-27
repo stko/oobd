@@ -21,7 +21,7 @@ dofile("../lib_protocol/realtimedata.lua")
 
 	<xsl:variable name="canid" select="concat(substring('000000000',string-length(@id)), substring(@id,3))"/>
 rtdArray_NOP_<xsl:value-of select="$canid"/> = { rtdinit="27<xsl:value-of select="$canid"/>000<xsl:value-of select="@length"/>", t="<xsl:value-of select="@name"/>", bus="HS-CAN", cid=<xsl:value-of select="@id"/>, sd = { <xsl:apply-templates select="my:Signal" />
-	dummy=0}
+	}
 	},</xsl:template>
 	<xsl:template match="my:Signal"><xsl:if test="my:Value">
 	sd_<xsl:value-of select="format-number(position(),'00')"/> = { <xsl:apply-templates select="my:Value" /></xsl:if>}, </xsl:template>

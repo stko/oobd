@@ -65,9 +65,7 @@ LicenseData gpl-2.0.txt
 LicenseForceSelection checkbox
 
 
-
 Section "OOBDesk"
-
 SetOutPath $INSTDIR
 
 CreateDirectory $INSTDIR\lib
@@ -102,13 +100,6 @@ CreateDirectory $INSTDIR\db
 StrCpy $fileToMake  "$INSTDIR\db\AVLLookup.class"
 Call createDummy
 
-#File /r  "build/classes/skdsswing/bus"
-#File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/bus"
-#File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/port"
-#File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/db"
-#File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/scriptengine"
-#File /r  "../skds/NBprojects/Base/build/classes/org/oobd/base/protocol"
-#File /r  "build/classes/org/oobd/ui/uihandler"
 File /oname=OOBDesk.jar "dist/OOBDesk_Rxxx_Branded.jar"
 File /oname=oobdcore.props  "oobdcore_dist.props"
 #File  "enginelua_dist.props"
