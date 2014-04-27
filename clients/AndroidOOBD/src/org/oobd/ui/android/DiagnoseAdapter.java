@@ -275,7 +275,6 @@ public class DiagnoseAdapter extends ArrayAdapter<Visualizer> {
 						functionValue
 								.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
-									@Override
 									public void onCheckedChanged(
 											CompoundButton buttonView,
 											boolean isChecked) {
@@ -345,7 +344,6 @@ public class DiagnoseAdapter extends ArrayAdapter<Visualizer> {
 						functionValue
 								.setOnItemSelectedListener(new OnItemSelectedListener() {
 
-									@Override
 									public void onItemSelected(
 											AdapterView<?> arg0, View view,
 											int pos, long id) {
@@ -355,7 +353,6 @@ public class DiagnoseAdapter extends ArrayAdapter<Visualizer> {
 
 									}
 
-									@Override
 									public void onNothingSelected(
 											AdapterView<?> arg0) {
 										// TODO Auto-generated method stub

@@ -1,7 +1,7 @@
 package org.oobd.ui.android.application;
 
 import java.util.HashMap;
-import java.util.Properties;
+import java.util.prefs.Preferences;
 import java.io.*;
 import java.lang.reflect.Method;
 
@@ -195,15 +195,7 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 		}
 	}
 
-	public Properties loadProperty(int pathID, String filename) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	public boolean saveProperty(int pathID, String filename, Properties prop) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	public char[] getAppPassPhrase() {
 		return PassPhraseProvider.getPassPhrase();
@@ -235,4 +227,40 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 		}
 
 	}
+
+	public Preferences loadPreferences(int pathID, String filename) {
+	       Preferences myPrefs = null;
+
+	        try {
+	            Preferences prefsRoot;
+	            
+	            prefsRoot = Preferences.userNodeForPackage(this.getClass());
+	            //prefsRoot.sync();
+	            myPrefs = prefsRoot.node("com.oobd.preference." + filename);
+	            if (myPrefs.keys().length == 0 && OOBDConstants.CorePrefsFileName.equalsIgnoreCase(filename)) { //no entries yet
+	                //generate system specific settings
+	                myPrefs.put("EngineClassPath", "org.oobd.base.scriptengine.ScriptengineLua");
+	                myPrefs.put("ProtocolClassPath", "org.oobd.base.protocol.ProtocolUDS");
+	                myPrefs.put("ConnectorClassPath", "org.oobd.base.connector.ConnectorLocal");
+	                myPrefs.put("BusClassPath", "org.oobd.base.bus.BusCom");
+	                myPrefs.put("DatabaseClassPath", "org.oobd.base.db.AVLLookup");
+	                myPrefs.put("UIHandlerClassPath", "org.oobd.ui.uihandler.UIHandler");
+	                myPrefs.flush();
+	            }
+	  	            return myPrefs;
+	        } catch (Exception e) {
+	        	Log.v(this.getClass().getSimpleName(), "could not load property id " + filename, e);
+	        }
+	        return myPrefs;
+	}
+
+    public boolean savePreferences(int pathID, String filename, Preferences properties) {
+        try {
+            properties.flush();
+            return true;
+        } catch (Exception e) {
+        	Log.v(this.getClass().getSimpleName(), "could not save property id " + filename, e);
+            return false;
+        }
+    }
 }

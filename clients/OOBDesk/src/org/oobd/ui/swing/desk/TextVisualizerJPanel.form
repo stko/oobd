@@ -23,14 +23,16 @@
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout">
-    <Property name="axis" type="int" value="3"/>
+    <Property name="axis" type="int" value="1"/>
   </Layout>
   <SubComponents>
     <Component class="javax.swing.JLabel" name="functionValue">
       <Properties>
         <Property name="font" type="java.awt.Font" resourceKey="functionValue.font"/>
-        <Property name="horizontalAlignment" type="int" value="0"/>
+        <Property name="horizontalAlignment" type="int" value="2"/>
         <Property name="text" type="java.lang.String" resourceKey="functionValue.text"/>
+        <Property name="verticalAlignment" type="int" value="3"/>
+        <Property name="horizontalTextPosition" type="int" value="2"/>
         <Property name="name" type="java.lang.String" value="functionValue" noResource="true"/>
       </Properties>
     </Component>
@@ -50,7 +52,9 @@
         </Property>
       </Properties>
 
-      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout">
+        <Property name="axis" type="int" value="0"/>
+      </Layout>
       <SubComponents>
         <Component class="javax.swing.JLabel" name="functionName">
           <Properties>
