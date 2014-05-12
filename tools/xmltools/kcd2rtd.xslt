@@ -20,7 +20,7 @@ dofile("../lib_protocol/realtimedata.lua")
 	<xsl:template match="my:Message">
 
 	<xsl:variable name="canid" select="concat(substring('000000000',string-length(@id)), substring(@id,3))"/>
-rtdArray_NOP_<xsl:value-of select="$canid"/> = { rtdinit="27<xsl:value-of select="$canid"/>000<xsl:value-of select="@length"/>", t="<xsl:value-of select="@name"/>", bus="HS-CAN", cid=<xsl:value-of select="@id"/>, sd = { <xsl:apply-templates select="my:Signal" />}
+rtdArray_NOP_<xsl:value-of select="$canid"/> = { rtdinit="27<xsl:value-of select="$canid"/>00000<xsl:value-of select="@length"/>", t="<xsl:value-of select="@name"/>", bus="HS-CAN", cid=<xsl:value-of select="@id"/>, sd = { <xsl:apply-templates select="my:Signal" />}
 	},</xsl:template>
 	
 	<xsl:template match="my:Signal">sd_<xsl:value-of select="format-number(position(),'00')"/> = { 
@@ -40,7 +40,7 @@ rtdArray_NOP_<xsl:value-of select="$canid"/> = { rtdinit="27<xsl:value-of select
 		<xsl:choose>
 			<xsl:when test="@endianess='big'">, endianess="Motorola"</xsl:when><xsl:otherwise>, endianess="Intel"</xsl:otherwise>
 		</xsl:choose>
-
+		<xsl:choose><xsl:when test="my:LabelSet">, dtype="ENUM"</xsl:when><xsl:otherwise><xsl:choose><xsl:when test="@signed">, dtype="<xsl:value-of select="@signed"/>"</xsl:when><xsl:otherwise>, dtype="UNSIGNED"</xsl:otherwise></xsl:choose></xsl:otherwise></xsl:choose>
 	<xsl:if test="my:Value">
 			<xsl:apply-templates select="my:Value" />
 		</xsl:if>		
@@ -49,7 +49,7 @@ rtdArray_NOP_<xsl:value-of select="$canid"/> = { rtdinit="27<xsl:value-of select
 	</xsl:if>},
 	</xsl:template>
 	
-	<xsl:template match="my:LabelSet"> ev = { <xsl:apply-templates select="my:Label" />
+	<xsl:template match="my:LabelSet">, ev = { <xsl:apply-templates select="my:Label" />
 		dummy=0}
 	</xsl:template>
 	 
@@ -67,12 +67,11 @@ rtdArray_NOP_<xsl:value-of select="$canid"/> = { rtdinit="27<xsl:value-of select
 			<xsl:when test="@unit">, unit="<xsl:value-of select="@unit"/>"</xsl:when><xsl:otherwise>, unit=""</xsl:otherwise>
 		</xsl:choose>
 		<xsl:choose>
-			<xsl:when test="@min">,	min_val=<xsl:value-of select="@min"/></xsl:when><xsl:otherwise>, min_val=0</xsl:otherwise>
+			<xsl:when test="@min">, min_val=<xsl:value-of select="@min"/></xsl:when><xsl:otherwise>, min_val=0</xsl:otherwise>
 		</xsl:choose>
 		<xsl:choose>
 			<xsl:when test="@max">, max_val=<xsl:value-of select="@max"/></xsl:when><xsl:otherwise>, max_val=0</xsl:otherwise>
 		</xsl:choose>
-		<xsl:choose><xsl:when test="../my:LabelSet">, dtype="ENUM"</xsl:when><xsl:otherwise><xsl:choose><xsl:when test="@signed">, dtype="<xsl:value-of select="@signed"/>"</xsl:when><xsl:otherwise>, dtype="UNSIGNED"</xsl:otherwise></xsl:choose></xsl:otherwise></xsl:choose>, 
 	</xsl:template>
 
 	<xsl:template match="text()|@*">
