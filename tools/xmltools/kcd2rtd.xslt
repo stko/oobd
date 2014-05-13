@@ -40,7 +40,7 @@ rtdArray_NOP_<xsl:value-of select="$canid"/> = { rtdinit="27<xsl:value-of select
 		<xsl:choose>
 			<xsl:when test="@endianess='big'">, endianess="Motorola"</xsl:when><xsl:otherwise>, endianess="Intel"</xsl:otherwise>
 		</xsl:choose>
-		<xsl:choose><xsl:when test="my:LabelSet">, dtype="ENUM"</xsl:when><xsl:otherwise><xsl:choose><xsl:when test="@signed">, dtype="<xsl:value-of select="@signed"/>"</xsl:when><xsl:otherwise>, dtype="UNSIGNED"</xsl:otherwise></xsl:choose></xsl:otherwise></xsl:choose>
+		<xsl:choose><xsl:when test="my:LabelSet">, dtype="ENUM"</xsl:when><xsl:otherwise><xsl:choose><xsl:when test="my:Value/@type='signed'">, dtype="SIGNED"</xsl:when><xsl:otherwise>, dtype="UNSIGNED"</xsl:otherwise></xsl:choose></xsl:otherwise></xsl:choose>
 	<xsl:if test="my:Value">
 			<xsl:apply-templates select="my:Value" />
 		</xsl:if>		
