@@ -47,51 +47,61 @@ end
 	return data
 end
 
----------------------- Negative response codes (NRC) --------------------------------------
--- see: http://www.autosar.org  => R4.0 AUTOSAR_SWS_DiagnosticCommunicationManager
 
-nrcCodes = {
-	[0x10] = 'General reject',
-	[0x11] = 'Service not supported (in active Diag session)',
-	[0x12] = 'Subfunction not supported (in active Diag session)',
-	[0x13] = 'Incorrect message length or invalid format',
-	[0x14] = 'Response to long',
-	[0x21] = 'Busy - Repeat request',
-	[0x22] = 'Conditions not correct',
-	[0x24] = 'Request sequence error',
-	[0x25] = 'No response from subnet component',
-	[0x26] = 'Failure prevents execution of requested action',
-	[0x31] = 'Request out of range',
-	[0x33] = 'Securtiy access denied',
-	[0x35] = 'Invalid key',
-	[0x36] = 'Exceed number of attempts',
-	[0x37] = 'Required time delay not expired',
-	[0x70] = 'Upload download not accepted',
-	[0x71] = 'Transfer data suspended',
-	[0x72] = 'General programming failure',
-	[0x73] = 'Wrong block sequence counter',
-	[0x78] = 'Reqeust correctly received - Response pending',
-	[0x7E] = 'Subfunction not supported in active session',
-	[0x7F] = 'System internal error',
-	[0x81] = 'RPM too high',
-	[0x82] = 'RPM too low',
-	[0x83] = 'Engine running',
-	[0x84] = 'Engine not running',
-	[0x85] = 'Engine runtime too low',
-	[0x86] = 'Temperature too high',
-	[0x87] = 'Temperature too low',
-	[0x88] = 'Vehicle speed too high',
-	[0x89] = 'Vehicle speed too low',
-	[0x8A] = 'Throttle pedal too high',
-	[0x8B] = 'Throttle pedal too low',
-	[0x8C] = 'Transmission range not in neutral',
-	[0x8D] = 'Transmission range not in gear',
-	[0x8F] = 'Brake not closed',
-	[0x90] = 'Sifter lever not in park',
-	[0x91] = 'Torque converter clutch locked',
-	[0x92] = 'Voltage too high',
-	[0x93] = 'Voltage too low',
-}
+--[[
+setLocale(oldvalue,id): Sets global LOCALE variable to "id". If not set, LOCALE is set to "en_en" at first call of getLocalePrintf
+--]]
+function setLocale(oldvalue,id)
+LOCALE=id
+return "language set to "..id
+end 
+
+--[[
+getLocalePrintf( category, textID, default)
+help function to support text messages coming out of localized databases
+At first step, it tries to open a oobd-db, where the filename consists of categorie_LOCALE.oobd
+LOCALE is a global variable, which shall contain the locale country code like de_de. If not set, en_en is used as default.
+
+Then it tries to find the entry "textID"
+
+if this fails, it's tried again with the english version of that categorie db, means categorie_en_en.oobd
+
+if that also failes, it returns the default string
+
+The return value, either found in the db or the default can be used as simple string, but the main purpose is to return the format string
+of a string.format() call, so by that localized texts can be generated which can also include some variables like e.g.
+
+return string.format(getLocalePrintf("nrc",string.format("0x%x",udsBuffer[3]), "NRC: 0x%02X"),udsBuffer[3])
+
+--]]
+
+function getLocalePrintf( category, textID, default)
+	if dbLookup ~= nil then -- db functionality implemented?
+		if LOCALE==nil then -- default language not set ?
+			LOCALE="en_en" -- then set it to english
+		end
+		newArray= dbLookup(category.."_"..LOCALE..".oodb",textID) -- look up for the given category db and for the given LOCALE
+		if newArray.len > 0 then -- if something was found
+			index=tostring(newArray.header["Template"])
+			return newArray.data["1"][index]
+		else -- not found: either the LOCALE DB does not exist or the entry was not found
+			if LOCALE ~="en_en" then -- if the LOCALE is already english, then there's no need to search again
+				newArray= dbLookup(category.."_en_en.oodb",textID) --another trial, this time in english
+				if newArray.len > 0 then
+					index=tostring(newArray.header["Template"])
+					return newArray.data["1"][index]
+				else --not found
+					return default -- just return the default
+				end
+			else --english was already tried
+				return default -- just return the default
+			end
+		end
+	else -- no db functionality available
+		return default -- just return the default
+	end
+end
+
 
 function selectModuleID(oldvalue,id)
 	index = tonumber(oldvalue)
