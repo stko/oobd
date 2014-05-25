@@ -5,6 +5,8 @@ import select
 import sys
 from sys import stderr
 
+
+
 def print_stderr(*args, **kwargs):
     print(*args, file=stderr, **kwargs)
 
@@ -27,64 +29,17 @@ class bcolors:
 
 
 testSet=[
-{'cmd':'p 0 0 0\r','res':r'.*(OBD).*','next':4,'err':1,'descr':'Looking for OOBD ID','okText':'OK: OOBD String received','errText':'Error: No correct Answer'},
-{'cmd':'p 0 0 0\r','res':r'.*(OBD).*','next':4,'err':2,'descr':'Looking for OOBD ID','okText':'OK: OOBD String received','errText':'Error: No correct Answer'},
-{'cmd':'p 0 0 0\r','res':r'.*(OBD).*','next':4,'err':3,'descr':'Looking for OOBD ID','okText':'OK: OOBD String received','errText':'Error: No correct Answer'},
-{'cmd':'p 0 0 0\r','res':r'.*(OBD).*','next':4,'err':4,'descr':'Looking for OOBD ID','okText':'OK: OOBD String received','errText':'Error: No correct Answer'},
-{'cmd':'p 0 0 1\r','res':r'.*(:).*','next':5,'err':-1,'descr':'Looking for Serial Nr.','okText':'OK: Serial Nr received','errText':'Error: No correct Answer'},
-{'cmd':'p 0 0 2\r','res':r'.*1\d{4} mV.*','next':6,'err':-1,'descr':'Check Voltage > 10V','okText':'OK: Voltage > 10V','errText':'Error: No correct Answer'},
+{'cmd':'p 0 0 0\r','res':r'.*(OBD).*','next':-2,'err':1,'descr':'Looking for OOBD ID','okText':'OK: OOBD String received','errText':'Error: No correct Answer'},
+{'cmd':'p 0 0 0\r','res':r'.*(OBD).*','next':-2,'err':2,'descr':'Looking for OOBD ID','okText':'OK: OOBD String received','errText':'Error: No correct Answer'},
+{'cmd':'p 0 0 0\r','res':r'.*(OBD).*','next':-2,'err':3,'descr':'Looking for OOBD ID','okText':'OK: OOBD String received','errText':'Error: No correct Answer'},
+{'cmd':'p 0 0 0\r','res':r'.*(OBD).*','next':-2,'err':-1,'descr':'Looking for OOBD ID','okText':'OK: OOBD String received','errText':'Error: No correct Answer'},
 
-{'cmd':'p 1 2 0 0\r','res':r'.*(.).*','next':7,'err':-1,'descr':'Blue LED off','okText':'OK: Blue LED turned off','errText':'Error: No correct Answer'},
-{'cmd':'p 1 2 1 0\r','res':r'.*(.).*','next':8,'err':-1,'descr':'Green LED off','okText':'OK: Green LED turned off','errText':'Error: No correct Answer'},
-{'cmd':'p 1 2 2 0\r','res':r'.*(.).*','next':9,'err':-1,'descr':'Red LED off','okText':'OK: Red LED turned off','errText':'Error: No correct Answer','dialogtext':'Are green and red LEDs off?'},
-{'cmd':'p 1 2 0 1\r','res':r'.*(.).*','next':10,'err':-1,'descr':'Blue LED on','okText':'OK: Blue LED turned on','errText':'Error: No correct Answer'},
-{'cmd':'p 1 2 1 1\r','res':r'.*(.).*','next':11,'err':-1,'descr':'Green LED on','okText':'OK: Green LED turned on','errText':'Error: No correct Answer','dialogtext':'Is the green LED on?'},
-{'cmd':'p 1 2 1 0\r','res':r'.*(.).*','next':12,'err':-1,'descr':'Green LED off','okText':'OK: Green LED turned off','errText':'Error: No correct Answer'},
-{'cmd':'p 1 2 2 1\r','res':r'.*(.).*','next':13,'err':-1,'descr':'Red LED on','okText':'OK: Red LED turned on','errText':'Error: No correct Answer','dialogtext':'Is the red LED on?'},
-{'cmd':'p 1 2 2 0\r','res':r'.*(.).*','next':14,'err':-1,'descr':'Red LED off','okText':'OK: Red LED turned off','errText':'Error: No correct Answer'},
-{'cmd':'p 1 2 3 1000\r','res':r'.*(.).*','next':15,'err':-1,'descr':'Buzzer on','okText':'OK: Buzzer turned on','errText':'Error: No correct Answer','dialogtext':'Do you hear the Buzzer?'},
-{'cmd':'p 1 2 3 0\r','res':r'.*(.).*','next':16,'err':-1,'descr':'Buzzer off','okText':'OK: Red LED turned off','errText':'Error: No correct Answer'},
-#{'cmd':'p 1 2 3 0\r','res':r'.*(.).*','next':21,'err':-1,'descr':'Buzzer off','okText':'OK: Red LED turned off','errText':'Error: No correct Answer'},
-
-# KL-Line Test
-{'cmd':'p  1 2 4 0\r','res':r'.*(.).*','next':17,'err':-1,'descr':' K-Line TX OFF (Transmit mode) ','okText':'OK: K-Line TX OFF','errText':'Error: No correct Answer'},
-{'cmd':'p  1 2 5 1\r','res':r'.*(.).*','next':18,'err':-1,'descr':' L-Line ON - 0V ','okText':'OK: L-Line ON','errText':'Error: No correct Answer'},
-{'cmd':'p  0 0 11\r','res':r'.*(high).*','next':19,'err':-1,'descr':' read K-Line Level ','okText':'OK: K-Line HIGH','errText':'Error: No correct Answer'},
-{'cmd':'p  1 2 5 0\r','res':r'.*(.).*','next':20,'err':-1,'descr':' L-Line OFF - 12V (PullUp) ','okText':'OK: L-Line OFF','errText':'Error: No correct Answer'},
-{'cmd':'p  0 0 11\r','res':r'.*(low).*','next':21,'err':-1,'descr':' read K-Line Level ','okText':'OK: K-Line LOW','errText':'Error: No correct Answer'},
-#{'cmd':'p  0 0 11\r','res':r'.*(low).*','next':32,'err':-1,'descr':' read K-Line Level ','okText':'OK: K-Line LOW','errText':'Error: No correct Answer'},
-
-
-
-# high speed test
-{'cmd':'p 8 2 0\r','res':r'.*(.).*','next':22,'err':-1,'descr':'deactivate Bus','okText':'OK: Bus deactivated','errText':'Error: No correct Answer'},
-{'cmd':'p 8 3 0\r','res':r'.*(.).*','next':23,'err':-1,'descr':'set CAN 500kb / 11b','okText':'OK: Bus set','errText':'Error: No correct Answer'},
-{'cmd':'p 8 4 0\r','res':r'.*(.).*','next':24,'err':-1,'descr':'set Channel 0','okText':'OK: Channel set','errText':'Error: No correct Answer'},
-{'cmd':'p 8 2 3\r','res':r'.*(.).*','next':25,'err':-1,'descr':'set Bus active','okText':'OK: Bus activated','errText':'Error: No correct Answer'},
-{'cmd':'p 6 5 $737\r','res':r'.*(.).*','next':26,'err':-1,'descr':'set Module ID 737 (Airbag)','okText':'OK: Module ID set','errText':'Error: No correct Answer'},
-{'cmd':'p 8 10 1 $07FF\r','res':r'.*(.).*','next':27,'err':-1,'descr':'set CAN Filter','okText':'OK: CAN Filter set','errText':'Error: No correct Answer'},
-{'cmd':'p 8 11 1 $0000\r','res':r'.*(.).*','next':28,'err':-1,'descr':'set CAN Mask ','okText':'OK: CAN Mask set','errText':'Error: No correct Answer'},
-{'cmd':'p 6 9 $73f\r','res':r'.*(.).*','next':29,'err':-1,'descr':'set Send ID','okText':'OK: Send ID set','errText':'Error: No correct Answer'},
-{'cmd':'1002\r','res':r'^(50).*','next':32,'err':30,'descr':'send Tester present','okText':'OK: Answer from Cluster','errText':'Error: No correct Answer from Airbag'},
-{'cmd':'1002\r','res':r'^(50).*','next':32,'err':31,'descr':'send Tester present','okText':'OK: Answer from Cluster','errText':'Error: No correct Answer from Airbag'},
-{'cmd':'1002\r','res':r'^(50).*','next':32,'err':-1,'descr':'send Tester present','okText':'OK: Answer from Cluster','errText':'Error: No correct Answer from Airbag'},
-# mid speed test
-{'cmd':'p 8 2 0\r','res':r'.*(.).*','next':33,'err':-1,'descr':'deactivate Bus','okText':'OK: Bus deactivated','errText':'Error: No correct Answer'},
-{'cmd':'p 8 3 1\r','res':r'.*(.).*','next':34,'err':-1,'descr':'set CAN 125kb / 11b','okText':'OK: Bus set','errText':'Error: No correct Answer'},
-{'cmd':'p 8 4 1\r','res':r'.*(.).*','next':35,'err':-1,'descr':'set Channel 1','okText':'OK: Channel set','errText':'Error: No correct Answer'},
-{'cmd':'p 8 2 3\r','res':r'.*(.).*','next':36,'err':-1,'descr':'set Bus active','okText':'OK: Bus activated','errText':'Error: No correct Answer'},
-{'cmd':'p 6 5 $741\r','res':r'.*(.).*','next':37,'err':-1,'descr':'set Module ID','okText':'OK: Module ID set','errText':'Error: No correct Answer'},
-{'cmd':'p 8 10 1 $07FF\r','res':r'.*(.).*','next':38,'err':-1,'descr':'set CAN Filter','okText':'OK: CAN Filter set','errText':'Error: No correct Answer'},
-{'cmd':'p 8 11 1 $0000\r','res':r'.*(.).*','next':39,'err':-1,'descr':'set CAN Mask ','okText':'OK: CAN Mask set','errText':'Error: No correct Answer'},
-{'cmd':'p 6 9 $749\r','res':r'.*(.).*','next':40,'err':-1,'descr':'set Send ID','okText':'OK: Send ID set','errText':'Error: No correct Answer'},
-{'cmd':'1002\r','res':r'^(50).*','next':-1,'err':41,'descr':'send Tester present','okText':'OK: Answer from DCU','errText':'Error: No correct Answer from DCU'},
-{'cmd':'1002\r','res':r'^(50).*','next':-1,'err':42,'descr':'send Tester present','okText':'OK: Answer from DCU','errText':'Error: No correct Answer from DCU'},
-{'cmd':'1002\r','res':r'^(50).*','next':-1,'err':-1,'descr':'send Tester present','okText':'OK: Answer from DCU','errText':'Error: No correct Answer from DCU'},
 ]
 
 def echoWrite(cmd):
 	cmdBytes=bytearray(cmd,"utf-8")
 	gaugeSocket.send(cmdBytes)
+#	res=gaugeSocket.recv(len(cmdBytes)).decode("utf-8")
 	res=gaugeSocket.recv(len(cmdBytes)).decode("utf-8")
 
 
@@ -101,14 +56,17 @@ def doSingleCmd(cmd, regex):
 			recvDone=True
 	print_stderr("Received:",res.replace("\r","\n"))
 	if res!="":
-		matchObj = re.match( regex , res, re.M|re.I)
+		matchObj = re.search( regex , res, re.M|re.I)
+		if res[-3:]==".\r>":
+			res=res[:-3]
+		res=res.replace("\r","")
 
 		if matchObj:
-			return (True)
+			return {'err':0,'text':res}
 		else:
-			return (False)
+			return {'err':1,'text':res}
 	else:
-		return (False)
+		return {'err':1,'text':''}
 
 
 
@@ -117,65 +75,87 @@ def doSingleCmd(cmd, regex):
 def testCommand(thisTest):
 	print_stderr ("Description:", thisTest['descr'])
 	print_stderr ("Command:", thisTest['cmd'])
-
-	if doSingleCmd(thisTest['cmd'],thisTest['res']):
-		if 'dialogtext' in thisTest:
-			#if ccbox(thisTest['dialogtext'], "Please Confirm"):     # show a Continue/Cancel dialog
-			time.sleep(0.5)
-			if True:     # show a Continue/Cancel dialog
-				print_stderr  (bcolors.OKGREEN + thisTest['okText'] + bcolors.ENDC)
-				return thisTest['next']
-			else:
-				print_stderr (bcolors.FAIL + thisTest['errText'] + bcolors.ENDC)
-				return thisTest['err']
-		else:
-			print_stderr (bcolors.OKGREEN + thisTest['okText'] + bcolors.ENDC)
-			return thisTest['next']
+	singleCMD=doSingleCmd(thisTest['cmd'],thisTest['res'])
+	if singleCMD['err']==0:
+		print_stderr (bcolors.OKGREEN + thisTest['okText'] + bcolors.ENDC)
+		return thisTest['next']
 	else:
 		print_stderr  (bcolors.FAIL + thisTest['errText'] + bcolors.ENDC)
 		return thisTest['err']
 
 def connect(macAdress):
-	while(True):
-		try:
-			port = 1
-			gaugeSocket = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
-			gaugeSocket.connect((macAdress,port))
+	try:
+		port = 1
+		gaugeSocket = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+		gaugeSocket.connect((macAdress,port))
 
-			print_stderr ("Connected to",macAdress)
-			time.sleep(0.5)
-			#gaugeSocket.setblocking(0)
-			break;
-		except socket.error as message: 
-			if gaugeSocket: 
-				gaugeSocket.close() 
-			print_stderr ("Could not connect: ", message, "; Retrying in 10s...")
-			time.sleep(10)
+		print_stderr ("Connected to",macAdress)
+		time.sleep(0.5)
+		#gaugeSocket.setblocking(0)
+	except socket.error as message: 
+		if gaugeSocket: 
+			gaugeSocket.close() 
+		gaugeSocket=None
+		print_stderr ("Could not connect: ", message)
 	return gaugeSocket;
 
 
 if len(sys.argv) < 2:
-    sys.exit('Usage: %s BT-MAC-Address' % sys.argv[0])
+    sys.exit('''
+Usage: %s BT-MAC-Address \'[cmdset[,cmdset]]\'
+for detailed information goto http://www.oobd.org/doku.php?id=doc:tools_oobdcmd
+''' % sys.argv[0])
 
 BTMAC=sys.argv[1]
 gaugeSocket = connect(BTMAC)
+if gaugeSocket == None:
+	exit(1) # error code for failed connect
 try:
 	gaugeSocket.send(bytearray('\r\r\r',"utf-8"))
 	gaugeSocket.recv(1024).decode("utf-8")
 except socket.error as error:
 	print_stderr (bcolors.FAIL + "Caught inital BluetoothError: ", error , bcolors.ENDC)
+	exit(1) # error code for failed connect
 state=0
-while(state!=-1):    
+while(state!=-1 and state!=-2 ):    
 	try:
 		thisTest=testSet[state]
 		state=testCommand(thisTest)
 	except socket.error as error:
 		print_stderr (bcolors.FAIL + "Caught BluetoothError: ", error , bcolors.ENDC)
-		time.sleep(5)
-		gaugeSocket = connect()
+		exit(1) # error code for failed connect
+
+if state != -2:
+	exit(2) # error code for failed init
+
+if len(sys.argv) > 2:
+	print_stderr("Do Command Sequence")
+	iniString=sys.argv[2]
+	cmdSets=re.split(",",iniString)
+	try:
+		for cmdSet in cmdSets:
+			print_stderr ("cmdSet:",cmdSet)
+			cmdDetails=re.split("\|",cmdSet)
+			if len(cmdDetails) != 2:
+				print_stderr("Error: Wrong command format in", cmdSet)
+				exit(3)
+			print_stderr ("cmd:",cmdDetails[0])
+			print_stderr ("regex:",cmdDetails[1])
+			singleCMD=doSingleCmd(bytes(cmdDetails[0], "utf-8").decode("unicode_escape"), cmdDetails[1])
+			if singleCMD['err']!=0:
+				print_stderr("Error: Command sequence failed on ", cmdSet)
+				exit(3)
+	except socket.error as error:
+		print_stderr (bcolors.FAIL + "Caught BluetoothError: ", error , bcolors.ENDC)
+		exit(1) # error code for failed connect
+
+if len(sys.argv) > 2 and len(sys.argv) < 4 : # no additional UDS-command given, so output the results from init
+	if singleCMD != None: # we have a result
+		print (singleCMD['text']) # this time only a print(), not a print_stderr(), because the result shall go to stdout
+
 
 gaugeSocket.close()
-
+exit(0) 
 
 def exitHandler(signum = 0, frame = 0):
 	print_stderr("Kill Process..")
