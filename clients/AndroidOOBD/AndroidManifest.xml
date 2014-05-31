@@ -37,6 +37,9 @@
 		</activity>
 		<activity android:name=".DiagnoseTab" android:label="DiagnoseTab" android:theme="@android:style/Theme.Light"></activity>
 		<activity android:name=".OutputActivity" android:label="OutputActivity" android:theme="@android:style/Theme.Light"></activity>
+		
+		<service android:name="com.openxc.VehicleManager"/>
+		
 	</application>
 	<uses-sdk android:minSdkVersion="7" />
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

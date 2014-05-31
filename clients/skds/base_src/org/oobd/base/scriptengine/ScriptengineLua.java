@@ -164,6 +164,19 @@ public class ScriptengineLua extends OobdScriptengine {
                 return 1;
             }
         });
+        register("openXCVehicleDataCall", new JavaFunction() {
+
+            public int call(LuaCallFrame callFrame, int nArguments) {
+                // BaseLib.luaAssert(nArguments >0, "not enough args");
+                initRPC(callFrame, nArguments);
+                Onion openXCJson = getLuaTable(0);
+                    if (openXCJson != null) {
+                    	core.getUiIF().openXCVehicleData(openXCJson);
+                    }
+                finishRPC(callFrame, nArguments);
+                return 1;
+            }
+        });
         register("pageDoneCall", new JavaFunction() {
 
             public int call(LuaCallFrame callFrame, int nArguments) {
