@@ -24,15 +24,23 @@ import org.oobd.crypt.AES.EncodeDecodeAES;
 import org.oobd.ui.android.application.AndroidGui;
 import org.oobd.ui.android.application.OOBDApp;
 
+import com.openxc.VehicleManager;
+import com.openxc.VehicleManager.VehicleBinder;
+import com.openxc.remote.VehicleService;
+
 //import com.lamerman.FileDialog;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -68,6 +76,9 @@ public class MainActivity extends FragmentActivity implements
 	private BluetoothAdapter mBluetoothAdapter;
 
 	public static MainActivity myMainActivity;
+	VehicleManager service = null;
+	OOBDVehicleDataSource source;
+	ServiceConnection mConnection;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -196,7 +207,7 @@ public class MainActivity extends FragmentActivity implements
 								}
 							});
 					alertDialog.show();
-					//return;
+					// return;
 				}
 				createDisclaimerDialog();
 			}
@@ -234,6 +245,53 @@ public class MainActivity extends FragmentActivity implements
 									// Do nothing.
 								}
 							}).show();
+		}
+		Log.d("OpenXC binding", "Stop old intend first");
+		getBaseContext().stopService(
+				new Intent(getBaseContext(), VehicleService.class));
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+		}
+		Log.d("OpenXC binding", "Starting openXC intend");
+		mConnection = new ServiceConnection() {
+			// Called when the connection with the service is established
+			public void onServiceConnected(ComponentName className,
+					IBinder serviceConnect) {
+				service = ((VehicleBinder) serviceConnect).getService();
+				service.addSource(source);
+				Log.d("OpenXC binding", "openXC service connected");
+			}
+
+			// Called when the connection with the service disconnects
+			// unexpectedly
+			public void onServiceDisconnected(ComponentName className) {
+				service = null;
+				Log.d("OpenXC binding", "openXC service disconnected");
+			}
+
+		};
+
+		source = new OOBDVehicleDataSource(null, getBaseContext());
+	}
+
+	public void openXCVehicleData(Onion openXCJson) {
+		if (source != null) {
+			source.sendJSONString(openXCJson.toString());
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		// When the activity starts up or returns from the background,
+		// re-connect to the VehicleManager so we can receive updates.
+		if (service == null) {
+
+			Intent intent = new Intent(this, VehicleManager.class);
+			getApplicationContext().bindService(intent, mConnection,
+					Context.BIND_AUTO_CREATE);
+
 		}
 	}
 

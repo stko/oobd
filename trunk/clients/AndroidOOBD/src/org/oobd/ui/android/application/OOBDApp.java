@@ -18,9 +18,12 @@ import org.oobd.ui.android.Diagnose;
 import org.oobd.ui.android.bus.ComPort;
 
 import android.app.Application;
+import android.os.Environment;
+import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 import android.content.SharedPreferences;
+
 
 /**
  * @author Andreas Budde, Peter Mayer Base class to maintain global application
@@ -40,7 +43,7 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 	private Toast mToast;
 	private ComPort myComPort;
 	private String userPassPhrase = "";
-
+	
 	public static OOBDApp getInstance() {
 		return mInstance;
 	}
@@ -54,7 +57,8 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 			return getFilesDir() + "/" + fileName;
 
 		default:
-			return "/sdcard/OOBD/" + fileName;
+			return Environment.getExternalStorageDirectory().getPath()
+					+ "/OOBD/" + fileName;
 			// return null;
 		}
 	}
@@ -102,8 +106,7 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 						+ resourceName + " loaded");
 			} catch (Exception e) {
 				Log.v(this.getClass().getSimpleName(), "Key File "
-						+ resourceName
-						+ " could not loaded", e);
+						+ resourceName + " could not loaded", e);
 			}
 			return resource;
 
@@ -125,6 +128,7 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 				+ thisCore.toString());
 	}
 
+	
 	public CharSequence[] getAvailableLuaScript() {
 
 		FilenameFilter filter = new FilenameFilter() {
@@ -195,8 +199,6 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 		}
 	}
 
-
-
 	public char[] getAppPassPhrase() {
 		return PassPhraseProvider.getPassPhrase();
 	}
@@ -229,38 +231,47 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 	}
 
 	public Preferences loadPreferences(int pathID, String filename) {
-	       Preferences myPrefs = null;
+		Preferences myPrefs = null;
 
-	        try {
-	            Preferences prefsRoot;
-	            
-	            prefsRoot = Preferences.userNodeForPackage(this.getClass());
-	            //prefsRoot.sync();
-	            myPrefs = prefsRoot.node("com.oobd.preference." + filename);
-	            if (myPrefs.keys().length == 0 && OOBDConstants.CorePrefsFileName.equalsIgnoreCase(filename)) { //no entries yet
-	                //generate system specific settings
-	                myPrefs.put("EngineClassPath", "org.oobd.base.scriptengine.ScriptengineLua");
-	                myPrefs.put("ProtocolClassPath", "org.oobd.base.protocol.ProtocolUDS");
-	                myPrefs.put("ConnectorClassPath", "org.oobd.base.connector.ConnectorLocal");
-	                myPrefs.put("BusClassPath", "org.oobd.base.bus.BusCom");
-	                myPrefs.put("DatabaseClassPath", "org.oobd.base.db.AVLLookup");
-	                myPrefs.put("UIHandlerClassPath", "org.oobd.ui.uihandler.UIHandler");
-	                myPrefs.flush();
-	            }
-	  	            return myPrefs;
-	        } catch (Exception e) {
-	        	Log.v(this.getClass().getSimpleName(), "could not load property id " + filename, e);
-	        }
-	        return myPrefs;
+		try {
+			Preferences prefsRoot;
+
+			prefsRoot = Preferences.userNodeForPackage(this.getClass());
+			// prefsRoot.sync();
+			myPrefs = prefsRoot.node("com.oobd.preference." + filename);
+			if (myPrefs.keys().length == 0
+					&& OOBDConstants.CorePrefsFileName
+							.equalsIgnoreCase(filename)) { // no entries yet
+				// generate system specific settings
+				myPrefs.put("EngineClassPath",
+						"org.oobd.base.scriptengine.ScriptengineLua");
+				myPrefs.put("ProtocolClassPath",
+						"org.oobd.base.protocol.ProtocolUDS");
+				myPrefs.put("ConnectorClassPath",
+						"org.oobd.base.connector.ConnectorLocal");
+				myPrefs.put("BusClassPath", "org.oobd.base.bus.BusCom");
+				myPrefs.put("DatabaseClassPath", "org.oobd.base.db.AVLLookup");
+				myPrefs.put("UIHandlerClassPath",
+						"org.oobd.ui.uihandler.UIHandler");
+				myPrefs.flush();
+			}
+			return myPrefs;
+		} catch (Exception e) {
+			Log.v(this.getClass().getSimpleName(),
+					"could not load property id " + filename, e);
+		}
+		return myPrefs;
 	}
 
-    public boolean savePreferences(int pathID, String filename, Preferences properties) {
-        try {
-            properties.flush();
-            return true;
-        } catch (Exception e) {
-        	Log.v(this.getClass().getSimpleName(), "could not save property id " + filename, e);
-            return false;
-        }
-    }
+	public boolean savePreferences(int pathID, String filename,
+			Preferences properties) {
+		try {
+			properties.flush();
+			return true;
+		} catch (Exception e) {
+			Log.v(this.getClass().getSimpleName(),
+					"could not save property id " + filename, e);
+			return false;
+		}
+	}
 }

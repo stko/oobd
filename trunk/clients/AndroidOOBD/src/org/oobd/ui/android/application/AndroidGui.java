@@ -269,4 +269,9 @@ public class AndroidGui implements IFui {
 
 	}
 
+	public void openXCVehicleData(Onion openXCJson) {
+		MainActivity.getMyMainActivity().openXCVehicleData(openXCJson);
+		
+	}
+
 }

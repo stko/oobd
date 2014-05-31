@@ -16,6 +16,7 @@ serWrite = serWriteCall
 serWait = serWaitCall
 serReadLn = serReadLnCall
 serDisplayWrite = serDisplayWriteCall
+openXCVehicleData =openXCVehicleDataCall
 --]]
 
 --[[
