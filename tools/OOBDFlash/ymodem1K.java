@@ -26,138 +26,25 @@ import ymodemguijava.*;
  * @author maziar
  */
 public class SendData {
-    private Enumeration enumComm;
-    private SerialPort serialPort;
-    private CommPortIdentifier serialPortId;
     private OutputStream outputStream;
-    private boolean serialPortGeoeffnet;
     private boolean isFirstSector=true;
-    final int baudrate=115200;
-    final int parity =serialPort.PARITY_NONE;
-    final int stopBits=serialPort.STOPBITS_1;
-    int flowcontrol = purejavacomm.SerialPort.FLOWCONTROL_NONE;
     final int dataBits=8;
   //  static Logger logger = Logger.getLogger(SendData.class);
     static boolean isEnd = false;
     static int counter =0;
     private InputStream inputStream;
-    private File file;
     private FileInputStream ins;
-    private String portName;
-    private boolean isPortOpen = false;
     private static String feedback;
-    private YModemGUIJAVAView  ym;
     private char in;
     private InitPacket init = new InitPacket();
     int errorcunter = 0;
     private boolean END=false;
     public static boolean  read= false;
-    public void setPortname(String comport){
-        this.portName= comport;
-    }
-    public void setFilePath(String path){
-        this.file= new File(path);
-    }
+
     public static String getFeedback(){
         return feedback;
     }
 
-
-    public boolean getOpenPort(){
-        return isPortOpen;
-    }
-    public SendData(String comPort, String path){
-        this.portName = comPort;
-        this.file = new File(path);
-
-    }
-    public SendData(String comPort){
-        this.portName = comPort;
-    }
-    public SendData(){
-        
-    }
-
-   public void findAllSerialport(){
-       enumComm = CommPortIdentifier.getPortIdentifiers();
-       while(enumComm.hasMoreElements()){
-           serialPortId =(CommPortIdentifier)enumComm.nextElement();
-           if(serialPortId.getPortType()==CommPortIdentifier.PORT_SERIAL){
-               
-           }
-       }
-   }
-   public  boolean oeffneSerialPort()
-	{
-		Boolean foundPort = false;
-		if (serialPortGeoeffnet != false) {
-			System.out.println("Serialport bereits geÃ¶ffnet");
-                        feedback ="Serialport bereits geÃ¶ffnet";
-			return false;
-		}
-		System.out.println("Ã–ffne Serialport");
-                feedback ="Ã–ffne serialport";
-		enumComm = CommPortIdentifier.getPortIdentifiers();
-		while(enumComm.hasMoreElements()) {
-			serialPortId = (CommPortIdentifier) enumComm.nextElement();
-			if (portName.contentEquals(serialPortId.getName())) {
-				foundPort = true;
-				break;
-			}
-		}
-		if (foundPort != true) {
-			System.out.println("Serialport nicht gefunden: " + portName);
-                        feedback ="Serialport nicht gefunden: " + portName;
-			return false;
-		}
-		try {
-			serialPort = (SerialPort) serialPortId.open("Ã–ffnen und Senden", 500);
-		} catch (PortInUseException e) {
-			System.out.println("Port belegt");
-                        feedback ="Port belegt";
-		}
-		try {
-			outputStream = serialPort.getOutputStream();
-		} catch (IOException e) {
-			System.out.println("Keinen Zugriff auf OutputStream");
-                          feedback ="Keinen Zugriff auf OutputStream";
-		}
-                try {
-			inputStream = serialPort.getInputStream();
-		} catch (IOException e) {
-			System.out.println("Keinen Zugriff auf InputStream");
-		}
-
-		try {
-			serialPort.setSerialPortParams(baudrate, dataBits, stopBits, parity);
-                        serialPort.setFlowControlMode(flowcontrol);
-		} catch(UnsupportedCommOperationException e) {
-			System.out.println("Konnte Schnittstellen-Paramter nicht setzen");
-                        feedback ="Konnte Schnittstellen-Paramter nicht setzen";
-		}
-                try {
-			serialPort.addEventListener(new PortEvetntListener());
-		} catch (TooManyListenersException e) {
-			System.out.println("TooManyListenersException fÃ¼r Serialport");
-		}
-		serialPort.notifyOnDataAvailable(true);
-
-		serialPortGeoeffnet = true;
-		return true;
-	}
-
-     public void schliesseSerialPort()
-	{
-		if ( serialPortGeoeffnet == true) {
-			System.out.println("SchlieÃŸe Serialport");
-                         feedback ="SchlieÃŸe Serialport";
-			serialPort.close();
-			serialPortGeoeffnet = false;
-		} else {
-			System.out.println("Serialport bereits geschlossen");
-                        feedback ="Serialport bereits geschlossen";
-		}
-	}
 
      private  void serialPortDatenVerfuegbar() {
 		try {
@@ -183,6 +70,7 @@ public class SendData {
 			System.out.println("Fehler beim Lesen empfangener Daten");
 		}
 	}
+
      private void sendDataToSerialPort(byte[] data){
          try{
              for(int i = 0; i< data.length;i++){
@@ -205,21 +93,16 @@ public class SendData {
 			System.out.println("Fehler beim Senden");
 		}
 	}
-    private void waitForResetDMX(){
-        sendeStringSerialPort(TransferSpecification.DXM_Bluetooth_reset);
-        for(int i = 0; i<5;i++){
-            sendeStringSerialPort(TransferSpecification.BootloaderLetter);
-        }
-        sendeStringSerialPort(TransferSpecification.DMX_Bluetooth_init_Mode);
+ 
+   private void waitForStart(Integer timeout){
+
         while(!isC()){
-            
+            öö hier fehlt die Abruchbedingung des Timeouts
             if(isC())
                 break;
         }
     }
-    private void restartDMX(){
-         sendeStringSerialPort(TransferSpecification.DMX_RESTART);
-    }
+
     public void updateFirmware(){
         //sendeStringSerialPort(TransferSpecification.DXM_Bluetooth_reset);
         //for(int i = 0; i<5;i++){
@@ -244,19 +127,16 @@ public class SendData {
         else
             YModemGUIJAVAView.jTextArea1.setText("Keine Acknolge");
     }
+
     // prÃ¼fen on Acknolege zurÃ¼ckkommt
     private boolean isAck(){
-        if(in==TransferSpecification.ACK)
-            return true;
-        else
-            return false;
+        return in==TransferSpecification.ACK;
     }
+
     private boolean isC(){
-        if(in==TransferSpecification.C)
-            return true;
-        else
-            return false;
+        return in==TransferSpecification.C;
     }
+
     private void sendNotFirstSector(){
         try{
             int b = 0;
@@ -370,26 +250,6 @@ public class SendData {
          }
     }
 
-
-     class PortEvetntListener implements purejavacomm.SerialPortEventListener{
-          public void serialEvent(SerialPortEvent event) {
-              System.out.println("serialPortEventlistener");
-			switch (event.getEventType()) {
-			case SerialPortEvent.DATA_AVAILABLE:
-				serialPortDatenVerfuegbar();
-				break;
-			case SerialPortEvent.BI:
-			case SerialPortEvent.CD:
-			case SerialPortEvent.CTS:
-			case SerialPortEvent.DSR:
-			case SerialPortEvent.FE:
-			case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
-			case SerialPortEvent.PE:
-			case SerialPortEvent.RI:
-			default:
-			}
-          }
-    }
 
 
 }
