@@ -17,160 +17,160 @@ import com.intel.bluetooth.RemoteDeviceHelper;
 public class OobdBtWrapper {
 
 
-    public static final Vector<OOBDDongleDescriptor> serviceFound = new Vector();
-    public static DiscoveryListener listener;
+	public static final Vector<OOBDDongleDescriptor> serviceFound = new Vector();
+	public static DiscoveryListener listener;
 
-    public static Vector<OOBDDongleDescriptor>  discover()  {
+	public static Vector<OOBDDongleDescriptor>  discover()  {
 
-        // First run RemoteDeviceDiscovery and use discoved device
-        System.out.print(".");
-        RemoteDeviceDiscovery.discover();
+		// First run RemoteDeviceDiscovery and use discoved device
+		System.out.print(".");
+		RemoteDeviceDiscovery.discover();
 
-        serviceFound.clear();
+		serviceFound.clear();
 
-        UUID serviceUUID =  new UUID(0x1101);
-        //UUID serviceUUID = "1e0ca4ea-299d-4335-93eb-27fcfe7fa848";
+		UUID serviceUUID =  new UUID(0x1101);
+		//UUID serviceUUID = "1e0ca4ea-299d-4335-93eb-27fcfe7fa848";
 
 
-        final Object serviceSearchCompletedEvent = new Object();
+		final Object serviceSearchCompletedEvent = new Object();
 
-        listener = new DiscoveryListener() {
+		listener = new DiscoveryListener() {
 
-            public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
-                try {
-                    RemoteDeviceHelper.authenticate(btDevice, "1234");
-                } catch (IOException CantAuthenticate) {
-                }
-            }
+			public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
+				try {
+					RemoteDeviceHelper.authenticate(btDevice, "1234");
+				} catch (IOException CantAuthenticate) {
+				}
+			}
 
-            public void inquiryCompleted(int discType) {
-            }
+			public void inquiryCompleted(int discType) {
+			}
 
-            public void servicesDiscovered(int transID, ServiceRecord[] servRecord) {
-                for (int i = 0; i < servRecord.length; i++) {
-                    String url = servRecord[i].getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false);
-                    if (url == null) {
-                        continue;
-                    }
-                    try {
-                        serviceFound.add(new OOBDDongleDescriptor(servRecord[i].getHostDevice().getFriendlyName(false), servRecord[i].getHostDevice().getBluetoothAddress(), url));
-                        System.out.print(".");
+			public void servicesDiscovered(int transID, ServiceRecord[] servRecord) {
+				for (int i = 0; i < servRecord.length; i++) {
+					String url = servRecord[i].getConnectionURL(ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false);
+					if (url == null) {
+						continue;
+					}
+					try {
+						serviceFound.add(new OOBDDongleDescriptor(servRecord[i].getHostDevice().getFriendlyName(false), servRecord[i].getHostDevice().getBluetoothAddress(), url));
+						System.out.print(".");
 
-                    } catch ( IOException e ) {
-                        System.err.print(e.toString());
-                    }
-                }
-            }
+					} catch ( IOException e ) {
+						System.err.print(e.toString());
+					}
+				}
+			}
 
-            public void serviceSearchCompleted(int transID, int respCode) {
-                System.out.print(".");
-                synchronized(serviceSearchCompletedEvent) {
-                    serviceSearchCompletedEvent.notifyAll();
-                }
-            }
+			public void serviceSearchCompleted(int transID, int respCode) {
+				System.out.print(".");
+				synchronized(serviceSearchCompletedEvent) {
+					serviceSearchCompletedEvent.notifyAll();
+				}
+			}
 
-        };
+		};
 
-        UUID[] searchUuidSet = new UUID[] { serviceUUID };
-        int[] attrIDs =  new int[] {
-            //0x0100 // Service name
-            0x0003 // Service name
-        };
-        System.out.print(".");
-        for(Enumeration en = RemoteDeviceDiscovery.devicesDiscovered.elements(); en.hasMoreElements(); ) {
-            RemoteDevice btDevice = (RemoteDevice)en.nextElement();
-            System.out.print(".");
-            synchronized(serviceSearchCompletedEvent) {
-                try {
-                    System.out.print(".");
-                    LocalDevice.getLocalDevice().getDiscoveryAgent().searchServices(attrIDs, searchUuidSet, btDevice, listener);
-                    serviceSearchCompletedEvent.wait();
-                } catch ( IOException ex ) {
-                    ex.printStackTrace();
-                } catch ( InterruptedException ex ) {
-                    ex.printStackTrace();
-                }
-            }
-        }
-        return serviceFound;
+		UUID[] searchUuidSet = new UUID[] { serviceUUID };
+		int[] attrIDs =  new int[] {
+		    //0x0100 // Service name
+		    0x0003 // Service name
+		};
+		System.out.print(".");
+		for(Enumeration en = RemoteDeviceDiscovery.devicesDiscovered.elements(); en.hasMoreElements(); ) {
+			RemoteDevice btDevice = (RemoteDevice)en.nextElement();
+			System.out.print(".");
+			synchronized(serviceSearchCompletedEvent) {
+				try {
+					System.out.print(".");
+					LocalDevice.getLocalDevice().getDiscoveryAgent().searchServices(attrIDs, searchUuidSet, btDevice, listener);
+					serviceSearchCompletedEvent.wait();
+				} catch ( IOException ex ) {
+					ex.printStackTrace();
+				} catch ( InterruptedException ex ) {
+					ex.printStackTrace();
+				}
+			}
+		}
+		return serviceFound;
 
-    }
+	}
 }
 
 class RemoteDeviceDiscovery {
 
-    public static final Vector<RemoteDevice> devicesDiscovered = new Vector();
+	public static final Vector<RemoteDevice> devicesDiscovered = new Vector();
 
-    static Vector<RemoteDevice> discover()   {
+	static Vector<RemoteDevice> discover()   {
 
-        try {
-            final Object inquiryCompletedEvent = new Object();
+		try {
+			final Object inquiryCompletedEvent = new Object();
 
-            devicesDiscovered.clear();
+			devicesDiscovered.clear();
 
-            DiscoveryListener listener = new DiscoveryListener() {
+			DiscoveryListener listener = new DiscoveryListener() {
 
-                public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
-                    System.out.print(".");
+				public void deviceDiscovered(RemoteDevice btDevice, DeviceClass cod) {
+					System.out.print(".");
 
-                    try {
-                        String name= btDevice.getFriendlyName(false);
-                        System.out.print(".");
-                        if (name.matches("^OOBD.*")) {
-                            devicesDiscovered.addElement(btDevice);
-                        }
-                    } catch (IOException cantGetDeviceName) {
-                    }
-                }
+					try {
+						String name= btDevice.getFriendlyName(false);
+						System.out.print(".");
+						if (name.matches("^OOBD.*")) {
+							devicesDiscovered.addElement(btDevice);
+						}
+					} catch (IOException cantGetDeviceName) {
+					}
+				}
 
-                public void inquiryCompleted(int discType) {
-                    System.out.print(".");
-                    synchronized(inquiryCompletedEvent) {
-                        inquiryCompletedEvent.notifyAll();
-                    }
-                }
+				public void inquiryCompleted(int discType) {
+					System.out.print(".");
+					synchronized(inquiryCompletedEvent) {
+						inquiryCompletedEvent.notifyAll();
+					}
+				}
 
-                public void serviceSearchCompleted(int transID, int respCode) {
-                }
+				public void serviceSearchCompleted(int transID, int respCode) {
+				}
 
-                public void servicesDiscovered(int transID, ServiceRecord[] servRecord) {
-                }
-            };
+				public void servicesDiscovered(int transID, ServiceRecord[] servRecord) {
+				}
+			};
 
-            synchronized(inquiryCompletedEvent) {
-                boolean started = LocalDevice.getLocalDevice().getDiscoveryAgent().startInquiry(DiscoveryAgent.GIAC, listener);
-                if (started) {
-                    System.out.print(".");
-                    inquiryCompletedEvent.wait();
-                    System.out.print(".");
-                }
-            }
+			synchronized(inquiryCompletedEvent) {
+				boolean started = LocalDevice.getLocalDevice().getDiscoveryAgent().startInquiry(DiscoveryAgent.GIAC, listener);
+				if (started) {
+					System.out.print(".");
+					inquiryCompletedEvent.wait();
+					System.out.print(".");
+				}
+			}
 
-        } catch ( IOException ex ) {
-            ex.printStackTrace();
-        } catch ( InterruptedException ex ) {
-            ex.printStackTrace();
-        }
-        return devicesDiscovered;
-    }
+		} catch ( IOException ex ) {
+			ex.printStackTrace();
+		} catch ( InterruptedException ex ) {
+			ex.printStackTrace();
+		}
+		return devicesDiscovered;
+	}
 
 }
 
 
 class OOBDDongleDescriptor {
-    public String friendlyName;
-    public String BluetoothAddress;
-    public String url;
-    public String hardwareID;
-    public String revision;
-    public String design;
-    public String layout;
+	public String friendlyName;
+	public String BluetoothAddress;
+	public String url;
+	public String hardwareID;
+	public String revision;
+	public String design;
+	public String layout;
 
-    OOBDDongleDescriptor(String friendlyName, String BluetoothAddress, String url) {
-        this.friendlyName = friendlyName;
-        this.BluetoothAddress = BluetoothAddress;
-        this.url = url;
-    }
+	OOBDDongleDescriptor(String friendlyName, String BluetoothAddress, String url) {
+		this.friendlyName = friendlyName;
+		this.BluetoothAddress = BluetoothAddress;
+		this.url = url;
+	}
 }
 
 

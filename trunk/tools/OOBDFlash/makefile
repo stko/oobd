@@ -17,8 +17,11 @@ OOBDFlashHandler.class: OOBDFlashHandler.java
 OOBDFileHandler.class: OOBDFileHandler.java 
 	javac -cp "./jars/*"  OOBDFileHandler.java
 
-OOBDFlash.class: OOBDFlash.java OobdBtWrapper.class OOBDFlashHandler.class OOBDFileHandler.class
-	javac -cp "./jars/*" OOBDFileHandler.java OOBDFlashHandler.java OobdBtWrapper.java OOBDFlash.java 
+YModem1K.class: YModem1K.java 
+	javac -cp "./jars/*"  YModem1K.java
+
+OOBDFlash.class: OOBDFlash.java OobdBtWrapper.class OOBDFlashHandler.class OOBDFileHandler.class YModem1K.class
+	javac -cp "./jars/*" OOBDFileHandler.java OOBDFlashHandler.java OobdBtWrapper.java YModem1K.java OOBDFlash.java 
 
 
 
