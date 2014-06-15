@@ -86,15 +86,6 @@ typedef void (*recv_cbf) (data_packet * p, UBaseType_t calledFromISR);
 
 
 
-//! function pointer prototypes to enable bus driver switching
-
-typedef UBaseType_t(*bus_init) ();
-typedef UBaseType_t(*bus_send) (data_packet * data);
-typedef void (*bus_flush) ();
-typedef UBaseType_t(*bus_param) (param_data * args);
-typedef UBaseType_t(*bus_paramPrint) (param_data * args);
-typedef void (*bus_close) ();
-
 
 
 

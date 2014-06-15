@@ -456,7 +456,7 @@ void printser_string(char const *str)
 {
     extern printChar_cbf printChar;
     if (str) {
-	    DEBUGPRINT("Output:%s\n",str);
+	DEBUGPRINT("Output:%s\n", str);
 	/* transmit characters until 0 character */
 	while (*str) {
 	    /* write character to buffer and increment pointer */
