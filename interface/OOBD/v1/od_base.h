@@ -243,6 +243,17 @@ typedef struct ODPBuffer {
 
 typedef struct ODPBuffer ODPBuffer;
 
+//! function pointer prototypes to enable bus driver switching
+
+typedef UBaseType_t(*bus_init) ();
+typedef UBaseType_t(*bus_send) (data_packet * data);
+typedef void (*bus_flush) ();
+typedef UBaseType_t(*bus_param) (param_data * args);
+typedef UBaseType_t(*bus_paramPrint) (param_data * args);
+typedef void (*bus_close) ();
+
+
+
 #include "od_protocols.h"
 
 void initILM();

@@ -55,6 +55,8 @@ void obd_uds_init();
 #define ERR_CODE_UDS_MISSING_FIRST_FRAME_TEXT "<- received instead expected First Frame PCI 0x20"
 #define ERR_CODE_UDS_TIMEOUT 5
 #define ERR_CODE_UDS_TIMEOUT_TEXT "Answer time exeeded"
+#define ERR_CODE_UDS_TP_OOM 6
+#define ERR_CODE_UDS_TP_OOM_TEXT "Out of Mem for Tester present Elements"
 
 /*! \defgroup param_protocol_uds Commands: Commands of the UDS Protocol
      The generic CAN commands are as follows, where the command is as P 7 value ...
@@ -76,6 +78,7 @@ void obd_uds_init();
 #define PARAM_TP_OFF                ( 7 )
 #define PARAM_TP_FREQ               ( 8 )
 #define PARAM_SENDID  		    ( 9 )
+#define PARAM_TP_TYPE               ( 10 )
 /*! 
 
 
@@ -91,6 +94,34 @@ struct UdsConfig {
      blockSize,			//!< max. number of frames to send, overwrites the values received from Module, if > 0.
      separationTime,		//!< delay between two frames,overwrites the values received from Module, if > 0
      tpFreq;			//!< time between two tester presents in systemticks
+    unsigned char tpType;	//!< tester present type, default öö
+
 };
+
+/* stores  */
+typedef struct TPElement {
+    struct TPElement *next;	//!< list pointers
+    UBaseType_t canID;
+    UBaseType_t tpFreq;
+    UBaseType_t counter;
+    unsigned char actTPType;
+} TPElement;
+
+typedef struct TPElement TPElement;
+
+struct TPElement *odp_uds_addTesterPresents(struct TPElement **tpList,
+					    UBaseType_t canID,
+					    UBaseType_t actTPFreq,
+					    unsigned char actTPType);
+
+void odp_uds_deleteTesterPresents(struct TPElement **tpList,
+				  UBaseType_t canID);
+
+void odp_uds_freeTPBuffers(struct TPElement *tpList);
+
+
+void odp_uds_generateTesterPresents(struct TPElement *tpList,
+				    unsigned char *canBuffer,
+				    bus_send actBus_send);
 
 #endif				/* INC_ODP_UDS_H */

@@ -63,7 +63,7 @@ extern char *oobd_Error_Text_OS[];
 /*!
 \brief shorten a 11-bit ID to save some Tester-Present -Memory
 
-In general for each Module ID (0x700- 0x7FF) a flag is needed in an array to store the actual tester present status.
+In general for each Module ID (0x700- 0x7FF) a timer value is needed in an array to store the actual tester present status.
 
 but as half of the address range is reserved for the tester answer IDs, we can shrink the IDs by half to save memory on the flag array
 
@@ -117,44 +117,132 @@ udp_uds_CAN2data(ODPBuffer * udsPtr, unsigned char *canPtr,
 }
 
 /*!
-\brief generates tester presents
+ * \brief add tester presents
+ * 
+ * As the software design does not allow global vars for the dynamic loadable protocols, we have to use some pointer to
+ * important variables instead to allow subroutines, otherways these subroutines won't see the "global" variables
+ * 
+ * \todo global TP On/off by using Module - ID 0
+ */
 
-As the software design does not allow global vars for the dynamic loadable protocols, we have to use some pointer to
-important variables instead to allow subroutines, otherways these subroutines won't see the "global" variables
+struct TPElement *odp_uds_addTesterPresents(struct TPElement **tpList,
+					    UBaseType_t canID,
+					    UBaseType_t actTPFreq,
+					    unsigned char actTPType)
+{
+    struct TPElement *actElement = *tpList;
+    while (actElement != NULL && actElement->canID != canID) {
+	actElement = actElement->next;
+    }
+    if (actElement == NULL) {	// either not found or tpList was NULL
+	actElement = pvPortMalloc(sizeof(struct TPElement));
+	if (actElement != NULL) {
+	    actElement->next = *tpList;	//hang the previous list behind the new element
+	    *tpList = actElement;	//make the element the new first element in the list
+	}
+    }
+    if (actElement != NULL) {	// either  found or fresh created
+	actElement->canID = canID;
+	actElement->tpFreq = actTPFreq;
+	actElement->counter = 1;
+	actElement->actTPType = actTPType;
+	DEBUGPRINT("Adding ID %02lX into list\n", canID);
 
-\todo global TP On/off by using Module - ID 0
-*/
+    }
+    return actElement;
+
+}
+
+/*!
+ * \brief remove tester presents
+ * 
+ * As the software design does not allow global vars for the dynamic loadable protocols, we have to use some pointer to
+ * important variables instead to allow subroutines, otherways these subroutines won't see the "global" variables
+ * 
+ */
 
 void
-odp_uds_generateTesterPresents(unsigned char *tpArray,
+odp_uds_deleteTesterPresents(struct TPElement **tpList, UBaseType_t canID)
+{
+    struct TPElement *actElement = *tpList;
+    struct TPElement *prevElement = NULL;
+    DEBUGPRINT("try remove ID %02lX from list\n", canID);
+    while (actElement != NULL && actElement->canID != canID) {
+	prevElement = actElement;
+	actElement = actElement->next;
+    }
+    if (actElement != NULL) {
+	if (prevElement) {	// means were are somewhere in the list, but not at its first element
+		DEBUGPRINT("its not the first element\n", canID);
+	    prevElement->next = actElement->next;
+	} else {		// we are at the first element
+		DEBUGPRINT("its the first element\n", canID);
+		*tpList = actElement->next;
+	}
+	vPortFree(actElement);
+	DEBUGPRINT("remove ID %02lX from list\n", canID);
+
+    }
+}
+
+/*!
+ * \brief remove all tester presents
+ * 
+ * As the software design does not allow global vars for the dynamic loadable protocols, we have to use some pointer to
+ * important variables instead to allow subroutines, otherways these subroutines won't see the "global" variables
+ * 
+ */
+
+void odp_uds_freeTPBuffers(struct TPElement *tpList)
+{
+    struct TPElement *actElement = tpList;
+    while (tpList != NULL) {
+	actElement = tpList->next;
+	vPortFree(tpList);
+	tpList = actElement;
+    }
+    DEBUGPRINT("remove all Tester Present Buffers\n", "a");
+
+}
+
+
+/*!
+	* \brief generates tester presents
+	* 
+	* As the software design does not allow global vars for the dynamic loadable protocols, we have to use some pointer to
+	* important variables instead to allow subroutines, otherways these subroutines won't see the "global" variables
+	* 
+	* \todo global TP On/off by using Module - ID 0
+	*/
+
+void
+odp_uds_generateTesterPresents(struct TPElement *tpList,
 			       unsigned char *canBuffer,
-			       bus_send actBus_send, UBaseType_t actTPFreq)
+			       bus_send actBus_send)
 {
     data_packet dp;
     UBaseType_t i;
-    int actAddr;
-    // first we fill the telegram with the tester present data
-    dp.len = 8;			/* Tester present message must be 8 bytes */
-    dp.data = canBuffer;
-    canBuffer[0] = 2;
-    canBuffer[1] = 0x3E;	// Service Tester Present
-
-    // fill with padding zeros
-    for (i = 2; i < 8; i++) {
-	canBuffer[i] = 0;
-    }
-    for (i = 0; i < 256; i++) {
-	if ((i & 8) == 0) {	// if it is not just a tester address
-	    actAddr = odp_uds_reduceID(i);
-	    if (tpArray[actAddr] > 0) {	/* marked for receive TPs */
-		tpArray[actAddr]--;
-		if (tpArray[actAddr] == 0) {
-		    dp.recv = i + 0x700;
-		    actBus_send(&dp);
-		    tpArray[actAddr] = actTPFreq;
-		}
+     
+    while (tpList != NULL) {
+ 	    
+	    tpList->counter--;
+	if (tpList->counter == 0) {
+	    // first we fill the telegram with the tester present data
+	    dp.len = 8;			/* Tester present message must be 8 bytes */
+	    dp.data = canBuffer;
+	    canBuffer[0] = 2;
+	    
+	    // fill with padding zeros
+	    for (i = 2; i < 8; i++) {
+		    canBuffer[i] = 0;
 	    }
+	    DEBUGPRINT("send Tester Present %lX next %lX\n", tpList->canID,tpList->next);
+	    dp.recv = tpList->canID;
+	    canBuffer[1] = tpList->actTPType;
+	    actBus_send(&dp);
+	    tpList->counter = tpList->tpFreq;
 	}
+	tpList = tpList->next;
     }
 }
 
@@ -343,11 +431,8 @@ void obp_uds(void *pvParameters)
     UBaseType_t separationTime_ST;
     UBaseType_t stateMachine_state = 0;
     unsigned char telegram[8];
-    /* Memory eater Nr. 1: The UDS message buffer */
-    /* Memory eater Nr. 2: The Tester Present Marker Flags */
-    unsigned char tp_Flags[128];
     struct UdsConfig udsConfig;
-
+    struct TPElement *tpList = NULL;	//!< keeps the list of testerPresents
     /* Init default parameters */
     udsConfig.recvID = 0x7DF;
     udsConfig.sendID = 0x00;	// 0 disables special sendID
@@ -356,7 +441,7 @@ void obp_uds(void *pvParameters)
     udsConfig.blockSize = 0;
     udsConfig.separationTime = 0;
     udsConfig.tpFreq = 250;
-
+    udsConfig.tpType = 0x80;
     blockSize_BS = 0;
     separationTime_ST = 0;
     /* tell the Rx-ISR about the function to use for received data */
@@ -366,10 +451,6 @@ void obp_uds(void *pvParameters)
 	keeprunning = 0;
     }
     protocolBuffer->len = 0;
-    /* reset the Tester Present Array */
-    for (i = 0; i < 128; i++) {
-	tp_Flags[i] = 0;
-    }
 //>>>> oobdtemple protocol mainloop_start  >>>>    
     for (; keeprunning;) {
 
@@ -436,8 +517,9 @@ void obp_uds(void *pvParameters)
 				    remainingBytes >
 				    7 ? 7 : remainingBytes;
 				odp_uds_data2CAN(&protocolBuffer->data
-						 [actBufferPos], &telegram,
-						 actFrameLen, 1);
+						 [actBufferPos],
+						 &telegram[0], actFrameLen,
+						 1);
 				sequenceCounter =
 				    sequenceCounter <
 				    14 ? sequenceCounter + 1 : 0;
@@ -558,7 +640,7 @@ void obp_uds(void *pvParameters)
 				udp_uds_CAN2data(protocolBuffer,
 						 &(dp->data[2]), 0, 6);
 				actDataPacket.recv = udsConfig.recvID;
-				actDataPacket.data = &telegram;
+				actDataPacket.data = &telegram[0];
 				actDataPacket.len = 8;
 				for (i = 0; i < 8; i++) {	/* just fill the telegram with 0 */
 				    telegram[i] = 0;
@@ -693,14 +775,30 @@ void obp_uds(void *pvParameters)
 					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
 		    case PARAM_TP_ON:
-			tp_Flags[odp_uds_reduceID(args->args[ARG_VALUE_1])]
-			    = udsConfig.tpFreq;
+			if (odp_uds_addTesterPresents(&tpList,
+						      args->args
+						      [ARG_VALUE_1],
+						      udsConfig.tpFreq,
+						      udsConfig.tpType)) {
+			    createCommandResultMsg(FBID_PROTOCOL_SPEC,
+						   ERR_CODE_NO_ERR, 0,
+						   NULL);
+			} else {
+			    createCommandResultMsg(FBID_PROTOCOL_SPEC,
+						   ERR_CODE_UDS_TP_OOM,
+						   0,
+						   ERR_CODE_UDS_TP_OOM_TEXT);
+			}
+			break;
+		    case PARAM_TP_OFF:
+			odp_uds_deleteTesterPresents(&tpList,
+						     args->args
+						     [ARG_VALUE_1]);
 			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
-		    case PARAM_TP_OFF:
-			tp_Flags[odp_uds_reduceID(args->args[ARG_VALUE_1])]
-			    = 0;
+		    case PARAM_TP_TYPE:
+			udsConfig.tpType = args->args[ARG_VALUE_1];
 			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
@@ -726,7 +824,8 @@ void obp_uds(void *pvParameters)
 		    break;
 		default:
 		    createCommandResultMsg(FBID_PROTOCOL_SPEC,
-					   ERR_CODE_OS_UNKNOWN_COMMAND, 0,
+					   ERR_CODE_OS_UNKNOWN_COMMAND,
+					   0,
 					   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 		    break;
 		}
@@ -790,12 +889,11 @@ void obp_uds(void *pvParameters)
 		    createCommandResultMsg
 			(FBID_PROTOCOL_GENERIC, ERR_CODE_NO_ERR, 0, NULL);
 		    DEBUGPRINT("Send input task release msg\n", 'a');
-
 		    /* just release the input again */
 		    if (pdPASS !=
 			sendMsg(MSG_SERIAL_RELEASE, inputQueue, NULL)) {
-			DEBUGPRINT("FATAL ERROR: input queue is full!\n",
-				   'a');
+			DEBUGPRINT
+			    ("FATAL ERROR: input queue is full!\n", 'a');
 		    }
 		}
 		break;
@@ -812,20 +910,18 @@ void obp_uds(void *pvParameters)
 					       ERR_CODE_UDS_TIMEOUT_TEXT);
 			stateMachine_state = SM_UDS_STANDBY;
 			if (pdPASS !=
-			    sendMsg(MSG_SERIAL_RELEASE, inputQueue, NULL))
-			{
+			    sendMsg(MSG_SERIAL_RELEASE, inputQueue,
+				    NULL)) {
 			    DEBUGPRINT
 				("FATAL ERROR: input queue is full!\n",
 				 'a');
-
 			}
 		    }
 		    timeout--;
 		}
 		/* Start generating tester present messages */
-		odp_uds_generateTesterPresents(&tp_Flags, &telegram,
-					       actBus_send,
-					       udsConfig.tpFreq);
+		odp_uds_generateTesterPresents(tpList,
+					       &telegram, actBus_send);
 //>>>> oobdtemple protocol final >>>>    
 		break;
 	    }
@@ -838,6 +934,7 @@ void obp_uds(void *pvParameters)
     /* Do all cleanup here to finish task */
     actBus_close();
     freeODPBuffer(protocolBuffer);
+    odp_uds_freeTPBuffers(tpList);
     xSemaphoreGive(protocollBinarySemaphore);
     vTaskDelete(NULL);
 }
