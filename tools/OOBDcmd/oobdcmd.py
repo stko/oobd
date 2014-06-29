@@ -1,5 +1,5 @@
 import time
-import socket
+import bluetooth
 import re
 import select
 import sys
@@ -37,10 +37,8 @@ testSet=[
 ]
 
 def echoWrite(cmd):
-	cmdBytes=bytearray(cmd,"utf-8")
-	gaugeSocket.send(cmdBytes)
-#	res=gaugeSocket.recv(len(cmdBytes)).decode("utf-8")
-	res=gaugeSocket.recv(len(cmdBytes)).decode("utf-8")
+	gaugeSocket.send(cmd)
+	res=gaugeSocket.recv(len(cmd))
 
 
 def doSingleCmd(cmd, regex):
@@ -86,8 +84,14 @@ def testCommand(thisTest):
 def connect(macAdress):
 	try:
 		port = 1
-		gaugeSocket = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
-		gaugeSocket.connect((macAdress,port))
+		gaugeSocket=bluetooth.BluetoothSocket( bluetooth.RFCOMM )
+		gaugeSocket.connect((macAdress, port))
+
+		#so it would like with the build in bluetooth support of python >=3.3, but that does not work
+		# under windows :-(
+		# in the header: import socket
+		#gaugeSocket = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+		#gaugeSocket.connect((macAdress,port))
 
 		print_stderr ("Connected to",macAdress)
 		time.sleep(0.5)
@@ -111,8 +115,8 @@ gaugeSocket = connect(BTMAC)
 if gaugeSocket == None:
 	exit(1) # error code for failed connect
 try:
-	gaugeSocket.send(bytearray('\r\r\r',"utf-8"))
-	gaugeSocket.recv(1024).decode("utf-8")
+	gaugeSocket.send('\r\r\r')
+	gaugeSocket.recv(1024)
 except socket.error as error:
 	print_stderr (bcolors.FAIL + "Caught inital BluetoothError: ", error , bcolors.ENDC)
 	exit(1) # error code for failed connect
