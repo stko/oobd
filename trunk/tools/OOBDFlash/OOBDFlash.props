@@ -1,0 +1,9 @@
+#OOBDFlash.props
+# Configfile OOBDFlash program
+# to use these settings, uncomment and change the values
+
+# if behind a corporate firewall, you might need a proxy to download the archive
+#httpProxyHost proxyvipfmcc.nb.ford.com
+
+# the port 
+#httpProxyPort 83
