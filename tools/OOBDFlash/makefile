@@ -3,7 +3,8 @@ all: OOBDFlash.class
 jar: OOBDFlash.jar
 
 OOBDFlash.jar: OOBDFlash.class MANIFEST.MF 
-	jar -cvmf MANIFEST.MF OOBDFlash.jar *.class `find jars -not -path "*/.svn/*" -not -type d`
+	jar -cvmf MANIFEST.MF OOBDFlash.jar *.class 
+#	jar -cvmf MANIFEST.MF OOBDFlash.jar *.class `find jars -not -path "*/.svn/*" -not -type d`
 
 
 
@@ -32,5 +33,9 @@ run:
 runjar:
 	java -jar OOBDFlash.jar
 
+zip: jar
+	-rm OOBDFlash.zip
+	zip OOBDFlash.zip OOBDFlash.jar jars/* OOBDFlash.props
+
 clean:
-	rm *.class *.java~ 
+	-rm *.class *.java~ 
