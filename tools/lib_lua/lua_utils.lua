@@ -52,8 +52,8 @@ end
 setLocale(oldvalue,id): Sets global LOCALE variable to "id". If not set, LOCALE is set to "en_en" at first call of getLocalePrintf
 --]]
 function setLocale(oldvalue,id)
-LOCALE=id
-return "language set to "..id
+	LOCALE=id
+	return "language set to "..id
 end 
 
 --[[
@@ -81,13 +81,13 @@ function getLocalePrintf( category, textID, default)
 			LOCALE="en_en" -- then set it to english
 		end
 		newArray= dbLookup(category.."_"..LOCALE..".oodb",textID) -- look up for the given category db and for the given LOCALE
-		if newArray.len > 0 then -- if something was found
+		if newArray ~= nil and newArray.len > 0 then -- if something was found
 			index=tostring(newArray.header["Template"])
 			return newArray.data["1"][index]
 		else -- not found: either the LOCALE DB does not exist or the entry was not found
 			if LOCALE ~="en_en" then -- if the LOCALE is already english, then there's no need to search again
 				newArray= dbLookup(category.."_en_en.oodb",textID) --another trial, this time in english
-				if newArray.len > 0 then
+				if newArray ~= nil and newArray.len > 0 then
 					index=tostring(newArray.header["Template"])
 					return newArray.data["1"][index]
 				else --not found
