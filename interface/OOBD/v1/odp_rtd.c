@@ -204,7 +204,7 @@ void odp_rtd_recvdata(data_packet * p, UBaseType_t callFromISR)
 		actElement->buffer[writeBufferIndex].timeStamp =
 		    xTaskGetTickCount();
 	    }
-	    if (!actElement->buffer[writeBufferIndex].locked) {
+	    if (!actElement->buffer[otherBuffer(writeBufferIndex)].locked) {
 		actElement->writeBufferIndex =
 		    otherBuffer(actElement->writeBufferIndex);
 	    }
