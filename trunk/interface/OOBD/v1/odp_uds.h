@@ -119,9 +119,10 @@ void odp_uds_deleteTesterPresents(struct TPElement **tpList,
 
 void odp_uds_freeTPBuffers(struct TPElement *tpList);
 
-
+/*
 void odp_uds_generateTesterPresents(struct TPElement *tpList,
-				    unsigned char *canBuffer,
-				    bus_send actBus_send);
+			       unsigned char *canBuffer,
+			       bus_send actBus_send);
+*/
 
 #endif				/* INC_ODP_UDS_H */
