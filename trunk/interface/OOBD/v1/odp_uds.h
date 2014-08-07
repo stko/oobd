@@ -105,7 +105,7 @@ typedef struct TPElement {
     UBaseType_t tpFreq;
     UBaseType_t counter;
     unsigned char actTPType;
-} TPElement;
+} TPELEMENT;
 
 typedef struct TPElement TPElement;
 
