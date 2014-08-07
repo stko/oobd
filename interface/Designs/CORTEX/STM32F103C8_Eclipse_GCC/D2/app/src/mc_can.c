@@ -142,7 +142,8 @@ UBaseType_t bus_send_can(data_packet * data)
 
     /* transmit whole CAN frame as specified above on CAN1 */
     /* Tx-Counter is increased in CAN-Tx interrupt routine */
-    CAN_Transmit(CAN1, &TxMessage);
+    /* repeat sending CAN messages until mailboxes is empty */
+    while(CAN_Transmit(CAN1, &TxMessage)>3);
 
     DEBUGUARTPRINT("\r\n*** bus_send_can finished! ***");
     return pdPASS;
@@ -588,12 +589,12 @@ UBaseType_t busControl(UBaseType_t cmd, void *param)
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {
     DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler entered ***");
-    UBaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
     uint8_t i;
     uint16_t LedDuration;
     CanRxMsg RxMessage;
     static data_packet dp;
-
+	
     /* initialize RxMessage CAN frame */
     RxMessage.StdId = 0x00;
     RxMessage.ExtId = 0x00;
@@ -626,8 +627,9 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 	if (reportReceivedData)
 	    reportReceivedData(&dp,pdTRUE);
     }
-    //  portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
     DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler finished ***");
+	
+//    portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
 }
 
 /*----------------------------------------------------------------------------*/
