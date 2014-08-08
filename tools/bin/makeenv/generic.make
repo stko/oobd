@@ -6,9 +6,14 @@ SPECS=$(shell ../../tools/bin/filelist.sh mdx)
 
 SOURCES=$(shell ../../tools/bin/filelist.sh luasource)
 LBCFILES=$(shell ../../tools/bin/filelist.sh lbc)
+KCDFILES=$(shell ../../tools/bin/filelist.sh kcd)
+
 CFLAGS=
 MDXTFLAGS=../../tools/xmltools/mdx2opendiagx.xslt ../../tools/xmltools/opendiagx2oobd.xslt
 MDXTHTMLFLAGS=../../tools/xmltools/mdx2opendiagx.xslt ../../tools/xmltools/opendiagx2html.xslt
+
+KCDFLAGS=tr --omit-decl  ../../tools/xmltools/kcd2rtd.xslt
+KCDHTMLFLAGS=tr --omit-decl  ../../tools/xmltools/kcd2html.xslt
 
 # adding external references file to complile
 # do we want to compile lua files from other directories into here? Then list them in "lua_reference" as LUA_REFS=
@@ -41,9 +46,16 @@ LUASOURCES=$(ALLSOURCES:.lua=.luasource)
 %.luasource: %.lua 
 	cp -p $< $(@F) 
 
-source: specs $(CUSTOMSOURCE) luas
+KCDSOURCES=$(KCDFILES:.kcd=.luasource) 
+%.luasource: %.kcd 
+	xmlstarlet $(KCDFLAGS) $< > $(@F) 
+	xmlstarlet $(KCDHTMLFLAGS) $<  > $(*F).html
+
+source: specs $(CUSTOMSOURCE) luas kcds
 luas: $(LUASOURCES) 
 specs: $(SPECSOURCES) $(MDXTFLAGS) $(CUSTOMSPECSOURCES)
+kcds: $(KCDSOURCES) 
+
 
 	echo target
 scripts: $(OBJECTS) 
