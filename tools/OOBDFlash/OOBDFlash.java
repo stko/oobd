@@ -15,7 +15,7 @@ public class OOBDFlash {
 
 
 	public static void main(String[] args) {
-		String downloadURL = "https://oobd.googlecode.com/files/Flashloader_Package.zip";
+		String downloadURL = "https://oobd.googlecode.com/svn/trunk/interface/Designs/CORTEX/STM32F103C8_Eclipse_GCC/D2/flashfiles/AllinOne/Flashloader_Package.zip";
 		String flashFileName = "";
 		String dongleMAC = "";
 		File tempDownloadFile = null;
@@ -91,7 +91,7 @@ public class OOBDFlash {
 						System.err.print("\t" + ((OOBDDongleDescriptor) serviceFound.get(i)).friendlyName);
 						System.err.print("\t" + ((OOBDDongleDescriptor) serviceFound.get(i)).hardwareID);
 						System.err.print("\t" + ((OOBDDongleDescriptor) serviceFound.get(i)).revision);
-						System.err.print("\t" + ((OOBDDongleDescriptor) serviceFound.get(i)).url);
+						//System.err.print("\t" + ((OOBDDongleDescriptor) serviceFound.get(i)).url);
 						System.err.println();
 					}
 					System.err.println("-or-");
@@ -207,7 +207,7 @@ public class OOBDFlash {
 		System.err.println("OOBDFlash is part of the OOBD.org tool set");
 		System.err.println();
 		System.err.println("Usage:");
-		System.err.println("java -jar OOBDFlash.jar [-d BT-MAC] [-f firmwarefile] [-u Download-URL]");
+		System.err.println("java -jar OOBDFlash.jar [-d BT-MAC] [-f firmwarefile | -u Download-URL | -l Archivefile]");
 		System.err.println();
 		System.err.println("Options:");
 		System.err.println();
