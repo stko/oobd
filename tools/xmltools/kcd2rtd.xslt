@@ -64,7 +64,7 @@ rtdArray_NOP_<xsl:value-of select="$canid"/> = { rtdinit="27<xsl:value-of select
 	</xsl:template>
 	
 	<xsl:template match="my:LabelSet">, ev = { <xsl:apply-templates select="my:Label" />
-		dummy=0}
+		}
 	</xsl:template>
 	 
 	<xsl:template match="my:Label">
