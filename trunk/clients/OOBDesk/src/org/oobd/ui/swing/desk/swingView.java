@@ -65,6 +65,7 @@ import javax.swing.filechooser.FileFilter;
 import org.json.JSONException;
 import org.oobd.base.archive.*;
 
+
 /**
  * The application's main frame.
  */
@@ -1402,8 +1403,12 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         return false;
 
     }
-}
 
+    @Override
+    public void openXCVehicleData(Onion onion) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+}
 class PWDialog extends JDialog implements ActionListener {
 
     private JPanel myPanel = null;
