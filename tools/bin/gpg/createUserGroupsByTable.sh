@@ -25,7 +25,7 @@ do
 	gpg --yes --batch --no-default-keyring  --keyring ./userkeyring.pub --fingerprint $user >> $user.groupkeys.fingerprint
 	gpg --yes --batch --no-default-keyring --trust-model always  --keyring ./userkeyring.pub --recipient $user $ADMINREADER --output $user.groupkeys --encrypt $user.groupring
 #	gpg -v --yes --batch --no-default-keyring --trust-model always  --keyring ./userkeyring.pub --recipient $user --output $user.groupkeys --encrypt ./oobd_groups.sec
-	grep "$user" useraccess.txt > $user.groupkeys.lst
+	grep -i "$user" useraccess.txt > $user.groupkeys.lst
 
 done
  
