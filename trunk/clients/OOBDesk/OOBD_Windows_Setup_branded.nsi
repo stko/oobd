@@ -96,6 +96,8 @@ Call createDummy
 CreateDirectory $INSTDIR\uihandler
 StrCpy $fileToMake  "$INSTDIR\uihandler\UIHandler.class"
 Call createDummy
+StrCpy $fileToMake  "$INSTDIR\uihandler\WsUIHandler.class"
+Call createDummy
 CreateDirectory $INSTDIR\db
 StrCpy $fileToMake  "$INSTDIR\db\AVLLookup.class"
 Call createDummy
