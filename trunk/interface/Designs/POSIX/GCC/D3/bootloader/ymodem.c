@@ -23,6 +23,7 @@
  */
 /* Includes ------------------------------------------------------------------*/
 #include <time.h>
+#include <unistd.h>
 #include "common.h"
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -57,6 +58,10 @@ static int32_t Receive_Byte(uint8_t * c, uint32_t timeout)
 	if (SerialKeyPressed(c) == 1) {
 	    return 0;
 	}
+	struct timespec tim, tim2;
+	tim.tv_sec = 0;
+	tim.tv_nsec = timeout * 1000000L;
+	nanosleep(&tim, &tim2);
     }
     return -1;
 }
@@ -91,19 +96,17 @@ Receive_Packet(uint8_t * data, int32_t * length, uint32_t timeout)
     uint16_t i, packet_size;
     uint8_t c;
     *length = 0;
-    printf("Starting Receive_Packet\n");
     if (Receive_Byte(&c, timeout) != 0) {
 	printf("No start byte received - exit Receive_Packet\n");
 	return -1;
     }
-    printf("Ending Receive_Packet\n");
     switch (c) {
     case SOH:
-	printf("Packet Normal Size\n");
+	printf("Packet Normal Size:");
 	packet_size = PACKET_SIZE;
 	break;
     case STX:
-	printf("Packet 1K Size\n");
+	printf("Packet 1K Size:");
 	packet_size = PACKET_1K_SIZE;
 	break;
     case EOT:
@@ -169,8 +172,13 @@ int32_t Ymodem_Receive(uint8_t * buf)
 		    break;
 		    /* Normal packet */
 		default:
+		    printf("Seq. Number recv.:%d\n",
+			   packet_data[PACKET_SEQNO_INDEX] & 0xff);
 		    if ((packet_data[PACKET_SEQNO_INDEX] & 0xff)
 			!= (packets_received & 0xff)) {
+			printf("Send NAK: Wrong Seq.: %d\n",
+			       packet_data[PACKET_SEQNO_INDEX] & 0xff);
+
 			Send_Byte(NAK);
 		    } else {
 			if (packets_received == 0) {
@@ -235,19 +243,19 @@ int32_t Ymodem_Receive(uint8_t * buf)
 			}
 			/* Data packet */
 			else {
-			    printf("begin MemCopy data\n");
+			    printf("do MemCopy data\n");
 			    memcpy(buf_ptr, packet_data + PACKET_HEADER,
 				   packet_length);
-			    printf("MemCopy data 1\n");
+//                          printf("MemCopy data 1\n");
 			    RamSource = (uint32_t) buf;
 			    for (j = 0; (j < packet_length)
 				 && (FlashDestination < (ApplicationAddress
 							 - 4) + size);
 				 j += 4) {
-				printf
-				    ("j: %d packet_length: %d  FlashDestination %d ApplicationAddress %d Size %d\n",
-				     j, packet_length, FlashDestination,
-				     ApplicationAddress, size);
+//                              printf
+//                                  ("j: %d packet_length: %d  FlashDestination %d ApplicationAddress %d Size %d\n",
+//                                   j, packet_length, FlashDestination,
+//                                   ApplicationAddress, size);
 
 				/* Program the data received into STM32F10x Flash */
 //                              FLASH_ProgramWord(FlashDestination,  *(uint32_t *) RamSource);
@@ -261,12 +269,12 @@ int32_t Ymodem_Receive(uint8_t * buf)
 				   return -2;
 				   }
 				 */
-				printf("MemCopy data 3\n");
+//                              printf("MemCopy data 3\n");
 				FlashDestination += 4;
 				RamSource += 4;
 			    }
 			    Send_Byte(ACK);
-			    printf("End MemCopy data\n");
+//                          printf("End MemCopy data\n");
 			}
 			packets_received++;
 			session_begin = 1;
@@ -479,7 +487,7 @@ Ymodem_Transmit(uint8_t * buf, const uint8_t * sendFileName,
 	    Send_Byte(tempCheckSum);
 	}
 	/* Wait for Ack and 'C' */
-	if (Receive_Byte(&receivedC[0], 10000) == 0) {
+	if (Receive_Byte(&receivedC[0], 500) == 0) {
 	    if (receivedC[0] == ACK) {
 		/* Packet transfered correctly */
 		ackReceived = 1;
@@ -522,8 +530,8 @@ Ymodem_Transmit(uint8_t * buf, const uint8_t * sendFileName,
 		Send_Byte(tempCheckSum);
 	    }
 	    /* Wait for Ack */
-	    if ((Receive_Byte(&receivedC[0], 100000) == 0) && (receivedC[0]
-							       == ACK)) {
+	    if ((Receive_Byte(&receivedC[0], 500) == 0) && (receivedC[0]
+							    == ACK)) {
 		ackReceived = 1;
 		if (size > pktSize) {
 		    buf_ptr += pktSize;
@@ -554,7 +562,7 @@ Ymodem_Transmit(uint8_t * buf, const uint8_t * sendFileName,
 	Send_Byte(EOT);
 	/* Send (EOT); */
 	/* Wait for Ack */
-	if ((Receive_Byte(&receivedC[0], 10000) == 0)
+	if ((Receive_Byte(&receivedC[0], 500) == 0)
 	    && receivedC[0] == ACK) {
 	    ackReceived = 1;
 	} else {
@@ -583,7 +591,7 @@ Ymodem_Transmit(uint8_t * buf, const uint8_t * sendFileName,
 	Send_Byte(tempCRC >> 8);
 	Send_Byte(tempCRC & 0xFF);
 	/* Wait for Ack and 'C' */
-	if (Receive_Byte(&receivedC[0], 10000) == 0) {
+	if (Receive_Byte(&receivedC[0], 500) == 0) {
 	    if (receivedC[0] == ACK) {
 		/* Packet transfered correctly */
 		ackReceived = 1;
@@ -601,7 +609,7 @@ Ymodem_Transmit(uint8_t * buf, const uint8_t * sendFileName,
 	Send_Byte(EOT);
 	/* Send (EOT); */
 	/* Wait for Ack */
-	if ((Receive_Byte(&receivedC[0], 10000) == 0)
+	if ((Receive_Byte(&receivedC[0], 500) == 0)
 	    && receivedC[0] == ACK) {
 	    ackReceived = 1;
 	} else {

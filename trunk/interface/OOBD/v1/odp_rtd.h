@@ -87,6 +87,7 @@ typedef struct RTDBuffer {
     UBaseType_t timeStamp;
     UBaseType_t valid;
     UBaseType_t locked;
+    unsigned char flags;
     UBaseType_t lastRecSeq;
     UBaseType_t lastWrittenPos;
     unsigned char *data;
