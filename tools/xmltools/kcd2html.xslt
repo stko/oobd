@@ -6,11 +6,11 @@
 	</xsl:template>
 	<xsl:template match="/my:NetworkDefinition/my:Bus">
 	
-	<p>This is confidential Data - all regulations regarding the handling of confidential data hve to be folloewd</p>
+	<p>This is confidential Data - all regulations regarding the handling of confidential data have to be applied</p>
 <html>
 <body>
 <table>
-<tr><th>CAN- Identifer</th><th>Name</th><th>Unit</th><th>Bus</th></tr>
+<tr><th>CAN- Identifer</th><th>Name</th><th>Unit</th><th>Bus (or Table Id)</th></tr>
 <xsl:apply-templates select="my:Message" />
 </table>
 </body>
@@ -23,7 +23,7 @@
 </xsl:template>
 	
 <xsl:template match="my:Signal">
-<tr><td></td><td><xsl:value-of select="@name"/></td><td><xsl:apply-templates select="my:Value" /></td></tr>
+<tr><td></td><td><xsl:value-of select="@name"/></td><td><xsl:apply-templates select="my:Value" /></td><td><xsl:variable name="canid" select="concat(substring('000000000',string-length(../@id)), substring(../@id,3))"/>rtdArray_NOP_<xsl:value-of select="$canid"/>_sd_<xsl:value-of select="format-number(position(),'00')"/></td></tr>
 </xsl:template>
 	 
 <xsl:template match="my:Value">

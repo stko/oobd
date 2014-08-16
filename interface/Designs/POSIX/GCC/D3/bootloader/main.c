@@ -276,6 +276,8 @@ int main(int argc, char *argv[])
 			sendStr
 			    ("\r\nWaiting for the file to be sent ... (press 'a' to abort)\n\r");
 			Size = Ymodem_Receive(virtualFlash);
+			printf("YModem returns size: %d\n", Size);
+
 			if (Size > 0) {
 			    sendStr
 				("\n\n\r Programming Completed Successfully!\n\r--------------------------------\r\n ");

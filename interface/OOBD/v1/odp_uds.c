@@ -173,11 +173,11 @@ odp_uds_deleteTesterPresents(struct TPElement **tpList, UBaseType_t canID)
     }
     if (actElement != NULL) {
 	if (prevElement) {	// means were are somewhere in the list, but not at its first element
-		DEBUGPRINT("its not the first element\n", canID);
+	    DEBUGPRINT("its not the first element\n", canID);
 	    prevElement->next = actElement->next;
 	} else {		// we are at the first element
-		DEBUGPRINT("its the first element\n", canID);
-		*tpList = actElement->next;
+	    DEBUGPRINT("its the first element\n", canID);
+	    *tpList = actElement->next;
 	}
 	vPortFree(actElement);
 	DEBUGPRINT("remove ID %02lX from list\n", canID);
@@ -222,21 +222,22 @@ odp_uds_generateTesterPresents(struct TPElement *tpList,
 {
     data_packet dp;
     UBaseType_t i;
-     
+
     while (tpList != NULL) {
- 	    
-	    tpList->counter--;
+
+	tpList->counter--;
 	if (tpList->counter == 0) {
 	    // first we fill the telegram with the tester present data
-	    dp.len = 8;			/* Tester present message must be 8 bytes */
+	    dp.len = 8;		/* Tester present message must be 8 bytes */
 	    dp.data = canBuffer;
 	    canBuffer[0] = 2;
-	    
+
 	    // fill with padding zeros
 	    for (i = 2; i < 8; i++) {
-		    canBuffer[i] = 0;
+		canBuffer[i] = 0;
 	    }
-	    DEBUGPRINT("send Tester Present %lX next %lX\n", tpList->canID,tpList->next);
+	    DEBUGPRINT("send Tester Present %lX next %lX\n", tpList->canID,
+		       tpList->next);
 	    dp.recv = tpList->canID;
 	    canBuffer[1] = tpList->actTPType;
 	    actBus_send(&dp);

@@ -93,6 +93,8 @@ odp_rtd_printdata_Buffer(UBaseType_t msgType, void *data,
 	    printser_uint32ToHex(myRTDElement->
 				 buffer[bufferIndex].timeStamp *
 				 portTICK_PERIOD_MS);
+	    printser_uint8ToHex(myRTDElement->buffer[bufferIndex].flags);	// print the flag Byte
+	    myRTDElement->buffer[bufferIndex].flags &= 0xFE;	//reset bit 0 (New data)
 	    int i;
 	    for (i = 0; i < myRTDElement->buffer[bufferIndex].len; i++) {
 		printser_uint8ToHex(myRTDElement->
@@ -197,6 +199,7 @@ void odp_rtd_recvdata(data_packet * p, UBaseType_t callFromISR)
 		len--;
 	    }
 	    actElement->buffer[writeBufferIndex].valid = pdTRUE;
+	    actElement->buffer[writeBufferIndex].flags |= 0x01;	//set bit 0 (New data)
 	    if (callFromISR) {
 		actElement->buffer[writeBufferIndex].timeStamp =
 		    xTaskGetTickCountFromISR();
@@ -234,8 +237,14 @@ void odp_rtd_recvdata(data_packet * p, UBaseType_t callFromISR)
 	    actElement->buffer[writeBufferIndex].lastRecSeq = seq;	//save actual received seq
 	    if (actElement->buffer[writeBufferIndex].lastWrittenPos >= len) {	//that was the last frame
 		actElement->buffer[writeBufferIndex].valid = pdTRUE;
-		actElement->buffer[writeBufferIndex].timeStamp =
-		    xTaskGetTickCountFromISR();
+		actElement->buffer[writeBufferIndex].flags |= 0x01;	//set bit 0 (New data)
+		if (callFromISR) {
+		    actElement->buffer[writeBufferIndex].timeStamp =
+			xTaskGetTickCountFromISR();
+		} else {
+		    actElement->buffer[writeBufferIndex].timeStamp =
+			xTaskGetTickCount();
+		}
 		actElement->buffer[writeBufferIndex].lastRecSeq = 0;	//reset the seqcount for the next time
 		if (!actElement->buffer[writeBufferIndex].locked) {
 		    actElement->writeBufferIndex =
@@ -306,8 +315,14 @@ void odp_rtd_recvdata(data_packet * p, UBaseType_t callFromISR)
 		}
 		if (actElement->buffer[writeBufferIndex].lastWrittenPos >= len) {	//that was the last frame
 		    actElement->buffer[writeBufferIndex].valid = pdTRUE;
-		    actElement->buffer[writeBufferIndex].timeStamp =
-			xTaskGetTickCountFromISR();
+		    actElement->buffer[writeBufferIndex].flags |= 0x01;	//set bit 0 (New data)
+		    if (callFromISR) {
+			actElement->buffer[writeBufferIndex].timeStamp =
+			    xTaskGetTickCountFromISR();
+		    } else {
+			actElement->buffer[writeBufferIndex].timeStamp =
+			    xTaskGetTickCount();
+		    }
 		    actElement->buffer[writeBufferIndex].lastRecSeq = 0;	//reset the seqcount for the next time
 		    if (!actElement->buffer[writeBufferIndex].locked) {
 			actElement->writeBufferIndex =
