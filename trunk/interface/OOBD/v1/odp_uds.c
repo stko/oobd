@@ -523,7 +523,7 @@ void obp_uds(void *pvParameters)
 						 1);
 				sequenceCounter =
 				    sequenceCounter <
-				    14 ? sequenceCounter + 1 : 0;
+				    15 ? sequenceCounter + 1 : 0;
 				actBufferPos += actFrameLen;
 				remainingBytes -= actFrameLen;
 				actDataPacket.data[0] = 0x20 + sequenceCounter;	// prepare CF
