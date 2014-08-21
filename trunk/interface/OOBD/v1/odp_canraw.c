@@ -148,15 +148,38 @@ void odp_canraw_recvdata(data_packet * p, UBaseType_t callFromISR)
 	} else {
 	    res = sendMsg(MSG_BUS_RECV, protocolQueue, msg);
 	}
+/*
+	printser_string("4");
+	printLF();
+	printEOT();
+*/
 	if (res != pdPASS) {
-	    DEBUGPRINT("FATAL ERROR: protocol queue is full!\n", 'a');
+		disposeMsg(msg);
+		printser_string("5");
+		printLF();
+		printEOT();
+		DEBUGPRINT("FATAL ERROR: protocol queue is full!\n", 'a');
 	} else {
-	    DEBUGUARTPRINT
+
+		printser_string("Total Heap (in byte): ");
+    				printser_int(configTOTAL_HEAP_SIZE, 10);
+    				printser_string("Free Heap (in byte): ");
+    				printser_int(xPortGetFreeHeapSize(), 10); /* send FreeRTOS free heap size */
+    				printLF();
+    				printEOT();
+  	DEBUGUARTPRINT
 		("\r\n*** odp_uds_recvdata: sendMsg - protocolQueue ***");
 	}
-    } else {
-	DEBUGPRINT("FATAL ERROR: Out of Heap space!l\n", 'a');
     }
+
+    else {
+    	printser_string("Total Heap (in byte): ");
+    				printser_string("FATAL ERROR: Out of Heap space!");
+    				printLF();
+    				printEOT();
+    	DEBUGPRINT("FATAL ERROR: Out of Heap space!l\n", 'a');
+    }
+
 }
 
 //>>>> oobdtemple protocol dumpFrame  >>>>
@@ -174,6 +197,7 @@ void odp_canraw_dumpFrame(data_packet * p, print_cbf print_data)
     if (NULL != (msg = createDataMsg(p))) {
 	msg->print = print_data;
 	if (pdPASS != sendMsg(MSG_BUS_RECV, outputQueue, msg)) {
+		disposeMsg(msg);
 	    DEBUGPRINT("FATAL ERROR: output queue is full!\n", 'a');
 	}
     } else {
