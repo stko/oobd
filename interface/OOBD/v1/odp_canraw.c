@@ -138,48 +138,69 @@ transfers received telegrams into Msgqueue
 
 void odp_canraw_recvdata(data_packet * p, UBaseType_t callFromISR)
 {
-    MsgData *msg;
-    extern QueueHandle_t protocolQueue;
-    p->timestamp = xTaskGetTickCountFromISR();
-    if (NULL != (msg = createDataMsg(p))) {
-	UBaseType_t res = 0;
-	if (callFromISR) {
-	    res = sendMsgFromISR(MSG_BUS_RECV, protocolQueue, msg);
-	} else {
-	    res = sendMsg(MSG_BUS_RECV, protocolQueue, msg);
+    extern print_cbf printdata_CAN;
+    extern printChar_cbf printChar;
+    extern protocolConfigPtr actProtConfigPtr;
+    struct CanRawConfig *protocolConfig;
+    if (callFromISR) {
+	p->timestamp = xTaskGetTickCountFromISR();
+    } else {
+	p->timestamp = xTaskGetTickCount();
+    }
+    protocolConfig = actProtConfigPtr;
+    if (protocolConfig != NULL) {
+	if (protocolConfig->showBusTransfer == 1) {	//normal output
+	    MsgData *msg;
+	    extern QueueHandle_t protocolQueue;
+	    if (NULL != (msg = createDataMsg(p))) {
+		UBaseType_t res = 0;
+		if (callFromISR) {
+		    res = sendMsgFromISR(MSG_BUS_RECV, protocolQueue, msg);
+		} else {
+		    res = sendMsg(MSG_BUS_RECV, protocolQueue, msg);
+		}
+		if (res != pdPASS) {
+		    disposeMsg(msg);
+		    DEBUGPRINT("FATAL ERROR: protocol queue is full!\n",
+			       'a');
+		}
+	    } else {
+		DEBUGPRINT("FATAL ERROR: Out of Heap space!l\n", 'a');
+	    }
 	}
-/*
-	printser_string("4");
-	printLF();
-	printEOT();
-*/
-	if (res != pdPASS) {
-		disposeMsg(msg);
-		printser_string("5");
-		printLF();
-		printEOT();
-		DEBUGPRINT("FATAL ERROR: protocol queue is full!\n", 'a');
-	} else {
-
-		printser_string("Total Heap (in byte): ");
-    				printser_int(configTOTAL_HEAP_SIZE, 10);
-    				printser_string("Free Heap (in byte): ");
-    				printser_int(xPortGetFreeHeapSize(), 10); /* send FreeRTOS free heap size */
-    				printLF();
-    				printEOT();
-  	DEBUGUARTPRINT
-		("\r\n*** odp_uds_recvdata: sendMsg - protocolQueue ***");
+	if (protocolConfig->showBusTransfer == 2) {	//normal output, but straight from the ISR
+	    printdata_CAN(MSG_BUS_RECV, p, printChar);
+	}
+	if (protocolConfig->showBusTransfer == 3) {
+	    printser_int(p->timestamp * portTICK_PERIOD_MS & 0xFFFF, 10);	//reduce down to 16 bit = 65536 ms = ~ 1 min
+	    printser_string(" 0x");
+	    printser_int(p->recv, 16);
+	    printser_string(" 0x");
+	    printser_int(p->err, 16);
+	    printser_string(" ");
+	    printser_int(p->len, 10);
+	    printser_string(" ");
+	    printser_uint8ToHex(p->data[0]);
+	    printser_uint8ToHex(p->data[1]);
+	    printser_uint8ToHex(p->data[2]);
+	    printser_uint8ToHex(p->data[3]);
+	    printser_uint8ToHex(p->data[4]);
+	    printser_uint8ToHex(p->data[5]);
+	    printser_uint8ToHex(p->data[6]);
+	    printser_uint8ToHex(p->data[7]);
+	    printLF();
+	}
+	if (protocolConfig->showBusTransfer == 4) {
+	    printser_uint8ToRaw(255);	//startbyte
+	    printser_uint8ToRaw((p->len & 7) + ((p->err << 3) & 24));	//DTC and error flag
+	    printser_uint32ToRawCoded(p->timestamp * portTICK_PERIOD_MS & 0xFFFF);	//reduce down to 16 bit = 65536 ms = ~ 1 min
+	    printser_uint32ToRawCoded(p->recv);
+	    int i;
+	    for (i = 0; i < p->len; i++) {
+		printser_uint8ToRawCoded(p->data[i]);
+	    }
 	}
     }
-
-    else {
-    	printser_string("Total Heap (in byte): ");
-    				printser_string("FATAL ERROR: Out of Heap space!");
-    				printLF();
-    				printEOT();
-    	DEBUGPRINT("FATAL ERROR: Out of Heap space!l\n", 'a');
-    }
-
 }
 
 //>>>> oobdtemple protocol dumpFrame  >>>>
@@ -197,7 +218,7 @@ void odp_canraw_dumpFrame(data_packet * p, print_cbf print_data)
     if (NULL != (msg = createDataMsg(p))) {
 	msg->print = print_data;
 	if (pdPASS != sendMsg(MSG_BUS_RECV, outputQueue, msg)) {
-		disposeMsg(msg);
+	    disposeMsg(msg);
 	    DEBUGPRINT("FATAL ERROR: output queue is full!\n", 'a');
 	}
     } else {
@@ -232,19 +253,15 @@ void obp_canraw(void *pvParameters)
     extern QueueHandle_t protocolQueue;
     extern QueueHandle_t outputQueue;
     extern QueueHandle_t inputQueue;
-
     MsgData *msg;
     MsgData *ownMsg;
     param_data *args;
-
     extern SemaphoreHandle_t protocollBinarySemaphore;
     UBaseType_t msgType;
     UBaseType_t timeout = 0;
-    UBaseType_t showBusTransfer = 0;
     int i;
     //catch the "Protocoll is running" Semaphore
     xSemaphoreTake(protocollBinarySemaphore, portMAX_DELAY);
-
     /* activate the bus... */
     odbarr[busToUse] ();
     actBus_init();
@@ -255,18 +272,25 @@ void obp_canraw(void *pvParameters)
     extern print_cbf printdata_CAN;
     UBaseType_t stateMachine_state = 0;
     UBaseType_t actBufferPos = 0;
-    struct CanRawConfig canRawConfig;
-
-    /* Init default parameters */
-    canRawConfig.recvID = 0x7DF;
-    canRawConfig.separationTime = 0;
     /* tell the Rx-ISR about the function to use for received data */
     busControl(ODB_CMD_RECV, odp_canraw_recvdata);
     protocolBuffer = createODPBuffer(CANRAWBUFFERSIZE);
     if (protocolBuffer == NULL) {
 	keeprunning = 0;
+    } else {
+	protocolBuffer->len = 0;
     }
-    protocolBuffer->len = 0;
+    extern protocolConfigPtr actProtConfigPtr;
+    struct CanRawConfig *protocolConfig;
+    protocolConfig = pvPortMalloc(sizeof(struct CanRawConfig));
+    if (protocolConfig == NULL) {
+	keeprunning = 0;
+    } else {
+	actProtConfigPtr = protocolConfig;
+	protocolConfig->recvID = 0x7DF;
+	protocolConfig->separationTime = 0;
+	protocolConfig->showBusTransfer = 0;
+    }
 //>>>> oobdtemple protocol mainloop_start  >>>>    
     for (; keeprunning;) {
 
@@ -279,7 +303,7 @@ void obp_canraw(void *pvParameters)
 	    case MSG_BUS_RECV:
 		dp = msg->addr;
 //<<<< oobdtemple protocol MSG_BUS_RECV <<<<
-		if (showBusTransfer > 0) {
+		if (protocolConfig->showBusTransfer > 0) {
 		    odp_canraw_dumpFrame(dp, printdata_CAN);
 		}
 		// no more action, Raw CAN does not manage any answers from the bus
@@ -298,11 +322,11 @@ void obp_canraw(void *pvParameters)
 				dp->data[i];
 			}
 		    } else {
-			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
-					       ERR_CODE_CANRAW_DATA_TOO_LONG_ERR,
-					       (protocolBuffer->len) +
-					       dp->len,
-					       ERR_CODE_CANRAW_DATA_TOO_LONG_ERR_TEXT);
+			createCommandResultMsg
+			    (FBID_PROTOCOL_GENERIC,
+			     ERR_CODE_CANRAW_DATA_TOO_LONG_ERR,
+			     (protocolBuffer->len) + dp->len,
+			     ERR_CODE_CANRAW_DATA_TOO_LONG_ERR_TEXT);
 		    }
 		}
 //>>>> oobdtemple protocol MSG_SERIAL_PARAM_1 >>>>    
@@ -329,15 +353,16 @@ void obp_canraw(void *pvParameters)
 			break;
 			// and here we proceed all command parameters
 		    case PARAM_LISTEN:
-			showBusTransfer = args->args[ARG_VALUE_1];
+			protocolConfig->showBusTransfer =
+			    args->args[ARG_VALUE_1];
 			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
 		    default:
-			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
-					       ERR_CODE_OS_UNKNOWN_COMMAND,
-					       0,
-					       ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
+			createCommandResultMsg
+			    (FBID_PROTOCOL_GENERIC,
+			     ERR_CODE_OS_UNKNOWN_COMMAND, 0,
+			     ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 			break;
 		    }
 		    break;
@@ -355,13 +380,13 @@ void obp_canraw(void *pvParameters)
 			   break;
 			 */
 		    case PARAM_CANRAW_FRAME_DELAY:
-			canRawConfig.separationTime =
+			protocolConfig->separationTime =
 			    args->args[ARG_VALUE_1] + 1;
 			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
 		    case PARAM_CANRAW_SENDID:
-			canRawConfig.recvID = args->args[ARG_VALUE_1];
+			protocolConfig->recvID = args->args[ARG_VALUE_1];
 			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
@@ -380,7 +405,8 @@ void obp_canraw(void *pvParameters)
 		    break;
 		default:
 		    createCommandResultMsg(FBID_PROTOCOL_SPEC,
-					   ERR_CODE_OS_UNKNOWN_COMMAND, 0,
+					   ERR_CODE_OS_UNKNOWN_COMMAND,
+					   0,
 					   ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 		    break;
 		}
@@ -403,18 +429,17 @@ void obp_canraw(void *pvParameters)
 //<<<< oobdtemple protocol MSG_SEND_BUFFER <<<<
 		if (protocolBuffer->len > 0) {
 		    actBufferPos = 0;
-		    for (; sendMoreFrames(protocolBuffer, &actBufferPos, &showBusTransfer, &stateMachine_state, &timeout, printdata_CAN, actBus_send););	// fire all in one shot.
+		    for (; sendMoreFrames(protocolBuffer, &actBufferPos, &protocolConfig->showBusTransfer, &stateMachine_state, &timeout, printdata_CAN, actBus_send););	// fire all in one shot.
 //>>>> oobdtemple protocol MSG_SEND_BUFFER_2 >>>>    
-
 		} else {	/* no data to send? */
 		    createCommandResultMsg
 			(FBID_PROTOCOL_GENERIC, ERR_CODE_NO_ERR, 0, NULL);
-
 		    /* just release the input again */
 		    if (pdPASS !=
 			sendMsg(MSG_SERIAL_RELEASE, inputQueue, NULL)) {
-			DEBUGPRINT("FATAL ERROR: input queue is full!\n",
-				   'a');
+			printser_string("Input queue is full!");
+			DEBUGPRINT
+			    ("FATAL ERROR: input queue is full!\n", 'a');
 		    }
 		}
 		break;
@@ -424,20 +449,20 @@ void obp_canraw(void *pvParameters)
 //<<<< oobdtemple protocol MSG_TICK <<<<
 		if (timeout > 0) {	/* we just waiting for the next frame to send */
 		    if (timeout == 1) {	/* time's gone... */
-			for (; sendMoreFrames(protocolBuffer, &actBufferPos, &showBusTransfer, &stateMachine_state, &timeout, printdata_CAN, actBus_send););	// fire all in one shot.
+			for (; sendMoreFrames(protocolBuffer, &actBufferPos, &protocolConfig->showBusTransfer, &stateMachine_state, &timeout, printdata_CAN, actBus_send););	// fire all in one shot.
 			if (timeout < 2) {	//
 			    protocolBuffer->len = 0;
 			    createCommandResultMsg
-				(FBID_PROTOCOL_GENERIC, ERR_CODE_NO_ERR, 0,
-				 NULL);
+				(FBID_PROTOCOL_GENERIC,
+				 ERR_CODE_NO_ERR, 0, NULL);
 			    stateMachine_state = SM_CANRAW_STANDBY;
 			    if (pdPASS !=
 				sendMsg(MSG_SERIAL_RELEASE, inputQueue,
 					NULL)) {
+				printser_string("INPQUE_FULL");
 				DEBUGPRINT
 				    ("FATAL ERROR: input queue is full!\n",
 				     'a');
-
 			    }
 			}
 		    }
@@ -454,6 +479,7 @@ void obp_canraw(void *pvParameters)
 
     /* Do all cleanup here to finish task */
     actBus_close();
+    vPortFree(protocolConfig);
     freeODPBuffer(protocolBuffer);
     xSemaphoreGive(protocollBinarySemaphore);
     vTaskDelete(NULL);
@@ -461,11 +487,16 @@ void obp_canraw(void *pvParameters)
 
 //<<<< oobdtemple protocol final <<<<
 
-int sendMoreFrames(ODPBuffer * protocolBuffer,
-		   UBaseType_t * actBufferPos_ptr,
-		   UBaseType_t * showBusTransfer_ptr,
-		   UBaseType_t * stateMachine_state_ptr,
-		   UBaseType_t * timeout_ptr,
+int sendMoreFrames(ODPBuffer *
+		   protocolBuffer,
+		   UBaseType_t *
+		   actBufferPos_ptr,
+		   UBaseType_t *
+		   showBusTransfer_ptr,
+		   UBaseType_t *
+		   stateMachine_state_ptr,
+		   UBaseType_t *
+		   timeout_ptr,
 		   print_cbf printdata_CAN, bus_send actBus_send)
 {
     unsigned char telegram[8];
@@ -489,7 +520,8 @@ int sendMoreFrames(ODPBuffer * protocolBuffer,
 	    protocolBuffer->data[*actBufferPos_ptr] >
 	    8 ? 8 : protocolBuffer->data[*actBufferPos_ptr];
 	(*actBufferPos_ptr)++;
-	odp_canraw_data2CAN(&protocolBuffer->data[*actBufferPos_ptr],
+	odp_canraw_data2CAN(&protocolBuffer->data
+			    [*actBufferPos_ptr],
 			    &telegram, actDataPacket.len, 0);
 	(*actBufferPos_ptr) += actDataPacket.len;
 	if (*showBusTransfer_ptr > 0) {

@@ -107,6 +107,11 @@ void (*odbarr[SYS_NR_OF_BUSSES]) ();
 TaskHandle_t xTaskProtHandle;
 
 
+// define type and Variable to store the pointer to the protocol configuration
+typedef void *protocolConfigPtr;
+protocolConfigPtr actProtConfigPtr;
+
+
 // function prototype for the bus interface
 UBaseType_t busControl(UBaseType_t cmd, void *param);
 

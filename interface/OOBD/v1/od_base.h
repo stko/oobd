@@ -288,6 +288,20 @@ void printser_uint16ToHex(uint16_t value);
 
 void printser_uint8ToHex(uint8_t value);
 
+void printser_uint32ToRaw(uint32_t value);
+
+void printser_uint16ToRaw(uint16_t value);
+
+void printser_uint8ToRaw(uint8_t value);
+
+void printCharCoded(unsigned char a);
+
+void printser_uint32ToRawCoded(uint32_t value);
+
+void printser_uint16ToRawCoded(uint16_t value);
+
+void printser_uint8ToRawCoded(uint8_t value);
+
 void printLF();
 
 void evalResult(UBaseType_t source, UBaseType_t errType,

@@ -90,15 +90,14 @@ odp_rtd_printdata_Buffer(UBaseType_t msgType, void *data,
 	} else {
 	    DEBUGPRINT("dump buffer:\n", "a");
 	    printser_string("62");
-	    printser_uint32ToHex(myRTDElement->
-				 buffer[bufferIndex].timeStamp *
-				 portTICK_PERIOD_MS);
+	    printser_uint32ToHex(myRTDElement->buffer[bufferIndex].
+				 timeStamp * portTICK_PERIOD_MS);
 	    printser_uint8ToHex(myRTDElement->buffer[bufferIndex].flags);	// print the flag Byte
 	    myRTDElement->buffer[bufferIndex].flags &= 0xFE;	//reset bit 0 (New data)
 	    int i;
 	    for (i = 0; i < myRTDElement->buffer[bufferIndex].len; i++) {
-		printser_uint8ToHex(myRTDElement->
-				    buffer[bufferIndex].data[i]);
+		printser_uint8ToHex(myRTDElement->buffer[bufferIndex].
+				    data[i]);
 		DEBUGPRINT(" buffer[%d]:%02X\n", i,
 			   myRTDElement->buffer[bufferIndex].data[i]);
 		if ((i % 8) == 0 && i > 0
@@ -228,10 +227,9 @@ void odp_rtd_recvdata(data_packet * p, UBaseType_t callFromISR)
 		    ("custom multi frame: sequence %02X: write %02X to index %ld\n",
 		     seq, p->data[i],
 		     actElement->buffer[writeBufferIndex].lastWrittenPos);
-		actElement->buffer[writeBufferIndex].data[actElement->
-							  buffer
-							  [writeBufferIndex].
-							  lastWrittenPos++]
+		actElement->buffer[writeBufferIndex].
+		    data[actElement->buffer
+			 [writeBufferIndex].lastWrittenPos++]
 		    = p->data[i];
 	    }
 	    actElement->buffer[writeBufferIndex].lastRecSeq = seq;	//save actual received seq
@@ -281,8 +279,8 @@ void odp_rtd_recvdata(data_packet * p, UBaseType_t callFromISR)
 			       actElement->buffer[writeBufferIndex].len,
 			       newLen);
 		    if (actElement->buffer[writeBufferIndex].data != NULL) {
-			vPortFree(actElement->buffer[writeBufferIndex].
-				  data);
+			vPortFree(actElement->
+				  buffer[writeBufferIndex].data);
 		    }
 		    actElement->buffer[writeBufferIndex].data =
 			pvPortMalloc(newLen);
@@ -295,17 +293,16 @@ void odp_rtd_recvdata(data_packet * p, UBaseType_t callFromISR)
 	    if (actElement->buffer[writeBufferIndex].data != NULL) {
 		for (i = ((seq & 0xF0) == 0x10) ? 2 : 1;
 		     i < p->len
-		     && actElement->buffer[writeBufferIndex].
-		     lastWrittenPos < len; i++) {
+		     && actElement->
+		     buffer[writeBufferIndex].lastWrittenPos < len; i++) {
 		    DEBUGPRINT
 			("ISO-TP frame: sequence %02X: write %02X to index %ld\n",
 			 seq, p->data[i],
-			 actElement->buffer[writeBufferIndex].
-			 lastWrittenPos);
-		    actElement->buffer[writeBufferIndex].data[actElement->
-							      buffer
-							      [writeBufferIndex].
-							      lastWrittenPos++]
+			 actElement->
+			 buffer[writeBufferIndex].lastWrittenPos);
+		    actElement->buffer[writeBufferIndex].
+			data[actElement->buffer
+			     [writeBufferIndex].lastWrittenPos++]
 			= p->data[i];
 		}
 		if ((seq & 0xF0) == 0x10) {
@@ -411,9 +408,22 @@ void odp_rtd(void *pvParameters)
     protocolBuffer = createODPBuffer(CMDBUFFERSIZE);
     if (protocolBuffer == NULL) {
 	keeprunning = 0;
+    } else {
+	protocolBuffer->len = 0;
     }
-    protocolBuffer->len = 0;
-//>>>> oobdtemple protocol mainloop_start  >>>>    
+/* the RTD protocol does not have a config yet--
+    extern protocolConfigPtr actProtConfigPtr;
+    struct RTDConfig *protocolConfig;
+    protocolConfig = pvPortMalloc(sizeof(struct RTDConfig));
+    if (protocolConfig == NULL) {
+	keeprunning = 0;
+    } else {
+	actProtConfigPtr = protocolConfig;
+	protocolConfig->recvID = 0x7DF;
+	protocolConfig->separationTime = 0;
+    }
+*/
+    //>>>> oobdtemple protocol mainloop_start  >>>>    
     for (; keeprunning;) {
 
 	if (MSG_NONE != (msgType = waitMsg(protocolQueue, &msg, portMAX_DELAY)))	// portMAX_DELAY
@@ -557,8 +567,9 @@ void odp_rtd(void *pvParameters)
 			    if (myRTDElement != NULL) {
 				/* lock buffer */
 				myRTDElement->buffer[otherBuffer
-						     (myRTDElement->writeBufferIndex)].locked
-				    = pdTRUE;
+						     (myRTDElement->
+						      writeBufferIndex)].
+				    locked = pdTRUE;
 			    }
 			    ownMsg = createMsg(myRTDElement, 0);
 			    /* add correct print routine; */
@@ -689,6 +700,7 @@ void odp_rtd(void *pvParameters)
     /* Do all cleanup here to finish task */
     freeRtdElements(&FirstRTDElement);
     actBus_close();
+//    vPortFree(protocolConfig);
     freeODPBuffer(protocolBuffer);
     xSemaphoreGive(protocollBinarySemaphore);
     vTaskDelete(NULL);
