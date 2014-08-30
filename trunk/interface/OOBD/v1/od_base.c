@@ -456,7 +456,7 @@ void printser_string(char const *str)
 {
     extern printChar_cbf printChar;
     if (str) {
-	DEBUGPRINT("Output:%s\n", str);
+//      DEBUGPRINT("Output:%s\n", str);
 	/* transmit characters until 0 character */
 	while (*str) {
 	    /* write character to buffer and increment pointer */
@@ -488,4 +488,71 @@ void printser_uint8ToHex(uint8_t value)
 {
     uint8ToHex((char *) &outputBuffer, value);
     printser_string((char *) &outputBuffer);
+}
+
+void printser_uint32ToRaw(uint32_t value)
+{
+    extern printChar_cbf printChar;
+    char *str = &value;
+    int i;
+    for (i = 0; i < 4; i++) {
+	/* write character to buffer and increment pointer */
+	printChar(*str++);
+    }
+}
+
+void printser_uint16ToRaw(uint16_t value)
+{
+    extern printChar_cbf printChar;
+    char *str = &value;
+    int i;
+    for (i = 0; i < 2; i++) {
+	/* write character to buffer and increment pointer */
+	printChar(*str++);
+    }
+}
+
+void printser_uint8ToRaw(uint8_t value)
+{
+    extern printChar_cbf printChar;
+    char *str = &value;
+    /* write character to buffer and increment pointer */
+    printChar(*str);
+}
+
+void printCharCoded(unsigned char a)
+{
+    extern printChar_cbf printChar;
+    if (a == 255) {
+	printChar(255);
+    }
+    printChar(a);
+
+}
+
+void printser_uint32ToRawCoded(uint32_t value)
+{
+    char *str = &value;
+    int i;
+    for (i = 0; i < 4; i++) {
+	/* write character to buffer and increment pointer */
+	printCharCoded(*str++);
+    }
+}
+
+void printser_uint16ToRawCoded(uint16_t value)
+{
+    char *str = &value;
+    int i;
+    for (i = 0; i < 2; i++) {
+	/* write character to buffer and increment pointer */
+	printCharCoded(*str++);
+    }
+}
+
+void printser_uint8ToRawCoded(uint8_t value)
+{
+    char *str = &value;
+    /* write character to buffer and increment pointer */
+    printCharCoded(*str);
 }
