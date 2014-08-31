@@ -172,14 +172,15 @@ void odp_canraw_recvdata(data_packet * p, UBaseType_t callFromISR)
 	    printdata_CAN(MSG_BUS_RECV, p, printChar);
 	}
 	if (protocolConfig->showBusTransfer == 3) {
-	    printser_int(p->timestamp * portTICK_PERIOD_MS & 0xFFFF, 10);	//reduce down to 16 bit = 65536 ms = ~ 1 min
-	    printser_string(" 0x");
-	    printser_int(p->recv, 16);
-	    printser_string(" 0x");
-	    printser_int(p->err, 16);
-	    printser_string(" ");
+	    // Lawicel format: Estimated out of http://lxr.free-electrons.com/source/drivers/net/can/slcan.c line 110 cc.
+	    if (p->recv & 2 ^ 31) {	// Bit 32 set, so it's an exended CAN ID
+		printser_string("T");
+		printser_uint32ToHex(p->recv & 0x1FFFFFFF);
+	    } else {
+		printser_string("t");
+		printser_uint16ToHex(p->recv & 0x1FFFFFFF);
+	    }
 	    printser_int(p->len, 10);
-	    printser_string(" ");
 	    printser_uint8ToHex(p->data[0]);
 	    printser_uint8ToHex(p->data[1]);
 	    printser_uint8ToHex(p->data[2]);
@@ -188,13 +189,21 @@ void odp_canraw_recvdata(data_packet * p, UBaseType_t callFromISR)
 	    printser_uint8ToHex(p->data[5]);
 	    printser_uint8ToHex(p->data[6]);
 	    printser_uint8ToHex(p->data[7]);
+	    printser_uint16ToHex(p->timestamp * portTICK_PERIOD_MS & 0xFFFF);	//reduce down to 16 bit = 65536 ms = ~ 1 min
 	    printLF();
 	}
 	if (protocolConfig->showBusTransfer == 4) {
 	    printser_uint8ToRaw(255);	//startbyte
-	    printser_uint8ToRaw((p->len & 7) + ((p->err << 3) & 24));	//DTC and error flag
-	    printser_uint32ToRawCoded(p->timestamp * portTICK_PERIOD_MS & 0xFFFF);	//reduce down to 16 bit = 65536 ms = ~ 1 min
-	    printser_uint32ToRawCoded(p->recv);
+	    printser_uint8ToRaw((p->len & 7) |	// bit 0-2: DTC
+				((p->err & 3) << 3) |	//bit 3-4 : Error flag
+				(((p->recv & 2) ^ 31 ? 1 : 0) << 4)	//bit 5: Extended CAN ID
+		);		//Status flag
+	    printser_uint16ToRawCoded(p->timestamp * portTICK_PERIOD_MS & 0xFFFF);	//reduce down to 16 bit = 65536 ms = ~ 1 min
+	    if ((p->recv & 2) ^ 31) {	// Bit 32 set, so it's an exended CAN ID
+		printser_uint32ToRawCoded(p->recv & 0x1FFFFFFF);
+	    } else {
+		printser_uint16ToRawCoded(p->recv & 0x1FFFFFFF);
+	    }
 	    int i;
 	    for (i = 0; i < p->len; i++) {
 		printser_uint8ToRawCoded(p->data[i]);
