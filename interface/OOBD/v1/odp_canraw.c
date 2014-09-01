@@ -173,12 +173,13 @@ void odp_canraw_recvdata(data_packet * p, UBaseType_t callFromISR)
 	}
 	if (protocolConfig->showBusTransfer == 3) {
 	    // Lawicel format: Estimated out of http://lxr.free-electrons.com/source/drivers/net/can/slcan.c line 110 cc.
-	    if (p->recv & 2 ^ 31) {	// Bit 32 set, so it's an exended CAN ID
+		if (p->recv & 0x80000000) {	// Bit 32 set, so it's an extended CAN ID
 		printser_string("T");
 		printser_uint32ToHex(p->recv & 0x1FFFFFFF);
 	    } else {
 		printser_string("t");
-		printser_uint16ToHex(p->recv & 0x1FFFFFFF);
+		printser_int((p->recv & 0x700) >> 8,10);
+		printser_uint8ToHex(p->recv & 0x00FF);
 	    }
 	    printser_int(p->len, 10);
 	    printser_uint8ToHex(p->data[0]);
