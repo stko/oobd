@@ -194,9 +194,9 @@ void odp_canraw_recvdata(data_packet * p, UBaseType_t callFromISR)
 	}
 	if (protocolConfig->showBusTransfer == 4) {
 	    printser_uint8ToRaw(255);	//startbyte
-	    printser_uint8ToRaw((p->len & 7) |	// bit 0-2: DTC
-				((p->err & 3) << 3) |	//bit 3-4 : Error flag
-				(((p->recv & 2) ^ 31 ? 1 : 0) << 4)	//bit 5: Extended CAN ID
+	    printser_uint8ToRaw((p->len & 0xF) |	// bit 0-3: DLC
+				((p->err & 3) << 4) |	//bit 4-5 : Error flag
+				(((p->recv & 2) ^ 31 ? 1 : 0) << 5)	//bit 6: Extended CAN ID
 		);		//Status flag
 	    printser_uint16ToRawCoded(p->timestamp * portTICK_PERIOD_MS & 0xFFFF);	//reduce down to 16 bit = 65536 ms = ~ 1 min
 	    if ((p->recv & 2) ^ 31) {	// Bit 32 set, so it's an exended CAN ID
