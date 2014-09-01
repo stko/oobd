@@ -100,7 +100,7 @@ while True:
 		nrOfBytes = nrOfBytes -6 # 6 bytes aready received
 		pid= "%02X%02X%02X" % ( msg[i+0] , msg[i+1] , msg[i+2])
 		nextStep=0 # send FlowControl, wait for consecutive frames
-		sendTele(msg,{'d':[0x30,0x30,0x00,0x00],'t':2,'e':0})
+		sendTele(msg,{'d':[0x30,0x30,0x0F,0x00],'t':2,'e':0})
 
 	################# Consecutive Frame #############
 	if frameType == 2: # consecutive frame
