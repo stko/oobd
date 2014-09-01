@@ -52,6 +52,9 @@
 #define SM_UDS_WAIT_FOR_ANSWER 		( 4 )
 #define SM_UDS_WAIT_FOR_BUFFERDUMP	( 5 )
 #define SM_UDS_SEND_CF			( 6 )
+#define SM_UDS_SEND_SINGLE_CF		( 7 )
+#define SM_UDS_SLEEP_UNTIL_SINGLE_CF	( 8 )
+
 
 #define UDSSIZE ( 4095 )
 
@@ -427,13 +430,13 @@ void obp_uds(void *pvParameters)
     UBaseType_t remainingBytes;
     UBaseType_t actBufferPos;
     UBaseType_t actFrameLen;
-    UBaseType_t blockSize_BS;
-    UBaseType_t separationTime_ST;
+    UBaseType_t blockSize_BS = 0;
+    UBaseType_t separationTime_ST = 0;
+    UBaseType_t actBlockSize_BS = 0;
+    UBaseType_t actSeparationTime_STTicks = 0;
     UBaseType_t stateMachine_state = 0;
     unsigned char telegram[8];
     struct TPElement *tpList = NULL;	//!< keeps the list of testerPresents
-    blockSize_BS = 0;
-    separationTime_ST = 0;
     /* tell the Rx-ISR about the function to use for received data */
     busControl(ODB_CMD_RECV, odp_uds_recvdata);
     protocolBuffer = createODPBuffer(UDSSIZE);
@@ -481,25 +484,42 @@ void obp_uds(void *pvParameters)
 		    } else {
 			if (stateMachine_state == SM_UDS_WAIT_FOR_FC) {
 			    if ((dp->data[0] & 0xF0) == 0x30) {	/* FlowControl */
-				DEBUGPRINT("FlowControl received", 'a');
+				DEBUGPRINT("FlowControl received\n", 'a');
+				/* as we now probably have to send many frames first before we receive any
+				   new answer from the module, we have to disable the timeout as long as we've sent the last frame
+				 */
+				timeout = 0;
 				//! \todo how to correctly support "wait" if LowNibble of PCI is 1?
 				if (protocolConfig->blockSize == 0) {
 				    blockSize_BS = dp->data[1];	/* take the block size out of the FC block */
 				} else {
 				    blockSize_BS = protocolConfig->blockSize;	/* use the config value instead the one from FC */
 				}
-				if (blockSize_BS > 0) {	/* add 1, if set, which is needed, as  the countdown routine counts down only to 1, not to 0 */
-				    blockSize_BS++;
+				if (blockSize_BS > 0) {
+				    actBlockSize_BS = blockSize_BS;
 				}
 				if (protocolConfig->separationTime == 0) {
 				    separationTime_ST = dp->data[2];	/* take the separation time out of the FC block */
 				} else {
 				    separationTime_ST = protocolConfig->separationTime;	/* use the config value instead the one from FC */
 				}
-				if (separationTime_ST > 0) {	/* add 1, if set, which is needed, as  the countdown routine counts down only to 1, not to 0 */
-				    separationTime_ST++;
+				if (separationTime_ST > 0) {
+				    stateMachine_state =
+					SM_UDS_SLEEP_UNTIL_SINGLE_CF;
+				    actSeparationTime_STTicks =
+					separationTime_ST /
+					portTICK_PERIOD_MS;
+				    actSeparationTime_STTicks++;
+				    if (actSeparationTime_STTicks < 2) {
+					actSeparationTime_STTicks = 2;
+				    }
+				    DEBUGPRINT
+					("FlowControl Delay received with %d ticks\n",
+					 actSeparationTime_STTicks);
+
+				} else {
+				    stateMachine_state = SM_UDS_SEND_CF;
 				}
-				stateMachine_state = SM_UDS_SEND_CF;
 			    } else {	/* wrong answer */
 				stateMachine_state = SM_UDS_STANDBY;
 				protocolBuffer->len = 0;
@@ -931,6 +951,25 @@ void obp_uds(void *pvParameters)
 		    }
 		    timeout--;
 		}
+		if (actSeparationTime_STTicks > 0) {
+		    DEBUGPRINT
+			("Remaining CF Waitticks: %ld , remainingBytes: %ld\n",
+			 actSeparationTime_STTicks, remainingBytes);
+		    stateMachine_state = SM_UDS_SLEEP_UNTIL_SINGLE_CF;
+		    actSeparationTime_STTicks--;
+		    if (actSeparationTime_STTicks < 1) {	//it's time for a new single CF
+			stateMachine_state = SM_UDS_SEND_SINGLE_CF;
+			actSeparationTime_STTicks = separationTime_ST / portTICK_PERIOD_MS;	//"reload" the counter
+			actSeparationTime_STTicks++;
+			if (actSeparationTime_STTicks < 2) {
+			    actSeparationTime_STTicks = 2;
+			}
+			DEBUGPRINT
+			    ("Reloaded CF Waitticks: %ld , remainingBytes: %ld\n",
+			     actSeparationTime_STTicks, remainingBytes);
+		    }
+		}
+
 		/* Start generating tester present messages */
 		odp_uds_generateTesterPresents(tpList,
 					       &telegram, actBus_send);
@@ -939,14 +978,15 @@ void obp_uds(void *pvParameters)
 	    }
 	    //if (Ticker oder sonstiges Consecutife Frame){
 	    if (1) {
-		if (stateMachine_state == SM_UDS_SEND_CF) {
-		    /* Caution: This "if state" needs to be straight after
-		       the Flow Control handling above, so that when the state 
-		       SM_UDS_SEND_CF is reached, the state machine starts straight to send
-		     */
-
-		    //! \todo delayed, block wise sending of Consecutive frame still needs to be implemented
-		    while (remainingBytes > 0) {
+		if (stateMachine_state == SM_UDS_SEND_CF
+		    || stateMachine_state == SM_UDS_SEND_SINGLE_CF) {
+		    while (remainingBytes > 0
+			   && stateMachine_state !=
+			   SM_UDS_SLEEP_UNTIL_SINGLE_CF) {
+			if (stateMachine_state == SM_UDS_SEND_SINGLE_CF) {
+			    stateMachine_state =
+				SM_UDS_SLEEP_UNTIL_SINGLE_CF;
+			}
 			DEBUGPRINT("Remaining bytes: %ld\n",
 				   remainingBytes);
 			actFrameLen =
@@ -965,8 +1005,11 @@ void obp_uds(void *pvParameters)
 			}
 			actBus_send(&actDataPacket);
 		    }
-		    stateMachine_state = SM_UDS_WAIT_FOR_ANSWER;
-		    timeout = protocolConfig->timeout;
+		    if (remainingBytes < 1) {
+			stateMachine_state = SM_UDS_WAIT_FOR_ANSWER;
+			actSeparationTime_STTicks = 0;
+			timeout = protocolConfig->timeout;
+		    }
 		}
 	    }
 	    disposeMsg(msg);
