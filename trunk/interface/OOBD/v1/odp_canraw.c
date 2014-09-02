@@ -142,6 +142,8 @@ void odp_canraw_recvdata(data_packet * p, UBaseType_t callFromISR)
     extern printChar_cbf printChar;
     extern protocolConfigPtr actProtConfigPtr;
     struct CanRawConfig *protocolConfig;
+    short ByteCnt;
+
     if (callFromISR) {
 	p->timestamp = xTaskGetTickCountFromISR();
     } else {
@@ -172,7 +174,7 @@ void odp_canraw_recvdata(data_packet * p, UBaseType_t callFromISR)
 	    printdata_CAN(MSG_BUS_RECV, p, printChar);
 	}
 	if (protocolConfig->showBusTransfer == 3) {
-	    // Lawicel format: Estimated out of http://lxr.free-electrons.com/source/drivers/net/can/slcan.c line 110 cc.
+		// Lawicel format: Estimated out of http://lxr.free-electrons.com/source/drivers/net/can/slcan.c line 110 cc.
 		if (p->recv & 0x80000000) {	// Bit 32 set, so it's an extended CAN ID
 		printser_string("T");
 		printser_uint32ToHex(p->recv & 0x1FFFFFFF);
@@ -182,15 +184,12 @@ void odp_canraw_recvdata(data_packet * p, UBaseType_t callFromISR)
 		printser_uint8ToHex(p->recv & 0x00FF);
 	    }
 	    printser_int(p->len, 10);
-	    printser_uint8ToHex(p->data[0]);
-	    printser_uint8ToHex(p->data[1]);
-	    printser_uint8ToHex(p->data[2]);
-	    printser_uint8ToHex(p->data[3]);
-	    printser_uint8ToHex(p->data[4]);
-	    printser_uint8ToHex(p->data[5]);
-	    printser_uint8ToHex(p->data[6]);
-	    printser_uint8ToHex(p->data[7]);
-	    printser_uint16ToHex(p->timestamp * portTICK_PERIOD_MS & 0xFFFF);	//reduce down to 16 bit = 65536 ms = ~ 1 min
+	    ByteCnt = 0;
+		while (ByteCnt != p->len ) {
+			printser_uint8ToHex(p->data[ByteCnt]);
+			ByteCnt ++;
+		}
+		printser_uint16ToHex(p->timestamp * portTICK_PERIOD_MS & 0xFFFF);	//reduce down to 16 bit = 65536 ms = ~ 1 min
 	    printLF();
 	}
 	if (protocolConfig->showBusTransfer == 4) {
