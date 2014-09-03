@@ -235,10 +235,6 @@ odp_uds_generateTesterPresents(struct TPElement *tpList,
 	    dp.data = canBuffer;
 	    canBuffer[0] = 0x3E;
 
-	    // fill with padding zeros
-	    for (i = 2; i < 8; i++) {
-		canBuffer[i] = 0;
-	    }
 	    DEBUGPRINT("send Tester Present %lX next %lX\n", tpList->canID,
 		       tpList->next);
 	    dp.recv = tpList->canID;
