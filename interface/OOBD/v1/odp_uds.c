@@ -233,7 +233,7 @@ odp_uds_generateTesterPresents(struct TPElement *tpList,
 	    // first we fill the telegram with the tester present data
 	    dp.len = 8;		/* Tester present message must be 8 bytes */
 	    dp.data = canBuffer;
-	    canBuffer[0] = 2;
+	    canBuffer[0] = 0x3E;
 
 	    // fill with padding zeros
 	    for (i = 2; i < 8; i++) {
@@ -430,7 +430,6 @@ void obp_uds(void *pvParameters)
     UBaseType_t remainingBytes;
     UBaseType_t actBufferPos;
     UBaseType_t actFrameLen;
-    UBaseType_t blockSize_BS = 0;
     UBaseType_t separationTime_ST = 0;
     UBaseType_t actBlockSize_BS = 0;
     UBaseType_t actSeparationTime_STTicks = 0;
@@ -491,12 +490,15 @@ void obp_uds(void *pvParameters)
 				timeout = 0;
 				//! \todo how to correctly support "wait" if LowNibble of PCI is 1?
 				if (protocolConfig->blockSize == 0) {
-				    blockSize_BS = dp->data[1];	/* take the block size out of the FC block */
+				    actBlockSize_BS = dp->data[1];	/* take the block size out of the FC block */
 				} else {
-				    blockSize_BS = protocolConfig->blockSize;	/* use the config value instead the one from FC */
+				    actBlockSize_BS = protocolConfig->blockSize;	/* use the config value instead the one from FC */
 				}
-				if (blockSize_BS > 0) {
-				    actBlockSize_BS = blockSize_BS;
+				if (actBlockSize_BS > 0) {
+				    actBlockSize_BS++;
+				    DEBUGPRINT
+					("Blocksize  received with %ld ticks\n",
+					 actBlockSize_BS);
 				}
 				if (protocolConfig->separationTime == 0) {
 				    separationTime_ST = dp->data[2];	/* take the separation time out of the FC block */
@@ -981,8 +983,9 @@ void obp_uds(void *pvParameters)
 		if (stateMachine_state == SM_UDS_SEND_CF
 		    || stateMachine_state == SM_UDS_SEND_SINGLE_CF) {
 		    while (remainingBytes > 0
-			   && stateMachine_state !=
-			   SM_UDS_SLEEP_UNTIL_SINGLE_CF) {
+			   && (stateMachine_state !=
+			       SM_UDS_SLEEP_UNTIL_SINGLE_CF)
+			   && (actBlockSize_BS != 1)) {
 			if (stateMachine_state == SM_UDS_SEND_SINGLE_CF) {
 			    stateMachine_state =
 				SM_UDS_SLEEP_UNTIL_SINGLE_CF;
@@ -1004,8 +1007,19 @@ void obp_uds(void *pvParameters)
 					      printdata_CAN);
 			}
 			actBus_send(&actDataPacket);
+			if (actBlockSize_BS > 1) {
+			    actBlockSize_BS--;
+			    DEBUGPRINT("Blocksize  REDUCED to %ld \n",
+				       actBlockSize_BS);
+
+			}
 		    }
-		    if (remainingBytes < 1) {
+		    if (actBlockSize_BS == 1) {	//in case we had some block limitations, send them and then wait for another FC Frame
+			stateMachine_state = SM_UDS_WAIT_FOR_FC;
+			actBlockSize_BS = 0;
+			timeout = protocolConfig->timeout;
+		    }
+		    if (remainingBytes < 1) {	// Buffer empty?  Then finish
 			stateMachine_state = SM_UDS_WAIT_FOR_ANSWER;
 			actSeparationTime_STTicks = 0;
 			timeout = protocolConfig->timeout;
