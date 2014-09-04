@@ -257,11 +257,8 @@ void printParam_sys_specific(UBaseType_t msgType, void *data,
 }
 
 /* evaluation of p 0 x x x commands */
-UBaseType_t eval_param_sys_specific(
-		param_data * args) {
-
+UBaseType_t eval_param_sys_specific(param_data * args) {
 	uint32_t BTMpin;
-
 
 	switch (args->args[ARG_CMD]) {
 	case PARAM_INFO:
@@ -283,13 +280,56 @@ UBaseType_t eval_param_sys_specific(
 		return pdTRUE;
 		break;
 
+
+	case PARAM_SET_MC_UART:
+		if (args->args[ARG_VALUE_1] == 1) {
+			uartReconfig(USART1, USART1_BAUDRATE_4800);
+			createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
+			return pdTRUE;
+		} else if (args->args[ARG_VALUE_1] == 2) {
+			uartReconfig(USART1, USART1_BAUDRATE_9600);
+			createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
+			return pdTRUE;
+		} else if (args->args[ARG_VALUE_1] == 3) {
+			uartReconfig(USART1, USART1_BAUDRATE_19200);
+			createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
+			return pdTRUE;
+		} else if (args->args[ARG_VALUE_1] == 4) {
+			uartReconfig(USART1, USART1_BAUDRATE_38400);
+			createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
+			return pdTRUE;
+		} else if (args->args[ARG_VALUE_1] == 5) {
+			uartReconfig(USART1, USART1_BAUDRATE_57600);
+			createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
+			return pdTRUE;
+		} else if (args->args[ARG_VALUE_1] == 6) {
+			uartReconfig(USART1, USART1_BAUDRATE_115200);
+			createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
+			return pdTRUE;
+		} else if (args->args[ARG_VALUE_1] == 7) {
+			uartReconfig(USART1, USART1_BAUDRATE_230400);
+			createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
+			return pdTRUE;
+		} else if (args->args[ARG_VALUE_1] == 8) {
+			uartReconfig(USART1, USART1_BAUDRATE_460800);
+			createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
+			return pdTRUE;
+		} else {
+			createCommandResultMsg(FBID_SYS_SPEC,
+					ERR_CODE_OS_COMMAND_NOT_SUPPORTED, 0,
+					ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
+			return pdFALSE;
+		}
+		return pdTRUE;
+		break;
+
+
 	case PARAM_SET_BTM:
 		if (args->args[ARG_VALUE_2] > 99999999) {
 			createCommandResultMsg(FBID_SYS_SPEC, ERR_CODE_OS_UNKNOWN_COMMAND,
 					0, ERR_CODE_OS_UNKNOWN_COMMAND_TEXT);
 			return pdFALSE;
 		}
-
 
 		sysIoCtrl(6, 0, 0, 0, 0); /* Reset BT-Module */
 		delay_ms(250);
@@ -321,12 +361,14 @@ UBaseType_t eval_param_sys_specific(
 			BTMpin = 10000000;
 
 			/* transmit PIN number from input stream to BT-Module */
-			while ( 0 != BTMpin )
-			{
+			while (0 != BTMpin) {
 				/* check if value is available on current position */
 				/* BT-Module supports only character 0-9 with 4-8 digit for the BT-PIN */
-				if ( 0 != args->args[ARG_VALUE_2] / BTMpin)
-					USART_SendData(USART1, (args->args[ARG_VALUE_2] % (BTMpin*10) / BTMpin) + 48);
+				if (0 != args->args[ARG_VALUE_2] / BTMpin)
+					USART_SendData(
+							USART1,
+							(args->args[ARG_VALUE_2] % (BTMpin * 10) / BTMpin)
+									+ 48);
 				BTMpin = BTMpin / 10;
 				btm_uart_delay_ms(40);
 			}
@@ -446,9 +488,22 @@ void mc_init_sys_shutdown_specific() {
 	SCB->AIRCR = 0x05FA0604; /* soft reset */
 }
 
+void uartReconfig(UBaseType_t UART, UBaseType_t uartSpeed) {
+	USART_InitTypeDef USART_InitStructure;
+
+	USART_InitStructure.USART_BaudRate = uartSpeed;
+	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+	USART_InitStructure.USART_StopBits = USART_StopBits_1;
+	USART_InitStructure.USART_Parity = USART_Parity_No;
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+	USART_Init(UART, &USART_InitStructure);
+}
+
+/*---------------------------------------------------------------------------*/
+
 UBaseType_t sysIoCtrl(UBaseType_t pinID, UBaseType_t lowerValue,
-		UBaseType_t upperValue, UBaseType_t duration,
-		UBaseType_t waveType) {
+		UBaseType_t upperValue, UBaseType_t duration, UBaseType_t waveType) {
 	DEBUGPRINT("Pin: %ld to value %ld\n", pinID, upperValue);
 	switch (pinID) {
 	case IO_LED_WHITE:
