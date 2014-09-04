@@ -233,12 +233,17 @@ odp_uds_generateTesterPresents(struct TPElement *tpList,
 	    // first we fill the telegram with the tester present data
 	    dp.len = 8;		/* Tester present message must be 8 bytes */
 	    dp.data = canBuffer;
-	    canBuffer[0] = 0x3E;
+	    canBuffer[0] = 0x02;	/* set DLC for 2 bytes indication */
+	    canBuffer[1] = 0x3E;
 
 	    DEBUGPRINT("send Tester Present %lX next %lX\n", tpList->canID,
 		       tpList->next);
 	    dp.recv = tpList->canID;
-	    canBuffer[1] = tpList->actTPType;
+	    canBuffer[2] = tpList->actTPType;
+	    // fill with padding zeros
+	    for (i = 3; i < 8; i++) {
+		canBuffer[i] = 0;
+	    }
 	    actBus_send(&dp);
 	    tpList->counter = tpList->tpFreq;
 	}
