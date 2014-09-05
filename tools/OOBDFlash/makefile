@@ -35,7 +35,7 @@ runjar:
 
 zip: jar
 	-rm OOBDFlash.zip
-	zip OOBDFlash.zip OOBDFlash.jar jars/* OOBDFlash.props
+	zip OOBDFlash.zip OOBDFlash.jar jars/* OOBDFlash.props runOOBDFlash.bat runOOBDFlash.sh
 
 clean:
 	-rm *.class *.java~ 
