@@ -1,16 +1,28 @@
 UDSLIB=../lib_protocol
 LUALIB=../../tools/lib_lua/
 LUAS=$(shell ../../tools/bin/filelist.sh lua)
-
-SPECS=$(shell ../../tools/bin/filelist.sh mdx)
-
+ifdef ENABLEODX
+	SPECS=$(shell ../../tools/bin/filelist.sh odx-d)
+else
+	SPECS=$(shell ../../tools/bin/filelist.sh mdx)
+endif
 SOURCES=$(shell ../../tools/bin/filelist.sh luasource)
 LBCFILES=$(shell ../../tools/bin/filelist.sh lbc)
 KCDFILES=$(shell ../../tools/bin/filelist.sh kcd)
 
 CFLAGS=
-MDXTFLAGS=../../tools/xmltools/mdx2opendiagx.xslt ../../tools/xmltools/opendiagx2oobd.xslt
-MDXTHTMLFLAGS=../../tools/xmltools/mdx2opendiagx.xslt ../../tools/xmltools/opendiagx2html.xslt
+ifdef ENABLEODX
+	ifdef ENABLEKWP2000
+		ODXTFLAGS=../../tools/xslt-files/input/odx-KWP.xslt ../../../tools/xslt-files/output/oobd-KWP.xslt
+		ODXTHTMLFLAGS=../../tools/xslt-files/input/odx-KWP.xslt ../../../tools/xslt-files/output/html.xslt
+	else
+		ODXTFLAGS=../../tools/xslt-files/input/odx-UDS.xslt ../../tools/xslt-files/output/oobd-UDS.xslt
+		ODXTHTMLFLAGS=../../tools/xslt-files/input/odx-UDS.xslt ../../tools/xslt-files/output/html.xslt
+	endif
+else
+	ODXTFLAGS=../../tools/xmltools/mdx2opendiagx.xslt ../../tools/xmltools/opendiagx2oobd.xslt
+	ODXTHTMLFLAGS=../../tools/xmltools/mdx2opendiagx.xslt ../../tools/xmltools/opendiagx2html.xslt
+endif
 
 KCDFLAGS=tr --omit-decl  ../../tools/xmltools/kcd2rtd.xslt
 KCDHTMLFLAGS=tr --omit-decl  ../../tools/xmltools/kcd2html.xslt
@@ -22,25 +34,36 @@ KCDHTMLFLAGS=tr --omit-decl  ../../tools/xmltools/kcd2html.xslt
 # do we have local files to copy? Then list them in "files.inc" as CPFILES=
 -include files.inc
 
-# do we want MDX files out of the MDX-pool to be compiled? Then list them in "mdx_pool_reference" as MDX_POOL=
--include mdx_pool_reference
+# do we want ODX/MDX files out of the ODX/MDX-pool to be compiled? Then list them in "mdx_pool_reference" or "odx_pool_reference" as MDX_POOL=
+#-include mdx_pool_reference
+-include odx_pool_reference
 
 ALLSOURCES=$(LUA_REFS) $(LUAS)
-SPECS+=$(MDX_POOL)
 
+ifdef ENABLEODX
+	SPECS+=$(ODX_POOL)
+else
+	SPECS+=$(MDX_POOL)
+endif
 
 OBJECTS=$(SOURCES:.luasource=.lbc)
 %.lbc: %.luasource 
 	$(OLP) $<  > lua.tmp
 	$(CC) $(CFLAGS) -o $@ lua.tmp
 
-
-SPECSOURCES=$(SPECS:.mdx=.luasource) 
+ifdef ENABLEODX
+SPECSOURCES=$(SPECS:.odx-d=.luasource) 
+%.luasource: %.odx-d
+	echo odx
+	$(ODXT) $(ODXTFLAGS) $< $(@F) 
+	$(ODXT) $(ODXTHTMLFLAGS) $<  $(*F).html
+else
+	SPECSOURCES=$(SPECS:.mdx=.luasource) 
 %.luasource: %.mdx
 	echo mdx
-	$(ODXT) $(MDXTFLAGS) $< $(@F) 
-	$(ODXT) $(MDXTHTMLFLAGS) $<  $(*F).html
-
+	$(ODXT) $(ODXTFLAGS) $< $(@F) 
+	$(ODXT) $(ODXTHTMLFLAGS) $<  $(*F).html
+endif
 
 LUASOURCES=$(ALLSOURCES:.lua=.luasource) 
 %.luasource: %.lua 
@@ -53,11 +76,8 @@ KCDSOURCES=$(KCDFILES:.kcd=.luasource)
 
 source: specs $(CUSTOMSOURCE) luas kcds
 luas: $(LUASOURCES) 
-specs: $(SPECSOURCES) $(MDXTFLAGS) $(CUSTOMSPECSOURCES)
+specs: $(SPECSOURCES) $(ODXTFLAGS) $(CUSTOMSPECSOURCES)
 kcds: $(KCDSOURCES) 
-
-
-	echo target
 scripts: $(OBJECTS) 
 pack: 
 ifdef ENABLEPGP
