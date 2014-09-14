@@ -25,7 +25,7 @@ namespace org.oobd.tools.olp
 
         static void Main(string[] args)
         {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Console.OutputEncoding = new System.Text.UTF8Encoding(false);
             if (args.Length == 1)
             {
                 System.Environment.Exit(doFile(args[0], args[0], 0));
@@ -57,7 +57,7 @@ olp is part of the OOBD toolset (www.oobd.org)", "$Rev: 255 $", "$Date: 2011-07-
             try
             {
                 //Console.Error.Write("{0} ",incFileName);
-                TextReader tr = new StreamReader(incFileName, System.Text.Encoding.UTF8);
+                TextReader tr = new StreamReader(incFileName, new System.Text.UTF8Encoding(false));
                 // no exception? Fine, then we can continue..
                 // save actual directory
                 String myCurrDir = Directory.GetCurrentDirectory();
@@ -110,7 +110,7 @@ olp is part of the OOBD toolset (www.oobd.org)", "$Rev: 255 $", "$Date: 2011-07-
                                 try
                                 {
                                     //Console.Error.Write("{0} ",incFileName);
-                                    TextReader optIncludeTr = new StreamReader(aMatch.Groups["file"].Value, System.Text.Encoding.UTF8);
+                                    TextReader optIncludeTr = new StreamReader(aMatch.Groups["file"].Value, new System.Text.UTF8Encoding(false));
                                     // no exception? Fine, then we can continue..
                                     String optLine;
                                     while ((optLine = optIncludeTr.ReadLine()) != null)
