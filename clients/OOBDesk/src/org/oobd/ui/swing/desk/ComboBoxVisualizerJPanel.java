@@ -178,13 +178,10 @@ public class ComboBoxVisualizerJPanel extends VisualizerJPanel implements IFvisu
         functionName.setText(onion.getOnionString("tooltip"));
         try {
             Onion items = (Onion) onion.getOnionObject("opts/content");
-            System.out.println("Onion:" + items.toString());
             Vector al = new Vector<String>();
             Iterator itr = items.sortedKeys();
             while (itr.hasNext()) {
                 Object element = itr.next();
-                System.out.print(element + " ");
-
                 al.add(items.get(element.toString()));
             }
             valueComboBox.setModel(new DefaultComboBoxModel(al));

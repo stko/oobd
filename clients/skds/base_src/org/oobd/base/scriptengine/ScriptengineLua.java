@@ -45,7 +45,6 @@ public class ScriptengineLua extends OobdScriptengine {
     public static final String ENG_LUA_STDLIB = "stdlib.lbc";
     private LuaState state;
     private LuaCallFrame callFrame;
-    private OobdScriptengine myself;
     private String scriptDir;
 
     public ScriptengineLua(String id, Core myCore, IFsystem mySystem) {
@@ -170,9 +169,9 @@ public class ScriptengineLua extends OobdScriptengine {
                 // BaseLib.luaAssert(nArguments >0, "not enough args");
                 initRPC(callFrame, nArguments);
                 Onion openXCJson = getLuaTable(0);
-                    if (openXCJson != null) {
-                    	core.getUiIF().openXCVehicleData(openXCJson);
-                    }
+                if (openXCJson != null) {
+                    core.getUiIF().openXCVehicleData(openXCJson);
+                }
                 finishRPC(callFrame, nArguments);
                 return 1;
             }
@@ -467,6 +466,20 @@ public class ScriptengineLua extends OobdScriptengine {
                 return 1;
             }
         });
+        register("ioInputCall", new JavaFunction() {
+
+            public int call(LuaCallFrame callFrame, int nArguments) {
+                initRPC(callFrame, nArguments);
+                Logger.getLogger(ScriptengineLua.class.getName()).log(
+                        Level.INFO,
+                        "Lua calls ioInputCall with string data:>" + getString(0)
+                        + "<");
+                String result = createInputTempFile(getString(0), getString(1), getString(2));
+                callFrame.push(result.intern());
+                finishRPC(callFrame, nArguments);
+                return 1;
+            }
+        });
 
         String scriptFileName = null;
         if (myStartupParam != null) {
@@ -564,32 +577,33 @@ public class ScriptengineLua extends OobdScriptengine {
         // seperator
         Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO,
                 "function to call in Lua:" + functionName);
-        LuaClosure fObject = (LuaClosure) state.getEnvironment().rawget(
-                functionName);
-        // System.err.println(fObject.getClass().toString());
-        // System.err.println(fObject.toString());
-        Object[] results = state.pcall(fObject, params);
-        if (results[0] != Boolean.TRUE) {
-            Object errorMessage = results[1];
-            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO,
-                    "Lua Crash: " + errorMessage);
-            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO,
-                    results[2].toString());
-            Throwable stacktrace = (Throwable) (results[3]);
-            if (stacktrace != null) {
-                stacktrace.printStackTrace();
+        try {
+            LuaClosure fObject = (LuaClosure) state.getEnvironment().rawget(
+                    functionName);
+            Object[] results = state.pcall(fObject, params);
+            if (results[0] != Boolean.TRUE) {
+                Object errorMessage = results[1];
+                Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO,
+                        "Lua Crash: " + errorMessage);
+                Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO,
+                        results[2].toString());
+                Throwable stacktrace = (Throwable) (results[3]);
+                if (stacktrace != null) {
+                    stacktrace.printStackTrace();
+                }
             }
-        }
 
-        // String response = BaseLib.rawTostring(fObject.env.rawget(1));
-        // fObject.push(response.intern());
-        if (results.length > 1) {
-            return (String) results[1];
-        } else {
-            return "";
-        }
+            // String response = BaseLib.rawTostring(fObject.env.rawget(1));
+            // fObject.push(response.intern());
+            if (results.length > 1) {
+                return (String) results[1];
+            } else {
+                return "";
+            }
 
-        // return "-";
+        } catch (Exception ex) {
+            return "function " + functionName + " not found";
+        }
     }
 
     public String GetVarString(String var) {
@@ -687,7 +701,7 @@ public class ScriptengineLua extends OobdScriptengine {
         Onion newOnion = new Onion();
         Object hash = input.next(null);
         while (hash != null) {
-            String key =  hash.toString();
+            String key = hash.toString();
             Object value = input.rawget(hash);
             try {
                 if (value instanceof String) {

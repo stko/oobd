@@ -4,6 +4,16 @@
  */
 package org.oobd.base.uihandler;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,6 +23,7 @@ import org.oobd.base.support.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONException;
+import org.oobd.base.scriptengine.OobdScriptengine;
 import org.oobd.base.visualizer.Visualizer;
 
 /**
@@ -48,6 +59,10 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
             if (myOnion.isType(CM_VALUE)) {
                 handleValue(myOnion);
                 return false;
+            }
+            if (myOnion.isType(CM_IOINPUT)) {
+                openTempFile(myOnion);
+                return true;
             }
             if (myOnion.isType(CM_UPDATE)) {
                 core.transferMsg(new Message(this, myOnion.getString("to"), myOnion));
@@ -151,6 +166,64 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
                 }
             }
         }
+    }
+
+    /**
+     * \brief Tells Value to all visualizers of a scriptengine
+     * 
+     * @param value
+     *            Onion containing value and scriptengine
+     * 
+     */
+    public void openTempFile(Onion value) {
+        InputStream myInputStream = null;
+        String myFileName = null;
+        try {
+            String owner = value.getOnionString("owner/name"); // who's the owner of
+            // that value?
+            if (owner == null) {
+                Logger.getLogger(Core.class.getName()).log(Level.WARNING,
+                        "onion id does not contain name");
+                return;
+            }
+            String filePath = Base64Coder.decodeString(value.getOnionString("filepath"));
+            String fileExtension = Base64Coder.decodeString(value.getOnionString("extension"));
+            String fileMessage = Base64Coder.decodeString(value.getOnionString("message"));
+            if (fileMessage.equalsIgnoreCase("html")) {
+                myFileName=filePath;
+                URL url = new URL(filePath);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 /* milliseconds */);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setRequestMethod("GET");
+                conn.setDoInput(true);
+                // Starts the query
+                conn.connect();
+                myInputStream = conn.getInputStream();
+            } else {
+                myFileName = getCore().getSystemIF().doFileSelector(filePath, fileExtension, fileMessage, false);
+                if (myFileName != null) {
+                    try {
+                        myInputStream = new FileInputStream(myFileName);
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(LocalOobdUIHandler.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+
+
+            if (myInputStream != null) {
+                OobdScriptengine actEngine = getCore().getScriptEngine(owner);
+                getCore().getSystemIF().createEngineTempFile(actEngine);
+
+                actEngine.fillTempFile(myInputStream);
+            } else {
+                myFileName = "";
+            }
+        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
+        }
+        value.setValue("result", Base64Coder.encodeString(myFileName));
     }
 
     /**

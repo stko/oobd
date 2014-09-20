@@ -57,7 +57,9 @@ public class Factory {
                     Logger.getLogger(Factory.class.getName()).log(Level.WARNING, "PGP File found: {0}" + file.getName() );
                     return new FileHandlerPGP(Core.getSingleInstance());
                 }else{
-                	return new FileHandlerLBC(Core.getSingleInstance());
+                	if (name[name.length-1].equals("lbc")) {
+                            return new FileHandlerLBC(Core.getSingleInstance());
+                        }
                 }
             }
         }

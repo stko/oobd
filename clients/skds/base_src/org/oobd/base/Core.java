@@ -440,6 +440,15 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 	}
 
 	/**
+	 * a help routine which returns the Scriptengine of a given ID
+	 * 
+	 * @return OobdScriptengine
+	 */
+	public OobdScriptengine getScriptEngine(String id) {
+		return activeEngines.get(id);
+	}
+
+	/**
 	 * supply Objects which binds to system specific hardware
 	 * 
 	 * @param typ
