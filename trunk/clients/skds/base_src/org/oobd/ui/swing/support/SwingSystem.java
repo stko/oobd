@@ -15,10 +15,12 @@ import org.oobd.base.OOBDConstants;
 import java.net.URL;
 import java.net.URLClassLoader;
 import org.oobd.base.port.ComPort_Win;
+import org.oobd.base.scriptengine.OobdScriptengine;
 import org.oobd.crypt.AES.EncodeDecodeAES;
 
 //import java.io.FileInputStream;
 import java.io.*;
+import javax.swing.JFileChooser;
 import org.oobd.base.archive.Archive;
 import org.oobd.base.archive.Factory;
 import org.oobd.base.support.Onion;
@@ -241,6 +243,80 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             // TODO Auto-generated catch block
             e.printStackTrace();
             userPassPhrase = "";
+        }
+    }
+
+    public void createEngineTempFile(OobdScriptengine eng) {
+        File f = null;
+
+        try {
+            //do we have to delete a previous first?
+
+            f = eng.getTempFile();
+            if (f != null) {
+                f.delete();
+            }
+            // creates temporary file
+            f = File.createTempFile("oobd", null, null);
+
+            // prints absolute path
+            System.out.println("temporary file created: " + f.getAbsolutePath());
+
+            // deletes file when the virtual machine terminate
+            f.deleteOnExit();
+
+            eng.setTempFile(f);
+
+        } catch (Exception e) {
+            // if any error occurs
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "could not create temp file! ", e);
+        }
+
+    }
+
+    public String doFileSelector(String path, final String extension, String message, Boolean save) {
+        JFileChooser chooser = new JFileChooser();
+        File oldDir = null;
+        String oldDirName = path;
+        if (oldDirName != null) {
+            oldDir = new File(oldDirName);
+        }
+        chooser.setCurrentDirectory(oldDir);
+        chooser.setSelectedFile(oldDir);
+        chooser.setMultiSelectionEnabled(false);
+        if (save){
+        chooser.setFileSelectionMode(JFileChooser.SAVE_DIALOG);
+        }else{
+            chooser.setFileSelectionMode(JFileChooser.OPEN_DIALOG);
+        }
+        chooser.addChoosableFileFilter(new javax.swing.filechooser.FileFilter() {
+
+            public boolean accept(File f) {
+                if (f.isDirectory()) {
+                    return true;
+                }
+                if (extension != null) {
+                    return f.getName().toLowerCase().endsWith(extension);
+                } else {
+                    return true;
+                }
+            }
+
+            public String getDescription() {
+                return extension + " Ext";
+            }
+        });
+        if ((save && chooser.showSaveDialog(null)== JFileChooser.APPROVE_OPTION) || (!save &&chooser.showOpenDialog(null)== JFileChooser.APPROVE_OPTION)
+                ) {
+            try {
+                return chooser.getSelectedFile().getAbsolutePath().toString();
+
+            } catch (Exception ex) {
+                Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
+            }
+        } else {
+            return null;
         }
     }
 }

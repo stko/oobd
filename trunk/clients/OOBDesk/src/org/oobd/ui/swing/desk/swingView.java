@@ -991,7 +991,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     @Action
     public void onClickMenu_Settings() {
-        System.out.println("Setting Menu selected");
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         //cl.next(mainPanel);
         cl.show(mainPanel, SETTINGSPANEL);
@@ -1074,7 +1073,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
         PWDialog pwDialog = new PWDialog(null);
         String str = pwDialog.showDialog();
-        System.out.printf("Password: %s\n", str);
         //       String str = JOptionPane.showInputDialog(null, "Enter your PGP PassPhrase : ",                "OOBD PGP Script Encryption", 1);
         if (str != null) {
             try {

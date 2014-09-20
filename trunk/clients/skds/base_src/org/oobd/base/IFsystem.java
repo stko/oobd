@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.io.InputStream;
 import java.util.prefs.Preferences;
+import org.oobd.base.scriptengine.OobdScriptengine;
 import org.oobd.base.support.Onion;
 
 /**
@@ -100,4 +101,23 @@ public interface IFsystem {
      * @param the user pass phrase
      */
     public void setUserPassPhrase(String upp);
+    
+    
+    /**
+     * \brief creates a new temporary file
+     * 
+     * @param the scriptengine, who's looking for a new data gain
+     */
+    public void createEngineTempFile(OobdScriptengine eng);
+
+    /**
+     * \brief generates and handles a Fileselector- Dialog
+     * 
+     * @param path : where to start the search
+     * @param extension : display filter in the file selector box
+     * @param message : title of the box, id supported
+     * @param save: Acts as "Save" Dialog, otherways as "Open"
+     * @return the path of the choosen file or null, if canceled
+     */
+    public String doFileSelector(String path, String extension,String message, Boolean Save);
 }

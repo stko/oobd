@@ -22,6 +22,7 @@ public interface OOBDConstants {
     public static final String CM_WRITESTRING = "WRITESTRING";
     public static final String CM_DBLOOKUP = "DBLOOKUP";
     public static final String CM_PARAM = "PARAM";
+    public static final String CM_IOINPUT = "IOINPUT";
     // IDs used for internal core list handling
     public static final String CL_PANE = "pane";
     public static final String CL_OBJECTS = "objects";

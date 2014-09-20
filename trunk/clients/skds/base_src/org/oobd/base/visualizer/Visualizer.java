@@ -135,338 +135,331 @@ import org.oobd.base.*;
  */
 public class Visualizer {
 
-	Onion ownerEngine;
-	Onion value;
-	String name;
-	String optId;
-	String optType;
-	String regex;
-	int min;
-	int max;
-	int step;
-	String unit;
-	String toolTip;
-	String lastValue = "";
-	int updateEvents;
-	int overflowProtectionCounter;
-	int averageOverflowProtection = 1;
-	int thisOverflowProtection = 1;
-	int nrOfTrials = 0;
-	IFvisualizer myObject;
-	boolean updateNeeded = false;
-	boolean obsulete = false;
-	Object relatedObject = null;
+    Onion ownerEngine;
+    Onion value;
+    String name;
+    String optId;
+    String optType;
+    String regex;
+    int min;
+    int max;
+    int step;
+    String unit;
+    String toolTip;
+    String lastValue = "";
+    int updateEvents;
+    int overflowProtectionCounter;
+    int averageOverflowProtection = 1;
+    int thisOverflowProtection = 1;
+    int nrOfTrials = 0;
+    IFvisualizer myObject;
+    boolean updateNeeded = false;
+    boolean obsulete = false;
+    Object relatedObject = null;
 
-	public Visualizer(Onion onion) {
-		ownerEngine = onion.getOnion(OOBDConstants.FN_OWNER);
-		name = onion.getOnionString(OOBDConstants.FN_NAME);
-		optId = onion.getOnionString(OOBDConstants.FN_OPTID);
-		optType = onion.getOnionString(OOBDConstants.FN_OPTTYPE);
-		regex = onion.getOnionString(OOBDConstants.FN_OPTREGEX);
-		try {
-			min = safeInt(onion.getOnionObject(OOBDConstants.FN_OPTMIN));
-		} catch (OnionNoEntryException e1) {
-			min = 0;
-		}
-		try {
-			max = safeInt(onion.getOnionObject(OOBDConstants.FN_OPTMAX));
-		} catch (OnionNoEntryException e1) {
-			max =0;
-		}
-		System.out.println("slider_regex="+regex);
-		System.out.println("slider_max="+max);
-		System.out.println("slider_min="+min);
-		try {
-			step = safeInt(onion.getOnionObject(OOBDConstants.FN_OPTSTEP));
-		} catch (OnionNoEntryException e1) {
-			step =0;
-		}
-		unit = onion.getOnionString(OOBDConstants.FN_OPTUNIT);
-		
-		toolTip = onion.getOnionBase64String(OOBDConstants.FN_TOOLTIP);
-		try {
-			updateEvents = onion.getInt(OOBDConstants.FN_UPDATEOPS);
-		} catch (JSONException e) {
-			updateEvents = 0;
-		}
-		value = onion;
-		// this.myObject=myObject;
-		Core.getSingleInstance().getUiHandler().addVisualizer(
-				ownerEngine.getOnionString(OOBDConstants.FN_NAME), this);
-	}
+    public Visualizer(Onion onion) {
+        ownerEngine = onion.getOnion(OOBDConstants.FN_OWNER);
+        name = onion.getOnionString(OOBDConstants.FN_NAME);
+        optId = onion.getOnionString(OOBDConstants.FN_OPTID);
+        optType = onion.getOnionString(OOBDConstants.FN_OPTTYPE);
+        regex = onion.getOnionString(OOBDConstants.FN_OPTREGEX);
+        try {
+            min = safeInt(onion.getOnionObject(OOBDConstants.FN_OPTMIN));
+        } catch (OnionNoEntryException e1) {
+            min = 0;
+        }
+        try {
+            max = safeInt(onion.getOnionObject(OOBDConstants.FN_OPTMAX));
+        } catch (OnionNoEntryException e1) {
+            max = 0;
+        }
+        try {
+            step = safeInt(onion.getOnionObject(OOBDConstants.FN_OPTSTEP));
+        } catch (OnionNoEntryException e1) {
+            step = 0;
+        }
+        unit = onion.getOnionString(OOBDConstants.FN_OPTUNIT);
 
-	/**
-	 * sets the corrosponding visual element to this visualizer
-	 * 
-	 * @param myObject
-	 */
-	public void setOwner(IFvisualizer myObject) {
-		this.myObject = myObject;
-	}
+        toolTip = onion.getOnionBase64String(OOBDConstants.FN_TOOLTIP);
+        try {
+            updateEvents = onion.getInt(OOBDConstants.FN_UPDATEOPS);
+        } catch (JSONException e) {
+            updateEvents = 0;
+        }
+        value = onion;
+        // this.myObject=myObject;
+        Core.getSingleInstance().getUiHandler().addVisualizer(
+                ownerEngine.getOnionString(OOBDConstants.FN_NAME), this);
+    }
 
-	/**
-	 * sets a generic object reference to this visualizer
-	 * 
-	 * @param myObject
-	 */
-	public void setReleatedObject(Object myObject) {
-		this.relatedObject = myObject;
-	}
+    /**
+     * sets the corrosponding visual element to this visualizer
+     * 
+     * @param myObject
+     */
+    public void setOwner(IFvisualizer myObject) {
+        this.myObject = myObject;
+    }
 
-	/**
-	 * gets a generic object reference to this visualizer
-	 * 
-	 * @param myObject
-	 */
-	public Object getReleatedObject() {
-		return this.relatedObject;
-	}
+    /**
+     * sets a generic object reference to this visualizer
+     * 
+     * @param myObject
+     */
+    public void setReleatedObject(Object myObject) {
+        this.relatedObject = myObject;
+    }
 
-	/**
-	 * sets the Value for this visualizer
-	 * 
-	 * @param myObject
-	 */
-	public void setValue(Onion value) {
-		if (!obsulete && this.name.matches(value.getOnionString("to/name"))) {
-			try {
-				Logger.getLogger(Visualizer.class.getName()).log(Level.INFO,
-						"Visualizer.setValue(): update needed.");
-				this.value = new Onion(value.toString());
-				if (getUpdateFlag(OOBDConstants.VE_LOG)
-						&& !lastValue.equalsIgnoreCase(this.toString())) {
-					Date date = new Date();
-					Core.getSingleInstance().outputText(
-							date.toGMTString() + "\t" + this.toString() + "\t"
-									+ this.toolTip);
-					lastValue = this.toString();
+    /**
+     * gets a generic object reference to this visualizer
+     * 
+     * @param myObject
+     */
+    public Object getReleatedObject() {
+        return this.relatedObject;
+    }
 
-				}
-				updateNeeded = true;
-				// as this is an actual value, we can reset the overflow
-				// protection for now and switch the protection delay one step
-				// downwards
-				averageOverflowProtection = (averageOverflowProtection
-						* nrOfTrials + thisOverflowProtection) / 2;
-				nrOfTrials = 0;
-				if (averageOverflowProtection < 1)
-					averageOverflowProtection = 1; // otherways the average calc
-													// won't work
-				thisOverflowProtection = 0;
-				System.out.println("set overflow delay to"
-						+ Integer.toString(averageOverflowProtection));
-				overflowProtectionCounter = 0;
+    /**
+     * sets the Value for this visualizer
+     * 
+     * @param myObject
+     */
+    public void setValue(Onion value) {
+        if (!obsulete && this.name.matches(value.getOnionString("to/name"))) {
+            try {
+                Logger.getLogger(Visualizer.class.getName()).log(Level.INFO,
+                        "Visualizer.setValue(): update needed.");
+                this.value = new Onion(value.toString());
+                if (getUpdateFlag(OOBDConstants.VE_LOG)
+                        && !lastValue.equalsIgnoreCase(this.toString())) {
+                    Date date = new Date();
+                    Core.getSingleInstance().outputText(
+                            date.toGMTString() + "\t" + this.toString() + "\t"
+                            + this.toolTip);
+                    lastValue = this.toString();
 
-			} catch (JSONException ex) {
-			}
-		}
-	}
+                }
+                updateNeeded = true;
+                // as this is an actual value, we can reset the overflow
+                // protection for now and switch the protection delay one step
+                // downwards
+                averageOverflowProtection = (averageOverflowProtection
+                        * nrOfTrials + thisOverflowProtection) / 2;
+                nrOfTrials = 0;
+                if (averageOverflowProtection < 1) {
+                    averageOverflowProtection = 1; // otherways the average calc
+                }													// won't work
+                thisOverflowProtection = 0;
+                System.out.println("set overflow delay to"
+                        + Integer.toString(averageOverflowProtection));
+                overflowProtectionCounter = 0;
 
-	public String getValue(String name) {
-		if (value != null) {
-			return value.getOnionString(name);
-		} else {
-			return null;
-		}
-	}
+            } catch (JSONException ex) {
+            }
+        }
+    }
 
-	public Object getValueOnion(String name) {
-		if (value != null) {
-			try {
-				return value.getOnionObject(name);
-			} catch (OnionNoEntryException e) {
-				return null;
-			}
-		} else {
-			return null;
-		}
-	}
+    public String getValue(String name) {
+        if (value != null) {
+            return value.getOnionString(name);
+        } else {
+            return null;
+        }
+    }
 
-	public boolean getUpdateFlag(int bitNr) {
-		return (updateEvents & (1 << bitNr)) != 0;
-	}
+    public Object getValueOnion(String name) {
+        if (value != null) {
+            try {
+                return value.getOnionObject(name);
+            } catch (OnionNoEntryException e) {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
 
-	public void setUpdateFlag(int bitNr, boolean bit) {
-		if (bit) {
-			updateEvents |= (1 << bitNr);
-		} else {
-			updateEvents &= (~(1 << bitNr));
-		}
-	}
+    public boolean getUpdateFlag(int bitNr) {
+        return (updateEvents & (1 << bitNr)) != 0;
+    }
 
-	/**
-	 * returns the name of the owning scriptengine
-	 * 
-	 * @return
-	 */
-	public String getOwnerEngine() {
-		return ownerEngine.getOnionString(OOBDConstants.FN_NAME);
-	}
+    public void setUpdateFlag(int bitNr, boolean bit) {
+        if (bit) {
+            updateEvents |= (1 << bitNr);
+        } else {
+            updateEvents &= (~(1 << bitNr));
+        }
+    }
 
-	/**
-	 * returns if the visualizer is if requested, where "" and "Label" equals the default type "Label"
-	 * 
-	 * @return 
-	 */
-	public boolean isTypeOf(String requestedType) {
-		if (requestedType!=null){
-			if ((requestedType.equals("") || requestedType.equalsIgnoreCase("Label")) && (optType==null || optType.equals("")|| optType.equalsIgnoreCase("Label"))) {
-				return true;
-			}else{
-				return requestedType.equalsIgnoreCase(optType);
-			}
-		}else{
-			return false;
-		}
-	}
+    /**
+     * returns the name of the owning scriptengine
+     * 
+     * @return
+     */
+    public String getOwnerEngine() {
+        return ownerEngine.getOnionString(OOBDConstants.FN_NAME);
+    }
 
-	
-	public String getRegex(){
-		return regex;
-	}
-	
-	public int getMin(){
-		return safeInt(min);
-	}
-	
-	public int getMax(){
-		return  safeInt(max);
-	}
-	
-	public int getStep(){
-		return  safeInt(step);
-	}
-	
-	public String getUnit(){
-		return unit;
-	}
-	
-	public String getName() {
-		return name;
-	}
+    /**
+     * returns if the visualizer is if requested, where "" and "Label" equals the default type "Label"
+     * 
+     * @return 
+     */
+    public boolean isTypeOf(String requestedType) {
+        if (requestedType != null) {
+            if ((requestedType.equals("") || requestedType.equalsIgnoreCase("Label")) && (optType == null || optType.equals("") || optType.equalsIgnoreCase("Label"))) {
+                return true;
+            } else {
+                return requestedType.equalsIgnoreCase(optType);
+            }
+        } else {
+            return false;
+        }
+    }
 
-	public String getToolTip() {
-		return toolTip;
-	}
+    public String getRegex() {
+        return regex;
+    }
 
-        
-public void inputNewValue(String newValue)        {
-    		if (value != null) {
-                    System.out.println("Set visualizer value to "+ newValue);
-			value.setValue("value", Base64Coder.encodeString(newValue));
-		} 
-}
-	@Override
-	public String toString() {
-		String val = getValue("value");
-		if (val == null) {
-			return "#NA";
-		} else {
-			return Base64Coder.decodeString(val);
-		}
+    public int getMin() {
+        return safeInt(min);
+    }
 
-	}
+    public int getMax() {
+        return safeInt(max);
+    }
 
-	/**
-	 * do update 0: start 1: update data 2: finish
-	 */
-	public void doUpdate(int updateLevel) {
-		if (obsulete) {
-			myObject = null; // set object reference to null, so that the
-								// garbage collection can remove it
-		} else {
-			if (myObject != null && updateNeeded) {
-				updateNeeded = !myObject.update(updateLevel);
-			}
-		}
-	}
+    public int getStep() {
+        return safeInt(step);
+    }
 
-	/**
-	 * Update request from Component \todo the information, if the user has
-	 * changed any selection, needs to be addded \ingroup visualisation
-	 */
-	public void updateRequest(int type) {
-		if (!obsulete) {
-			System.out.println("update request type " + Integer.toString(type));
-			if (type != OOBDConstants.UR_TIMER
-					|| overflowProtectionCounter == 0) {
-				Logger.getLogger(Visualizer.class.getName())
-						.log(Level.INFO,
-								"Update request" + Integer.toString(type)
-										+ " my ownwer is: "
-										+ ownerEngine.toString()
-										+ "actual visualizer data: "
-										+ value.toString());
-				try {
-					Core.getSingleInstance().transferMsg(
-							new Message(Core.getSingleInstance(),
-									OOBDConstants.UIHandlerMailboxName, new Onion(""
-											+ "{" + "'type':'"
-											+ OOBDConstants.CM_UPDATE + "',"
-											+ "'vis':'" + this.name + "',"
-											+ "'to':'" + getOwnerEngine()
-											+ "'," + "'optid':'" + this.optId
-											+ "'," + "'actValue':'"
-											+ getValue("value") + "',"
-											+ "'updType':"
-											+ Integer.toString(type) + "}")));
-				} catch (JSONException ex) {
-					Logger.getLogger(Visualizer.class.getName()).log(
-							Level.SEVERE, null, ex);
-				}
-				if (type == OOBDConstants.UR_TIMER) {
-					// reduce the actual delay time, which is used to reduce the
-					// overall number of
-					// sended msgs in case no update message is answered at all
-					overflowProtectionCounter = averageOverflowProtection;
-					nrOfTrials++;
-				}
-			} else {
-				// overflow delay seems not sufficent, so increase it
-				thisOverflowProtection++;
-				if (overflowProtectionCounter > 0)
-					overflowProtectionCounter--;
-				System.out.println("increase actual overflow delay to "
-						+ Integer.toString(thisOverflowProtection)
-						+ " overflowProtectionCounter:"
-						+ Integer.toString(overflowProtectionCounter));
-			}
-		}
-	}
+    public String getUnit() {
+        return unit;
+    }
 
-	/**
-	 * declares the visualizer as invalid, to that the core can remove it
-	 */
-	public void setRemove() {
-		obsulete = true;
-	}
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * tells the core, if that visualizer is valid or should be removed
-	 * 
-	 * @return
-	 */
-	public boolean getRemoved() {
-		return obsulete;
-	}
+    public String getToolTip() {
+        return toolTip;
+    }
 
-	public void inputNewValue(int progress) {
-		inputNewValue(new Integer(progress).toString());
-		
-	}
-	
-	public static int safeInt(Object value) {
-		if (value ==null) {
-			return 0;
-		}
-		if (value instanceof Integer) {
-			return (Integer) value;
-		}
-		try {
-			return Integer.parseInt(value.toString());
-		} catch (NumberFormatException ex) {
-			return 0;
-		}
-	}
-	
+    public void inputNewValue(String newValue) {
+        if (value != null) {
+            value.setValue("value", Base64Coder.encodeString(newValue));
+        }
+    }
+
+    @Override
+    public String toString() {
+        String val = getValue("value");
+        if (val == null) {
+            return "#NA";
+        } else {
+            return Base64Coder.decodeString(val);
+        }
+
+    }
+
+    /**
+     * do update 0: start 1: update data 2: finish
+     */
+    public void doUpdate(int updateLevel) {
+        if (obsulete) {
+            myObject = null; // set object reference to null, so that the
+            // garbage collection can remove it
+        } else {
+            if (myObject != null && updateNeeded) {
+                updateNeeded = !myObject.update(updateLevel);
+            }
+        }
+    }
+
+    /**
+     * Update request from Component \todo the information, if the user has
+     * changed any selection, needs to be addded \ingroup visualisation
+     */
+    public void updateRequest(int type) {
+        if (!obsulete) {
+            if (type != OOBDConstants.UR_TIMER
+                    || overflowProtectionCounter == 0) {
+                Logger.getLogger(Visualizer.class.getName()).log(Level.INFO,
+                        "Update request" + Integer.toString(type)
+                        + " my ownwer is: "
+                        + ownerEngine.toString()
+                        + "actual visualizer data: "
+                        + value.toString());
+                try {
+                    Core.getSingleInstance().transferMsg(
+                            new Message(Core.getSingleInstance(),
+                            OOBDConstants.UIHandlerMailboxName, new Onion(""
+                            + "{" + "'type':'"
+                            + OOBDConstants.CM_UPDATE + "',"
+                            + "'vis':'" + this.name + "',"
+                            + "'to':'" + getOwnerEngine()
+                            + "'," + "'optid':'" + this.optId
+                            + "'," + "'actValue':'"
+                            + getValue("value") + "',"
+                            + "'updType':"
+                            + Integer.toString(type) + "}")));
+                } catch (JSONException ex) {
+                    Logger.getLogger(Visualizer.class.getName()).log(
+                            Level.SEVERE, null, ex);
+                }
+                if (type == OOBDConstants.UR_TIMER) {
+                    // reduce the actual delay time, which is used to reduce the
+                    // overall number of
+                    // sended msgs in case no update message is answered at all
+                    overflowProtectionCounter = averageOverflowProtection;
+                    nrOfTrials++;
+                }
+            } else {
+                // overflow delay seems not sufficent, so increase it
+                thisOverflowProtection++;
+                if (overflowProtectionCounter > 0) {
+                    overflowProtectionCounter--;
+                }
+                System.out.println("increase actual overflow delay to "
+                        + Integer.toString(thisOverflowProtection)
+                        + " overflowProtectionCounter:"
+                        + Integer.toString(overflowProtectionCounter));
+            }
+        }
+    }
+
+    /**
+     * declares the visualizer as invalid, to that the core can remove it
+     */
+    public void setRemove() {
+        obsulete = true;
+    }
+
+    /**
+     * tells the core, if that visualizer is valid or should be removed
+     * 
+     * @return
+     */
+    public boolean getRemoved() {
+        return obsulete;
+    }
+
+    public void inputNewValue(int progress) {
+        inputNewValue(new Integer(progress).toString());
+
+    }
+
+    public static int safeInt(Object value) {
+        if (value == null) {
+            return 0;
+        }
+        if (value instanceof Integer) {
+            return (Integer) value;
+        }
+        try {
+            return Integer.parseInt(value.toString());
+        } catch (NumberFormatException ex) {
+            return 0;
+        }
+    }
 }
