@@ -108,7 +108,7 @@ public interface IFsystem {
      * 
      * @param the scriptengine, who's looking for a new data gain
      */
-    public void createEngineTempFile(OobdScriptengine eng);
+    public void createEngineTempInputFile(OobdScriptengine eng);
 
     /**
      * \brief generates and handles a Fileselector- Dialog

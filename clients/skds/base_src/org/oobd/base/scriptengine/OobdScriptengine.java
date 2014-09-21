@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import org.oobd.base.*;
 import org.oobd.base.support.*;
 import java.util.logging.Level;
@@ -23,7 +24,9 @@ import org.json.JSONException;
 abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstants {
 
     protected Onion myStartupParam;
-    protected File myTempFile = null;
+    protected File myTempInputFile = null;
+    protected FileInputStream actualOobdInputStream = null;
+    protected File myTempOutputFile = null;
     protected OobdScriptengine myself;
 
     public static String publicName() {
@@ -51,8 +54,8 @@ abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstan
      * 
      * @param the temp file path
      */
-    public void setTempFile(File newFile) {
-        myTempFile = newFile;
+    public void setTempInputFile(File newFile) {
+        myTempInputFile = newFile;
     }
 
     /**
@@ -60,8 +63,27 @@ abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstan
      * 
      * @return the actual temp file path
      */
-    public File getTempFile() {
-        return myTempFile;
+    public File getTempInputFile() {
+        return myTempInputFile;
+    }
+
+    /**
+     * \brief deletes the actual temporary input file, if exists
+     * 
+     */
+    public void removeTempInputFile() {
+        try {
+            if (actualOobdInputStream != null) {
+                actualOobdInputStream.close();
+                actualOobdInputStream = null;
+            }
+            if (myTempInputFile != null) {
+                myTempInputFile.delete();
+                myTempInputFile = null;
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(OobdScriptengine.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -119,13 +141,39 @@ abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstan
      * @param the inputstream
      * @return true if success 
      */
-    public boolean fillTempFile(InputStream in) {
+    public boolean fillTempInputFile(InputStreamReader in) {
         boolean res = false;
-        if (myTempFile != null) {
+        if (myTempInputFile != null) {
             try {
-                FileOutputStream myTempFileOutput = new FileOutputStream(myTempFile);
+                FileOutputStream myTempFileOutput = new FileOutputStream(myTempInputFile);
                 org.apache.commons.io.IOUtils.copy(in, myTempFileOutput);
                 res = true;
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(OobdScriptengine.class.getName()).log(Level.SEVERE, null, ex);
+
+            } catch (IOException ex) {
+                Logger.getLogger(OobdScriptengine.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return res;
+    }
+
+    /**
+     * \brief fills the temp file with data
+     * 
+     * @param the inputstream
+     * @return true if success 
+     */
+    public String readTempInputFile(String format) {
+        String res = "";
+        if (myTempInputFile != null) {
+            try {
+                if (actualOobdInputStream == null) {
+                    actualOobdInputStream = new FileInputStream(myTempInputFile);
+                }
+                res = org.apache.commons.io.IOUtils.toString(actualOobdInputStream);
+                actualOobdInputStream.close();
+                actualOobdInputStream = null;
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(OobdScriptengine.class.getName()).log(Level.SEVERE, null, ex);
 

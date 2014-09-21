@@ -4,13 +4,17 @@
  */
 package org.oobd.base.uihandler;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -176,7 +180,7 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
      * 
      */
     public void openTempFile(Onion value) {
-        InputStream myInputStream = null;
+        InputStreamReader myInputStream = null;
         String myFileName = null;
         try {
             String owner = value.getOnionString("owner/name"); // who's the owner of
@@ -190,7 +194,7 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
             String fileExtension = Base64Coder.decodeString(value.getOnionString("extension"));
             String fileMessage = Base64Coder.decodeString(value.getOnionString("message"));
             if (fileMessage.equalsIgnoreCase("html")) {
-                myFileName=filePath;
+                myFileName = filePath;
                 URL url = new URL(filePath);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setReadTimeout(10000 /* milliseconds */);
@@ -199,14 +203,44 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
                 conn.setDoInput(true);
                 // Starts the query
                 conn.connect();
-                myInputStream = conn.getInputStream();
-            } else {
-                myFileName = getCore().getSystemIF().doFileSelector(filePath, fileExtension, fileMessage, false);
-                if (myFileName != null) {
-                    try {
-                        myInputStream = new FileInputStream(myFileName);
-                    } catch (FileNotFoundException ex) {
-                        Logger.getLogger(LocalOobdUIHandler.class.getName()).log(Level.SEVERE, null, ex);
+                     int HttpResult = conn.getResponseCode();
+
+                    if (HttpResult == HttpURLConnection.HTTP_OK) {
+                        myInputStream = new InputStreamReader(conn.getInputStream(), "utf-8");
+                    } else {
+                        System.out.println(conn.getResponseMessage());
+                    }
+           } else {
+                if (fileMessage.equalsIgnoreCase("json")) {
+                    myFileName = filePath;
+                    URL url = new URL(filePath);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(10000 /* milliseconds */);
+                    conn.setConnectTimeout(15000 /* milliseconds */);
+                    conn.setDoOutput(true);
+                    conn.setDoInput(true);
+                    conn.setRequestProperty("Content-Type", "application/json; charset=utf8");
+                    conn.setRequestProperty("Accept", "application/json");
+                    conn.setRequestMethod("POST");
+                    conn.connect();
+                    OutputStream os = conn.getOutputStream();
+                    os.write(fileExtension.getBytes("UTF-8"));
+                    os.close();
+                    int HttpResult = conn.getResponseCode();
+
+                    if (HttpResult == HttpURLConnection.HTTP_OK) {
+                        myInputStream = new InputStreamReader(conn.getInputStream(), "utf-8");
+                    } else {
+                        System.out.println(conn.getResponseMessage());
+                    }
+                } else {
+                    myFileName = getCore().getSystemIF().doFileSelector(filePath, fileExtension, fileMessage, false);
+                    if (myFileName != null) {
+                        try {
+                            myInputStream = new FileReader(myFileName);
+                        } catch (FileNotFoundException ex) {
+                            Logger.getLogger(LocalOobdUIHandler.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
             }
@@ -214,9 +248,9 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
 
             if (myInputStream != null) {
                 OobdScriptengine actEngine = getCore().getScriptEngine(owner);
-                getCore().getSystemIF().createEngineTempFile(actEngine);
+                getCore().getSystemIF().createEngineTempInputFile(actEngine);
 
-                actEngine.fillTempFile(myInputStream);
+                actEngine.fillTempInputFile(myInputStream);
             } else {
                 myFileName = "";
             }

@@ -246,26 +246,20 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         }
     }
 
-    public void createEngineTempFile(OobdScriptengine eng) {
+    public void createEngineTempInputFile(OobdScriptengine eng) {
         File f = null;
 
         try {
             //do we have to delete a previous first?
 
-            f = eng.getTempFile();
-            if (f != null) {
-                f.delete();
-            }
+            eng.removeTempInputFile();
             // creates temporary file
             f = File.createTempFile("oobd", null, null);
-
-            // prints absolute path
-            System.out.println("temporary file created: " + f.getAbsolutePath());
 
             // deletes file when the virtual machine terminate
             f.deleteOnExit();
 
-            eng.setTempFile(f);
+            eng.setTempInputFile(f);
 
         } catch (Exception e) {
             // if any error occurs

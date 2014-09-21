@@ -17,6 +17,9 @@ serWait = serWaitCall
 serReadLn = serReadLnCall
 serDisplayWrite = serDisplayWriteCall
 openXCVehicleData =openXCVehicleDataCall
+ioInput = ioInputCall
+ioRead = ioReadCall
+ioWrite = ioWriteCall
 --]]
 
 --[[
