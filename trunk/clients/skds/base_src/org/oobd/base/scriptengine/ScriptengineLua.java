@@ -149,7 +149,6 @@ public class ScriptengineLua extends OobdScriptengine {
                     Onion optTable = getLuaTable(5);
                     if (optTable != null) {
                         myOnion.setValue("opts", optTable);
-                        System.out.println("Opt Onion:" + myOnion.toString());
                     }
                     core.transferMsg(new Message(myself, UIHandlerMailboxName,
                             myOnion));
@@ -470,12 +469,57 @@ public class ScriptengineLua extends OobdScriptengine {
 
             public int call(LuaCallFrame callFrame, int nArguments) {
                 initRPC(callFrame, nArguments);
+                String potentialJSONParam;
+                Onion optTable = null;
                 Logger.getLogger(ScriptengineLua.class.getName()).log(
                         Level.INFO,
                         "Lua calls ioInputCall with string data:>" + getString(0)
                         + "<");
-                String result = createInputTempFile(getString(0), getString(1), getString(2));
+                try {
+                    optTable = getLuaTable(1);
+                } catch (ClassCastException ex) {
+                    optTable = null;
+                }
+                if (optTable != null) {
+                    potentialJSONParam = optTable.toString();
+                } else {
+                    potentialJSONParam = getString(1);
+                }
+
+                String result = createInputTempFile(getString(0), potentialJSONParam, getString(2));
                 callFrame.push(result.intern());
+                finishRPC(callFrame, nArguments);
+                return 1;
+            }
+        });
+        register("ioReadCall", new JavaFunction() {
+
+            public int call(LuaCallFrame callFrame, int nArguments) {
+
+                // BaseLib.luaAssert(nArguments >0, "not enough args");
+                initRPC(callFrame, nArguments);
+                Logger.getLogger(ScriptengineLua.class.getName()).log(
+                        Level.INFO,
+                        "Lua calls ioReadCall with string data:>" + getString(0)
+                        + "<");
+
+                String result = readTempInputFile(getString(0));
+
+                if ("*json".equalsIgnoreCase(getString(0))) {
+                    Onion answer = null;
+                    try {
+                        answer = new Onion(result);
+                    } catch (JSONException ex) {
+                        Logger.getLogger(ScriptengineLua.class.getName()).log(
+                                Level.SEVERE, null, ex);
+                    }
+
+                    LuaTableImpl newTable = new LuaTableImpl();
+                    newTable = onion2Lua(answer);
+                    callFrame.push(newTable);
+                } else {
+                    callFrame.push(result.intern());
+                }
                 finishRPC(callFrame, nArguments);
                 return 1;
             }
