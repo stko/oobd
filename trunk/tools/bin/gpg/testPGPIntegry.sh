@@ -14,7 +14,7 @@ gpg --no-default-keyring --keyring "$PUBFILE" --secret-keyring "$SECFILE" --outp
 if [ $? -eq 0 ] ; then
 	echo "--------------------------------"
 	echo "Step 1: the user keys allowed to decrypt the group keys"
-	gpg  -o - --decrypt $appPassPhraseFile | gpg --passphrase-fd 0 --batch --yes --no-default-keyring --keyring "$PUBGROUPFILE" --secret-keyring ./actgroupkeys.sec --list-packets "$SCRIPTFILE"
+	gpg  -o - --decrypt $appPassPhraseFile | gpg --passphrase-fd 0 --batch --yes --no-default-keyring --keyring "$PUBGROUPFILE" --secret-keyring ./actgroupkeys.sec -o - --decrypt "$SCRIPTFILE" | md5sum
 	if [ $? -eq 0 ] ; then
 		echo "--------------------------------"
 		echo "Everything ok :-)"
