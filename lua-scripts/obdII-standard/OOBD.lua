@@ -15,7 +15,7 @@ function vin(oldvalue,id)
 	udsLen=receive()
 	if udsLen>0 then
 		if udsBuffer[1]==0x49 then
-			local pos=4
+			local pos=3
 			local res=""
 			while pos <= udsLen and pos < 36 do
 				if udsBuffer[pos]>31 then
