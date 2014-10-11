@@ -77,18 +77,18 @@ public class ComPort implements OOBDPort {
 		if (obdDevice != null) { // Get a BluetoothSocket to connect
 			// with the given BluetoothDevice
 			try {
-				mBluetoothAdapter.cancelDiscovery();
 				Log.v(this.getClass().getSimpleName(),
 						"Device " + obdDevice.getName());
 				java.lang.reflect.Method m = obdDevice.getClass().getMethod(
-//						"createRfcommSocket", new Class[] { int.class });
-				"createInsecureRfcommSocket", new Class[] { int.class });
+						"createRfcommSocket", new Class[] { int.class });
+//				"createInsecureRfcommSocket", new Class[] { int.class });
+				serialPort=null;
 				serialPort = (BluetoothSocket) m.invoke(obdDevice,
-						Integer.valueOf(1));
+						1);
 
 				if (serialPort != null) {
 					try {
-
+						mBluetoothAdapter.cancelDiscovery();
 						serialPort.connect();
 						Log.d("OOBD:Bluetooth", "Bluetooth connected");
 						inputStream = serialPort.getInputStream();
