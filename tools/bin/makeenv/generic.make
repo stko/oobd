@@ -40,12 +40,6 @@ KCDHTMLFLAGS=tr --omit-decl  ../../tools/xmltools/kcd2html.xslt
 
 ALLSOURCES=$(LUA_REFS) $(LUAS)
 
-ifdef ENABLEODX
-	SPECS+=$(ODX_POOL)
-else
-	SPECS+=$(MDX_POOL)
-endif
-
 OBJECTS=$(SOURCES:.luasource=.lbc)
 %.lbc: %.luasource 
 	$(OLP) $<  > lua.tmp
@@ -65,7 +59,8 @@ else
 	$(ODXT) $(ODXTHTMLFLAGS) $<  $(*F).html
 endif
 
-LUASOURCES=$(ALLSOURCES:.lua=.luasource) 
+#LUASOURCES=$(ALLSOURCES:.lua=.luasource) 
+LUASOURCES:=$(notdir  $(ALLSOURCES:.lua=.luasource))
 %.luasource: %.lua 
 	cp -p $< $(@F) 
 
