@@ -1,0 +1,23 @@
+{
+    "manifest_version": 2,
+    "name": "OOBD Kadaver",     
+    "description": "Provides Remote connection for CANINVADER OBD Diagnostic Tool",
+    "version": "0.1",
+    "icons": {
+        "16": "icon.png",
+        "128": "icon.png"
+    },
+    "app": {
+        "background": {
+            "scripts": ["main.js"]
+        }
+    },
+    "permissions": [
+        {"fileSystem": ["directory"]}
+    ],
+    "bluetooth": {
+        "socket": true,
+        "uuids": [ "1101", "00001101-0000-1000-8000-00805f9b34fb", "cc8894db-f550-4a33-8a02-fd8a99fe38fb", "fa87c0d0-afac-11de-8a39-0800200c9a66", "8e3ad063-db38-4289-aa8f-b30e4223cf40"],
+        "low_energy": true
+    }
+}   

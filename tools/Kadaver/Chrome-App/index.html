@@ -1,0 +1,87 @@
+<html>
+    <head>
+        <title>OOBD Kadaver</title>
+        <script src="foreground.js"></script>
+    </head>
+    <body>
+        <h1>OOBD Remote Connector</h1>
+        <div id="bluetoothconnect">Not connected</div>
+        <div id="devicenames">Getting Bluetooth Devices...</div>
+         <div id="bluetoothstatus">Nothing doing</div>
+        <button id="discovery" class="mainbutton" disabled="true">Start Discovery</button>
+        <button id="service" class="mainbutton" disabled="true">Send Init</button>
+        <button id="disconnect" class="mainbutton" disabled="true">Disconnect</button>
+        <div id="channel">-</div>
+<!--        <div id='btDeviceSelect '></div>
+        <div id='connect'>CON</div>-->
+<div id="outputWS"></div>
+        
+        <style>
+            body {
+                background-color:#e5e5e5;   
+            }
+            .deviceitem {
+                font-weight:500;
+                color:#393939;
+                cursor: pointer;
+                margin-bottom:8px;
+            }
+            .disabled {
+                font-size:6pt;
+                opacity:0.5;
+                -webkit-animation-duration: 1s;
+                cursor: default ;
+            }
+            #bluetoothconnect {
+                text-transform: uppercase;
+                color: #777;   
+                padding-bottom:8px;
+            }
+            h1 {
+                margin-bottom:0px;   
+                color:#333;
+            }
+            input {
+                width:80%;
+                margin-bottom:8px;
+                color:#e5e5e5;
+                border:solid 1px #999;
+                padding-left:4px;
+            }
+            .mainbutton {
+                padding-top:16px;
+                text-transform: uppercase;
+                color:#09f;
+                border:none;
+                background-color:inherit;
+                cursor: pointer;
+                font-weight:500;
+                opacity:1;
+                margin-left:16px;
+            }
+            .mainbutton:disabled {
+                opacity:0.4;   
+                color:#999;
+            }
+            #devicenames {
+                margin-bottom:24px;   
+            }
+            #bluetoothstatus {
+                font-size:10pt;
+                color:#999;
+            }
+            #imagetable {
+                text-align:center;
+                font-size:11pt;
+                color:#555;
+                margin-top:16px;
+            }
+        </style>
+    </body>
+        <!--
+        /*chrome.runtime.onInstalled.addListener(function() {
+        //App installed. Do any initialization here 
+"fileSystem": ["write", "retainEntries", "directory"],
+    });*/
+    -->
+</html>
