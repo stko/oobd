@@ -1073,6 +1073,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
         PWDialog pwDialog = new PWDialog(null);
         String str = pwDialog.showDialog();
+        System.err.println("passwort="+str);
         //       String str = JOptionPane.showInputDialog(null, "Enter your PGP PassPhrase : ",                "OOBD PGP Script Encryption", 1);
         if (str != null) {
             try {

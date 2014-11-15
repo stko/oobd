@@ -17,4 +17,6 @@ public abstract class OobdBus extends OobdPlugin{
         super(name);
     }
 
+    public abstract void receiveString (String msg);
+    
 }

@@ -14,10 +14,12 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.*;
 
+
 public class BusCom extends OobdBus implements OOBDConstants {
 
     static Enumeration portList;
     static boolean outputBufferEmptyFlag = false;
+       ComReader reader = null;
 
     public BusCom() {
         super("Buscom");
@@ -35,14 +37,7 @@ public class BusCom extends OobdBus implements OOBDConstants {
 
     public void run() {
 
-        ComReader reader;
-        Onion portType = null;
-        try {
-            portType = new Onion("{'type':'serial'}");
-        } catch (JSONException ex) {
-            Logger.getLogger(BusCom.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        reader = new ComReader();
+         reader = new ComReader();
         while (keepRunning == true) {
             Message msg = getMsg(true);
             Onion on = msg.getContent();
@@ -73,7 +68,7 @@ public class BusCom extends OobdBus implements OOBDConstants {
                 }
             } else if ("connect".equalsIgnoreCase(command)) {
                 reader.close();
-                Boolean result = reader.connect((OOBDPort) getCore().supplyHardwareHandle(portType));
+                Boolean result = reader.connect((OOBDPort) getCore().supplyHardwareHandle(on),on, this);
                 try {
                     replyMsg(msg, new Onion("" + "{'type':'" + CM_RES_BUS
                             + "'," + "'owner':" + "{'name':'" + getPluginName()
@@ -105,8 +100,14 @@ public class BusCom extends OobdBus implements OOBDConstants {
             }
         }
     }
-}
 
+    @Override
+    public void receiveString(String msg) {
+        if (reader != null){
+            reader.receiveString(msg);
+        }
+    }
+}
 class ComReader implements Runnable {
 
     public String URL = null;
@@ -115,15 +116,15 @@ class ComReader implements Runnable {
 
     public ComReader() {
 
-        new Thread(this).start();
+        //new Thread(this).start();
     }
 
-    public boolean connect(OOBDPort portHandle) {
+    public boolean connect(OOBDPort portHandle, Onion options, OobdBus bus) {
         if (comHandle != null) {
             comHandle.close();
             comHandle = null;
         }
-        if (portHandle.connect(null)) {
+        if (portHandle.connect(options, bus )) {
             comHandle = portHandle;
             return true;
         } else {
@@ -135,7 +136,7 @@ class ComReader implements Runnable {
     public void close() {
         if (comHandle != null) {
             try {
-                comHandle.resetConnection();
+                comHandle.close();
                 comHandle = null;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -143,6 +144,10 @@ class ComReader implements Runnable {
         }
     }
 
+public synchronized void receiveString(String msg){
+    inBuffer.append(msg);
+}    
+    
     public synchronized void write(char c) {
         if (comHandle != null && comHandle.getOutputStream() != null) {
             try {
@@ -155,41 +160,13 @@ class ComReader implements Runnable {
     }
 
     public synchronized void write(String s) {
-        if (comHandle != null && comHandle.getOutputStream() != null) {
-            try {
-                Logger.getLogger(ComReader.class.getName()).log(Level.INFO,
-                        "Serial output:" + s);
-                comHandle.getOutputStream().write(s.getBytes(), 0, s.length());
-                // outStream.flush();
-            } catch (IOException ex) {
-                Logger.getLogger(ComReader.class.getName()).log(Level.WARNING,
-                        null, ex);
-            }
+        if (comHandle != null) {
+            
+                comHandle.write(s); 
+                
         }
     }
 
-    public synchronized char readChar() {
-        int inChar = -1;
-        if (comHandle != null && comHandle.getInputStream() != null) {
-            Logger.getLogger(BusCom.class.getName()).log(Level.INFO,
-                    "call available");
-            try {
-                if (comHandle.getInputStream().available() > 0) {
-                    inChar = comHandle.getInputStream().read();
-                    return (char) inChar;
-                }
-            } catch (Exception ex) {
-                Logger.getLogger(ComReader.class.getName()).log(Level.WARNING,
-                        null, ex);
-            }
-        }
-        return (char) 0;
-
-    }
-
-    public synchronized boolean isEmpty() {
-        return (comHandle == null || !(comHandle.available()));
-    }
 
     /**
      * \todo this routine actual polls, but as e.g. shown in the purejavacomm-

@@ -7,6 +7,7 @@ package org.oobd.base.port;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.oobd.base.*;
+import org.oobd.base.bus.OobdBus;
 import org.oobd.base.port.OOBDPort;
 import org.oobd.base.port.PortInfo;
 import org.oobd.base.support.Onion;
@@ -20,7 +21,7 @@ import java.util.prefs.Preferences;
  *
  * @author steffen
  */
-public class ComPort_Unix implements OOBDPort {
+public class ComPort_Unix implements OOBDPort, SerialPortEventListener {
 
     CommPortIdentifier portId;
     CommPortIdentifier saveportId;
@@ -28,6 +29,7 @@ public class ComPort_Unix implements OOBDPort {
     InputStream inputStream;
     OutputStream outputStream;
     SerialPort serialPort;
+    OobdBus msgReceiver;
 
     public OutputStream getOutputStream() {
         return outputStream;
@@ -37,10 +39,11 @@ public class ComPort_Unix implements OOBDPort {
         return inputStream;
     }
 
-    public boolean connect(Onion options) {
+    public boolean connect(Onion options, OobdBus receiveListener) {
         Preferences props = Core.getSingleInstance().getSystemIF().loadPreferences(OOBDConstants.FT_RAW, OOBDConstants.AppPrefsFileName);
-         String defaultPort = "";
+        String defaultPort = "";
         Boolean portFound = false;
+        msgReceiver = receiveListener;
 
         // determine the name of the serial port on several operating systems
         String osname = System.getProperty("os.name", "").toLowerCase();
@@ -88,8 +91,13 @@ public class ComPort_Unix implements OOBDPort {
                         outputStream = serialPort.getOutputStream();
                         //outStreamWriter = new OutputStreamWriter(outStream, "iso-8859-1");
                         serialPort.enableReceiveTimeout(5);
-                         attachShutDownHook();
-                       return true;
+                        try {
+                            serialPort.addEventListener(this);
+                        } catch (TooManyListenersException ex) {
+                            Logger.getLogger(ComPort_Unix.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        attachShutDownHook();
+                        return true;
                     } catch (UnsupportedCommOperationException ex) {
                         Logger.getLogger(ComPort_Unix.class.getName()).log(Level.SEVERE, "Unsupported serial port parameter", ex);
                         return false;
@@ -118,12 +126,12 @@ public class ComPort_Unix implements OOBDPort {
             return inputStream != null && inputStream.available() > 0;
         } catch (IOException ex) {
             // broken socket: Close it..
-            resetConnection();
+            close();
             return false;
         }
     }
 
-    public OOBDPort close() {
+    public void close() {
         if (serialPort != null) {
             try {
                 inputStream.close();
@@ -144,32 +152,27 @@ public class ComPort_Unix implements OOBDPort {
                 e.printStackTrace();
             }
         }
-        return null;
-    }
-
-    public OOBDPort resetConnection() {
-        return close();
     }
 
     public PortInfo[] getPorts() {
         Vector<PortInfo> portVector = new Vector();
 
-                portList = CommPortIdentifier.getPortIdentifiers();
-                if (portList == null || !portList.hasMoreElements()){
-				PortInfo[] DeviceSet = new PortInfo[1];
-				DeviceSet[0] = new PortInfo("", "No Comports found :-(");
-				return DeviceSet;
+        portList = CommPortIdentifier.getPortIdentifiers();
+        if (portList == null || !portList.hasMoreElements()) {
+            PortInfo[] DeviceSet = new PortInfo[1];
+            DeviceSet[0] = new PortInfo("", "No Comports found :-(");
+            return DeviceSet;
 
-                }
+        }
         while (portList.hasMoreElements()) {
             portId = (CommPortIdentifier) portList.nextElement();
             if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-                portVector.add(new PortInfo("",portId.getName()));
+                portVector.add(new PortInfo("", portId.getName()));
             }
 
         }
-               ArrayList<PortInfo> myList= Collections.list(portList);
-               return (PortInfo[])myList.toArray();
+        ArrayList<PortInfo> myList = Collections.list(portList);
+        return (PortInfo[]) myList.toArray();
 
     }
 
@@ -185,5 +188,37 @@ public class ComPort_Unix implements OOBDPort {
         });
         System.out.println("Shut Down Hook Attached.");
 
+    }
+
+    public void serialEvent(SerialPortEvent spe) {
+        if (spe.getEventType() == SerialPortEvent.DATA_AVAILABLE && inputStream != null) {
+            int n;
+            try {
+                n = inputStream.available();
+                if (n > 0) {
+                    byte[] buffer = new byte[n];
+
+                    inputStream.read(buffer, 0, n);
+                    msgReceiver.receiveString(new String(buffer));
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(ComPort_Unix.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+    }
+
+    public synchronized void write(String s) {
+        if (outputStream != null) {
+            try {
+                Logger.getLogger(ComPort_Win.class.getName()).log(Level.INFO,
+                        "Serial output:" + s);
+                outputStream.write(s.getBytes(), 0, s.length());
+                // outStream.flush();
+            } catch (IOException ex) {
+                Logger.getLogger(ComPort_Win.class.getName()).log(Level.WARNING,
+                        null, ex);
+            }
+        }
     }
 }

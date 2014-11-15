@@ -44,4 +44,9 @@ public class BusEcho extends OobdBus implements OOBDConstants {
 
 
     }
+
+    @Override
+    public void receiveString(String msg) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
