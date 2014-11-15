@@ -57,6 +57,8 @@ public interface OOBDConstants {
     public final static String AppPrefsFileName = "app.props";
      //key names for properties
      public final static String PropName_SerialPort ="SerialPort";
+     public final static String PropName_KadaverServer ="KadaverServer";
+     public final static String PropName_KadaverServerDefault ="ws://oobd.luxen.org";
      public final static String PropName_ScriptDir ="ScriptDir";
      public final static String PropName_ScriptName ="Script";
      public final static String PropName_OutputDir ="OutputDir";

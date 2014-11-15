@@ -5,6 +5,7 @@
 package org.oobd.ui.swing.support;
 
 import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
 import java.util.prefs.Preferences;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,11 +21,13 @@ import org.oobd.crypt.AES.EncodeDecodeAES;
 
 //import java.io.FileInputStream;
 import java.io.*;
+import java.net.URI;
 import javax.swing.JFileChooser;
 import org.oobd.base.archive.Archive;
 import org.oobd.base.archive.Factory;
 import org.oobd.base.support.Onion;
 import org.oobd.base.port.ComPort_Unix;
+import org.oobd.base.port.ComPort_Kadaver;
 import org.oobd.crypt.AES.PassPhraseProvider;
 
 /**
@@ -166,17 +169,30 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     }
 
     public Object supplyHardwareHandle(Onion typ) {
-        String osname = System.getProperty("os.name", "").toLowerCase();
-        Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "OS detected: " + osname);
-        try {
-            if (osname.startsWith("windows")) {
-                return new ComPort_Win();
-            } else {
-                return new ComPort_Unix();
-            }
+        String handleType = typ.getOnionString("type");
+        if ("serial".equalsIgnoreCase(handleType)) {
+            String osname = System.getProperty("os.name", "").toLowerCase();
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "OS detected: " + osname);
+            try {
+                if (osname.startsWith("windows")) {
+                    return new ComPort_Win();
+                } else {
+                    return new ComPort_Unix();
+                }
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return null;
+            }
+        } else if ("kadaver".equalsIgnoreCase(handleType)) {
+            Preferences props = Core.getSingleInstance().getSystemIF().loadPreferences(OOBDConstants.FT_RAW, OOBDConstants.AppPrefsFileName);
+            try {
+                return new ComPort_Kadaver(new URI(props.get(OOBDConstants.PropName_KadaverServer, PropName_KadaverServerDefault)));
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
+            }
+        } else {
             return null;
         }
 
@@ -278,9 +294,9 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         chooser.setCurrentDirectory(oldDir);
         chooser.setSelectedFile(oldDir);
         chooser.setMultiSelectionEnabled(false);
-        if (save){
-        chooser.setFileSelectionMode(JFileChooser.SAVE_DIALOG);
-        }else{
+        if (save) {
+            chooser.setFileSelectionMode(JFileChooser.SAVE_DIALOG);
+        } else {
             chooser.setFileSelectionMode(JFileChooser.OPEN_DIALOG);
         }
         chooser.addChoosableFileFilter(new javax.swing.filechooser.FileFilter() {
@@ -300,8 +316,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                 return extension + " Ext";
             }
         });
-        if ((save && chooser.showSaveDialog(null)== JFileChooser.APPROVE_OPTION) || (!save &&chooser.showOpenDialog(null)== JFileChooser.APPROVE_OPTION)
-                ) {
+        if ((save && chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) || (!save && chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)) {
             try {
                 return chooser.getSelectedFile().getAbsolutePath().toString();
 

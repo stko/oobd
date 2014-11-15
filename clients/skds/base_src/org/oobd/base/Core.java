@@ -794,6 +794,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 			}
 			if (receiver == null) {
 				receiver = busses.get(msg.rec);
+                                //hardwired: websocket tsting
+                                msg.content.setValue("type", "kadaver");
 			}
 			if (receiver == null) {
 				receiver = connectors.get(msg.rec);
