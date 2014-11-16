@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.prefs.Preferences;
 import java.io.*;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.oobd.base.Core;
 import org.oobd.base.OOBDConstants;
@@ -12,16 +14,21 @@ import org.oobd.base.IFui;
 import org.oobd.base.archive.*;
 
 import org.oobd.base.support.Onion;
+import org.oobd.base.scriptengine.OobdScriptengine;
 import org.oobd.crypt.AES.EncodeDecodeAES;
 import org.oobd.crypt.AES.PassPhraseProvider;
 import org.oobd.ui.android.Diagnose;
 import org.oobd.ui.android.bus.ComPort;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Application;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 
 
@@ -274,4 +281,139 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 			return false;
 		}
 	}
+	
+	public void createEngineTempInputFile(OobdScriptengine eng) {
+        File f = null;
+
+        try {
+            //do we have to delete a previous first?
+
+            eng.removeTempInputFile();
+            // creates temporary file
+            f = File.createTempFile("oobd", null, null);
+
+            // deletes file when the virtual machine terminate
+            f.deleteOnExit();
+
+            eng.setTempInputFile(f);
+
+        } catch (Exception e) {
+            // if any error occurs
+			Log.v(this.getClass().getSimpleName(),
+					"could not create temp file!", e);
+         }
+
+    }
+
+    public String doFileSelector(String path, final String extension, String message, Boolean save) {
+ 
+    	
+    	
+    	
+		Intent intent = new Intent("org.openintents.action.PICK_FILE");
+		intent.putExtra(
+				Intent.EXTRA_TITLE,
+				"Save as text");
+		startActivityForResult(intent, 1);
+
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	JFileChooser chooser = new JFileChooser();
+        File oldDir = null;
+        String oldDirName = path;
+        if (oldDirName != null) {
+            oldDir = new File(oldDirName);
+        }
+        chooser.setCurrentDirectory(oldDir);
+        chooser.setSelectedFile(oldDir);
+        chooser.setMultiSelectionEnabled(false);
+        if (save){
+        chooser.setFileSelectionMode(JFileChooser.SAVE_DIALOG);
+        }else{
+            chooser.setFileSelectionMode(JFileChooser.OPEN_DIALOG);
+        }
+        chooser.addChoosableFileFilter(new javax.swing.filechooser.FileFilter() {
+
+            public boolean accept(File f) {
+                if (f.isDirectory()) {
+                    return true;
+                }
+                if (extension != null) {
+                    return f.getName().toLowerCase().endsWith(extension);
+                } else {
+                    return true;
+                }
+            }
+
+            public String getDescription() {
+                return extension + " Ext";
+            }
+        });
+        if ((save && chooser.showSaveDialog(null)== JFileChooser.APPROVE_OPTION) || (!save &&chooser.showOpenDialog(null)== JFileChooser.APPROVE_OPTION)
+                ) {
+            try {
+                return chooser.getSelectedFile().getAbsolutePath().toString();
+
+            } catch (Exception ex) {
+                Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+    
+    public boolean FileselectorCallback(String selectedFilName){
+		final File file = new File(filePath);
+		if (file.exists()) {
+			AlertDialog alertDialog = new AlertDialog.Builder(
+					myOutputActivityInstance).create();
+			alertDialog.setTitle("File already exist!");
+			alertDialog.setMessage("OK to overwrite?");
+			alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,"OK",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int which) {
+							saveOutput(file);
+						}
+					});
+			alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,"Cancel", (DialogInterface.OnClickListener)null);
+			alertDialog.show();
+		} else {
+			saveOutput(file);
+		}
+  	
+    	
+    }
+    
+	public synchronized void onActivityResult(final int requestCode,
+			int resultCode, final Intent data) {
+
+		if (resultCode == Activity.RESULT_OK) {
+
+			URI filePath = null;
+			try {
+				filePath = new URI(data.getDataString());
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		} else if (resultCode == Activity.RESULT_CANCELED) {
+
+		}
+
+	}
+
+    
 }

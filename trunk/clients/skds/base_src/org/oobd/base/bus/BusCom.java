@@ -103,7 +103,9 @@ public class BusCom extends OobdBus implements OOBDConstants {
 
     @Override
     public void receiveString(String msg) {
+        System.err.println("Received (1) in Buscom:"+msg);
         if (reader != null){
+        System.err.println("Received (2) in Buscom:"+msg);
             reader.receiveString(msg);
         }
     }
@@ -234,7 +236,7 @@ public synchronized void receiveString(String msg){
     }
 
     public synchronized int read() {
-        if (comHandle != null && comHandle.getInputStream() != null) {
+  //      if (comHandle != null && comHandle.getInputStream() != null) {
             if (inBuffer.length() > 0) {
                 char c = inBuffer.charAt(0);
                 inBuffer.deleteCharAt(0);
@@ -245,8 +247,8 @@ public synchronized void receiveString(String msg){
             } /*
              * if (btConnection != null) { return btConnection.read(); }
              */
-        }
-        return -2; // -2 stands for "no connection"
+//        }
+//        return -2; // -2 stands for "no connection"
     }
 
     public String readln(int timeout, boolean ignoreEmptyLines) {
