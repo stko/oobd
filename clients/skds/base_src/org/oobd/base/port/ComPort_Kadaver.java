@@ -6,6 +6,7 @@ package org.oobd.base.port;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.json.JSONException;
 import org.oobd.base.port.OOBDPort;
 import org.oobd.base.*;
 import org.oobd.base.port.PortInfo;
@@ -26,12 +27,13 @@ import org.oobd.base.bus.OobdBus;
  */
 public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
 
-    InputStream inputStream=null;
-    OutputStream outputStream=null;
+    InputStream inputStream = null;
+    OutputStream outputStream = null;
     OobdBus msgReceiver;
-    
-    public ComPort_Kadaver(java.net.URI wsURL){
+
+    public ComPort_Kadaver(java.net.URI wsURL) {
         super(wsURL);
+        System.err.println("WS created with Uri" + wsURL.toASCIIString());
     }
 
     public OutputStream getOutputStream() {
@@ -43,26 +45,28 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
     }
 
     public boolean connect(Onion options, OobdBus receiveListener) {
-        Preferences props = Core.getSingleInstance().getSystemIF().loadPreferences(OOBDConstants.FT_RAW, OOBDConstants.AppPrefsFileName);
         msgReceiver = receiveListener;
         attachShutDownHook();
-        return true;
+        try {
+            connectBlocking();
+            return true;
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
 
 
     }
 
     public boolean available() {
-            return isOpen();
+        return isOpen();
     }
-
- 
-
 
     public PortInfo[] getPorts() {
 
-            PortInfo[] DeviceSet = new PortInfo[1];
-            DeviceSet[0] = new PortInfo("", "No Comports found :-(");
-            return DeviceSet;
+        PortInfo[] DeviceSet = new PortInfo[1];
+        DeviceSet[0] = new PortInfo("", "No Comports found :-(");
+        return DeviceSet;
 
     }
 
@@ -80,45 +84,47 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
 
     }
 
-   public  void onMessage( String message ){
-                    msgReceiver.receiveString(message);
-                }
-            
-    
-        public synchronized void write(String s) {
-            try {
-                Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.INFO,
-                        "Serial output:" + s);
-                send(s);
-                // outStream.flush();
-            } catch (NotYetConnectedException ex) {
-                Logger.getLogger(ComPort_Win.class.getName()).log(Level.WARNING,
-                        null, ex);
-            }
+    public void onMessage(String message) {
+        try {
+            Onion myOnion = new Onion(message);
+            System.err.println("Answer from remote:"+myOnion.getOnionBase64String("reply"));
+            msgReceiver.receiveString(myOnion.getOnionBase64String("reply"));
+        } catch (JSONException ex) {
+            Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
         }
-    
+    }
+
+    public synchronized void write(String s) {
+        try {
+            Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.INFO,
+                    "Serial output:" + s);
+            send(new Onion("{'msg':'" + Base64Coder.encodeString(s) + "','channel': '5000'}").toString());
+
+            // outStream.flush();
+        } catch (JSONException ex) {
+            Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NotYetConnectedException ex) {
+            Logger.getLogger(ComPort_Win.class.getName()).log(Level.WARNING,
+                    null, ex);
+        }
+    }
 
     @Override
     public void onOpen(ServerHandshake handshakedata) {
-        
     }
 
- 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        
     }
 
     @Override
     public void onError(Exception ex) {
         Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.WARNING,
-                        "Winsocket reports Error", ex);
+                "Winsocket reports Error", ex);
     }
-
 
     @Override
     public void close() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
 }
