@@ -54,51 +54,50 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
 
     }
 
-    boolean actionRequest(Onion myOnion) {
+    Onion actionRequest(Onion myOnion) {
         try {
             if (myOnion.isType(CM_VISUALIZE)) {
                 userInterface.visualize(myOnion);
-                return false;
+                return null;
             }
             if (myOnion.isType(CM_VALUE)) {
                 handleValue(myOnion);
-                return false;
+                return null;
             }
             if (myOnion.isType(CM_IOINPUT)) {
                 openTempFile(myOnion);
-                return true;
+                return new Onion();
             }
             if (myOnion.isType(CM_UPDATE)) {
                 core.transferMsg(new Message(this, myOnion.getString("to"), myOnion));
 
-                return false;
+                return null;
             }
 
             if (myOnion.isType(CM_PAGE)) {
                 userInterface.openPage(myOnion.getOnionString("owner"),
                         myOnion.getOnionString("name"), 1, 1);
-                return false;
+                return null;
             }
             if (myOnion.isType(CM_PAGEDONE)) {
                 userInterface.openPageCompleted(
                         myOnion.getOnionString("owner"),
                         myOnion.getOnionString("name"));
-                return false;
+                return null;
             }
             if (myOnion.isType(CM_WRITESTRING)) {
                 userInterface.sm(Base64Coder.decodeString(myOnion.getOnionString("data")));
-                return false;
+                return null;
             }
             if (myOnion.isType(CM_PARAM)) {
-                userInterface.requestParamInput(myOnion);
-                return false;
+                return userInterface.requestParamInput(myOnion);
             }
         } catch (org.json.JSONException e) {
             Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
                     "JSON exception..");
-            return false;
+            return null;
         }
-        return false;
+        return null;
     }
 
     public void handleMsg() {
@@ -106,14 +105,17 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
         while ((thisMsg = this.getMsgPort().getMsg(0)) != null) { // just waiting
             // and handling
             // messages
-            if (actionRequest(thisMsg.getContent()) == true) {
+            Onion answer = actionRequest(thisMsg.getContent());
+            if (answer != null) {
                 try {
                     thisMsg.setContent(thisMsg.getContent().setValue("replyID",
                             thisMsg.getContent().getInt("msgID")));
                 } catch (JSONException ex) {
                     Logger.getLogger(Core.class.getName()).log(
                             Level.SEVERE, null, ex);
+
                 }
+                thisMsg.getContent().setValue("answer", answer);
                 msgPort.replyMsg(thisMsg, thisMsg.getContent());
             }
 
@@ -203,14 +205,14 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
                 conn.setDoInput(true);
                 // Starts the query
                 conn.connect();
-                     int HttpResult = conn.getResponseCode();
+                int HttpResult = conn.getResponseCode();
 
-                    if (HttpResult == HttpURLConnection.HTTP_OK) {
-                        myInputStream = new InputStreamReader(conn.getInputStream(), "utf-8");
-                    } else {
-                        System.out.println(conn.getResponseMessage());
-                    }
-           } else {
+                if (HttpResult == HttpURLConnection.HTTP_OK) {
+                    myInputStream = new InputStreamReader(conn.getInputStream(), "utf-8");
+                } else {
+                    System.out.println(conn.getResponseMessage());
+                }
+            } else {
                 if (fileMessage.equalsIgnoreCase("json")) {
                     myFileName = filePath;
                     URL url = new URL(filePath);
