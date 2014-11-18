@@ -33,7 +33,6 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
 
     public ComPort_Kadaver(java.net.URI wsURL) {
         super(wsURL);
-        System.err.println("WS created with Uri" + wsURL.toASCIIString());
     }
 
     public OutputStream getOutputStream() {

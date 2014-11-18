@@ -23,7 +23,7 @@ public interface IFui {
      *
      * @param msg a param onion (see http://www.oobd.org/doku.php?id=dev:onionspec&#param)
      */
-    public void requestParamInput(Onion msg);
+    public Onion requestParamInput(Onion msg);
 
     /**
      * \brief register the core instance to the UserInterface

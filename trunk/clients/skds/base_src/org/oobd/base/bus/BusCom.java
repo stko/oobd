@@ -103,9 +103,7 @@ public class BusCom extends OobdBus implements OOBDConstants {
 
     @Override
     public void receiveString(String msg) {
-        System.err.println("Received (1) in Buscom:"+msg);
-        if (reader != null){
-        System.err.println("Received (2) in Buscom:"+msg);
+         if (reader != null){
             reader.receiveString(msg);
         }
     }

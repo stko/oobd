@@ -62,9 +62,9 @@ import javax.swing.JPasswordField;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.oobd.base.archive.*;
-
 
 /**
  * The application's main frame.
@@ -291,6 +291,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         settingsMenuItem = new javax.swing.JMenuItem();
+        jCheckBoxRemoteConnect = new javax.swing.JCheckBoxMenuItem();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         statusPanel = new javax.swing.JPanel();
@@ -646,9 +647,16 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         fileMenu.setName("fileMenu"); // NOI18N
 
         settingsMenuItem.setAction(actionMap.get("onClickMenu_Settings")); // NOI18N
+        settingsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         settingsMenuItem.setText(resourceMap.getString("settingsMenuItem.text")); // NOI18N
         settingsMenuItem.setName("settingsMenuItem"); // NOI18N
         fileMenu.add(settingsMenuItem);
+
+        jCheckBoxRemoteConnect.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
+        jCheckBoxRemoteConnect.setSelected(true);
+        jCheckBoxRemoteConnect.setText(resourceMap.getString("jCheckBoxRemoteConnect.text")); // NOI18N
+        jCheckBoxRemoteConnect.setName("jCheckBoxRemoteConnect"); // NOI18N
+        fileMenu.add(jCheckBoxRemoteConnect);
 
         aboutMenuItem.setAction(actionMap.get("showAboutBox")); // NOI18N
         aboutMenuItem.setName("aboutMenuItem"); // NOI18N
@@ -679,7 +687,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             .addGroup(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusMessageLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 319, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 333, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel)
@@ -729,19 +737,32 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         if (scriptSelectComboBox.getSelectedItem() == null) {
             return;
         }
-        String scriptName = scriptSelectComboBox.getSelectedItem().toString();
-        appProbs.put(OOBDConstants.PropName_ScriptName, scriptName);
-        oobdCore.getSystemIF().savePreferences(FT_PROPS,
-                OOBDConstants.AppPrefsFileName, appProbs);
-        CardLayout cl = (CardLayout) (mainPanel.getLayout());
-        cl.show(mainPanel, DIAGNOSEPANEL);
-        try {
-            startScriptEngine(
-                    new Onion("{" + "'scriptpath':'" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath().replace("\\", "/")
-                    + "'" + "}"));
-        } catch (JSONException ex) {
-            // TODO Auto-generated catch block
-            Logger.getLogger(swingView.class.getName()).log(Level.WARNING, "JSON creation error with file name:" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath(), ex.getMessage());
+
+        if (jCheckBoxRemoteConnect.isSelected()) {
+            try {
+                Onion answer = requestParamInput(new Onion("{" + "'param' : [{ " + "'type':'String',"
+                        + "'title':'" + Base64Coder.encodeString("Eingabefenster") + "',"
+                        + "'message':'" + Base64Coder.encodeString("und noch etwas Text..") + "'"
+                        + "}]}"));
+                System.err.println("Dialogantwort=" + answer.getOnionBase64String("answer"));
+            } catch (JSONException ex) {
+                Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            String scriptName = scriptSelectComboBox.getSelectedItem().toString();
+            appProbs.put(OOBDConstants.PropName_ScriptName, scriptName);
+            oobdCore.getSystemIF().savePreferences(FT_PROPS,
+                    OOBDConstants.AppPrefsFileName, appProbs);
+            CardLayout cl = (CardLayout) (mainPanel.getLayout());
+            cl.show(mainPanel, DIAGNOSEPANEL);
+            try {
+                startScriptEngine(
+                        new Onion("{" + "'scriptpath':'" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath().replace("\\", "/")
+                        + "'" + "}"));
+            } catch (JSONException ex) {
+                // TODO Auto-generated catch block
+                Logger.getLogger(swingView.class.getName()).log(Level.WARNING, "JSON creation error with file name:" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath(), ex.getMessage());
+            }
         }
     }//GEN-LAST:event_jLabel3MouseClicked
 
@@ -1011,6 +1032,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JToolBar diagnoseToolBar;
     private javax.swing.JButton gridBiggerButton;
     private javax.swing.JButton gridSmallerButton;
+    private javax.swing.JCheckBoxMenuItem jCheckBoxRemoteConnect;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1073,7 +1095,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
         PWDialog pwDialog = new PWDialog(null);
         String str = pwDialog.showDialog();
-        System.err.println("passwort="+str);
+        // System.err.println("passwort="+str);
         //       String str = JOptionPane.showInputDialog(null, "Enter your PGP PassPhrase : ",                "OOBD PGP Script Encryption", 1);
         if (str != null) {
             try {
@@ -1302,17 +1324,38 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }
 
     @Override
-    public void requestParamInput(Onion msg) {
-        String message = "internal error: Invalid cmd parameters";
-        ArrayList<Onion> params = msg.getOnionArray("PARAM", "param");
-        if (params != null) {
-            Onion p0Onion = params.get(0);
-            if (p0Onion != null) {
-                message = Base64Coder.decodeString(p0Onion.getOnionString("tooltip"));
+    public Onion requestParamInput(Onion msg) {
+        Onion answer = null;
+        boolean valid = false;
+        JSONArray params;
+        try {
+            params = msg.getJSONArray("param");
+            if (params != null) {
+                Onion p0Onion = new Onion(params.get(0).toString());
+                if (p0Onion != null) {
+                    String type = p0Onion.getOnionString("type");
+                    String message = Base64Coder.decodeString(p0Onion.getOnionString("message"));
+                    String title = Base64Coder.decodeString(p0Onion.getOnionString("title"));
+                    if ("alert".equalsIgnoreCase(type)) {
+                        JOptionPane.showMessageDialog(null, message);
+                        valid = true;
+                    }
+                    if ("string".equalsIgnoreCase(type)) {
+                        String answerString = JOptionPane.showInputDialog(null, message,
+                                title,
+                                JOptionPane.PLAIN_MESSAGE);
+                        answer = new Onion().setValue("answer", Base64Coder.encodeString(answerString));
+                        valid = true;
+                    }
+                }
             }
+        } catch (JSONException ex) {
+            Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
         }
-        JOptionPane.showMessageDialog(null, message);
-
+        if (!valid) {
+            JOptionPane.showMessageDialog(null, "internal error: Invalid cmd parameters");
+        }
+        return answer;
     }
 
     private int checkKeyFiles() {
@@ -1408,13 +1451,13 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }
+
 class PWDialog extends JDialog implements ActionListener {
 
     private JPanel myPanel = null;
     private JButton yesButton = null;
     private JButton noButton = null;
     final JPasswordField pgpPassword = new JPasswordField("");
-    
 
     public PWDialog(JFrame frame) {
         super(frame, true);
