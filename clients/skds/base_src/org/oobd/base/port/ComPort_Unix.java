@@ -96,6 +96,7 @@ public class ComPort_Unix implements OOBDPort, SerialPortEventListener {
                         } catch (TooManyListenersException ex) {
                             Logger.getLogger(ComPort_Unix.class.getName()).log(Level.SEVERE, null, ex);
                         }
+                        serialPort.notifyOnDataAvailable(true);
                         attachShutDownHook();
                         return true;
                     } catch (UnsupportedCommOperationException ex) {
@@ -133,6 +134,7 @@ public class ComPort_Unix implements OOBDPort, SerialPortEventListener {
 
     public void close() {
         if (serialPort != null) {
+            serialPort.removeEventListener();
             try {
                 inputStream.close();
                 inputStream = null;
@@ -181,12 +183,12 @@ public class ComPort_Unix implements OOBDPort, SerialPortEventListener {
 
             @Override
             public void run() {
-                System.out.println("Inside Add Shutdown Hook");
+                System.err.println("Inside Add Shutdown Hook");
                 close();
-                System.out.println("Serial line closed");
+                System.err.println("Serial line closed");
             }
         });
-        System.out.println("Shut Down Hook Attached.");
+        System.err.println("Shut Down Hook Attached.");
 
     }
 
@@ -194,18 +196,19 @@ public class ComPort_Unix implements OOBDPort, SerialPortEventListener {
         if (spe.getEventType() == SerialPortEvent.DATA_AVAILABLE && inputStream != null) {
             int n;
             try {
-                n = inputStream.available();
-                if (n > 0) {
-                    byte[] buffer = new byte[n];
+                while (inputStream.available() > 0) {
+                    n = inputStream.available();
+                    if (n > 0) {
+                        byte[] buffer = new byte[n];
 
-                    inputStream.read(buffer, 0, n);
-                    msgReceiver.receiveString(new String(buffer));
+                        inputStream.read(buffer, 0, n);
+                        msgReceiver.receiveString(new String(buffer));
+                    }
                 }
             } catch (IOException ex) {
-                Logger.getLogger(ComPort_Unix.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ComPort_Unix.class.getName()).log(Level.SEVERE, "Serial input event execption", ex);
             }
         }
-
     }
 
     public synchronized void write(String s) {

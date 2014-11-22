@@ -89,7 +89,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private int elementCount;
     private int defaultGridWidth = 200;
     private String pageTitle;
-
+    String connectURLDefault="";
+    
     public swingView(SingleFrameApplication app) {
         super(app);
 
@@ -759,6 +760,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             try {
                 Onion answer = requestParamInput(new Onion("{" + "'param' : [{ " + "'type':'String',"
                         + "'title':'" + Base64Coder.encodeString("Enter the Connect Number") + "',"
+                        + "'default':'" + Base64Coder.encodeString(connectURLDefault) + "',"
                         + "'message':'" + Base64Coder.encodeString("Please ask the person, who's connecting the dongle to the vehicle for the Connect Number displayed by his software") + "'"
                         + "}]}"));
                 if (answer == null) {
@@ -770,7 +772,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                     JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-                System.err.println("Dialogantwort=" + connectURL);
+                connectURLDefault= connectURL;
 
 
                 String serverURL = appProbs.get(OOBDConstants.PropName_KadaverServer, PropName_KadaverServerDefault);
@@ -1379,14 +1381,18 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                     String type = p0Onion.getOnionString("type");
                     String message = Base64Coder.decodeString(p0Onion.getOnionString("message"));
                     String title = Base64Coder.decodeString(p0Onion.getOnionString("title"));
+                    String defaultValue = p0Onion.getOnionString("default");
+                    if (defaultValue!=null){
+                        defaultValue = Base64Coder.decodeString(defaultValue);
+                    }
                     if ("alert".equalsIgnoreCase(type)) {
                         JOptionPane.showMessageDialog(null, message);
                         valid = true;
                     }
                     if ("string".equalsIgnoreCase(type)) {
-                        String answerString = JOptionPane.showInputDialog(null, message,
+                        String answerString = (String) JOptionPane.showInputDialog(null, message,
                                 title,
-                                JOptionPane.PLAIN_MESSAGE);
+                                JOptionPane.PLAIN_MESSAGE,null,null,defaultValue);
                         if (answerString != null) {
                             answer = new Onion().setValue("answer", Base64Coder.encodeString(answerString));
                         }

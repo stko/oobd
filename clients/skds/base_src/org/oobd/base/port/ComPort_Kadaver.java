@@ -78,19 +78,18 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
 
             @Override
             public void run() {
-                System.out.println("Inside Add Shutdown Hook");
+                System.err.println("Inside Add Shutdown Hook");
                 close();
-                System.out.println("Serial line closed");
+                System.err.println("Serial line closed");
             }
         });
-        System.out.println("Shut Down Hook Attached.");
+        System.err.println("Shut Down Hook Attached.");
 
     }
 
     public void onMessage(String message) {
         try {
             Onion myOnion = new Onion(message);
-            System.err.println("Answer from remote:"+myOnion.getOnionBase64String("reply"));
             msgReceiver.receiveString(myOnion.getOnionBase64String("reply"));
         } catch (JSONException ex) {
             Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
