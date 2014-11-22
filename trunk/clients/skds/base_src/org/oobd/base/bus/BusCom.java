@@ -145,7 +145,6 @@ class ComReader implements Runnable {
     }
 
 public synchronized void receiveString(String msg){
-    System.err.println("Received:"+msg);
     inBuffer.append(msg);
 }    
     
@@ -162,7 +161,6 @@ public synchronized void receiveString(String msg){
 
     public synchronized void write(String s) {
         if (comHandle != null) {
-            System.err.println ("write on comhandle:"+s);
                 comHandle.write(s); 
                 
         }else{

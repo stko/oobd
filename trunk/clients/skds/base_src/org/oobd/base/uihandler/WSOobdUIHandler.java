@@ -48,7 +48,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler{
     }
 
     public void start() {
-        System.out.println("Start WEB SERVER");
+        System.err.println("Start WEB SERVER");
         try {
             // 1) Create a Jetty server with the 8091 port.
             Server server = new Server(8081);

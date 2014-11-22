@@ -210,7 +210,7 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
                 if (HttpResult == HttpURLConnection.HTTP_OK) {
                     myInputStream = new InputStreamReader(conn.getInputStream(), "utf-8");
                 } else {
-                    System.out.println(conn.getResponseMessage());
+                    System.err.println(conn.getResponseMessage());
                 }
             } else {
                 if (fileMessage.equalsIgnoreCase("json")) {
@@ -233,7 +233,7 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
                     if (HttpResult == HttpURLConnection.HTTP_OK) {
                         myInputStream = new InputStreamReader(conn.getInputStream(), "utf-8");
                     } else {
-                        System.out.println(conn.getResponseMessage());
+                        System.err.println(conn.getResponseMessage());
                     }
                 } else {
                     myFileName = getCore().getSystemIF().doFileSelector(filePath, fileExtension, fileMessage, false);

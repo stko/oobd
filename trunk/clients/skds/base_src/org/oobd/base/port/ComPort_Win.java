@@ -94,7 +94,7 @@ public class ComPort_Win implements OOBDPort, SerialPortEventListener {
                         try {
                             serialPort.addEventListener(this);
                         } catch (TooManyListenersException ex) {
-                            Logger.getLogger(ComPort_Unix.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(ComPort_Win.class.getName()).log(Level.SEVERE, null, ex);
                         }
                         serialPort.notifyOnDataAvailable(true);
                         attachShutDownHook();
@@ -183,23 +183,21 @@ public class ComPort_Win implements OOBDPort, SerialPortEventListener {
 
             @Override
             public void run() {
-                System.out.println("Inside Add Shutdown Hook");
+                System.err.println("Inside Add Shutdown Hook");
                 close();
-                System.out.println("Serial line closed");
+                System.err.println("Serial line closed");
             }
         });
-        System.out.println("Shut Down Hook Attached.");
+        System.err.println("Shut Down Hook Attached.");
 
     }
 
     public void serialEvent(SerialPortEvent spe) {
-        System.err.println("Serial event:"+Integer.toString(spe.getEventType()));
         if (spe.getEventType() == SerialPortEvent.DATA_AVAILABLE && inputStream != null) {
             int n;
             try {
                 while (inputStream.available() > 0) {
                     n = inputStream.available();
-                    System.err.println("chars in inbut buffer:" + Integer.toString(n));
                     if (n > 0) {
                         byte[] buffer = new byte[n];
 
@@ -208,11 +206,8 @@ public class ComPort_Win implements OOBDPort, SerialPortEventListener {
                     }
                 }
             } catch (IOException ex) {
-            System.err.println(" serial input event execption?");
-                Logger.getLogger(ComPort_Unix.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ComPort_Win.class.getName()).log(Level.SEVERE, "Serial input event execption", ex);
             }
-        }else{
-            System.err.println("not a valid serial input event");
         }
     }
 

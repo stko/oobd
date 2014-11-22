@@ -51,7 +51,6 @@ public class Factory {
         }
         if (file.exists()) {
             String name[] = file.getName().split("\\.");
-            Logger.getLogger(Factory.class.getName()).log(Level.INFO, "Length of file name array: {0}" + name.length );
             if (name.length > 1) {
                 if (name[name.length-1].equals("pgp")) {
                     Logger.getLogger(Factory.class.getName()).log(Level.WARNING, "PGP File found: {0}" + file.getName() );

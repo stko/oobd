@@ -87,10 +87,8 @@ public class ScriptengineLua extends OobdScriptengine {
                 // cellList = new List();
                 String connectURLParameter= getString(0);
                 if (connectURLParameter!=null && !"".equals(connectURLParameter)){
-                    System.err.println("connectURLParameter:"+connectURLParameter);
                     connectURL=Base64Coder.encodeString(connectURLParameter);
                 }
-                System.err.println("connecturl:"+connectURL);
                 try {
                     myself.getMsgPort().sendAndWait(
                             new Message(myself, CoreMailboxName, new Onion(""
@@ -412,7 +410,7 @@ public class ScriptengineLua extends OobdScriptengine {
                 }
 
                 // Object tab = callFrame.get(0);
-                // System.out.println(tab.getClass().getName());
+                // System.err.println(tab.getClass().getName());
                 LuaTableImpl newTable = new LuaTableImpl();
                 // try {
                 // newTable = onion2Lua(new Onion("{" + "'type':'" +
@@ -427,7 +425,6 @@ public class ScriptengineLua extends OobdScriptengine {
                  */
                 // newTable.rawset("Testkey", "Testvalue");
                 callFrame.push(newTable);
-                System.out.println("onionMsg called\n");
                 finishRPC(callFrame, nArguments);
                 return 1;
             }

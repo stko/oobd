@@ -107,7 +107,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             case FT_DATABASE:
                 return fileName;
             case FT_KEY:
-                System.out.println("key path generated:" + System.getProperty("user.home") + java.io.File.separator + fileName);
+                System.err.println("key path generated:" + System.getProperty("user.home") + java.io.File.separator + fileName);
                 return System.getProperty("user.home") + java.io.File.separator + fileName;
 
             default:
@@ -170,8 +170,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
 
     public Object supplyHardwareHandle(Onion typ) {
         String connectURL = typ.getOnionBase64String("connecturl");
-        System.err.println("connecturl:"+connectURL);
-        if (connectURL.toLowerCase().startsWith("ws")){
+         if (connectURL.toLowerCase().startsWith("ws")){
             try {
                 return new ComPort_Kadaver(new URI(connectURL));
             } catch (URISyntaxException ex) {

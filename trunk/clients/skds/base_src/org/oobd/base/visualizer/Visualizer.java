@@ -250,7 +250,7 @@ public class Visualizer {
                     averageOverflowProtection = 1; // otherways the average calc
                 }													// won't work
                 thisOverflowProtection = 0;
-                System.out.println("set overflow delay to"
+                System.err.println("set overflow delay to"
                         + Integer.toString(averageOverflowProtection));
                 overflowProtectionCounter = 0;
 
@@ -420,7 +420,7 @@ public class Visualizer {
                 if (overflowProtectionCounter > 0) {
                     overflowProtectionCounter--;
                 }
-                System.out.println("increase actual overflow delay to "
+                System.err.println("increase actual overflow delay to "
                         + Integer.toString(thisOverflowProtection)
                         + " overflowProtectionCounter:"
                         + Integer.toString(overflowProtectionCounter));
