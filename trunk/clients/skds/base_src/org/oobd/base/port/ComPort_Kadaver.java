@@ -30,9 +30,13 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
     InputStream inputStream = null;
     OutputStream outputStream = null;
     OobdBus msgReceiver;
+    String channel;
 
     public ComPort_Kadaver(java.net.URI wsURL) {
         super(wsURL);
+        String [] parts=wsURL.toString().split("@");
+        parts=parts[0].split("://");
+        channel=parts[1];
     }
 
     public OutputStream getOutputStream() {
@@ -95,9 +99,8 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
 
     public synchronized void write(String s) {
         try {
-            Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.INFO,
-                    "Serial output:" + s);
-            send(new Onion("{'msg':'" + Base64Coder.encodeString(s) + "','channel': '5000'}").toString());
+            Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.INFO, "Serial output:{0}", s);
+            send(new Onion("{'msg':'" + Base64Coder.encodeString(s) + "','channel': '"+channel+"'}").toString());
 
             // outStream.flush();
         } catch (JSONException ex) {
@@ -124,6 +127,6 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
 
     @Override
     public void close() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        super.close();
     }
 }

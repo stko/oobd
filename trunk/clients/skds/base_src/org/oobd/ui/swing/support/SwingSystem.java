@@ -169,8 +169,17 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     }
 
     public Object supplyHardwareHandle(Onion typ) {
-        String handleType = typ.getOnionString("type");
-        if ("serial".equalsIgnoreCase(handleType)) {
+        String connectURL = typ.getOnionBase64String("connecturl");
+        System.err.println("connecturl:"+connectURL);
+        if (connectURL.toLowerCase().startsWith("ws")){
+            try {
+                return new ComPort_Kadaver(new URI(connectURL));
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
+            }
+            
+        }else if (connectURL.equalsIgnoreCase("serial")){
             String osname = System.getProperty("os.name", "").toLowerCase();
             Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "OS detected: " + osname);
             try {
@@ -184,18 +193,9 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                 ex.printStackTrace();
                 return null;
             }
-        } else if ("kadaver".equalsIgnoreCase(handleType)) {
-            Preferences props = Core.getSingleInstance().getSystemIF().loadPreferences(OOBDConstants.FT_RAW, OOBDConstants.AppPrefsFileName);
-            try {
-                return new ComPort_Kadaver(new URI(props.get(OOBDConstants.PropName_KadaverServer, PropName_KadaverServerDefault)));
-            } catch (URISyntaxException ex) {
-                Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);
-                return null;
-            }
-        } else {
+        } else{
             return null;
         }
-
     }
 
     public Preferences loadPreferences(int pathID, String filename) {

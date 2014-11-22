@@ -46,6 +46,7 @@ public class ScriptengineLua extends OobdScriptengine {
     private LuaState state;
     private LuaCallFrame callFrame;
     private String scriptDir;
+    private String connectURL;
 
     public ScriptengineLua(String id, Core myCore, IFsystem mySystem) {
         super(id, myCore, mySystem, "ScriptengineLua id " + id);
@@ -84,13 +85,20 @@ public class ScriptengineLua extends OobdScriptengine {
                 // BaseLib.luaAssert(nArguments >0, "not enough args");
                 initRPC(callFrame, nArguments);
                 // cellList = new List();
+                String connectURLParameter= getString(0);
+                if (connectURLParameter!=null && !"".equals(connectURLParameter)){
+                    System.err.println("connectURLParameter:"+connectURLParameter);
+                    connectURL=Base64Coder.encodeString(connectURLParameter);
+                }
+                System.err.println("connecturl:"+connectURL);
                 try {
                     myself.getMsgPort().sendAndWait(
                             new Message(myself, CoreMailboxName, new Onion(""
-                            + "{'type':'" + CM_CHANNEL + "',"
-                            + "'owner':'" + myself.getId() + "',"
-                            + "'command':'connect'," + "'channel':'"
-                            + getString(0) + "'}")), -1);
+                            + "{'type':'" + CM_CHANNEL + "'"
+                            + ",'owner':'" + myself.getId() + "'"
+                            + ",'command':'connect'"
+                            + ",'connecturl':'" + connectURL + "'" //just as reminder : connectURL comes already base64 coded
+                            + "}")), -1);
                 } catch (JSONException ex) {
                     Logger.getLogger(ScriptengineLua.class.getName()).log(
                             Level.SEVERE, null, ex);
@@ -528,6 +536,7 @@ public class ScriptengineLua extends OobdScriptengine {
         String scriptFileName = null;
         if (myStartupParam != null) {
             scriptFileName = myStartupParam.getOnionString("scriptpath");
+            connectURL = myStartupParam.getOnionString("connecturl");
         }
         // given filename overrides config settings
         if (scriptFileName == null) {

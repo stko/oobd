@@ -265,6 +265,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         pgpEnabled = new javax.swing.JCheckBox();
         pgpImportKeys = new javax.swing.JButton();
         pgpStatus = new javax.swing.JLabel();
+        jLabelRemoteServer = new javax.swing.JLabel();
+        jTextFieldRemoteServer = new javax.swing.JTextField();
         diagnose = new javax.swing.JPanel();
         toolPanelDiagnose = new javax.swing.JPanel();
         diagnoseTitle = new javax.swing.JLabel();
@@ -467,6 +469,22 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         gridBagConstraints.gridy = 2;
         settings.add(pgpStatus, gridBagConstraints);
 
+        jLabelRemoteServer.setText(resourceMap.getString("jLabelRemoteServer.text")); // NOI18N
+        jLabelRemoteServer.setName("jLabelRemoteServer"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        settings.add(jLabelRemoteServer, gridBagConstraints);
+
+        jTextFieldRemoteServer.setText(resourceMap.getString("jTextFieldRemoteServer.text")); // NOI18N
+        jTextFieldRemoteServer.setName("jTextFieldRemoteServer"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        settings.add(jTextFieldRemoteServer, gridBagConstraints);
+
         mainPanel.add(settings, "card4");
 
         diagnose.setName("diagnose"); // NOI18N
@@ -647,13 +665,11 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         fileMenu.setName("fileMenu"); // NOI18N
 
         settingsMenuItem.setAction(actionMap.get("onClickMenu_Settings")); // NOI18N
-        settingsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         settingsMenuItem.setText(resourceMap.getString("settingsMenuItem.text")); // NOI18N
         settingsMenuItem.setName("settingsMenuItem"); // NOI18N
         fileMenu.add(settingsMenuItem);
 
         jCheckBoxRemoteConnect.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
-        jCheckBoxRemoteConnect.setSelected(true);
         jCheckBoxRemoteConnect.setText(resourceMap.getString("jCheckBoxRemoteConnect.text")); // NOI18N
         jCheckBoxRemoteConnect.setName("jCheckBoxRemoteConnect"); // NOI18N
         fileMenu.add(jCheckBoxRemoteConnect);
@@ -714,6 +730,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
         appProbs.put(OOBDConstants.PropName_ScriptDir, scriptDir.getText());
         appProbs.put(OOBDConstants.PropName_SerialPort, comportComboBox.getEditor().getItem().toString());
+        appProbs.put(OOBDConstants.PropName_KadaverServer, jTextFieldRemoteServer.getText());
         oobdCore.getSystemIF().savePreferences(FT_PROPS,
                 OOBDConstants.AppPrefsFileName, appProbs);
         String script = appProbs.get(OOBDConstants.PropName_ScriptName, null);
@@ -737,33 +754,55 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         if (scriptSelectComboBox.getSelectedItem() == null) {
             return;
         }
-
+        String connectURL = "serial"; //this looks obviously not like an URL yet, but maybe in a  later extension
         if (jCheckBoxRemoteConnect.isSelected()) {
             try {
                 Onion answer = requestParamInput(new Onion("{" + "'param' : [{ " + "'type':'String',"
-                        + "'title':'" + Base64Coder.encodeString("Eingabefenster") + "',"
-                        + "'message':'" + Base64Coder.encodeString("und noch etwas Text..") + "'"
+                        + "'title':'" + Base64Coder.encodeString("Enter the Connect Number") + "',"
+                        + "'message':'" + Base64Coder.encodeString("Please ask the person, who's connecting the dongle to the vehicle for the Connect Number displayed by his software") + "'"
                         + "}]}"));
-                System.err.println("Dialogantwort=" + answer.getOnionBase64String("answer"));
+                if (answer == null) {
+                    JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                connectURL = answer.getOnionBase64String("answer");
+                if (connectURL == null || connectURL.equals("")) {
+                    JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                System.err.println("Dialogantwort=" + connectURL);
+
+
+                String serverURL = appProbs.get(OOBDConstants.PropName_KadaverServer, PropName_KadaverServerDefault);
+                String[] parts = serverURL.split("://");
+                if (parts.length != 2) {
+                    JOptionPane.showMessageDialog(null, "The Remote Connect URL is not a valid URL", "Wrong Format", JOptionPane.WARNING_MESSAGE);
+                    return;
+
+                }
+                connectURL = parts[0] + "://" + Base64Coder.encodeString(connectURL) + "@" + parts[1];
+
             } catch (JSONException ex) {
                 Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            String scriptName = scriptSelectComboBox.getSelectedItem().toString();
-            appProbs.put(OOBDConstants.PropName_ScriptName, scriptName);
-            oobdCore.getSystemIF().savePreferences(FT_PROPS,
-                    OOBDConstants.AppPrefsFileName, appProbs);
-            CardLayout cl = (CardLayout) (mainPanel.getLayout());
-            cl.show(mainPanel, DIAGNOSEPANEL);
-            try {
-                startScriptEngine(
-                        new Onion("{" + "'scriptpath':'" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath().replace("\\", "/")
-                        + "'" + "}"));
-            } catch (JSONException ex) {
-                // TODO Auto-generated catch block
-                Logger.getLogger(swingView.class.getName()).log(Level.WARNING, "JSON creation error with file name:" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath(), ex.getMessage());
+                return;
             }
         }
+        String scriptName = scriptSelectComboBox.getSelectedItem().toString();
+        appProbs.put(OOBDConstants.PropName_ScriptName, scriptName);
+        oobdCore.getSystemIF().savePreferences(FT_PROPS,
+                OOBDConstants.AppPrefsFileName, appProbs);
+        CardLayout cl = (CardLayout) (mainPanel.getLayout());
+        cl.show(mainPanel, DIAGNOSEPANEL);
+        try {
+            startScriptEngine(
+                    new Onion("{" + "'scriptpath':'" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath().replace("\\", "/") + "'"
+                    + ",'connecturl':'" + Base64Coder.encodeString(connectURL) + "'"
+                    + "}"));
+        } catch (JSONException ex) {
+            // TODO Auto-generated catch block
+            Logger.getLogger(swingView.class.getName()).log(Level.WARNING, "JSON creation error with file name:" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath(), ex.getMessage());
+        }
+
     }//GEN-LAST:event_jLabel3MouseClicked
 
     private void settingsComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_settingsComponentShown
@@ -810,6 +849,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
         scriptDir.setText(appProbs.get(OOBDConstants.PropName_ScriptDir, ""));
         pgpEnabled.setSelected("true".equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_PGPEnabled, "")));
+        jTextFieldRemoteServer.setText(appProbs.get(OOBDConstants.PropName_KadaverServer, OOBDConstants.PropName_KadaverServerDefault));
         updateUI();
     }
 
@@ -936,6 +976,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }//GEN-LAST:event_mainPanelComponentResized
 
     private void outputBackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outputBackButtonActionPerformed
+
         diagnoseTabPanel.setSelectedComponent(diagnosePanel);
     }//GEN-LAST:event_outputBackButtonActionPerformed
 
@@ -1036,11 +1077,13 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabelRemoteServer;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JTextArea jTextAreaOutput;
+    private javax.swing.JTextField jTextFieldRemoteServer;
     private javax.swing.JToggleButton logButton;
     private javax.swing.JPanel main;
     private javax.swing.JPanel mainPanel;
@@ -1344,7 +1387,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                         String answerString = JOptionPane.showInputDialog(null, message,
                                 title,
                                 JOptionPane.PLAIN_MESSAGE);
-                        answer = new Onion().setValue("answer", Base64Coder.encodeString(answerString));
+                        if (answerString != null) {
+                            answer = new Onion().setValue("answer", Base64Coder.encodeString(answerString));
+                        }
                         valid = true;
                     }
                 }

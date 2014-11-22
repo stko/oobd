@@ -21,7 +21,7 @@ import java.util.prefs.Preferences;
  *
  * @author steffen
  */
-public class ComPort_Win implements OOBDPort , SerialPortEventListener {
+public class ComPort_Win implements OOBDPort, SerialPortEventListener {
 
     CommPortIdentifier portId;
     CommPortIdentifier saveportId;
@@ -96,6 +96,7 @@ public class ComPort_Win implements OOBDPort , SerialPortEventListener {
                         } catch (TooManyListenersException ex) {
                             Logger.getLogger(ComPort_Unix.class.getName()).log(Level.SEVERE, null, ex);
                         }
+                        serialPort.notifyOnDataAvailable(true);
                         attachShutDownHook();
                         return true;
                     } catch (UnsupportedCommOperationException ex) {
@@ -133,6 +134,7 @@ public class ComPort_Win implements OOBDPort , SerialPortEventListener {
 
     public void close() {
         if (serialPort != null) {
+            serialPort.removeEventListener();
             try {
                 inputStream.close();
                 inputStream = null;
@@ -152,9 +154,8 @@ public class ComPort_Win implements OOBDPort , SerialPortEventListener {
                 e.printStackTrace();
             }
         }
-     }
+    }
 
- 
     public PortInfo[] getPorts() {
         Vector<PortInfo> portVector = new Vector();
 
@@ -176,7 +177,8 @@ public class ComPort_Win implements OOBDPort , SerialPortEventListener {
         return (PortInfo[]) myList.toArray();
 
     }
-        public void attachShutDownHook() {
+
+    public void attachShutDownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread() {
 
             @Override
@@ -191,25 +193,31 @@ public class ComPort_Win implements OOBDPort , SerialPortEventListener {
     }
 
     public void serialEvent(SerialPortEvent spe) {
+        System.err.println("Serial event:"+Integer.toString(spe.getEventType()));
         if (spe.getEventType() == SerialPortEvent.DATA_AVAILABLE && inputStream != null) {
             int n;
             try {
-                n = inputStream.available();
-                if (n > 0) {
-                    byte[] buffer = new byte[n];
+                while (inputStream.available() > 0) {
+                    n = inputStream.available();
+                    System.err.println("chars in inbut buffer:" + Integer.toString(n));
+                    if (n > 0) {
+                        byte[] buffer = new byte[n];
 
-                    inputStream.read(buffer, 0, n);
-                    msgReceiver.receiveString(new String(buffer));
+                        inputStream.read(buffer, 0, n);
+                        msgReceiver.receiveString(new String(buffer));
+                    }
                 }
             } catch (IOException ex) {
+            System.err.println(" serial input event execption?");
                 Logger.getLogger(ComPort_Unix.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }else{
+            System.err.println("not a valid serial input event");
         }
-
     }
-    
-        public synchronized void write(String s) {
-        if (outputStream!= null) {
+
+    public synchronized void write(String s) {
+        if (outputStream != null) {
             try {
                 Logger.getLogger(ComPort_Win.class.getName()).log(Level.INFO,
                         "Serial output:" + s);
@@ -221,5 +229,4 @@ public class ComPort_Win implements OOBDPort , SerialPortEventListener {
             }
         }
     }
-
 }

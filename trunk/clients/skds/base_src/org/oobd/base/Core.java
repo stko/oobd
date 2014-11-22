@@ -701,8 +701,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                         BusMailboxName, new Onion(""
                         + "{'type':'" + CM_BUSTEST
                         + "'," + "'command':'connect',"
-                        + "'port':'"
-                        + myOnion.getString("channel")
+                        + "'connecturl':'"
+                        + myOnion.getString("connecturl")
                         + "'}")), 35000); // 35 secs to
                 // connect
                 // to a
@@ -786,8 +786,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             }
             if (receiver == null) {
                 receiver = busses.get(msg.rec);
-                //hardwired: websocket tsting
-                msg.content.setValue("type", "kadaver");
             }
             if (receiver == null) {
                 receiver = connectors.get(msg.rec);
