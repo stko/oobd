@@ -49,6 +49,21 @@ end
 
 
 --[[
+isPermitted(permissionName): Checks, if permissionname is included in permission file "ScriptPermissions.perms"
+
+in there the global array scriptPermissions hold the key -> values, which works like flags. With the utility function isPermitted() is can be checked, if a flag is set here or not.
+
+Attention: Only the presence of a flag is checked, but not it's value! So also combinations like MyFlag = 0 , MyFlag = "No" or MyFlag = FALSE would give a positive result, as the key "MyFlag" itself exists. The only exeption is a MyFlag= nil, as this in fact deletes the whole entry.
+
+--]]
+
+
+function isPermitted(permissionName)
+	return scriptPermissions ~= nil and scriptPermissions[permissionName:lower()] ~= nil
+end 
+
+
+--[[
 setLocale(oldvalue,id): Sets global LOCALE variable to "id". If not set, LOCALE is set to "en_en" at first call of getLocalePrintf
 --]]
 function setLocale(oldvalue,id)
