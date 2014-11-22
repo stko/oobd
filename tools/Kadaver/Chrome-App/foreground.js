@@ -217,6 +217,7 @@ var max = 99999999;
 thisChannel=Math.floor(Math.random()*(max-min+1)+min)+"";
 console.log("Mychannel: "+thisChannel);
 app.getElementById("bluetoothstatus").innerHTML =thisChannel;
+app.getElementById("channel").innerHTML =thisChannel;
 
 
 

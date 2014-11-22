@@ -478,11 +478,11 @@ function readAnswerArray()
   return #res , res -- return nr of lines and answer array
 end
 
-function identifyOOBDInterface()
+function identifyOOBDInterface(connectURL)
 	local answ=""
 	-- test for older software versions
 	if openChannel ~= nil then
-	  openChannel("serial")
+	  openChannel(connectURL)
 	end 
 	-- clean input queue
 	echoWrite("\r\r\r")
