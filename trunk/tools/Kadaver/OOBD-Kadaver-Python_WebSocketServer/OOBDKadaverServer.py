@@ -41,22 +41,24 @@ class SimpleChat(WebSocket):
 
    def handleMessage(self):
       if self.data is not None:
-	print 'try to send...'
 	try:
 		thisMsg=loads(str(self.data))
-		print 'message: '+str(self.data)
+#		print 'message: '+str(self.data)
 		try:
 			thisMsg['reply'] # checks if variable exists
-			print "reply found"
+			thiscmd=decodestring(thisMsg['reply'])
+			thiscmd.replace("\r","\n")
+			print decodestring(thisMsg['channel'])+"<"+thiscmd+"\n"
 			self.channel='r'+thisMsg['channel']
 			prefix="s"
 		except Exception as n:
-			print " reply Exception: " , n
-			print "no reply found"
+			thiscmd=decodestring(thisMsg['msg'])
+			thiscmd.replace("\r","\n")
+			print decodestring(thisMsg['channel'])+">"+thiscmd+"\n"
 			self.channel='s'+thisMsg['channel']
 			prefix="r"
 		for client in self.server.connections.itervalues():
-			print 'actual client: '+ client.channel
+#			print 'actual client: '+ client.channel
 			if client != self and client.channel == prefix+thisMsg['channel'] :
 				try:
 					client.sendMessage(str(self.data))
@@ -69,28 +71,16 @@ class SimpleChat(WebSocket):
 
    def handleConnected(self):
       print self.address, 'connected'
-      for client in self.server.connections.itervalues():
-         if client != self:
-            try:
-               client.sendMessage(encodestring(str(self.address[0]) + ' - connected'))
-            except Exception as n:
-               print n
-
+ 
    def handleClose(self):
       print self.address, 'closed'
-      for client in self.server.connections.itervalues():
-         if client != self:
-            try:
-               client.sendMessage(encodestring(str(self.address[0]) + ' - disconnected'))
-            except Exception as n:
-               print n
-
+ 
 
 if __name__ == "__main__":
 
    parser = OptionParser(usage="usage: %prog [options]", version="%prog 1.0")
    parser.add_option("--host", default='', type='string', action="store", dest="host", help="hostname (localhost)")
-   parser.add_option("--port", default=8000, type='int', action="store", dest="port", help="port (8000)")
+   parser.add_option("--port", default=9000, type='int', action="store", dest="port", help="port (9000)")
    parser.add_option("--example", default='chat', type='string', action="store", dest="example", help="echo, chat")
    parser.add_option("--ssl", default=0, type='int', action="store", dest="ssl", help="ssl (1: on, 0: off (default))")
    parser.add_option("--cert", default='./cert.pem', type='string', action="store", dest="cert", help="cert (./cert.pem)")
