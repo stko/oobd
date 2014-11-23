@@ -206,7 +206,7 @@ function str2ab(str) {
 
 
     console.log("Starting WS Work");
-var wsUri = "ws://192.168.1.21:8000/";
+var wsUri = "ws://oobd.luxen.de:9000/";
 var outputWS;
 var thisChannel;
 
@@ -222,6 +222,25 @@ app.getElementById("channel").innerHTML =thisChannel;
 
 
     outputWS = document.getElementById("outputWS");
+
+	
+// http://demo.agektmr.com/dialog/ 
+	
+var wsdialog = app.getElementById('wsdialog');
+app.getElementById('show').onclick = function() {
+  wsdialog.showModal();
+};
+
+app.getElementById('close').onclick = function() {
+  var value = app.getElementById('return_value').value;
+  wsdialog.close(value);
+};
+app.getElementById('wsdialog').addEventListener('close', function() {
+  alert(this.returnValue);
+});
+
+
+
     testWebSocket();
 }
 
@@ -241,17 +260,22 @@ function testWebSocket() {
     };
 }
 
+function showStatus(event){
+	writeToScreen(event);
+}
+
+
 function onOpen(evt) {
-    writeToScreen("CONNECTED");
+    showStatus("WSCONNECTED");
     doSend("WebSocket rocks");
 }
 
 function onClose(evt) {
-    writeToScreen("DISCONNECTED");
+    showStatus("WSDISCONNECTED");
 }
 
 function onMessage(evt) {
-    writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data + '</span>');
+    showStatus("WSRECEIVE");
 	try {
 	obj = JSON.parse(evt.data);
 	if (obj.msg){
@@ -265,12 +289,13 @@ function onMessage(evt) {
 }
 
 function onError(evt) {
-    writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+    showStatus('WSERROR');
+    console.log('WS ERROR: ' + evt.data);
 }
 
 function doSend(message) {
 	var msg=JSON.stringify({reply: btoa(message), channel:btoa(thisChannel)});
-    writeToScreen("SENT: " + message + "=" +msg);
+    showStatus('WSSEND');
     websocket.send(msg);
 }
 
@@ -281,3 +306,5 @@ function writeToScreen(message) {
     outputWS.appendChild(pre);
 }
 window.addEventListener("load", init_WS, false);
+
+

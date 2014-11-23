@@ -4,18 +4,58 @@
         <script src="foreground.js"></script>
     </head>
     <body>
-        <h1>OOBD Remote Connector</h1>
-        <div id="bluetoothconnect">Not connected</div>
-        <div id="devicenames">Getting Bluetooth Devices...</div>
-         <div id="bluetoothstatus">Nothing doing</div>
-        <button id="discovery" class="mainbutton" disabled="true">Start Discovery</button>
-        <button id="service" class="mainbutton" disabled="true">Send Init</button>
-        <button id="disconnect" class="mainbutton" disabled="true">Disconnect</button>
-        <div id="channel">-</div>
-<!--        <div id='btDeviceSelect '></div>
-        <div id='connect'>CON</div>-->
-<div id="outputWS"></div>
-        
+        <table border="1" width="100%">
+			<tr>
+				<td rowspan="2"><svg width="48" height="96"><image xlink:href="OOBD_Kadaver.svg"  width="48" height="96"/></svg></td><td>-</td><td><h1>OOBD Kadaver</h1></td><td>-</td><td><svg width="48" height="48"><image xlink:href="laptop112.svg"  width="48" height="48"/></svg></td>
+			</tr>
+ 			<tr>
+				<td></td>
+				<td>The Remote Diagnostics Connector</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td colspan="5"><div id="bluetoothconnect">Not connected</div></td>
+			</tr>
+ 			<tr>
+				<td colspan="5"><div id="devicenames">Getting Bluetooth Devices...</div></td>
+			</tr>
+ 			<tr>
+				<td colspan="5"><div id="bluetoothstatus">Nothing doing</div></td>
+			</tr>
+ 			<tr>
+				<td colspan="5"><button id="discovery" class="mainbutton" disabled="true">Start Discovery</button></td>
+			</tr>
+ 			<tr>
+				<td colspan="5"><button id="service" class="mainbutton" disabled="true">Send Init</button></td>
+			</tr>
+ 			<tr>
+				<td colspan="5"><button id="disconnect" class="mainbutton" disabled="true">Disconnect</button></td>
+			</tr>
+ 			<tr>
+				<td colspan="5"><div id="channel">-</div></td>
+			</tr>
+ 			<tr>
+				<td colspan="5"><dialog id="wsdialog">
+				  <p>This is da dialog!</p>
+				  <input type="text" id="return_value" value="" placeholder="Enter value">
+				  <button id="close">Enter</button>
+				</dialog></td>
+			</tr>
+ 			<tr>
+				<td colspan="5"><button id="show">Open Dialog!</button></td>
+			</tr>
+ 			<tr>
+				<td colspan="5"><div id="outputWS"></div></td>
+			</tr>
+ 			<tr>
+				<td><svg width="48" height="48"><image xlink:href="car95.svg" width="48" height="48"/></svg></td>
+				<td></td>
+				<td><svg width="48" height="48"><image xlink:href="laptop112.svg"  width="48" height="48"/></svg></td>
+				<td></td>
+				<td><svg width="48" height="48"><image xlink:href="earth53.svg"  width="48" height="48"/></svg></td>
+			</tr>
+		</table>
         <style>
             body {
                 background-color:#e5e5e5;   
@@ -76,6 +116,20 @@
                 color:#555;
                 margin-top:16px;
             }
+			dialog {
+				border: 1px solid rgba(0, 0, 0, 0.3);
+				border-radius: 6px;
+				box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+			}
+			dialog::backdrop {
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-color: rgba(0, 0, 0, 0.8);
+			}
+			td { text-align: center; }
         </style>
     </body>
         <!--
