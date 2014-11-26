@@ -1,3 +1,4 @@
+function init_WS() {
 //
 //VIA https://developer.chrome.com/apps/app_bluetooth
 app = window.document;
@@ -69,33 +70,7 @@ chrome.bluetooth.getDevices(function(devices) {
     }
 });
 
-// Now begin the discovery process.
-function discovery() {
-    console.log("Starting device discovery");
-    chrome.bluetooth.startDiscovery(function() {
-        // Stop discovery after 30 seconds.
-        console.log("discover button");
-        try {
-            app.getElementById("discovery").innerHTML = "Discovering";
-            app.getElementById("discovery").disabled = true;
-        } catch (E) {
-            setTimeout(function() {
-                app.getElementById("discovery").innerHTML = "Discovering";
-                app.getElementById("discovery").disabled = true;
-            }, 1000);
-        }
-        setTimeout(function() {
-            app.getElementById("discovery").innerHTML = "Discover Devices";
-            app.getElementById("discovery").disabled = false;
-            app.getElementById("discovery").onclick = function() {
-                discovery();
-            };
-            chrome.bluetooth.stopDiscovery(function() {
-                console.log("Discovery Ends")
-            });
-        }, 30000);
-    });
-}
+
 discovery();
 
 
@@ -126,6 +101,140 @@ var onConnectedCallback = function() {
     }
 };
 
+
+
+chrome.bluetoothSocket.onReceive.addListener(function(receiveInfo) {
+    if (receiveInfo.socketId != socketId) {
+        app.getElementById("bluetoothstatus").innerHTML = "Got data from wrong socket";
+        return;
+    }
+    // receiveInfo.data is an ArrayBuffer.
+    app.getElementById("bluetoothstatus").innerHTML = "Received " + ab2str(receiveInfo.data);
+    console.log("Received: ", ab2str(receiveInfo.data));
+	doSend(ab2str(receiveInfo.data));
+});
+
+chrome.bluetoothSocket.onReceiveError.addListener(function(errorInfo) {
+    // Cause is in errorInfo.error.
+    console.log(errorInfo.errorMessage);
+    app.getElementById("bluetoothstatus").innerHTML = errorInfo.errorMessage;
+});
+
+function ab2str(buf) {
+    return String.fromCharCode.apply(null, new Uint8Array(buf));
+}
+
+function str2ab(str) {
+        var buf = new ArrayBuffer(str.length); 
+        var bufView = new Uint8Array(buf);
+        for (var i = 0, strLen = str.length; i < strLen; i++) {
+            bufView[i] = str.charCodeAt(i);
+        }
+        return buf;
+    }
+
+
+    console.log("Starting WS Work");
+var wsUri = "ws://oobd.luxen.de/websock/";
+var outputWS;
+var thisChannel;
+
+//function init_WS() {
+// create random channel number
+var min = 10000000;
+var max = 99999999;
+thisChannel=Math.floor(Math.random()*(max-min+1)+min)+"";
+console.log("Mychannel: "+thisChannel);
+app.getElementById("bluetoothstatus").innerHTML =thisChannel;
+app.getElementById("channel").innerHTML =thisChannel;
+
+
+
+    outputWS = document.getElementById("outputWS");
+
+	
+// http://demo.agektmr.com/dialog/ 
+	
+var wsdialog = app.getElementById('wsdialog');
+app.getElementById('show').onclick = function() {
+  wsdialog.showModal();
+};
+
+app.getElementById('close').onclick = function() {
+  var value = app.getElementById('return_value').value;
+  wsdialog.close(value);
+};
+app.getElementById('wsdialog').addEventListener('close', function() {
+  alert(this.returnValue);
+});
+
+
+
+    testWebSocket();
+}
+
+window.addEventListener("load", init_WS, false);
+
+function testWebSocket() {
+    websocket = new WebSocket(wsUri);
+    websocket.onopen = function(evt) {
+        onOpen(evt)
+    };
+    websocket.onclose = function(evt) {
+        onClose(evt)
+    };
+    websocket.onmessage = function(evt) {
+        onMessage(evt)
+    };
+    websocket.onerror = function(evt) {
+        onError(evt)
+    };
+}
+
+function showStatus(event){
+	writeToScreen(event);
+}
+
+function onOpen(evt) {
+    showStatus("WSCONNECTED");
+    doSend("WebSocket rocks");
+}
+
+function onClose(evt) {
+    showStatus("WSDISCONNECTED");
+}
+
+function onMessage(evt) {
+    showStatus("WSRECEIVE");
+	try {
+	obj = JSON.parse(evt.data);
+	if (obj.msg){
+		sendMessage(str2ab(atob(obj.msg)));
+	}
+	}
+	catch(err){
+		console.log("Json Error "+err.message);
+	}
+// MUSS NOCH AN DIE RICHTIGE STELLE!  websocket.close();
+}
+
+function onError(evt) {
+    showStatus('WSERROR');
+    console.log('WS ERROR: ' + evt.data);
+}
+
+function doSend(message) {
+	var msg=JSON.stringify({reply: btoa(message), channel:btoa(thisChannel)});
+    showStatus('WSSEND');
+    websocket.send(msg);
+}
+
+function writeToScreen(message) {
+    var pre = document.createElement("p");
+    pre.style.wordWrap = "break-word";
+    pre.innerHTML = message;
+    outputWS.appendChild(pre);
+}
 
 //"49aca6e6-0596-11e4-8f46-b2227cce2b54", "49aca9f2-0596-11e4-8f46-b2227cce2b54", 
 function connectTo(address) {
@@ -175,136 +284,31 @@ function sendMessage(data) {
     });
 }
 
-chrome.bluetoothSocket.onReceive.addListener(function(receiveInfo) {
-    if (receiveInfo.socketId != socketId) {
-        app.getElementById("bluetoothstatus").innerHTML = "Got data from wrong socket";
-        return;
-    }
-    // receiveInfo.data is an ArrayBuffer.
-    app.getElementById("bluetoothstatus").innerHTML = "Received " + ab2str(receiveInfo.data);
-    console.log("Received: ", ab2str(receiveInfo.data));
-	doSend(ab2str(receiveInfo.data));
-});
-chrome.bluetoothSocket.onReceiveError.addListener(function(errorInfo) {
-    // Cause is in errorInfo.error.
-    console.log(errorInfo.errorMessage);
-    app.getElementById("bluetoothstatus").innerHTML = errorInfo.errorMessage;
-});
 
-function ab2str(buf) {
-    return String.fromCharCode.apply(null, new Uint8Array(buf));
-}
-
-function str2ab(str) {
-        var buf = new ArrayBuffer(str.length); // 2 bytes for each char
-        var bufView = new Uint8Array(buf);
-        for (var i = 0, strLen = str.length; i < strLen; i++) {
-            bufView[i] = str.charCodeAt(i);
+// Now begin the discovery process.
+function discovery() {
+    console.log("Starting device discovery");
+    chrome.bluetooth.startDiscovery(function() {
+        // Stop discovery after 30 seconds.
+        console.log("discover button");
+        try {
+            app.getElementById("discovery").innerHTML = "Discovering";
+            app.getElementById("discovery").disabled = true;
+        } catch (E) {
+            setTimeout(function() {
+                app.getElementById("discovery").innerHTML = "Discovering";
+                app.getElementById("discovery").disabled = true;
+            }, 1000);
         }
-        return buf;
-    }
-
-
-    console.log("Starting WS Work");
-var wsUri = "ws://oobd.luxen.de:9000/";
-var outputWS;
-var thisChannel;
-
-function init_WS() {
-// create random channel number
-var min = 10000000;
-var max = 99999999;
-thisChannel=Math.floor(Math.random()*(max-min+1)+min)+"";
-console.log("Mychannel: "+thisChannel);
-app.getElementById("bluetoothstatus").innerHTML =thisChannel;
-app.getElementById("channel").innerHTML =thisChannel;
-
-
-
-    outputWS = document.getElementById("outputWS");
-
-	
-// http://demo.agektmr.com/dialog/ 
-	
-var wsdialog = app.getElementById('wsdialog');
-app.getElementById('show').onclick = function() {
-  wsdialog.showModal();
-};
-
-app.getElementById('close').onclick = function() {
-  var value = app.getElementById('return_value').value;
-  wsdialog.close(value);
-};
-app.getElementById('wsdialog').addEventListener('close', function() {
-  alert(this.returnValue);
-});
-
-
-
-    testWebSocket();
+        setTimeout(function() {
+            app.getElementById("discovery").innerHTML = "Discover Devices";
+            app.getElementById("discovery").disabled = false;
+            app.getElementById("discovery").onclick = function() {
+                discovery();
+            };
+            chrome.bluetooth.stopDiscovery(function() {
+                console.log("Discovery Ends")
+            });
+        }, 30000);
+    });
 }
-
-function testWebSocket() {
-    websocket = new WebSocket(wsUri);
-    websocket.onopen = function(evt) {
-        onOpen(evt)
-    };
-    websocket.onclose = function(evt) {
-        onClose(evt)
-    };
-    websocket.onmessage = function(evt) {
-        onMessage(evt)
-    };
-    websocket.onerror = function(evt) {
-        onError(evt)
-    };
-}
-
-function showStatus(event){
-	writeToScreen(event);
-}
-
-
-function onOpen(evt) {
-    showStatus("WSCONNECTED");
-    doSend("WebSocket rocks");
-}
-
-function onClose(evt) {
-    showStatus("WSDISCONNECTED");
-}
-
-function onMessage(evt) {
-    showStatus("WSRECEIVE");
-	try {
-	obj = JSON.parse(evt.data);
-	if (obj.msg){
-		sendMessage(str2ab(atob(obj.msg)));
-	}
-	}
-	catch(err){
-		console.log("Json Error "+err.message);
-	}
-// MUSS NOCH AN DIE RICHTIGE STELLE!  websocket.close();
-}
-
-function onError(evt) {
-    showStatus('WSERROR');
-    console.log('WS ERROR: ' + evt.data);
-}
-
-function doSend(message) {
-	var msg=JSON.stringify({reply: btoa(message), channel:btoa(thisChannel)});
-    showStatus('WSSEND');
-    websocket.send(msg);
-}
-
-function writeToScreen(message) {
-    var pre = document.createElement("p");
-    pre.style.wordWrap = "break-word";
-    pre.innerHTML = message;
-    outputWS.appendChild(pre);
-}
-window.addEventListener("load", init_WS, false);
-
-
