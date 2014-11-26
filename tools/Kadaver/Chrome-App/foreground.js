@@ -135,7 +135,7 @@ function str2ab(str) {
 
 
     console.log("Starting WS Work");
-var wsUri = "ws://oobd.luxen.de/websock/";
+
 var outputWS;
 var thisChannel;
 
@@ -168,14 +168,7 @@ app.getElementById('wsdialog').addEventListener('close', function() {
   alert(this.returnValue);
 });
 
-
-
-    testWebSocket();
-}
-
-window.addEventListener("load", init_WS, false);
-
-function testWebSocket() {
+function testWebSocket(wsUri) {
     websocket = new WebSocket(wsUri);
     websocket.onopen = function(evt) {
         onOpen(evt)
@@ -312,3 +305,12 @@ function discovery() {
         }, 30000);
     });
 }
+
+console.log("Style:"+app.getElementById("carsvg").style);
+app.getElementById("carsvg").style.fill="yellow";
+
+    testWebSocket("ws://oobd.luxen.de/websock/");
+}
+
+window.addEventListener("load", init_WS, false);
+
