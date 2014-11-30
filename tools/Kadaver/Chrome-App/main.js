@@ -1,5 +1,7 @@
+var childWindow;
+
 chrome.app.runtime.onLaunched.addListener(function() {
-    chrome.app.window.create('index.html', {
+    childWindow=chrome.app.window.create('index.html', {
         'bounds': {
           'width': 475,
           'height': 500
@@ -12,6 +14,10 @@ chrome.app.runtime.onLaunched.addListener(function() {
 });
 });
 chrome.runtime.onSuspend.addListener(function() {
-    //Close bluetooth    
+	//Close bluetooth    
 });
 
+chrome.app.window.get(childWindow).onClosed.addListener(function(){
+	chrome.bluetoothSocket.disconnect(window.socketId);
+	window.websocket.close();
+});
