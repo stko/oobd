@@ -65,13 +65,13 @@ function init_WS() {
 
 	var onConnectedCallback = function() {
 		if (chrome.runtime.lastError) {
-			eventFlowControl(WSCONNECTED, chrome.runtime.lastError.message);
+			console.log("BT connect error");
+			eventFlowControl("WSCONNECTED", chrome.runtime.lastError.message);
 			showStatusLine("Dongle connection failed, try again");
 		} else {
 			// Profile implementation here.
-			eventFlowControl(BTCONNECTED, null);
-			showStatusLine("Connection Number");
-			startService();
+			console.log("BT connected");
+			eventFlowControl("BTCONNECTED", null);
 		}
 	};
 
@@ -104,31 +104,34 @@ function init_WS() {
 			case "CHKBTAPAPTER":
 				showStatusLine("Status: search for Bluetooth Hardware");
 				checkBluetoothSocket();
-				 break;
+				break;
 			case "BTAVAILABLE":
 				showStatusLine("Status: connect to Kadaver Server");
 				connectWebserver();
-				 break;
+				break;
 			case "WSCONNECTED":
 				showStatusLine("scan 30secs for OOBD Dongles. Please wait...");
 				BluetoothDiscovery();
-				 break;
+				break;
 			case "DONGLEFOUND":
 				showStatusLine("try to connect to Dongle "+ data);
 				BluetoothPairing(data);
-				 break;
+				break;
+			case "BTCONNECTED":
+				normalOperation();
+				break;
 			case "WSDISCONNECTED":
-				 break;
+				break;
 			case "WSRECEIVE":
-				 break;
+				break;
 			case "JSONERRORRECV":
-				 break;
+				break;
 			case "WSSEND":
-				 break;
+				break;
 			case "ENDPROGRAM":
 				chrome.app.window.AppWindow.close();
 				app.close();
-				 break;
+				break;
 		}
 	}
 	
@@ -253,7 +256,8 @@ function init_WS() {
 
 	function normalOperation() {
 		app.getElementById("channel").innerHTML = thisChannel;
-
+		showStatusLine("Connection Number");
+		startService();
 		console.log("State normalOperation");
 		return 99;
 	}
