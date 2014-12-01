@@ -26,7 +26,7 @@
 	<button type="submit" value="no" >Give up</button>
 	</form>
 	</dialog>
-       <table border="1" width="100%">
+       <table border="0" width="100%">
 			<tr>
 				<td rowspan="2"><svg width="48" height="96"><image xlink:href="OOBD_Kadaver.svg"  width="48" height="96"/></svg></td><td colspan="4"><h1>OOBD Kadaver</h1></td>
 			</tr>
@@ -35,11 +35,11 @@
 			</tr>
 			<tr>
 				<td colspan="5" id="status">
-					Connection number:
+					-
 				</td>
 			</tr>
   			<tr>
-				<td colspan="5"><div id="channel">-</div></td>
+				<td colspan="5" id="channel">-</td>
 			</tr>
   			<tr>
 				<td>
@@ -197,7 +197,7 @@
 		</table>
         <style>
             body {
-                background-color:#e5e5e5;   
+                background-color:#f0f0ff;   
             }
             .deviceitem {
                 font-weight:500;
@@ -247,6 +247,10 @@
             }
             #bluetoothstatus {
                 font-size:10pt;
+                color:#999;
+            }
+            #channel {
+                font-size:24pt;
                 color:#999;
             }
             #imagetable {
