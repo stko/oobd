@@ -75,6 +75,7 @@ File /oname=$INSTDIR\lib\kahlua.jar dist/lib/kahlua.jar
 File /oname=$INSTDIR\lib\purejavacomm.jar dist/lib/purejavacomm.jar
 File /oname=$INSTDIR\lib\RXTXcomm.jar dist/lib/RXTXcomm.jar
 File /oname=$INSTDIR\lib\swing-worker-1.1.jar dist/lib/swing-worker-1.1.jar
+File /oname=$INSTDIR\lib\java_websocket.jar dist/lib/java_websocket.jar 
 
 File /oname=$INSTDIR\lib\jetty-continuation-7.6.13.v20130916.jar dist/lib/jetty-continuation-7.6.13.v20130916.jar
 File /oname=$INSTDIR\lib\jetty-http-7.6.13.v20130916.jar dist/lib/jetty-http-7.6.13.v20130916.jar
