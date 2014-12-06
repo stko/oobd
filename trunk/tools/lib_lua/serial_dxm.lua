@@ -486,10 +486,22 @@ function identifyOOBDInterface(connectURL)
 	end 
 	-- clean input queue
 	echoWrite("\r\r\r")
-	-- Abfrage auf OOBD -interfae
-	echoWrite("p 0 0 \r")
-	answ=serReadLn(2000, false)
-	print ("Busantwort:", answ)
+	-- Abfrage auf OOBD -interface
+	sameAnswerCounter=0
+	repeatCounter=10 --maximal 10 trials in total
+	oldAnsw="nonsens"
+	while  sameAnswerCounter<2 and repeatCounter>0 do -- 3 same ansers are needed 
+		repeatCounter=repeatCounter-1
+		echoWrite("p 0 0 \r")
+		answ=serReadLn(2000, false)
+		if answ==oldAnsw then
+			sameAnswerCounter=sameAnswerCounter+1
+		else
+			sameAnswerCounter=0 -- no match? reset success counter
+		end
+		oldAnsw=answ
+		print ("Busantwort:", answ)
+	end
 	-- Antwort auseinanderfiedeln und Prüfen
 	idString= getStringPart(answ, 1)
 	print ("teilstring:",idString)
