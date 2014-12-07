@@ -89,8 +89,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private int elementCount;
     private int defaultGridWidth = 200;
     private String pageTitle;
-    String connectURLDefault="";
-    
+    String connectURLDefault = "";
+
     public swingView(SingleFrameApplication app) {
         super(app);
 
@@ -268,6 +268,10 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         pgpStatus = new javax.swing.JLabel();
         jLabelRemoteServer = new javax.swing.JLabel();
         jTextFieldRemoteServer = new javax.swing.JTextField();
+        jTextFieldProxyHost = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jSpinnerProxyPort = new javax.swing.JSpinner();
         diagnose = new javax.swing.JPanel();
         toolPanelDiagnose = new javax.swing.JPanel();
         diagnoseTitle = new javax.swing.JLabel();
@@ -485,6 +489,37 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(jTextFieldRemoteServer, gridBagConstraints);
+
+        jTextFieldProxyHost.setText(resourceMap.getString("jTextFieldProxyHost.text")); // NOI18N
+        jTextFieldProxyHost.setName("jTextFieldProxyHost"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        settings.add(jTextFieldProxyHost, gridBagConstraints);
+
+        jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
+        jLabel2.setName("jLabel2"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        settings.add(jLabel2, gridBagConstraints);
+
+        jLabel5.setText(resourceMap.getString("jLabel5.text")); // NOI18N
+        jLabel5.setName("jLabel5"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        settings.add(jLabel5, gridBagConstraints);
+
+        jSpinnerProxyPort.setName("jSpinnerProxyPort"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        settings.add(jSpinnerProxyPort, gridBagConstraints);
 
         mainPanel.add(settings, "card4");
 
@@ -732,6 +767,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         appProbs.put(OOBDConstants.PropName_ScriptDir, scriptDir.getText());
         appProbs.put(OOBDConstants.PropName_SerialPort, comportComboBox.getEditor().getItem().toString());
         appProbs.put(OOBDConstants.PropName_KadaverServer, jTextFieldRemoteServer.getText());
+        appProbs.put(OOBDConstants.PropName_KadaverProxyHost, jTextFieldProxyHost.getText());
+        appProbs.putInt(OOBDConstants.PropName_KadaverProxyPort, ((Number)jSpinnerProxyPort.getValue()).intValue());
         oobdCore.getSystemIF().savePreferences(FT_PROPS,
                 OOBDConstants.AppPrefsFileName, appProbs);
         String script = appProbs.get(OOBDConstants.PropName_ScriptName, null);
@@ -756,7 +793,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             return;
         }
         String connectURL = "serial"; //this looks obviously not like an URL yet, but maybe in a  later extension
-        if (jCheckBoxRemoteConnect.isSelected()) {
+         if (jCheckBoxRemoteConnect.isSelected()) {
             try {
                 Onion answer = requestParamInput(new Onion("{" + "'param' : [{ " + "'type':'String',"
                         + "'title':'" + Base64Coder.encodeString("Enter the Connect Number") + "',"
@@ -772,7 +809,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                     JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-                connectURLDefault= connectURL;
+                connectURLDefault = connectURL;
 
 
                 String serverURL = appProbs.get(OOBDConstants.PropName_KadaverServer, PropName_KadaverServerDefault);
@@ -796,10 +833,11 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         cl.show(mainPanel, DIAGNOSEPANEL);
         try {
-            startScriptEngine(
+            Onion cmdOnion =
                     new Onion("{" + "'scriptpath':'" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath().replace("\\", "/") + "'"
                     + ",'connecturl':'" + Base64Coder.encodeString(connectURL) + "'"
-                    + "}"));
+                    + "}");
+            startScriptEngine(cmdOnion);
         } catch (JSONException ex) {
             // TODO Auto-generated catch block
             Logger.getLogger(swingView.class.getName()).log(Level.WARNING, "JSON creation error with file name:" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath(), ex.getMessage());
@@ -852,6 +890,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         scriptDir.setText(appProbs.get(OOBDConstants.PropName_ScriptDir, ""));
         pgpEnabled.setSelected("true".equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_PGPEnabled, "")));
         jTextFieldRemoteServer.setText(appProbs.get(OOBDConstants.PropName_KadaverServer, OOBDConstants.PropName_KadaverServerDefault));
+        jTextFieldProxyHost.setText(appProbs.get(OOBDConstants.PropName_KadaverProxyHost, null));
+        jSpinnerProxyPort.setValue(appProbs.getInt(OOBDConstants.PropName_KadaverProxyPort, 0));
         updateUI();
     }
 
@@ -1077,14 +1117,18 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JButton gridSmallerButton;
     private javax.swing.JCheckBoxMenuItem jCheckBoxRemoteConnect;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabelRemoteServer;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar.Separator jSeparator1;
+    private javax.swing.JSpinner jSpinnerProxyPort;
     private javax.swing.JTextArea jTextAreaOutput;
+    private javax.swing.JTextField jTextFieldProxyHost;
     private javax.swing.JTextField jTextFieldRemoteServer;
     private javax.swing.JToggleButton logButton;
     private javax.swing.JPanel main;
@@ -1382,7 +1426,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                     String message = Base64Coder.decodeString(p0Onion.getOnionString("message"));
                     String title = Base64Coder.decodeString(p0Onion.getOnionString("title"));
                     String defaultValue = p0Onion.getOnionString("default");
-                    if (defaultValue!=null){
+                    if (defaultValue != null) {
                         defaultValue = Base64Coder.decodeString(defaultValue);
                     }
                     if ("alert".equalsIgnoreCase(type)) {
@@ -1392,7 +1436,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                     if ("string".equalsIgnoreCase(type)) {
                         String answerString = (String) JOptionPane.showInputDialog(null, message,
                                 title,
-                                JOptionPane.PLAIN_MESSAGE,null,null,defaultValue);
+                                JOptionPane.PLAIN_MESSAGE, null, null, defaultValue);
                         if (answerString != null) {
                             answer = new Onion().setValue("answer", Base64Coder.encodeString(answerString));
                         }

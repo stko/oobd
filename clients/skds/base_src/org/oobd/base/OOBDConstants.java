@@ -59,6 +59,8 @@ public interface OOBDConstants {
      public final static String PropName_SerialPort ="SerialPort";
      public final static String PropName_KadaverServer ="KadaverServer";
      public final static String PropName_KadaverServerDefault ="ws://localhost:8000";
+     public final static String PropName_KadaverProxyHost ="KadaverServerProxyHost";
+     public final static String PropName_KadaverProxyPort ="KadaverServerProxyPort";
      public final static String PropName_ScriptDir ="ScriptDir";
      public final static String PropName_ScriptName ="Script";
      public final static String PropName_OutputDir ="OutputDir";
