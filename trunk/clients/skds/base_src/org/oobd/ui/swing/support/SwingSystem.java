@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.FileHandler;
 import java.util.HashMap;
+import org.json.JSONException;
 import org.oobd.base.*;
 import org.oobd.base.OOBDConstants;
 import java.net.URL;
@@ -21,6 +22,8 @@ import org.oobd.crypt.AES.EncodeDecodeAES;
 
 //import java.io.FileInputStream;
 import java.io.*;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URI;
 import javax.swing.JFileChooser;
 import org.oobd.base.archive.Archive;
@@ -169,18 +172,36 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     }
 
     public Object supplyHardwareHandle(Onion typ) {
+            Preferences appProbs         = core.getSystemIF().loadPreferences(FT_PROPS,
+                OOBDConstants.AppPrefsFileName);
+
+
+        
+         
         String connectURL = typ.getOnionBase64String("connecturl");
-         if (connectURL.toLowerCase().startsWith("ws")){
+        String proxyHost = appProbs.get(OOBDConstants.PropName_KadaverProxyHost, null);
+        int proxyPort = appProbs.getInt(OOBDConstants.PropName_KadaverProxyPort, 0);
+         if (connectURL.toLowerCase().startsWith("ws")) {
             try {
-                return new ComPort_Kadaver(new URI(connectURL));
+                Proxy thisProxy = null;
+                if (proxyHost != null && proxyPort != 0) {
+                    thisProxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
+
+                }
+                return new ComPort_Kadaver(new URI(connectURL), thisProxy);
+
             } catch (URISyntaxException ex) {
                 Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);
                 return null;
+
             }
-            
-        }else if (connectURL.equalsIgnoreCase("serial")){
+        } else if (connectURL.equalsIgnoreCase(
+                "serial")) {
             String osname = System.getProperty("os.name", "").toLowerCase();
             Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "OS detected: " + osname);
+
+
+
             try {
                 if (osname.startsWith("windows")) {
                     return new ComPort_Win();
@@ -192,7 +213,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                 ex.printStackTrace();
                 return null;
             }
-        } else{
+        } else {
             return null;
         }
     }
@@ -215,6 +236,10 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                 myPrefs.flush();
             }
             return myPrefs;
+
+
+
+
         } catch (Exception e) {
             Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "could not load property id " + filename, e);
         }
@@ -225,8 +250,16 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         try {
             properties.flush();
             return true;
+
+
+
+
         } catch (Exception e) {
             Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "could not load property id " + filename, e);
+
+
+
+
             return false;
         }
     }
@@ -276,6 +309,10 @@ public class SwingSystem implements IFsystem, OOBDConstants {
 
             eng.setTempInputFile(f);
 
+
+
+
+
         } catch (Exception e) {
             // if any error occurs
             Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "could not create temp file! ", e);
@@ -319,8 +356,16 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             try {
                 return chooser.getSelectedFile().getAbsolutePath().toString();
 
+
+
+
+
             } catch (Exception ex) {
                 Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);
+
+
+
+
                 return null;
             }
         } else {

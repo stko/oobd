@@ -13,6 +13,7 @@ import org.oobd.base.port.PortInfo;
 import org.oobd.base.support.Onion;
 //import gnu.io.*; // for rxtxSerial library
 import java.io.*;
+import java.net.Proxy;
 import java.net.URI;
 import java.nio.channels.NotYetConnectedException;
 import org.java_websocket.client.WebSocketClient;
@@ -32,8 +33,11 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
     OobdBus msgReceiver;
     String channel;
 
-    public ComPort_Kadaver(java.net.URI wsURL) {
+    public ComPort_Kadaver(java.net.URI wsURL, Proxy proxy) {
         super(wsURL);
+        if (proxy!=null){
+            this.setProxy(proxy);
+        }
         String [] parts=wsURL.toString().split("@");
         parts=parts[0].split("://");
         channel=parts[1];
