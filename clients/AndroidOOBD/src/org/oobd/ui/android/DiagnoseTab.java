@@ -99,7 +99,7 @@ public class DiagnoseTab extends TabActivity {
 class ConnectInfoTask implements Runnable {
 	TextView label;
 	Handler handler;
-	boolean lastResult;
+	String lastResult;
 
 	ConnectInfoTask(TextView myLabel, Handler myHandler) {
 		label = myLabel;
@@ -109,12 +109,12 @@ class ConnectInfoTask implements Runnable {
 	public void run() {
 		handler.postDelayed(this, OOBDConstants.LV_STATUS);
 		if (label != null) {
-			boolean thisResult = OOBDApp.getInstance().isConnected();
+			String thisResult = OOBDApp.getInstance().connectInfo();
 			if (thisResult != lastResult) {
-				if (thisResult == true) {
-					label.setText("Bluetooth Connected");
+				if (thisResult != null) {
+					label.setText(thisResult);
 				} else {
-					label.setText("No Bluetooth Connection");
+					label.setText("Not connected");
 				}
 			}
 			lastResult = thisResult;

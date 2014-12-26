@@ -21,12 +21,14 @@ public interface OOBDPort {
 
     public void close();
 
-    public InputStream getInputStream();
+   // public InputStream getInputStream();
 
-    public OutputStream getOutputStream();
+   // public OutputStream getOutputStream();
 
-    public boolean available();
+//    public boolean available();
 
+    public String connectInfo();
+    
     public void attachShutDownHook();
 
     public void write(String s);

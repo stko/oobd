@@ -7,20 +7,13 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.json.JSONException;
-import org.oobd.base.OOBDConstants;
-import org.oobd.base.support.Onion;
-import org.oobd.ui.android.application.AndroidGui;
-
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.TabActivity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Html;
@@ -31,7 +24,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-//import com.lamerman.*;
 
 //http://code.google.com/p/android-file-dialog/
 

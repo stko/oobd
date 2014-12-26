@@ -9,7 +9,6 @@ import org.oobd.base.OOBDConstants;
 import org.oobd.base.support.Onion;
 import org.oobd.base.visualizer.IFvisualizer;
 import org.oobd.base.visualizer.Visualizer;
-import org.oobd.ui.android.application.AndroidGui;
 import org.oobd.ui.android.application.OOBDApp;
 
 import android.app.ListActivity;
@@ -59,7 +58,7 @@ public class Diagnose extends ListActivity {
 		public void run() {
 			if (timerTickCounter >OOBDConstants.LV_UPDATE_INTERVAL){
 				timerTickCounter=0;
-				AndroidGui.getInstance().updateOobdUI();
+				MainActivity.myMainActivity.updateOobdUI();
 			}
 			if (timerTickCounter ==0 && myTimerButton.isChecked()) {
 				refreshView(OOBDConstants.VE_TIMER, OOBDConstants.VE_TIMER);

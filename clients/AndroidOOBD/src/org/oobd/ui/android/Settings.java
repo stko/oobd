@@ -4,12 +4,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
@@ -47,7 +50,12 @@ public class Settings extends Activity {
 	private CheckBox pgpEnabled;
 	private TextView pgpStatus;
 	private Button pgpImportKeys;
+	private CheckBox remoteConnect;
+	private TextView wsURLeditText;
+	private TextView wsProxyHostEditText;
+	private TextView wsProxyPortEditText;
 
+ 	
 	public static Settings mySettingsActivity;
 
 	// protected void onCreate(Bundle savedInstanceState,OOBDPort comPort) {
@@ -123,6 +131,53 @@ public class Settings extends Activity {
 
 			}
 		});
+		remoteConnect = (CheckBox) findViewById(R.id.remoteConnectCheckBox);
+		remoteConnect.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			public void onCheckedChanged(CompoundButton parent,
+					boolean isChecked) {
+				preferences.edit().putBoolean("REMOTECONNECT", isChecked).commit();
+
+			}
+		});
+		remoteConnect.setChecked(preferences.getBoolean("REMOTECONNECT",false));
+		
+		wsURLeditText = (EditText)findViewById(R.id.wsURLeditText);
+		wsURLeditText.addTextChangedListener(new TextWatcher(){
+		    public void afterTextChanged(Editable s) {
+		    	preferences.edit().putString(OOBDConstants.PropName_KadaverServer, wsURLeditText.getText().toString()).commit();
+		    }
+		    public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		    public void onTextChanged(CharSequence s, int start, int before, int count){}
+		}); 
+		wsURLeditText.setText(preferences.getString(OOBDConstants.PropName_KadaverServer,OOBDConstants.PropName_KadaverServerDefault));
+		
+		
+		wsProxyHostEditText = (EditText)findViewById(R.id.wsProxyHostEditText);
+		wsProxyHostEditText.addTextChangedListener(new TextWatcher(){
+		    public void afterTextChanged(Editable s) {
+		    	preferences.edit().putString("PROXYHOST", wsProxyHostEditText.getText().toString()).commit();
+		    }
+		    public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		    public void onTextChanged(CharSequence s, int start, int before, int count){}
+		}); 
+		wsProxyHostEditText.setText(preferences.getString("PROXYHOST",""));
+		
+		
+		wsProxyPortEditText = (EditText)findViewById(R.id.wsProxyPortEditText);
+		wsProxyPortEditText.addTextChangedListener(new TextWatcher(){
+		    public void afterTextChanged(Editable s) {
+		    	String content=wsProxyPortEditText.getText().toString();
+		    	if (content.length()>0){
+		    		preferences.edit().putInt("PROXYPORT", Integer.parseInt(wsProxyPortEditText.getText().toString())).commit();
+		    	}
+		    }
+		    public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		    public void onTextChanged(CharSequence s, int start, int before, int count){}
+		}); 
+		wsProxyPortEditText.setText(preferences.getString("PROXYPORT",""));
+		
+		
 		updateUI();
 
 	}
