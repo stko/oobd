@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.oobd.base.bus.OobdBus;
 import org.oobd.base.port.OOBDPort;
 import org.oobd.base.port.PortInfo;
 
@@ -30,24 +31,27 @@ public class ComPort implements OOBDPort {
 	BluetoothDevice obdDevice;
 	BluetoothSocket serialPort;
 	String BTAddress = null;
+	Thread myThread;
+	OobdBus msgReceiver;
+
 	public static final UUID MY_UUID = UUID
 			.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
-	public InputStream getInputStream() {
-		if (serialPort != null) {
-			return inputStream;
-		} else {
-			return null;
-		}
-	}
-
-	public OutputStream getOutputStream() {
-		if (serialPort != null) {
-			return outputStream;
-		} else {
-			return null;
-		}
-	}
+//	public InputStream getInputStream() {
+//		if (serialPort != null) {
+//			return inputStream;
+//		} else {
+//			return null;
+//		}
+//	}
+//
+//	public OutputStream getOutputStream() {
+//		if (serialPort != null) {
+//			return outputStream;
+//		} else {
+//			return null;
+//		}
+//	}
 
 	public ComPort(Activity callingActivity, String BTAddress) {
 		myInstance = this;
@@ -56,7 +60,8 @@ public class ComPort implements OOBDPort {
 		// Looper.prepare();
 	}
 
-	public boolean connect(Onion options) {
+	public boolean connect(Onion options, OobdBus receiveListener) {
+		msgReceiver = receiveListener;
 		System.out.println("Starting Bluetooth Detection and Device Pairing");
 		if (mBluetoothAdapter == null) {
 			mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -81,10 +86,9 @@ public class ComPort implements OOBDPort {
 						"Device " + obdDevice.getName());
 				java.lang.reflect.Method m = obdDevice.getClass().getMethod(
 						"createRfcommSocket", new Class[] { int.class });
-//				"createInsecureRfcommSocket", new Class[] { int.class });
-				serialPort=null;
-				serialPort = (BluetoothSocket) m.invoke(obdDevice,
-						1);
+				// "createInsecureRfcommSocket", new Class[] { int.class });
+				serialPort = null;
+				serialPort = (BluetoothSocket) m.invoke(obdDevice, 1);
 
 				if (serialPort != null) {
 					try {
@@ -93,8 +97,50 @@ public class ComPort implements OOBDPort {
 						Log.d("OOBD:Bluetooth", "Bluetooth connected");
 						inputStream = serialPort.getInputStream();
 						outputStream = serialPort.getOutputStream();
+
 						OOBDApp.getInstance().displayToast(
 								"Bluetooth connected");
+
+						myThread = new Thread() {
+
+							@Override
+							public void run() {
+								byte[] buffer = new byte[1024]; // buffer store
+																// for the
+																// stream
+								int bytes; // bytes returned from read()
+
+								// Keep listening to the InputStream until an
+								// exception occurs
+								Log.d("OOBD:Bluetooth", "receiver task runs");
+								while (true) {
+									if (inputStream != null) {
+										try {
+											// Read from the InputStream
+											bytes = inputStream.read(buffer);
+											if (bytes > 0) {
+												Log.v(this.getClass().getSimpleName(),
+														"Debug: received something");
+												msgReceiver
+														.receiveString(new String(
+																buffer));
+											}
+										} catch (IOException e) {
+											break;
+										}
+									} else {
+										try {
+											Thread.sleep(100);
+										} catch (InterruptedException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
+									}
+								}
+							}
+
+						};
+						myThread.start();
 						return true;
 					} catch (IOException ex) {
 						Log.e(this.getClass().getSimpleName(),
@@ -137,17 +183,26 @@ public class ComPort implements OOBDPort {
 		return false;
 	}
 
-	public boolean available() {
-		try {
-			return inputStream != null && inputStream.available() > 0;
-		} catch (IOException ex) {
-			// broken socket: Close it..
-			resetConnection();
-			return false;
-		}
-	}
+//	public boolean available() {
+//		try {
+//			return inputStream != null && inputStream.available() > 0;
+//		} catch (IOException ex) {
+//			// broken socket: Close it..
+//			close();
+//			return false;
+//		}
+//	}
 
-	public OOBDPort close() {
+    public String connectInfo(){
+    	if (inputStream != null){
+    		return "BT Connect to "+BTAddress;
+    	}else{
+    		return null;
+    	}
+    }
+
+	
+	public void close() {
 		if (serialPort != null) {
 			try {
 				inputStream.close();
@@ -168,11 +223,6 @@ public class ComPort implements OOBDPort {
 				e.printStackTrace();
 			}
 		}
-		return null;
-	}
-
-	public OOBDPort resetConnection() {
-		return close();
 	}
 
 	public PortInfo[] getPorts() {
@@ -211,18 +261,33 @@ public class ComPort implements OOBDPort {
 	}
 
 	public void attachShutDownHook() {
-	      Runtime.getRuntime().addShutdownHook(new Thread() {
+		Runtime.getRuntime().addShutdownHook(new Thread() {
 
-	            @Override
-	            public void run() {
-	                System.out.println("Inside Add Shutdown Hook");
-	                close();
-	                System.out.println("Serial line closed");
-	            }
-	        });
-	        System.out.println("Shut Down Hook Attached.");
+			@Override
+			public void run() {
+				System.out.println("Inside Add Shutdown Hook");
+				close();
+				System.out.println("Serial line closed");
+			}
+		});
+		System.out.println("Shut Down Hook Attached.");
 
-		
+	}
+
+	public synchronized void write(String s) {
+		Log.d("OOBD:Comport", "Write something ");
+		if (serialPort != null) {
+			try {
+				serialPort.getOutputStream().write(s.getBytes());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		} else {
+			System.err.println("NO comhandle:" + s);
+
+		}
 	}
 
 }

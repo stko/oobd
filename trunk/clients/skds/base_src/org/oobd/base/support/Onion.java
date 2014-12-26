@@ -173,10 +173,8 @@ public class Onion extends JSONObject {
     public ArrayList<Onion> getOnionArray(String path, String name) {
         ArrayList<Onion> res = new ArrayList<Onion>();
         try {
-            Onion result = getOnion(path);
-            if (result != null) {
-                String aString = result.get(name).toString();
-                JSONArray r = new JSONArray(aString);
+        	JSONArray r = JSONArray(path);
+            if (r != null) {
                 for (int i = 0; i < r.length(); i++) {
                     res.add(new Onion(r.get(i).toString()));
                 }

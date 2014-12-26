@@ -28,10 +28,9 @@ import org.oobd.base.bus.OobdBus;
  */
 public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
 
-    InputStream inputStream = null;
-    OutputStream outputStream = null;
     OobdBus msgReceiver;
     String channel;
+    String Server;
 
     public ComPort_Kadaver(java.net.URI wsURL, Proxy proxy) {
         super(wsURL);
@@ -39,17 +38,12 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
             this.setProxy(proxy);
         }
         String [] parts=wsURL.toString().split("@");
+        Server=wsURL.toString();
         parts=parts[0].split("://");
         channel=parts[1];
     }
 
-    public OutputStream getOutputStream() {
-        return outputStream;
-    }
 
-    public InputStream getInputStream() {
-        return inputStream;
-    }
 
     public boolean connect(Onion options, OobdBus receiveListener) {
         msgReceiver = receiveListener;
@@ -69,6 +63,15 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
         return isOpen();
     }
 
+    public String connectInfo(){
+    	if (isOpen()){
+    		return "Remote Connect to "+Server;
+    	}else{
+    		return null;
+    	}
+    }
+
+    
     public PortInfo[] getPorts() {
 
         PortInfo[] DeviceSet = new PortInfo[1];
@@ -84,7 +87,7 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
             public void run() {
                 System.err.println("Inside Add Shutdown Hook");
                 close();
-                System.err.println("Serial line closed");
+                System.err.println("Websocket closed");
             }
         });
         System.err.println("Shut Down Hook Attached.");
@@ -109,7 +112,7 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
         } catch (JSONException ex) {
             Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NotYetConnectedException ex) {
-            Logger.getLogger(ComPort_Win.class.getName()).log(Level.WARNING,
+            Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.WARNING,
                     null, ex);
         }
     }

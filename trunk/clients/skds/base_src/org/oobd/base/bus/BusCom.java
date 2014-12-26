@@ -108,7 +108,8 @@ public class BusCom extends OobdBus implements OOBDConstants {
         }
     }
 }
-class ComReader implements Runnable {
+//class ComReader implements Runnable {
+	class ComReader  {
 
     public String URL = null;
     private StringBuffer inBuffer = new StringBuffer();
@@ -148,16 +149,16 @@ public synchronized void receiveString(String msg){
     inBuffer.append(msg);
 }    
     
-    public synchronized void write(char c) {
-        if (comHandle != null && comHandle.getOutputStream() != null) {
-            try {
-                comHandle.getOutputStream().write(c);
-            } catch (IOException ex) {
-                Logger.getLogger(ComReader.class.getName()).log(Level.WARNING,
-                        null, ex);
-            }
-        }
-    }
+//    public synchronized void write(char c) {
+//        if (comHandle != null && comHandle.getOutputStream() != null) {
+//            try {
+//                comHandle.getOutputStream().write(c);
+//            } catch (IOException ex) {
+//                Logger.getLogger(ComReader.class.getName()).log(Level.WARNING,
+//                        null, ex);
+//            }
+//        }
+//    }
 
     public synchronized void write(String s) {
         if (comHandle != null) {
@@ -174,60 +175,60 @@ public synchronized void receiveString(String msg){
      * \todo this routine actual polls, but as e.g. shown in the purejavacomm-
      * Demo (), the reveice can also be done as an EventListener
      */
-    public void run() {
-        while (true) {
-
-            int input;
-            int n;
-
-            try {
-                if (false && comHandle != null && comHandle.getInputStream() != null) {
-                    n = comHandle.getInputStream().available();
-                    if (n > 0) {
-                        byte[] buffer = new byte[n];
-
-                        n = comHandle.getInputStream().read(buffer, 0, n);
-
-                        for (int i = 0; i < n; ++i) {
-                            inBuffer.append((char) buffer[i]);
-                        }
-                    } else {
-                        try {
-                            Thread.sleep(10);
-                        } catch (InterruptedException ex) {
-                            // the VM doesn't want us to sleep anymore,
-                            // so get back to work
-                            Logger.getLogger(ComReader.class.getName()).log(
-                                    Level.WARNING, null, ex);
-
-                        }
-                    }
-                } else {
-                    // as this thread runs in an unstopped endless loop, as
-                    // long
-                    // there's no serial port open, we need to slow him down
-                    // here...
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        // the VM doesn't want us to sleep anymore,
-                        // so get back to work
-                    }
-                }
-
-            } catch (Exception ex) {
-                Logger.getLogger(ComReader.class.getName()).log(Level.WARNING,
-                        "Unexpected error: Close down socket", ex);
-                close();
-            }
-        }
-    }
+//    public void run() {
+//        while (true) {
+//
+//            int input;
+//            int n;
+//
+//            try {
+//                if (false && comHandle != null && comHandle.getInputStream() != null) {
+//                    n = comHandle.getInputStream().available();
+//                    if (n > 0) {
+//                        byte[] buffer = new byte[n];
+//
+//                        n = comHandle.getInputStream().read(buffer, 0, n);
+//
+//                        for (int i = 0; i < n; ++i) {
+//                            inBuffer.append((char) buffer[i]);
+//                        }
+//                    } else {
+//                        try {
+//                            Thread.sleep(10);
+//                        } catch (InterruptedException ex) {
+//                            // the VM doesn't want us to sleep anymore,
+//                            // so get back to work
+//                            Logger.getLogger(ComReader.class.getName()).log(
+//                                    Level.WARNING, null, ex);
+//
+//                        }
+//                    }
+//                } else {
+//                    // as this thread runs in an unstopped endless loop, as
+//                    // long
+//                    // there's no serial port open, we need to slow him down
+//                    // here...
+//                    try {
+//                        Thread.sleep(100);
+//                    } catch (InterruptedException e) {
+//                        // the VM doesn't want us to sleep anymore,
+//                        // so get back to work
+//                    }
+//                }
+//
+//            } catch (Exception ex) {
+//                Logger.getLogger(ComReader.class.getName()).log(Level.WARNING,
+//                        "Unexpected error: Close down socket", ex);
+//                close();
+//            }
+//        }
+//    }
 
     public void flush() {
-        if (comHandle != null && comHandle.getInputStream() != null) {
+        
             while (read() > (char) 0)
 				;
-        }
+
 
     }
 

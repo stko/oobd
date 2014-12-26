@@ -5,12 +5,6 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <CheckBox
-        android:id="@+id/PGPCheckBox"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/pgp_checkbox" />
-
     <TextView
         android:id="@+id/pgpStatustextView"
         android:layout_width="fill_parent"
@@ -25,12 +19,71 @@
         android:layout_height="wrap_content"
         android:text="@string/pgpimportKeybutton" />
 
+    <CheckBox
+        android:id="@+id/PGPCheckBox"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pgp_checkbox" />
+
+    <CheckBox
+        android:id="@+id/remoteConnectCheckBox"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/remote_connect" />
+
+    <TextView
+        android:id="@+id/wsURLTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Remote Connect Server URL"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/wsURLeditText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textUri" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/wsProxyHostTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Remote Connect Proxy Host"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/wsProxyHostEditText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text" />
+
+    <TextView
+        android:id="@+id/wsProxyPortTextView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/remote_connect_Proxy_port"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <EditText
+        android:id="@+id/wsProxyPortEditText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number" />
+
     <TextView
         android:id="@+id/BTDeviceView"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="6.30"
-        android:gravity="center|bottom"
+        android:gravity="bottom"
         android:text="@string/select_your_bt_device_" >
     </TextView>
 

@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.prefs.Preferences;
 import java.io.*;
 import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -13,11 +15,14 @@ import org.oobd.base.IFsystem;
 import org.oobd.base.IFui;
 import org.oobd.base.archive.*;
 
+import org.oobd.base.port.ComPort_Kadaver;
+import org.oobd.base.port.OOBDPort;
 import org.oobd.base.support.Onion;
 import org.oobd.base.scriptengine.OobdScriptengine;
 import org.oobd.crypt.AES.EncodeDecodeAES;
 import org.oobd.crypt.AES.PassPhraseProvider;
 import org.oobd.ui.android.Diagnose;
+import org.oobd.ui.android.MainActivity;
 import org.oobd.ui.android.bus.ComPort;
 
 import android.app.Activity;
@@ -31,7 +36,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-
 /**
  * @author Andreas Budde, Peter Mayer Base class to maintain global application
  *         state. This activity is Initialised before all others. Store here
@@ -44,13 +48,12 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 	public static final String UPDATE_LEVEL = "OOBD Update Level";
 	public static final int REQUEST_ENABLE_BT = 10;
 	public Core core;
-	public IFui androidGui;
 	// make it singleton
 	private static OOBDApp mInstance;
 	private Toast mToast;
-	private ComPort myComPort;
+	private OOBDPort myComPort;
 	private String userPassPhrase = "";
-	
+
 	public static OOBDApp getInstance() {
 		return mInstance;
 	}
@@ -103,7 +106,7 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 						+ " loaded from /sdcard/oobd");
 			} catch (Exception e) {
 				Log.v(this.getClass().getSimpleName(), "File " + resourceName
-						+ " could not loaded from /sdcard/oobd", e);
+						+ " could not loaded from /sdcard/oobd");
 			}
 			return resource;
 		case OOBDConstants.FT_KEY:
@@ -129,13 +132,11 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 		mInstance = this;
 		mToast = Toast
 				.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
-		androidGui = new AndroidGui();
-		Core thisCore = new Core(androidGui, this, "Core");
-		Log.v(this.getClass().getSimpleName(), "Core creation finalized"
-				+ thisCore.toString());
+//		Core thisCore = new Core(MainActivity.getMyMainActivity(), this, "Core");
+//		Log.v(this.getClass().getSimpleName(), "Core creation finalized"
+//				+ thisCore.toString());
 	}
 
-	
 	public CharSequence[] getAvailableLuaScript() {
 
 		FilenameFilter filter = new FilenameFilter() {
@@ -181,24 +182,58 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 
 	public Object supplyHardwareHandle(Onion typ) {
 		SharedPreferences preferences;
-		String BTDeviceName = "00:12:6F:07:27:25";
 		preferences = this.getSharedPreferences("OOBD_SETTINGS", MODE_PRIVATE);
-		if (preferences != null) {
-			BTDeviceName = preferences.getString("BTDEVICE",
-					"00:12:6F:07:27:25");
-		}
-		myComPort = new ComPort(Diagnose.getInstance(), BTDeviceName);
-		return myComPort;
-	}
+		String BTDeviceName = "00:12:6F:07:27:25";
 
-	public boolean isConnected() {
-		if (myComPort == null) {
-			return false;
+		if (typ != null) {
+			String connectURL = typ.getOnionBase64String("connecturl");
+			String proxyHost = preferences.getString(
+					OOBDConstants.PropName_KadaverProxyHost, null);
+			int proxyPort = preferences.getInt(
+					OOBDConstants.PropName_KadaverProxyPort, 0);
+			if (connectURL.toLowerCase().startsWith("ws")) {
+				try {
+					Proxy thisProxy = null;
+					if (proxyHost != null && proxyPort != 0) {
+						thisProxy = new Proxy(Proxy.Type.HTTP,
+								new InetSocketAddress(proxyHost, proxyPort));
+
+					}
+					myComPort= new ComPort_Kadaver(new URI(connectURL), thisProxy);
+					return myComPort;
+				} catch (URISyntaxException ex) {
+					Log.v(this.getClass().getSimpleName(),
+							"could not open Websocket Interface", ex);
+					return null;
+
+				}
+			} else if (connectURL.equalsIgnoreCase("serial")) {
+				if (preferences != null) {
+					BTDeviceName = preferences.getString("BTDEVICE",
+							"00:12:6F:07:27:25");
+				}
+				myComPort = new ComPort(Diagnose.getInstance(), BTDeviceName);
+				return myComPort;
+			}
+			return null;
+
 		} else {
-			return (myComPort.getInputStream() != null);
+			// todo Android always needs a comport object to have a list of the
+			// possible devices for the settings screen
+			return new ComPort(Diagnose.getInstance(), BTDeviceName);
 		}
 	}
 
+
+	   public String connectInfo(){
+			if (myComPort == null) {
+				return null;
+			} else {
+				return (myComPort.connectInfo());
+			}
+	    }
+
+	
 	public void closeHardwareHandle() {
 		if (myComPort != null) {
 			myComPort.close();
@@ -235,6 +270,40 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 			userPassPhrase = "";
 		}
 
+	}
+
+	public void createEngineTempInputFile(OobdScriptengine eng) {
+		File f = null;
+
+		try {
+			// do we have to delete a previous first?
+
+			eng.removeTempInputFile();
+			// creates temporary file
+			f = File.createTempFile("oobd", null, null);
+
+			// deletes file when the virtual machine terminate
+			f.deleteOnExit();
+
+			eng.setTempInputFile(f);
+
+		} catch (Exception e) {
+			// if any error occurs
+			Log.v(this.getClass().getSimpleName(),
+					"could not create temp file! ", e);
+		}
+
+	}
+
+	public String doFileSelector(String path, final String extension,
+			String message, Boolean save) {
+		File oldDir = null;
+		String oldDirName = path;
+		if (oldDirName != null) {
+			oldDir = new File(oldDirName);
+		}
+
+		return null;
 	}
 
 	public Preferences loadPreferences(int pathID, String filename) {
@@ -281,139 +350,5 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 			return false;
 		}
 	}
-	
-	public void createEngineTempInputFile(OobdScriptengine eng) {
-        File f = null;
 
-        try {
-            //do we have to delete a previous first?
-
-            eng.removeTempInputFile();
-            // creates temporary file
-            f = File.createTempFile("oobd", null, null);
-
-            // deletes file when the virtual machine terminate
-            f.deleteOnExit();
-
-            eng.setTempInputFile(f);
-
-        } catch (Exception e) {
-            // if any error occurs
-			Log.v(this.getClass().getSimpleName(),
-					"could not create temp file!", e);
-         }
-
-    }
-
-    public String doFileSelector(String path, final String extension, String message, Boolean save) {
- 
-    	
-    	
-    	
-		Intent intent = new Intent("org.openintents.action.PICK_FILE");
-		intent.putExtra(
-				Intent.EXTRA_TITLE,
-				"Save as text");
-		startActivityForResult(intent, 1);
-
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	JFileChooser chooser = new JFileChooser();
-        File oldDir = null;
-        String oldDirName = path;
-        if (oldDirName != null) {
-            oldDir = new File(oldDirName);
-        }
-        chooser.setCurrentDirectory(oldDir);
-        chooser.setSelectedFile(oldDir);
-        chooser.setMultiSelectionEnabled(false);
-        if (save){
-        chooser.setFileSelectionMode(JFileChooser.SAVE_DIALOG);
-        }else{
-            chooser.setFileSelectionMode(JFileChooser.OPEN_DIALOG);
-        }
-        chooser.addChoosableFileFilter(new javax.swing.filechooser.FileFilter() {
-
-            public boolean accept(File f) {
-                if (f.isDirectory()) {
-                    return true;
-                }
-                if (extension != null) {
-                    return f.getName().toLowerCase().endsWith(extension);
-                } else {
-                    return true;
-                }
-            }
-
-            public String getDescription() {
-                return extension + " Ext";
-            }
-        });
-        if ((save && chooser.showSaveDialog(null)== JFileChooser.APPROVE_OPTION) || (!save &&chooser.showOpenDialog(null)== JFileChooser.APPROVE_OPTION)
-                ) {
-            try {
-                return chooser.getSelectedFile().getAbsolutePath().toString();
-
-            } catch (Exception ex) {
-                Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
-    
-    public boolean FileselectorCallback(String selectedFilName){
-		final File file = new File(filePath);
-		if (file.exists()) {
-			AlertDialog alertDialog = new AlertDialog.Builder(
-					myOutputActivityInstance).create();
-			alertDialog.setTitle("File already exist!");
-			alertDialog.setMessage("OK to overwrite?");
-			alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,"OK",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int which) {
-							saveOutput(file);
-						}
-					});
-			alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,"Cancel", (DialogInterface.OnClickListener)null);
-			alertDialog.show();
-		} else {
-			saveOutput(file);
-		}
-  	
-    	
-    }
-    
-	public synchronized void onActivityResult(final int requestCode,
-			int resultCode, final Intent data) {
-
-		if (resultCode == Activity.RESULT_OK) {
-
-			URI filePath = null;
-			try {
-				filePath = new URI(data.getDataString());
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		} else if (resultCode == Activity.RESULT_CANCELED) {
-
-		}
-
-	}
-
-    
 }
