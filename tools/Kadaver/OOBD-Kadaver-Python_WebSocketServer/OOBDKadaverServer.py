@@ -43,7 +43,7 @@ class SimpleChat(WebSocket):
       if self.data is not None:
 	try:
 		thisMsg=loads(str(self.data))
-#		print 'message: '+str(self.data)
+		print 'message: '+str(self.data)
 		try:
 			thisMsg['reply'] # checks if variable exists
 			thiscmd=decodestring(thisMsg['reply'])
@@ -59,11 +59,11 @@ class SimpleChat(WebSocket):
 			prefix="r"
 		for client in self.server.connections.itervalues():
 #			print 'actual client: '+ client.channel
-			if client != self and client.channel == prefix+thisMsg['channel'] :
-				try:
+			try:
+				if client != self and client.channel == prefix+thisMsg['channel'] :
 					client.sendMessage(str(self.data))
-				except Exception as n:
-					print n
+			except Exception as n:
+				print "Send Exception: " ,n
 	except Exception as n:
 		print "Exception: " , n
 
