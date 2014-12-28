@@ -1,11 +1,14 @@
 {
     "manifest_version": 2,
-    "name": "OOBD Kadaver",     
-    "description": "Provides Remote connection for CANINVADER OBD Diagnostic Tool",
+    "name": "OOBD Kadaver",   
+    "short_name": "OOBD Kadaver",   
+    "description": "Provides Remote connection for the CANINVADER & OOBD Diagnostic Tools",
     "version": "0.1",
     "icons": {
         "16": "icon.png",
-        "128": "icon.png"
+        "32": "icon32.png",
+        "48": "icon48.png",
+        "128": "icon128.png"
     },
     "app": {
         "background": {
