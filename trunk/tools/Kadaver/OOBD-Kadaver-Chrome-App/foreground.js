@@ -1,7 +1,24 @@
+/*
+	
+	This file is part of the OOBD.org distribution.
+
+	OOBD.org is free software; you can redistribute it and/or modify it
+	under the terms of the GNU General Public License (version 2) as published
+	by the Free Software Foundation and modified by the FreeRTOS exception.
+
+	OOBD.org is distributed in the hope that it will be useful, but WITHOUT
+	ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+	FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+	more details.
+
+	For details about the protocols used, please refer to http://www.oobd.org/doku.php?id=doc:rfc_kadaver
+
+*/
 function init_WS() {
 	//VIA https://developer.chrome.com/apps/app_bluetooth
 	app = window.document;
 	wsURL = "ws://oobd.luxen.de/websock/";
+	//wsURL = "ws://192.168.1.21:9000/";
 	var powered = false;
 	device_names = {};
 	Object.size = function(obj) {
@@ -21,7 +38,10 @@ function init_WS() {
 	thisChannel = Math.floor(Math.random() * (max - min + 1) + min) + "";
 	console.log("Mychannel: " + thisChannel);
 	outputWS = document.getElementById("outputWS");
-
+	document.getElementById('help').onclick=function() {
+					//chrome.tabs.create({'url': "http://www.oobd.org/doku.php?id=doc:tools_kadaver"});
+					window.open("http://www.oobd.org/doku.php?id=doc:tools_kadaver");
+				};
 	
 	chrome.bluetooth.onAdapterStateChanged.addListener(function(adapter) {
 		console.log(adapter);
@@ -31,6 +51,8 @@ function init_WS() {
 				console.log("Adapter radio is on");
 			} else {
 				console.log("Adapter radio is off");
+					setColor("carsvg", "red");
+
 			}
 		}
 	});
@@ -38,9 +60,6 @@ function init_WS() {
 		if (device.name.indexOf("OOBD") == 0){
 			console.log("+OOBD-Dongle", device);
 			device_names[device.address] = device.name;
-		}
-		for (var i in device_names) {
-			// mache etwas mit den gefundenene Devices ...   app.getElementById("devicenames").innerHTML += "<div class='deviceitem' data-address='" + i + "'>-" + device_names[i] + " [" + i + "]</div>";
 		}
 	};
 	var removeDeviceName = function(device) {
@@ -68,10 +87,14 @@ function init_WS() {
 			console.log("BT connect error");
 			eventFlowControl("WSCONNECTED", chrome.runtime.lastError.message);
 			showStatusLine("Dongle connection failed, try again");
+				setColor("carsvg", "red");
+
 		} else {
 			// Profile implementation here.
 			console.log("BT connected");
 			eventFlowControl("BTCONNECTED", null);
+				setColor("carsvg", "green");
+
 		}
 	};
 
@@ -87,6 +110,8 @@ function init_WS() {
 	chrome.bluetoothSocket.onReceiveError.addListener(function(errorInfo) {
 		// Cause is in errorInfo.error.
 		console.log("BTRECVERROR:" +errorInfo.errorMessage);
+			setColor("carsvg", "red");
+
 	});
 
 	
@@ -102,19 +127,19 @@ function init_WS() {
 		console.log("Incoming Event:"+evt);
 		switch(evt){
 			case "CHKBTAPAPTER":
-				showStatusLine("Status: search for Bluetooth Hardware");
+				showStatusLine("Search for Bluetooth Hardware");
 				checkBluetoothSocket();
 				break;
 			case "BTAVAILABLE":
-				showStatusLine("Status: connect to Kadaver Server");
+				showStatusLine("Connect to Kadaver Server");
 				connectWebserver();
 				break;
 			case "WSCONNECTED":
-				showStatusLine("scan 30secs for OOBD Dongles. Please wait...");
+				showStatusLine("Scan for OOBD Dongles...");
 				BluetoothDiscovery();
 				break;
 			case "DONGLEFOUND":
-				showStatusLine("try to connect to Dongle "+ data);
+				showStatusLine("Connect to "+ data);
 				BluetoothPairing(data);
 				break;
 			case "BTCONNECTED":
@@ -164,10 +189,13 @@ function init_WS() {
 		websocket = new WebSocket(wsURL);
 		console.log("new WS???");
 		websocket.onopen = function(evt) {
-			wsOnOpen(evt)
+			wsOnOpen(evt);
+				setColor("earthsvg", "green");
+
 		};
 		websocket.onclose = function(evt) {
 			wsOnClose(evt)
+			setColor("earthsvg", "black");
 		};
 		websocket.onmessage = function(evt) {
 			wsOnMessage(evt)
@@ -176,6 +204,7 @@ function init_WS() {
 			console.log("WS reports error..."+evt.type);
 			console.log(evt);
 			if (evt.type=="error"){
+				setColor("earthsvg", "red");
 				console.log("WS Error handling");
 				app.getElementById('ws_return_value').value=wsURL;
 				var wsdialog = app.getElementById('wsdialog');
@@ -224,6 +253,7 @@ function init_WS() {
 					});
 					noDongleDialog.showModal();
 				}else if (Object.size(device_names)==1){
+					setColor("carsvg", "yellow");
 					for (var i in device_names) { // 
 						eventFlowControl("DONGLEFOUND",i);
 					}
@@ -255,6 +285,7 @@ function init_WS() {
 	}
 
 	function normalOperation() {
+		setColor("laptopsvg", "green");
 		app.getElementById("channel").innerHTML = thisChannel;
 		showStatusLine("Connection Number");
 		startService();
@@ -288,6 +319,7 @@ function init_WS() {
 
 	function wsOnClose(evt) {
 		eventFlowControl("WSDISCONNECTED",null);
+		setColor("earthsvg", "red");
 	}
 
 	function wsOnMessage(evt) {
@@ -351,7 +383,6 @@ function init_WS() {
 		app.getElementById(element).style.fill = color;
 	}
 
-	setColor("carsvg", "yellow");
 
 	
 }

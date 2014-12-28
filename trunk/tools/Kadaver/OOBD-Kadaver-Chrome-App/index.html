@@ -28,7 +28,8 @@
 	</dialog>
        <table border="0" width="100%">
 			<tr>
-				<td rowspan="2"><svg width="48" height="96"><image xlink:href="OOBD_Kadaver.svg"  width="48" height="96"/></svg></td><td colspan="4"><h1>OOBD Kadaver</h1></td>
+				<td rowspan="2"><div id="help"><a href="#"">Help</a></div><svg width="48" height="96"><image xlink:href="OOBD_Kadaver.svg"  width="48" height="96"/></svg></td><td colspan="4">
+      <h1>OOBD Kadaver</h1></td>
 			</tr>
  			<tr>
 				<td  colspan="4">The Remote Diagnostics Connector</td>
@@ -223,7 +224,7 @@
             input {
                 width:80%;
                 margin-bottom:8px;
-                color:#e5e5e5;
+                color:#000000;
                 border:solid 1px #999;
                 padding-left:4px;
             }
@@ -248,6 +249,12 @@
             #bluetoothstatus {
                 font-size:10pt;
                 color:#999;
+            }
+           #help {
+                margin-bottom:0px;   
+                font-size:6pt;
+                color:#999;
+				text-align:left
             }
             #channel {
                 font-size:24pt;
