@@ -290,4 +290,9 @@ public class ComPort implements OOBDPort {
 		}
 	}
 
+	public int adjustTimeOut(int originalTimeout) {
+		// leave the original timeout unchanged
+		return originalTimeout;
+	}
+
 }
