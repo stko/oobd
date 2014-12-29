@@ -10,7 +10,7 @@
 	<application android:icon="@drawable/obd2_icon" android:label="@string/app_name_short"
 		android:name="org.oobd.ui.android.application.OOBDApp"
 		android:theme="@android:style/Theme.Light.NoTitleBar"
-		android:debuggable="true">
+		android:debuggable="false">
 		
 		<activity android:name=".MainActivity" android:theme="@android:style/Theme.Light"
 			android:configChanges="orientation|keyboardHidden" android:label="@string/app_name_short">

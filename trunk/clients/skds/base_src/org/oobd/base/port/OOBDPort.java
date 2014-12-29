@@ -31,5 +31,7 @@ public interface OOBDPort {
     
     public void attachShutDownHook();
 
+    public int adjustTimeOut(int originalTimeout);
+
     public void write(String s);
 }

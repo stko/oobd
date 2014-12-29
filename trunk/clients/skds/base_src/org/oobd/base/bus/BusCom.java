@@ -257,7 +257,7 @@ public synchronized void receiveString(String msg){
         boolean waitForever = timeout < 1;
         boolean doLoop = true;
         int c;
-        long timeOutInMillis = System.currentTimeMillis() + timeout;
+        long timeOutInMillis = System.currentTimeMillis() + comHandle.adjustTimeOut(timeout);
         int sleepTime = 2;
         while (doLoop && isConnected()) {
             c = read();
@@ -305,7 +305,7 @@ public synchronized void receiveString(String msg){
         int c;
         int sleepTime = 5;
         int result = 0;
-        long timeOutInMillis = System.currentTimeMillis() + timeout;
+        long timeOutInMillis = System.currentTimeMillis() + comHandle.adjustTimeOut(timeout);
         Conditions con = new Conditions(conditions);
         while (doLoop && isConnected()) {
             c = read();
