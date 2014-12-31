@@ -30,6 +30,7 @@ public class ComPort_Unix implements OOBDPort, SerialPortEventListener {
     OutputStream outputStream;
     SerialPort serialPort;
     OobdBus msgReceiver;
+    String defaultPort = "";
 
     public OutputStream getOutputStream() {
         return outputStream;
@@ -41,7 +42,6 @@ public class ComPort_Unix implements OOBDPort, SerialPortEventListener {
 
     public boolean connect(Onion options, OobdBus receiveListener) {
         Preferences props = Core.getSingleInstance().getSystemIF().loadPreferences(OOBDConstants.FT_RAW, OOBDConstants.AppPrefsFileName);
-        String defaultPort = "";
         Boolean portFound = false;
         msgReceiver = receiveListener;
 
@@ -223,5 +223,17 @@ public class ComPort_Unix implements OOBDPort, SerialPortEventListener {
                         null, ex);
             }
         }
+    }
+
+    public String connectInfo() {
+        if (serialPort==null){
+            return "BT: Not connected";
+        }else{
+            return "BT connected to "+defaultPort;
+        }
+    }
+
+    public int adjustTimeOut(int originalTimeout) {
+        return originalTimeout;
     }
 }

@@ -18,13 +18,13 @@ import org.oobd.base.Core;
  *
  * @author steffen
  */
-public class FileHandlerLBC implements Archive {
+public class FileHandlerPlain implements Archive {
 
     String myFilePath;
     String myFileName;
 	Core core;
 
-	public FileHandlerLBC(Core c){
+	public FileHandlerPlain(Core c){
 		core=c;
 	}
 
@@ -33,7 +33,7 @@ public class FileHandlerLBC implements Archive {
             try {
                 return new FileInputStream(myFilePath);
             } catch (FileNotFoundException ex) {
-                Logger.getLogger(FileHandlerLBC.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(FileHandlerPlain.class.getName()).log(Level.SEVERE, null, ex);
                 return null;
             }
         }
@@ -45,7 +45,7 @@ public class FileHandlerLBC implements Archive {
             try {
                 inStream.close();
             } catch (IOException ex) {
-                Logger.getLogger(FileHandlerLBC.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(FileHandlerPlain.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
