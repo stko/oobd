@@ -17,9 +17,10 @@
 function init_WS() {
 	//VIA https://developer.chrome.com/apps/app_bluetooth
 	app = window.document;
-	wsURL = "ws://oobd.luxen.de/websock/";
-	//wsURL = "ws://192.168.1.21:9000/";
+	//wsURL = "ws://oobd.luxen.de/websock/";
+	wsURL = "ws://192.168.1.21:9000/";
 	var powered = false;
+	var btDeviceName = "";
 	device_names = {};
 	Object.size = function(obj) {
     var size = 0, key;
@@ -103,7 +104,8 @@ function init_WS() {
 			return;
 		}
 		// receiveInfo.data is an ArrayBuffer.
-		console.log("Received: ", ab2str(receiveInfo.data));
+		console.log("BT Received: ", ab2str(receiveInfo.data));
+		eventFlowControl("BTRECEIVE",null)
 		doSend(ab2str(receiveInfo.data));
 	});
 
@@ -111,6 +113,7 @@ function init_WS() {
 		// Cause is in errorInfo.error.
 		console.log("BTRECVERROR:" +errorInfo.errorMessage);
 			setColor("carsvg", "red");
+			eventFlowControl("DONGLEFOUND",btDeviceName);
 
 	});
 
@@ -124,6 +127,7 @@ function init_WS() {
 	
 	
 	function eventFlowControl(evt, data){
+	
 		console.log("Incoming Event:"+evt);
 		switch(evt){
 			case "CHKBTAPAPTER":
@@ -148,10 +152,18 @@ function init_WS() {
 			case "WSDISCONNECTED":
 				break;
 			case "WSRECEIVE":
+				triggerBarberPole("wsrx");
+				break;
+			case "BTRECEIVE":
+				triggerBarberPole("btrx");
 				break;
 			case "JSONERRORRECV":
 				break;
 			case "WSSEND":
+				triggerBarberPole("wstx");
+				break;
+			case "BTSEND":
+				triggerBarberPole("bttx");
 				break;
 			case "ENDPROGRAM":
 				chrome.app.window.AppWindow.close();
@@ -238,9 +250,9 @@ function init_WS() {
 				console.log("BluetoothDiscovery  3");
 				chrome.bluetooth.stopDiscovery(function() {});
 				console.log("Discovery Ends -nr of dongles found: "+Object.size(device_names))
-			for (var i in device_names) {
-				console.log("data-address=" + device_names[i] + " [" + i + "]");
-			}
+				for (var i in device_names) {
+					console.log("data-address=" + device_names[i] + " [" + i + "]");
+				}
 				if (Object.size(device_names)==0){
 					var noDongleDialog = app.getElementById('noDongleDialog');
 					noDongleDialog.addEventListener('close', function (event) {
@@ -255,6 +267,7 @@ function init_WS() {
 				}else if (Object.size(device_names)==1){
 					setColor("carsvg", "yellow");
 					for (var i in device_names) { // 
+						btDeviceName=i;
 						eventFlowControl("DONGLEFOUND",i);
 					}
 				}
@@ -323,10 +336,12 @@ function init_WS() {
 	}
 
 	function wsOnMessage(evt) {
+
 		eventFlowControl("WSRECEIVE",null);
 		try {
 			obj = JSON.parse(evt.data);
 			if (obj.msg) {
+				console.log("WS receive: "+obj.msg);
 				sendMessage(str2ab(atob(obj.msg)));
 			}
 		} catch (err) {
@@ -343,6 +358,7 @@ function init_WS() {
 			reply: btoa(message),
 			channel: btoa(thisChannel)
 		});
+		console.log("WSSend: "+message);
 		eventFlowControl("WSSEND",null);
 		websocket.send(msg);
 	}
@@ -372,6 +388,7 @@ function init_WS() {
 			if (chrome.runtime.lastError) {
 				console.log("BTSENDERROR" + chrome.runtime.lastError.message);
 			} else {
+				eventFlowControl("BTSEND",null)
 				console.log("BTSEND: Sent " + bytes_sent + " bytes:" + ab2str(data));
 			}
 		});
@@ -383,8 +400,15 @@ function init_WS() {
 		app.getElementById(element).style.fill = color;
 	}
 
-
 	
-}
+	
+	function triggerBarberPole(name){
+		// retrieve the element
+		element = app.getElementById(name);
+		var newone = element.cloneNode(true);
+		element.parentNode.replaceChild(newone, element);
+		
 
+	}
+}
 window.addEventListener("load", init_WS, false);
