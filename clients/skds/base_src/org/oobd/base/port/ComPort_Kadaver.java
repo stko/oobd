@@ -140,6 +140,6 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
 
 	public int adjustTimeOut(int originalTimeout) {
 		// as the ws- based time could be much longer as a direct connection, we multiply the normal time
-		return originalTimeout*3;
+		return originalTimeout*1;
 	}
 }
