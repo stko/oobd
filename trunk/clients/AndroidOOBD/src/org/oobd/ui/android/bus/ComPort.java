@@ -121,9 +121,10 @@ public class ComPort implements OOBDPort {
 											if (bytes > 0) {
 												Log.v(this.getClass().getSimpleName(),
 														"Debug: received something");
+												String recString=new String(buffer);
+												recString=recString.substring(0, bytes);
 												msgReceiver
-														.receiveString(new String(
-																buffer));
+														.receiveString(recString);
 											}
 										} catch (IOException e) {
 											break;

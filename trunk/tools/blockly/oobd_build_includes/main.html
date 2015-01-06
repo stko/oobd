@@ -43,19 +43,6 @@
 <script type="text/javascript" src="./blocks/variables.js"></script>
 <script type="text/javascript" src="./blocks/procedures.js"></script>
 
-<!-- API categories. -->
-  <script type="text/javascript" src="./oobd-api/blocks.js"></script>
-  <script type="text/javascript" src="./oobd-api/blocks-bit.js"></script>
-  <script type="text/javascript" src="./oobd-api/blocks-colour.js"></script>
-  <script type="text/javascript" src="./oobd-api/blocks-disk.js"></script>
-  <script type="text/javascript" src="./oobd-api/blocks-fs.js"></script>
-  <script type="text/javascript" src="./oobd-api/blocks-os.js"></script>
-  <script type="text/javascript" src="./oobd-api/blocks-paintutils.js"></script>
-  <script type="text/javascript" src="./oobd-api/blocks-peripheral.js"></script>
-  <script type="text/javascript" src="./oobd-api/blocks-shell.js"></script>
-  <script type="text/javascript" src="./oobd-api/blocks-term.js"></script>
-  <script type="text/javascript" src="./oobd-api/blocks-textutils.js"></script> 
-
 <script type="text/javascript">
 'use strict';
 // Depending on the URL argument, render as LTR or RTL.
@@ -383,13 +370,18 @@ h1 {
 
 
          <category name="OOBD">
-            <category name="Menu">
-              <block type="oobd_menu">
-               <value name="menuTitle">
-                  <block type="text"></block>
-                </value>
-              </block>
-            </category>
+ 		<block type="oobd_menu">
+		<value name="menuTitle">
+			<block type="text"></block>
+		</value>
+		</block>
+		<block type="oobd_item">
+		<value name="mcaller">
+			<block type="text"></block>
+		</value>
+		</block>
+		<block type="oobd_mcall">
+		</block>
           </category>
 
 

@@ -46,3 +46,59 @@ Blockly.Blocks['oobd_menu'] = {
     this.setTooltip('');
   }
 };
+
+Blockly.Blocks['oobd_item'] = {
+  init: function() {
+    this.setHelpUrl('http://www.example.com/');
+    this.setColour(15);
+    this.appendDummyInput()
+        .appendField("OOBD Menuitem");
+    this.appendDummyInput()
+        .appendField("Content")
+        .appendField(new Blockly.FieldTextInput("Field Text"), "content");
+    this.appendDummyInput()
+        .appendField("Flags")
+        .appendField(new Blockly.FieldDropdown([["none", "0x00"], ["Update", "0x01"], ["Timer", "0x02"], ["Upd. & Tim.", "0x03"]]), "flags");
+    this.appendStatementInput("NAME")
+        .appendField("id");
+    this.appendValueInput("mcaller")
+        .setCheck("mCall")
+        .appendField("MenuCall");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setTooltip('');
+  }
+};
+
+Blockly.Blocks['oobd_mcall'] = {
+  init: function() {
+    this.setHelpUrl('http://www.example.com/');
+    this.setColour(15);
+    this.appendDummyInput()
+        .appendField("OOBD MenuCall")
+        .appendField(new Blockly.FieldTextInput("CallName"), "CallName");
+    this.appendStatementInput("NAME");
+    this.setInputsInline(true);
+    this.setTooltip('');
+  }
+};
+
+Blockly.Blocks['oobd_service'] = {
+  init: function() {
+    this.setHelpUrl('http://www.example.com/');
+    this.setColour(15);
+    this.appendDummyInput()
+        .appendField("UDS Service");
+    this.appendValueInput("service")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("Service-ID");
+    this.appendValueInput("params")
+        .setAlign(Blockly.ALIGN_RIGHT)
+        .appendField("Parameter");
+    this.appendStatementInput("NAME");
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setTooltip('');
+  }
+};
