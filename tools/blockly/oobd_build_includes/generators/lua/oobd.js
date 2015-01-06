@@ -36,3 +36,29 @@ Blockly.Lua['oobd_menu'] = function(block) {
   return code;
 };
 
+Blockly.Lua['oobd_item'] = function(block) {
+  var text_content = block.getFieldValue('content');
+  var dropdown_flags = block.getFieldValue('flags');
+  var statements_name = Blockly.Lua.statementToCode(block, 'NAME');
+  var value_mcaller = Blockly.Lua.valueToCode(block, 'mcaller', Blockly.Lua.ORDER_ATOMIC);
+  // TODO: Assemble Lua into code variable.
+  var code = '...';
+  return code;
+};
+
+Blockly.Lua['oobd_mcall'] = function(block) {
+  var text_callname = block.getFieldValue('CallName');
+  var statements_name = Blockly.Lua.statementToCode(block, 'NAME');
+  // TODO: Assemble Lua into code variable.
+  var code = '...';
+  return code;
+};
+
+Blockly.Lua['oobd_service'] = function(block) {
+  var value_service = Blockly.Lua.valueToCode(block, 'service', Blockly.Lua.ORDER_ATOMIC);
+  var value_params = Blockly.Lua.valueToCode(block, 'params', Blockly.Lua.ORDER_ATOMIC);
+  var statements_name = Blockly.Lua.statementToCode(block, 'NAME');
+  // TODO: Assemble Lua into code variable.
+  var code = '...';
+  return code;
+};
