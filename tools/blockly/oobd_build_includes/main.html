@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
   <meta name="google" value="notranslate">
-<title>Blockly Playground</title>
+<title>The OOBD Web Generator</title>
 
 <!--  <link rel="stylesheet" type="text/css" href="./apps/common.css">
   <link rel="stylesheet" type="text/css" href="./apps/code/style.css">
@@ -124,7 +124,7 @@ h1 {
   <div id="blocklyDiv"></div>
 
   <xml id="toolbox" style="display: none">
-          <category name="ComputerCraft">
+<!--          <category name="ComputerCraft">
             <category name="Bit">
               <block type="bit_shift">
                 <value name="BITS">
@@ -365,7 +365,7 @@ h1 {
               <block type="textutils_format_time"></block>
             </category>
           </category>
-
+-->
 
 
 
@@ -382,8 +382,48 @@ h1 {
 		</block>
 		<block type="oobd_mcall">
 		</block>
-          </category>
+		<block type="oobd_service">
+		<value name="service">
+			<block type="text"></block>
+		</value>
+		<value name="params">
+			<block type="text"></block>
+		</value>
+		</block>
+ 		<block type="oobd_setdongle">
+		</block>
+		<block type="oobd_setmodule">
+		</block>
+		<block type="oobd_requestservice">
+		<value name="serviceID">
+			<block type="text"></block>
+		</value>
+		<value name="NAME">
+			<block type="text"></block>
+		</value>
+		</block>
+		<block type="oobd_evalresult">
+		<value name="startbit">
+			<block type="text"></block>
+		</value>
+		<value name="length">
+			<block type="text"></block>
+		</value>
+		<value name="offset">
+			<block type="text"></block>
+		</value>
+		<value name="mult">
+			<block type="text"></block>
+		</value>
+		<value name="Unit">
+			<block type="text"></block>
+		</value>
+		</block>
+         </category>
 
+
+          
+          
 
 
 
@@ -550,7 +590,9 @@ h1 {
           <category name="Procedures" custom="PROCEDURE"></category>
         </xml>
 
-  <h1>Blockly Playground</h1>
+  <h1>The OOBD Web Generator</h1>
+  
+  <p>Generate your Scripts online and on the fly in any (modern) Browser</p>
 
   <p><a href="javascript:void([document.getElementById('blocklyDiv').style.display = 'block', Blockly.mainWorkspace.render()])">Show</a>
    - <a href="javascript:void(document.getElementById('blocklyDiv').style.display = 'none')">Hide</a></p>

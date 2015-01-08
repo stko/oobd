@@ -50,7 +50,7 @@ Blockly.Blocks['oobd_menu'] = {
 Blockly.Blocks['oobd_item'] = {
   init: function() {
     this.setHelpUrl('http://www.example.com/');
-    this.setColour(15);
+    this.setColour(330);
     this.appendDummyInput()
         .appendField("OOBD Menuitem");
     this.appendDummyInput()
@@ -74,7 +74,7 @@ Blockly.Blocks['oobd_item'] = {
 Blockly.Blocks['oobd_mcall'] = {
   init: function() {
     this.setHelpUrl('http://www.example.com/');
-    this.setColour(15);
+    this.setColour(330);
     this.appendDummyInput()
         .appendField("OOBD MenuCall")
         .appendField(new Blockly.FieldTextInput("CallName"), "CallName");
@@ -87,7 +87,7 @@ Blockly.Blocks['oobd_mcall'] = {
 Blockly.Blocks['oobd_service'] = {
   init: function() {
     this.setHelpUrl('http://www.example.com/');
-    this.setColour(15);
+    this.setColour(330);
     this.appendDummyInput()
         .appendField("UDS Service");
     this.appendValueInput("service")
@@ -102,3 +102,99 @@ Blockly.Blocks['oobd_service'] = {
     this.setTooltip('');
   }
 };
+
+
+Blockly.Blocks['oobd_setdongle'] = {
+  init: function() {
+    this.setHelpUrl('http://www.example.com/');
+    this.setColour(330);
+    this.appendDummyInput()
+        .appendField("Set Dongle to");
+    this.appendDummyInput()
+        .appendField("Bus Mode")
+        .appendField(new Blockly.FieldDropdown([["Off", "off"], ["Listen", "listen"], ["Active", "active"]]), "busMode");
+    this.appendDummyInput()
+        .appendField("Channel")
+        .appendField(new Blockly.FieldDropdown([["HS-CAN", "HS-CAN"], ["MS-CAN", "MS-CAN"]]), "bus");
+    this.appendDummyInput()
+        .appendField("Protocol")
+        .appendField(new Blockly.FieldDropdown([["UDS", "1"], ["Real Time Data", "2"]]), "protocol");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setTooltip('');
+  }
+};
+
+Blockly.Blocks['oobd_setmodule'] = {
+  init: function() {
+    this.setHelpUrl('http://www.example.com/');
+    this.setColour(330);
+    this.appendDummyInput()
+        .appendField("Set Module to ");
+    this.appendDummyInput()
+        .appendField("ID (e.g. 7E0)")
+        .appendField(new Blockly.FieldTextInput("7E0"), "moduleID");
+    this.appendDummyInput()
+        .appendField("Timeout (ms)")
+        .appendField(new Blockly.FieldTextInput("50"), "moduleTimeout");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setTooltip('');
+  }
+};
+
+
+Blockly.Blocks['oobd_requestservice'] = {
+  init: function() {
+    this.setHelpUrl('http://www.example.com/');
+    this.setColour(330);
+    this.appendDummyInput()
+        .appendField("Request Service ");
+    this.appendValueInput("serviceID")
+        .setCheck("String")
+        .appendField("ID (hex)");
+    this.appendValueInput("NAME")
+        .setCheck("String")
+        .appendField("Parameters (hex)");
+    this.appendStatementInput("inner")
+        .appendField("if success");
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+    this.setTooltip('');
+  }
+};
+
+
+Blockly.Blocks['oobd_evalresult'] = {
+  init: function() {
+    this.setHelpUrl('http://www.example.com/');
+    this.setColour(330);
+    this.appendDummyInput()
+        .appendField("Eval Result");
+    this.appendDummyInput()
+        .appendField("Type")
+        .appendField(new Blockly.FieldDropdown([["ASCII", "ascii"], ["Bit", "bit"], ["numeric", "numeric"]]), "type");
+    this.appendValueInput("startbit")
+        .setCheck("Number")
+        .appendField("Startbit");
+    this.appendValueInput("length")
+        .setCheck("Number")
+        .appendField("Length (Bits)");
+    this.appendValueInput("offset")
+        .setCheck("Number")
+        .appendField("Offset");
+    this.appendValueInput("mult")
+        .setCheck("Number")
+        .appendField("Multiplier");
+    this.appendValueInput("Unit")
+        .setCheck("String")
+        .appendField("Unit");
+    this.appendDummyInput()
+        .appendField("(\"low-Value\" / \"High-Value\" for Bits");
+    this.setOutput(true);
+    this.setTooltip('');
+  }
+};
+
