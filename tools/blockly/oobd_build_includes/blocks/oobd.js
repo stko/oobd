@@ -29,10 +29,12 @@ goog.provide('Blockly.Blocks.oobd');
 goog.require('Blockly.Blocks');
 
 
+var oobdcolour = new Blockly.FieldColour('#ffff00');
+
 Blockly.Blocks['oobd_menu'] = {
   init: function() {
     this.setHelpUrl('http://www.example.com/');
-    this.setColour(330);
+    this.setColour(60);
     this.appendDummyInput()
         .appendField("OOBD Menu");
     this.appendValueInput("menuTitle")
@@ -50,20 +52,21 @@ Blockly.Blocks['oobd_menu'] = {
 Blockly.Blocks['oobd_item'] = {
   init: function() {
     this.setHelpUrl('http://www.example.com/');
-    this.setColour(330);
+    this.setColour(60);
     this.appendDummyInput()
         .appendField("OOBD Menuitem");
     this.appendDummyInput()
         .appendField("Content")
-        .appendField(new Blockly.FieldTextInput("Field Text"), "content");
+        .appendField(new Blockly.FieldTextInput("Description of this Value"), "content");
     this.appendDummyInput()
-        .appendField("Flags")
-        .appendField(new Blockly.FieldDropdown([["none", "0x00"], ["Update", "0x01"], ["Timer", "0x02"], ["Upd. & Tim.", "0x03"]]), "flags");
-    this.appendStatementInput("NAME")
-        .appendField("id");
+        .appendField("Icons")
+        .appendField(new Blockly.FieldDropdown([["none", "0x00"], ["Update", "0x02"], ["Timer", "0x04"], ["Upd. & Timer", "0x06"], ["Submenu", "0x01"], ["Back", "0x10"]]), "Flags");
+    this.appendValueInput("idinfo")
+        .setCheck("String")
+        .appendField("ID");
     this.appendValueInput("mcaller")
-        .setCheck("mCall")
-        .appendField("MenuCall");
+        .setCheck("String")
+        .appendField("Related Function Name");
     this.setInputsInline(true);
     this.setPreviousStatement(true);
     this.setNextStatement(true);
@@ -74,7 +77,7 @@ Blockly.Blocks['oobd_item'] = {
 Blockly.Blocks['oobd_mcall'] = {
   init: function() {
     this.setHelpUrl('http://www.example.com/');
-    this.setColour(330);
+    this.setColour(60);
     this.appendDummyInput()
         .appendField("OOBD MenuCall")
         .appendField(new Blockly.FieldTextInput("CallName"), "CallName");
@@ -84,30 +87,12 @@ Blockly.Blocks['oobd_mcall'] = {
   }
 };
 
-Blockly.Blocks['oobd_service'] = {
-  init: function() {
-    this.setHelpUrl('http://www.example.com/');
-    this.setColour(330);
-    this.appendDummyInput()
-        .appendField("UDS Service");
-    this.appendValueInput("service")
-        .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("Service-ID");
-    this.appendValueInput("params")
-        .setAlign(Blockly.ALIGN_RIGHT)
-        .appendField("Parameter");
-    this.appendStatementInput("NAME");
-    this.setPreviousStatement(true);
-    this.setNextStatement(true);
-    this.setTooltip('');
-  }
-};
 
 
 Blockly.Blocks['oobd_setdongle'] = {
   init: function() {
     this.setHelpUrl('http://www.example.com/');
-    this.setColour(330);
+    this.setColour(60);
     this.appendDummyInput()
         .appendField("Set Dongle to");
     this.appendDummyInput()
@@ -129,7 +114,7 @@ Blockly.Blocks['oobd_setdongle'] = {
 Blockly.Blocks['oobd_setmodule'] = {
   init: function() {
     this.setHelpUrl('http://www.example.com/');
-    this.setColour(330);
+    this.setColour(60);
     this.appendDummyInput()
         .appendField("Set Module to ");
     this.appendDummyInput()
@@ -149,7 +134,7 @@ Blockly.Blocks['oobd_setmodule'] = {
 Blockly.Blocks['oobd_requestservice'] = {
   init: function() {
     this.setHelpUrl('http://www.example.com/');
-    this.setColour(330);
+    this.setColour(60);
     this.appendDummyInput()
         .appendField("Request Service ");
     this.appendValueInput("serviceID")
@@ -170,7 +155,7 @@ Blockly.Blocks['oobd_requestservice'] = {
 Blockly.Blocks['oobd_evalresult'] = {
   init: function() {
     this.setHelpUrl('http://www.example.com/');
-    this.setColour(330);
+    this.setColour(60);
     this.appendDummyInput()
         .appendField("Eval Result");
     this.appendDummyInput()
@@ -192,7 +177,7 @@ Blockly.Blocks['oobd_evalresult'] = {
         .setCheck("String")
         .appendField("Unit");
     this.appendDummyInput()
-        .appendField("(\"low-Value\" / \"High-Value\" for Bits");
+        .appendField("(\"low-Value\" ? \"High-Value\" for Bits)");
     this.setOutput(true);
     this.setTooltip('');
   }

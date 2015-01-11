@@ -30,71 +30,72 @@ goog.require('Blockly.Lua');
 
 Blockly.Lua['oobd_menu'] = function(block) {
   var value_menutitle = Blockly.Lua.valueToCode(block, 'menuTitle', Blockly.Lua.ORDER_ATOMIC);
-  var statements_inner = Blockly.Lua.statementToCode(block, 'inner');
-  // TODO: Assemble Lua into code variable.
-  var code = '...';
-  
-  
-  
-  
-  
+  var statements_name = Blockly.Lua.statementToCode(block, 'inner');
+  var code ='openPage('+value_menutitle+')\n'
+ 	+statements_name
+	+'pageDone()\n'
+        ;
   return code;
 };
 
 Blockly.Lua['oobd_item'] = function(block) {
   var text_content = block.getFieldValue('content');
-  var dropdown_flags = block.getFieldValue('flags');
-  var statements_name = Blockly.Lua.statementToCode(block, 'NAME');
+  var dropdown_flags = block.getFieldValue('Flags');
+  var value_idinfo = Blockly.Lua.valueToCode(block, 'idinfo', Blockly.Lua.ORDER_ATOMIC);
   var value_mcaller = Blockly.Lua.valueToCode(block, 'mcaller', Blockly.Lua.ORDER_ATOMIC);
-  // TODO: Assemble Lua into code variable.
-  var code = '...';
+  var code ='addElement("'+text_content+'" , '+value_mcaller+', "-", '+dropdown_flags +', '+value_idinfo +')\n'
+        ;  
   return code;
 };
 
 Blockly.Lua['oobd_mcall'] = function(block) {
   var text_callname = block.getFieldValue('CallName');
   var statements_name = Blockly.Lua.statementToCode(block, 'NAME');
-  // TODO: Assemble Lua into code variable.
   var code = 'function '+ text_callname +'(oldvalue,id)\n'
+	+'local result = oldvalue\n'
 	+statements_name
 	+'return result\n'
-end
-''';
+	+'end\n'
+        ;
   return code;
 };
 
-Blockly.Lua['oobd_service'] = function(block) {
-  var value_service = Blockly.Lua.valueToCode(block, 'service', Blockly.Lua.ORDER_ATOMIC);
-  var value_params = Blockly.Lua.valueToCode(block, 'params', Blockly.Lua.ORDER_ATOMIC);
-  var statements_name = Blockly.Lua.statementToCode(block, 'NAME');
-  // TODO: Assemble Lua into code variable.
-  var code = '...';
-  return code;
-};
 
 Blockly.Lua['oobd_setdongle'] = function(block) {
   var dropdown_busmode = block.getFieldValue('busMode');
   var dropdown_bus = block.getFieldValue('bus');
   var dropdown_protocol = block.getFieldValue('protocol');
-  // TODO: Assemble Lua into code variable.
-  var code = '...';
+  var code ='setDongleMode("'+dropdown_busmode+'" , "'+dropdown_bus+'", "'+dropdown_protocol +'")\n'
+        ;  
   return code;
 };
 
 Blockly.Lua['oobd_setmodule'] = function(block) {
   var text_moduleid = block.getFieldValue('moduleID');
   var text_moduletimeout = block.getFieldValue('moduleTimeout');
-  // TODO: Assemble Lua into code variable.
-  var code = '...';
-  return code;
+ var code ='setModuleParams("'+text_moduleid+'" , '+text_moduletimeout +')\n'
+        ;  
+   return code;
 };
 
 Blockly.Lua['oobd_requestservice'] = function(block) {
   var value_serviceid = Blockly.Lua.valueToCode(block, 'serviceID', Blockly.Lua.ORDER_ATOMIC);
   var value_name = Blockly.Lua.valueToCode(block, 'NAME', Blockly.Lua.ORDER_ATOMIC);
   var statements_inner = Blockly.Lua.statementToCode(block, 'inner');
-  // TODO: Assemble Lua into code variable.
-  var code = '...';
+  var code = 'echoWrite('+ value_serviceid +'..' + value_name  +'.."\\r")\n'
+	+'local udsLen=receive()\n'
+	+'if udsLen>0 then\n'
+	+'if udsBuffer[1]==tonumber('+ value_serviceid + ',16) + 0x40  then\n'
+	+statements_inner
+	+'elseif udsBuffer[1]== 0x7F then\n'
+	+'return string.format(getLocalePrintf("nrc",string.format("0x%x",udsBuffer[3]), "NRC: 0x%02X"),udsBuffer[3])\n'
+	+'else\n'
+	+'return "Error"\n'
+	+'end\n'
+	+'else\n'
+	+'return "NO DATA"\n'
+	+'end\n'
+        ;
   return code;
 };
 
@@ -106,8 +107,7 @@ Blockly.Lua['oobd_evalresult'] = function(block) {
   var value_offset = Blockly.Lua.valueToCode(block, 'offset', Blockly.Lua.ORDER_ATOMIC);
   var value_mult = Blockly.Lua.valueToCode(block, 'mult', Blockly.Lua.ORDER_ATOMIC);
   var value_unit = Blockly.Lua.valueToCode(block, 'Unit', Blockly.Lua.ORDER_ATOMIC);
-  // TODO: Assemble Lua into code variable.
-  var code = '...';
+  var code ='result=evalResult("'+dropdown_type+'" , tonumber('+value_startbit+') , tonumber('+value_length+') , tonumber('+value_offset+') , tonumber('+value_mult+') , '+value_unit +')\n'
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.Lua.ORDER_NONE];
 };

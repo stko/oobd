@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
+import org.oobd.base.Core;
 import org.oobd.base.OOBDConstants;
 import org.oobd.base.port.OOBDPort;
 import org.oobd.base.port.PortInfo;
@@ -32,7 +33,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Andreas Budde, Peter Mayer Settings activity that allows users to
@@ -43,18 +50,19 @@ public class Settings extends Activity {
 
 	public static final String KEY_LIST_SELECT_PAIRED_OBD2_DEVICE = "PREF_OOBD_BT_DEVICE";
 
+	private Spinner connectTypeSpinner;
 	private Spinner mDeviceSpinner;
-	private String BTDeviceName;
-	private OOBDPort portListGenerator;
+	private String connectDeviceName;
+	private String connectTypeName;
+	private PortInfo[] portList;
 	SharedPreferences preferences;
 	private CheckBox pgpEnabled;
 	private TextView pgpStatus;
 	private Button pgpImportKeys;
-	private CheckBox remoteConnect;
 	private TextView wsURLeditText;
 	private TextView wsProxyHostEditText;
 	private TextView wsProxyPortEditText;
-
+	private Hashtable<String, Class> supplyHardwareConnects;
  	
 	public static Settings mySettingsActivity;
 
@@ -64,25 +72,67 @@ public class Settings extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings);
 		preferences = this.getSharedPreferences("OOBD_SETTINGS", MODE_PRIVATE);
-		portListGenerator = ((OOBDPort) OOBDApp.getInstance().getCore()
-				.supplyHardwareHandle(null));
-		mDeviceSpinner = (Spinner) findViewById(R.id.BTDeviceSpinner);
-		mDeviceSpinner
+		connectTypeSpinner = (Spinner) findViewById(R.id.connectionTypeSpinner);
+		connectTypeSpinner
 				.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 					public void onItemSelected(AdapterView<?> parent,
 							View view, int pos, long id) {
-						BTDeviceName = ((PortInfo) parent
-								.getItemAtPosition(pos)).getDevice();
-						if (BTDeviceName != null
-								&& !BTDeviceName.equalsIgnoreCase("")) {
+						connectTypeName = (String) parent
+								.getItemAtPosition(pos);
+						if (connectTypeName != null
+								&& !connectTypeName.equalsIgnoreCase("")) {
 							preferences.edit()
-									.putString("BTDEVICE", BTDeviceName)
+									.putString(OOBDConstants.PropName_ConnectType, connectTypeName)
 									.commit();
 						}
 					}
 
 					public void onNothingSelected(AdapterView<?> parent) {
-						preferences.edit().putString("BTDEVICE", "").commit();
+						preferences.edit().putString(OOBDConstants.PropName_ConnectType, "").commit();
+					}
+				});
+		
+		
+        List<String> list = new ArrayList<String>();
+		supplyHardwareConnects = OOBDApp.getInstance().getCore().getConnectorList();
+       
+        Enumeration<String> e = supplyHardwareConnects.keys();
+       
+        //iterate through Hashtable keys Enumeration
+        while(e.hasMoreElements()){
+          list.add(e.nextElement());
+      }
+         
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>
+                     (this, android.R.layout.simple_spinner_item,list);
+                      
+        dataAdapter.setDropDownViewResource
+                     (android.R.layout.simple_spinner_dropdown_item);
+                      
+        connectTypeSpinner.setAdapter(dataAdapter);
+	
+
+		
+		
+		
+		
+		mDeviceSpinner = (Spinner) findViewById(R.id.BTDeviceSpinner);
+		mDeviceSpinner
+				.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+					public void onItemSelected(AdapterView<?> parent,
+							View view, int pos, long id) {
+						connectDeviceName = ((PortInfo) parent
+								.getItemAtPosition(pos)).getDevice();
+						if (connectDeviceName != null
+								&& !connectDeviceName.equalsIgnoreCase("")) {
+							preferences.edit()
+									.putString(connectTypeName+"_DEVICE", connectDeviceName)
+									.commit();
+						}
+					}
+
+					public void onNothingSelected(AdapterView<?> parent) {
+						preferences.edit().putString(connectTypeName+"_DEVICE", "").commit();
 					}
 				});
 		pgpEnabled = (CheckBox) findViewById(R.id.PGPCheckBox);
@@ -131,16 +181,7 @@ public class Settings extends Activity {
 
 			}
 		});
-		remoteConnect = (CheckBox) findViewById(R.id.remoteConnectCheckBox);
-		remoteConnect.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
-			public void onCheckedChanged(CompoundButton parent,
-					boolean isChecked) {
-				preferences.edit().putBoolean("REMOTECONNECT", isChecked).commit();
-
-			}
-		});
-		remoteConnect.setChecked(preferences.getBoolean("REMOTECONNECT",false));
 		
 		wsURLeditText = (EditText)findViewById(R.id.wsURLeditText);
 		wsURLeditText.addTextChangedListener(new TextWatcher(){
@@ -189,17 +230,39 @@ public class Settings extends Activity {
 
 	private void updateUI() {
 		if (preferences != null) {
-			BTDeviceName = preferences.getString("BTDEVICE",
-					"00:12:6F:07:27:25");
+			connectTypeName = preferences.getString(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
+			connectDeviceName = preferences.getString(connectTypeName+"_DEVICE","");
 			pgpEnabled.setChecked(preferences.getBoolean("PGPENABLED", false));
 		}
+		Class<OOBDPort> value=supplyHardwareConnects.get(connectTypeName);
+        try { // tricky: try to call a static method of an interface, where a interface don't have static values by definition..
+           // Class[] parameterTypes = new Class[]{};
+            java.lang.reflect.Method method = value.getMethod(
+                    "getPorts", new Class[]{}); // no parameters
+            Object instance = null;
+            portList = (PortInfo[]) method.invoke(instance,
+                    new Object[]{}); // no parameters
+            
+        } catch (Exception ex) {
+            Logger.getLogger(Core.class.getName()).log(
+                    Level.WARNING,
+                    "can't call static method 'getPorts' of "
+                    + value.getName());
+            ex.printStackTrace();
 
+        }
+
+		
+		
+		
+		
+		
 		ArrayAdapter<PortInfo> adapter = new ArrayAdapter<PortInfo>(this,
 				android.R.layout.simple_spinner_item,
-				portListGenerator.getPorts());
+				portList);
 		mDeviceSpinner.setAdapter(adapter);
 		for (int i = 0; i < adapter.getCount(); i++) {
-			if (BTDeviceName.equals(adapter.getItem(i).getDevice())) {
+			if (connectDeviceName.equals(adapter.getItem(i).getDevice())) {
 				mDeviceSpinner.setSelection(i);
 				break;
 			}

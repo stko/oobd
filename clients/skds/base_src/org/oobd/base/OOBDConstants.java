@@ -66,6 +66,11 @@ public interface OOBDConstants {
      public final static String PropName_OutputDir ="OutputDir";
      public final static String PropName_PGPEnabled ="PGPEnabled";
      public final static String PropName_UIHander ="UIHandler";
+     public final static String PropName_ConnectType ="ConnectType";
+     public final static String PropName_ConnectTypeBT ="Bluetooth";
+     public final static String PropName_ConnectTypeRemoteConnect ="Kadaver";
+     public final static String PropName_ConnectTypeRemoteDiscovery ="Discovery";
+     public final static String PropName_ConnectDevice ="ConnectDevice";
      //PGP key file  names
     public final static String PGP_USER_KEYFILE_NAME = "userkey.sec";
     public final static String PGP_GROUP_KEYFILE_NAME = "groupkey.sec";
@@ -94,4 +99,6 @@ public interface OOBDConstants {
     public final static int LV_UPDATE_UI = 10;
     // loop time for status Updates in ms
     public final static int LV_STATUS = 1000;
+    // UDP Broadcast defined
+    public final static int UDP_PORT = 34807;
 }

@@ -226,13 +226,13 @@ public class ComPort implements OOBDPort {
 		}
 	}
 
-	public PortInfo[] getPorts() {
+	public static PortInfo[] getPorts() {
 		System.out.println("Starting Bluetooth Detection and Device Pairing");
 
 		BluetoothAdapter mBluetoothAdapter = BluetoothAdapter
 				.getDefaultAdapter();
 		if (mBluetoothAdapter == null) {
-			Log.w(this.getClass().getSimpleName(), "Bluetooth not supported.");
+			Log.w("ComPort", "Bluetooth not supported.");
 			PortInfo[] BTDeviceSet = new PortInfo[1];
 			BTDeviceSet[0] = new PortInfo("", "No Devices paired :-(");
 			return BTDeviceSet;
@@ -240,7 +240,7 @@ public class ComPort implements OOBDPort {
 		Set<BluetoothDevice> pairedDevices = mBluetoothAdapter
 				.getBondedDevices();
 		PortInfo[] BTDeviceSet = new PortInfo[pairedDevices.size()];
-		Log.v(this.getClass().getSimpleName(), "Anzahl paired devices: "
+		Log.v("ComPort", "Anzahl paired devices: "
 				+ pairedDevices.size());
 
 		// If there are paired devices

@@ -25,11 +25,18 @@
         android:layout_height="wrap_content"
         android:text="@string/pgp_checkbox" />
 
-    <CheckBox
-        android:id="@+id/remoteConnectCheckBox"
+    <TextView
+        android:id="@+id/connectionSelectTextView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/remote_connect" />
+        android:text="Connection Type"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        tools:ignore="HardcodedText" />
+
+    <Spinner
+        android:id="@+id/connectionTypeSpinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/wsURLTextView"
