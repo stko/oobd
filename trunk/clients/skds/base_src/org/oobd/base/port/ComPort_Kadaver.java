@@ -41,10 +41,9 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
         Server=wsURL.toString();
         parts=parts[0].split("://");
         channel=parts[1];
-    }
+   }
 
-
-
+ 
     public boolean connect(Onion options, OobdBus receiveListener) {
         msgReceiver = receiveListener;
         attachShutDownHook();
@@ -72,7 +71,7 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
     }
 
     
-    public PortInfo[] getPorts() {
+    public static PortInfo[] getPorts() {
 
         PortInfo[] DeviceSet = new PortInfo[1];
         DeviceSet[0] = new PortInfo("", "No Comports found :-(");

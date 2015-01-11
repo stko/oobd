@@ -1,6 +1,7 @@
 package org.oobd.ui.android.application;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.prefs.Preferences;
 import java.io.*;
 import java.lang.reflect.Method;
@@ -349,6 +350,16 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 					"could not save property id " + filename, e);
 			return false;
 		}
+	}
+
+	public Hashtable<String, Class> getConnectorList() {
+		Hashtable<String, Class> connectClasses
+	     = new Hashtable<String, Class>();
+		connectClasses.put(OOBDConstants.PropName_ConnectTypeBT,ComPort.class);
+		connectClasses.put( OOBDConstants.PropName_ConnectTypeRemoteConnect,ComPort_Kadaver.class);
+		//connectClasses.put(OOBDConstants.PropName_ConnectTypeRemoteDiscovery,);
+	   
+		return connectClasses;
 	}
 
 }

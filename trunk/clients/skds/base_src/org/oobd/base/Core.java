@@ -31,6 +31,7 @@ import java.lang.reflect.*;
 import java.io.*;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 
 import java.util.Collection;
@@ -450,6 +451,16 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public Object supplyHardwareHandle(Onion typ) {
         return systemInterface.supplyHardwareHandle(typ);
+    }
+
+    /**
+     * supply list of  system specific connection hardware classes
+     * 
+     * @param typ
+     * @return a hardware handle of the requested type or nil
+     */
+    public Hashtable<String, Class> getConnectorList() {
+        return systemInterface.getConnectorList();
     }
 
     @Override

@@ -1,11 +1,14 @@
 package org.oobd.base;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.MissingResourceException;
 import java.io.InputStream;
 import java.util.prefs.Preferences;
 import org.oobd.base.scriptengine.OobdScriptengine;
 import org.oobd.base.support.Onion;
+import org.oobd.base.port.OOBDPort;
 
 /**
  * \brief Interface for the Application to communicate with the OOBD core
@@ -76,6 +79,17 @@ public interface IFsystem {
      * @return a object which connects to the system specific hardware or nil
      */
     public Object supplyHardwareHandle(Onion typ);
+    
+
+    
+    /**
+     * \brief supplies Class Array of available Connect classses
+     * 
+     * @param typ on
+     * @return a list of connection types as already created objects
+     */
+    public Hashtable<String, Class> getConnectorList();
+    
     
     /**
      * \brief returns the (secret) application pass phrase for data decoding

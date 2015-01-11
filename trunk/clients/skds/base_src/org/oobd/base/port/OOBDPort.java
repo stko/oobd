@@ -14,7 +14,7 @@ import org.oobd.base.support.Onion;
  */
 public interface OOBDPort {
 
-    public PortInfo[] getPorts();
+    //public PortInfo[] getPorts();
 
     public boolean connect(Onion options, OobdBus receiveListener);
     // Must be called when an unexpected IO exception happens to clear close the connection
