@@ -3,6 +3,7 @@
 	<name>OOBDAndroidSVN</name>
 	<comment></comment>
 	<projects>
+		<project>openxc</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
