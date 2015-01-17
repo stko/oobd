@@ -59,11 +59,11 @@ public class Settings extends Activity {
 	private CheckBox pgpEnabled;
 	private TextView pgpStatus;
 	private Button pgpImportKeys;
-	private TextView wsURLeditText;
+	private TextView urlEditText;
 	private TextView wsProxyHostEditText;
 	private TextView wsProxyPortEditText;
 	private Hashtable<String, Class> supplyHardwareConnects;
- 	
+
 	public static Settings mySettingsActivity;
 
 	// protected void onCreate(Bundle savedInstanceState,OOBDPort comPort) {
@@ -81,41 +81,40 @@ public class Settings extends Activity {
 								.getItemAtPosition(pos);
 						if (connectTypeName != null
 								&& !connectTypeName.equalsIgnoreCase("")) {
-							preferences.edit()
-									.putString(OOBDConstants.PropName_ConnectType, connectTypeName)
-									.commit();
+							preferences
+									.edit()
+									.putString(
+											OOBDConstants.PropName_ConnectType,
+											connectTypeName).commit();
+							updateUI();
 						}
 					}
 
 					public void onNothingSelected(AdapterView<?> parent) {
-						preferences.edit().putString(OOBDConstants.PropName_ConnectType, "").commit();
+						preferences
+								.edit()
+								.putString(OOBDConstants.PropName_ConnectType,
+										"").commit();
 					}
 				});
-		
-		
-        List<String> list = new ArrayList<String>();
-		supplyHardwareConnects = OOBDApp.getInstance().getCore().getConnectorList();
-       
-        Enumeration<String> e = supplyHardwareConnects.keys();
-       
-        //iterate through Hashtable keys Enumeration
-        while(e.hasMoreElements()){
-          list.add(e.nextElement());
-      }
-         
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>
-                     (this, android.R.layout.simple_spinner_item,list);
-                      
-        dataAdapter.setDropDownViewResource
-                     (android.R.layout.simple_spinner_dropdown_item);
-                      
-        connectTypeSpinner.setAdapter(dataAdapter);
-	
 
-		
-		
-		
-		
+		List<String> list = new ArrayList<String>();
+		supplyHardwareConnects = OOBDApp.getInstance().getCore()
+				.getConnectorList();
+
+		Enumeration<String> e = supplyHardwareConnects.keys();
+
+		// iterate through Hashtable keys Enumeration
+		while (e.hasMoreElements()) {
+			list.add(e.nextElement());
+		}
+
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, list);
+
+		dataAdapter
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		connectTypeSpinner.setAdapter(dataAdapter);
 		mDeviceSpinner = (Spinner) findViewById(R.id.BTDeviceSpinner);
 		mDeviceSpinner
 				.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -125,14 +124,17 @@ public class Settings extends Activity {
 								.getItemAtPosition(pos)).getDevice();
 						if (connectDeviceName != null
 								&& !connectDeviceName.equalsIgnoreCase("")) {
-							preferences.edit()
-									.putString(connectTypeName+"_DEVICE", connectDeviceName)
-									.commit();
+							preferences
+									.edit()
+									.putString(connectTypeName + "_DEVICE",
+											connectDeviceName).commit();
 						}
 					}
 
 					public void onNothingSelected(AdapterView<?> parent) {
-						preferences.edit().putString(connectTypeName+"_DEVICE", "").commit();
+						preferences.edit()
+								.putString(connectTypeName + "_DEVICE", "")
+								.commit();
 					}
 				});
 		pgpEnabled = (CheckBox) findViewById(R.id.PGPCheckBox);
@@ -147,7 +149,6 @@ public class Settings extends Activity {
 		pgpStatus = (TextView) findViewById(R.id.pgpStatustextView);
 		pgpImportKeys = (Button) findViewById(R.id.pgpImportKeysbutton);
 		pgpImportKeys.setOnClickListener(new View.OnClickListener() {
-
 			public void onClick(View v) {
 				if (checkKeyFiles() != 0) {
 					importKeyFiles();
@@ -182,43 +183,65 @@ public class Settings extends Activity {
 			}
 		});
 
-		
-		wsURLeditText = (EditText)findViewById(R.id.wsURLeditText);
-		wsURLeditText.addTextChangedListener(new TextWatcher(){
-		    public void afterTextChanged(Editable s) {
-		    	preferences.edit().putString(OOBDConstants.PropName_KadaverServer, wsURLeditText.getText().toString()).commit();
-		    }
-		    public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-		    public void onTextChanged(CharSequence s, int start, int before, int count){}
-		}); 
-		wsURLeditText.setText(preferences.getString(OOBDConstants.PropName_KadaverServer,OOBDConstants.PropName_KadaverServerDefault));
-		
-		
-		wsProxyHostEditText = (EditText)findViewById(R.id.wsProxyHostEditText);
-		wsProxyHostEditText.addTextChangedListener(new TextWatcher(){
-		    public void afterTextChanged(Editable s) {
-		    	preferences.edit().putString("PROXYHOST", wsProxyHostEditText.getText().toString()).commit();
-		    }
-		    public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-		    public void onTextChanged(CharSequence s, int start, int before, int count){}
-		}); 
-		wsProxyHostEditText.setText(preferences.getString("PROXYHOST",""));
-		
-		
-		wsProxyPortEditText = (EditText)findViewById(R.id.wsProxyPortEditText);
-		wsProxyPortEditText.addTextChangedListener(new TextWatcher(){
-		    public void afterTextChanged(Editable s) {
-		    	String content=wsProxyPortEditText.getText().toString();
-		    	if (content.length()>0){
-		    		preferences.edit().putInt("PROXYPORT", Integer.parseInt(wsProxyPortEditText.getText().toString())).commit();
-		    	}
-		    }
-		    public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-		    public void onTextChanged(CharSequence s, int start, int before, int count){}
-		}); 
-		wsProxyPortEditText.setText(preferences.getString("PROXYPORT",""));
-		
-		
+		urlEditText = (EditText) findViewById(R.id.wsURLeditText);
+		urlEditText.addTextChangedListener(new TextWatcher() {
+			public void afterTextChanged(Editable s) {
+				preferences
+						.edit()
+						.putString(connectTypeName + "_"+ OOBDConstants.PropName_ConnectServerURL,
+								urlEditText.getText().toString()).commit();
+			}
+
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+			}
+
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+			}
+		});
+
+		wsProxyHostEditText = (EditText) findViewById(R.id.wsProxyHostEditText);
+		wsProxyHostEditText.addTextChangedListener(new TextWatcher() {
+			public void afterTextChanged(Editable s) {
+				preferences
+						.edit()
+						.putString(connectTypeName + "_"+ "PROXYHOST",
+								wsProxyHostEditText.getText().toString())
+						.commit();
+			}
+
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+			}
+
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+			}
+		});
+
+		wsProxyPortEditText = (EditText) findViewById(R.id.wsProxyPortEditText);
+		wsProxyPortEditText.addTextChangedListener(new TextWatcher() {
+			public void afterTextChanged(Editable s) {
+				String content = wsProxyPortEditText.getText().toString();
+				if (content.length() > 0) {
+					preferences
+							.edit()
+							.putInt(connectTypeName + "_"+ "PROXYPORT",
+									Integer.parseInt(wsProxyPortEditText
+											.getText().toString())).commit();
+				}
+			}
+
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+			}
+
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+			}
+		});
+
 		updateUI();
 
 	}
@@ -230,36 +253,39 @@ public class Settings extends Activity {
 
 	private void updateUI() {
 		if (preferences != null) {
-			connectTypeName = preferences.getString(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
-			connectDeviceName = preferences.getString(connectTypeName+"_DEVICE","");
+			connectTypeName = preferences.getString(
+					OOBDConstants.PropName_ConnectType,
+					OOBDConstants.PropName_ConnectTypeBT);
+			connectDeviceName = preferences.getString(connectTypeName
+					+ "_DEVICE", "");
 			pgpEnabled.setChecked(preferences.getBoolean("PGPENABLED", false));
 		}
-		Class<OOBDPort> value=supplyHardwareConnects.get(connectTypeName);
-        try { // tricky: try to call a static method of an interface, where a interface don't have static values by definition..
-           // Class[] parameterTypes = new Class[]{};
-            java.lang.reflect.Method method = value.getMethod(
-                    "getPorts", new Class[]{}); // no parameters
-            Object instance = null;
-            portList = (PortInfo[]) method.invoke(instance,
-                    new Object[]{}); // no parameters
-            
-        } catch (Exception ex) {
-            Logger.getLogger(Core.class.getName()).log(
-                    Level.WARNING,
-                    "can't call static method 'getPorts' of "
-                    + value.getName());
-            ex.printStackTrace();
+		urlEditText.setText(preferences.getString(
+				connectTypeName + "_"+OOBDConstants.PropName_ConnectServerURL,
+				OOBDConstants.PropName_KadaverServerDefault));
+		wsProxyHostEditText.setText(preferences.getString(connectTypeName + "_"+ "PROXYHOST", ""));
+		wsProxyPortEditText.setText(preferences.getString(connectTypeName + "_"+ "PROXYPORT", ""));
+		Class<OOBDPort> value = supplyHardwareConnects.get(connectTypeName);
+		try { // tricky: try to call a static method of an interface, where a
+				// interface don't have static values by definition..
+				// Class[] parameterTypes = new Class[]{};
+			java.lang.reflect.Method method = value.getMethod("getPorts",
+					new Class[] {}); // no parameters
+			Object instance = null;
+			portList = (PortInfo[]) method.invoke(instance, new Object[] {}); // no
+																				// parameters
 
-        }
+		} catch (Exception ex) {
+			Logger.getLogger(Core.class.getName())
+					.log(Level.WARNING,
+							"can't call static method 'getPorts' of "
+									+ value.getName());
+			ex.printStackTrace();
 
-		
-		
-		
-		
-		
+		}
+
 		ArrayAdapter<PortInfo> adapter = new ArrayAdapter<PortInfo>(this,
-				android.R.layout.simple_spinner_item,
-				portList);
+				android.R.layout.simple_spinner_item, portList);
 		mDeviceSpinner.setAdapter(adapter);
 		for (int i = 0; i < adapter.getCount(); i++) {
 			if (connectDeviceName.equals(adapter.getItem(i).getDevice())) {

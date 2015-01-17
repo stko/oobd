@@ -57,10 +57,10 @@ public interface OOBDConstants {
     public final static String AppPrefsFileName = "app.props";
      //key names for properties
      public final static String PropName_SerialPort ="SerialPort";
-     public final static String PropName_KadaverServer ="KadaverServer";
+     public final static String PropName_ConnectServerURL ="ConnectServerURL";
      public final static String PropName_KadaverServerDefault ="ws://oobd.luxen.de/websock/";
-     public final static String PropName_KadaverProxyHost ="KadaverServerProxyHost";
-     public final static String PropName_KadaverProxyPort ="KadaverServerProxyPort";
+     public final static String PropName_ProxyHost ="ServerProxyHost";
+     public final static String PropName_ProxyPort ="ServerProxyPort";
      public final static String PropName_ScriptDir ="ScriptDir";
      public final static String PropName_ScriptName ="Script";
      public final static String PropName_OutputDir ="OutputDir";

@@ -23,9 +23,8 @@ public class BusCom extends OobdBus implements OOBDConstants {
 	static Enumeration portList;
 	static boolean outputBufferEmptyFlag = false;
 	ComReader reader = null;
-	Hashtable <PortInfo,Long> udpBroadcasts;
-	
-	
+	Hashtable<String, Long> udpBroadcasts;
+
 	public BusCom() {
 		super("Buscom");
 	}
@@ -43,7 +42,7 @@ public class BusCom extends OobdBus implements OOBDConstants {
 	public void run() {
 
 		reader = new ComReader();
-		udpBroadcasts=new Hashtable <PortInfo,Long>();
+		udpBroadcasts=new Hashtable <String,Long>();
 		DatagramSocket socket = null;
 		try {
 			socket = new DatagramSocket(UDP_PORT);
@@ -136,15 +135,29 @@ public class BusCom extends OobdBus implements OOBDConstants {
 					socket.receive(packet);
 					String broadcastMsg=new String(packet.getData()).substring(0, packet.getLength());
 					System.err.println("UPD received:"+broadcastMsg);
-					Onion broadcast = new Onion(broadcastMsg);
 					boolean listHasChanged=false;
-					Enumeration<PortInfo> e = udpBroadcasts.keys();
 					Long acTime=System.currentTimeMillis();
+					if (!udpBroadcasts.containsValue(broadcastMsg)){
+						listHasChanged=true;
+					}
+					udpBroadcasts.put(broadcastMsg,acTime);
+					Enumeration<String> e = udpBroadcasts.keys();
 					while(e.hasMoreElements()){
-						// we go through the keys to get the time to then delete the entry by the key, if too old
-	
-						PortInfo key = (PortInfo) e.nextElement();
-						Ã¶Ã¶ und hier gehts weiter....
+						// we go through the keys to get the time to then delete the entry by the key, if too old	
+						String key = (String) e.nextElement();
+						if (acTime-udpBroadcasts.get(key)>30000){ //older as 30 secs?
+							listHasChanged=true;
+							udpBroadcasts.remove(key);
+						}
+					}
+					if (listHasChanged){
+						e = udpBroadcasts.keys();
+						while(e.hasMoreElements()){
+							// we go through the keys to get the time to then delete the entry by the key, if too old	
+							String key = (String) e.nextElement();
+							Onion broadcast = new Onion(key); //using an Onion object jzst for parse the JSON Strng
+							öö
+						}
 					}
 				} catch (Exception e) {
 					// general catch up of any receiving problems

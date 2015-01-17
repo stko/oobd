@@ -610,7 +610,7 @@ public class MainActivity extends FragmentActivity implements
 				connectURLDefault = connectURL;
 
 				String serverURL = preferences.getString(
-						OOBDConstants.PropName_KadaverServer,
+						OOBDConstants.PropName_ConnectServerURL,
 						OOBDConstants.PropName_KadaverServerDefault);
 				String[] parts = serverURL.split("://");
 				if (parts.length != 2) {

@@ -17,6 +17,7 @@ import org.oobd.base.IFui;
 import org.oobd.base.archive.*;
 
 import org.oobd.base.port.ComPort_Kadaver;
+import org.oobd.base.port.ComPort_Telnet;
 import org.oobd.base.port.OOBDPort;
 import org.oobd.base.support.Onion;
 import org.oobd.base.scriptengine.OobdScriptengine;
@@ -133,9 +134,10 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 		mInstance = this;
 		mToast = Toast
 				.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
-//		Core thisCore = new Core(MainActivity.getMyMainActivity(), this, "Core");
-//		Log.v(this.getClass().getSimpleName(), "Core creation finalized"
-//				+ thisCore.toString());
+		// Core thisCore = new Core(MainActivity.getMyMainActivity(), this,
+		// "Core");
+		// Log.v(this.getClass().getSimpleName(), "Core creation finalized"
+		// + thisCore.toString());
 	}
 
 	public CharSequence[] getAvailableLuaScript() {
@@ -189,9 +191,9 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 		if (typ != null) {
 			String connectURL = typ.getOnionBase64String("connecturl");
 			String proxyHost = preferences.getString(
-					OOBDConstants.PropName_KadaverProxyHost, null);
+					OOBDConstants.PropName_ProxyHost, null);
 			int proxyPort = preferences.getInt(
-					OOBDConstants.PropName_KadaverProxyPort, 0);
+					OOBDConstants.PropName_ProxyPort, 0);
 			if (connectURL.toLowerCase().startsWith("ws")) {
 				try {
 					Proxy thisProxy = null;
@@ -200,7 +202,8 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 								new InetSocketAddress(proxyHost, proxyPort));
 
 					}
-					myComPort= new ComPort_Kadaver(new URI(connectURL), thisProxy);
+					myComPort = new ComPort_Kadaver(new URI(connectURL),
+							thisProxy);
 					return myComPort;
 				} catch (URISyntaxException ex) {
 					Log.v(this.getClass().getSimpleName(),
@@ -215,9 +218,18 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 				}
 				myComPort = new ComPort(Diagnose.getInstance(), BTDeviceName);
 				return myComPort;
-			}
-			return null;
 
+			} else if (connectURL.toLowerCase().startsWith("telnet")) {
+				Proxy thisProxy = null;
+				if (proxyHost != null && proxyPort != 0) {
+					thisProxy = new Proxy(Proxy.Type.HTTP,
+							new InetSocketAddress(proxyHost, proxyPort));
+				}
+				myComPort = new ComPort_Telnet(connectURL);
+				return myComPort;
+
+			} else
+				return null;
 		} else {
 			// todo Android always needs a comport object to have a list of the
 			// possible devices for the settings screen
@@ -225,16 +237,14 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 		}
 	}
 
+	public String connectInfo() {
+		if (myComPort == null) {
+			return null;
+		} else {
+			return (myComPort.connectInfo());
+		}
+	}
 
-	   public String connectInfo(){
-			if (myComPort == null) {
-				return null;
-			} else {
-				return (myComPort.connectInfo());
-			}
-	    }
-
-	
 	public void closeHardwareHandle() {
 		if (myComPort != null) {
 			myComPort.close();
@@ -353,12 +363,12 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 	}
 
 	public Hashtable<String, Class> getConnectorList() {
-		Hashtable<String, Class> connectClasses
-	     = new Hashtable<String, Class>();
-		connectClasses.put(OOBDConstants.PropName_ConnectTypeBT,ComPort.class);
-		connectClasses.put( OOBDConstants.PropName_ConnectTypeRemoteConnect,ComPort_Kadaver.class);
-		//connectClasses.put(OOBDConstants.PropName_ConnectTypeRemoteDiscovery,);
-	   
+		Hashtable<String, Class> connectClasses = new Hashtable<String, Class>();
+		connectClasses.put(OOBDConstants.PropName_ConnectTypeBT, ComPort.class);
+		connectClasses.put(OOBDConstants.PropName_ConnectTypeRemoteConnect,
+				ComPort_Kadaver.class);
+		// connectClasses.put(OOBDConstants.PropName_ConnectTypeRemoteDiscovery,);
+
 		return connectClasses;
 	}
 
