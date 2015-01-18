@@ -284,6 +284,12 @@ public class Settings extends Activity {
 
 		}
 
+		for (int i = 0; i < connectTypeSpinner.getAdapter().getCount(); i++) {
+			if (connectTypeName.equals(connectTypeSpinner.getAdapter().getItem(i))) {
+				connectTypeSpinner.setSelection(i);
+				break;
+			}
+		}
 		ArrayAdapter<PortInfo> adapter = new ArrayAdapter<PortInfo>(this,
 				android.R.layout.simple_spinner_item, portList);
 		mDeviceSpinner.setAdapter(adapter);

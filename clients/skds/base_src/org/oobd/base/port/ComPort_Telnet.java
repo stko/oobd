@@ -75,7 +75,7 @@ public class ComPort_Telnet implements OOBDPort, Runnable {
 	public static PortInfo[] getPorts() {
 		if (udpAnouncements == null) {
 			PortInfo[] DeviceSet = new PortInfo[1];
-			DeviceSet[0] = new PortInfo("", "No D");
+			DeviceSet[0] = new PortInfo("", "No Devices visible");
 			return DeviceSet;
 		} else {
 			return udpAnouncements;
@@ -152,26 +152,16 @@ public class ComPort_Telnet implements OOBDPort, Runnable {
 	}
 
 	public void onMessage(String message) {
-		try {
-			Onion myOnion = new Onion(message);
-			msgReceiver.receiveString(myOnion.getOnionBase64String("reply"));
-		} catch (JSONException ex) {
-			Logger.getLogger(ComPort_Telnet.class.getName()).log(Level.SEVERE,
-					null, ex);
-		}
+			msgReceiver.receiveString(message);
 	}
 
 	public synchronized void write(String s) {
 		try {
 			Logger.getLogger(ComPort_Telnet.class.getName()).log(Level.INFO,
 					"Telnet output:{0}", s);
-			out.write(new Onion("{'msg':'" + Base64Coder.encodeString(s)
-					+ "','channel': '" + port + "'}").toString().getBytes());
+			out.write(s.getBytes());
 
 			// outStream.flush();
-		} catch (JSONException ex) {
-			Logger.getLogger(ComPort_Telnet.class.getName()).log(Level.SEVERE,
-					null, ex);
 		} catch (IOException ex) {
 			Logger.getLogger(ComPort_Telnet.class.getName()).log(Level.SEVERE,
 					null, ex);
@@ -181,7 +171,6 @@ public class ComPort_Telnet implements OOBDPort, Runnable {
 		}
 	}
 
-	@Override
 	public void close() {
 		try {
 			if (in != null) {

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.MissingResourceException;
 import java.io.InputStream;
+import java.net.DatagramSocket;
 import java.util.prefs.Preferences;
 import org.oobd.base.scriptengine.OobdScriptengine;
 import org.oobd.base.support.Onion;
@@ -134,4 +135,13 @@ public interface IFsystem {
      * @return the path of the choosen file or null, if canceled
      */
     public String doFileSelector(String path, String extension,String message, Boolean Save);
+
+    /**
+     * \brief get a UDP socket listening to the WiFi device
+     * 
+     *  As a multi-interface listening seems not to work on Android, this function returns the socket bound to the Wifi interface only
+     * 
+     * @return UDP listen socket
+     */
+	public DatagramSocket getUDPBroadcastSocket();
 }

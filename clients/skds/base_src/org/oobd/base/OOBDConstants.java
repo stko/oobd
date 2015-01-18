@@ -69,8 +69,9 @@ public interface OOBDConstants {
      public final static String PropName_ConnectType ="ConnectType";
      public final static String PropName_ConnectTypeBT ="Bluetooth";
      public final static String PropName_ConnectTypeRemoteConnect ="Kadaver";
+     public final static String PropName_ConnectTypeTelnet ="Telnet";
      public final static String PropName_ConnectTypeRemoteDiscovery ="Discovery";
-     public final static String PropName_ConnectDevice ="ConnectDevice";
+         public final static String PropName_ConnectDevice ="ConnectDevice";
      //PGP key file  names
     public final static String PGP_USER_KEYFILE_NAME = "userkey.sec";
     public final static String PGP_GROUP_KEYFILE_NAME = "groupkey.sec";
