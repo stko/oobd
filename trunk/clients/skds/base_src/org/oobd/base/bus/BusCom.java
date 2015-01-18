@@ -7,6 +7,7 @@ package org.oobd.base.bus;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.oobd.base.*;
+import org.oobd.base.port.ComPort_Telnet;
 import org.oobd.base.port.OOBDPort;
 import org.oobd.base.port.PortInfo;
 import org.oobd.base.support.Onion;
@@ -42,15 +43,8 @@ public class BusCom extends OobdBus implements OOBDConstants {
 	public void run() {
 
 		reader = new ComReader();
-		udpBroadcasts=new Hashtable <String,Long>();
-		DatagramSocket socket = null;
-		try {
-			socket = new DatagramSocket(UDP_PORT);
-			socket.setBroadcast(true);
-		} catch (SocketException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		udpBroadcasts = new Hashtable<String, Long>();
+		DatagramSocket socket = core.getSystemIF().getUDPBroadcastSocket();
 		byte[] buf = new byte[1024];
 		DatagramPacket packet = new DatagramPacket(buf, buf.length);
 		while (keepRunning == true) {
@@ -129,41 +123,67 @@ public class BusCom extends OobdBus implements OOBDConstants {
 								Level.SEVERE, null, ex);
 					}
 				}
-			}else{ // check the incoming 
-				try {
-					socket.setSoTimeout(100);
-					socket.receive(packet);
-					String broadcastMsg=new String(packet.getData()).substring(0, packet.getLength());
-					System.err.println("UPD received:"+broadcastMsg);
-					boolean listHasChanged=false;
-					Long acTime=System.currentTimeMillis();
-					if (!udpBroadcasts.containsValue(broadcastMsg)){
-						listHasChanged=true;
-					}
-					udpBroadcasts.put(broadcastMsg,acTime);
-					Enumeration<String> e = udpBroadcasts.keys();
-					while(e.hasMoreElements()){
-						// we go through the keys to get the time to then delete the entry by the key, if too old	
-						String key = (String) e.nextElement();
-						if (acTime-udpBroadcasts.get(key)>30000){ //older as 30 secs?
-							listHasChanged=true;
-							udpBroadcasts.remove(key);
+			} else { // check the incoming
+				if (socket != null) {
+					try {
+						socket.setSoTimeout(5);
+						socket.receive(packet);
+						String broadcastMsg = new String(packet.getData())
+								.substring(0, packet.getLength());
+						System.err.println("UPD received:" + broadcastMsg);
+						boolean listHasChanged = false;
+						Long acTime = System.currentTimeMillis();
+						if (!udpBroadcasts.containsValue(broadcastMsg)) {
+							listHasChanged = true;
 						}
-					}
-					if (listHasChanged){
-						e = udpBroadcasts.keys();
-						while(e.hasMoreElements()){
-							// we go through the keys to get the time to then delete the entry by the key, if too old	
+						udpBroadcasts.put(broadcastMsg, acTime);
+						Enumeration<String> e = udpBroadcasts.keys();
+						while (e.hasMoreElements()) {
+							// we go through the keys to get the time to then
+							// delete
+							// the entry by the key, if too old
 							String key = (String) e.nextElement();
-							Onion broadcast = new Onion(key); //using an Onion object jzst for parse the JSON Strng
-							öö
+							if (acTime - udpBroadcasts.get(key) > 30000) { // older
+																			// as
+																			// 30
+																			// secs?
+								listHasChanged = true;
+								udpBroadcasts.remove(key);
+							}
 						}
+						if (listHasChanged) {
+							e = udpBroadcasts.keys();
+							PortInfo[] udpDeviceList = new PortInfo[udpBroadcasts
+									.size()];
+							int i = 0;
+							while (e.hasMoreElements()) {
+								// we go through the keys to get the time to
+								// then
+								// delete the entry by the key, if too old
+								String key = (String) e.nextElement();
+								Onion broadcast = new Onion(key); // using an
+																	// Onion
+																	// object
+																	// just
+																	// for parse
+																	// the
+																	// JSON
+																	// Strng
+								udpDeviceList[i++] = new PortInfo(
+										broadcast.getOnionString("ip")
+												+ ":"
+												+ broadcast.getInt("port"),
+										broadcast.getOnionString("device"));
+							}
+							ComPort_Telnet.setPorts(udpDeviceList);
+						}
+					} catch (Exception e) {
+						// general catch up of any receiving problems
+
 					}
-				} catch (Exception e) {
-					// general catch up of any receiving problems
-				
 				}
 			}
+
 		}
 	}
 
@@ -319,42 +339,44 @@ class ComReader {
 
 	public String readln(int timeout, boolean ignoreEmptyLines) {
 		String res = "";
-		boolean waitForever = timeout < 1;
-		boolean doLoop = true;
-		int c;
-		long timeOutInMillis = System.currentTimeMillis()
-				+ comHandle.adjustTimeOut(timeout);
-		int sleepTime = 2;
-		while (doLoop && isConnected()) {
-			c = read();
-			if (c > 0) {
-				// if (c != 10 && c != 13) {
-				if (c > 31) {
-					res += (char) c;
-				}
-				if (c == 13) { // CR detected, condition meet - LF (0x10) is
-					// completely ignored
-					// res+=".";
-					doLoop = res.equals("") && ignoreEmptyLines;
-				}
-			} else {
-				if (waitForever) {
-					try {
-						Thread.sleep(sleepTime);
-					} catch (InterruptedException e) {
-						// the VM doesn't want us to sleep anymore,
-						// so get back to work
+		if (isConnected()) {
+			boolean waitForever = timeout < 1;
+			boolean doLoop = true;
+			int c;
+			long timeOutInMillis = System.currentTimeMillis()
+					+ comHandle.adjustTimeOut(timeout);
+			int sleepTime = 2;
+			while (doLoop && isConnected()) {
+				c = read();
+				if (c > 0) {
+					// if (c != 10 && c != 13) {
+					if (c > 31) {
+						res += (char) c;
 					}
-
+					if (c == 13) { // CR detected, condition meet - LF (0x10) is
+						// completely ignored
+						// res+=".";
+						doLoop = res.equals("") && ignoreEmptyLines;
+					}
 				} else {
-					if (timeOutInMillis <= System.currentTimeMillis()) {
-						doLoop = false;
-					} else {
+					if (waitForever) {
 						try {
 							Thread.sleep(sleepTime);
 						} catch (InterruptedException e) {
 							// the VM doesn't want us to sleep anymore,
 							// so get back to work
+						}
+
+					} else {
+						if (timeOutInMillis <= System.currentTimeMillis()) {
+							doLoop = false;
+						} else {
+							try {
+								Thread.sleep(sleepTime);
+							} catch (InterruptedException e) {
+								// the VM doesn't want us to sleep anymore,
+								// so get back to work
+							}
 						}
 					}
 				}
@@ -366,40 +388,42 @@ class ComReader {
 	}
 
 	public int wait(String conditions, int timeout) {
-		boolean waitForever = timeout < 1;
-		boolean doLoop = true;
-		int c;
-		int sleepTime = 5;
 		int result = 0;
-		long timeOutInMillis = System.currentTimeMillis()
-				+ comHandle.adjustTimeOut(timeout);
-		Conditions con = new Conditions(conditions);
-		while (doLoop && isConnected()) {
-			c = read();
-			if (c > -1) {
-				result = con.checkConditions((char) c);
+		if (isConnected()) {
+			boolean waitForever = timeout < 1;
+			boolean doLoop = true;
+			int c;
+			int sleepTime = 5;
+			long timeOutInMillis = System.currentTimeMillis()
+					+ comHandle.adjustTimeOut(timeout);
+			Conditions con = new Conditions(conditions);
+			while (doLoop && isConnected()) {
+				c = read();
+				if (c > -1) {
+					result = con.checkConditions((char) c);
 
-				if (result > 0) { // condition meet
-					doLoop = false;
-				}
-			} else {
-				if (waitForever) {
-					try {
-						Thread.sleep(sleepTime);
-					} catch (InterruptedException e) {
-						// the VM doesn't want us to sleep anymore,
-						// so get back to work
-					}
-
-				} else {
-					if (timeOutInMillis <= System.currentTimeMillis()) {
+					if (result > 0) { // condition meet
 						doLoop = false;
-					} else {
+					}
+				} else {
+					if (waitForever) {
 						try {
 							Thread.sleep(sleepTime);
 						} catch (InterruptedException e) {
 							// the VM doesn't want us to sleep anymore,
 							// so get back to work
+						}
+
+					} else {
+						if (timeOutInMillis <= System.currentTimeMillis()) {
+							doLoop = false;
+						} else {
+							try {
+								Thread.sleep(sleepTime);
+							} catch (InterruptedException e) {
+								// the VM doesn't want us to sleep anymore,
+								// so get back to work
+							}
 						}
 					}
 				}

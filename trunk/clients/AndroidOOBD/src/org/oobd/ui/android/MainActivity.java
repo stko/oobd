@@ -421,7 +421,9 @@ public class MainActivity extends FragmentActivity implements
 						alertDialog.show();
 						// return;
 					}
-					BTDeviceName = preferences.getString("BTDEVICE", "");
+					BTDeviceName = preferences.getString(
+							OOBDConstants.PropName_ConnectTypeBT + "_DEVICE",
+							"");
 					if (BTDeviceName.equalsIgnoreCase("")) {
 						AlertDialog alertDialog = new AlertDialog.Builder(
 								myMainActivity).create();
@@ -579,7 +581,29 @@ public class MainActivity extends FragmentActivity implements
 										// yet, but maybe in a later extension
 
 		// ----------------------------------------------------------
-		if (preferences.getBoolean("REMOTECONNECT", false)) {
+		String connectTypeName = preferences.getString(
+				OOBDConstants.PropName_ConnectType,
+				OOBDConstants.PropName_ConnectTypeBT);
+		if (connectTypeName.equals(OOBDConstants.PropName_ConnectTypeBT)) {
+			connectURL = "BT://"
+					+ preferences.getString(
+							OOBDConstants.PropName_ConnectTypeBT + "_DEVICE",
+							"");
+		}
+		if (connectTypeName.equals(OOBDConstants.PropName_ConnectTypeRemoteDiscovery)) {
+			connectURL = "telnet://"
+					+ preferences.getString(
+							OOBDConstants.PropName_ConnectTypeRemoteDiscovery + "_DEVICE",
+							"");
+		}
+		if (connectTypeName.equals(OOBDConstants.PropName_ConnectTypeTelnet)) {
+			connectURL =  preferences.getString(
+							OOBDConstants.PropName_ConnectTypeTelnet +"_"+ OOBDConstants.PropName_ConnectServerURL,
+							OOBDConstants.PropName_KadaverServerDefault);
+		}
+
+		if (connectTypeName
+				.equals(OOBDConstants.PropName_ConnectTypeRemoteConnect)) {
 			try {
 				Onion answer = requestParamInput(new Onion(
 						"{"
@@ -610,7 +634,7 @@ public class MainActivity extends FragmentActivity implements
 				connectURLDefault = connectURL;
 
 				String serverURL = preferences.getString(
-						OOBDConstants.PropName_ConnectServerURL,
+						OOBDConstants.PropName_ConnectTypeRemoteConnect+"_"+OOBDConstants.PropName_ConnectServerURL,
 						OOBDConstants.PropName_KadaverServerDefault);
 				String[] parts = serverURL.split("://");
 				if (parts.length != 2) {
@@ -627,8 +651,10 @@ public class MainActivity extends FragmentActivity implements
 				return;
 			}
 		}
+		connectURL=connectURL;
 
-		// ----------------------------------------------------------
+
+// ----------------------------------------------------------
 		// prepare the "load Script" message
 		Diagnose.showDialog = true;
 		// the following trick avoids a recreation of the Diagnose
@@ -737,17 +763,16 @@ public class MainActivity extends FragmentActivity implements
 				throw new RuntimeException();
 			}
 		};
-		String dlgTitle="Parameter error";
-		String dlgMsg="Parameter error";
-		String dlgDefault="Parameter error";
-		ArrayList<Onion> params = dialogOnion.getOnionArray("PARAM",
-				"param");
+		String dlgTitle = "Parameter error";
+		String dlgMsg = "Parameter error";
+		String dlgDefault = "Parameter error";
+		ArrayList<Onion> params = dialogOnion.getOnionArray("PARAM", "param");
 		if (params != null && params.size() > 0) {
 			Onion p0Onion = params.get(0);
 			if (p0Onion != null) {
-				dlgTitle=p0Onion.getOnionBase64String("title");
-				dlgMsg=p0Onion.getOnionBase64String("tooltip");
-				dlgDefault=p0Onion.getOnionBase64String("default");
+				dlgTitle = p0Onion.getOnionBase64String("title");
+				dlgMsg = p0Onion.getOnionBase64String("tooltip");
+				dlgDefault = p0Onion.getOnionBase64String("default");
 			}
 		}
 		input.setText(dlgDefault);
@@ -761,7 +786,8 @@ public class MainActivity extends FragmentActivity implements
 							dialogResult = input.getText().toString();
 							Message m = mHandler.obtainMessage();
 							mHandler.sendMessage(m);
-							dialogResultOnion=new Onion().setBase64Value("answer",dialogResult);
+							dialogResultOnion = new Onion().setBase64Value(
+									"answer", dialogResult);
 						} catch (Exception e) {
 							// e.printStackTrace();
 							dialogResult = "";

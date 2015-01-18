@@ -74,7 +74,7 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
     public static PortInfo[] getPorts() {
 
         PortInfo[] DeviceSet = new PortInfo[1];
-        DeviceSet[0] = new PortInfo("", "No Comports found :-(");
+        DeviceSet[0] = new PortInfo("", "No Devices for Websockets");
         return DeviceSet;
 
     }

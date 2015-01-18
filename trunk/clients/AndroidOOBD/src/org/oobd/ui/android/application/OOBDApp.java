@@ -5,6 +5,8 @@ import java.util.Hashtable;
 import java.util.prefs.Preferences;
 import java.io.*;
 import java.lang.reflect.Method;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URI;
@@ -30,10 +32,13 @@ import org.oobd.ui.android.bus.ComPort;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Application;
+import android.net.DhcpInfo;
+import android.net.wifi.WifiManager;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -186,15 +191,18 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 	public Object supplyHardwareHandle(Onion typ) {
 		SharedPreferences preferences;
 		preferences = this.getSharedPreferences("OOBD_SETTINGS", MODE_PRIVATE);
-		String BTDeviceName = "00:12:6F:07:27:25";
 
 		if (typ != null) {
 			String connectURL = typ.getOnionBase64String("connecturl");
+			String[] parts = connectURL.split("://");
+			String protocol = parts[0];
+			String host = parts[1];
+
 			String proxyHost = preferences.getString(
 					OOBDConstants.PropName_ProxyHost, null);
 			int proxyPort = preferences.getInt(
 					OOBDConstants.PropName_ProxyPort, 0);
-			if (connectURL.toLowerCase().startsWith("ws")) {
+			if ("ws".equalsIgnoreCase(protocol)) {
 				try {
 					Proxy thisProxy = null;
 					if (proxyHost != null && proxyPort != 0) {
@@ -211,15 +219,11 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 					return null;
 
 				}
-			} else if (connectURL.equalsIgnoreCase("serial")) {
-				if (preferences != null) {
-					BTDeviceName = preferences.getString("BTDEVICE",
-							"00:12:6F:07:27:25");
-				}
-				myComPort = new ComPort(Diagnose.getInstance(), BTDeviceName);
+			} else if ("bt".equalsIgnoreCase(protocol)) {
+				myComPort = new ComPort(Diagnose.getInstance(), host);
 				return myComPort;
 
-			} else if (connectURL.toLowerCase().startsWith("telnet")) {
+			} else if ("telnet".equalsIgnoreCase(protocol)) {
 				Proxy thisProxy = null;
 				if (proxyHost != null && proxyPort != 0) {
 					thisProxy = new Proxy(Proxy.Type.HTTP,
@@ -233,7 +237,8 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 		} else {
 			// todo Android always needs a comport object to have a list of the
 			// possible devices for the settings screen
-			return new ComPort(Diagnose.getInstance(), BTDeviceName);
+			// return new ComPort(Diagnose.getInstance(), BTDeviceName);
+			return null;
 		}
 	}
 
@@ -345,7 +350,7 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 			return myPrefs;
 		} catch (Exception e) {
 			Log.v(this.getClass().getSimpleName(),
-					"could not load property id " + filename, e);
+					"could not load property id " + filename);
 		}
 		return myPrefs;
 	}
@@ -367,9 +372,42 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 		connectClasses.put(OOBDConstants.PropName_ConnectTypeBT, ComPort.class);
 		connectClasses.put(OOBDConstants.PropName_ConnectTypeRemoteConnect,
 				ComPort_Kadaver.class);
-		// connectClasses.put(OOBDConstants.PropName_ConnectTypeRemoteDiscovery,);
+		connectClasses.put(OOBDConstants.PropName_ConnectTypeRemoteDiscovery,
+				ComPort_Telnet.class);
+		connectClasses.put(OOBDConstants.PropName_ConnectTypeTelnet,
+				ComPort_Telnet.class);
 
 		return connectClasses;
+	}
+
+	public DatagramSocket getUDPBroadcastSocket() {
+		try {
+			DatagramSocket socket = null;
+//			WifiManager wifi = (WifiManager) getApplicationContext()
+//					.getSystemService(Context.WIFI_SERVICE);
+//			if (wifi != null) {
+//				DhcpInfo dhcp = wifi.getDhcpInfo();
+//				if (dhcp != null) {
+//					// int broadcast = (dhcp.ipAddress & dhcp.netmask) |
+//					// ~dhcp.netmask;
+//					int broadcast = dhcp.ipAddress;
+//					byte[] quads = new byte[4];
+//					for (int k = 0; k < 4; k++)
+//						quads[k] = (byte) ((broadcast >> k * 8) & 0xFF);
+//					socket = new DatagramSocket(UDP_PORT,
+//							InetAddress.getByAddress(quads));
+//				}
+//			}
+			if (socket == null) {
+				socket = new DatagramSocket(UDP_PORT);
+			}
+			socket.setBroadcast(true);
+			return socket;
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return null;
+		}
 	}
 
 }
