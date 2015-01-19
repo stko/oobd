@@ -287,6 +287,7 @@ UBaseType_t bus_param_can_spec(param_data * args)
 	rxCount = 0;
 	txCount = 0;
 	errCount = 0;
+
 	switch (args->args[ARG_VALUE_1]) {
 	case 0:
 	case 1:
@@ -589,7 +590,7 @@ UBaseType_t busControl(UBaseType_t cmd, void *param)
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {
     DEBUGUARTPRINT("\r\n*** USB_LP_CAN1_RX0_IRQHandler entered ***");
-    portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
+//    portBASE_TYPE xHigherPriorityTaskWoken = pdFALSE;
     uint8_t i;
     uint16_t LedDuration;
     CanRxMsg RxMessage;
@@ -626,7 +627,11 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 	}
 	/* CAN-Frame values which are independent on standard or extended identifiers */
 	dp.len = RxMessage.DLC;
-	dp.err = 0x00;		/* use received value for error simulations */
+	
+	if (CAN_MessagePending(CAN1, CAN_FIFO0) == 0x00)
+		dp.err = 0x00;		/* use received value for error simulations */
+	else
+		dp.err = 0x01;		/* set error flag indication if CAN message is pending */
 	dp.data = &RxMessage.Data[0];	/* data starts here */
 	if (reportReceivedData)
 	    reportReceivedData(&dp,pdTRUE);
@@ -640,7 +645,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 void CAN1_SCE_IRQHandler(void)
 {
     DEBUGUARTPRINT("\r\n*** CAN1_SCE_IRQHandler entered ***");
-    UBaseType_t xHigherPriorityTaskWoken = pdFALSE;
+//    UBaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
     /* check for receive errors */
     if (CAN_GetLastErrorCode(CAN1) == CAN_ErrorCode_StuffErr
