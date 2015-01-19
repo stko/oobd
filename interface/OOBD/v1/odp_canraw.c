@@ -189,7 +189,10 @@ void odp_canraw_recvdata(data_packet * p, UBaseType_t callFromISR)
 			printser_uint8ToHex(p->data[ByteCnt]);
 			ByteCnt ++;
 		}
-		printser_uint16ToHex(p->timestamp * portTICK_PERIOD_MS & 0xFFFF);	//reduce down to 16 bit = 65536 ms = ~ 1 min
+		if (p->err == 0x01)
+			printser_string("FFFF");	// if error occurs set timestamp to 0xFFFF
+		else
+			printser_uint16ToHex(p->timestamp * portTICK_PERIOD_MS & 0xFFFF);	//reduce down to 16 bit = 65536 ms = ~ 1 min
 	    printLF();
 	}
 	if (protocolConfig->showBusTransfer == 4) {
