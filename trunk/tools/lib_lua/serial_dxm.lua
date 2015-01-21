@@ -392,8 +392,12 @@ function interface_version(oldvalue,id)
     echoWrite("p 0 0 0\r")
     err, answ = readAnswerArray()
     return answ[1]
-  else
+  elseif hardwareID == 1 then -- DXM1 support
     echoWrite("at!01\r")
+    answ=serReadLn(2000, true)
+    return answ
+  else -- ELM327 specific
+    echoWrite("AT I\r")
     answ=serReadLn(2000, true)
     return answ
   end
@@ -406,11 +410,15 @@ function interface_serial(oldvalue,id)
      answ=serReadLn(2000, true)
     return answ
   elseif hardwareID == 3 or hardwareID == 4 then
-    echoWrite("p 0 0 1\r")
+    echoWrite("p 0 0 1\r") -- get BT-MAC address of OOBD-Cup v5 and OOBD CAN Invader
     err, answ = readAnswerArray()
     return answ[1]
-  else
+  elseif hardwareID == 1 then -- DXM1
     echoWrite("at!00\r")
+    answ=serReadLn(2000, true)
+    return answ
+  else -- ELM327 specific
+    echoWrite("at @2\r")
     answ=serReadLn(2000, true)
     return answ
   end
@@ -434,8 +442,12 @@ function interface_voltage(oldvalue,id)
       answ=answ.." Volt"
       return answ
     end
-  else
+  elseif hardwareID == 1 then -- DXM1
     echoWrite("at!10\r")
+    answ=serReadLn(2000, true)
+    return answ
+  else -- ELM327 specific
+    echoWrite("AT RV\r")
     answ=serReadLn(2000, true)
     return answ
   end
@@ -451,12 +463,33 @@ function interface_bus(oldvalue,id)
     echoWrite("p 9 0 0\r")
     err, answ = readAnswerArray()
     return answ[1]
-  else
-    echoWrite("0100\r") -- first send something to let the DXM search for a available bus
+  else 
+    echoWrite("0100\r") -- first send something to let the DXM1 and ELM327 search for a available bus
     udsLen=receive()
-    echoWrite("atdp\r")
+    echoWrite("atdp\r") -- show current used protocol
     answ=serReadLn(2000, true)
     return answ
+  end
+end
+
+function interface_deviceID(oldvalue,id)
+  local answ=""
+  if hardwareID == 2 then  -- in case of using Original DXM1 Hardware with firmwar <= SVN 346
+     echoWrite("p 0 8\r")
+     answ=serReadLn(2000, true)
+    return answ
+  elseif hardwareID == 3 or hardwareID == 4 then -- in case of using OOBD Cup v5 and OOBD CAN Invader
+    echoWrite("p 0 0 8\r") -- get device String i.e. OOBD-CIV xxxxxx of OOBDCup v5 and OOBD CAN Invader
+    err, answ = readAnswerArray()
+    return answ[1]
+  elseif hardwareID == 1 then
+    echoWrite("AT!00\r")  -- in case of original DXM1 Hard-/Software use serialnumber
+    answ=serReadLn(2000, true)
+    return answ
+  else -- ELM327
+    echoWrite("AT @2\r")  -- Read out ELM327 Device ID
+    answ=serReadLn(2000, true)
+	return answ
   end
 end
 
@@ -532,30 +565,42 @@ function identifyOOBDInterface(connectURL)
 			  end
 	      --]]	  
 		elseif hardware_variant=="POSIX" or hardware_variant=="Lux-Wolf" then
-		  --[[ OOBD-Cup v5, new firmware paramater set ]]--
-		  hardwareID=4
-	      --[[		    echoWrite("p 0 1 1\r") -- set protocol
-			  err, res = readAnswerArray()
-			  if err ~=0 then
-			    print (" Set protocol error:", err, res[1])
-			  end
-			  echoWrite("p 0 1 1\r") -- set Bus
-			  err, res = readAnswerArray()
-			  if err ~=0 then
-			    print (" Set protocol error:", err, res[1])
-			  end
-	      --]]	  
-        else
-	      -- to support older OOBD firmware, set the Module-ID to functional address
-	      echoWrite("p 11 $7DF\r")
+			--[[ OOBD-Cup v5, new firmware paramater set ]]--
+			hardwareID=4
+		  
+			echoWrite("p 1 1 1 0\r") -- activate Diagnostic protocol
+			err, res = readAnswerArray()
+			if err ~=0 then
+				print (" Set protocol error:", err, res[1])
+			end        
+		else
+			-- to support older OOBD firmware, set the Module-ID to functional address
+			echoWrite("p 11 $7DF\r")
 	    end
 	  end
 	else
-	  receive = receive_DXM
-	  setTimeout = doNothing
-	  setSendID = doNothing
-	  setCANFilter = doNothing
-	  hardwareID=1
+		receive = receive_DXM
+		setTimeout = doNothing
+		setSendID = doNothing
+		setCANFilter = doNothing
+		hardwareID=1
+		echoWrite("at z\r") -- Warm start / Reset of device
+		serWait(">",2000) -- wait 3 secs for an automatic protocol detection process
+		echoWrite("at i\r") -- request version
+		hardware_variant=getStringPart(answ, 2)
+	    if hardware_variant ~= "DXM1" then -- ELM327 specific
+			hardwareID=0
+			hardware_variant=getStringPart(answ, 1)
+			firmware_revision=getStringPart(answ, 2)
+			echoWrite("at sp 0\r") -- ELMxxx device expected and set protocol automatically
+			serWait(">",500) -- wait 3 secs for an automatic protocol detection process
+		else -- DXM1 support
+			firmware_revision=getStringPart(answ, 3)
+			hardware_model=getStringPart(answ, 1)
+		end
+
+		echoWrite("0100\r") -- DXM/ELMxxx detected and perform automatic diagnostic protocol detection
+		serWait(">",3000) -- wait 3 secs for an automatic protocol detection process
 	end
 	print ("Hardware found: ", hardwareID, "Revision: ",firmware_revision,"Model",hardware_model, "Variant", hardware_variant)
 end
