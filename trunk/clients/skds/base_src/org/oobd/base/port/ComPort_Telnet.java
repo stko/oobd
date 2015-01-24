@@ -48,7 +48,7 @@ public class ComPort_Telnet implements OOBDPort, Runnable {
 		msgReceiver = receiveListener;
 		attachShutDownHook();
 		try {
-			Socket sock = new Socket(Server, port);
+			sock = new Socket(Server, port);
 			out = sock.getOutputStream();
 			in = sock.getInputStream();
 			return true;

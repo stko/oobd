@@ -43,14 +43,14 @@ public class FileHandlerPGP implements Archive {
 				mfp = new FileInputStream(myFilePath);
 			} catch (FileNotFoundException e) {
 				Core.getSingleInstance().userAlert(
-						"Error: Can't read PGP crypted file");
+						"Error: Can't read PGP crypted file","Diagnose");
 			}
 			InputStream userKeyFile = core.getSystemIF()
 					.generateResourceStream(OOBDConstants.FT_KEY,
 							OOBDConstants.PGP_USER_KEYFILE_NAME);
 			if (userKeyFile == null) {
 				Core.getSingleInstance().userAlert(
-						"Error: Can't read PGP user key file");
+						"Error: Can't read PGP user key file","Diagnose");
 				return null;
 			}
 			InputStream groupKeyFile = core.getSystemIF()
@@ -58,7 +58,7 @@ public class FileHandlerPGP implements Archive {
 							OOBDConstants.PGP_GROUP_KEYFILE_NAME);
 			if (groupKeyFile == null) {
 				Core.getSingleInstance().userAlert(
-						"Error: Can't read PGP group key file");
+						"Error: Can't read PGP group key file","Diagnose");
 				return null;
 			}
 			return GroupDecoder.decryptGroup(mfp, userKeyFile, groupKeyFile,
