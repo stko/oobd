@@ -56,34 +56,34 @@ public class GroupDecoder {
 			groupKeyStream = PGPUtils.decryptFileStream(groupkeyFile,
 					userkeyFile, userPass);
 		} catch (NoSuchProviderException e1) {
-			Core.getSingleInstance().userAlert("Group Keys: Internal Error. Details:"+e1.getMessage());
+			Core.getSingleInstance().userAlert("Group Keys: Internal Error. Details:"+e1.getMessage(),"Diagnose");
 			e1.printStackTrace();
 		} catch (IOException e1) {
 			Core.getSingleInstance().userAlert(
-					"Group Key Error: Can't read PGP Key file(s). Details:"+e1.getMessage());
+					"Group Key Error: Can't read PGP Key file(s). Details:"+e1.getMessage(),"Diagnose");
 		} catch (PGPException e1) {
 			Core.getSingleInstance().userAlert(
-					"Group Key Error: Invalid PGP Key or pass phrase. Details:"+e1.getMessage());
+					"Group Key Error: Invalid PGP Key or pass phrase. Details:"+e1.getMessage(),"Diagnose");
 		} catch (IllegalArgumentException e1) {
 			Core.getSingleInstance().userAlert(
-					"Group Key Error: Failed to find private key. Details:"+e1.getMessage());
+					"Group Key Error: Failed to find private key. Details:"+e1.getMessage(),"Diagnose");
 		}
 		InputStream unc = null;
 		try {
 			unc = PGPUtils.decryptFileStream(in, groupKeyStream, groupPass);
 		} catch (NoSuchProviderException e1) {
 			Core.getSingleInstance().userAlert(
-					"Script Encryption: Internal Error. Details:"+e1.getMessage());
+					"Script Encryption: Internal Error. Details:"+e1.getMessage(),"Diagnose");
 			e1.printStackTrace();
 		} catch (IOException e1) {
 			Core.getSingleInstance().userAlert(
-					"Script Encryption Error: Can't read PGP Key file(s). Details:"+e1.getMessage());
+					"Script Encryption Error: Can't read PGP Key file(s). Details:"+e1.getMessage(),"Diagnose");
 		} catch (PGPException e1) {
 			Core.getSingleInstance().userAlert(
-					"Script Encryption Error: Invalid group Key. Details:"+e1.getMessage());
+					"Script Encryption Error: Invalid group Key. Details:"+e1.getMessage(),"Diagnose");
 		} catch (IllegalArgumentException e1) {
 			Core.getSingleInstance().userAlert(
-					"Script Encryption Error: Failed to find private key. Details:"+e1.getMessage());
+					"Script Encryption Error: Failed to find private key. Details:"+e1.getMessage(),"Diagnose");
 		}
 		try {
 			userkeyFile.close();

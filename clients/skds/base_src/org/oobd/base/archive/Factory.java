@@ -54,21 +54,16 @@ public class Factory {
 		if (file.exists()) {
 			String name[] = file.getName().split("\\.");
 			if (name.length > 1) {
-				if (name[name.length - 1].equals("pgp")) {
+				if (name[name.length - 1].equalsIgnoreCase("pgp")) {
 					Logger.getLogger(Factory.class.getName()).log(
 							Level.WARNING,
 							"PGP File found: {0}" + file.getName());
 					return new FileHandlerPGP(Core.getSingleInstance());
 				} else {
-					if (name[name.length - 1].equals("lbc")) {
-						return new FileHandlerPlain(Core.getSingleInstance());
-					} else {
-						if (name[name.length - 1].equals("oodb")) {
-							return new FileHandlerPlain(
-									Core.getSingleInstance());
-						}
-					}
+					return new FileHandlerPlain(Core.getSingleInstance());
 				}
+			}else {
+				return new FileHandlerPlain(Core.getSingleInstance());
 			}
 		}
 		return null;

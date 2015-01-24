@@ -24,6 +24,7 @@ import org.oobd.ui.android.application.OOBDApp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -590,16 +591,18 @@ public class MainActivity extends FragmentActivity implements
 							OOBDConstants.PropName_ConnectTypeBT + "_DEVICE",
 							"");
 		}
-		if (connectTypeName.equals(OOBDConstants.PropName_ConnectTypeRemoteDiscovery)) {
+		if (connectTypeName
+				.equals(OOBDConstants.PropName_ConnectTypeRemoteDiscovery)) {
 			connectURL = "telnet://"
 					+ preferences.getString(
-							OOBDConstants.PropName_ConnectTypeRemoteDiscovery + "_DEVICE",
-							"");
+							OOBDConstants.PropName_ConnectTypeRemoteDiscovery
+									+ "_DEVICE", "");
 		}
 		if (connectTypeName.equals(OOBDConstants.PropName_ConnectTypeTelnet)) {
-			connectURL =  preferences.getString(
-							OOBDConstants.PropName_ConnectTypeTelnet +"_"+ OOBDConstants.PropName_ConnectServerURL,
-							OOBDConstants.PropName_KadaverServerDefault);
+			connectURL = preferences.getString(
+					OOBDConstants.PropName_ConnectTypeTelnet + "_"
+							+ OOBDConstants.PropName_ConnectServerURL,
+					OOBDConstants.PropName_KadaverServerDefault);
 		}
 
 		if (connectTypeName
@@ -634,7 +637,8 @@ public class MainActivity extends FragmentActivity implements
 				connectURLDefault = connectURL;
 
 				String serverURL = preferences.getString(
-						OOBDConstants.PropName_ConnectTypeRemoteConnect+"_"+OOBDConstants.PropName_ConnectServerURL,
+						OOBDConstants.PropName_ConnectTypeRemoteConnect + "_"
+								+ OOBDConstants.PropName_ConnectServerURL,
 						OOBDConstants.PropName_KadaverServerDefault);
 				String[] parts = serverURL.split("://");
 				if (parts.length != 2) {
@@ -651,10 +655,9 @@ public class MainActivity extends FragmentActivity implements
 				return;
 			}
 		}
-		connectURL=connectURL;
+		connectURL = connectURL;
 
-
-// ----------------------------------------------------------
+		// ----------------------------------------------------------
 		// prepare the "load Script" message
 		Diagnose.showDialog = true;
 		// the following trick avoids a recreation of the Diagnose
@@ -766,6 +769,7 @@ public class MainActivity extends FragmentActivity implements
 		String dlgTitle = "Parameter error";
 		String dlgMsg = "Parameter error";
 		String dlgDefault = "Parameter error";
+		String window = "Main";
 		ArrayList<Onion> params = dialogOnion.getOnionArray("PARAM", "param");
 		if (params != null && params.size() > 0) {
 			Onion p0Onion = params.get(0);
@@ -773,10 +777,20 @@ public class MainActivity extends FragmentActivity implements
 				dlgTitle = p0Onion.getOnionBase64String("title");
 				dlgMsg = p0Onion.getOnionBase64String("tooltip");
 				dlgDefault = p0Onion.getOnionBase64String("default");
+				try {
+					window = p0Onion.getString("window");
+				} catch (JSONException e) {
+				}
 			}
 		}
 		input.setText(dlgDefault);
-		AlertDialog customAlert = new AlertDialog.Builder(myMainActivity)
+		Builder customAlert = null;
+		if ("Main".equalsIgnoreCase(window)) {
+			customAlert = new AlertDialog.Builder(this);
+		} else {
+			customAlert = new AlertDialog.Builder(Diagnose.getInstance());
+		}
+		customAlert
 				.setTitle(dlgTitle)
 				.setMessage(dlgMsg)
 				.setView(input)
@@ -805,7 +819,8 @@ public class MainActivity extends FragmentActivity implements
 								mHandler.sendMessage(m);
 
 							}
-						}).show();
+//						}).show();
+				});
 		try {
 			customAlert.show();
 			// Looper.getMainLooper().loop();

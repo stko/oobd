@@ -130,7 +130,7 @@ public class BusCom extends OobdBus implements OOBDConstants {
 						socket.receive(packet);
 						String broadcastMsg = new String(packet.getData())
 								.substring(0, packet.getLength());
-						System.err.println("UPD received:" + broadcastMsg);
+						//System.err.println("UPD received:" + broadcastMsg);
 						boolean listHasChanged = false;
 						Long acTime = System.currentTimeMillis();
 						if (!udpBroadcasts.containsValue(broadcastMsg)) {
