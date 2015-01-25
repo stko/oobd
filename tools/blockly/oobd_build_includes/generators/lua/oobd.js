@@ -109,7 +109,8 @@ Blockly.Lua['oobd_evalresult'] = function(block) {
   var value_unit = Blockly.Lua.valueToCode(block, 'Unit', Blockly.Lua.ORDER_ATOMIC);
   var code ='result=evalResult("'+dropdown_type+'" , tonumber('+value_startbit+') , tonumber('+value_length+') , tonumber('+value_offset+') , tonumber('+value_mult+') , '+value_unit +')\n'
   // TODO: Change ORDER_NONE to the correct strength.
-  return [code, Blockly.Lua.ORDER_NONE];
+//  return [code, Blockly.Lua.ORDER_NONE];
+  return code;
 };
 
 

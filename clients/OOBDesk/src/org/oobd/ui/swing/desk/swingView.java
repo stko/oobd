@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.text.ParseException;
 import java.util.ArrayList;
 import org.oobd.base.*;
 import org.oobd.base.Core;
@@ -766,9 +767,14 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
         appProbs.put(OOBDConstants.PropName_ScriptDir, scriptDir.getText());
         appProbs.put(OOBDConstants.PropName_SerialPort, comportComboBox.getEditor().getItem().toString());
-        appProbs.put(OOBDConstants.PropName_KadaverServer, jTextFieldRemoteServer.getText());
-        appProbs.put(OOBDConstants.PropName_KadaverProxyHost, jTextFieldProxyHost.getText());
-        appProbs.putInt(OOBDConstants.PropName_KadaverProxyPort, ((Number)jSpinnerProxyPort.getValue()).intValue());
+        appProbs.put(OOBDConstants.PropName_ConnectServerURL, jTextFieldRemoteServer.getText());
+        appProbs.put(OOBDConstants.PropName_ProxyHost, jTextFieldProxyHost.getText());
+        try {
+            jSpinnerProxyPort.commitEdit();
+        } catch (ParseException ex) {
+            Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        appProbs.putInt(OOBDConstants.PropName_ProxyPort, ((Integer)jSpinnerProxyPort.getValue()));
         oobdCore.getSystemIF().savePreferences(FT_PROPS,
                 OOBDConstants.AppPrefsFileName, appProbs);
         String script = appProbs.get(OOBDConstants.PropName_ScriptName, null);
@@ -812,7 +818,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                 connectURLDefault = connectURL;
 
 
-                String serverURL = appProbs.get(OOBDConstants.PropName_KadaverServer, PropName_KadaverServerDefault);
+                String serverURL = appProbs.get(OOBDConstants.PropName_ConnectServerURL, PropName_KadaverServerDefault);
                 String[] parts = serverURL.split("://");
                 if (parts.length != 2) {
                     JOptionPane.showMessageDialog(null, "The Remote Connect URL is not a valid URL", "Wrong Format", JOptionPane.WARNING_MESSAGE);
@@ -889,9 +895,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
         scriptDir.setText(appProbs.get(OOBDConstants.PropName_ScriptDir, ""));
         pgpEnabled.setSelected("true".equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_PGPEnabled, "")));
-        jTextFieldRemoteServer.setText(appProbs.get(OOBDConstants.PropName_KadaverServer, OOBDConstants.PropName_KadaverServerDefault));
-        jTextFieldProxyHost.setText(appProbs.get(OOBDConstants.PropName_KadaverProxyHost, null));
-        jSpinnerProxyPort.setValue(appProbs.getInt(OOBDConstants.PropName_KadaverProxyPort, 0));
+        jTextFieldRemoteServer.setText(appProbs.get(OOBDConstants.PropName_ConnectServerURL, OOBDConstants.PropName_KadaverServerDefault));
+        jTextFieldProxyHost.setText(appProbs.get(OOBDConstants.PropName_ProxyHost, null));
+        jSpinnerProxyPort.setValue(appProbs.getInt(OOBDConstants.PropName_ProxyPort, 0));
         updateUI();
     }
 
