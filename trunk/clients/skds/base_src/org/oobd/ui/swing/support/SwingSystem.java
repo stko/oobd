@@ -22,15 +22,18 @@ import org.oobd.crypt.AES.EncodeDecodeAES;
 
 //import java.io.FileInputStream;
 import java.io.*;
+import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URI;
+import java.util.Hashtable;
 import javax.swing.JFileChooser;
 import org.oobd.base.archive.Archive;
 import org.oobd.base.archive.Factory;
 import org.oobd.base.support.Onion;
 import org.oobd.base.port.ComPort_Unix;
 import org.oobd.base.port.ComPort_Kadaver;
+import org.oobd.base.port.ComPort_Telnet;
 import org.oobd.crypt.AES.PassPhraseProvider;
 
 /**
@@ -179,8 +182,8 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         
          
         String connectURL = typ.getOnionBase64String("connecturl");
-        String proxyHost = appProbs.get(OOBDConstants.PropName_KadaverProxyHost, null);
-        int proxyPort = appProbs.getInt(OOBDConstants.PropName_KadaverProxyPort, 0);
+        String proxyHost = appProbs.get(OOBDConstants.PropName_ProxyHost, null);
+        int proxyPort = appProbs.getInt(OOBDConstants.PropName_ProxyPort, 0);
          if (connectURL.toLowerCase().startsWith("ws")) {
             try {
                 Proxy thisProxy = null;
@@ -372,4 +375,34 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             return null;
         }
     }
+    
+    	public Hashtable<String, Class> getConnectorList() {
+		Hashtable<String, Class> connectClasses = new Hashtable<String, Class>();
+		connectClasses.put(OOBDConstants.PropName_ConnectTypeBT, ComPort_Win.class);
+		connectClasses.put(OOBDConstants.PropName_ConnectTypeRemoteConnect,
+				ComPort_Kadaver.class);
+		connectClasses.put(OOBDConstants.PropName_ConnectTypeRemoteDiscovery,
+				ComPort_Telnet.class);
+		connectClasses.put(OOBDConstants.PropName_ConnectTypeTelnet,
+				ComPort_Telnet.class);
+
+		return connectClasses;
+	}
+
+    
+    public DatagramSocket getUDPBroadcastSocket() {
+		try {
+			DatagramSocket socket = null;
+			if (socket == null) {
+				socket = new DatagramSocket(UDP_PORT);
+			}
+			socket.setBroadcast(true);
+			return socket;
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return null;
+		}
+	}
+    
 }

@@ -178,7 +178,8 @@ Blockly.Blocks['oobd_evalresult'] = {
         .appendField("Unit");
     this.appendDummyInput()
         .appendField("(\"low-Value\" ? \"High-Value\" for Bits)");
-    this.setOutput(true);
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
     this.setTooltip('');
   }
 };
