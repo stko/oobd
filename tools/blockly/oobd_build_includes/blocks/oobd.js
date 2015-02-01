@@ -31,6 +31,20 @@ goog.require('Blockly.Blocks');
 
 var oobdcolour = new Blockly.FieldColour('#ffff00');
 
+Blockly.Blocks['oobd_main'] = {
+  init: function() {
+    this.setHelpUrl('http://www.example.com/');
+    this.setColour(60);
+    this.appendDummyInput()
+        .appendField("Implement your main program here:");
+    this.appendStatementInput("inner");
+    this.setInputsInline(true);
+    this.setDeletable(false);
+    this.setTooltip('');
+  }
+};
+
+
 Blockly.Blocks['oobd_menu'] = {
   init: function() {
     this.setHelpUrl('http://www.example.com/');
@@ -156,8 +170,14 @@ Blockly.Blocks['oobd_evalresult'] = {
   init: function() {
     this.setHelpUrl('http://www.example.com/');
     this.setColour(60);
-    this.appendDummyInput()
-        .appendField("Eval Result");
+   this.appendDummyInput()
+        .appendField("Measure ");
+    this.appendValueInput("serviceID")
+        .setCheck("String")
+        .appendField("Service (hex)");
+    this.appendValueInput("NAME")
+        .setCheck("String")
+        .appendField("Parameters (hex)");
     this.appendDummyInput()
         .appendField("Type")
         .appendField(new Blockly.FieldDropdown([["ASCII", "ascii"], ["Bit", "bit"], ["numeric", "numeric"]]), "type");
@@ -177,7 +197,8 @@ Blockly.Blocks['oobd_evalresult'] = {
         .setCheck("String")
         .appendField("Unit");
     this.appendDummyInput()
-        .appendField("(\"low-Value\" ? \"High-Value\" for Bits)");
+        .appendField("(\"low-Value\" | \"High-Value\" for Bits)");
+    this.setInputsInline(true);
     this.setPreviousStatement(true);
     this.setNextStatement(true);
     this.setTooltip('');

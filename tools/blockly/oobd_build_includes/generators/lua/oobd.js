@@ -28,6 +28,20 @@ goog.provide('Blockly.Lua.oobd');
 goog.require('Blockly.Lua');
 
 
+Blockly.Lua['oobd_main'] = function(block) {
+  var statements_name = Blockly.Lua.statementToCode(block, 'inner');
+  var code ='function Main(oldvalue,id)\n'
+	+statements_name
++'end\n'
+
+
++'\n\nStart("","")\n'
++'return\n'
+        ;
+  return code;
+};
+
+
 Blockly.Lua['oobd_menu'] = function(block) {
   var value_menutitle = Blockly.Lua.valueToCode(block, 'menuTitle', Blockly.Lua.ORDER_ATOMIC);
   var statements_name = Blockly.Lua.statementToCode(block, 'inner');
@@ -101,13 +115,15 @@ Blockly.Lua['oobd_requestservice'] = function(block) {
 
 
 Blockly.Lua['oobd_evalresult'] = function(block) {
+  var value_serviceid = Blockly.Lua.valueToCode(block, 'serviceID', Blockly.Lua.ORDER_ATOMIC);
+  var value_name = Blockly.Lua.valueToCode(block, 'NAME', Blockly.Lua.ORDER_ATOMIC);
   var dropdown_type = block.getFieldValue('type');
   var value_startbit = Blockly.Lua.valueToCode(block, 'startbit', Blockly.Lua.ORDER_ATOMIC);
   var value_length = Blockly.Lua.valueToCode(block, 'length', Blockly.Lua.ORDER_ATOMIC);
   var value_offset = Blockly.Lua.valueToCode(block, 'offset', Blockly.Lua.ORDER_ATOMIC);
   var value_mult = Blockly.Lua.valueToCode(block, 'mult', Blockly.Lua.ORDER_ATOMIC);
   var value_unit = Blockly.Lua.valueToCode(block, 'Unit', Blockly.Lua.ORDER_ATOMIC);
-  var code ='result=evalResult("'+dropdown_type+'" , tonumber('+value_startbit+') , tonumber('+value_length+') , tonumber('+value_offset+') , tonumber('+value_mult+') , '+value_unit +')\n'
+  var code ='result=evalResult('+value_serviceid+' ,'+value_name+' ,"'+dropdown_type+'" , tonumber('+value_startbit+') , tonumber('+value_length+') , tonumber('+value_offset+') , tonumber('+value_mult+') , '+value_unit +')\n'
   // TODO: Change ORDER_NONE to the correct strength.
 //  return [code, Blockly.Lua.ORDER_NONE];
   return code;

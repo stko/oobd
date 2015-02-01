@@ -8,6 +8,11 @@ library to wrap the blockly function calls to the existing lua libraries
 --]]
 
 
+dofile("serial_dxm.lua")
+dofile("lib_lua.lua")
+dofile("lib_uds.lua")
+
+
 
 --[[
 setDongleMode(Busmode , channel , protocol)
@@ -40,27 +45,35 @@ end
 
 
 --[[
-evalResult(valType , valStartBit , valBitLen , valOffset , valMult , valUnit)
+evalResult(valService, valParams, valType , valStartBit , valBitLen , valOffset , valMult , valUnit)
 
-clcualtes the result
+calcualtes the result
 --]]
 
-function setModuleParams(id , timeout)
-also die erste Frage ist, wie man das machen soll, wenn jede heutige Routine den DID nochmal schickt...
+tempParamTable={}
 
-und am besten sollten die Nachschlagetabellen hier on the fly erzeugt und dann einfach an die Auswerteroutine übergeben werden??
-
-Menu2Data = {
-Menu2Data_NOP_D111 = { t = "ECU Power Supply Voltage", sev_r = "22", ses_r ="01;03;", call = "readNumPid",  sd = {
-sd_00 = {  bpos = 0 , blen = 1 , Bpos = 0 , Blen = 8 , mult = 0.1 , offset = 0 , unit = "V" , dtype = "UNSIGNED" , t = "ECU Power Supply Voltage"} ,
-dummy=0}
+function evalResult(valService, valParams, valType , valStartBit , valBitLen , valOffset , valMult , valUnit)
+  
+  if valType == "ascii" then
+    tempParamTable{'tempParamTable_NOP_'..valParams}={ sev_r = valService,  t="dummy title", call = "readAscPid", sd = {
+    sd_00 = {Bpos = valStartBit , Blen =  valBitLen , mult = valMult , offset = valOffset, unit = " "..valUnit, , dtype = "UNSIGNED", t="dummy subtitle"}}}
+    result=readAscPid("",'tempParamTable_NOP_'..valParams)
+  end
+  if valType == "bit" then
+    bitvalue=Split(valUnit, "|")
+    tempParamTable{'tempParamTable_NOP_'..valParams}={ sev_r = valService, cmd = "id0x" .. valParams , t="dummy title", call = "readAscPid",  sd = {
+sd_00 = { by = math.floor(valStartBit / 8) , bi = valStartBit % 8, lt = bitvalue[1], ht = bitvalue[1]}}}
 },
-Menu2Data_NOP_F113 = { sev_r = "22", ses_r ="01;03;", t="Delivery Assy", call = "readAscPid", sd = {
-sd_00 = {bpos = 1 , blen =  1 , mult = 0.392156862745 , offset = 0, unit = " %"},
-dummy=0}
-},
-
+    result=readBMPPid("",'tempParamTable_NOP_'..valParams)
+  end
+  if valType == "numeric" then
+    tempParamTable{'tempParamTable_NOP_'..valParams}={ sev_r = valService,  t="dummy title", call = "readNumPid", sd = {
+    sd_00 = {Bpos = valStartBit , Blen =  valBitLen , mult = valMult , offset = valOffset, unit = " "..valUnit, , dtype = "UNSIGNED", t="dummy subtitle"}}}
+    result=readNumPid("",'tempParamTable_NOP_'..valParams)
+  end
 end
+
+
 
 
 

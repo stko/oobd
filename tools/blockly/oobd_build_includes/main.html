@@ -53,6 +53,11 @@ function start() {
   var toolbox = document.getElementById('toolbox');
   Blockly.inject(document.getElementById('blocklyDiv'),
                  {'rtl': rtl, path: './', toolbox: toolbox});
+                 
+    var xml=document.getElementById("preset");
+    Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xml);
+
+
 }
 
 function toXml() {
@@ -97,6 +102,8 @@ function compile(lang) {
 	doExecute();
 }
 
+
+
 </script>
 
 <style>
@@ -122,7 +129,82 @@ h1 {
 <body onload="start()">
 
   <div id="blocklyDiv"></div>
-
+  <xml id="preset" style="display: none">
+    <block type="oobd_mcall" id="133" x="-542" y="-646">
+        <field name="CallName">getvin</field>
+        <statement name="NAME">
+            <block type="oobd_evalresult" id="106" inline="true">
+                <field name="type">ascii</field>
+                <value name="serviceID">
+                    <block type="text" id="107">
+                        <field name="TEXT">09</field>
+                    </block>
+                </value>
+                <value name="NAME">
+                    <block type="text" id="108">
+                        <field name="TEXT">02</field>
+                    </block>
+                </value>
+                <value name="startbit">
+                    <block type="text" id="109">
+                        <field name="TEXT">0</field>
+                    </block>
+                </value>
+                <value name="length">
+                    <block type="text" id="110">
+                        <field name="TEXT">288</field>
+                    </block>
+                </value>
+                <value name="offset">
+                    <block type="text" id="111">
+                        <field name="TEXT"></field>
+                    </block>
+                </value>
+                <value name="mult">
+                    <block type="text" id="112">
+                        <field name="TEXT"></field>
+                    </block>
+                </value>
+                <value name="Unit">
+                    <block type="text" id="113">
+                        <field name="TEXT"></field>
+                    </block>
+                </value>
+            </block>
+        </statement>
+    </block>
+    <block type="oobd_main" id="1" deletable="false" x="-540" y="-532">
+        <statement name="inner">
+            <block type="oobd_setdongle" id="44">
+                <field name="busMode">active</field>
+                <field name="bus">HS-CAN</field>
+                <field name="protocol">1</field>
+                <next>
+                    <block type="oobd_setmodule" id="64">
+                        <field name="moduleID">7E0</field>
+                        <field name="moduleTimeout">50</field>
+                        <next>
+                            <block type="oobd_item" id="23" inline="true">
+                                <field name="content">Get VIN</field>
+                                <field name="Flags">0x02</field>
+                                <value name="idinfo">
+                                    <block type="text" id="187">
+                                        <field name="TEXT"></field>
+                                    </block>
+                                </value>
+                                <value name="mcaller">
+                                    <block type="text" id="24">
+                                        <field name="TEXT">getvin</field>
+                                    </block>
+                                </value>
+                            </block>
+                        </next>
+                    </block>
+                </next>
+            </block>
+        </statement>
+    </block>
+</xml>
   <xml id="toolbox" style="display: none">
 <!--          <category name="ComputerCraft">
             <category name="Bit">
@@ -370,7 +452,9 @@ h1 {
 
 
          <category name="OOBD">
- 		<block type="oobd_menu">
+		<block type="oobd_main">
+		</block>
+		<block type="oobd_menu">
 		<value name="menuTitle">
 			<block type="text"></block>
 		</value>
@@ -395,6 +479,12 @@ h1 {
 		</value>
 		</block>
 		<block type="oobd_evalresult">
+		<value name="serviceID">
+			<block type="text"></block>
+		</value>
+		<value name="NAME">
+			<block type="text"></block>
+		</value>
 		<value name="startbit">
 			<block type="text"></block>
 		</value>
