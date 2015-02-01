@@ -195,6 +195,9 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 		if (typ != null) {
 			String connectURL = typ.getOnionBase64String("connecturl");
 			String[] parts = connectURL.split("://");
+			if (parts.length!=2){
+				return null;
+			}
 			String protocol = parts[0];
 			String host = parts[1];
 

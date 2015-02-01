@@ -212,6 +212,9 @@ class ComReader {
 			comHandle.close();
 			comHandle = null;
 		}
+		if (portHandle==null){
+			return false;
+		}
 		if (portHandle.connect(options, bus)) {
 			comHandle = portHandle;
 			return true;
