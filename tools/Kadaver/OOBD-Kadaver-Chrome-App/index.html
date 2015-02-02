@@ -26,6 +26,15 @@
 	<button type="submit" value="no" >Give up</button>
 	</form>
 	</dialog>
+	<dialog id="dongleSelectDialog">
+	<form method="dialog">
+	<p>Please select the right dongle</p>
+  <p><select id="dongleSelect" size="1">
+  </select></p>
+	<button type="submit" id="dongleSelectButton" value="yes" autofocus>Connect</button>
+	<button type="submit" value="no" >Give up</button>
+	</form>
+	</dialog>
        <table border="0" width="100%">
 			<tr>
 				<td rowspan="2">
@@ -35,7 +44,7 @@
 				<h1>OOBD Kadaver</h1></td>
 			</tr>
  			<tr>
-				<td  colspan="4" style=" color:#FFFFFF">The Remote Diagnostics Connector</td>
+				<td  colspan="4" style=" color:#088A08">The Remote Diagnostics Connector</td>
 			</tr>
 			<tr>
 				<td colspan="5" id="status">
@@ -295,7 +304,7 @@
             }
             #channel {
                 font-size:24pt;
-                color:#999;
+                color:#fff;
             }
             #imagetable {
                 text-align:center;

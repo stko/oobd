@@ -247,6 +247,7 @@ function init_WS() {
 			// Stop discovery after 30 seconds.
 			console.log("BluetoothDiscovery  2");
 			setTimeout(function() {
+				clearTimeout();
 				console.log("BluetoothDiscovery  3");
 				chrome.bluetooth.stopDiscovery(function() {});
 				console.log("Discovery Ends -nr of dongles found: "+Object.size(device_names))
@@ -264,6 +265,32 @@ function init_WS() {
 						}
 					});
 					noDongleDialog.showModal();
+				}else if (Object.size(device_names)>1){
+					setColor("carsvg", "yellow");
+					var dongleSelect = document.getElementById("dongleSelect");
+					while(dongleSelect.options.length > 0){                
+						dongleSelect.remove(0);
+					}
+					for (var i in device_names) { // 
+							var option = document.createElement("option");
+							option.text = device_names[i];
+							option.value = i;
+							dongleSelect.add(option);
+					}
+					var dongleSelectDialog=app.getElementById('dongleSelectDialog');
+					app.getElementById('dongleSelectButton').onclick  = function() {
+						dongleSelectDialog.close(dongleSelect.value);
+						};
+					dongleSelectDialog.addEventListener('close', function (event) {
+						console.log("Dongle select Dialog closed with "+dongleSelectDialog.returnValue);
+						if (dongleSelectDialog.returnValue != 'no') {
+							eventFlowControl("DONGLEFOUND",dongleSelectDialog.returnValue);
+						} else {
+							eventFlowControl("ENDPROGRAM",null);
+						}
+					});
+					dongleSelectDialog.showModal();
+
 				}else if (Object.size(device_names)==1){
 					setColor("carsvg", "yellow");
 					for (var i in device_names) { // 

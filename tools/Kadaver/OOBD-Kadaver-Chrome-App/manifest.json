@@ -3,7 +3,7 @@
     "name": "OOBD Kadaver",   
     "short_name": "OOBD Kadaver",   
     "description": "Provides Remote connection for the CANINVADER & OOBD Diagnostic Tools",
-    "version": "0.2.1",
+    "version": "0.3.1",
     "icons": {
         "16": "icon.png",
         "32": "icon32.png",
