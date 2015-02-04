@@ -153,7 +153,7 @@ void odp_canraw_recvdata(data_packet * p, UBaseType_t callFromISR)
     if (xTickNew < xTickOld) // check for xTick overflow
     	xTickOld = 0;
 
-    if (xTickCurrent >= 60000) // limit timestamp to 60000
+    if (xTickCurrent >= 59999) // limit timestamp to 0-59999 tick (ms)
 		xTickCurrent = 0;
 
    	xTickCurrent = xTickCurrent + (xTickNew - xTickOld);
