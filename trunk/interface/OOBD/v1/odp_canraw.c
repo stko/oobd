@@ -54,7 +54,8 @@
 
 
 extern char *oobd_Error_Text_OS[];
-
+//define OOBD protocol specific xTick
+static volatile uint16_t xTickNew=0; xTickOld=0, xTickCurrent=0;
 
 
 
@@ -144,11 +145,21 @@ void odp_canraw_recvdata(data_packet * p, UBaseType_t callFromISR)
     struct CanRawConfig *protocolConfig;
     short ByteCnt;
 
-    if (callFromISR) {
-	p->timestamp = xTaskGetTickCountFromISR();
-    } else {
-	p->timestamp = xTaskGetTickCount();
-    }
+    if (callFromISR)
+    	xTickNew = (uint16_t) xTaskGetTickCountFromISR();
+    else
+    	xTickNew = (uint16_t) xTaskGetTickCount();
+
+    if (xTickNew < xTickOld) // check for xTick overflow
+    	xTickOld = 0;
+
+    if (xTickCurrent >= 60000) // limit timestamp to 60000
+		xTickCurrent = 0;
+
+   	xTickCurrent = xTickCurrent + (xTickNew - xTickOld);
+	xTickOld = xTickNew; // set latest value to xTickOld for next duration
+	p->timestamp = xTickCurrent;
+
     protocolConfig = actProtConfigPtr;
     if (protocolConfig != NULL) {
 	if (protocolConfig->showBusTransfer == 1) {	//normal output
@@ -366,6 +377,7 @@ void obp_canraw(void *pvParameters)
 			break;
 			// and here we proceed all command parameters
 		    case PARAM_LISTEN:
+		    	xTickCurrent = 0; // set current Timestamp to "0" if Listen mode ist activated
 			protocolConfig->showBusTransfer =
 			    args->args[ARG_VALUE_1];
 			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
