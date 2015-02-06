@@ -96,4 +96,4 @@ endif
 
 
 clean:
-	rm -f *.lbc *.luasource *.html *.lbc.pgp lua.tmp
+	rm -f *.lbc *.luasource *.html *.lbc.pgp lua.tmp gn.txt tmp
