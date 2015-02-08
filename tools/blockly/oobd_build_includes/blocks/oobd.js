@@ -111,13 +111,13 @@ Blockly.Blocks['oobd_setdongle'] = {
         .appendField("Set Dongle to");
     this.appendDummyInput()
         .appendField("Bus Mode")
-        .appendField(new Blockly.FieldDropdown([["Off", "off"], ["Listen", "listen"], ["Active", "active"]]), "busMode");
+        .appendField(new Blockly.FieldDropdown([["Off", "0"], ["Listen", "2"], ["Active", "3"]]), "busMode");
     this.appendDummyInput()
         .appendField("Channel")
         .appendField(new Blockly.FieldDropdown([["HS-CAN", "HS-CAN"], ["MS-CAN", "MS-CAN"]]), "bus");
     this.appendDummyInput()
         .appendField("Protocol")
-        .appendField(new Blockly.FieldDropdown([["UDS", "1"], ["Real Time Data", "2"]]), "protocol");
+        .appendField(new Blockly.FieldDropdown([["UDS", "1"], ["Real Time Data", "3"]]), "protocol");
     this.setInputsInline(true);
     this.setPreviousStatement(true);
     this.setNextStatement(true);

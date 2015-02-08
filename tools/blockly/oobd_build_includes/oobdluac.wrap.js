@@ -74,17 +74,17 @@
 	}
 
       var Module = {
-      	arguments: ['dummy.lua'],
+      	arguments: ['lualib.lbc', 'dummy.lua'],
       	postRun: function() {
       		var fileResult = FS.readFile('luac.out');
       		// zwei Arrays zusammentackern: a.push.apply(a, b);
       		download(ArrayBufferToString(fileResult), "OOBDWeb.lbc", "application/octet-stream");
       		console.log('postrun');
       	},
-      	'preRun': function() {
+      	'preRun': [function() {
       		FS.writeFile('dummy.lua', document.luaSource, { encoding: "utf8" });
       		console.log('prerun with source:' +document.luaSource);
-      	},
+      	}],
       	'calledRun': false,
       	ABORT: false,
 

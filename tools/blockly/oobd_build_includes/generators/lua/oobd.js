@@ -33,8 +33,6 @@ Blockly.Lua['oobd_main'] = function(block) {
   var code ='function Main(oldvalue,id)\n'
 	+statements_name
 +'end\n'
-
-
 +'\n\nStart("","")\n'
 +'return\n'
         ;
