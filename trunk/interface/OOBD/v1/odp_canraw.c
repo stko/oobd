@@ -55,7 +55,8 @@
 
 extern char *oobd_Error_Text_OS[];
 //define OOBD protocol specific xTick
-static volatile uint16_t xTickNew=0; xTickOld=0, xTickCurrent=0;
+static volatile uint16_t xTickNew = 0;
+xTickOld = 0, xTickCurrent = 0;
 
 
 
@@ -146,19 +147,19 @@ void odp_canraw_recvdata(data_packet * p, UBaseType_t callFromISR)
     short ByteCnt;
 
     if (callFromISR)
-    	xTickNew = (uint16_t) xTaskGetTickCountFromISR();
+	xTickNew = (uint16_t) xTaskGetTickCountFromISR();
     else
-    	xTickNew = (uint16_t) xTaskGetTickCount();
+	xTickNew = (uint16_t) xTaskGetTickCount();
 
-    if (xTickNew < xTickOld) // check for xTick overflow
-    	xTickOld = 0;
+    if (xTickNew < xTickOld)	// check for xTick overflow
+	xTickOld = 0;
 
-    if (xTickCurrent >= 59999) // limit timestamp to 0-59999 tick (ms)
-		xTickCurrent = 0;
+    if (xTickCurrent >= 59999)	// limit timestamp to 0-59999 tick (ms)
+	xTickCurrent = 0;
 
-   	xTickCurrent = xTickCurrent + (xTickNew - xTickOld);
-	xTickOld = xTickNew; // set latest value to xTickOld for next duration
-	p->timestamp = xTickCurrent;
+    xTickCurrent = xTickCurrent + (xTickNew - xTickOld);
+    xTickOld = xTickNew;	// set latest value to xTickOld for next duration
+    p->timestamp = xTickCurrent;
 
     protocolConfig = actProtConfigPtr;
     if (protocolConfig != NULL) {
@@ -185,25 +186,25 @@ void odp_canraw_recvdata(data_packet * p, UBaseType_t callFromISR)
 	    printdata_CAN(MSG_BUS_RECV, p, printChar);
 	}
 	if (protocolConfig->showBusTransfer == 3) {
-		// Lawicel format: Estimated out of http://lxr.free-electrons.com/source/drivers/net/can/slcan.c line 110 cc.
-		if (p->recv & 0x80000000) {	// Bit 32 set, so it's an extended CAN ID
+	    // Lawicel format: Estimated out of http://lxr.free-electrons.com/source/drivers/net/can/slcan.c line 110 cc.
+	    if (p->recv & 0x80000000) {	// Bit 32 set, so it's an extended CAN ID
 		printser_string("T");
 		printser_uint32ToHex(p->recv & 0x1FFFFFFF);
 	    } else {
 		printser_string("t");
-		printser_int((p->recv & 0x700) >> 8,10);
+		printser_int((p->recv & 0x700) >> 8, 10);
 		printser_uint8ToHex(p->recv & 0x00FF);
 	    }
 	    printser_int(p->len, 10);
 	    ByteCnt = 0;
-		while (ByteCnt != p->len ) {
-			printser_uint8ToHex(p->data[ByteCnt]);
-			ByteCnt ++;
-		}
-		if (p->err == 0x01)
-			printser_string("FFFF");	// if error occurs set timestamp to 0xFFFF
-		else
-			printser_uint16ToHex(p->timestamp * portTICK_PERIOD_MS & 0xFFFF);	//reduce down to 16 bit = 65536 ms = ~ 1 min
+	    while (ByteCnt != p->len) {
+		printser_uint8ToHex(p->data[ByteCnt]);
+		ByteCnt++;
+	    }
+	    if (p->err == 0x01)
+		printser_string("FFFF");	// if error occurs set timestamp to 0xFFFF
+	    else
+		printser_uint16ToHex(p->timestamp * portTICK_PERIOD_MS & 0xFFFF);	//reduce down to 16 bit = 65536 ms = ~ 1 min
 	    printLF();
 	}
 	if (protocolConfig->showBusTransfer == 4) {
@@ -377,7 +378,7 @@ void obp_canraw(void *pvParameters)
 			break;
 			// and here we proceed all command parameters
 		    case PARAM_LISTEN:
-		    	xTickCurrent = 0; // set current Timestamp to "0" if Listen mode ist activated
+			xTickCurrent = 0;	// set current Timestamp to "0" if Listen mode ist activated
 			protocolConfig->showBusTransfer =
 			    args->args[ARG_VALUE_1];
 			createCommandResultMsg(FBID_PROTOCOL_GENERIC,

@@ -133,6 +133,7 @@ UBaseType_t eval_param_sys(param_data * args)
 		}
 
 	    }
+	    return pdFALSE;
 	} else {
 	    createCommandResultMsg
 		(FBID_SYS_GENERIC,
