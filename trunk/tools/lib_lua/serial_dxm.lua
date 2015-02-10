@@ -1,3 +1,4 @@
+dofile("luaSVNRevs.inc")
 -- include the basic connectivity
 
 
@@ -609,6 +610,8 @@ end
 
 function SysInfo_Menu(oldvalue,id)
 	openPage("Sysinfo")
+	addElement("Lua Script Revision", "nothing"," "..SVNREVLUASCRIPT,0x0, "")
+	addElement("Lua Library Revision", "nothing"," "..SVNREVLUALIB,0x0, "")
 	addElement("Serial", "interface_serial","-",0x2, "")
 	addElement("BIOS", "interface_version","-",0x2, "")
 	addElement("Power", "interface_voltage","-",0x6, "")

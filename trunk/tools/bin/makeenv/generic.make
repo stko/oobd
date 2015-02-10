@@ -1,5 +1,9 @@
 UDSLIB=../lib_protocol
 LUALIB=../../tools/lib_lua/
+LUASVNFILE=../../tools/lib_lua/luaSVNRevs.inc
+SVNREVLUASCRIPT=$(shell ../../tools/lib_lua/echoLuaRev.sh SVNREVLUASCRIPT)
+SVNREVLUALIB=$(shell (cd ../../tools/lib_lua/ ; ./echoLuaRev.sh SVNREVLUALIB) )
+
 LUAS=$(shell ../../tools/bin/filelist.sh lua)
 
 SPECS=$(shell ../../tools/bin/filelist.sh mdx)
@@ -51,7 +55,10 @@ KCDSOURCES=$(KCDFILES:.kcd=.luasource)
 	xmlstarlet $(KCDFLAGS) $< > $(@F) 
 	xmlstarlet $(KCDHTMLFLAGS) $<  > $(*F).html
 
-source: specs $(CUSTOMSOURCE) luas kcds
+revision:
+	echo "$(SVNREVLUALIB)\n$(SVNREVLUASCRIPT)" > $(LUASVNFILE)
+
+source: revision specs $(CUSTOMSOURCE) luas kcds
 luas: $(LUASOURCES) 
 specs: $(SPECSOURCES) $(MDXTFLAGS) $(CUSTOMSPECSOURCES)
 kcds: $(KCDSOURCES) 
