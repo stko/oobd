@@ -56,7 +56,8 @@ KCDSOURCES=$(KCDFILES:.kcd=.luasource)
 	xmlstarlet $(KCDHTMLFLAGS) $<  > $(*F).html
 
 revision:
-	echo "$(SVNREVLUALIB)\n$(SVNREVLUASCRIPT)" > $(LUASVNFILE)
+	echo "$(SVNREVLUALIB)" > $(LUASVNFILE)
+	echo "$(SVNREVLUASCRIPT)" >> $(LUASVNFILE)
 
 source: revision specs $(CUSTOMSOURCE) luas kcds
 luas: $(LUASOURCES) 
