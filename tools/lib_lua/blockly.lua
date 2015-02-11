@@ -21,7 +21,7 @@ sets the bus channel, speed and active mode
 --]]
 
 function setDongleMode(busMode , busID , protocol)
-	echoWrite("p 1 "..protocol.."\r") -- activate Diagnostic protocol
+	echoWrite("p 1 1 "..protocol.."\r") -- activate Diagnostic protocol
 	setBus(busID)
 	if hardwareID == 2 then
 		echoWrite("p 5 "..busMode.."\r")

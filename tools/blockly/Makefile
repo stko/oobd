@@ -19,7 +19,7 @@ default:
 
 
 download:
-	-rm -r new_blockly blockly_lua_repository blockly_original_repository
+	-rm -r new_blockly blockly_lua_repository blockly_original_repository closure-library
 	svn export https://github.com/google/blockly.git/trunk blockly_original_repository
 	svn export https://github.com/espertus/blockly-lua.git/trunk blockly_lua_repository
 	svn export https://github.com/google/closure-library.git/trunk closure-library
