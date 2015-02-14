@@ -57,19 +57,19 @@ function evalResult(valService, valParams, valType , valStartBit , valBitLen , v
   result="unknown call.."
   if valType == "ascii" then
     tempParamTable['tempParamTable_NOP_'..valParams]={ sev_r = valService,  t="dummy title", call = "readAscPid", sd = {
-    sd_00 = {Bpos = valStartBit , Blen =  valBitLen , mult = valMult , offset = valOffset, unit = " "..valUnit,  dtype = "UNSIGNED", t="dummy subtitle"}}}
+    sd_00 = {Bpos = valStartBit , Blen =  valBitLen , mult = valMult , offset = valOffset, unit = valUnit,  dtype = "UNSIGNED", t="dummy subtitle"}}}
     result=readAscPid("",'tempParamTable_NOP_'..valParams)
   end
   if valType == "bit" then
     bitvalue=Split(valUnit, "|")
     tempParamTable['tempParamTable_NOP_'..valParams]={ sev_r = valService, cmd = "id0x" .. valParams , t="dummy title", call = "readBMPPid",  sd = {
-sd_00 = { by = math.floor(valStartBit / 8) , bi = valStartBit % 8, lt = bitvalue[1], ht = bitvalue[1]}}}
-    result=readBMPPid("",'tempParamTable_NOP_'..valParams)
+sd_00 = { by = math.floor(valStartBit / 8) , bi = math.floor(valBitLen / 8), lt = bitvalue[1], ht = bitvalue[2]}}}
+    result=readBMPPid("",'tempParamTable_NOP_'..valParams.."_sd_00")
   end
   if valType == "numeric" then
     tempParamTable['tempParamTable_NOP_'..valParams]={ sev_r = valService,  t="dummy title", call = "readNumPid", sd = {
-    sd_00 = {Bpos = valStartBit , Blen =  valBitLen , mult = valMult , offset = valOffset, unit = " "..valUnit,  dtype = "UNSIGNED", t="dummy subtitle"}}}
-    result=readNumPid("",'tempParamTable_NOP_'..valParams)
+    sd_00 = {Bpos = valStartBit , Blen =  valBitLen , bpos = math.floor(valStartBit / 8), blen =math.floor(valBitLen / 8),  mult = valMult , offset = valOffset, unit = valUnit,  dtype = "UNSIGNED", t="dummy subtitle"}}}
+    result=readNumPid("",'tempParamTable_NOP_'..valParams.."_sd_00")
   end
   return result
 end

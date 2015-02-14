@@ -33,13 +33,13 @@ var oobdcolour = new Blockly.FieldColour('#ffff00');
 
 Blockly.Blocks['oobd_main'] = {
   init: function() {
-    this.setHelpUrl('http://www.example.com/');
+    this.setHelpUrl('http://www.oobd.org/doku.php?id=doc:tools_quickscript#the_main_menu');
     this.setColour(60);
     this.appendDummyInput()
         .appendField("Implement your main program here:");
     this.appendStatementInput("inner");
     this.setInputsInline(true);
-    this.setDeletable(false);
+    /*this.setDeletable(false);*/
     this.setTooltip('');
   }
 };
@@ -47,7 +47,7 @@ Blockly.Blocks['oobd_main'] = {
 
 Blockly.Blocks['oobd_menu'] = {
   init: function() {
-    this.setHelpUrl('http://www.example.com/');
+    this.setHelpUrl('http://www.oobd.org/doku.php?id=doc:tools_quickscript#the_menu');
     this.setColour(60);
     this.appendDummyInput()
         .appendField("OOBD Menu");
@@ -65,7 +65,7 @@ Blockly.Blocks['oobd_menu'] = {
 
 Blockly.Blocks['oobd_item'] = {
   init: function() {
-    this.setHelpUrl('http://www.example.com/');
+    this.setHelpUrl('http://www.oobd.org/doku.php?id=doc:tools_quickscript#the_menu_item');
     this.setColour(60);
     this.appendDummyInput()
         .appendField("OOBD Menuitem");
@@ -90,7 +90,7 @@ Blockly.Blocks['oobd_item'] = {
 
 Blockly.Blocks['oobd_mcall'] = {
   init: function() {
-    this.setHelpUrl('http://www.example.com/');
+    this.setHelpUrl('http://www.oobd.org/doku.php?id=doc:tools_quickscript#the_item_procedure');
     this.setColour(60);
     this.appendDummyInput()
         .appendField("OOBD MenuCall")
@@ -105,7 +105,7 @@ Blockly.Blocks['oobd_mcall'] = {
 
 Blockly.Blocks['oobd_setdongle'] = {
   init: function() {
-    this.setHelpUrl('http://www.example.com/');
+    this.setHelpUrl('http://www.oobd.org/doku.php?id=doc:tools_quickscript#set_the_dongle');
     this.setColour(60);
     this.appendDummyInput()
         .appendField("Set Dongle to");
@@ -127,7 +127,7 @@ Blockly.Blocks['oobd_setdongle'] = {
 
 Blockly.Blocks['oobd_setmodule'] = {
   init: function() {
-    this.setHelpUrl('http://www.example.com/');
+    this.setHelpUrl('http://www.oobd.org/doku.php?id=doc:tools_quickscript#define_the_module');
     this.setColour(60);
     this.appendDummyInput()
         .appendField("Set Module to ");
@@ -147,7 +147,7 @@ Blockly.Blocks['oobd_setmodule'] = {
 
 Blockly.Blocks['oobd_requestservice'] = {
   init: function() {
-    this.setHelpUrl('http://www.example.com/');
+    this.setHelpUrl('http://www.oobd.org/doku.php?id=doc:tools_quickscript#request_a_service');
     this.setColour(60);
     this.appendDummyInput()
         .appendField("Request Service ");
@@ -168,7 +168,7 @@ Blockly.Blocks['oobd_requestservice'] = {
 
 Blockly.Blocks['oobd_evalresult'] = {
   init: function() {
-    this.setHelpUrl('http://www.example.com/');
+    this.setHelpUrl('http://www.oobd.org/doku.php?id=doc:tools_quickscript#evaluate_a_result');
     this.setColour(60);
    this.appendDummyInput()
         .appendField("Measure ");
