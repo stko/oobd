@@ -56,6 +56,7 @@ function start() {
                  
     var xml=document.getElementById("preset");
     Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xml);
+ document.getElementById('fileinput').addEventListener('change', readSingleFile, false);
 
 
 }
@@ -66,6 +67,7 @@ function toXml() {
   output.value = Blockly.Xml.domToText(xml);
   output.focus();
   output.select();
+  download( Blockly.Xml.domToText(xml),  "OOBDWeb.oobdqs", "application/octet-stream");
 }
 
 function fromXml() {
@@ -102,7 +104,37 @@ function compile(lang) {
 	doExecute();
 }
 
+function readSingleFile(evt) {
+  // Check for the various File API support.
+  if (window.File && window.FileReader && window.FileList && window.Blob) {
+    //Retrieve the first (and only!) File from the FileList object
+    var f = evt.target.files[0]; 
 
+    if (f) {
+      var r = new FileReader();
+      r.onload = function(e) { 
+	  var contents = e.target.result;
+	  /*
+	  alert( "Got the file.\n" 
+	  +"name: " + f.name + "\n"
+	  +"type: " + f.type + "\n"
+	  +"size: " + f.size + " bytes\n"
+	  + "starts with: " + contents.substr(1, contents.indexOf("\n"))
+	  */
+	  var xml = Blockly.Xml.textToDom(contents);
+	  Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xml);
+	  
+      }
+      r.readAsText(f);
+    } else { 
+      alert("Failed to load file");
+    }	
+  } else {
+    alert('The File APIs are not fully supported by your browser.');
+  }
+}
+
+ 
 
 </script>
 
@@ -120,15 +152,14 @@ h1 {
   font-size: 140%;
 }
 #blocklyDiv {
-  float: right;
-  height: 95%;
-  width: 70%;
+ float: left;
+  height: 60%;
+  width: 100%;
 }
 </style>
 </head>
 <body onload="start()">
 
-  <div id="blocklyDiv"></div>
   <xml id="preset" style="display: none">
 	<block type="oobd_mcall" id="1" x="-542" y="-646">
 		<field name="CallName">getvin</field>
@@ -680,15 +711,21 @@ h1 {
           <category name="Variables" custom="VARIABLE"></category>
           <category name="Procedures" custom="PROCEDURE"></category>
         </xml>
-
+<table width="100%">
+<tr><td height="10%" style="padding:2px; width:600px; ">
   <h1>OOBD Quick Script - The  Web Script Generator</h1>
   
   <p>Generate your Scripts online and on the fly in any (modern) Browser (<a href="http://www.oobd.org/doku.php?id=doc:tools_quickscript">HowTo</a>)</p>
  <p>Making your own Diagnostic sequences was never been so easy: Design it, download it, run it, got it!</p>
-
-  <p><a href="javascript:void([document.getElementById('blocklyDiv').style.display = 'block', Blockly.mainWorkspace.render()])">Show</a>
+<!---
+</td><td>
+  <p><a href="javascript:void([document.getElementById('blocklyDiv').style.display = 'inline', Blockly.mainWorkspace.render()])">Show</a>
    - <a href="javascript:void(document.getElementById('blocklyDiv').style.display = 'none')">Hide</a></p>
+-->
 
+   </td><td>
+    <textarea id="importExport" style="width: 100%; height: 100%"></textarea>
+  </td><td style="padding:2px; width:200px">
   <script type="text/javascript">
     if (rtl) {
       document.write('[ &larr; RTL. Switch to <A HREF="?ltr">LTR</A>. ]');
@@ -696,28 +733,27 @@ h1 {
       document.write('[ &rarr; LTR. Switch to <A HREF="?rtl">RTL</A>. ]');
     }
   </script>
-
-  <p>
-    <input type="button" value="Export to XML" onclick="toXml()">
-    &nbsp;
-    <input type="button" value="Import from XML" onclick="fromXml()">
-    <br>
-    <input type="button" value="Generate Lua Code" onclick="toCode('Lua')">
-     <br>
-    <textarea id="importExport" style="width: 26%; height: 12em"></textarea>
-  </p>
-  <hr>
-
+<br>
 <!--
-  <p>
-    Stress test with an <input type="button" value="Airstrike!" onclick="airstrike(100)">
-  </p>
+    <input type="button" style=" width:100%" value="Load QS-Template" onclick="fromXml()">
+    <br>
 -->
-  <p>
-    Download as compiled OOBD script <input type="button" value="Download Script" onclick="compile('Lua')">
-  </p>
-
-  </form>
+    Load QS-Template
+    <br>
+    <input type="file" id="fileinput" />
+    <br>
+    <input type="button" style=" width:100%" value="Save QS-Template" onclick="toXml()">
+    <br>
+    <input type="button" style=" width:100%" value="View Lua Code" onclick="toCode('Lua')">
+    <br>
+    <input type="button" style=" width:100%" value="Download as compiled OOBD script" onclick="compile('Lua')">
+</td></tr>
+<!--
+<tr><td width="100%" height="90%" style="padding: 2px;" colspan="3">
+</td></tr>
+-->
+</table>
+<div id="blocklyDiv"></div>
 <script async type="text/javascript" src="oobdluac.js"></script> 
  
 </body>
