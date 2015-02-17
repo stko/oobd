@@ -1,4 +1,3 @@
-     function doExecute() {
       function download(strData, strFileName, strMimeType) {
       		var D = document,
       			A = arguments,
@@ -39,6 +38,9 @@
       //example usage:
       //download("hello world", "test.txt", "text/plain")
       //download( result.chars.join(""), report.pdf", "application/pdf");
+
+
+     function doExecute() {
 
       function ArrayBufferToString(buffer) {
       	return BinaryToString(String.fromCharCode.apply(null, Array.prototype.slice.apply(new Uint8Array(buffer))));
