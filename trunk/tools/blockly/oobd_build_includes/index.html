@@ -56,7 +56,8 @@ function start() {
                  
     var xml=document.getElementById("preset");
     Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xml);
- document.getElementById('fileinput').addEventListener('change', readSingleFile, false);
+	document.getElementById('fileinput').addEventListener('change', readSingleFile, false);
+	document.getElementById('fileinput').addEventListener('click', clearfilevalue, false);
 
 
 }
@@ -64,10 +65,10 @@ function start() {
 function toXml() {
   var output = document.getElementById('importExport');
   var xml = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace);
-  output.value = Blockly.Xml.domToText(xml);
+  output.value = Blockly.Xml.domToPrettyText(xml);
   output.focus();
   output.select();
-  download( Blockly.Xml.domToText(xml),  "OOBDWeb.oobdqs", "application/octet-stream");
+  download( Blockly.Xml.domToPrettyText(xml),  "OOBDWeb.oobdqs", "application/octet-stream");
 }
 
 function fromXml() {
@@ -126,13 +127,16 @@ function readSingleFile(evt) {
 	  
       }
       r.readAsText(f);
-    } else { 
-      alert("Failed to load file");
+	document.getElementById('fileinput').value = null;
     }	
   } else {
     alert('The File APIs are not fully supported by your browser.');
   }
 }
+
+function clearfilevalue(evt) {
+  evt.target.value = null;
+ }
 
  
 
@@ -712,8 +716,8 @@ h1 {
           <category name="Procedures" custom="PROCEDURE"></category>
         </xml>
 <table width="100%">
-<tr><td height="10%" style="padding:2px; width:600px; ">
-  <h1>OOBD Quick Script - The  Web Script Generator</h1>
+<tr><td height="10%" style="padding:2px; width:600px; text-align:center; vertical-align:middle; ">
+  <a href="http://oobd.org"><img src="http://oobd.org/lib/tpl/prsnl10/user/logo.png" alt="OOBD" style="float:left"></a><h1>OOBD Quick Script - The  Web Script Generator</h1>
   
   <p>Generate your Scripts online and on the fly in any (modern) Browser (<a href="http://www.oobd.org/doku.php?id=doc:tools_quickscript">HowTo</a>)</p>
  <p>Making your own Diagnostic sequences was never been so easy: Design it, download it, run it, got it!</p>
@@ -723,8 +727,8 @@ h1 {
    - <a href="javascript:void(document.getElementById('blocklyDiv').style.display = 'none')">Hide</a></p>
 -->
 
-   </td><td>
-    <textarea id="importExport" style="width: 100%; height: 100%"></textarea>
+   </td><td>Content Dump:<br>
+    <textarea id="importExport" style="width: 100%; "></textarea>
   </td><td style="padding:2px; width:200px">
   <script type="text/javascript">
     if (rtl) {
@@ -734,11 +738,9 @@ h1 {
     }
   </script>
 <br>
-<!--
-    <input type="button" style=" width:100%" value="Load QS-Template" onclick="fromXml()">
+    <input type="button" style=" width:100%" value="Clear Canvas" onclick="Blockly.mainWorkspace.clear()">
     <br>
--->
-    Load QS-Template
+    Import QS-Template
     <br>
     <input type="file" id="fileinput" />
     <br>
