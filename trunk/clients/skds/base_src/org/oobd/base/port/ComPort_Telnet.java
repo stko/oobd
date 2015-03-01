@@ -13,8 +13,6 @@ import java.nio.channels.NotYetConnectedException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.handshake.ServerHandshake;
 import org.json.JSONException;
 import org.oobd.base.Base64Coder;
 import org.oobd.base.bus.OobdBus;
