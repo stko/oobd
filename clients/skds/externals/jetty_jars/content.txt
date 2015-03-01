@@ -1,17 +1,25 @@
-# downloaded accourding 
-#
-# http://angelozerr.wordpress.com/2011/07/26/websockets_jetty_step3/
+# sample taken from
+# http://amilamanoj.blogspot.de/2013/06/secure-websockets-with-jetty.html
 #
 # from
 #
-# http://download.eclipse.org/jetty/stable-7/dist/
+# http://download.eclipse.org/jetty/
 #
-# out of the ketty-distribution-7.6.13 Archive, directory lib
+# out of the jetty-distribution-9.2.7.v20150116.tar.gz Archive, take
 #
-jetty-continuation-7.6.13.v20130916.jar
-jetty-http-7.6.13.v20130916.jar
-jetty-io-7.6.13.v20130916.jar
-jetty-server-7.6.13.v20130916.jar
-jetty-util-7.6.13.v20130916.jar
-jetty-websocket-7.6.13.v20130916.jar
-servlet-api-2.5.jar
+
+
+javax.websocket-api-1.0.jar
+javax-websocket-client-impl-9.2.7.v20150116.jar
+javax-websocket-server-impl-9.2.7.v20150116.jar
+jetty-http-9.2.7.v20150116.jar
+jetty-io-9.2.7.v20150116.jar
+jetty-server-9.2.7.v20150116.jar
+jetty-util-9.2.7.v20150116.jar
+servlet-api-3.1.jar
+websocket-api-9.2.7.v20150116.jar
+websocket-client-9.2.7.v20150116.jar
+websocket-common-9.2.7.v20150116.jar
+websocket-server-9.2.7.v20150116.jar
+websocket-servlet-9.2.7.v20150116.jar
+
