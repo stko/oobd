@@ -75,16 +75,24 @@ File /oname=$INSTDIR\lib\kahlua.jar dist/lib/kahlua.jar
 File /oname=$INSTDIR\lib\purejavacomm.jar dist/lib/purejavacomm.jar
 File /oname=$INSTDIR\lib\RXTXcomm.jar dist/lib/RXTXcomm.jar
 File /oname=$INSTDIR\lib\swing-worker-1.1.jar dist/lib/swing-worker-1.1.jar
-File /oname=$INSTDIR\lib\java_websocket.jar dist/lib/java_websocket.jar 
 
-File /oname=$INSTDIR\lib\jetty-continuation-7.6.13.v20130916.jar dist/lib/jetty-continuation-7.6.13.v20130916.jar
-File /oname=$INSTDIR\lib\jetty-http-7.6.13.v20130916.jar dist/lib/jetty-http-7.6.13.v20130916.jar
-File /oname=$INSTDIR\lib\jetty-io-7.6.13.v20130916.jar dist/lib/jetty-io-7.6.13.v20130916.jar
-File /oname=$INSTDIR\lib\jetty-server-7.6.13.v20130916.jar dist/lib/jetty-server-7.6.13.v20130916.jar
-File /oname=$INSTDIR\lib\jetty-util-7.6.13.v20130916.jar dist/lib/jetty-util-7.6.13.v20130916.jar
-File /oname=$INSTDIR\lib\jetty-websocket-7.6.13.v20130916.jar dist/lib/jetty-websocket-7.6.13.v20130916.jar
-File /oname=$INSTDIR\lib\servlet-api-2.5.jar dist/lib/servlet-api-2.5.jar
+File /oname=$INSTDIR\lib\javax.websocket-api-1.0.jar dist/lib/javax.websocket-api-1.0.jar
+File /oname=$INSTDIR\lib\javax-websocket-client-impl-9.2.7.v20150116.jar dist/lib/javax-websocket-client-impl-9.2.7.v20150116.jar
+File /oname=$INSTDIR\lib\javax-websocket-server-impl-9.2.7.v20150116.jar dist/lib/javax-websocket-server-impl-9.2.7.v20150116.jar
+File /oname=$INSTDIR\lib\jetty-http-9.2.7.v20150116.jar dist/lib/jetty-http-9.2.7.v20150116.jar
+File /oname=$INSTDIR\lib\jetty-io-9.2.7.v20150116.jar dist/lib/jetty-io-9.2.7.v20150116.jar
+File /oname=$INSTDIR\lib\jetty-server-9.2.7.v20150116.jar dist/lib/jetty-server-9.2.7.v20150116.jar
+File /oname=$INSTDIR\lib\jetty-util-9.2.7.v20150116.jar dist/lib/jetty-util-9.2.7.v20150116.jar
+File /oname=$INSTDIR\lib\servlet-api-3.1.jar dist/lib/servlet-api-3.1.jar
+File /oname=$INSTDIR\lib\websocket-api-9.2.7.v20150116.jar dist/lib/websocket-api-9.2.7.v20150116.jar
+File /oname=$INSTDIR\lib\websocket-client-9.2.7.v20150116.jar dist/lib/websocket-client-9.2.7.v20150116.jar
+File /oname=$INSTDIR\lib\websocket-common-9.2.7.v20150116.jar dist/lib/websocket-common-9.2.7.v20150116.jar
+File /oname=$INSTDIR\lib\websocket-server-9.2.7.v20150116.jar dist/lib/websocket-server-9.2.7.v20150116.jar
+File /oname=$INSTDIR\lib\websocket-servlet-9.2.7.v20150116.jar dist/lib/websocket-servlet-9.2.7.v20150116.jar
 #File /r dist/lib
+
+
+
 
 
 
@@ -118,9 +126,9 @@ File "../../tools/bin/OOBDCopyShop.hta"
 
 WriteUninstaller "$INSTDIR\uninstaller.exe"
 CreateDirectory "$SMPROGRAMS\OOBD\$menutype"
-#CreateShortCut "$SMPROGRAMS\OOBD\$menutype\OOBDesk.lnk" "javaw" "-jar -Djava.library.path=bus/lib -Djava.util.logging.config.file=logging.props OOBDesk.jar"
-#CreateShortCut "$SMPROGRAMS\OOBD\$menutype\OOBDesk.lnk" "java" "-jar -Djava.library.path=bus/lib -Djava.util.logging.config.file=logging.props OOBDesk.jar"
-CreateShortCut "$SMPROGRAMS\OOBD\$menutype\OOBDesk.lnk" "java" "-jar -Djava.library.path=port -Djava.util.logging.config.file=logging.props OOBDesk.jar"
+#CreateShortCut "$SMPROGRAMS\OOBD\$menutype\OOBDesk.lnk" "javaw" "-version:1.7 -jar -Djava.library.path=bus/lib -Djava.util.logging.config.file=logging.props OOBDesk.jar"
+#CreateShortCut "$SMPROGRAMS\OOBD\$menutype\OOBDesk.lnk" "java" "-version:1.7 -jar -Djava.library.path=bus/lib -Djava.util.logging.config.file=logging.props OOBDesk.jar"
+CreateShortCut "$SMPROGRAMS\OOBD\$menutype\OOBDesk.lnk" "java" "-version:1.7 -jar -Djava.library.path=port -Djava.util.logging.config.file=logging.props OOBDesk.jar"
 CreateShortCut "$SMPROGRAMS\OOBD\$menutype\OOBDCopyShop.lnk" "$INSTDIR\OOBDCopyShop.hta"
 CreateShortCut "$SMPROGRAMS\OOBD\$menutype\View Log Files.lnk" "javaw" "-jar jlogviewer.jar"
 CreateShortCut "$SMPROGRAMS\OOBD\$menutype\OOBDesk Homepage.lnk" "$INSTDIR\oobd.url"
