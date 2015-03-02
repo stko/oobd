@@ -63,7 +63,7 @@ public class ComPort_Kadaver implements OOBDPort {
         channel = parts[1];
         if ("wss".equalsIgnoreCase(protocol)) {
             SslContextFactory sslContextFactory = new SslContextFactory();
-            Resource keyStoreResource = Resource.newResource(this.getClass().getResource("keystore.jks"));
+            Resource keyStoreResource = Resource.newResource(this.getClass().getResource("/org/oobd/base/port/keystore.jks"));
             sslContextFactory.setKeyStoreResource(keyStoreResource);
             sslContextFactory.setKeyStorePassword("ausderferne");
             sslContextFactory.setKeyManagerPassword("ausderferne");
