@@ -20,19 +20,15 @@ dofile("../lib_protocol/realtimedata.lua")
 	<xsl:template match="my:Message">
 
 	<xsl:variable name="canid" select="concat(substring('000000000',string-length(@id)), substring(@id,3))"/>
-rtdArray_NOP_<xsl:value-of select="$canid"/> = { rtdinit="27<xsl:value-of select="$canid"/>00000<xsl:value-of select="@length"/>", t="<xsl:value-of select="@name"/>", bus="HS-CAN", cid=<xsl:value-of select="@id"/>, sd = { <xsl:apply-templates select="my:Signal" />}
+rtdArray_NOP_<xsl:value-of select="$canid"/> = { rtdinit="27<xsl:value-of select="$canid"/>00000<xsl:value-of select="@length"/>", t="<xsl:value-of select="@name"/>", bus="HS-CAN", cid=<xsl:value-of select="@id"/>, sd = { 
+	<xsl:apply-templates select="my:Signal" />}
 	},</xsl:template>
 	
 	<xsl:template match="my:Signal">sd_<xsl:value-of select="format-number(position(),'00')"/> = { 
 		<xsl:variable name="bytesize" select="round(../@length div 8)"/>
 		<xsl:variable name="bitsize" select="@length"/>
-		<xsl:variable name="bitpos" select="@offset"/>
-		<xsl:variable name="bytepos" select="floor($bitpos div 8)"/>t="<xsl:value-of select="@name"/>", bpos=<xsl:value-of select="$bytepos"/>
-		<xsl:choose>
-			<xsl:when test="@length">, blen=<xsl:value-of select="$bytesize"/></xsl:when><xsl:otherwise>, blen=0</xsl:otherwise>
-		</xsl:choose>
-		<xsl:choose>
-			<xsl:when test="@offset">, Bpos=<xsl:value-of select="$bitpos"/></xsl:when><xsl:otherwise>, Bpos=255</xsl:otherwise>
+		<xsl:variable name="bitpos" select="@offset"/>t="<xsl:value-of select="@name"/>", <xsl:choose>
+			<xsl:when test="@offset">Bpos=<xsl:value-of select="$bitpos"/></xsl:when><xsl:otherwise>, Bpos=255</xsl:otherwise>
 		</xsl:choose>
 		<xsl:choose>
 			<xsl:when test="@length">, Blen=<xsl:value-of select="$bitsize"/></xsl:when><xsl:otherwise>, Blen=1</xsl:otherwise>
