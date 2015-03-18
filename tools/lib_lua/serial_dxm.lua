@@ -308,34 +308,45 @@ end
 
 function setBus(bus)
   if lastSwitchedBus ~= bus then
+	-- first we need to translate the bus into speed and  port
+	if bus == "IMS-CAN" or bus == "HS-CAN" or bus == "CAN" then
+		speed = "500b11"
+	else
+		speed = "125b11"
+	end
+	if speed == "500b11" then
+		port=1
+	else
+		port=2
+	end
+	-- now comes another tricky part: Do we have a bus topology lookup table available?
+	if bustopology ~= nil and shortName ~= nil and bustopology[shortName] ~= nil then
+		speed=bustopology[shortName].speed
+		port=bustopology[shortName].port
+	end
     if hardwareID == 2 then
-      if bus == "HS-CAN" then
+      if speed == "500b11" then
 		echoWrite("p 6 3\r")
       end
-      if bus == "IMS-CAN" then
-		echoWrite("p 6 3\r")
-      end
-      if bus == "MS-CAN" then
+     if speed == "125b11" then
 		echoWrite("p 6 1\r")
       end
     elseif hardwareID == 3 then
-      if bus == "HS-CAN" then
+      if speed == "500b11" then
 		echoWrite("p 8 3 3\r")
-      elseif bus == "IMS-CAN" then
-		echoWrite("p 8 3 3\r")
-      elseif bus == "MS-CAN" then
+      elseif speed == "125b11" then
 		echoWrite("p 8 3 1\r")
       end
 		serWait(".|:",2000) -- wait 2 secs for an response
     elseif hardwareID == 4 then
-      if bus == "HS-CAN" then
+      if speed == "500b11" then
 		echoWrite("p 8 3 3\r")
-		echoWrite("p 8 4 0\r")
-      elseif bus == "IMS-CAN" then
-		echoWrite("p 8 3 3\r")
-		echoWrite("p 8 4 0\r")
-      elseif bus == "MS-CAN" then
+     elseif speed == "125b11" then
 		echoWrite("p 8 3 1\r")
+     end
+      if port == 1 then
+		echoWrite("p 8 4 0\r")
+     elseif port == 2 then
 		echoWrite("p 8 4 1\r")
       end
 		serWait(".|:",2000) -- wait 2 secs for an response
