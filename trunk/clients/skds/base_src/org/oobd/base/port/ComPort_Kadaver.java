@@ -159,7 +159,6 @@ public class ComPort_Kadaver implements OOBDPort {
         }
     }
 
-    @Override
     public void close() {
     }
 

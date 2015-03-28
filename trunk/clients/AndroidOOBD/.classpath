@@ -7,5 +7,18 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openxc"/>
+	<classpathentry kind="lib" path="/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/externals/jetty_jars/javax.websocket-api-1.0.jar"/>
+	<classpathentry kind="lib" path="/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/externals/jetty_jars/javax-websocket-client-impl-9.2.7.v20150116.jar"/>
+	<classpathentry kind="lib" path="/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/externals/jetty_jars/javax-websocket-server-impl-9.2.7.v20150116.jar"/>
+	<classpathentry kind="lib" path="/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/externals/jetty_jars/jetty-http-9.2.7.v20150116.jar"/>
+	<classpathentry kind="lib" path="/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/externals/jetty_jars/jetty-io-9.2.7.v20150116.jar"/>
+	<classpathentry kind="lib" path="/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/externals/jetty_jars/jetty-util-9.2.7.v20150116.jar"/>
+	<classpathentry kind="lib" path="/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/externals/jetty_jars/servlet-api-3.1.jar"/>
+	<classpathentry kind="lib" path="/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/externals/jetty_jars/websocket-api-9.2.7.v20150116.jar"/>
+	<classpathentry kind="lib" path="/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/externals/jetty_jars/websocket-client-9.2.7.v20150116.jar"/>
+	<classpathentry kind="lib" path="/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/externals/jetty_jars/websocket-common-9.2.7.v20150116.jar"/>
+	<classpathentry kind="lib" path="/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/externals/jetty_jars/websocket-server-9.2.7.v20150116.jar"/>
+	<classpathentry kind="lib" path="/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/externals/jetty_jars/websocket-servlet-9.2.7.v20150116.jar"/>
+	<classpathentry kind="lib" path="/home/steffen/Desktop/workcopies/oobd/trunk/clients/skds/externals/jetty_jars/jetty-server-9.2.7.v20150116.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
