@@ -37,7 +37,9 @@ import org.oobd.base.port.ComPort_Telnet;
 import org.oobd.crypt.AES.PassPhraseProvider;
 
 /**
- * This class is the connection between the generic oobd system and the enviroment for e.g. IO operations
+ * This class is the connection between the generic oobd system and the
+ * enviroment for e.g. IO operations
+ *
  * @author steffen
  */
 public class SwingSystem implements IFsystem, OOBDConstants {
@@ -121,7 +123,6 @@ public class SwingSystem implements IFsystem, OOBDConstants {
 
         }
 
-
     }
 
     public InputStream generateResourceStream(int pathID, String resourceName)
@@ -161,7 +162,6 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                             + resourceName + " loaded");
                     break;
 
-
                 default:
                     throw new java.util.MissingResourceException("Resource not known",
                             "OOBDApp", resourceName);
@@ -175,20 +175,19 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     }
 
     public Object supplyHardwareHandle(Onion typ) {
-            Preferences appProbs         = core.getSystemIF().loadPreferences(FT_PROPS,
+        Preferences appProbs = core.getSystemIF().loadPreferences(FT_PROPS,
                 OOBDConstants.AppPrefsFileName);
 
-
-        
-         
         String connectURL = typ.getOnionBase64String("connecturl");
         String proxyHost = appProbs.get(OOBDConstants.PropName_ProxyHost, null);
         int proxyPort = appProbs.getInt(OOBDConstants.PropName_ProxyPort, 0);
-         if (connectURL.toLowerCase().startsWith("ws")) {
+        if (connectURL.toLowerCase().startsWith("ws")) {
             try {
                 Proxy thisProxy = null;
                 if (proxyHost != null && proxyPort != 0) {
                     thisProxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
+                    System.setProperty("https.proxyHost", proxyHost);
+                    System.setProperty("https.proxyPort", Integer.toString(proxyPort));
 
                 }
                 return new ComPort_Kadaver(new URI(connectURL), thisProxy);
@@ -202,8 +201,6 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                 "serial")) {
             String osname = System.getProperty("os.name", "").toLowerCase();
             Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "OS detected: " + osname);
-
-
 
             try {
                 if (osname.startsWith("windows")) {
@@ -240,9 +237,6 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             }
             return myPrefs;
 
-
-
-
         } catch (Exception e) {
             Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "could not load property id " + filename, e);
         }
@@ -254,14 +248,8 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             properties.flush();
             return true;
 
-
-
-
         } catch (Exception e) {
             Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "could not load property id " + filename, e);
-
-
-
 
             return false;
         }
@@ -312,10 +300,6 @@ public class SwingSystem implements IFsystem, OOBDConstants {
 
             eng.setTempInputFile(f);
 
-
-
-
-
         } catch (Exception e) {
             // if any error occurs
             Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "could not create temp file! ", e);
@@ -359,15 +343,8 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             try {
                 return chooser.getSelectedFile().getAbsolutePath().toString();
 
-
-
-
-
             } catch (Exception ex) {
                 Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);
-
-
-
 
                 return null;
             }
@@ -375,34 +352,33 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             return null;
         }
     }
-    
-    	public Hashtable<String, Class> getConnectorList() {
-		Hashtable<String, Class> connectClasses = new Hashtable<String, Class>();
-		connectClasses.put(OOBDConstants.PropName_ConnectTypeBT, ComPort_Win.class);
-		connectClasses.put(OOBDConstants.PropName_ConnectTypeRemoteConnect,
-				ComPort_Kadaver.class);
-		connectClasses.put(OOBDConstants.PropName_ConnectTypeRemoteDiscovery,
-				ComPort_Telnet.class);
-		connectClasses.put(OOBDConstants.PropName_ConnectTypeTelnet,
-				ComPort_Telnet.class);
 
-		return connectClasses;
-	}
+    public Hashtable<String, Class> getConnectorList() {
+        Hashtable<String, Class> connectClasses = new Hashtable<String, Class>();
+        connectClasses.put(OOBDConstants.PropName_ConnectTypeBT, ComPort_Win.class);
+        connectClasses.put(OOBDConstants.PropName_ConnectTypeRemoteConnect,
+                ComPort_Kadaver.class);
+        connectClasses.put(OOBDConstants.PropName_ConnectTypeRemoteDiscovery,
+                ComPort_Telnet.class);
+        connectClasses.put(OOBDConstants.PropName_ConnectTypeTelnet,
+                ComPort_Telnet.class);
 
-    
+        return connectClasses;
+    }
+
     public DatagramSocket getUDPBroadcastSocket() {
-		try {
-			DatagramSocket socket = null;
-			if (socket == null) {
-				socket = new DatagramSocket(UDP_PORT);
-			}
-			socket.setBroadcast(true);
-			return socket;
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return null;
-		}
-	}
-    
+        try {
+            DatagramSocket socket = null;
+            if (socket == null) {
+                socket = new DatagramSocket(UDP_PORT);
+            }
+            socket.setBroadcast(true);
+            return socket;
+        } catch (Exception e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+            return null;
+        }
+    }
+
 }
