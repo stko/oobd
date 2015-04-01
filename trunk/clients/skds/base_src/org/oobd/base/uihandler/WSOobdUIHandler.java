@@ -10,49 +10,35 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONException;
 
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.util.resource.Resource;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-
-import org.eclipse.jetty.http.HttpVersion;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.jetty.server.Handler;
 
-import org.eclipse.jetty.server.HttpConfiguration;
-import org.eclipse.jetty.server.HttpConnectionFactory;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.util.resource.FileResource;
-import org.eclipse.jetty.websocket.api.RemoteEndpoint;
-import org.eclipse.jetty.websocket.server.WebSocketHandler;
-import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
+import java.util.Collection;
+
+import org.java_websocket.WebSocket;
+import org.java_websocket.WebSocketImpl;
+import org.java_websocket.framing.Framedata;
+import org.java_websocket.handshake.ClientHandshake;
+import org.java_websocket.server.WebSocketServer;
 
 /**
  * generic abstract for the implementation of scriptengines
  *
  * @author steffen
  */
-
-
-
-// taken from http://amilamanoj.blogspot.de/2013/06/secure-websockets-with-jetty.html
-
-
-
+// taken from https://github.com/TooTallNate/Java-WebSocket
 abstract public class WSOobdUIHandler extends OobdUIHandler {
 
     protected Onion myStartupParam;
+    ChatServer s;
 
     public static String publicName() {
         /* the abstract class also needs to have this method, because it's also loaded during dynamic loading, and the empty return string
@@ -73,36 +59,81 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
     public void start() {
         System.err.println("Start WEB SERVER");
 
-        WebSocketServer webSocketServer = new WebSocketServer();
+
+        WebSocketImpl.DEBUG = true;
+        int port = 8887; // 843 flash policy port
+        try {
+            s = new ChatServer(8443);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        s.start();
+        System.out.println("ChatServer started on port: " + s.getPort());
+
+        BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
+        while (true) {
+            try {
+                String in = sysin.readLine();
+
+                s.sendToAll(in);
+                if (in.equals("exit")) {
+                    s.stop();
+                    break;
+                } else if (in.equals("restart")) {
+                    s.stop();
+                    s.start();
+                    break;
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*       
+        OOBDWebSocketServer webSocketServer = new OOBDWebSocketServer();
         webSocketServer.setHost("localhost");
         webSocketServer.setPort(8443);
         try {
-            webSocketServer.setKeyStoreResource(new FileResource(WebSocketServer.class.getResource("/keystore.jks")));
-            webSocketServer.setKeyStorePassword("password");
-            webSocketServer.setKeyManagerPassword("password");
-            webSocketServer.addWebSocket(MyWebSocket.class, "/");
-            webSocketServer.initialize();
-            webSocketServer.start();
-            // set userInterface here (somehow..)
+        webSocketServer.setKeyStoreResource(new FileResource(OOBDWebSocketServer.class.getResource("/keystore.jks")));
+        webSocketServer.setKeyStorePassword("password");
+        webSocketServer.setKeyManagerPassword("password");
+        webSocketServer.addWebSocket(MyWebSocket.class, "/");
+        webSocketServer.initialize();
+        webSocketServer.start();
+        // set userInterface here (somehow..)
         } catch (Exception ex) {
-            Logger.getLogger(WSOobdUIHandler.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(WSOobdUIHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
+         */
     }
 
     public void handleMsg() {
         Message thisMsg;
         while ((thisMsg = this.getMsgPort().getMsg(0)) != null) { // if msg quere is not empty
 /*
-             if (actionRequest(thisMsg.getContent()) == true) {
-             try {
-             thisMsg.setContent(thisMsg.getContent().setValue("replyID",
-             thisMsg.getContent().getInt("msgID")));
-             } catch (JSONException ex) {
-             Logger.getLogger(Core.class.getName()).log(
-             Level.SEVERE, null, ex);
-             }
-             msgPort.replyMsg(thisMsg, thisMsg.getContent());
-             }
+            if (actionRequest(thisMsg.getContent()) == true) {
+            try {
+            thisMsg.setContent(thisMsg.getContent().setValue("replyID",
+            thisMsg.getContent().getInt("msgID")));
+            } catch (JSONException ex) {
+            Logger.getLogger(Core.class.getName()).log(
+            Level.SEVERE, null, ex);
+            }
+            msgPort.replyMsg(thisMsg, thisMsg.getContent());
+            }
              * 
              */
         }
@@ -110,116 +141,87 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
     }
 }
 
-@WebSocket
-class MyWebSocket {
+class ChatServer extends WebSocketServer {
 
-    private RemoteEndpoint remote;
-
-    @OnWebSocketConnect
-    public void onConnect(Session session) {
-        System.out.println("WebSocket Opened");
-        this.remote = session.getRemote();
+    public ChatServer(int port) throws UnknownHostException {
+        super(new InetSocketAddress(port));
     }
 
-    @OnWebSocketMessage
-    public void onMessage(String message) {
-        System.out.println("Message from Client: " + message);
+    public ChatServer(InetSocketAddress address) {
+        super(address);
+    }
+
+    @Override
+    public void onOpen(WebSocket conn, ClientHandshake handshake) {
+        this.sendToAll("new connection: " + handshake.getResourceDescriptor());
+        System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
+    }
+
+    @Override
+    public void onClose(WebSocket conn, int code, String reason, boolean remote) {
+        this.sendToAll(conn + " has left the room!");
+        System.out.println(conn + " has left the room!");
+    }
+
+    @Override
+    public void onMessage(WebSocket conn, String message) {
+        this.sendToAll(message);
+        System.out.println(conn + ": " + message);
+    }
+
+    @Override
+    public void onFragment(WebSocket conn, Framedata fragment) {
+        System.out.println("received fragment: " + fragment);
+    }
+
+    public static void main(String[] args) throws InterruptedException, IOException {
+        WebSocketImpl.DEBUG = true;
+        int port = 8887; // 843 flash policy port
         try {
-            remote.sendString("Hi Client:Here's my echo:" + message);
-        } catch (IOException e) {
-            e.printStackTrace();
+            port = Integer.parseInt(args[ 0]);
+        } catch (Exception ex) {
+        }
+        ChatServer s = new ChatServer(port);
+        s.start();
+        System.out.println("ChatServer started on port: " + s.getPort());
+
+        BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
+        while (true) {
+            String in = sysin.readLine();
+            s.sendToAll(in);
+            if (in.equals("exit")) {
+                s.stop();
+                break;
+            } else if (in.equals("restart")) {
+                s.stop();
+                s.start();
+                break;
+            }
         }
     }
 
-    @OnWebSocketClose
-    public void onClose(int statusCode, String reason) {
-        System.out.println("WebSocket Closed. Code:" + statusCode);
-    }
-}
-
-class WebSocketServer {
-
-    private Server server;
-    private String host;
-    private int port;
-    private Resource keyStoreResource;
-    private String keyStorePassword;
-    private String keyManagerPassword;
-    private List<Handler> webSocketHandlerList = new ArrayList<Handler>();
-
-    public static void main(String[] args) throws Exception {
-        WebSocketServer webSocketServer = new WebSocketServer();
-        webSocketServer.setHost("localhost");
-        webSocketServer.setPort(8443);
-        // the p12 keyfile needs to be in the same directory as this source file to be included into the jar through the build process
-        webSocketServer.setKeyStoreResource(new FileResource(WebSocketServer.class.getResource("/keystore.jks")));
-        webSocketServer.setKeyStorePassword("password");
-        webSocketServer.setKeyManagerPassword("password");
-        webSocketServer.addWebSocket(MyWebSocket.class, "/");
-        webSocketServer.initialize();
-        webSocketServer.start();
+    @Override
+    public void onError(WebSocket conn, Exception ex) {
+        ex.printStackTrace();
+        if (conn != null) {
+            // some errors like port binding failed may not be assignable to a specific websocket
+        }
     }
 
-    public void initialize() {
-        server = new Server();
-        // connector configuration
-        SslContextFactory sslContextFactory = new SslContextFactory();
-        sslContextFactory.setKeyStoreResource(keyStoreResource);
-        sslContextFactory.setKeyStorePassword(keyStorePassword);
-        sslContextFactory.setKeyManagerPassword(keyManagerPassword);
-        SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString());
-        HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(new HttpConfiguration());
-        ServerConnector sslConnector = new ServerConnector(server, sslConnectionFactory, httpConnectionFactory);
-        sslConnector.setHost(host);
-        sslConnector.setPort(port);
-        server.addConnector(sslConnector);
-        // handler configuration
-        HandlerCollection handlerCollection = new HandlerCollection();
-        handlerCollection.setHandlers(webSocketHandlerList.toArray(new Handler[0]));
-        server.setHandler(handlerCollection);
-    }
-
-    public void addWebSocket(final Class<?> webSocket, String pathSpec) {
-        WebSocketHandler wsHandler = new WebSocketHandler() {
-            @Override
-            public void configure(WebSocketServletFactory webSocketServletFactory) {
-                webSocketServletFactory.register(webSocket);
+    /**
+     * Sends <var>text</var> to all currently connected WebSocket clients.
+     * 
+     * @param text
+     *            The String to send across the network.
+     * @throws InterruptedException
+     *             When socket related I/O errors occur.
+     */
+    public void sendToAll(String text) {
+        Collection<WebSocket> con = connections();
+        synchronized (con) {
+            for (WebSocket c : con) {
+                c.send(text);
             }
-        };
-        ContextHandler wsContextHandler = new ContextHandler();
-        wsContextHandler.setHandler(wsHandler);
-        wsContextHandler.setContextPath(pathSpec);  // this context path doesn't work ftm
-        webSocketHandlerList.add(wsHandler);
+        }
     }
-
-    public void start() throws Exception {
-        server.start();
-        server.join();
-    }
-
-    public void stop() throws Exception {
-        server.stop();
-        server.join();
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public void setKeyStoreResource(Resource keyStoreResource) {
-        this.keyStoreResource = keyStoreResource;
-    }
-
-    public void setKeyStorePassword(String keyStorePassword) {
-        this.keyStorePassword = keyStorePassword;
-    }
-
-    public void setKeyManagerPassword(String keyManagerPassword) {
-        this.keyManagerPassword = keyManagerPassword;
-    }
-
 }
