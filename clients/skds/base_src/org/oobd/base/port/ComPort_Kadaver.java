@@ -13,6 +13,7 @@ import org.oobd.base.port.PortInfo;
 import org.oobd.base.support.Onion;
 //import gnu.io.*; // for rxtxSerial library
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Socket;
 import java.net.URI;
@@ -31,6 +32,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
+import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
 import org.oobd.base.bus.OobdBus;
 
@@ -44,21 +46,27 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
 
     OobdBus msgReceiver;
     String channel;
+    URI wsURI;
     String Server;
     String protocol;
+    String proxyHost;
+    int proxyPort;
     Proxy proxy;
 
-    public ComPort_Kadaver(java.net.URI wsURL, Proxy proxy) {
+    public ComPort_Kadaver(java.net.URI wsURL, Proxy proxy, String proxyHost, int proxyPort) {
         super(wsURL);
-        if (proxy != null) {
+        if (proxy != Proxy.NO_PROXY) {
             System.out.println("use proxy..");
-            this.setProxy(proxy);
-            this.proxy = proxy;
         }
+        this.setProxy(proxy);
+        this.proxy = proxy;
+        this.wsURI = wsURL;
+        this.proxyHost = proxyHost;
+        this.proxyPort = proxyPort;
         String[] parts = wsURL.toString().split("@");
         Server = wsURL.toString();
-        protocol = parts[0];
         parts = parts[0].split("://");
+        protocol = parts[0];
         channel = parts[1];
     }
 
@@ -92,28 +100,58 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
                 // sslContext.init( null, null, null ); // will use java's default key and trust store which is sufficient unless you deal with self-signed certificates
 
                 SSLSocketFactory factory = sslContext.getSocketFactory();// (SSLSocketFactory) SSLSocketFactory.getDefault();
-                Socket sslSocket = factory.createSocket();
+                Socket s = new Socket(proxy); // as the websocket does not provide its socket, we have to overwrite his socket instead with our own one...
+                int port = uri.getPort();
+                if (port == -1) {
+                    String scheme = uri.getScheme();
+                    if (scheme.equals("wss")) {
+                        port = WebSocket.DEFAULT_WSS_PORT;
+                    } else if (scheme.equals("ws")) {
+                        port = WebSocket.DEFAULT_PORT;
+                    } else {
+                        throw new RuntimeException("unkonow scheme" + scheme);
+                    }
+                }
+                s.connect(new InetSocketAddress(wsURI.getHost(), port), 10000);
+                //setSocket(s);
+                //connectBlocking(); // the socket needs to be connected before overlay it with SSL
+                //setSocket(factory.createSocket(s, wsURI.getHost(), wsURI.getPort(), true));
+                setSocket(factory.createSocket(s, wsURI.getHost(), port, true));
+                attachShutDownHook();
+                connectBlocking();
+                return true;
             } catch (IOException ex) {
                 Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             } catch (NoSuchAlgorithmException ex) {
                 Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             } catch (CertificateException ex) {
                 Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             } catch (KeyStoreException ex) {
                 Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             } catch (UnrecoverableKeyException ex) {
                 Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             } catch (KeyManagementException ex) {
                 Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             }
-        }
-        attachShutDownHook();
-        try {
-            connectBlocking();
-            return true;
-        } catch (InterruptedException ex) {
-            Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+
+        } else {
+            attachShutDownHook();
+            try {
+                connectBlocking();
+                return true;
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
         }
 
     }

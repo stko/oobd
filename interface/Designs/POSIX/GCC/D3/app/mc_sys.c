@@ -186,8 +186,8 @@ void mc_sys_idlehook()
 #ifdef __GCC_POSIX__
     struct timespec xTimeToSleep, xTimeSlept;
     /* Makes the process more agreeable when using the Posix simulator. */
-    xTimeToSleep.tv_sec = 1;
-    xTimeToSleep.tv_nsec = 0;
+    xTimeToSleep.tv_sec = 0;
+    xTimeToSleep.tv_nsec = 5000;
     nanosleep(&xTimeToSleep, &xTimeSlept);
     //DEBUGPRINT("Idle..\n",'a');
 #endif

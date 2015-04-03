@@ -183,14 +183,14 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         int proxyPort = appProbs.getInt(OOBDConstants.PropName_ProxyPort, 0);
         if (connectURL.toLowerCase().startsWith("ws")) {
             try {
-                Proxy thisProxy = null;
+                Proxy thisProxy = Proxy.NO_PROXY;
                 if (proxyHost != null && proxyPort != 0) {
                     thisProxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
                     System.setProperty("https.proxyHost", proxyHost);
                     System.setProperty("https.proxyPort", Integer.toString(proxyPort));
 
                 }
-                return new ComPort_Kadaver(new URI(connectURL), thisProxy);
+                return new ComPort_Kadaver(new URI(connectURL), thisProxy,proxyHost, proxyPort);
 
             } catch (URISyntaxException ex) {
                 Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);
