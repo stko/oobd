@@ -7,3 +7,5 @@ echo call the python server then with luxen.cert as keyfile
 openssl pkcs12 -export -out keystore.p12 -inkey luxen.cert -in luxen.cert
 keytool -importkeystore -destkeystore keystore.jks -srcstoretype PKCS12 -srckeystore keystore.p12
 
+echo "For android, you've to convert the keysore.jks into a bouncycastle keystore"
+echo "manually with portecle from http://portecle.sourceforge.net/"
