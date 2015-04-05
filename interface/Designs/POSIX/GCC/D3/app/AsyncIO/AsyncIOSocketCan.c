@@ -48,31 +48,31 @@ int iSocketOpenCAN(char *name, void (*vSocketCallback) (int, void *),
 	    printf("Failed to open socket: %d.\n", errno);
 	    return 0;
 	}
-	/* Have we been passed a call back function that will deal with received messages? */
-	struct ifreq ifr;
+	    /* Have we been passed a call back function that will deal with received messages? */
+	    struct ifreq ifr;
 	strcpy(ifr.ifr_name, name);
 	/* ifr.ifr_ifindex gets filled 
-	 * with that device's index */
+						 * with that device's index */
 	if (ioctl(iSocket, SIOCGIFINDEX, &ifr)) {
 	    printf("ioctl\n");
 	    return 0;
 	}
 
-	if (pdTRUE ==
-	    lAsyncIORegisterCallback(iSocket, vSocketCallback,
-				     pvContext)) {
-	    /* This is CAN so bind it passed listen address. */
-	    if (NULL != pxBindAddress) {
-		pxBindAddress->can_family = AF_CAN;
-		pxBindAddress->can_ifindex = ifr.ifr_ifindex;
-		if (0 !=
-		    bind(iSocket, (struct sockaddr *) pxBindAddress,
-			 sizeof(struct sockaddr_can))) {
-		    printf("Bind error: %d\n", errno);
+	    if (pdTRUE ==
+		lAsyncIORegisterCallback(iSocket, vSocketCallback,
+					 pvContext)) {
+		/* This is CAN so bind it passed listen address. */
+		if (NULL != pxBindAddress) {
+		    pxBindAddress->can_family = AF_CAN;
+		    pxBindAddress->can_ifindex = ifr.ifr_ifindex;
+		    if (0 !=
+			bind(iSocket, (struct sockaddr *) pxBindAddress,
+			     sizeof(struct sockaddr_can))) {
+			printf("Bind error: %d\n", errno);
+		    }
 		}
-	    }
-	} else {
-	    /* Socket is being used as polled IO or for sending data. */
+	    } else {
+		/* Socket is being used as polled IO or for sending data. */
 	}
     }
     taskEXIT_CRITICAL();
