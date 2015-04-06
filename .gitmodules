@@ -1,0 +1,3 @@
+[submodule "clients/skds/externals/Java-Websocket"]
+	path = clients/skds/externals/Java-Websocket
+	url = https://github.com/TooTallNate/Java-WebSocket.git

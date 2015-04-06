@@ -214,7 +214,7 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 
 					}
 					myComPort = new ComPort_Kadaver(new URI(connectURL),
-							thisProxy);
+							thisProxy,proxyHost,proxyPort);
 					return myComPort;
 				} catch (URISyntaxException ex) {
 					Log.v(this.getClass().getSimpleName(),

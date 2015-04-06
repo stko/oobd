@@ -16,20 +16,17 @@
     </propertyfile>
 </target>
 <target name="-post-init" description="Sets the buildversion for the current build">
-    <exec outputproperty="svna.version" executable="svnversion">
-        <redirector>
-            <outputfilterchain>
-                <tokenfilter>
-                    <replaceregex pattern="^[0-9]*:" replace="" flags="g"/>
-                    <replaceregex pattern="M" replace="" flags="g"/>
-                </tokenfilter>
-            </outputfilterchain>
-        </redirector>
-    </exec>
+    <exec outputproperty="gitr.version" executable="git">
+        <arg value="describe"/>
+        <arg value="--dirty"/>
+        <arg value="--always"/>
+     </exec>
+    <exec outputproperty="gitr.date" executable="date">
+     </exec>
     <propertyfile file="${src.dir}/org/oobd/ui/swing/desk/resources/swing.properties">
-        <entry key="Application.revision" value="${svna.version}" type="int" operation="="/>
+        <entry key="Application.revision" value="${gitr.version} (${gitr.date})" type="string" operation="="/>
     </propertyfile>
-    <echo>Revision found from SVN: ${svna.version}</echo>
+    <echo>Revision found from Git: ${gitr.version} (${gitr.date})</echo>
 </target>   
     <!--
 
