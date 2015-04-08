@@ -1,5 +1,5 @@
 #!/bin/sh
-REV=$(svn info | grep Revision  |  awk -F: '{print $2}')
+REV=$(git describe --dirty --always)
 if [ -z $REV ]; then
 REV=norev;
 fi
