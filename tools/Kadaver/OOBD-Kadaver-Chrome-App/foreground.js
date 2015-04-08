@@ -17,7 +17,8 @@
 function init_WS() {
 	//VIA https://developer.chrome.com/apps/app_bluetooth
 	app = window.document;
-	wsURL = "ws://oobd.luxen.de/websock/";
+	wsURL = "wss://oobd.luxen.de/websockssl";
+	//wsURL = "ws://oobd.luxen.de/websock/";
 	//wsURL = "ws://192.168.1.21:9000/";
 	var powered = false;
 	var btDeviceName = "";
