@@ -31,9 +31,9 @@ def sendSingleFrame(can_id,data):
 #	msg[2]=data["e"]
 	#	print dump(data)
 	for i in range(len(data)):
-		msg[0+i]=data[i]
+		msg.extend([data[i]])
 	for i in range(len(data),7):
-		msg[1+i]=0
+		msg.extend([0])
 	global s
 	try:
 #		s.send(build_can_frame(can_id, b'\x01\x02\x03'))
@@ -60,13 +60,13 @@ def recvTele(timeout):
 			i = 1
 			pid= "%02X%02X%02X" % ( data[i+0] , data[i+1] , data[i+2])
 			print ("Single Frame")
-			msg+=data[1:data[0]+1]
+			msg.extend(data[1:data[0]+1])
 			state=99;
 		############ First Frame  #################
 		if frameType == 1: 
 			i = 1
 			nrOfBytes = (data[0] & 0x0f ) *256 + data[1]
-			msg+=data[2:]
+			msg.extend(data[2:])
 			print ("First Frame, expecting ",nrOfBytes, " Bytes")
 			nrOfBytes = nrOfBytes -6 # 6 bytes aready received
 			pid= "%02X%02X%02X" % ( data[i+0] , data[i+1] , data[i+2])
@@ -76,9 +76,9 @@ def recvTele(timeout):
 		################# Consecutive Frame #############
 		if frameType == 2: # consecutive frame
 			if nrOfBytes> 6:
-				msg+=data[1:]
+				msg.extend(data[1:])
 			else:
-				msg+=data[1:nrOfBytes+1]
+				msg.extend(data[1:nrOfBytes+1])
 			nrOfBytes = nrOfBytes - 7 # just count the number of received bytes
 			print ("Consecutive Frame, bytes remaining: ", nrOfBytes)
 			if nrOfBytes <=0:
@@ -92,6 +92,7 @@ def recvTele(timeout):
 	return  ("%04X" % 	can_id) , msg
 
 def sendTele(can_id,data):
+	print("sendTele 1...")
 	state=0
 	global s
 	isMultiFrame=False
@@ -100,27 +101,33 @@ def sendTele(can_id,data):
 	while state != 99:
 		msg =bytearray()
 		if len(data)<8 and not isMultiFrame:
-			msg[0]=len(data)
-			msg+=data
-			sendSingleFrame(can_id+8,msg)
+			msg.extend([len(data)])
+			msg.extend(data)
+			sendSingleFrame(int(can_id)+8,msg)
 			state=99;
 		else:
+			print("sendTele 2...")
 			isMultiFrame=True
 			if not FFalreadySend:
-				msg[0]=0x10+(len(data) >> 4)
-				msg[1]=len(data) % 16
-				msg+=data[:6]
-				sendSingleFrame(can_id+8,msg)
+				msg.extend([0x10+(len(data) >> 4)])
+				msg.extend([len(data) % 16])
+				msg.extend(data[:6])
+				print("sendTele 3...")
+				sendSingleFrame(int(can_id)+8,msg)
+				print("sendTele 4...")
 				FFalreadySend=True
 				cf, addr = s.recvfrom( 16 )# wait for FC
+				print("sendTele 5...")
 			else:
-				msg[0]=0x20+CFcount
+				msg.extend([0x20+CFcount])
 				CFcount+=1
 				if CFcount>15:
 					CFcount=0
-				msg+=data[:7]
+				msg.extend(data[:7])
 				data=data[7:]
-				sendSingleFrame(can_id+8,msg)
+				sendSingleFrame(int(can_id)+8,msg)
 				if len(data)<1:
 					state=99
+		print("sendTele 6...")
+
 

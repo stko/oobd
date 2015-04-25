@@ -44,7 +44,7 @@ print (service, did)
 try:
 	answer=modules[myBus]["0x"+can_id].answerDiD(service,"did_"+did)
 	print ("Answer len:", len(answer))
-
+	pprint.pprint(modules[myBus]["0x"+can_id])
+	isotp.sendTele(can_id,answer)
 except Exception as n:
 		print ("not found - bus: ",myBus, "can_id: ", can_id)
-		pprint.pprint(modules[myBus]["0x"+can_id])

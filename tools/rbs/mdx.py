@@ -9,26 +9,36 @@ class DID:
 		tree = xmlroot.find("./ECU_DATA/DATA_IDENTIFIERS/DID[@ID='"+didID+"']")
 		try:
 			tree
+			print ("1")
+			self.name=tree.find("./NAME").text
+			print ("2")
+			self.bytesize=int(tree.find("./BYTE_SIZE").text)
+			print ("bytesize", self.bytesize)
+			self.didType=tree.find("./DID_TYPE").text
+			print ("4")
+			self.subFields=tree.findall("./SUB_FIELD")
+			print ("5")
+			try:
+				self.bytesize
+				self.data=bytearray()
+				print ("1")
+				for i in range(self.bytesize):
+					self.data.extend([0])
+				print ("2")
+				print (self.name, self.bytesize)
+				pprint.pprint (tree)
+			except Exception as n:
+				print("DID "+didID+" has no data!")
 		except Exception as n:
 			print("DID "+didID+" is not in module..!")
-		self.name=tree.find("./NAME").text
-		self.bytesize=tree.find("./BYTE_SIZE").text
-		try:
-			self.bytesize
-			self.data=bytearray()
-			print ("1")
-			for i in range(self.bytesize):
-				self.data[i]=0
-			print ("2")
-
-		except Exception as n:
-			print("DID "+didID+" has no data!")
-		print (self.name, self.bytesize)
-		pprint.pprint (tree)
 		
 	def getData(self):
 		try:
 			self.data
+			self.subFields
+			for subfield in self.subFields:
+				leastBit= subfield.find('LEAST_SIG_BIT').text
+				print ("Leastbit", leastBit)
 			return self.data
 		except Exception as n:
 			return []
