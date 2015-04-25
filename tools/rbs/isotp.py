@@ -46,6 +46,7 @@ def sendSingleFrame(can_id,data):
 def recvTele(timeout):
 	state=0
 	msg =bytearray()
+	s.settimeout(None) # blocking mode, waits forever
 	while state != 99:
 		cf, addr = s.recvfrom( 16 ) # buffer size is 1024 bytes
 		print('Received: can_id=%x, can_dlc=%x, data=%s' % dissect_can_frame(cf))
@@ -91,9 +92,10 @@ def recvTele(timeout):
 		print ("pid:",pid)
 	return  ("%04X" % 	can_id) , msg
 
-def sendTele(can_id,data):
+def sendTele(can_id,data, timeout=0.2):
 	state=0
 	global s
+	s.settimeout(timeout) # time to wait for a Consecutive frame
 	isMultiFrame=False
 	FFalreadySend=False
 	CFcount=1

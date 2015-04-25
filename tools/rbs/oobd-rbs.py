@@ -36,15 +36,16 @@ for i in range(3,len(sys.argv)):
 pprint.pprint(modules[sys.argv[2]])	
 
 
-can_id, msg = isotp.recvTele(50)
-service = "%02X" % ( msg[0])
-did= "%02X%02X" % ( msg[1] , msg[2])
-print (can_id, msg)
-print (service, did)
-try:
-	answer=modules[myBus]["0x"+can_id].answerDiD(service,"did_"+did)
-	print ("Answer len:", len(answer))
+while(1):
+	can_id, msg = isotp.recvTele(50)
+	service = "%02X" % ( msg[0])
+	did= "%02X%02X" % ( msg[1] , msg[2])
+	print (can_id, msg)
+	print (service, did)
+	try:
+		answer=modules[myBus]["0x"+can_id].answerDiD(service,"did_"+did)
+		print ("Answer len:", len(answer))
 
-except Exception as n:
-		print ("not found - bus: ",myBus, "can_id: ", can_id)
-		pprint.pprint(modules[myBus]["0x"+can_id])
+	except Exception as n:
+			print ("not found - bus: ",myBus, "can_id: ", can_id)
+

@@ -13,12 +13,13 @@ class DID:
 			print("DID "+didID+" is not in module..!")
 		self.name=tree.find("./NAME").text
 		self.bytesize=tree.find("./BYTE_SIZE").text
+		print ("bytesize",self.bytesize)
 		try:
 			self.bytesize
 			self.data=bytearray()
-			print ("1")
-			for i in range(self.bytesize):
-				self.data[i]=0
+			print ("1",)
+			for i in range(int(self.bytesize)):
+				self.data.append(0)
 			print ("2")
 
 		except Exception as n:
@@ -49,6 +50,7 @@ class MDX:
 		return (self.bus, self.moduleID)
 	
 	def answerDiD(self,service, didID): # get the request separated into service and did itself, both as strings
+		print("geht noch..")
 		if service=="22": # read data by service
 			try:
 				self.dids[didID]
