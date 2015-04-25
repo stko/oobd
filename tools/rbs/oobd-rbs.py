@@ -35,7 +35,6 @@ for i in range(3,len(sys.argv)):
 	modules[bus][moduleID]=module
 pprint.pprint(modules[sys.argv[2]])	
 
-
 while(1):
 	can_id, msg = isotp.recvTele(50)
 	service = "%02X" % ( msg[0])
