@@ -3,18 +3,19 @@
 	$jobDone=false;
 	if ($argc==8){ // = 7 parameters, param 0 is the script name itself
 		$useraccesslist=$argv[1];
-		$username=$argv[2];
+		$username=strtolower($argv[2]);
 		$groupfilename =$argv[3];
 		$nsistemplate=$argv[4];
 		$licencefile=$argv[5];
 		$scriptinputdir=$argv[6];
 		print("create Installer for $username\n");
-		$outputdir=$argv[7]. DIRECTORY_SEPARATOR .$argv[2];
+		$outputdir=$argv[7]. DIRECTORY_SEPARATOR .$username;
 		$allowedGroups=array();
 		$userGroupListArray=file($useraccesslist);
 		foreach ($userGroupListArray as $line){
 			list($user, $group) = explode(":", $line,2);
-			if ($user == $argv[2]){
+			$user=strtolower($user);
+			if ($user == $username){
 				#print ($user. $group."\n");
 				preg_match("/(.*)_(.*)/",$group,$matches);
 				$carline=$matches[1];
