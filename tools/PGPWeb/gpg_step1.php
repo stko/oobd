@@ -6,11 +6,12 @@
 <body>
 <h1>OOBD GPG Online Key Generator - Email Verification</h1>
 <?php
+	require_once 'config.php';
 	include("mail.php");
 	// Name des Absenders
-	$absender_name = "OOBD GPG Key Generator";
+	$absender_name = $config['sendername'];
 	// E-Mail Adresse vom Absender
-	$absender_email = "keys@oobd.org";
+	$absender_email = $config['senderemail'];
 	$Betreff = "OOBD GPG Online Key Generator - Email Verification";
 	$email=$_REQUEST['email'];
 	$fullname=$_REQUEST['fullname'];
@@ -19,8 +20,8 @@
 	//print "Your email address: $email<br>\n";
 
 	if (isValidEmail($email) && isValidName($fullname)){
-		$id=md5("saltANDpepper".$email.$fullname);
-		$link="http://keys.oobd.org/oobdkey/gpg_step2.php?n=".urlencode($fullname)."&e=".urlencode($email)."&sid=$id";
+		$id=md5($config['md5salt'].$email.$fullname);
+		$link=$config['sideurl']."/gpg_step2.php?n=".urlencode($fullname)."&e=".urlencode($email)."&sid=$id";
 		$content="OOBD GPG Online Key Generator - Email Verification
 
 If you don't requested a online key generation, that please delete this mail, no further action is needed.
@@ -32,7 +33,9 @@ $link
 
 ";
 
-		sendMail($absender_email,$absender_name,$email,$Betreff,$content,"","","");
+		sendMail($absender_email,$absender_name,$email,$Betreff,$content);
+
+		
 		print "the email to verify your email address is sent to $email. Please use the link inside that mail to proceed\n";
 	}else{
 

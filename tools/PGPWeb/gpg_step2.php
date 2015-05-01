@@ -21,6 +21,7 @@
 <body>
 <h1>OOBD GPG Online Key Generator - Define your Phassphrase</h1>
 <?php
+	require_once 'config.php';
 
 	$email=$_REQUEST['e'];
 	$fullname=$_REQUEST['n'];
@@ -28,7 +29,7 @@
 
 	print "Your Name: $fullname<br>\n";
 	print "Your email address: $email<br>\n";
-	$id=md5("saltANDpepper".$email.$fullname);
+	$id=md5($config['md5salt'].$email.$fullname);
 	print "<hr>Session- ID: $sid<br>\n";
 	print "Check-ID:    $id<br><hr>\n";
 
