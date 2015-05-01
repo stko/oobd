@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head><title>OOBD GPG Online Key Generator</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="robots" content="noindex,follow" />
+<script language="JavaScript" type="text/javascript">
+
+
+	//function to check full name
+	function isValidName(strEmail){
+		validRegExp = /\w+\s+\w+/i;
+		// search email text for regular exp matches
+		if (strEmail.search(validRegExp) == -1) 
+		{
+			alert('A full name ( firstname Lastname ) is required.\nPlease amend and retry');
+			return false;
+		} 
+		return true; 
+	}
+	//function to check terms of use checkbox
+	function isValidTOU(box){
+		if (! box.checked){
+			alert('You need to agree to the terms of use\nto use this service');
+			return false;
+		}
+		return true; 
+	}
+	//function to check valid email address
+	function isValidEmail(strEmail){
+		validRegExp = /^[^@]+@[^@]+.[a-z]{2,}$/i;
+
+		// search email text for regular exp matches
+		if (strEmail.search(validRegExp) == -1) 
+		{
+			alert('A valid e-mail address is required.\nPlease amend and retry');
+			return false;
+		} 
+		return true; 
+	}
+
+
+	//function that performs all functions, defined in the onsubmit event handler
+
+	function check(form){
+		if (isValidName(form.fullname.value)){
+			if (isValidTOU(form.use)){
+				if (isValidEmail(form.email.value)){
+					return true;
+				}
+			}
+
+		}
+		return false;
+	}
+
+</script>
+</head>
+<body>
+<h1>OOBD GPG Online Key Generator</h1>
+This page creates a personal pgp key pair, tailored to the <a href="http://oobd.org">OOBD</a> encryption system.<p>
+Without any doubt it's always unsecure and not recommend to use any external tool for key generation instead of a local tool like <a href="http://www.gpg4win.org/">gpg4win</a>, but if the user don't have the rights to install and to use own software, this page is still better as nothing.
+<p>
+In case you want to create your key by yourself with your own software instead, just please make sure that you choose a DSA key type, as OOBD is actual just verified against that key type.
+
+<h2>Terms of Use</h2>
+This page does not store or use any given data at all, all inputs and files are just temporary and will be deleted straight after key generation, with two exeptions:
+<ul>
+<li>a successfull key generation is logged with only the name & email address used for it
+<li>in case of an key generation error, a complete data dump including your secret data is generated for fault finding
+</ul>
+
+This key generation service is as-it-is without any warranty. The owner of this key generation service do take any responsibility for any direct or indirect damage related to the use of this service.
+
+To use this service, you need to agree to this terms of use by selecting the checkbox "terms of Use" below.
+<p>
+<p>
+So let's start:
+<h2>Step 1: Verify your Email Address</h2>
+<p>
+First we'll send you a link to your email address to verify that adress. After receiving that mail, please follow that link to proceed.
+<form name="theform" method="post" action="gpg_step1.php" onSubmit="return check(this);">
+<input type=checkbox name="use" value="use" > I agree to the Terms of Use (shown above)<br>
+  Your full Name: (required!)<br />
+<input name="fullname" type="text" />
+  <br>
+  E-Mail Address (required!)<br>
+  <input name="email" type="text" id="email" />
+  <br />
+<input name="submit" type="submit" />
+</form>
+
+</body>
+</html>
