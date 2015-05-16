@@ -15,7 +15,7 @@ public class OOBDFlash {
 
 
 	public static void main(String[] args) {
-		String downloadURL = "https://oobd.googlecode.com/svn/trunk/interface/Designs/CORTEX/STM32F103C8_Eclipse_GCC/D2/flashfiles/AllinOne/Flashloader_Package.zip";
+		String downloadURL = "https://github.com/stko/oobd/blob/master/interface/Designs/CORTEX/STM32F103C8_Eclipse_GCC/D2/flashfiles/AllinOne/Flashloader_Package.zip?raw=true";
 		String flashFileName = "";
 		String dongleMAC = "";
 		File tempDownloadFile = null;

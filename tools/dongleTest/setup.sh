@@ -24,7 +24,7 @@ echo "Acquire::http::Proxy \"http://"$HTTP_PROXY"\"/;" > /tmp/pp
 sudo cp /tmp/pp /etc/apt/apt.conf.d/10-proxy
 
 sudo apt-get update
-sudo apt-get install subversion python-easygui python-bluetooth ussp-push blueman
+sudo apt-get install subversion python-easygui python3-easygui python3 python-bluetooth ussp-push blueman
 
 # setting the subversion proxy
 
@@ -41,10 +41,10 @@ fi
 mkdir -p ~/.config/autostart
 mkdir ~/bin
 rm -rf ~/bin/dongleTest
-svn export http://oobd.googlecode.com/svn/trunk/tools/dongleTest ~/bin/dongleTest
+svn export https://github.com/stko/oobd/trunk/tools/dongleTest ~/bin/dongleTest
 chmod +x ~/bin/dongleTest/*.sh
 rm -rf ~/bin/stm32flash
-svn export http://oobd.googlecode.com/svn/trunk/tools/stm32flash ~/bin/stm32flash
+svn export https://github.com/stko/oobd/trunk/tools/stm32flash ~/bin/stm32flash
 chmod +x ~/bin/stm32flash/stm32flash
 
 
