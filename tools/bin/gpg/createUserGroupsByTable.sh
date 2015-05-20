@@ -1,6 +1,7 @@
 #!/bin/bash
 . settings.inc
 # delete old group rings first
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 rm *.groupring
 rm *.groupring.tmp
 declare -A USERS
@@ -26,7 +27,13 @@ do
 	gpg --yes --batch --no-default-keyring --trust-model always  --keyring ./userkeyring.pub --recipient $user $ADMINREADER --output $user.groupkeys --encrypt $user.groupring
 #	gpg -v --yes --batch --no-default-keyring --trust-model always  --keyring ./userkeyring.pub --recipient $user --output $user.groupkeys --encrypt ./oobd_groups.sec
 	grep -i "$user" useraccess.txt > $user.groupkeys.lst
-
+	if [[ -d "${INSTALLERSOURCEDIR}" &&  -d "${INSTALLERTARGETDIR}" ]] ; then
+		echo "make Installer!"
+		php $DIR/createNSISfiles.php  $NEWUSERACCESS $user $user.groupkeys $INSTALLERTEMPLATE $INSTALLERLICENCE $INSTALLERSOURCEDIR $INSTALLERTARGETDIR
+		(cd $INSTALLERTARGETDIR && $INSTALLEREXE $user.nsi && zip $user.zip $user.exe)
+		
+		
+	fi
 done
  
 rm *.groupring
