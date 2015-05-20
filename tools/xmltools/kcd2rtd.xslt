@@ -4,26 +4,26 @@
 	<xsl:template match="*">
 		<xsl:apply-templates/>
 	</xsl:template>
+
 	<xsl:template match="/my:NetworkDefinition/my:Bus">-- this file is been automatically generated out of the CanBabel translated DBC file
-	
-rtdArray = {
+
+	rtdArray = {
 		<xsl:apply-templates select="my:Message" />
 }
 
-dofile("presets.rtd")
+dofile("<xsl:value-of select="substring-before(../my:Document/@name, '.dbc')"/>.rtd")
 dofile("../../tools/lib_lua/serial_dxm.lua")
 dofile("../../tools/lib_lua/lua_utils.lua")
 dofile("../../tools/lib_lua/luabit/bit.lua")
 dofile("../lib_protocol/standard-uds.lua")
-dofile("../lib_protocol/realtimedata.lua")
-</xsl:template>
-	<xsl:template match="my:Message">
+dofile("../lib_protocol/realtimedata.lua")</xsl:template>
 
+	<xsl:template match="my:Message">
 	<xsl:variable name="canid" select="concat(substring('000000000',string-length(@id)), substring(@id,3))"/>
 rtdArray_NOP_<xsl:value-of select="$canid"/> = { rtdinit="27<xsl:value-of select="$canid"/>00000<xsl:value-of select="@length"/>", t="<xsl:value-of select="@name"/>", bus="HS-CAN", cid=<xsl:value-of select="@id"/>, sd = { 
 	<xsl:apply-templates select="my:Signal" />}
 	},</xsl:template>
-	
+
 	<xsl:template match="my:Signal">sd_<xsl:value-of select="format-number(position(),'00')"/> = { 
 		<xsl:variable name="bytesize" select="round(../@length div 8)"/>
 		<xsl:variable name="bitsize" select="@length"/>
