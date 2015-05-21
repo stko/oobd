@@ -405,11 +405,11 @@ function interface_version(oldvalue,id)
     err, answ = readAnswerArray()
     return answ[1]
   elseif hardwareID == 1 then -- DXM1 support
-    echoWrite("at!01\r")
+	echoWrite("at!01\r")
     answ=serReadLn(2000, true)
-    return answ
+  return answ
   else -- ELM327 specific
-    echoWrite("AT I\r")
+	echoWrite("AT I\r")
     answ=serReadLn(2000, true)
     return answ
   end
@@ -426,11 +426,11 @@ function interface_serial(oldvalue,id)
     err, answ = readAnswerArray()
     return answ[1]
   elseif hardwareID == 1 then -- DXM1
-    echoWrite("at!00\r")
+	echoWrite("at!00\r")
     answ=serReadLn(2000, true)
-    return answ
+	return answ
   else -- ELM327 specific
-    echoWrite("at @2\r")
+	echoWrite("at @2\r")
     answ=serReadLn(2000, true)
     return answ
   end
@@ -454,14 +454,14 @@ function interface_voltage(oldvalue,id)
       answ=answ.." Volt"
       return answ
     end
-  elseif hardwareID == 1 then -- DXM1
+  elseif hardwareID == 1 then   -- DXM1
     echoWrite("at!10\r")
     answ=serReadLn(2000, true)
-    return answ
-  else -- ELM327 specific
-    echoWrite("AT RV\r")
+	return answ
+  else
+	echoWrite("AT RV\r") -- ELM327 specific
     answ=serReadLn(2000, true)
-    return answ
+	return answ
   end
 end
 
@@ -579,8 +579,7 @@ function identifyOOBDInterface(connectURL)
 		elseif hardware_variant=="POSIX" or hardware_variant=="Lux-Wolf" then
 			--[[ OOBD-Cup v5, new firmware paramater set ]]--
 			hardwareID=4
-		  
-			echoWrite("p 1 1 1 0\r") -- activate Diagnostic protocol
+--			echoWrite("p 1 1 1 0\r") -- activate Diagnostic protocol
 			err, res = readAnswerArray()
 			if err ~=0 then
 				print (" Set protocol error:", err, res[1])
@@ -596,16 +595,15 @@ function identifyOOBDInterface(connectURL)
 		setSendID = doNothing
 		setCANFilter = doNothing
 		hardwareID=1
-		echoWrite("at z\r") -- Warm start / Reset of device
-		serWait(">",2000) -- wait 3 secs for an automatic protocol detection process
 		echoWrite("at i\r") -- request version
+		answ=serReadLn(2000, false)
 		hardware_variant=getStringPart(answ, 2)
 	    if hardware_variant ~= "DXM1" then -- ELM327 specific
 			hardwareID=0
 			hardware_variant=getStringPart(answ, 1)
 			firmware_revision=getStringPart(answ, 2)
 			echoWrite("at sp 0\r") -- ELMxxx device expected and set protocol automatically
-			serWait(">",500) -- wait 3 secs for an automatic protocol detection process
+			serWait(">",2000) -- wait 3 secs for an automatic protocol detection process
 		else -- DXM1 support
 			firmware_revision=getStringPart(answ, 3)
 			hardware_model=getStringPart(answ, 1)
