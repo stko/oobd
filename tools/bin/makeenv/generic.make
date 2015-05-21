@@ -101,7 +101,7 @@ else
 	find $(PACKDIR)/oobd -name .svn -exec rm -rf {} \; 
 endif
 
+clean: genericclean $(CUSTOMCLEAN)
 
-
-clean:
+genericclean:
 	rm -f *.lbc *.luasource *.html *.lbc.pgp lua.tmp gn.txt tmp
