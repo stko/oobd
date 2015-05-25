@@ -207,7 +207,7 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 					OOBDConstants.PropName_ProxyPort, 0);
 			if (protocol.toLowerCase().startsWith("ws")) {
 				try {
-					Proxy thisProxy = null;
+					Proxy thisProxy = Proxy.NO_PROXY;
 					if (proxyHost != null && proxyPort != 0) {
 						thisProxy = new Proxy(Proxy.Type.HTTP,
 								new InetSocketAddress(proxyHost, proxyPort));
