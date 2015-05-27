@@ -295,6 +295,8 @@ function activateBus()
 		echoWrite("p 5 3\r")
 	elseif hardwareID==3 or hardwareID==4 then
 		echoWrite("p 8 2 3\r")
+	elseif hardwareID==0 or hardwareID==1 then
+		echoWrite("0100")   -- start protocol autoscan on ELM327 or DXM1
   end
 end
 
