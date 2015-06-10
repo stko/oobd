@@ -1,8 +1,6 @@
 dofile("luaSVNRevs.inc")
 -- include the basic connectivity
 
-
-
 --- use the following lines for debugging in lua editor
 ---[[
 openPage = openPageCall
@@ -208,8 +206,14 @@ end
 -- set CAN-ID filter - only needed for OOBD 
 function setCANFilter_OOBD(id, addr, mask)
   if hardwareID==3 or hardwareID==4 then
-    echoWrite("p 8 10 "..id.." $0"..addr.."\r") -- use CAN-Filter No <id>, CAN-ID <addr>
-	echoWrite("p 8 11 "..id.." $0"..mask.."\r") -- use CAN-Filter No <id>, CAN-IDMask <mask>
+	echoWrite ("p 8 14\r") -- reset CAN filter
+	if tonumber(addr,16) <= 0x7FF  then
+		echoWrite("p 8 10 "..id.." $0"..addr.."\r") -- use CAN-Filter No <id>, 11bit-CAN-ID <addr>
+		echoWrite("p 8 11 "..id.." $0"..mask.."\r") -- use CAN-Filter No <id>, 11bit-CAN-IDMask <mask>
+	else
+		echoWrite("p 8 12 "..id.." $0"..addr.."\r") -- use CAN-Filter No <id>, 29bit-CAN-ID <addr>	
+		echoWrite("p 8 13 "..id.." $0"..mask.."\r") -- use CAN-Filter No <id>, 29bit-CAN-IDMask <mask>
+	end
   end
 end
 
@@ -285,8 +289,10 @@ function setModuleID(id)
     echoWrite("p 11 $"..id.."\r")
   elseif hardwareID==3 or hardwareID==4 then
     echoWrite("p 6 5 $"..id.."\r")
-  else
+  elseif hardwareID==1 then -- DXM 1
     echoWrite("atci "..id.."\r")
+  else -- ELM327
+	echoWrite("atsh "..id.."\r")
   end
 end
 
@@ -295,8 +301,6 @@ function activateBus()
 		echoWrite("p 5 3\r")
 	elseif hardwareID==3 or hardwareID==4 then
 		echoWrite("p 8 2 3\r")
-	elseif hardwareID==0 or hardwareID==1 then
-		echoWrite("0100")   -- start protocol autoscan on ELM327 or DXM1
   end
 end
 
@@ -312,47 +316,91 @@ function setBus(bus)
   if lastSwitchedBus ~= bus then
 	-- first we need to translate the bus into speed and  port
 	if bus == "IMS-CAN" or bus == "HS-CAN" or bus == "CAN" then
-		speed = "500b11"
-	else
-		speed = "125b11"
-	end
-	if speed == "500b11" then
-		port=1
-	else
-		port=2
+		bus = "500b11"
+	elseif bus == "MS-CAN" then
+		bus = "125b11"
 	end
 	-- now comes another tricky part: Do we have a bus topology lookup table available?
 	if bustopology ~= nil and shortName ~= nil and bustopology[shortName] ~= nil then
-		speed=bustopology[shortName].speed
+		bus=bustopology[shortName].speed
 		port=bustopology[shortName].port
 	end
-    if hardwareID == 2 then
-      if speed == "500b11" then
+
+	if hardwareID == 0 then -- ELM327 
+	  if bus == "500b11" then
+		echoWrite("at sp 6\r")
+	  elseif bus == "500b29" then
+		echoWrite("at sp 7\r")
+	  elseif bus == "250b11" then
+		echoWrite("at sp 8\r")
+	  elseif bus == "250b29" then
+		echoWrite("at sp 9\r")
+	  else
+	  	echoWrite("at sp 0\r") -- set automatic protocol detection
+		echoWrite("0100\r") -- first send something to let the DXM1 and ELM327 search for a available bus
+		udsLen=receive()
+	  end
+    elseif hardwareID == 1 then -- DXM1
+	  if bus == "500b11" then
+		echoWrite("atp 6\r")
+	  elseif bus == "500b29" then
+		echoWrite("atp 7\r")
+	  elseif bus == "250b11" then
+		echoWrite("atp 8\r")
+	  elseif bus == "250b29" then
+		echoWrite("atp 9\r")
+	  else
+	  	echoWrite("atp 0\r") -- set automatic protocol detection
+		echoWrite("0100\r") -- first send something to let the DXM1 and ELM327 search for a available bus
+		udsLen=receive()
+	  end
+    elseif hardwareID == 2 then
+      if bus == "500b11" then
+		port = 1
 		echoWrite("p 6 3\r")
       end
-     if speed == "125b11" then
+	  if bus == "125b11" then
+		port = 2
 		echoWrite("p 6 1\r")
       end
-    elseif hardwareID == 3 then
-      if speed == "500b11" then
+    elseif hardwareID == 3 then  -- Original DXM without relay
+      if bus == "500b11" then
 		echoWrite("p 8 3 3\r")
-      elseif speed == "125b11" then
+      elseif bus == "125b11" then
 		echoWrite("p 8 3 1\r")
+      elseif bus == "250b11" then
+		echoWrite("p 8 3 2\r")
+	  elseif bus == "500b29" then
+		echoWrite("p 8 3 7\r")
+      elseif bus == "250b29" then
+		echoWrite("p 8 3 6\r")
       end
-		serWait(".|:",2000) -- wait 2 secs for an response
-    elseif hardwareID == 4 then
-      if speed == "500b11" then
+    elseif hardwareID == 4 then 
+      if bus == "500b11" then
+		port = 1
 		echoWrite("p 8 3 3\r")
-     elseif speed == "125b11" then
+	  elseif bus == "250b11" then
+		port = 1
+		echoWrite("p 8 3 2\r")
+      elseif bus == "125b11" then
+		port = 1
 		echoWrite("p 8 3 1\r")
-     end
-      if port == 1 then
-		echoWrite("p 8 4 0\r")
-     elseif port == 2 then
-		echoWrite("p 8 4 1\r")
+	  elseif bus == "500b29" then
+		port = 1
+		echoWrite("p 8 3 7\r")
+      elseif bus == "250b29" then
+		port = 1
+		echoWrite("p 8 3 6\r")
       end
-		serWait(".|:",2000) -- wait 2 secs for an response
     end
+
+	if port == 1 then
+	  echoWrite("p 8 4 0\r")
+	elseif port == 2 then
+	  echoWrite("p 8 4 1\r")
+    end
+   	serWait(".|:",2000) -- wait 2 secs for an response	
+	
     lastSwitchedBus = bus
   end
 end
@@ -478,8 +526,6 @@ function interface_bus(oldvalue,id)
     err, answ = readAnswerArray()
     return answ[1]
   else 
-    echoWrite("0100\r") -- first send something to let the DXM1 and ELM327 search for a available bus
-    udsLen=receive()
     echoWrite("atdp\r") -- show current used protocol
     answ=serReadLn(2000, true)
     return answ
@@ -567,21 +613,9 @@ function identifyOOBDInterface(connectURL)
 	    if hardware_variant=="POSIX" or hardware_variant=="dxm" then
 		  --[[ Original DXM1, with new firmware paramater set > Revision 346 ]]--
 		  hardwareID=3
-	      --[[		    echoWrite("p 0 1 1\r") -- set protocol
-			  err, res = readAnswerArray()
-			  if err ~=0 then
-			    print (" Set protocol error:", err, res[1])
-			  end
-			  echoWrite("p 0 1 1\r") -- set Bus
-			  err, res = readAnswerArray()
-			  if err ~=0 then
-			    print (" Set protocol error:", err, res[1])
-			  end
-	      --]]	  
 		elseif hardware_variant=="POSIX" or hardware_variant=="Lux-Wolf" then
 			--[[ OOBD-Cup v5, new firmware paramater set ]]--
 			hardwareID=4
---			echoWrite("p 1 1 1 0\r") -- activate Diagnostic protocol
 			err, res = readAnswerArray()
 			if err ~=0 then
 				print (" Set protocol error:", err, res[1])
@@ -617,17 +651,25 @@ function identifyOOBDInterface(connectURL)
 	print ("Hardware found: ", hardwareID, "Revision: ",firmware_revision,"Model",hardware_model, "Variant", hardware_variant)
 end
 
+function getSVNLuaScript(oldvalue,id)
+    return ""..SVNREVLUASCRIPT
+end
+
+function getSVNLuaLib(oldvalue,id)
+    return ""..SVNREVLUALIB
+end
+
 ---------------------- System Info Menu --------------------------------------
 
 function SysInfo_Menu(oldvalue,id)
 	openPage("Sysinfo")
-	addElement("Lua Script Revision", "nothing"," "..SVNREVLUASCRIPT,0x0, "")
-	addElement("Lua Library Revision", "nothing"," "..SVNREVLUALIB,0x0, "")
-	addElement("Serial", "interface_serial","-",0x2, "")
-	addElement("BIOS", "interface_version","-",0x2, "")
-	addElement("Power", "interface_voltage","-",0x6, "")
-	addElement("Which Bus?", "interface_bus","-",0x2, "")
-	addElement("<<< Main", "Main","<<<",0x10, "")
+	addElement("Lua Script Revision", "getSVNLuaScript", ""..SVNREVLUASCRIPT, 0x0, "")
+	addElement("Lua Library Revision", "getSVNLuaLib", ""..SVNREVLUALIB, 0x0, "")
+	addElement("Serial", "interface_serial", "-", 0x2, "")
+	addElement("BIOS", "interface_version", "-", 0x2, "")
+	addElement("Power", "interface_voltage", "-", 0x6, "")
+	addElement("Which Bus?", "interface_bus", "-", 0x2, "")
+	addElement("<<< Main", "Main", "<<<", 0x10, "")
 	pageDone()
 	return oldvalue
 end

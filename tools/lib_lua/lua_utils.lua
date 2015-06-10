@@ -120,16 +120,41 @@ end
 
 function selectModuleID(oldvalue,id)
 	index = tonumber(oldvalue)
-
+	
 	if index == 0 then
-		setModuleID("7DF") -- set legislated OBD/WWH-OBD functional request ID
-		setCANFilter(1,"7E8","7FF") -- set CAN-Filter of ECU request/response CAN-ID range
-		setSendID("7E8") 	-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
+		setBus("HS-CAN") 					-- set HS-CAN 500kbit/s, 11bit
+		setModuleID("7DF")			-- set legislated OBD/WWH-OBD functional request 11bit CAN-ID
+		setSendID("7E8") 			-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
+		activateBus()
+		setCANFilter(1,"7E8","7FF")	-- set CAN-Filter of ECU request/response CAN-ID range
+		ModuleID = oldvalue;
+	elseif index == 9 then						-- 29bit identifier
+		setBus("500b29")						-- set HS-CAN 500kbit/s, 29bit
+		setModuleID("18DB33F1")					-- set legislated OBD/WWH-OBD functional request 29bit CAN-ID
+		setSendID("18DAF110")					-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
+		activateBus()
+		setCANFilter(1,"18DAF100","1FFFFF00")	-- set CAN-Filter of ECU response 29bit CAN-ID range only
+		ModuleID = oldvalue;
+	elseif index == 10 then						-- 29bit identifier
+		setBus("500b29")						-- set HS-CAN 500kbit/s, 29bit
+		setModuleID("18DA10F1")					-- set legislated OBD/WWH-OBD physical request 29bit CAN-ID
+		setSendID("18DAF110")					-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
+		activateBus()
+		setCANFilter(1,"18DAF100","1FFFFF00")	-- set CAN-Filter of ECU response 29bit CAN-ID range only
+		ModuleID = oldvalue;
+	elseif index == 11 then						-- 29bit identifier
+		setBus("500b29")						-- set HS-CAN 500kbit/s, 29bit
+		setModuleID("18DA11F1")					-- set legislated OBD/WWH-OBD physical request 29bit CAN-ID
+		setSendID("18DAF111")					-- set default to legislated OBD/WWH-OBD physical response ID (ECU #2 - TCM, Transmission Control Module)
+		activateBus()
+		setCANFilter(1,"18DAF100","1FFFFF00")	-- set CAN-Filter of ECU response 29bit CAN-ID range only
 		ModuleID = oldvalue;
 	else
-		setModuleID(string.format("%3X",index+0x7E0-1)) -- set legislated OBD/WWH-OBD functional request ID
-		setCANFilter(1,string.format("%3X",index+0x7E8-1),"7FF") -- set CAN-Filter of ECU request/response CAN-ID range
-		setSendID(string.format("%3X",index+0x7E8-1)) 	-- set default to legislated OBD/WWH-OBD physical response ID
+		setBus("HS-CAN")													-- set HS-CAN 500kbit/s, 11bit
+		setModuleID(string.format("%3X",index+0x7E0-1))				-- set legislated OBD/WWH-OBD physical request ID
+		setSendID(string.format("%3X",index+0x7E8-1)) 				-- set default to legislated OBD/WWH-OBD physical response ID
+		activateBus()
+		setCANFilter(1,string.format("%3X",index+0x7E8-1),"7FF")	-- set CAN-Filter of ECU request/response CAN-ID range
 		ModuleID = oldvalue;
 	end
 
