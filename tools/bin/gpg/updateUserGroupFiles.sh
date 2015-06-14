@@ -16,6 +16,7 @@ if [ $? -eq 0 ] ; then
 		cp $3 $3_$TIMESTAMP 
 		zip $LOGUSERACCESS $3.sig_$TIMESTAMP $3_$TIMESTAMP 
 		cp $NEWUSERACCESS $OLDUSERACCESS 
+		rm $3.sig_* $3_*
 	else
 		echo No updates found
 	fi

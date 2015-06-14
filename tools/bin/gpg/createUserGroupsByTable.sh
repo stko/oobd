@@ -11,7 +11,7 @@ while read line ; do
 	USERS[$user]=$user
 	echo "user: [$user]"
 	echo "group:[$group]"
-	gpg --yes --batch --no-default-keyring --secret-keyring ./oobd_groups.sec  --export-secret-key $group >> $user.groupring.tmp
+	gpg --yes --batch --no-default-keyring --secret-keyring ./$group.sec  --export-secret-key $group >> $user.groupring.tmp
 	gpg --yes --batch --no-default-keyring --keyring ../oobd_groups.pub  --fingerprint $group >> $user.groupkeys.fingerprint
 done < $1
 for user in "${!USERS[@]}"

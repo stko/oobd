@@ -24,22 +24,23 @@
 			exitProg("Error while reading groups from " . $grouplist . "\n", 1);
 		}
 		foreach ($groups as $group){
-			print "#%dry-run
-%echo Generating  key for $group
+			file_put_contents($group.".groupsec","
 Key-Type: DSA
+#%dry-run
 Key-Length: 2048
 Subkey-Type: ELG-E
 Subkey-Length: 2048
+Expire-Date: 0
+Passphrase: $appPassPhrase
+%echo Generating  key for $group
 Name-Real: $group
 #Name-Comment: OOBD scipts for the car 
 #Name-Email: joe@foo.bar
-Expire-Date: 0
-Passphrase: $appPassPhrase
-%pubring $pubfile
-%secring $secfile
+#%pubring $pubfile
+#%secring $secfile
+#%secring ./$group.sec
 %commit
-
-";
+");
 
 		}
 		$jobDone=true;
