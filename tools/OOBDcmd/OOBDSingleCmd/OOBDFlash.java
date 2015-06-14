@@ -19,7 +19,7 @@ public class OOBDFlash {
         String cmd="d";
         Vector<OOBDDongleDescriptor> serviceFound =new Vector<OOBDDongleDescriptor>() ;
         BufferedReader buffer=new BufferedReader(new InputStreamReader(System.in));
-        if (OOBDFileHandler.download("https://oobd.googlecode.com/files/Flashloader_Package.zip", "download.zip")) {
+        if (OOBDFileHandler.download("https://github.com/stko/oobd/trunk/interface/Designs/CORTEX/STM32F103C8_Eclipse_GCC/D2/flashfiles/AllinOne/Flashloader_Package.zip", "download.zip")) {
             OOBDFileHandler.getFilelist("",0);
         }
 

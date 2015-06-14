@@ -21,7 +21,7 @@
 			foreach ($newlist as $entry => $dummy){
 				list($user, $group) = explode(":", $entry,2);
 				if ($updateUser==$user){
-					echo "$entry";
+					echo trim($entry)."\n";
 				}
 			}
 		}
@@ -39,7 +39,7 @@ function loadUserFile($filename){
 	if ($handle) {
 		while (($buffer = fgets($handle, 4096)) !== false) {
 			list($user, $group) = explode(":", $buffer,2);
-			$res[strtolower($buffer)]=1;
+			$res[trim(strtolower($buffer))]=1;
 		}
 		if (!feof($handle)) {
 		echo "Error: unexpected fgets() fail\n";

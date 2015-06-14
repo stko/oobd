@@ -5,6 +5,11 @@ import select
 import sys
 from sys import stderr
 
+# to install Dialog, use "sudo apt-get install python-dialog" or "sudo pip3 install pythondialog"
+from dialog import Dialog
+
+nrOfRetries=4
+
 def print_stderr(*args, **kwargs):
     print(*args, file=stderr, **kwargs)
 
@@ -24,13 +29,13 @@ class bcolors:
 		self.FAIL = ''
 		self.ENDC = ''
 
-
+d = Dialog(dialog="dialog")
 
 testSet=[
 {'cmd':'p 0 0 0\r','res':r'.*(OBD).*','next':4,'err':1,'descr':'Looking for OOBD ID','okText':'OK: OOBD String received','errText':'Error: No correct Answer'},
 {'cmd':'p 0 0 0\r','res':r'.*(OBD).*','next':4,'err':2,'descr':'Looking for OOBD ID','okText':'OK: OOBD String received','errText':'Error: No correct Answer'},
 {'cmd':'p 0 0 0\r','res':r'.*(OBD).*','next':4,'err':3,'descr':'Looking for OOBD ID','okText':'OK: OOBD String received','errText':'Error: No correct Answer'},
-{'cmd':'p 0 0 0\r','res':r'.*(OBD).*','next':4,'err':4,'descr':'Looking for OOBD ID','okText':'OK: OOBD String received','errText':'Error: No correct Answer'},
+{'cmd':'p 0 0 0\r','res':r'.*(OBD).*','next':4,'err':-1,'descr':'Looking for OOBD ID','okText':'OK: OOBD String received','errText':'Error: No correct Answer'},
 {'cmd':'p 0 0 1\r','res':r'.*(:).*','next':5,'err':-1,'descr':'Looking for Serial Nr.','okText':'OK: Serial Nr received','errText':'Error: No correct Answer'},
 {'cmd':'p 0 0 2\r','res':r'.*1\d{4} mV.*','next':6,'err':-1,'descr':'Check Voltage > 10V','okText':'OK: Voltage > 10V','errText':'Error: No correct Answer'},
 
@@ -43,8 +48,8 @@ testSet=[
 {'cmd':'p 1 2 2 1\r','res':r'.*(.).*','next':13,'err':-1,'descr':'Red LED on','okText':'OK: Red LED turned on','errText':'Error: No correct Answer','dialogtext':'Is the red LED on?'},
 {'cmd':'p 1 2 2 0\r','res':r'.*(.).*','next':14,'err':-1,'descr':'Red LED off','okText':'OK: Red LED turned off','errText':'Error: No correct Answer'},
 {'cmd':'p 1 2 3 1000\r','res':r'.*(.).*','next':15,'err':-1,'descr':'Buzzer on','okText':'OK: Buzzer turned on','errText':'Error: No correct Answer','dialogtext':'Do you hear the Buzzer?'},
-{'cmd':'p 1 2 3 0\r','res':r'.*(.).*','next':16,'err':-1,'descr':'Buzzer off','okText':'OK: Red LED turned off','errText':'Error: No correct Answer'},
-#{'cmd':'p 1 2 3 0\r','res':r'.*(.).*','next':21,'err':-1,'descr':'Buzzer off','okText':'OK: Red LED turned off','errText':'Error: No correct Answer'},
+#{'cmd':'p 1 2 3 0\r','res':r'.*(.).*','next':16,'err':-1,'descr':'Buzzer off','okText':'OK: Red LED turned off','errText':'Error: No correct Answer'},
+{'cmd':'p 1 2 3 0\r','res':r'.*(.).*','next':21,'err':-1,'descr':'Buzzer off','okText':'OK: Red LED turned off','errText':'Error: No correct Answer'},
 
 # KL-Line Test
 {'cmd':'p  1 2 4 0\r','res':r'.*(.).*','next':17,'err':-1,'descr':' K-Line TX OFF (Transmit mode) ','okText':'OK: K-Line TX OFF','errText':'Error: No correct Answer'},
@@ -77,9 +82,9 @@ testSet=[
 {'cmd':'p 8 10 1 $07FF\r','res':r'.*(.).*','next':38,'err':-1,'descr':'set CAN Filter','okText':'OK: CAN Filter set','errText':'Error: No correct Answer'},
 {'cmd':'p 8 11 1 $0000\r','res':r'.*(.).*','next':39,'err':-1,'descr':'set CAN Mask ','okText':'OK: CAN Mask set','errText':'Error: No correct Answer'},
 {'cmd':'p 6 9 $749\r','res':r'.*(.).*','next':40,'err':-1,'descr':'set Send ID','okText':'OK: Send ID set','errText':'Error: No correct Answer'},
-{'cmd':'1002\r','res':r'^(50).*','next':-1,'err':41,'descr':'send Tester present','okText':'OK: Answer from DCU','errText':'Error: No correct Answer from DCU'},
-{'cmd':'1002\r','res':r'^(50).*','next':-1,'err':42,'descr':'send Tester present','okText':'OK: Answer from DCU','errText':'Error: No correct Answer from DCU'},
-{'cmd':'1002\r','res':r'^(50).*','next':-1,'err':-1,'descr':'send Tester present','okText':'OK: Answer from DCU','errText':'Error: No correct Answer from DCU'},
+{'cmd':'1002\r','res':r'^(50).*','next':-2,'err':41,'descr':'send Tester present','okText':'OK: Answer from DCU','errText':'Error: No correct Answer from DCU'},
+{'cmd':'1002\r','res':r'^(50).*','next':-2,'err':42,'descr':'send Tester present','okText':'OK: Answer from DCU','errText':'Error: No correct Answer from DCU'},
+{'cmd':'1002\r','res':r'^(50).*','next':-2,'err':-1,'descr':'send Tester present','okText':'OK: Answer from DCU','errText':'Error: No correct Answer from DCU'},
 ]
 
 def echoWrite(cmd):
@@ -111,18 +116,25 @@ def doSingleCmd(cmd, regex):
 		return (False)
 
 
-
+def repeatFewTimes(cmd, regex):
+	success=False
+	cnt=nrOfRetries
+	while(cnt>0 and not success):
+		print_stderr("Try nr.",nrOfRetries-cnt+1)
+		success=doSingleCmd(cmd, regex)
+		if not success:
+			time.sleep(0.5)
+		cnt-=1
+	return success
 
 
 def testCommand(thisTest):
 	print_stderr ("Description:", thisTest['descr'])
 	print_stderr ("Command:", thisTest['cmd'])
 
-	if doSingleCmd(thisTest['cmd'],thisTest['res']):
+	if repeatFewTimes(thisTest['cmd'],thisTest['res']):
 		if 'dialogtext' in thisTest:
-			#if ccbox(thisTest['dialogtext'], "Please Confirm"):     # show a Continue/Cancel dialog
-			time.sleep(0.5)
-			if True:     # show a Continue/Cancel dialog
+			if  d.yesno(thisTest['dialogtext']) == d.OK:
 				print_stderr  (bcolors.OKGREEN + thisTest['okText'] + bcolors.ENDC)
 				return thisTest['next']
 			else:
@@ -165,7 +177,7 @@ try:
 except socket.error as error:
 	print_stderr (bcolors.FAIL + "Caught inital BluetoothError: ", error , bcolors.ENDC)
 state=0
-while(state!=-1):    
+while(state>-1):    
 	try:
 		thisTest=testSet[state]
 		state=testCommand(thisTest)
@@ -174,6 +186,10 @@ while(state!=-1):
 		time.sleep(5)
 		gaugeSocket = connect()
 
+if state == -1:
+	d.msgbox("TEST FAILED !!!")
+else:
+	d.msgbox("Test OK !!!")
 gaugeSocket.close()
 
 

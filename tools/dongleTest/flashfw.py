@@ -6,8 +6,11 @@ import sys
 import subprocess
 
 from modem import YMODEM
-# to install easygui, use "sudo apt-get install python-easygui"
-from easygui import *
+
+# to install Dialog, use "sudo apt-get install python-dialog" or "sudo pip3 install pythondialog"
+from dialog import Dialog
+
+d = Dialog(dialog="dialog")
 
 def getc(size, timeout=5):
 	r, w, e = select.select([gaugeSocket], [], [], timeout)
@@ -100,7 +103,8 @@ while(runstatus>0):
 	#in case the bootloader is active
 	if len(lines)>0 and lines[len(lines)-1]=="OOBD-Flashloader>":
 		print "Bootloader active, flashing can start.."
-		if ccbox("ok to flash?", "Please Confirm"):
+		#this is the version for python3: if  d.yesno("ok to flash?") == d.OK:
+		if  d.yesno("ok to flash?") == d.DIALOG_OK: #this is for python < 3.0
 			try:
 				# ymodem = YMODEM(getc, putc)
 				echoWrite("1")

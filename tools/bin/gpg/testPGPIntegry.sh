@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 rm actgroupkeys.sec
 echo "When entering pathes, you can use the bash autocomplete tab key function"
 echo "use a leading ./ for key files in local directory, as gpg requires this"
