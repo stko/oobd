@@ -1,6 +1,9 @@
+-- m4_define(`DEBUGPRINT', `m4_ifdef(`DEBUG', if "DBGUSER" ==$1 and DBGLEVEL >=$2 then  print(string.format(m4_shift(m4_shift( $@ ))) ) end)')
+
 
 -- taken from  http://stackoverflow.com/questions/1426954/split-string-in-lua
 function Split(pString, pPattern)
+   DEBUGPRINT("nexulm", 1, "lua_utils.lua - Split,%02d: %s", "00", "enter function Split")
    local Table = {}  -- NOTE: use {n = 0} in Lua-5.0
    local fpat = "(.-)" .. pPattern
    local last_end = 1
@@ -23,6 +26,7 @@ end
 -- helper function to translate a table identifier into its table data and the related ID,
 -- returns ID,  data
 function translateTableID(id)
+	DEBUGPRINT("nexulm", 1, "lua_utils.lua - translateTableID,%02d: %s", "00", "enter function translateTableID")
 	local info = Split(id, "_")
 	return info[3] , _G[info[1]][info[1].."_"..info[2].."_"..info[3]] --nice trick to get a variable just by name :-)
 end
@@ -30,7 +34,8 @@ end
 
 -- helper function to get a subtable just out of the ID. If wholeTable is true, then the function returns the whole subtable, if wholeTable is false, it only return that particual element out of the subtable which is indexed by the string
 -- returns ID,  data
-	function getSubTable(id, level,wholeTable)
+function getSubTable(id, level,wholeTable)
+	DEBUGPRINT("nexulm", 1, "lua_utils.lua - getSubTable,%02d: %s", "00", "enter function getSubTable")
 	local info = Split(id, "_")
 	local data =_G[info[1]]
 	if data ~=nil and #info>2 then
@@ -91,6 +96,7 @@ return string.format(getLocalePrintf("nrc",string.format("0x%x",udsBuffer[3]), "
 --]]
 
 function getLocalePrintf( category, textID, default)
+	DEBUGPRINT("nexulm", 1, "lua_utils.lua - getLocalePrintf,%02d: %s", "00", "enter function getLocalePrintf")
 	if dbLookup ~= nil then -- db functionality implemented?
 		if LOCALE==nil then -- default language not set ?
 			LOCALE="en_en" -- then set it to english
@@ -119,41 +125,51 @@ end
 
 
 function selectModuleID(oldvalue,id)
+	DEBUGPRINT("nexulm", 1, "lua_utils.lua - selectModuleID,%02d: %s", "00", "enter function selectModuleID")
 	index = tonumber(oldvalue)
 	
 	if index == 0 then
-		setBus("HS-CAN") 					-- set HS-CAN 500kbit/s, 11bit
-		setModuleID("7DF")			-- set legislated OBD/WWH-OBD functional request 11bit CAN-ID
-		setSendID("7E8") 			-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
+		if hardwareID == 0 or hardwareID == 1 then	-- if ELM327/DXM1 is selected so default is set autoprobing diag protocol on
+     		setBus("autoprobing")					-- set automatic protocol detection
+		else
+			setBus("HS-CAN")						-- set HS-CAN 500kbit/s, 11bit
+		end
 		activateBus()
-		setCANFilter(1,"7E8","7FF")	-- set CAN-Filter of ECU request/response CAN-ID range
+		setModuleID("7DF")						-- set legislated OBD/WWH-OBD functional request 11bit CAN-ID
+		setSendID("7E8") 						-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
+		setCANFilter(1,"7E8","7FF")				-- set CAN-Filter of ECU request/response CAN-ID range
 		ModuleID = oldvalue;
 	elseif index == 9 then						-- 29bit identifier
+		DEBUGPRINT("nexulm", 1, "lua_utils.lua - selectModuleID,%02d: %s", "01", "index 9, setBus(500b29)")
 		setBus("500b29")						-- set HS-CAN 500kbit/s, 29bit
+		activateBus()
 		setModuleID("18DB33F1")					-- set legislated OBD/WWH-OBD functional request 29bit CAN-ID
 		setSendID("18DAF110")					-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
-		activateBus()
 		setCANFilter(1,"18DAF100","1FFFFF00")	-- set CAN-Filter of ECU response 29bit CAN-ID range only
 		ModuleID = oldvalue;
 	elseif index == 10 then						-- 29bit identifier
 		setBus("500b29")						-- set HS-CAN 500kbit/s, 29bit
+		activateBus()
 		setModuleID("18DA10F1")					-- set legislated OBD/WWH-OBD physical request 29bit CAN-ID
 		setSendID("18DAF110")					-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
-		activateBus()
 		setCANFilter(1,"18DAF100","1FFFFF00")	-- set CAN-Filter of ECU response 29bit CAN-ID range only
 		ModuleID = oldvalue;
 	elseif index == 11 then						-- 29bit identifier
 		setBus("500b29")						-- set HS-CAN 500kbit/s, 29bit
+		activateBus()
 		setModuleID("18DA11F1")					-- set legislated OBD/WWH-OBD physical request 29bit CAN-ID
 		setSendID("18DAF111")					-- set default to legislated OBD/WWH-OBD physical response ID (ECU #2 - TCM, Transmission Control Module)
-		activateBus()
 		setCANFilter(1,"18DAF100","1FFFFF00")	-- set CAN-Filter of ECU response 29bit CAN-ID range only
 		ModuleID = oldvalue;
 	else
-		setBus("HS-CAN")													-- set HS-CAN 500kbit/s, 11bit
+		if hardwareID == 0 or hardwareID == 1 then	-- if ELM327/DXM1 is selected so default is set autoprobing diag protocol on
+     		setBus("autoprobing")					-- set automatic protocol detection
+		else
+			setBus("HS-CAN")						-- set HS-CAN 500kbit/s, 11bit for all other supported OBD2 Dongle
+		end
+		activateBus()
 		setModuleID(string.format("%3X",index+0x7E0-1))				-- set legislated OBD/WWH-OBD physical request ID
 		setSendID(string.format("%3X",index+0x7E8-1)) 				-- set default to legislated OBD/WWH-OBD physical response ID
-		activateBus()
 		setCANFilter(1,string.format("%3X",index+0x7E8-1),"7FF")	-- set CAN-Filter of ECU request/response CAN-ID range
 		ModuleID = oldvalue;
 	end

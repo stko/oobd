@@ -32,19 +32,17 @@ KCDHTMLFLAGS=tr --omit-decl  ../../tools/xmltools/kcd2html.xslt
 ALLSOURCES=$(LUA_REFS) $(LUAS)
 SPECS+=$(MDX_POOL)
 
-
 OBJECTS=$(SOURCES:.luasource=.lbc)
 %.lbc: %.luasource 
-	$(OLP) $<  > lua.tmp
+	$(OLP) $< > m4.tmp
+	m4 $(OPTM4) -DDBGUSER=$(DBGUSER) -DDBGLEVEL=$(DBGLEVEL) -P m4.tmp > lua.tmp
 	$(CC) $(CFLAGS) -o $@ lua.tmp
-
 
 SPECSOURCES=$(SPECS:.mdx=.luasource) 
 %.luasource: %.mdx
 	echo mdx
 	$(ODXT) $(MDXTFLAGS) $< $(@F) 
 	$(ODXT) $(MDXTHTMLFLAGS) $<  $(*F).html
-
 
 LUASOURCES=$(ALLSOURCES:.lua=.luasource) 
 %.luasource: %.lua 
@@ -64,9 +62,13 @@ luas: $(LUASOURCES)
 specs: $(SPECSOURCES) $(MDXTFLAGS) $(CUSTOMSPECSOURCES)
 kcds: $(KCDSOURCES) 
 
-
 	echo target
-scripts: $(OBJECTS) 
+scripts: $(OBJECTS)
+
+debug: setdebug scripts
+setdebug:
+	$(eval OPTM4=-DDEBUG)
+ 
 pack: 
 ifdef ENABLEPGP
 	export GROUPNAME=`pwd >gn.txt; sed -e 's/.*\///g' gn.txt` ; \
@@ -104,4 +106,4 @@ endif
 clean: genericclean $(CUSTOMCLEAN)
 
 genericclean:
-	rm -f *.lbc *.luasource *.html *.lbc.pgp lua.tmp gn.txt tmp
+	rm -f *.lbc *.luasource *.html *.lbc.pgp lua.tmp m4.tmp gn.txt tmp
