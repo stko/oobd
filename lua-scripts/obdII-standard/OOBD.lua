@@ -5,8 +5,8 @@ OOBD.lua
 local BusID = "HS-CAN";
 local ModuleID = 0;  -- default functionl request ID for emission related ECUs
 
-dofile("../../tools/lib_lua/serial_dxm.lua")
 dofile("../../tools/lib_lua/lua_utils.lua")
+dofile("../../tools/lib_lua/serial_dxm.lua")
 
 ---------------------- Vehicle Info Menu --------------------------------------
 
