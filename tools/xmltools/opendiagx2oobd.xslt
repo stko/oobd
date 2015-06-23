@@ -13,8 +13,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 -- optinclude("bustopology.luatable")
 
-dofile("../../tools/lib_lua/serial_dxm.lua")
 dofile("../../tools/lib_lua/lua_utils.lua")
+dofile("../../tools/lib_lua/serial_dxm.lua")
 dofile("../../tools/lib_lua/luabit/bit.lua")
 dofile("../lib_protocol/standard-uds.lua")
 dofile("../lib_protocol/secaccess.lua")

@@ -12,8 +12,8 @@
 }
 
 dofile("<xsl:value-of select="substring-before(../my:Document/@name, '.dbc')"/>.rtd")
-dofile("../../tools/lib_lua/serial_dxm.lua")
 dofile("../../tools/lib_lua/lua_utils.lua")
+dofile("../../tools/lib_lua/serial_dxm.lua")
 dofile("../../tools/lib_lua/luabit/bit.lua")
 dofile("../lib_protocol/standard-uds.lua")
 dofile("../lib_protocol/realtimedata.lua")</xsl:template>
