@@ -17,17 +17,26 @@ import java.util.List;
 
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
+import org.oobd.base.scriptengine.OobdScriptengine;
+import org.oobd.base.visualizer.Visualizer;
 
 /**
  * generic abstract for the implementation of scriptengines
@@ -38,10 +47,13 @@ import org.java_websocket.server.WebSocketServer;
 abstract public class WSOobdUIHandler extends OobdUIHandler {
 
     protected Onion myStartupParam;
-    ChatServer s;
-
+    ChatServer wsServer;
+ final HashMap<String, ArrayList<Visualizer>> visualizers = new HashMap<String, ArrayList<Visualizer>>();// /<stores all available visalizers
+    IFui userInterface;
+    public static String ownerEngine;
+    
     public static String publicName() {
-        /* the abstract class also needs to have this method, because it's also loaded during dynamic loading, and the empty return string
+        /* the abstract class also needs to have this method, because it'wsServer also loaded during dynamic loading, and the empty return string
          ** is the indicator for this abstract class
          */
         return "webUIHandler";
@@ -63,25 +75,26 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
         WebSocketImpl.DEBUG = true;
         int port = 8887; // 843 flash policy port
         try {
-            s = new ChatServer(8443);
+            wsServer = new ChatServer(8443);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        s.start();
-        System.out.println("ChatServer started on port: " + s.getPort());
+        wsServer.start();
+        System.out.println("ChatServer started on port: " + wsServer.getPort());
 
+ /*
         BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
         while (true) {
             try {
                 String in = sysin.readLine();
 
-                s.sendToAll(in);
+                wsServer.sendToAll(in);
                 if (in.equals("exit")) {
-                    s.stop();
+                    wsServer.stop();
                     break;
                 } else if (in.equals("restart")) {
-                    s.stop();
-                    s.start();
+                    wsServer.stop();
+                    wsServer.start();
                     break;
                 }
             } catch (Exception ex) {
@@ -90,7 +103,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
         }
 
 
-
+*/
 
 
 
@@ -120,26 +133,306 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
          */
     }
 
+
+
+
+
+
+   Onion actionRequest(Onion myOnion) {
+        try {
+            if (myOnion.isType(CM_VISUALIZE)) {
+                //userInterface.visualize(myOnion);
+                ownerEngine = myOnion.getOnion(OOBDConstants.FN_OWNER).getOnionString(OOBDConstants.FN_NAME);
+                wsServer.sendToAll(myOnion.toString());
+                return null;
+            }
+            if (myOnion.isType(CM_VALUE)) {
+                //handleValue(myOnion);
+                wsServer.sendToAll(myOnion.toString());
+                return null;
+            }
+            if (myOnion.isType(CM_IOINPUT)) {
+                openTempFile(myOnion);
+                return new Onion();
+            }
+            if (myOnion.isType(CM_UPDATE)) {
+                core.transferMsg(new Message(this, myOnion.getString("to"), myOnion));
+
+                return null;
+            }
+
+            if (myOnion.isType(CM_PAGE)) {
+                //userInterface.openPage(myOnion.getOnionString("owner"),
+                 //       myOnion.getOnionString("name"), 1, 1);
+                wsServer.sendToAll(myOnion.toString());
+                return null;
+            }
+            if (myOnion.isType(CM_PAGEDONE)) {
+                //userInterface.openPageCompleted(
+                 //       myOnion.getOnionString("owner"),
+                  //      myOnion.getOnionString("name"));
+                wsServer.sendToAll(myOnion.toString());
+                return null;
+            }
+            if (myOnion.isType(CM_WRITESTRING)) {
+                //userInterface.sm(Base64Coder.decodeString(myOnion.getOnionString("data")));
+                wsServer.sendToAll(myOnion.toString());
+                return null;
+            }
+            if (myOnion.isType(CM_PARAM)) {
+                //return userInterface.requestParamInput(myOnion);
+            }
+        } catch (org.json.JSONException e) {
+            Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
+                    "JSON exception..");
+            return null;
+        }
+        return null;
+    }
+
     public void handleMsg() {
         Message thisMsg;
-        while ((thisMsg = this.getMsgPort().getMsg(0)) != null) { // if msg quere is not empty
-/*
-            if (actionRequest(thisMsg.getContent()) == true) {
-            try {
-            thisMsg.setContent(thisMsg.getContent().setValue("replyID",
-            thisMsg.getContent().getInt("msgID")));
-            } catch (JSONException ex) {
-            Logger.getLogger(Core.class.getName()).log(
-            Level.SEVERE, null, ex);
-            }
-            msgPort.replyMsg(thisMsg, thisMsg.getContent());
-            }
-             * 
-             */
-        }
+        while ((thisMsg = this.getMsgPort().getMsg(0)) != null) { // just waiting
+            // and handling
+            // messages
+            Onion answer = actionRequest(thisMsg.getContent());
+            if (answer != null) {
+                try {
+                    thisMsg.setContent(thisMsg.getContent().setValue("replyID",
+                            thisMsg.getContent().getInt("msgID")));
+                } catch (JSONException ex) {
+                    Logger.getLogger(Core.class.getName()).log(
+                            Level.SEVERE, null, ex);
 
+                }
+                thisMsg.getContent().setValue("answer", answer);
+                msgPort.replyMsg(thisMsg, thisMsg.getContent());
+            }
+
+        }
+        //updateVisualizers();
     }
+
+    /**
+     * \brief add generated visualizers to global list
+     * 
+     * several owners (=scriptengines) do have their own visualizers. This is
+     * stored in the visualizers hash
+     * 
+     * @param owner
+     *            who owns the visualizer
+     * @param vis
+     *            the visualizer
+     */
+    public void addVisualizer(String owner, Visualizer vis) {
+        if (visualizers.containsKey(owner)) {
+            ((ArrayList) visualizers.get(owner)).add(vis);
+        } else {
+            ArrayList ar = new ArrayList();
+            ar.add(vis);
+            visualizers.put(owner, ar);
+        }
+    }
+
+    /**
+     * \brief Tells Value to all visualizers of a scriptengine
+     * 
+     * @param value
+     *            Onion containing value and scriptengine
+     * 
+     */
+    public void handleValue(Onion value) {
+        String owner = value.getOnionString("owner/name"); // who'wsServer the owner of
+        // that value?
+        if (owner == null) {
+            Logger.getLogger(Core.class.getName()).log(Level.WARNING,
+                    "onion id does not contain name");
+        } else {
+            ArrayList affectedVisualizers = visualizers.get(owner); // which
+            // visualizers
+            // belong to
+            // that
+            // owner
+            if (affectedVisualizers != null) {
+                Iterator visItr = affectedVisualizers.iterator();
+                while (visItr.hasNext()) {
+                    Visualizer vis = (Visualizer) visItr.next();
+                    vis.setValue(value); // send the value to all visualisers of
+                    // that owner
+                }
+            }
+        }
+    }
+
+    /**
+     * \brief Tells Value to all visualizers of a scriptengine
+     * 
+     * @param value
+     *            Onion containing value and scriptengine
+     * 
+     */
+    public void openTempFile(Onion value) {
+        InputStreamReader myInputStream = null;
+        String myFileName = null;
+        try {
+            String owner = value.getOnionString("owner/name"); // who'wsServer the owner of
+            // that value?
+            if (owner == null) {
+                Logger.getLogger(Core.class.getName()).log(Level.WARNING,
+                        "onion id does not contain name");
+                return;
+            }
+            String filePath = Base64Coder.decodeString(value.getOnionString("filepath"));
+            String fileExtension = Base64Coder.decodeString(value.getOnionString("extension"));
+            String fileMessage = Base64Coder.decodeString(value.getOnionString("message"));
+            if (fileMessage.equalsIgnoreCase("html")) {
+                myFileName = filePath;
+                URL url = new URL(filePath);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 /* milliseconds */);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setRequestMethod("GET");
+                conn.setDoInput(true);
+                // Starts the query
+                conn.connect();
+                int HttpResult = conn.getResponseCode();
+
+                if (HttpResult == HttpURLConnection.HTTP_OK) {
+                    myInputStream = new InputStreamReader(conn.getInputStream(), "utf-8");
+                } else {
+                    System.err.println(conn.getResponseMessage());
+                }
+            } else {
+                if (fileMessage.equalsIgnoreCase("json")) {
+                    myFileName = filePath;
+                    URL url = new URL(filePath);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(10000 /* milliseconds */);
+                    conn.setConnectTimeout(15000 /* milliseconds */);
+                    conn.setDoOutput(true);
+                    conn.setDoInput(true);
+                    conn.setRequestProperty("Content-Type", "application/json; charset=utf8");
+                    conn.setRequestProperty("Accept", "application/json");
+                    conn.setRequestMethod("POST");
+                    conn.connect();
+                    OutputStream os = conn.getOutputStream();
+                    os.write(fileExtension.getBytes("UTF-8"));
+                    os.close();
+                    int HttpResult = conn.getResponseCode();
+
+                    if (HttpResult == HttpURLConnection.HTTP_OK) {
+                        myInputStream = new InputStreamReader(conn.getInputStream(), "utf-8");
+                    } else {
+                        System.err.println(conn.getResponseMessage());
+                    }
+                } else {
+                    myFileName = getCore().getSystemIF().doFileSelector(filePath, fileExtension, fileMessage, false);
+                    if (myFileName != null) {
+                        try {
+                            myInputStream = new FileReader(myFileName);
+                        } catch (FileNotFoundException ex) {
+                            Logger.getLogger(LocalOobdUIHandler.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            }
+
+
+            if (myInputStream != null) {
+                OobdScriptengine actEngine = getCore().getScriptEngine(owner);
+                getCore().getSystemIF().createEngineTempInputFile(actEngine);
+
+                actEngine.fillTempInputFile(myInputStream);
+            } else {
+                myFileName = "";
+            }
+        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
+        }
+        value.setValue("result", Base64Coder.encodeString(myFileName));
+    }
+
+    /**
+     * \brief updates all visualizers
+     * 
+     * to not having several UI refreshes in parallel, update requests are only
+     * be collected for each visualizer and only been refreshed when the central
+     * core raises this update event.
+     * 
+     * 
+     * 
+     */
+    public void updateVisualizers() {
+        synchronized (visualizers) { // Collection<ArrayList<Visualizer>> c =
+            // Collections
+            // .synchronizedCollection(visualizers.values());
+            Collection<ArrayList<Visualizer>> c = visualizers.values();
+            // synchronized (c) {
+            // obtain an Iterator for Collection
+            Iterator<ArrayList<Visualizer>> itr;
+
+            // iterate through HashMap values iterator
+            // run through the 3 update states: 0: start 1: update data 2:
+            // finish
+            for (int i = 0; i < 3; i++) {
+                itr = c.iterator();
+                while (itr.hasNext()) {
+                    ArrayList<Visualizer> engineVisualizers = itr.next();
+                    boolean somethingToRemove = false;
+                    Iterator<Visualizer> visItr = engineVisualizers.iterator();
+                    // synchronized (visItr) {
+                    while (visItr.hasNext()) {
+                        Visualizer vis = visItr.next();
+                        if (vis != null) {
+                            synchronized (vis) {
+                                if (vis.getRemoved()) {
+                                    somethingToRemove = true;
+                                } else {
+                                    vis.doUpdate(i);
+                                }
+                            }
+                        }
+                    }
+                    // }
+                    synchronized (engineVisualizers) {
+                        if (somethingToRemove) {
+                            int del = 0;
+                            while (del < engineVisualizers.size()) {
+                                if (engineVisualizers.get(del).getRemoved()) {
+                                    engineVisualizers.remove(del);
+                                }
+                                del++;
+                            }
+
+                        }
+                    }
+                }
+            }
+            // }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
 
 class ChatServer extends WebSocketServer {
 
@@ -153,20 +446,47 @@ class ChatServer extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-        this.sendToAll("new connection: " + handshake.getResourceDescriptor());
-        System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
+         System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-        this.sendToAll(conn + " has left the room!");
-        System.out.println(conn + " has left the room!");
+         System.out.println(conn + " has left the room!");
     }
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        this.sendToAll(message);
-        System.out.println(conn + ": " + message);
+         System.out.println(conn + ": " + message);
+                        try {
+                            Onion webvis=new Onion(message);
+                            System.out.println("messagetext:"+""
+                            + "{" + "'type':'"
+                            + OOBDConstants.CM_UPDATE + "',"
+                            + "'vis':'" + webvis.getOnionString("name") + "',"
+                            + "'to':'" + WSOobdUIHandler.ownerEngine
+                            + "'," + "'optid':'" + webvis.getOnionString("optId")
+                            + "'," + "'actValue':'"
+                            + webvis.getOnionString("value") + "',"
+                            + "'updType':"
+                            + Integer.toString(webvis.getInt("type")) + "}");
+                            
+                    Core.getSingleInstance().transferMsg(
+                            new Message(Core.getSingleInstance(),
+                            OOBDConstants.UIHandlerMailboxName, new Onion(""
+                            + "{" + "'type':'"
+                            + OOBDConstants.CM_UPDATE + "',"
+                            + "'vis':'" + webvis.getOnionString("name") + "',"
+                            + "'to':'" + WSOobdUIHandler.ownerEngine
+                            + "'," + "'optid':'" + webvis.getOnionString("optId")
+                            + "'," + "'actValue':'"
+                            + webvis.getOnionString("value") + "',"
+                            + "'updType':"
+                            + Integer.toString(webvis.getInt("type")) + "}")));
+                } catch (JSONException ex) {
+                    Logger.getLogger(Visualizer.class.getName()).log(
+                            Level.SEVERE, null, ex);
+                }
+
     }
 
     @Override
