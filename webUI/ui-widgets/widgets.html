@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+
+	<link rel="stylesheet" href="style/jquery-ui.min.css" />
+	<link rel="stylesheet" href="style/style.css" />
+	<script src="js/jquery-1.11.3.min.js"></script>
+	<script src="js/jquery-ui.min.js"></script>
+	<script src="js/sevenSeg.js"></script>
+	<script src="js/smoothie.js"></script>
+
+
+
+</head>
+<body>
+  <h1 id="title">OOBD Web Widgets Demo</h1>
+	<div id="widget1" title="Demo Input with Display">
+		<div id="widget1-display1"></div>
+		<button id="widget1-button-plus" class="left">Plus</button>
+	  	<button id="widget1-button-reset" >0</button>
+		<button id="widget1-button-minus" class="right">Minus</button>
+	</div>
+  	<div id="widget2" title="Demo Flowing Chart">
+		<canvas id="widget2-display1" width="415" height="100">Not supported</canvas>
+
+	</div>
+	<script>
+		$(document).ready(function() {
+	  		// Widget 1
+		  	$("#widget1").dialog();
+		  	var clicks = 0;
+			 	$("#widget1-display1").sevenSeg({digits: 4, value: 0});
+
+		  	function updateDisplay1()  {
+					$("#widget1-display1").sevenSeg({value: clicks});
+				}
+		  	$("#widget1-button-plus").click(function() {
+		  		clicks++;
+		  		updateDisplay1();
+		  	});
+		  	$("#widget1-button-minus").click(function() {
+		  		clicks--;
+		  		updateDisplay1();
+		  	});
+		  	$("#widget1-button-reset").click(function() {
+		  		clicks = 0;
+		  		updateDisplay1();
+		  	});
+	  		//Widget 2
+			$("#widget2").dialog({
+	  			minWidth: 450
+	  		});
+	  		var smoothie = new SmoothieChart();
+	  		var demoVal = new TimeSeries();
+	  		smoothie.streamTo($("#widget2-display1")[0]);
+	  		setInterval(function(){
+	  			demoVal.append(new Date().getTime(), clicks);
+	  		}, 200);
+	  		smoothie.addTimeSeries(demoVal);
+
+
+
+	  	});
+	</script>
+</body>
+</html>
