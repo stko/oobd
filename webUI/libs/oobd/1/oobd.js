@@ -1,3 +1,34 @@
+
+
+(function() {
+    // Load the script
+    var script = document.createElement("SCRIPT");
+    script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js';
+    script.type = 'text/javascript';
+    document.getElementsByTagName("head")[0].appendChild(script);
+	console.log('irgendwo');
+    // Poll for jQuery to come into existance
+    var checkReady = function(callback) {
+        if (window.jQuery) {
+	console.log('gefunden');
+            callback(jQuery);
+        }
+        else {
+	console.log('warten');
+            window.setTimeout(function() { checkReady(callback); }, 100);
+        }
+    };
+
+    // Start polling...
+    checkReady(function($) {
+ 	console.log('wo bin ich ');
+       // Use $ here...
+    });
+})();
+
+
+
+
 /**
 * Oobd namespace.
 */
