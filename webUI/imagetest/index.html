@@ -2,7 +2,6 @@
 
 <html lang="en">
 <head><meta charset="utf-8">
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> -->
 <script type="text/javascript" src="../libs/oobd/1/oobd.js"></script>
 <script type="text/javascript">
 /* this function is implementation specific and links the OOBD feedback to the web elements */
@@ -15,45 +14,14 @@ function registerOOBD(id,initialValue){
 }
 
 
-var readyStateCheckInterval = setInterval(function() {
-    if (document.readyState === "complete") {
-        clearInterval(readyStateCheckInterval);
-	Oobd.init('ws://localhost:8443');
-	registerOOBD("oobd_te-interface_serial:","");
-	registerOOBD("oobd_te-interface_version:","");
-	registerOOBD("oobd_te-interface_voltage:","");
-	registerOOBD("oobd_te-interface_bus:","");
-	var found=$("[id^=oobd_ci]");
-// Get the Object by ID
-	var a = document.getElementById("svgObject");
-	// Get the SVG document inside the Object tag
-	var svgDoc = a.contentDocument;
-	// Get one of the SVG items by ID;
-	var svgItem = svgDoc.getElementById("oobd_ci-toogleBit:BMPGroups_0_600F_sd_14");
-	console.log(svgItem);
-	// Set the colour to something else
-	svgItem.setAttribute("style", "fill:#FF0000");
-    }
-}, 10);
-
-/*
-$(document).ready(function(){
-	Oobd.init('ws://localhost:8443');
-	registerOOBD("oobd_te-interface_serial:","");
-	registerOOBD("oobd_te-interface_version:","");
-	registerOOBD("oobd_te-interface_voltage:","");
-	registerOOBD("oobd_te-interface_bus:","");
-});
-*/
-
 </script>
 
 </script>
 </head>
 <body>
 
-<embed src="imagetest.svg" type="image/svg+xml" />
-<object id="svgObject" data="imagetest.svg" type="image/svg+xml"></object>
+<object class="OOBDMap" data="imagetest.svg" type="image/svg+xml"></object>
+<object class="OOBDMap" data="imagetest.svg" type="image/svg+xml"></object>
 System Info:
 
 <table>
