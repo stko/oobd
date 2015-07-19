@@ -57,6 +57,7 @@ public class Settings extends Activity {
 	private PortInfo[] portList;
 	SharedPreferences preferences;
 	private CheckBox pgpEnabled;
+	private CheckBox httpEnabled;
 	private TextView pgpStatus;
 	private Button pgpImportKeys;
 	private TextView urlEditText;
@@ -143,6 +144,20 @@ public class Settings extends Activity {
 			public void onCheckedChanged(CompoundButton parent,
 					boolean isChecked) {
 				preferences.edit().putBoolean("PGPENABLED", isChecked).commit();
+
+			}
+		});
+		httpEnabled = (CheckBox) findViewById(R.id.HTTPCheckBox);
+		httpEnabled.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			public void onCheckedChanged(CompoundButton parent,
+					boolean isChecked) {
+				if (isChecked){
+				preferences.edit().putString(OOBDConstants.PropName_UIHander, "ws").commit();
+				}else{
+					preferences.edit().putString(OOBDConstants.PropName_UIHander, "UIHandler").commit();
+					
+				}
 
 			}
 		});
@@ -259,6 +274,7 @@ public class Settings extends Activity {
 			connectDeviceName = preferences.getString(connectTypeName
 					+ "_DEVICE", "");
 			pgpEnabled.setChecked(preferences.getBoolean("PGPENABLED", false));
+			httpEnabled.setChecked(preferences.getString(OOBDConstants.PropName_UIHander, "UIHandler").equalsIgnoreCase("ws"));
 		}
 		urlEditText.setText(preferences.getString(
 				connectTypeName + "_"+OOBDConstants.PropName_ConnectServerURL,

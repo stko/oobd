@@ -46,6 +46,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
 
     Core core;
     private String userPassPhrase = "";
+    String webRootDir = "";
 
     public void registerOobdCore(Core thisCore) {
         core = thisCore;
@@ -114,6 +115,13 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             case FT_RAW:
             case FT_DATABASE:
                 return fileName;
+            case FT_WEBPAGE:
+                if (!webRootDir.equals("")) {
+                    System.err.println("web path generated:" + webRootDir + fileName);
+                    return webRootDir + fileName;
+                } else {
+                    return "";
+                }
             case FT_KEY:
                 System.err.println("key path generated:" + System.getProperty("user.home") + java.io.File.separator + fileName);
                 return System.getProperty("user.home") + java.io.File.separator + fileName;
@@ -125,6 +133,16 @@ public class SwingSystem implements IFsystem, OOBDConstants {
 
     }
 
+    String mapDirectory(String mapDir, String path) {
+             System.err.println("MapDirecory mapdir "+mapDir+" path "+path+ " Startswith: "+"/" + mapDir.toLowerCase());
+       if (path.toLowerCase().startsWith("/" + mapDir.toLowerCase())) {
+            path = path.substring(mapDir.length() + 1);
+            return path;
+        } else {
+            return "";
+        }
+    }
+
     public InputStream generateResourceStream(int pathID, String resourceName)
             throws java.util.MissingResourceException {
         Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "Try to load: " + resourceName
@@ -132,13 +150,13 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         InputStream resource = null;
         try {
             switch (pathID) {
+                case OOBDConstants.FT_WEBPAGE:
+                    String newPath=mapDirectory("libs",resourceName);
+                    if (!newPath.equals("")){
+                        resourceName="/../libs/"+newPath;
+                    }
+                // please notice: here's no case "break"!
                 case OOBDConstants.FT_PROPS:
-                    resource = new FileInputStream(generateUIFilePath(pathID,
-                            resourceName));
-                    Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
-                            + " loaded");
-                    break;
-
                 case OOBDConstants.FT_RAW:
                     resource = new FileInputStream(generateUIFilePath(pathID,
                             resourceName));
@@ -148,6 +166,10 @@ public class SwingSystem implements IFsystem, OOBDConstants {
 
                 case OOBDConstants.FT_DATABASE:
                 case OOBDConstants.FT_SCRIPT:
+                    Preferences appProbs = core.getSystemIF().loadPreferences(FT_PROPS,
+                            OOBDConstants.AppPrefsFileName);
+                    // save actual script directory to buffer it for later as webroot directory
+                    webRootDir = appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator;
                     String filePath = generateUIFilePath(pathID, resourceName);
                     Archive achive = Factory.getArchive(filePath);
                     achive.bind(filePath);
@@ -190,7 +212,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                     System.setProperty("https.proxyPort", Integer.toString(proxyPort));
 
                 }
-                return new ComPort_Kadaver(new URI(connectURL), thisProxy,proxyHost, proxyPort);
+                return new ComPort_Kadaver(new URI(connectURL), thisProxy, proxyHost, proxyPort);
 
             } catch (URISyntaxException ex) {
                 Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);

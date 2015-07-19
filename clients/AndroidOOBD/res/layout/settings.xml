@@ -5,6 +5,12 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
+    <CheckBox
+        android:id="@+id/HTTPCheckBox"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/http_checkbox" />
+
     <TextView
         android:id="@+id/pgpStatustextView"
         android:layout_width="fill_parent"
