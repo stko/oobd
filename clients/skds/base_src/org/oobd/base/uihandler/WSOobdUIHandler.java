@@ -5,16 +5,15 @@
 package org.oobd.base.uihandler;
 
 import org.oobd.base.*;
+import org.oobd.base.OOBDConstants;
 import org.oobd.base.support.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONException;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -38,6 +37,12 @@ import org.java_websocket.server.WebSocketServer;
 import org.oobd.base.scriptengine.OobdScriptengine;
 import org.oobd.base.visualizer.Visualizer;
 
+import java.util.Map;
+import java.io.IOException;
+import fi.iki.elonen.NanoHTTPD;
+import java.io.FileInputStream;
+import java.io.InputStream;
+
 /**
  * generic abstract for the implementation of scriptengines
  *
@@ -48,10 +53,11 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
 
     protected Onion myStartupParam;
     ChatServer wsServer;
- final HashMap<String, ArrayList<Visualizer>> visualizers = new HashMap<String, ArrayList<Visualizer>>();// /<stores all available visalizers
+    OOBDHttpServer myWebServer;
+    final HashMap<String, ArrayList<Visualizer>> visualizers = new HashMap<String, ArrayList<Visualizer>>();// /<stores all available visalizers
     IFui userInterface;
     public static String ownerEngine;
-    
+
     public static String publicName() {
         /* the abstract class also needs to have this method, because it'wsServer also loaded during dynamic loading, and the empty return string
          ** is the indicator for this abstract class
@@ -71,7 +77,6 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
     public void start() {
         System.err.println("Start WEB SERVER");
 
-
         WebSocketImpl.DEBUG = true;
         int port = 8887; // 843 flash policy port
         try {
@@ -82,63 +87,53 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
         wsServer.start();
         System.out.println("ChatServer started on port: " + wsServer.getPort());
 
- /*
-        BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
-        while (true) {
-            try {
-                String in = sysin.readLine();
-
-                wsServer.sendToAll(in);
-                if (in.equals("exit")) {
-                    wsServer.stop();
-                    break;
-                } else if (in.equals("restart")) {
-                    wsServer.stop();
-                    wsServer.start();
-                    break;
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-        /*       
-        OOBDWebSocketServer webSocketServer = new OOBDWebSocketServer();
-        webSocketServer.setHost("localhost");
-        webSocketServer.setPort(8443);
         try {
-        webSocketServer.setKeyStoreResource(new FileResource(OOBDWebSocketServer.class.getResource("/keystore.jks")));
-        webSocketServer.setKeyStorePassword("password");
-        webSocketServer.setKeyManagerPassword("password");
-        webSocketServer.addWebSocket(MyWebSocket.class, "/");
-        webSocketServer.initialize();
-        webSocketServer.start();
-        // set userInterface here (somehow..)
-        } catch (Exception ex) {
-        Logger.getLogger(WSOobdUIHandler.class.getName()).log(Level.SEVERE, null, ex);
+            myWebServer = new OOBDHttpServer();
+        } catch (IOException ioe) {
+            System.err.println("Couldn't start server:\n" + ioe);
         }
+
+        /*
+         BufferedReader sysin = new BufferedReader(new InputStreamReader(System.in));
+         while (true) {
+         try {
+         String in = sysin.readLine();
+
+         wsServer.sendToAll(in);
+         if (in.equals("exit")) {
+         wsServer.stop();
+         break;
+         } else if (in.equals("restart")) {
+         wsServer.stop();
+         wsServer.start();
+         break;
+         }
+         } catch (Exception ex) {
+         ex.printStackTrace();
+         }
+         }
+
+
+         */
+        /*       
+         OOBDWebSocketServer webSocketServer = new OOBDWebSocketServer();
+         webSocketServer.setHost("localhost");
+         webSocketServer.setPort(8443);
+         try {
+         webSocketServer.setKeyStoreResource(new FileResource(OOBDWebSocketServer.class.getResource("/keystore.jks")));
+         webSocketServer.setKeyStorePassword("password");
+         webSocketServer.setKeyManagerPassword("password");
+         webSocketServer.addWebSocket(MyWebSocket.class, "/");
+         webSocketServer.initialize();
+         webSocketServer.start();
+         // set userInterface here (somehow..)
+         } catch (Exception ex) {
+         Logger.getLogger(WSOobdUIHandler.class.getName()).log(Level.SEVERE, null, ex);
+         }
          */
     }
 
-
-
-
-
-
-   Onion actionRequest(Onion myOnion) {
+    Onion actionRequest(Onion myOnion) {
         try {
             if (myOnion.isType(CM_VISUALIZE)) {
                 //userInterface.visualize(myOnion);
@@ -163,14 +158,14 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
 
             if (myOnion.isType(CM_PAGE)) {
                 //userInterface.openPage(myOnion.getOnionString("owner"),
-                 //       myOnion.getOnionString("name"), 1, 1);
+                //       myOnion.getOnionString("name"), 1, 1);
                 wsServer.sendToAll(myOnion.toString());
                 return null;
             }
             if (myOnion.isType(CM_PAGEDONE)) {
                 //userInterface.openPageCompleted(
-                 //       myOnion.getOnionString("owner"),
-                  //      myOnion.getOnionString("name"));
+                //       myOnion.getOnionString("owner"),
+                //      myOnion.getOnionString("name"));
                 wsServer.sendToAll(myOnion.toString());
                 return null;
             }
@@ -215,14 +210,12 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
 
     /**
      * \brief add generated visualizers to global list
-     * 
+     *
      * several owners (=scriptengines) do have their own visualizers. This is
      * stored in the visualizers hash
-     * 
-     * @param owner
-     *            who owns the visualizer
-     * @param vis
-     *            the visualizer
+     *
+     * @param owner who owns the visualizer
+     * @param vis the visualizer
      */
     public void addVisualizer(String owner, Visualizer vis) {
         if (visualizers.containsKey(owner)) {
@@ -236,10 +229,9 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
 
     /**
      * \brief Tells Value to all visualizers of a scriptengine
-     * 
-     * @param value
-     *            Onion containing value and scriptengine
-     * 
+     *
+     * @param value Onion containing value and scriptengine
+     *
      */
     public void handleValue(Onion value) {
         String owner = value.getOnionString("owner/name"); // who'wsServer the owner of
@@ -266,10 +258,9 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
 
     /**
      * \brief Tells Value to all visualizers of a scriptengine
-     * 
-     * @param value
-     *            Onion containing value and scriptengine
-     * 
+     *
+     * @param value Onion containing value and scriptengine
+     *
      */
     public void openTempFile(Onion value) {
         InputStreamReader myInputStream = null;
@@ -337,7 +328,6 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
                 }
             }
 
-
             if (myInputStream != null) {
                 OobdScriptengine actEngine = getCore().getScriptEngine(owner);
                 getCore().getSystemIF().createEngineTempInputFile(actEngine);
@@ -354,13 +344,13 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
 
     /**
      * \brief updates all visualizers
-     * 
+     *
      * to not having several UI refreshes in parallel, update requests are only
      * be collected for each visualizer and only been refreshed when the central
      * core raises this update event.
-     * 
-     * 
-     * 
+     *
+     *
+     *
      */
     public void updateVisualizers() {
         synchronized (visualizers) { // Collection<ArrayList<Visualizer>> c =
@@ -412,27 +402,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
         }
     }
 
-
-
-
-
-
-
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
 
 class ChatServer extends WebSocketServer {
 
@@ -446,46 +416,46 @@ class ChatServer extends WebSocketServer {
 
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
-         System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
+        System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-         System.out.println(conn + " has left the room!");
+        System.out.println(conn + " has left the room!");
     }
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-         System.out.println(conn + ": " + message);
-                        try {
-                            Onion webvis=new Onion(message);
-                            System.out.println("messagetext:"+""
-                            + "{" + "'type':'"
-                            + OOBDConstants.CM_UPDATE + "',"
-                            + "'vis':'" + webvis.getOnionString("name") + "',"
-                            + "'to':'" + WSOobdUIHandler.ownerEngine
-                            + "'," + "'optid':'" + webvis.getOnionString("optId")
-                            + "'," + "'actValue':'"
-                            + webvis.getOnionString("value") + "',"
-                            + "'updType':"
-                            + Integer.toString(webvis.getInt("type")) + "}");
-                            
-                    Core.getSingleInstance().transferMsg(
-                            new Message(Core.getSingleInstance(),
+        System.out.println(conn + ": " + message);
+        try {
+            Onion webvis = new Onion(message);
+            System.out.println("messagetext:" + ""
+                    + "{" + "'type':'"
+                    + OOBDConstants.CM_UPDATE + "',"
+                    + "'vis':'" + webvis.getOnionString("name") + "',"
+                    + "'to':'" + WSOobdUIHandler.ownerEngine
+                    + "'," + "'optid':'" + webvis.getOnionString("optId")
+                    + "'," + "'actValue':'"
+                    + webvis.getOnionString("value") + "',"
+                    + "'updType':"
+                    + Integer.toString(webvis.getInt("type")) + "}");
+
+            Core.getSingleInstance().transferMsg(
+                    new Message(Core.getSingleInstance(),
                             OOBDConstants.UIHandlerMailboxName, new Onion(""
-                            + "{" + "'type':'"
-                            + OOBDConstants.CM_UPDATE + "',"
-                            + "'vis':'" + webvis.getOnionString("name") + "',"
-                            + "'to':'" + WSOobdUIHandler.ownerEngine
-                            + "'," + "'optid':'" + webvis.getOnionString("optId")
-                            + "'," + "'actValue':'"
-                            + webvis.getOnionString("value") + "',"
-                            + "'updType':"
-                            + Integer.toString(webvis.getInt("type")) + "}")));
-                } catch (JSONException ex) {
-                    Logger.getLogger(Visualizer.class.getName()).log(
-                            Level.SEVERE, null, ex);
-                }
+                                    + "{" + "'type':'"
+                                    + OOBDConstants.CM_UPDATE + "',"
+                                    + "'vis':'" + webvis.getOnionString("name") + "',"
+                                    + "'to':'" + WSOobdUIHandler.ownerEngine
+                                    + "'," + "'optid':'" + webvis.getOnionString("optId")
+                                    + "'," + "'actValue':'"
+                                    + webvis.getOnionString("value") + "',"
+                                    + "'updType':"
+                                    + Integer.toString(webvis.getInt("type")) + "}")));
+        } catch (JSONException ex) {
+            Logger.getLogger(Visualizer.class.getName()).log(
+                    Level.SEVERE, null, ex);
+        }
 
     }
 
@@ -498,7 +468,7 @@ class ChatServer extends WebSocketServer {
         WebSocketImpl.DEBUG = true;
         int port = 8887; // 843 flash policy port
         try {
-            port = Integer.parseInt(args[ 0]);
+            port = Integer.parseInt(args[0]);
         } catch (Exception ex) {
         }
         ChatServer s = new ChatServer(port);
@@ -530,11 +500,9 @@ class ChatServer extends WebSocketServer {
 
     /**
      * Sends <var>text</var> to all currently connected WebSocket clients.
-     * 
-     * @param text
-     *            The String to send across the network.
-     * @throws InterruptedException
-     *             When socket related I/O errors occur.
+     *
+     * @param text The String to send across the network.
+     * @throws InterruptedException When socket related I/O errors occur.
      */
     public void sendToAll(String text) {
         Collection<WebSocket> con = connections();
@@ -542,6 +510,100 @@ class ChatServer extends WebSocketServer {
             for (WebSocket c : con) {
                 c.send(text);
             }
+        }
+    }
+}
+
+class OOBDHttpServer extends NanoHTTPD {
+
+    
+        public static final String MIME_DEFAULT_BINARY = "application/octet-stream";
+
+   
+    /**
+     * Hashtable mapping (String)FILENAME_EXTENSION -> (String)MIME_TYPE
+     */
+    @SuppressWarnings("serial")
+    private static final Map<String, String> MIME_TYPES = new HashMap<String, String>() {
+
+        {
+            put("css", "text/css");
+            put("htm", "text/html");
+            put("html", "text/html");
+            put("xml", "text/xml");
+            put("java", "text/x-java-source, text/java");
+            put("md", "text/plain");
+            put("txt", "text/plain");
+            put("asc", "text/plain");
+            put("gif", "image/gif");
+            put("jpg", "image/jpeg");
+            put("jpeg", "image/jpeg");
+            put("png", "image/png");
+            put("svg", "image/svg+xml");
+            put("mp3", "audio/mpeg");
+            put("m3u", "audio/mpeg-url");
+            put("mp4", "video/mp4");
+            put("ogv", "video/ogg");
+            put("flv", "video/x-flv");
+            put("mov", "video/quicktime");
+            put("swf", "application/x-shockwave-flash");
+            put("js", "application/javascript");
+            put("pdf", "application/pdf");
+            put("doc", "application/msword");
+            put("ogg", "application/x-ogg");
+            put("zip", "application/octet-stream");
+            put("exe", "application/octet-stream");
+            put("class", "application/octet-stream");
+            put("m3u8", "application/vnd.apple.mpegurl");
+            put("ts", " video/mp2t");
+        }
+    };
+
+    
+    
+    
+    public OOBDHttpServer() throws IOException {
+        super(8080);
+        start();
+        System.out.println("\nRunning! Point your browers to http://localhost:8080/ \n");
+    }
+
+    public static void main(String[] args) {
+        try {
+            new OOBDHttpServer();
+        } catch (IOException ioe) {
+            System.err.println("Couldn't start server:\n" + ioe);
+        }
+    }
+    
+
+        // Get MIME type from file name extension, if possible
+    private String getMimeTypeForFile(String uri) {
+        int dot = uri.lastIndexOf('.');
+        String mime = null;
+        if (dot >= 0) {
+            mime = MIME_TYPES.get(uri.substring(dot + 1).toLowerCase());
+        }
+        return mime == null ? MIME_DEFAULT_BINARY : mime;
+    }
+
+    @Override
+    public NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+        System.err.println("url path:" + session.getUri());
+        String msg = "<html><body><h1>Hello server</h1>\n";
+        Map<String, String> parms = session.getParms();
+        if (parms.get("username") == null) {
+            msg += "<form action='?' method='get'>\n  <p>Your name: <input type='text' name='username'></p>\n" + "</form>\n";
+        } else {
+            msg += "<p>Hello, " + parms.get("username") + "!</p>";
+        }
+        //return newFixedLengthResponse( msg + "</body></html>\n" );
+        InputStream myFileStream = Core.getSingleInstance().getSystemIF().generateResourceStream(OOBDConstants.FT_WEBPAGE, session.getUri());
+        if (myFileStream != null) {
+            return newChunkedResponse(Response.Status.OK, getMimeTypeForFile(session.getUri()), myFileStream);
+        } else {
+            
+             return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "war nix..");
         }
     }
 }

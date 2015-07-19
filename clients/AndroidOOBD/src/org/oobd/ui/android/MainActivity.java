@@ -313,12 +313,22 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	public void announceUIHandler(String id, String visibleName) {
-		Onion onion = new Onion();
-		String seID = OOBDApp.getInstance().getCore()
-				.createUIHandler(id, onion);
+		System.out
+				.println("UIHandler id:" + id + " visibleName:" + visibleName);
 
-		OOBDApp.getInstance().getCore().startUIHandler(seID, onion);
+		if (preferences == null) {
+			preferences = getSharedPreferences("OOBD_SETTINGS", MODE_PRIVATE);
+		}
+		if (preferences != null) {
+			if (preferences.getString(OOBDConstants.PropName_UIHander,
+					"UIHandler").equalsIgnoreCase(visibleName)) {
+				Onion onion = new Onion();
+				String seID = OOBDApp.getInstance().getCore()
+						.createUIHandler(id, onion);
 
+				OOBDApp.getInstance().getCore().startUIHandler(seID, onion);
+			}
+		}
 	}
 
 	/** Called when the activity is first created. */
@@ -819,8 +829,8 @@ public class MainActivity extends FragmentActivity implements
 								mHandler.sendMessage(m);
 
 							}
-//						}).show();
-				});
+							// }).show();
+						});
 		try {
 			customAlert.show();
 			// Looper.getMainLooper().loop();

@@ -84,6 +84,16 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 		mToast.setText(text);
 		mToast.show();
 	}
+	
+	 String mapDirectory(String mapDir, String path) {
+         System.err.println("MapDirecory mapdir "+mapDir+" path "+path+ " Startswith: "+"/" + mapDir.toLowerCase());
+   if (path.toLowerCase().startsWith("/" + mapDir.toLowerCase())) {
+        path = path.substring(mapDir.length() + 1);
+        return path;
+    } else {
+        return "";
+    }
+}
 
 	public InputStream generateResourceStream(int pathID, String resourceName)
 			throws java.util.MissingResourceException {
@@ -102,6 +112,16 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 						+ " could not loaded from /sdcard/oobd", e);
 			}
 			return resource;
+        case OOBDConstants.FT_WEBPAGE:
+            String newPath=mapDirectory("libs",resourceName);
+            if (!newPath.equals("")){
+                // CAUTION: This directory mapping is only temporary, as Android does not
+            	//handle any webapp subdirectories.
+            	//this is just a dirty hack
+            	//resourceName="/../libs/"+newPath;
+                resourceName="/libs/"+newPath;
+            }
+        // please notice: here's no case "break"!
 		case OOBDConstants.FT_DATABASE:
 		case OOBDConstants.FT_SCRIPT:
 			try {

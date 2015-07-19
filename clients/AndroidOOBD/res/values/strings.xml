@@ -8,4 +8,5 @@
     <string name="pgpimportKeybutton">Import PGP Keys now</string>
     <string name="remote_connect">Remote Connect</string>
     <string name="remote_connect_Proxy_port">Remote Connect Proxy Port (0 to disable)</string>
+    <string name="http_checkbox">HTTP Nuke\'m Mode</string>
 </resources>
