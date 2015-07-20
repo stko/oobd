@@ -122,7 +122,7 @@ end
 
 
 function getStringPart(text, index)
-	DEBUGPRINT("nexulm", 1, "lua_utils.lua - getStringPart,%02d: %s", "00", "enter function getStringPart")
+	DEBUGPRINT("nexulm", 1, "serial_dxm.lua - getStringPart,%02d: %s", "00", "enter function getStringPart")
 	start, finish = string.find(text," ")
 	loop = 0
 	first = ""

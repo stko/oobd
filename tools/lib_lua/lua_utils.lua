@@ -127,38 +127,38 @@ end
 function selectModuleID(oldvalue,id)
 	DEBUGPRINT("nexulm", 1, "lua_utils.lua - selectModuleID,%02d: %s", "00", "enter function selectModuleID")
 	index = tonumber(oldvalue)
-	
-	if index == 0 then
+
+	if index == 0 or index == 1 or index == 2 then
 		if hardwareID == 0 or hardwareID == 1 then	-- if ELM327/DXM1 is selected so default is set autoprobing diag protocol on
      		setBus("autoprobing")					-- set automatic protocol detection
 		else
 			setBus("HS-CAN")						-- set HS-CAN 500kbit/s, 11bit
 		end
 		activateBus()
-		setModuleID("7DF")						-- set legislated OBD/WWH-OBD functional request 11bit CAN-ID
-		setSendID("7E8") 						-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
-		setCANFilter(1,"7E8","7FF")				-- set CAN-Filter of ECU request/response CAN-ID range
+		if index == 1 then
+			setModuleID("7E0")						-- set legislated OBD/WWH-OBD physical request 11bit CAN-ID for ECM
+			setSendID("7E8") 						-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
+		elseif index == 2 then
+			setModuleID("7E1")						-- set legislated OBD/WWH-OBD physical request 11bit CAN-ID for TCM
+			setSendID("7E9") 						-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
+		else	-- index == 0
+			setModuleID("7DF")						-- set legislated OBD/WWH-OBD functional request 11bit CAN-ID
+			setSendID("7E8") 						-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
+		end
+		setCANFilter(1,"7E0","7F0")					-- set CAN-Filter of ECU request/response CAN-ID range
 		ModuleID = oldvalue;
-	elseif index == 9 then						-- 29bit identifier
+	elseif index == 9 or index == 10 or index == 11 then	-- 29bit identifier
 		DEBUGPRINT("nexulm", 1, "lua_utils.lua - selectModuleID,%02d: %s", "01", "index 9, setBus(500b29)")
 		setBus("500b29")						-- set HS-CAN 500kbit/s, 29bit
 		activateBus()
-		setModuleID("18DB33F1")					-- set legislated OBD/WWH-OBD functional request 29bit CAN-ID
+		if index == 10 then
+			setModuleID("18DA10F1")					-- set legislated OBD/WWH-OBD physical request 29bit CAN-ID for ECM		
+		elseif index == 11 then
+			setModuleID("18DA11F1")					-- set legislated OBD/WWH-OBD physical request 29bit CAN-ID	for TCM
+		else 	-- index == 9
+			setModuleID("18DB33F1")					-- set legislated OBD/WWH-OBD functional request 29bit CAN-ID
+		end
 		setSendID("18DAF110")					-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
-		setCANFilter(1,"18DAF100","1FFFFF00")	-- set CAN-Filter of ECU response 29bit CAN-ID range only
-		ModuleID = oldvalue;
-	elseif index == 10 then						-- 29bit identifier
-		setBus("500b29")						-- set HS-CAN 500kbit/s, 29bit
-		activateBus()
-		setModuleID("18DA10F1")					-- set legislated OBD/WWH-OBD physical request 29bit CAN-ID
-		setSendID("18DAF110")					-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
-		setCANFilter(1,"18DAF100","1FFFFF00")	-- set CAN-Filter of ECU response 29bit CAN-ID range only
-		ModuleID = oldvalue;
-	elseif index == 11 then						-- 29bit identifier
-		setBus("500b29")						-- set HS-CAN 500kbit/s, 29bit
-		activateBus()
-		setModuleID("18DA11F1")					-- set legislated OBD/WWH-OBD physical request 29bit CAN-ID
-		setSendID("18DAF111")					-- set default to legislated OBD/WWH-OBD physical response ID (ECU #2 - TCM, Transmission Control Module)
 		setCANFilter(1,"18DAF100","1FFFFF00")	-- set CAN-Filter of ECU response 29bit CAN-ID range only
 		ModuleID = oldvalue;
 	else
