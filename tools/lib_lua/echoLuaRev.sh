@@ -5,7 +5,5 @@ if [ $? -ne 0 ] || [ -z $REV ]; then
 	if [ $? -ne 0 ] || [ -z $REV ]; then
 		REV=0;
 	fi
-else
-	REV=0;
 fi
 echo $1=\"$REV\"
