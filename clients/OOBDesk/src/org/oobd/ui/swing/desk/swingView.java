@@ -1221,7 +1221,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     public void announceUIHandler(String id, String visibleName) {
         Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: UIHandler-ID: {0} visibleName:{1}", new Object[]{id, visibleName
                 });
-        if (appProbs.get(OOBDConstants.PropName_UIHander, "UIHandler").equalsIgnoreCase(visibleName)) {
+        if (appProbs.get(OOBDConstants.PropName_UIHander, "LocalOobdUIHandler").equalsIgnoreCase(visibleName)) {
             Onion onion = new Onion();
             String seID = oobdCore.createUIHandler(id, onion);
 
