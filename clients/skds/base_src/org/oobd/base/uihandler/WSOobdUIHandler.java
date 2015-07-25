@@ -62,7 +62,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
         /* the abstract class also needs to have this method, because it'wsServer also loaded during dynamic loading, and the empty return string
          ** is the indicator for this abstract class
          */
-        return "webUIHandler";
+        return "WebUIHandler";
     }
 
     public WSOobdUIHandler(String myID, Core myCore, IFsystem mySystem, String name) {

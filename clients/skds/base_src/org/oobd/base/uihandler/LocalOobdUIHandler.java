@@ -43,7 +43,7 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
         /* the abstract class also needs to have this method, because it's also loaded during dynamic loading, and the empty return string
          ** is the indicator for this abstract class
          */
-        return "";
+        return "LocalOobdUIHandler";
     }
 
     public LocalOobdUIHandler(String myID, Core myCore, IFsystem mySystem, String name) {
