@@ -641,15 +641,13 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         String seID = id + "." + i.toString();
 
         OobdUIHandler o = null;
-        WSOobdUIHandler o1=null;
-        Class[] argsClass = new Class[4]; // first we set up an pseudo - args -
+        Class[] argsClass = new Class[3]; // first we set up an pseudo - args -
         // array for the scriptengine-
         // constructor
         argsClass[0] = seID.getClass(); // and fill it with the info of the
         // arguments classes
         argsClass[1] = this.getClass();
         argsClass[2] = IFsystem.class;
-        argsClass[3] = String.class;
         Class classRef = (Class) uiHandlers.get(id); // then we get the class of
         // the
         // wanted scriptengine
@@ -663,10 +661,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             // to the
             // args
             // classes
-            Object[] args = {seID, this, systemInterface,new String(OOBDConstants.UIHandlerMailboxName)}; // creating the
+            Object[] args = {seID, this, systemInterface}; // creating the
             // args-array
-      //       o1 =  (WSOobdUIHandler) con.newInstance(args); // and finally create
-           o = (OobdUIHandler) con.newInstance(seID, this, systemInterface,OOBDConstants.UIHandlerMailboxName); // and finally create
+           o = (OobdUIHandler) con.newInstance(seID, this, systemInterface); // and finally create
             // the object from
             // the scriptengine
             // class with its
@@ -675,7 +672,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        activeUIHandlers.put(seID, o1); // store the new created scriptengine
+        activeUIHandlers.put(seID, o); // store the new created scriptengine
         uiHandlerID = seID;
         return seID;
     }
