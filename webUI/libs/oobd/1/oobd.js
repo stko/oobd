@@ -71,6 +71,7 @@ if (typeof Oobd == "undefined") {
 			if ('WebSocket' in window){
 				/* WebSocket is supported. You can proceed with your code*/
 				this.connection = new WebSocket(uri);
+				this.visualizers = new Array();
 				this.connection.onopen = function(){
 					/*Send a small message to the console once the connection is established */
 					console.log('Connection open!');
@@ -84,26 +85,38 @@ if (typeof Oobd == "undefined") {
 					console.log("data "+rawMsg.data);
 					try {
 						var obj = JSON.parse(rawMsg.data);
+						console.log(obj);
 						console.log("type: "+obj.type);
 						if (obj.type=="VALUE"){
 							console.log("b64_value: "+obj.value);
-							var server_message = atob(obj.value);
-							var owner = obj.to.name;	// Get all svg images, which are defined as OOBDMap class
-	var a = document.getElementsByClassName("OOBDMap");
-	var oobdpatt = new RegExp("^oobd_"); // Regex pattern for svg area identification
-	for (index = 0; index < a.length; ++index) { // go through all images found
-		var svgDoc = a[index].contentDocument;
-		var svgItem = svgDoc.getElementsByTagName("*"); //list all image elements
-		for (i2 = 0; i2 < svgItem.length; ++i2) {
-			var name=svgItem[i2].getAttribute("id"); 
-			console.log("element:"+name);
-			 if (oobdpatt.test(name)){//is the element a oobd map area
-				console.log("passt: "+name);
-				Oobd.addObject(svgItem[i2],"");
-				svgItem[i2].setAttribute("style", "fill:#FF0000");
-			}
-		}
-	}
+							var server_message = "";
+							if (typeof obj.value != "undefined"  && obj.value.length>0){
+							  server_message = atob(obj.value);
+							}
+							var owner = obj.to.name;
+							// Get all svg images, which are defined as OOBDMap class
+							for (i = 0; i < Oobd.visualizers.length; ++i) { // search for the real id of a function owner
+							  if (Oobd.visualizers[i].command==owner){
+							    owner=Oobd.visualizers[i].name;
+							    i=Oobd.visualizers.length; //break
+							  }
+							}
+							
+							var a = document.getElementsByClassName("OOBDMap");
+							var oobdpatt = new RegExp("^oobd_"); // Regex pattern for svg area identification
+							for (index = 0; index < a.length; ++index) { // go through all images found
+								var svgDoc = a[index].contentDocument;
+								var svgItem = svgDoc.getElementsByTagName("*"); //list all image elements
+								for (i2 = 0; i2 < svgItem.length; ++i2) {
+									var name=svgItem[i2].getAttribute("id"); 
+									console.log("element:"+name);
+									if (oobdpatt.test(name)){//is the element a oobd map area
+										console.log("passt: "+name);
+										Oobd.addObject(svgItem[i2],"");
+										svgItem[i2].setAttribute("style", "fill:#FF0000");
+									}
+								}
+							}
 
 							console.log("owner:"+owner);
 							var h= document.getElementById(owner);
