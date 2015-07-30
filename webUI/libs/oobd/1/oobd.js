@@ -31,28 +31,36 @@ var readyStateCheckInterval = setInterval(function() {
     if (document.readyState === "complete") {
         clearInterval(readyStateCheckInterval);
 	Oobd.init('ws://localhost:8443');
-	registerOOBD("oobd_te-interface_serial:","");
-	registerOOBD("oobd_te-interface_version:","");
-	registerOOBD("oobd_te-interface_voltage:","");
-	registerOOBD("oobd_te-interface_bus:","");
-
-	// Get all svg images, which are defined as OOBDMap class
-	var a = document.getElementsByClassName("OOBDMap");
-	var oobdpatt = new RegExp("^oobd_"); // Regex pattern for svg area identification
+	// Get all elements, which are defined as oobd class
+	var a = document.getElementsByClassName("OOBD");
 	for (index = 0; index < a.length; ++index) { // go through all images found
-		var svgDoc = a[index].contentDocument;
-		var svgItem = svgDoc.getElementsByTagName("*"); //list all image elements
-		for (i2 = 0; i2 < svgItem.length; ++i2) {
-			var name=svgItem[i2].getAttribute("id"); 
-			console.log("element:"+name);
-			 if (oobdpatt.test(name)){//is the element a oobd map area
-				console.log("passt: "+name);
-				Oobd.addObject(svgItem[i2],"");
-				svgItem[i2].setAttribute("style", "fill:#FF0000");
-			}
+		var oobdElement = a[index];
+		var type=oobdElement.getAttribute("oobd:type");
+		var name=oobdElement.getAttribute("id"); 
+		console.log("oobdtype:"+type);
+		console.log("id:"+name);
+		if (type=="te"){
+			oobdElement.oodbupdate= function(input){
+				oobdElement.getElementsByClassName("value")[0].innerHTML = atob(input.value);
+			};
+			Oobd.addObject(oobdElement,"");
 		}
 	}
 
+	// Get all svg images, which are defined as OOBDMap class
+	var a = document.getElementsByClassName("OOBDMap");
+	for (index = 0; index < a.length; ++index) { // go through all images found
+		var svgDoc = a[index].contentDocument;
+		var svgItem = svgDoc.getElementsByClassName("oobd");
+		for (i2 = 0; i2 < svgItem.length; ++i2) {
+			var type=svgItem[i2].getAttribute("oobd:type"); 
+			var fc=svgItem[i2].getAttribute("oobd:fc"); 
+			console.log("oobd:type:"+name);
+			console.log("oobd:fc:"+fc);
+			Oobd.addObject(svgItem[i2],"");
+			svgItem[i2].oodbupdate("bla");
+		}
+	}
     }
 }, 10);
 
@@ -148,9 +156,11 @@ if (typeof Oobd == "undefined") {
 				thisElement = new Object();
 				thisElement["name"] = obj.getAttribute("id");
 				var params=this.splitID(obj.getAttribute("id"));
-				console.log(params); 
-				thisElement["type"] = params[1];
-				thisElement["command"] = params[2];
+				thisElement["type"] = obj.getAttribute("oobd:type");
+				thisElement["command"] = obj.getAttribute("oobd:fc");
+				console.log("id:"+thisElement["name"]); 
+				console.log("type:"+thisElement["type"]); 
+				console.log("fc:"+thisElement["command"]); 
 				thisElement["object"]=obj;
 				obj.oobd.command = params[2];
 				this.visualizers.push(thisElement);
@@ -158,6 +168,8 @@ if (typeof Oobd == "undefined") {
 					console.log("clicked element "+this.id);
 					console.log("clicked command "+obj.oobd.command);
 					Oobd.connection.send("{'name'='"+obj.oobd.command+"','opt'='','value'='"+btoa(this.oobd.value)+"','type'=1}");
+					this.getElementsByClassName("name")[0].innerHTML = "Name";
+					this.getElementsByClassName("value")[0].innerHTML = "Wert";
 				});
 		}
 		
