@@ -132,6 +132,12 @@ if (typeof Oobd == "undefined") {
 							h.oobd.onion=obj;
 							h.oodbupdate(obj);
 						}
+						if (obj.type=="WRITESTRING"){
+						if (typeof Oobd.writeString != "undefined"  && typeof obj.value != "undefined" && obj.value.length>0){
+							  console.log("output:"+obj.value);
+							  Oobd.writeString(obj.value);
+							}
+						}
 					}
 					catch(err){
 						console.log("Json Error "+err.message);
