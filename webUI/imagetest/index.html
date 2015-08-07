@@ -4,7 +4,10 @@
 <head><meta charset="utf-8">
 <script type="text/javascript" src="../libs/oobd/1/oobd.js"></script>
 <script type="text/javascript">
-
+Oobd.writeString=function addText(text) {
+    var targ = event.target || event.srcElement;
+    document.getElementById("textoutput").value += text;
+}
 </script>
 
 </script>
@@ -21,6 +24,8 @@ System Info:
 <tr class="OOBD" oobd:type="te" id=oobd_te-interface_voltage:"><td class="name">Voltage</td> <td class="value">Click for Update</td></tr>
 <tr class="OOBD" oobd:type="te" id=oobd_te-interface_bus:"><td class="name">Bus</td>         <td class="value">Click for Update</td></tr>
 </table>
+<p>Outputs<p>
+    <textarea id="textoutput"></textarea>
 <script type="text/javascript">
 </script>
 
