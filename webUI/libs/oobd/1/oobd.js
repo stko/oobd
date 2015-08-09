@@ -41,7 +41,7 @@ var readyStateCheckInterval = setInterval(function() {
 		console.log("id:"+name);
 		if (type=="te"){
 			oobdElement.oodbupdate= function(input){
-				oobdElement.getElementsByClassName("value")[0].innerHTML = atob(input.value);
+				this.getElementsByClassName("value")[0].innerHTML = atob(input.value);
 			};
 			Oobd.addObject(oobdElement,"");
 		}
@@ -58,7 +58,7 @@ var readyStateCheckInterval = setInterval(function() {
 			console.log("oobd:type:"+name);
 			console.log("oobd:fc:"+fc);
 			Oobd.addObject(svgItem[i2],"");
-			svgItem[i2].oodbupdate("bla");
+			// svgItem[i2].oodbupdate("bla");
 		}
 	}
     }
@@ -97,45 +97,21 @@ if (typeof Oobd == "undefined") {
 						console.log("type: "+obj.type);
 						if (obj.type=="VALUE"){
 							console.log("b64_value: "+obj.value);
-							var server_message = "";
-							if (typeof obj.value != "undefined"  && obj.value.length>0){
-							  server_message = atob(obj.value);
-							}
+							console.log("decoded value: "+atob(obj.value));
 							var owner = obj.to.name;
+							console.log("Update values received for:"+owner);
 							// Get all svg images, which are defined as OOBDMap class
 							for (i = 0; i < Oobd.visualizers.length; ++i) { // search for the real id of a function owner
-							  if (Oobd.visualizers[i].command==owner){
-							    owner=Oobd.visualizers[i].name;
-							    i=Oobd.visualizers.length; //break
-							  }
-							}
-							
-							var a = document.getElementsByClassName("OOBDMap");
-							var oobdpatt = new RegExp("^oobd_"); // Regex pattern for svg area identification
-							for (index = 0; index < a.length; ++index) { // go through all images found
-								var svgDoc = a[index].contentDocument;
-								var svgItem = svgDoc.getElementsByTagName("*"); //list all image elements
-								for (i2 = 0; i2 < svgItem.length; ++i2) {
-									var name=svgItem[i2].getAttribute("id"); 
-									console.log("element:"+name);
-									if (oobdpatt.test(name)){//is the element a oobd map area
-										console.log("passt: "+name);
-										Oobd.addObject(svgItem[i2],"");
-										svgItem[i2].setAttribute("style", "fill:#FF0000");
-									}
+								if (Oobd.visualizers[i].command==owner){
+									Oobd.visualizers[i].object.oodbupdate(obj);
 								}
 							}
-
-							console.log("owner:"+owner);
-							var h= document.getElementById(owner);
-							console.log("element:"+h.innerHTML);
-							h.oobd.onion=obj;
-							h.oodbupdate(obj);
 						}
 						if (obj.type=="WRITESTRING"){
-						if (typeof Oobd.writeString != "undefined"  && typeof obj.value != "undefined" && obj.value.length>0){
-							  console.log("output:"+obj.value);
-							  Oobd.writeString(obj.value);
+						if (typeof Oobd.writeString != "undefined"  && typeof obj.data != "undefined" && obj.data.length>0){
+							  console.log("output:"+decodeURIComponent(escape(atob(obj.data))));
+								// bizarre UTF-8 decoding...
+							  Oobd.writeString(decodeURIComponent(escape(atob(obj.data)))+"\n");
 							}
 						}
 					}
@@ -157,26 +133,35 @@ if (typeof Oobd == "undefined") {
 		},
 
 		addObject : function(obj, initialValue) {
-				obj.oobd=new Object();
-				obj.oobd.value=initialValue;
-				thisElement = new Object();
-				thisElement["name"] = obj.getAttribute("id");
-				var params=this.splitID(obj.getAttribute("id"));
-				thisElement["type"] = obj.getAttribute("oobd:type");
-				thisElement["command"] = obj.getAttribute("oobd:fc");
-				console.log("id:"+thisElement["name"]); 
-				console.log("type:"+thisElement["type"]); 
-				console.log("fc:"+thisElement["command"]); 
-				thisElement["object"]=obj;
-				obj.oobd.command = params[2];
-				this.visualizers.push(thisElement);
-				obj.addEventListener("click", function(){
-					console.log("clicked element "+this.id);
-					console.log("clicked command "+obj.oobd.command);
-					Oobd.connection.send("{'name'='"+obj.oobd.command+"','opt'='','value'='"+btoa(this.oobd.value)+"','type'=1}");
-					this.getElementsByClassName("name")[0].innerHTML = "Name";
-					this.getElementsByClassName("value")[0].innerHTML = "Wert";
-				});
+				if (obj.getAttribute("oobd:fc")== null){
+					console.log("Error: Object with id "+obj.getAttribute("id")+ " does not contain a functioncall (fc) attribut!"); 
+				}else{
+					obj.oobd=new Object();
+					obj.oobd.value=initialValue;
+					thisElement = new Object();
+					thisElement["name"] = obj.getAttribute("id");
+					thisElement["type"] = obj.getAttribute("oobd:type");
+					thisElement["command"] = obj.getAttribute("oobd:fc");
+					var params=obj.getAttribute("oobd:fc").match(/(\w+):(.+)/)
+					if (params != null && params.length>2){
+						thisElement["optid"] =params[2];
+					}else{
+						thisElement["optid"] ="";
+					}
+					console.log("id:"+thisElement["name"]); 
+					console.log("type:"+thisElement["type"]); 
+					console.log("fc:"+thisElement["command"]); 
+					console.log("optid:"+thisElement["optid"]); 
+					thisElement["object"]=obj;
+					obj.oobd.command = thisElement["command"];
+					obj.oobd.optid = thisElement["optid"];
+					this.visualizers.push(thisElement);
+					obj.addEventListener("click", function(){
+						console.log("clicked element "+this.id);
+						console.log("clicked command "+obj.oobd.command);
+						Oobd.connection.send("{'name'='"+this.oobd.command+"','optid'='"+this.oobd.optid+"','value'='"+btoa(this.oobd.value)+"','updType'=1}");
+					});
+				}
 		}
 		
 	}

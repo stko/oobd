@@ -134,53 +134,58 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
     }
 
     Onion actionRequest(Onion myOnion) {
-        try {
-            if (myOnion.isType(CM_VISUALIZE)) {
-                //userInterface.visualize(myOnion);
-                ownerEngine = myOnion.getOnion(OOBDConstants.FN_OWNER).getOnionString(OOBDConstants.FN_NAME);
-                wsServer.sendToAll(myOnion.toString());
-                return null;
-            }
-            if (myOnion.isType(CM_VALUE)) {
-                //handleValue(myOnion);
-                wsServer.sendToAll(myOnion.toString());
-                return null;
-            }
-            if (myOnion.isType(CM_IOINPUT)) {
-                openTempFile(myOnion);
-                return new Onion();
-            }
-            if (myOnion.isType(CM_UPDATE)) {
-                core.transferMsg(new Message(this, myOnion.getString("to"), myOnion));
-
-                return null;
-            }
-
-            if (myOnion.isType(CM_PAGE)) {
-                //userInterface.openPage(myOnion.getOnionString("owner"),
-                //       myOnion.getOnionString("name"), 1, 1);
-                wsServer.sendToAll(myOnion.toString());
-                return null;
-            }
-            if (myOnion.isType(CM_PAGEDONE)) {
-                //userInterface.openPageCompleted(
-                //       myOnion.getOnionString("owner"),
-                //      myOnion.getOnionString("name"));
-                wsServer.sendToAll(myOnion.toString());
-                return null;
-            }
-            if (myOnion.isType(CM_WRITESTRING)) {
-                //userInterface.sm(Base64Coder.decodeString(myOnion.getOnionString("data")));
-                wsServer.sendToAll(myOnion.toString());
-                return null;
-            }
-            if (myOnion.isType(CM_PARAM)) {
-                //return userInterface.requestParamInput(myOnion);
-            }
-        } catch (org.json.JSONException e) {
-            Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
-                    "JSON exception..");
+        if (myOnion.isType(CM_VISUALIZE)) {
+            //userInterface.visualize(myOnion);
+            ownerEngine = myOnion.getOnion(OOBDConstants.FN_OWNER).getOnionString(OOBDConstants.FN_NAME);
+            wsServer.sendToAll(myOnion.toString());
             return null;
+        }
+        if (myOnion.isType(CM_VALUE)) {
+            //handleValue(myOnion);
+            wsServer.sendToAll(myOnion.toString());
+            return null;
+        }
+        if (myOnion.isType(CM_IOINPUT)) {
+            openTempFile(myOnion);
+            return new Onion();
+        }
+        if (myOnion.isType(CM_UPDATE)) {
+            try {
+                //core.transferMsg(new Message(this, myOnion.getString("to"), myOnion));
+                //core.transferMsg(new Message(this, ownerEngine, myOnion));
+                System.out.println("Ownerengine:"+ownerEngine);
+                myOnion.put("to", ownerEngine);
+                core.transferMsg(new Message(this, myOnion.getString("to"), myOnion));
+                
+                
+                return null;
+            } catch (JSONException ex) {
+                Logger.getLogger(WSOobdUIHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        if (myOnion.isType(CM_PAGE)) {
+                //userInterface.openPage(myOnion.getOnionString("owner"),
+            //       myOnion.getOnionString("name"), 1, 1);
+             System.out.println("Openpage onion:"+myOnion);
+            ownerEngine = myOnion.getOnionString("owner");
+            wsServer.sendToAll(myOnion.toString());
+            return null;
+        }
+        if (myOnion.isType(CM_PAGEDONE)) {
+                //userInterface.openPageCompleted(
+            //       myOnion.getOnionString("owner"),
+            //      myOnion.getOnionString("name"));
+            wsServer.sendToAll(myOnion.toString());
+            return null;
+        }
+        if (myOnion.isType(CM_WRITESTRING)) {
+            //userInterface.sm(Base64Coder.decodeString(myOnion.getOnionString("data")));
+            wsServer.sendToAll(myOnion.toString());
+            return null;
+        }
+        if (myOnion.isType(CM_PARAM)) {
+            //return userInterface.requestParamInput(myOnion);
         }
         return null;
     }
@@ -434,11 +439,11 @@ class ChatServer extends WebSocketServer {
                     + OOBDConstants.CM_UPDATE + "',"
                     + "'vis':'" + webvis.getOnionString("name") + "',"
                     + "'to':'" + WSOobdUIHandler.ownerEngine
-                    + "'," + "'optid':'" + webvis.getOnionString("optId")
+                    + "'," + "'optid':'" + webvis.getOnionString("optid")
                     + "'," + "'actValue':'"
                     + webvis.getOnionString("value") + "',"
                     + "'updType':"
-                    + Integer.toString(webvis.getInt("type")) + "}");
+                    + Integer.toString(webvis.getInt("updType")) + "}");
 
             Core.getSingleInstance().transferMsg(
                     new Message(Core.getSingleInstance(),
@@ -447,11 +452,11 @@ class ChatServer extends WebSocketServer {
                                     + OOBDConstants.CM_UPDATE + "',"
                                     + "'vis':'" + webvis.getOnionString("name") + "',"
                                     + "'to':'" + WSOobdUIHandler.ownerEngine
-                                    + "'," + "'optid':'" + webvis.getOnionString("optId")
+                                    + "'," + "'optid':'" + webvis.getOnionString("optid")
                                     + "'," + "'actValue':'"
                                     + webvis.getOnionString("value") + "',"
                                     + "'updType':"
-                                    + Integer.toString(webvis.getInt("type")) + "}")));
+                                    + Integer.toString(webvis.getInt("updType")) + "}")));
         } catch (JSONException ex) {
             Logger.getLogger(Visualizer.class.getName()).log(
                     Level.SEVERE, null, ex);
@@ -516,10 +521,8 @@ class ChatServer extends WebSocketServer {
 
 class OOBDHttpServer extends NanoHTTPD {
 
-    
-        public static final String MIME_DEFAULT_BINARY = "application/octet-stream";
+    public static final String MIME_DEFAULT_BINARY = "application/octet-stream";
 
-   
     /**
      * Hashtable mapping (String)FILENAME_EXTENSION -> (String)MIME_TYPE
      */
@@ -559,9 +562,6 @@ class OOBDHttpServer extends NanoHTTPD {
         }
     };
 
-    
-    
-    
     public OOBDHttpServer() throws IOException {
         super(8080);
         start();
@@ -575,9 +575,8 @@ class OOBDHttpServer extends NanoHTTPD {
             System.err.println("Couldn't start server:\n" + ioe);
         }
     }
-    
 
-        // Get MIME type from file name extension, if possible
+    // Get MIME type from file name extension, if possible
     private String getMimeTypeForFile(String uri) {
         int dot = uri.lastIndexOf('.');
         String mime = null;
@@ -602,8 +601,8 @@ class OOBDHttpServer extends NanoHTTPD {
         if (myFileStream != null) {
             return newChunkedResponse(Response.Status.OK, getMimeTypeForFile(session.getUri()), myFileStream);
         } else {
-            
-             return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "war nix..");
+
+            return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "war nix..");
         }
     }
 }

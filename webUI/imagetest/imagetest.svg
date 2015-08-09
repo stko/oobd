@@ -23,7 +23,16 @@ function init(evt) {
 	var svgItem = svgDocument.getElementsByClassName("oobd");
 		for (i2 = 0; i2 < svgItem.length; ++i2) {
 		svgItem[i2].oodbupdate= function(input){
-			this.setAttribute("style", "fill:#FF0000");
+			var value=atob(input.value);
+			if (value=="i"){ // no anser from module, so ignored
+				this.setAttribute("style", "fill:#75A3A3");
+			} else if (value=="n"){ // no errors, so green
+					this.setAttribute("style", "fill:#66FF33");
+			} else if (value=="y"){ //  errors, so orange
+				this.setAttribute("style", "fill:#FF9933");
+			} else { // any kind of fatal error, so red
+				this.setAttribute("style", "fill:#FF0000");
+			}
 		};
 	}
 }
@@ -82,7 +91,7 @@ function init(evt) {
     <path
        sodipodi:type="arc"
        style="fill:#00ff00;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       id="oobd_ci-toogleBit:BMPGroups_0_600F_sd_14"
+       id="IPC"
        sodipodi:cx="205.71428"
        sodipodi:cy="743.79077"
        sodipodi:rx="51.42857"
@@ -96,13 +105,13 @@ function init(evt) {
        sodipodi:rx="51.42857"
        sodipodi:cy="743.79077"
        sodipodi:cx="205.71428"
-       id="oobd_ci-toogleBit:BMPGroups_0_61C0_sd_06"
+       id="PDM"
        style="fill:#008080;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        sodipodi:type="arc"
        transform="translate(337.14286,-368.57143)"
        inkscape:label="#path2989"
        oobd:type="ci"
-       oobd:fc="toogleBit:BMPGroups_0_61C0_sd_06"
+       oobd:fc="dtcStatus:125b11_741"
        class="oobd" />
   </g>
 </svg>

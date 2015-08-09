@@ -587,13 +587,14 @@ public class ScriptengineLua extends OobdScriptengine {
                             + "'},"
                             // + "'value':'" +
                             // Integer.toString(i)
-                            + "'value':'"
-                            + Base64Coder.encodeString(callFunction(
+                                    // adds a preformed JSON string, containing a value string plus an optional "dataset" sub- table
+                            + callFunction(
                             vis,
                             new Object[]{
                                 Base64Coder.decodeString(on.getOnionString("actValue")),
-                                on.getOnionString("optid")}))
-                            + "'}")));
+                                on.getOnionString("optid"),
+                                on.optInt("updType")})
+                            + "}")));
                 }
             } catch (JSONException ex) {
                 Logger.getLogger(ScriptengineTerminal.class.getName()).log(
@@ -625,6 +626,7 @@ public class ScriptengineLua extends OobdScriptengine {
         // the
         // :
         // seperator
+        String res="'value':'";
         Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO,
                 "function to call in Lua:" + functionName);
         try {
@@ -637,22 +639,28 @@ public class ScriptengineLua extends OobdScriptengine {
                         "Lua Crash: " + errorMessage);
                 Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO,
                         results[2].toString());
+                /*
                 Throwable stacktrace = (Throwable) (results[3]);
+                
                 if (stacktrace != null) {
                     stacktrace.printStackTrace();
                 }
+             */
             }
 
             // String response = BaseLib.rawTostring(fObject.env.rawget(1));
             // fObject.push(response.intern());
             if (results.length > 1) {
-                return (String) results[1];
-            } else {
-                return "";
+                res+= Base64Coder.encodeString((String) results[1]);
             }
+            res+="'";
+            if (results[0] == Boolean.TRUE && results.length > 2) {
+                res+= ", 'dataset':" +lua2Onion((LuaTableImpl) results[1]);
+            }
+             return res;
 
         } catch (Exception ex) {
-            return "function " + functionName + " not found";
+            return Base64Coder.encodeString("'value':'"+"function " + functionName + " not found'");
         }
     }
 

@@ -153,7 +153,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                 case OOBDConstants.FT_WEBPAGE:
                     String newPath=mapDirectory("libs",resourceName);
                     if (!newPath.equals("")){
-                        resourceName="/../libs/"+newPath;
+                        resourceName="/../../libs/"+newPath;
                     }
                 // please notice: here's no case "break"!
                 case OOBDConstants.FT_PROPS:
