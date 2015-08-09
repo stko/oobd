@@ -267,6 +267,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
      * @param value Onion containing value and scriptengine
      *
      */
+<<<<<<< HEAD
     public void openTempFile(Onion value) {
         InputStreamReader myInputStream = null;
         String myFileName = null;
@@ -337,6 +338,107 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
                 OobdScriptengine actEngine = getCore().getScriptEngine(owner);
                 getCore().getSystemIF().createEngineTempInputFile(actEngine);
 
+=======
+    public void handleValue(Onion value) {
+        String owner = value.getOnionString("owner/name"); // who'wsServer the owner of
+        // that value?
+        if (owner == null) {
+            Logger.getLogger(Core.class.getName()).log(Level.WARNING,
+                    "onion id does not contain name");
+        } else {
+            ArrayList affectedVisualizers = visualizers.get(owner); // which
+            // visualizers
+            // belong to
+            // that
+            // owner
+            if (affectedVisualizers != null) {
+                Iterator visItr = affectedVisualizers.iterator();
+                while (visItr.hasNext()) {
+                    Visualizer vis = (Visualizer) visItr.next();
+                    vis.setValue(value); // send the value to all visualisers of
+                    // that owner
+                }
+            }
+        }
+    }
+
+    /**
+     * \brief Tells Value to all visualizers of a scriptengine
+     *
+     * @param value Onion containing value and scriptengine
+     *
+     */
+    public void openTempFile(Onion value) {
+        InputStreamReader myInputStream = null;
+        String myFileName = null;
+        try {
+            String owner = value.getOnionString("owner/name"); // who'wsServer the owner of
+            // that value?
+            if (owner == null) {
+                Logger.getLogger(Core.class.getName()).log(Level.WARNING,
+                        "onion id does not contain name");
+                return;
+            }
+            String filePath = Base64Coder.decodeString(value.getOnionString("filepath"));
+            String fileExtension = Base64Coder.decodeString(value.getOnionString("extension"));
+            String fileMessage = Base64Coder.decodeString(value.getOnionString("message"));
+            if (fileMessage.equalsIgnoreCase("html")) {
+                myFileName = filePath;
+                URL url = new URL(filePath);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000 /* milliseconds */);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setRequestMethod("GET");
+                conn.setDoInput(true);
+                // Starts the query
+                conn.connect();
+                int HttpResult = conn.getResponseCode();
+
+                if (HttpResult == HttpURLConnection.HTTP_OK) {
+                    myInputStream = new InputStreamReader(conn.getInputStream(), "utf-8");
+                } else {
+                    System.err.println(conn.getResponseMessage());
+                }
+            } else {
+                if (fileMessage.equalsIgnoreCase("json")) {
+                    myFileName = filePath;
+                    URL url = new URL(filePath);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setReadTimeout(10000 /* milliseconds */);
+                    conn.setConnectTimeout(15000 /* milliseconds */);
+                    conn.setDoOutput(true);
+                    conn.setDoInput(true);
+                    conn.setRequestProperty("Content-Type", "application/json; charset=utf8");
+                    conn.setRequestProperty("Accept", "application/json");
+                    conn.setRequestMethod("POST");
+                    conn.connect();
+                    OutputStream os = conn.getOutputStream();
+                    os.write(fileExtension.getBytes("UTF-8"));
+                    os.close();
+                    int HttpResult = conn.getResponseCode();
+
+                    if (HttpResult == HttpURLConnection.HTTP_OK) {
+                        myInputStream = new InputStreamReader(conn.getInputStream(), "utf-8");
+                    } else {
+                        System.err.println(conn.getResponseMessage());
+                    }
+                } else {
+                    myFileName = getCore().getSystemIF().doFileSelector(filePath, fileExtension, fileMessage, false);
+                    if (myFileName != null) {
+                        try {
+                            myInputStream = new FileReader(myFileName);
+                        } catch (FileNotFoundException ex) {
+                            Logger.getLogger(LocalOobdUIHandler.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            }
+
+            if (myInputStream != null) {
+                OobdScriptengine actEngine = getCore().getScriptEngine(owner);
+                getCore().getSystemIF().createEngineTempInputFile(actEngine);
+
+>>>>>>> 323f47c475452eb72ba312bbdddf7086bafe5304
                 actEngine.fillTempInputFile(myInputStream);
             } else {
                 myFileName = "";
