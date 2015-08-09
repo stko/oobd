@@ -2,6 +2,11 @@
 # please copy this template as lokal.make
 # and adapt the following variables acording to your local settings
 
+## to allow a make process from different directories,
+## point to the OOBD root directory here, where OOBD is located
+
+OOBDROOT=~/Desktop/workcopies/skdsscripts/oobd2/OEMs/Ford/trunk
+
 #  your lua- compiler (luac)
 # for Windows
 #CC="<drive>:<directory_to_Lua>/luac"
@@ -10,9 +15,9 @@ CC=luac
 
 # the OOBD Lua preprocessor
 # for Cygwin
-#OLP=../../tools/bin/olp.exe
+#OLP=$(OOBDROOT)/tools/bin/olp.exe
 # for Linux
-OLP=mono ../../tools/bin/olp.exe
+OLP=mono $(OOBDROOT)/tools/bin/olp.exe
 
 # Temporary output for Windows
 # PACKDIR="C:\\temp\\diagoutput\\"
@@ -22,9 +27,9 @@ PACKDIR="/media/ram/diagoutput/"
 
 
 # for Cygwin
-#ODXT="../../tools/bin/OpenDiagXCL.exe" 
+#ODXT="$(OOBDROOT)/tools/bin/OpenDiagXCL.exe" 
 # for Linux
-ODXT=mono ../../tools/bin/OpenDiagXCL.exe 
+ODXT=mono $(OOBDROOT)/tools/bin/OpenDiagXCL.exe 
 
 # relative path to the MDX pool
 MDXPOOL=../../mdx_pool/
