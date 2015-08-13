@@ -46,7 +46,25 @@ var readyStateCheckInterval = setInterval(function() {
 			Oobd.addObject(oobdElement,"");
 		}
 	}
-
+	var a = $(".OOBD");
+	for (index = 0; index < a.length; ++index) { // go through all images found
+		var oobdElement = a[index];
+		var type=oobdElement.getAttribute("oobd:type");
+		var name=oobdElement.getAttribute("id"); 
+		console.log("oobdtype:"+type);
+		console.log("id:"+name);
+		if (type=="jqx"){
+			console.log(oobdElement);
+			oobdElement.oodbupdate= function(input){
+				console.log("Updatefunction erreicht!"+input.value);
+				console.log(this);
+				this.jqxGauge('value',120);
+			};
+			Oobd.addObject(oobdElement,"");
+			oobdElement.jqxGauge('value',120);
+			 //$('#gaugeContainer').jqxGauge('value',120);
+		}
+	}
 	// Get all svg images, which are defined as OOBDMap class
 	var a = document.getElementsByClassName("OOBDMap");
 	for (index = 0; index < a.length; ++index) { // go through all images found
