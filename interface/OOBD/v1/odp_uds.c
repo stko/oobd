@@ -784,8 +784,6 @@ void obp_uds(void *pvParameters)
 			/*
 			   case PARAM_ECHO:
 			   break;
-			   case PARAM_TIMEOUT_PENDING:
-			   break;
 			   case PARAM_BLOCKSIZE:
 			   break;
 			   case PARAM_FRAME_DELAY:
@@ -793,6 +791,12 @@ void obp_uds(void *pvParameters)
 			 */
 		    case PARAM_TIMEOUT:
 			protocolConfig->timeout =
+			    args->args[ARG_VALUE_1] + 1;
+			createCommandResultMsg(FBID_PROTOCOL_SPEC,
+					       ERR_CODE_NO_ERR, 0, NULL);
+			break;
+		    case PARAM_TIMEOUT_PENDING:
+			protocolConfig->timeoutPending =
 			    args->args[ARG_VALUE_1] + 1;
 			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_NO_ERR, 0, NULL);
@@ -811,10 +815,9 @@ void obp_uds(void *pvParameters)
 			if (odp_uds_addTesterPresents(&tpList,
 						      args->args
 						      [ARG_VALUE_1],
-						      protocolConfig->
-						      tpFreq,
-						      protocolConfig->
-						      tpType)) {
+						      protocolConfig->tpFreq,
+						      protocolConfig->tpType))
+			{
 			    createCommandResultMsg(FBID_PROTOCOL_SPEC,
 						   ERR_CODE_NO_ERR, 0,
 						   NULL);

@@ -126,6 +126,9 @@ while True:
 		print ("next step: ", nextStep)
 		if nextStep == 1: #Single Frame or end of Consecutive Frame series -> send the PID answer
 			sendTele(msg,dArray[0]) 
+		# in case the first sended telegram is not a first frame, we continue to send the rest 
+		if (dArray[0]["d"][0] & 0xF0 ) / 16 != 1:
+			nextStep = 2
 		if nextStep == 2: # send remaining consecute frames
 			print ("Array Len: ", len(dArray))
 			for i in range(len(dArray)):
