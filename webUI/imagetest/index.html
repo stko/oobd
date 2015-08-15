@@ -1,33 +1,65 @@
 <!DOCTYPE html>
 
 <html lang="en">
-<head><meta charset="utf-8">
-<script type="text/javascript" src="../libs/oobd/1/oobd.js"></script>
-<script type="text/javascript">
-Oobd.writeString=function addText(text) {
-    var targ = event.target || event.srcElement;
-    document.getElementById("textoutput").value += text;
-}
-</script>
+
+<head>
+	<meta charset="utf-8">
+	<script type="text/javascript" src="../libs/oobd/1/oobd.js"></script>
+	<script type="text/javascript">
+		Oobd.writeString = function addText(text) {
+			var targ = event.target || event.srcElement;
+			document.getElementById("textoutput").value += text;
+		}
+	</script>
 
 </head>
+
 <body>
 
-<object class="OOBDMap" data="imagetest.svg" type="image/svg+xml"></object>
-<object class="OOBDMap" data="imagetest.svg" type="image/svg+xml"></object>
-System Info:
+	<object class="OOBDMap" data="imagetest.svg" type="image/svg+xml"></object>
+	<object class="OOBDMap" data="imagetest.svg" type="image/svg+xml"></object>
+	System Info:
 
-<table>
-<tr class="OOBD" oobd:type="te" oobd:fc="interface_serial:" id="Serial_number"><td class="name">Serial</td>  <td class="value">Click for Update</td></tr>
-<tr class="OOBD" oobd:type="te" id="interface_Version"><td class="name">BIOS</td>    <td class="value">Click for Update</td></tr>
-<tr class="OOBD" oobd:type="te" id="voltage"><td class="name">Voltage</td> <td class="value">Click for Update</td></tr>
-<tr class="OOBD" oobd:type="te" id="bustype"><td class="name">Bus</td>         <td class="value">Click for Update</td></tr>
-<tr class="OOBD" oobd:type="te" oobd:fc="greet:" id="greetings"><td class="name">Bus</td>         <td class="value">Click for Update</td></tr>
-</table>
-<p>Outputs<p>
-    <textarea id="textoutput"></textarea>
+	<table>
+		<tr class="OOBD" oobd:type="te" oobd:fc="interface_serial:" id="Serial_number">
+			<td class="name">Serial</td>
+			<td class="value">Click for Update</td>
+		</tr>
+		<tr class="OOBD" oobd:type="te" id="interface_Version">
+			<td class="name">BIOS</td>
+			<td class="value">Click for Update</td>
+		</tr>
+		<tr class="OOBD" oobd:type="te" id="voltage">
+			<td class="name">Voltage</td>
+			<td class="value">Click for Update</td>
+		</tr>
+		<tr class="OOBD" oobd:type="te" id="bustype">
+			<td class="name">Bus</td>
+			<td class="value">Click for Update</td>
+		</tr>
+		<tr class="OOBD" oobd:type="te" oobd:fc="greet:" id="greetings">
+			<td class="name">Bus</td>
+			<td class="value">Click for Update</td>
+		</tr>
+	</table>
+	<p>Outputs</p>
+	<p />
+	<textarea id="textoutput"></textarea>
 
+
+
+	<script>
+		// put here inits here as browser independent, pure javascript solution for document.ready
+		(function() {
+			// your page initialization code here
+			// the DOM will be available here
+			Oobd.init();
+			Oobd.writeString = function addText(text) {
+				document.getElementById("textoutput").value += text;
+			}
+
+		})();
+	</script>
 </body>
+
 </html>
-
-

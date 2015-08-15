@@ -1,84 +1,11 @@
 
 
-(function() {
-    // Load the script
-    var script = document.createElement("SCRIPT");
-    script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js';
-    script.type = 'text/javascript';
-    document.getElementsByTagName("head")[0].appendChild(script);
-	console.log('irgendwo');
-    // Poll for jQuery to come into existance
-    var checkReady = function(callback) {
-        if (window.jQuery) {
-	console.log('gefunden');
-            callback(jQuery);
-        }
-        else {
-	console.log('warten');
-            window.setTimeout(function() { checkReady(callback); }, 100);
-        }
-    };
-
-    // Start polling...
-    checkReady(function($) {
- 	console.log('wo bin ich ');
-       // Use $ here...
-    });
-})();
-
 
 var readyStateCheckInterval = setInterval(function() {
     if (document.readyState === "complete") {
         clearInterval(readyStateCheckInterval);
-	Oobd.init('ws://localhost:8443');
+	Oobd.init();
 	// Get all elements, which are defined as oobd class
-	var a = document.getElementsByClassName("OOBD");
-	for (index = 0; index < a.length; ++index) { // go through all images found
-		var oobdElement = a[index];
-		var type=oobdElement.getAttribute("oobd:type");
-		var name=oobdElement.getAttribute("id"); 
-		console.log("oobdtype:"+type);
-		console.log("id:"+name);
-		if (type=="te"){
-			oobdElement.oodbupdate= function(input){
-				this.getElementsByClassName("value")[0].innerHTML = atob(input.value);
-			};
-			Oobd.addObject(oobdElement,"");
-		}
-	}
-	var a = $(".OOBD");
-	for (index = 0; index < a.length; ++index) { // go through all images found
-		var oobdElement = a[index];
-		var type=oobdElement.getAttribute("oobd:type");
-		var name=oobdElement.getAttribute("id"); 
-		console.log("oobdtype:"+type);
-		console.log("id:"+name);
-		if (type=="jqx"){
-			console.log(oobdElement);
-			oobdElement.oodbupdate= function(input){
-				console.log("Updatefunction erreicht!"+input.value);
-				console.log(this);
-				this.jqxGauge('value',120);
-			};
-			Oobd.addObject(oobdElement,"");
-			oobdElement.jqxGauge('value',120);
-			 //$('#gaugeContainer').jqxGauge('value',120);
-		}
-	}
-	// Get all svg images, which are defined as OOBDMap class
-	var a = document.getElementsByClassName("OOBDMap");
-	for (index = 0; index < a.length; ++index) { // go through all images found
-		var svgDoc = a[index].contentDocument;
-		var svgItem = svgDoc.getElementsByClassName("oobd");
-		for (i2 = 0; i2 < svgItem.length; ++i2) {
-			var type=svgItem[i2].getAttribute("oobd:type"); 
-			var fc=svgItem[i2].getAttribute("oobd:fc"); 
-			console.log("oobd:type:"+name);
-			console.log("oobd:fc:"+fc);
-			Oobd.addObject(svgItem[i2],"");
-			// svgItem[i2].oodbupdate("bla");
-		}
-	}
     }
 }, 10);
 
@@ -91,12 +18,43 @@ if (typeof Oobd == "undefined") {
 		/**
 		* Initializes this object.
 		*/
+		wsURL:"ws://localhost:8443",
 		connection:"",
 		visualizers : new Array(),
 		init : function(uri) {
+			var a = document.getElementsByClassName("OOBD");
+			for (index = 0; index < a.length; ++index) { // go through all images found
+				var oobdElement = a[index];
+				var type=oobdElement.getAttribute("oobd:type");
+				var name=oobdElement.getAttribute("id"); 
+				console.log("oobdtype:"+type);
+				console.log("id:"+name);
+				if (type=="te"){
+					oobdElement.oodbupdate= function(input){
+						this.getElementsByClassName("value")[0].innerHTML = atob(input.value);
+					};
+					Oobd.addObject(oobdElement,"");
+				}
+			}
+			// Get all svg images, which are defined as OOBDMap class
+			var a = document.getElementsByClassName("OOBDMap");
+			for (index = 0; index < a.length; ++index) { // go through all images found
+				var svgDoc = a[index].contentDocument;
+				var svgItem = svgDoc.getElementsByClassName("oobd");
+				for (i2 = 0; i2 < svgItem.length; ++i2) {
+					var type=svgItem[i2].getAttribute("oobd:type"); 
+					var fc=svgItem[i2].getAttribute("oobd:fc"); 
+					console.log("oobd:type:"+name);
+					console.log("oobd:fc:"+fc);
+					Oobd.addObject(svgItem[i2],"");
+					// svgItem[i2].oodbupdate("bla");
+				}
+			}
+		},
+		start : function() {
 			if ('WebSocket' in window){
 				/* WebSocket is supported. You can proceed with your code*/
-				this.connection = new WebSocket(uri);
+				this.connection = new WebSocket(this.wsURL);
 				this.visualizers = new Array();
 				this.connection.onopen = function(){
 					/*Send a small message to the console once the connection is established */
@@ -121,6 +79,7 @@ if (typeof Oobd == "undefined") {
 							// Get all svg images, which are defined as OOBDMap class
 							for (i = 0; i < Oobd.visualizers.length; ++i) { // search for the real id of a function owner
 								if (Oobd.visualizers[i].command==owner){
+									console.log("Object found in list, try to update:"+owner);
 									Oobd.visualizers[i].object.oodbupdate(obj);
 								}
 							}
