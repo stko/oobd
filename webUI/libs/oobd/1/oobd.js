@@ -14,7 +14,7 @@ var readyStateCheckInterval = setInterval(function() {
 * Oobd namespace.
 */
 if (typeof Oobd == "undefined") {
-	var Oobd = {
+	Oobd = {
 		/**
 		* Initializes this object.
 		*/
@@ -50,6 +50,27 @@ if (typeof Oobd == "undefined") {
 					// svgItem[i2].oodbupdate("bla");
 				}
 			}
+			$(function(){
+				var a = $(".OOBD");
+				for (index = 0; index < a.length; ++index) { // go through all images found
+					var oobdElement = a[index];
+					var type=oobdElement.getAttribute("oobd:type");
+					var name=oobdElement.getAttribute("id"); 
+					console.log("oobdtype:"+type);
+					console.log("id:"+name);
+					if (type=="jqx"){
+						console.log($(oobdElement));
+						oobdElement.oodbupdate= function(input){
+							console.log("Updatefunction erreicht!"+parseInt(atob(input.value)));
+							console.log($(this));
+							//$(this).jqxGauge('value',parseInt(atob(input.value)));
+							$(this)["jqxGauge"]('value',parseInt(atob(input.value)));
+						};
+						Oobd.addObject(oobdElement,"");
+						 //$('#gaugeContainer').jqxGauge('value',100);
+					}
+				}
+			});
 		},
 		start : function() {
 			if ('WebSocket' in window){
@@ -76,8 +97,9 @@ if (typeof Oobd == "undefined") {
 							console.log("decoded value: "+atob(obj.value));
 							var owner = obj.to.name;
 							console.log("Update values received for:"+owner);
-							// Get all svg images, which are defined as OOBDMap class
+							console.log(Oobd.visualizers); 
 							for (i = 0; i < Oobd.visualizers.length; ++i) { // search for the real id of a function owner
+								console.log("visualizer in list:"+Oobd.visualizers[i].command);
 								if (Oobd.visualizers[i].command==owner){
 									console.log("Object found in list, try to update:"+owner);
 									Oobd.visualizers[i].object.oodbupdate(obj);
@@ -132,11 +154,13 @@ if (typeof Oobd == "undefined") {
 					thisElement["object"]=obj;
 					obj.oobd.command = thisElement["command"];
 					obj.oobd.optid = thisElement["optid"];
-					this.visualizers.push(thisElement);
+					Oobd.visualizers.push(thisElement);
+					console.log("add object as visualizer:"+thisElement["command"]); 
+					console.log(Oobd.visualizers); 
 					obj.addEventListener("click", function(){
 						console.log("clicked element "+this.id);
 						console.log("clicked command "+obj.oobd.command);
-						Oobd.connection.send("{'name'='"+this.oobd.command+"','optid'='"+this.oobd.optid+"','value'='"+btoa(this.oobd.value)+"','updType'=1}");
+						Oobd.connection.send('{"name":"'+this.oobd.command+'","optid":"'+this.oobd.optid+'","value":"'+btoa(this.oobd.value)+'","updType":1}');
 					});
 				}
 		}

@@ -18,7 +18,7 @@
 	<script type="text/javascript" src="./jqxgauge_files/jqxgauge.js"></script>
 
 	<script type="text/javascript" src="../libs/oobd/1/oobd.js"></script>
-	<script type="text/javascript" src="../libs/oobd/1/oobdjqx.js"></script>
+	<!--<script type="text/javascript" src="../libs/oobd/1/oobdjqx.js"></script> -->
 
 
 	<style type="text/css">
@@ -165,7 +165,7 @@
 			// after the page implementation is done, let OOBD sample the content. First intialize the basics
 			Oobd.init();
 			// then initialize the frameworks you are using
-			Oobdjqx.init();
+			//Oobdjqx.init();
 			// set your hooks
 			Oobd.writeString=function addText(text) {
 				document.getElementById("textoutput").value += text;
@@ -183,6 +183,7 @@
 		<div id="gaugeValue" style="position: absolute; top: 235px; left: 132px; font-family: Sans-Serif; text-align: center; font-size: 17px; width: 70px;"></div>
 		<div style="margin-left: 60px; float: left;" id="linearGauge"></div>
 	</div>
+<p />
 <h2>Text Output from OOBD</h2>
 	<textarea id="textoutput"rows="4" cols="50"></textarea>
 

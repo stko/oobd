@@ -18,6 +18,10 @@ from base64 import encodestring, decodestring
 
 logging.basicConfig(format='%(asctime)s %(message)s', level=logging.DEBUG)
 
+global actValue
+actValue=100
+global server
+
 class SimpleEcho(WebSocket):
 
 
@@ -38,37 +42,28 @@ class SimpleEcho(WebSocket):
 
 
 class SimpleChat(WebSocket):
-
+ 
    def handleMessage(self):
       if self.data is not None:
 	try:
-		thisMsg=loads(str(self.data))
+		global actValue
+		actValue+=10
+		if actValue> 200:
+			actValue=50
 		print 'message: '+str(self.data)
-		try:
-			thisMsg['reply'] # checks if variable exists
-			thiscmd=decodestring(thisMsg['reply'])
-			thiscmd.replace("\r","\n")
-			print decodestring(thisMsg['channel'])+"<"+thiscmd+"\n"
-			self.channel='r'+thisMsg['channel']
-			prefix="s"
-		except Exception as n:
-			thiscmd=decodestring(thisMsg['msg'])
-			thiscmd.replace("\r","\n")
-			print decodestring(thisMsg['channel'])+">"+thiscmd+"\n"
-			self.channel='s'+thisMsg['channel']
-			prefix="r"
-		for client in self.server.connections.itervalues():
+		thisMsg=loads(str(self.data))
+		self.sendMessage('{"type":"VALUE" , "to":{"name":"gauge_speed:"}, "value":"'+encodestring(str(actValue)).replace('\n', '')+'"}')
+		#self.sendMessage('{"type":"VALUE" , "to":{"name":"gauge_speed:"}, "value":"'+encodestring("120").replace('\n', '')+'"}')
+		#for client in self.server.connections.itervalues():
 #			print 'actual client: '+ client.channel
-			try:
-				if client != self and client.channel == prefix+thisMsg['channel'] :
-					client.sendMessage(str(self.data))
-			except Exception as n:
-				print "Send Exception: " ,n
+		#	try:
+		#		client.sendMessage(str(self.data))
+		#	except Exception as n:
+		#		print "Send Exception: " ,n
 	except Exception as n:
 		print "Exception: " , n
 
-
-
+ 
    def handleConnected(self):
       print self.address, 'connected'
       self.sendMessage('{"type":"WRITESTRING" ,"value":"'+encodestring("Connected to OOBD").replace('\n', '')+'"}')
@@ -76,7 +71,6 @@ class SimpleChat(WebSocket):
 
    def handleClose(self):
       print self.address, 'closed'
- 
 
 if __name__ == "__main__":
 
@@ -104,5 +98,4 @@ if __name__ == "__main__":
       sys.exit()
 
    signal.signal(signal.SIGINT, close_sig_handler)
-
    server.serveforever()

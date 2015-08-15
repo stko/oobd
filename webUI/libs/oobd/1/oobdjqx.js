@@ -27,8 +27,8 @@ if (typeof Oobdjqx == "undefined") {
 							this.jqxGauge('value',120);
 						};
 						Oobd.addObject(oobdElement,"");
-						//$(oobdElement).jqxGauge('value',120);
-						 //$('#gaugeContainer').jqxGauge('value',120);
+						$(oobdElement).jqxGauge('value',110);
+						 //$('#gaugeContainer').jqxGauge('value',100);
 					}
 				}
 			} else {
