@@ -16,7 +16,9 @@ class DongleCmdLine(object):
 		self._ser = serial.Serial(device, 19200, timeout=1)
 		if self._ser is None:
 			raise AssertionError("could not open serial line!")
-
+		else:
+			self._flush()
+			
 	def close_port(self):
 		sys.stderr.write("close port ")
 		self._ser.close
@@ -44,16 +46,31 @@ class DongleCmdLine(object):
 			raise AssertionError("serial line is not open!")
 		else:
 			self._ser.write(line)      # write a string
-			maxDelay=5
+			maxDelay=50
 			while maxDelay>0:
 				nrOfBytes=self._ser.inWaiting();
 				if nrOfBytes > 0:
 					s = self._ser.read(nrOfBytes)          # read buffer
 					s=s.replace("\r","+cr+")
+					sys.stderr.write("\n### "+s+"\n") 
 					self._answer +=s
-					maxDelay =5 #rewind timeout
+					if True and s[-1:]==">": # end of feedback
+						maxDelay=1 # end loop
+					else:
+						maxDelay =50 #rewind timeout
+					
 				else:
 					time.sleep(0.1) # wait 0.1 seconds
 					maxDelay -=1 #reduce timeout
+
+
+
+	def _flush(self):
+		if not(self._ser is None):
+			nrOfBytes=50
+			while nrOfBytes>0:
+				nrOfBytes=self._ser.inWaiting();
+				if nrOfBytes > 0:
+					s = self._ser.read(nrOfBytes)          # read buffer
 
 

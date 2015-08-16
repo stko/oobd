@@ -27,8 +27,24 @@ Robot Framework test cases are created using a simple tabular syntax.
 
     *** Test Cases ***
     Dongle reports version
-        when send dongle command  p 0 0 0 
-        then answer should match    .*(OBD).*
+        send dongle command  p 0 0 0 
+        answer should match    .*(OBD).*
+
+    test normal response
+       send dongle command  19018D
+       answer should match    .*(\\.\\+cr\\+>)
+       send dongle command  p 6 2 1000 0
+       answer should match    .*(\\.\\+cr\\+>)
+       send dongle command  1902CE
+       answer should match    .*(\\.\\+cr\\+>)
+       send dongle command  p 6 2 10
+       answer should match    .*(\\.\\+cr\\+>)
+       send dongle command  1902CE
+       answer should match    .*(:Error: \\d+ \\d+ \\d+ Answer time exeeded\\+cr\\+>)
+       send dongle command  p 6 2 1000 0
+       answer should match    .*(\\.\\+cr\\+>)
+       send dongle command  1902CE
+       answer should match    .*(\\.\\+cr\\+>)
 
 .. code:: robotframework
 
@@ -115,7 +131,7 @@ starts and that every test also clears it afterwards:
 
 .. code:: robotframework
 
-    *** Settings ***
+   *** Settings ***
     test Setup       Open Port  ${port}
     test Teardown    close port
 

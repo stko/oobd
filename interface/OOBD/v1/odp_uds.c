@@ -815,9 +815,10 @@ void obp_uds(void *pvParameters)
 			if (odp_uds_addTesterPresents(&tpList,
 						      args->args
 						      [ARG_VALUE_1],
-						      protocolConfig->tpFreq,
-						      protocolConfig->tpType))
-			{
+						      protocolConfig->
+						      tpFreq,
+						      protocolConfig->
+						      tpType)) {
 			    createCommandResultMsg(FBID_PROTOCOL_SPEC,
 						   ERR_CODE_NO_ERR, 0,
 						   NULL);
