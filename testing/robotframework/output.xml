@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20150816 10:52:49.733" generator="Robot 2.9 (Python 2.7.6 on linux2)">
+<suite source="/home/steffen/Desktop/workcopies/oobd/testing/robotframework/dongleTest.rst" id="s1" name="dongleTest">
+<test id="s1-t1" name="Dongle reports version">
+<kw type="setup" name="Open Port" library="DongleCmdLine">
+<arguments>
+<arg>${port}</arg>
+</arguments>
+<msg timestamp="20150816 10:52:49.781" level="INFO">open /tmp/DXM</msg>
+<status status="PASS" endtime="20150816 10:52:49.781" starttime="20150816 10:52:49.781"></status>
+</kw>
+<kw name="when send dongle command" library="DongleCmdLine">
+<arguments>
+<arg>p 0 0 0</arg>
+</arguments>
+<msg timestamp="20150816 10:52:50.383" level="INFO">cmd p 0 0 0</msg>
+<status status="PASS" endtime="20150816 10:52:50.383" starttime="20150816 10:52:49.781"></status>
+</kw>
+<kw name="then answer should match" library="DongleCmdLine">
+<arguments>
+<arg>.*(OBD).*</arg>
+</arguments>
+<msg timestamp="20150816 10:52:50.384" level="INFO">result: p 0 0 0+cr+p 0 0 0+cr+OOBD POSIX 53421fd-dirty POSIX Sat, 15 Aug 2015 08:51:02 +0200+cr+.+cr+&gt;</msg>
+<status status="PASS" endtime="20150816 10:52:50.384" starttime="20150816 10:52:50.384"></status>
+</kw>
+<kw type="teardown" name="Close Port" library="DongleCmdLine">
+<msg timestamp="20150816 10:52:50.385" level="INFO">close port</msg>
+<status status="PASS" endtime="20150816 10:52:50.385" starttime="20150816 10:52:50.384"></status>
+</kw>
+<tags>
+<tag>example</tag>
+<tag>quickstart</tag>
+<tag>smoke</tag>
+</tags>
+<status status="PASS" endtime="20150816 10:52:50.385" critical="yes" starttime="20150816 10:52:49.780"></status>
+</test>
+<status status="PASS" endtime="20150816 10:52:50.385" starttime="20150816 10:52:49.734"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="0" pass="1">Critical Tests</stat>
+<stat fail="0" pass="1">All Tests</stat>
+</total>
+<tag>
+<stat fail="0" pass="1">example</stat>
+<stat fail="0" pass="1">quickstart</stat>
+<stat fail="0" pass="1">smoke</stat>
+</tag>
+<suite>
+<stat fail="0" id="s1" name="dongleTest" pass="1">dongleTest</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
