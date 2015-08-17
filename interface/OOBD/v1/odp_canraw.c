@@ -187,7 +187,7 @@ void odp_canraw_recvdata(data_packet * p, UBaseType_t callFromISR)
 	}
 	if (protocolConfig->showBusTransfer == 3) {
 	    // Lawicel format: Estimated out of http://lxr.free-electrons.com/source/drivers/net/can/slcan.c line 110 cc.
-	    if (p->recv & 0x80000000) {	// Bit 32 set, so it's an extended CAN ID
+	    if (p->ide == 0x01) {	// Bit 32 set, so it's an extended CAN ID
 		printser_string("T");
 		printser_uint32ToHex(p->recv & 0x1FFFFFFF);
 	    } else {
@@ -211,10 +211,10 @@ void odp_canraw_recvdata(data_packet * p, UBaseType_t callFromISR)
 	    printser_uint8ToRaw(255);	//startbyte
 	    printser_uint8ToRaw((p->len & 0xF) |	// bit 0-3: DLC
 				((p->err & 3) << 4) |	//bit 4-5 : Error flag
-				(((p->recv & 0x80000000) ? 1 : 0) << 5)	//bit 6: Extended CAN ID
+				(((p->ide == 0x01) ? 1 : 0) << 5)	//bit 6: Extended CAN ID
 		);		//Status flag
 	    printser_uint16ToRawCoded(p->timestamp * portTICK_PERIOD_MS & 0xFFFF);	//reduce down to 16 bit = 65536 ms = ~ 1 min
-	    if ((p->recv & 0x80000000)) {	// Bit 32 set, so it's an exended CAN ID
+	    if ((p->ide == 0x01)) {	// Bit 32 set, so it's an exended CAN ID
 		printser_uint32ToRawCoded(p->recv & 0x1FFFFFFF);
 	    } else {
 		printser_uint16ToRawCoded(p->recv & 0x1FFFFFFF);
