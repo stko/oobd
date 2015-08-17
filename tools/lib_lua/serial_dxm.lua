@@ -666,6 +666,14 @@ function getSVNLuaLib(oldvalue,id)
     return ""..SVNREVLUALIB
 end
 
+function setResponsePendingTimeOut(timeOut)
+	DEBUGPRINT("nexulm", 1, "serial_dxm.lua - setResponsePendingTimeOut,%02d: %s", "00", "enter function setResponsePendingTimeOut")
+	
+	if hardwareID == 3 or hardwareID == 4 then	-- set ResponsePendingTimeOut for OOBD Cup v5 or OOBD CAN Invader
+		echoWrite("p 6 2 "..timeOut.."\r")
+	end
+end
+
 ---------------------- System Info Menu --------------------------------------
 
 function SysInfo_Menu(oldvalue,id)
