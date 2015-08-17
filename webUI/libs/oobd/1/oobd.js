@@ -64,7 +64,8 @@ if (typeof Oobd == "undefined") {
 							console.log("Updatefunction erreicht!"+parseInt(atob(input.value)));
 							console.log($(this));
 							//$(this).jqxGauge('value',parseInt(atob(input.value)));
-							$(this)["jqxGauge"]('value',parseInt(atob(input.value)));
+							//$(this)["jqxGauge"]('value',parseInt(atob(input.value)));
+							$(this).val(parseInt(atob(input.value)));
 						};
 						Oobd.addObject(oobdElement,"");
 						 //$('#gaugeContainer').jqxGauge('value',100);
