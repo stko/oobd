@@ -111,6 +111,7 @@ function init(evt) {
        transform="translate(337.14286,-368.57143)"
        inkscape:label="#path2989"
        oobd:type="ci"
+       oobd:click="yes"
        oobd:fc="dtcStatus:125b11_741"
        class="oobd" />
   </g>
