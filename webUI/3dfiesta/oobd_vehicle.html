@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>three.js webgl - trackball controls</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<style>
+		body {
+			color: #000;
+			font-family: Monospace;
+			font-size: 13px;
+			text-align: center;
+			font-weight: bold;
+			background-color: #fff;
+			margin: 0px;
+			overflow: hidden;
+		}
+		
+		#info {
+			color: #000;
+			position: absolute;
+			top: 0px;
+			width: 100%;
+			padding: 5px;
+		}
+		
+		a {
+			color: red;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="container"></div>
+	<div id="info">
+		<a href="http://threejs.org" target="_blank">three.js</a> - trackball controls example</br>
+		MOVE mouse &amp; press LEFT/A: rotate, MIDDLE/S: zoom, RIGHT/D: pan
+	</div>
+
+	<script src="../libs/threejs/71/three.min.js"></script>
+
+	<script src="../libs/threejs/71/js/controls/TrackballControls.js"></script>
+
+	<script src="../libs/threejs/71/js/Detector.js"></script>
+	<script src="../libs/threejs/71/js/libs/stats.min.js"></script>
+	<script src="vehicleModel.js"></script>
+	<script src="oobdobjects.js"></script>
+	<script src="../libs/oobd/1/oobdthree.js"></script>
+	<script>
+		if (!Detector.webgl) Detector.addGetWebGLMessage();
+
+		var container, stats;
+
+		var camera, controls, scene, raycaster, renderer;
+		var mouse = new THREE.Vector2(),
+			INTERSECTED;
+
+		init();
+		animate();
+
+		function init() {
+
+			camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 5.02461, 502.01266);
+			camera.position.x = 13.39149;
+			camera.position.y = -16.74871;
+			camera.position.z = 12.96200;
+			camera.up = new THREE.Vector3(0, 0, 1);
+			var target = new THREE.Vector3(0.00000, 0.00000, 0.00000);
+			camera.lookAt(target);
+
+
+			controls = new THREE.TrackballControls(camera);
+
+			controls.rotateSpeed = 10.0;
+			controls.zoomSpeed = 1.2;
+			controls.panSpeed = 0.8;
+
+			controls.noZoom = false;
+			controls.noPan = false;
+
+			controls.staticMoving = true;
+			controls.dynamicDampingFactor = 0.3;
+
+			controls.keys = [65, 83, 68];
+
+			controls.addEventListener('change', render);
+
+			// world
+
+			scene = new THREE.Scene();
+
+
+			// lights
+
+			light = new THREE.DirectionalLight(0xffffff);
+			light.position.set(1, 1, 1);
+			scene.add(light);
+
+			light = new THREE.DirectionalLight(0x002288);
+			light.position.set(-1, -1, -1);
+			scene.add(light);
+
+			light = new THREE.AmbientLight(0x222222);
+			scene.add(light);
+
+			raycaster = new THREE.Raycaster();
+
+			// renderer
+
+			renderer = new THREE.WebGLRenderer();
+			/*
+							renderer = new THREE.WebGLRenderer( { antialias: false } );
+							renderer.setClearColor( scene.fog.color );
+			*/
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+
+			container = document.getElementById('container');
+			container.appendChild(renderer.domElement);
+
+			stats = new Stats();
+			stats.domElement.style.position = 'absolute';
+			stats.domElement.style.top = '0px';
+			stats.domElement.style.zIndex = 100;
+			container.appendChild(stats.domElement);
+
+			//
+			document.addEventListener('mousemove', onDocumentMouseMove, false);
+
+			window.addEventListener('resize', onWindowResize, false);
+
+			// load the vehicle
+			create_geometry_0(scene);
+
+			// init the oobd elements
+			oobdObjectsInit();
+
+			render();
+
+		}
+
+		function onWindowResize() {
+
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize(window.innerWidth, window.innerHeight);
+
+			controls.handleResize();
+
+			render();
+
+		}
+
+
+		function onDocumentMouseMove(event) {
+
+			//event.preventDefault();
+			mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+			mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+		}
+
+
+		function animate() {
+
+			requestAnimationFrame(animate);
+			//render();
+			controls.update();
+
+		}
+
+		function render() {
+
+
+			renderer.render(scene, camera);
+			stats.update();
+
+		}
+	</script>
+
+</body>
+
+</html>
