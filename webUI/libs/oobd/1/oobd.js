@@ -50,33 +50,12 @@ if (typeof Oobd == "undefined") {
 					// svgItem[i2].oodbupdate("bla");
 				}
 			}
-			$(function(){
-				var a = $(".OOBD");
-				for (index = 0; index < a.length; ++index) { // go through all images found
-					var oobdElement = a[index];
-					var type=oobdElement.getAttribute("oobd:type");
-					var name=oobdElement.getAttribute("id"); 
-					console.log("oobdtype:"+type);
-					console.log("id:"+name);
-					if (type=="jqx"){
-						console.log($(oobdElement));
-						oobdElement.oodbupdate= function(input){
-							console.log("Updatefunction erreicht!"+parseInt(atob(input.value)));
-							console.log($(this));
-							//$(this).jqxGauge('value',parseInt(atob(input.value)));
-							$(this)["jqxGauge"]('value',parseInt(atob(input.value)));
-						};
-						Oobd.addObject(oobdElement,"");
-						 //$('#gaugeContainer').jqxGauge('value',100);
-					}
-				}
-			});
 		},
 		start : function() {
 			if ('WebSocket' in window){
 				/* WebSocket is supported. You can proceed with your code*/
 				this.connection = new WebSocket(this.wsURL);
-				this.visualizers = new Array();
+				//this.visualizers = new Array();
 				this.connection.onopen = function(){
 					/*Send a small message to the console once the connection is established */
 					console.log('Connection open!');

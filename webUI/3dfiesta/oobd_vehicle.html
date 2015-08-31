@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-	<title>three.js webgl - trackball controls</title>
+	<title>OOBD Three.js Demo</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 	<style>
@@ -34,7 +34,7 @@
 <body>
 	<div id="container"></div>
 	<div id="info">
-		<a href="http://threejs.org" target="_blank">three.js</a> - trackball controls example</br>
+		<a href="http://oobd.org" target="_blank">OOBD.ORG</a> - 3D Three.js controls example</br>
 		MOVE mouse &amp; press LEFT/A: rotate, MIDDLE/S: zoom, RIGHT/D: pan
 	</div>
 
@@ -46,6 +46,7 @@
 	<script src="../libs/threejs/71/js/libs/stats.min.js"></script>
 	<script src="vehicleModel.js"></script>
 	<script src="oobdobjects.js"></script>
+	<script src="../libs/oobd/1/oobd.js"></script>
 	<script src="../libs/oobd/1/oobdthree.js"></script>
 	<script>
 		if (!Detector.webgl) Detector.addGetWebGLMessage();
@@ -134,8 +135,11 @@
 			create_geometry_0(scene);
 
 			// init the oobd elements
-			oobdObjectsInit();
-
+			Oobd.init();
+			Oobdthree.init();
+			Oobdthree.loadOobdObjects(oobdObjects);
+			Oobd.start();
+			//Oobd.update();
 			render();
 
 		}
