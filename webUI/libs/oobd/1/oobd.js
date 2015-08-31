@@ -20,6 +20,8 @@ if (typeof Oobd == "undefined") {
 		*/
 		wsURL:"ws://localhost:8443",
 		connection:"",
+		timerFlag:-1,
+		timerObject: null,
 		visualizers : new Array(),
 		init : function(uri) {
 			var a = document.getElementsByClassName("OOBD");
@@ -27,8 +29,6 @@ if (typeof Oobd == "undefined") {
 				var oobdElement = a[index];
 				var type=oobdElement.getAttribute("oobd:type");
 				var name=oobdElement.getAttribute("id"); 
-				console.log("oobdtype:"+type);
-				console.log("id:"+name);
 				if (type=="te"){
 					oobdElement.oodbupdate= function(input){
 						this.getElementsByClassName("value")[0].innerHTML = atob(input.value);
@@ -44,11 +44,38 @@ if (typeof Oobd == "undefined") {
 				for (i2 = 0; i2 < svgItem.length; ++i2) {
 					var type=svgItem[i2].getAttribute("oobd:type"); 
 					var fc=svgItem[i2].getAttribute("oobd:fc"); 
-					console.log("oobd:type:"+name);
-					console.log("oobd:fc:"+fc);
 					Oobd.addObject(svgItem[i2],"");
 					// svgItem[i2].oodbupdate("bla");
 				}
+			}
+		},
+		update : function (){
+				for (i = 0; i < Oobd.visualizers.length; ++i) { 
+					console.log("update:"+Oobd.visualizers[i].command);
+					Oobd.connection.send('{"name":"'+Oobd.visualizers[i].command+'","optid":"'+Oobd.visualizers[i].optid+'","value":"'+btoa(Oobd.visualizers[i].value)+'","updType":0}');
+				}
+		},
+		_timerTick : function (){
+				if (Oobd.timerFlag> -1){
+					if (Oobd.timerObject != null) window.clearTimeout(Oobd.timerObject);
+					if (Oobd.timerFlag < Oobd.visualizers.length){
+						console.log("timer update:"+Oobd.visualizers[Oobd.timerFlag].command);
+						Oobd.connection.send('{"name":"'+Oobd.visualizers[Oobd.timerFlag].command+'","optid":"'+Oobd.visualizers[Oobd.timerFlag].optid+'","value":"'+btoa(Oobd.visualizers[Oobd.timerFlag].value)+'","updType":2}');
+						Oobd.timerFlag++;
+					}
+					if (Oobd.timerFlag == Oobd.visualizers.length){
+						Oobd.timerFlag=0;
+					}
+					Oobd.timerObject=window.setTimeout(Oobd._timerTick, 1000);
+				}
+		},
+		timer : function(on) {
+			if (on){
+				this.timerFlag=0;
+				this._timerTick();
+			}else{
+				window.clearTimeout(this.timerObject);;
+				this.timerFlag=-1;
 			}
 		},
 		start : function() {
@@ -69,25 +96,24 @@ if (typeof Oobd == "undefined") {
 					console.log("data "+rawMsg.data);
 					try {
 						var obj = JSON.parse(rawMsg.data);
-						console.log(obj);
-						console.log("type: "+obj.type);
 						if (obj.type=="VALUE"){
-							console.log("b64_value: "+obj.value);
-							console.log("decoded value: "+atob(obj.value));
 							var owner = obj.to.name;
-							console.log("Update values received for:"+owner);
-							console.log(Oobd.visualizers); 
 							for (i = 0; i < Oobd.visualizers.length; ++i) { // search for the real id of a function owner
-								console.log("visualizer in list:"+Oobd.visualizers[i].command);
 								if (Oobd.visualizers[i].command==owner){
-									console.log("Object found in list, try to update:"+owner);
+									Oobd.visualizers[i].object.oobd.value=atob(obj.value);
 									Oobd.visualizers[i].object.oodbupdate(obj);
 								}
+							}
+							Oobd._timerTick();
+						}
+						if (obj.type=="WSCONNECT"){
+						if (typeof Oobd.onConnect != "undefined"  ){
+								// bizarre UTF-8 decoding...
+							  Oobd.onConnect();
 							}
 						}
 						if (obj.type=="WRITESTRING"){
 						if (typeof Oobd.writeString != "undefined"  && typeof obj.data != "undefined" && obj.data.length>0){
-							  console.log("output:"+decodeURIComponent(escape(atob(obj.data))));
 								// bizarre UTF-8 decoding...
 							  Oobd.writeString(decodeURIComponent(escape(atob(obj.data)))+"\n");
 							}
@@ -126,21 +152,17 @@ if (typeof Oobd == "undefined") {
 					}else{
 						thisElement["optid"] ="";
 					}
-					console.log("id:"+thisElement["name"]); 
-					console.log("type:"+thisElement["type"]); 
-					console.log("fc:"+thisElement["command"]); 
-					console.log("optid:"+thisElement["optid"]); 
 					thisElement["object"]=obj;
 					obj.oobd.command = thisElement["command"];
 					obj.oobd.optid = thisElement["optid"];
 					Oobd.visualizers.push(thisElement);
 					console.log("add object as visualizer:"+thisElement["command"]); 
-					console.log(Oobd.visualizers); 
-					obj.addEventListener("click", function(){
-						console.log("clicked element "+this.id);
-						console.log("clicked command "+obj.oobd.command);
-						Oobd.connection.send('{"name":"'+this.oobd.command+'","optid":"'+this.oobd.optid+'","value":"'+btoa(this.oobd.value)+'","updType":1}');
-					});
+					if (obj.getAttribute("oobd:click")=="yes"){
+						obj.addEventListener("click", function(){
+							console.log("clicked command "+obj.oobd.command);
+							Oobd.connection.send('{"name":"'+this.oobd.command+'","optid":"'+this.oobd.optid+'","value":"'+btoa(this.oobd.value)+'","updType":1}');
+						});
+					}
 				}
 		}
 		

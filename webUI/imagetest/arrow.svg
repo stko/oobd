@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
-<svg  onload="init(evt)"
+<svg
+   xmlns:oobd="http://www.oobd.org/namespaces/oobd"
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:oobd="http://www.oobd.org/namespaces/oobd"
-   width="332.4375"
-   height="426.71875"
+   onload="init(evt)"
+   width="753.46796"
+   height="426.71429"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="imagetest.svg">
-
-<script type="text/ecmascript"><![CDATA[
+   sodipodi:docname="arrow.svg">
+ <script type="text/ecmascript"><![CDATA[
 function init(evt) {
 	svgDocument = evt.target.ownerDocument;
 	var svgItem = svgDocument.getElementsByClassName("oobd");
@@ -34,14 +35,44 @@ function init(evt) {
 				this.setAttribute("style", "fill:#FF0000");
 			}
 		};
+		var coord= svgItem[i2].getBBox();
+		console.log("transform " + svgItem[i2].getBBox());
+		console.log(coord);
+		var x =coord.x + (coord.width/2);
+		var y =coord.y + (coord.height/2);
+		svgItem[i2].setAttribute("transform", " rotate(120 " +x + " " + y +")");
 	}
 }
 
 
 ]]></script>
 
+
   <defs
-     id="defs4" />
+     id="defs4">
+    <linearGradient
+       id="linearGradient3779">
+      <stop
+         style="stop-color:#ffb111;stop-opacity:1;"
+         offset="0"
+         id="stop3781" />
+      <stop
+         style="stop-color:#fff5ea;stop-opacity:1;"
+         offset="1"
+         id="stop3783" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3779"
+       id="radialGradient3785"
+       cx="1267.0758"
+       cy="330.15305"
+       fx="1267.0758"
+       fy="330.15305"
+       r="12.081648"
+       gradientTransform="matrix(1,0,0,15.56669,-429.39388,-4758.3638)"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -49,9 +80,9 @@ function init(evt) {
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.35"
-     inkscape:cx="909.06696"
-     inkscape:cy="171.92353"
+     inkscape:zoom="0.64"
+     inkscape:cx="689.44196"
+     inkscape:cy="171.92858"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -80,7 +111,7 @@ function init(evt) {
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-285.21875,-163.28125)">
+     transform="translate(-285.21429,-163.29076)">
     <rect
        style="fill:#0000ff;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="rect2985"
@@ -100,7 +131,7 @@ function init(evt) {
        transform="translate(140,-362.85714)"
        inkscape:label="#path2987" />
     <path
-       d="m 257.14285,743.79077 a 51.42857,51.42857 0 1 1 -102.85714,0 51.42857,51.42857 0 1 1 102.85714,0 z"
+       d="m 257.14285,743.79077 c 0,28.40322 -23.02536,51.42857 -51.42857,51.42857 -28.40322,0 -51.42857,-23.02535 -51.42857,-51.42857 0,-28.40321 23.02535,-51.42857 51.42857,-51.42857 28.40321,0 51.42857,23.02536 51.42857,51.42857 z"
        sodipodi:ry="51.42857"
        sodipodi:rx="51.42857"
        sodipodi:cy="743.79077"
@@ -110,6 +141,27 @@ function init(evt) {
        sodipodi:type="arc"
        transform="translate(337.14286,-368.57143)"
        inkscape:label="#path2989"
+       oobd:type="ci"
+       oobd:click="yes"
+       oobd:fc="dtcStatus:125b11_741"
+       class="oobd" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#008080"
+       id="path2987"
+       sodipodi:cx="985.71429"
+       sodipodi:cy="169.5759"
+       sodipodi:rx="197.14285"
+       sodipodi:ry="197.14285"
+       d="m 1182.8571,169.5759 c 0,108.87899 -88.2638,197.14285 -197.14281,197.14285 -108.87899,0 -197.14285,-88.26386 -197.14285,-197.14285 0,-108.878994 88.26386,-197.142856 197.14285,-197.142856 108.87901,0 197.14281,88.263862 197.14281,197.142856 z"
+       transform="translate(-144.17488,214.15469)" />
+    <path
+       style="fill:url(#radialGradient3785);fill-opacity:1;stroke:#000000;stroke-width:0.16469617px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 839.3291,193.03758 -13.647,263.04334 13.647,112.9345 10.352,-113.87563 z"
+       id="arrow"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccc"
+       inkscape:label="#path2993"
        oobd:type="ci"
        oobd:click="yes"
        oobd:fc="dtcStatus:125b11_741"

@@ -116,7 +116,7 @@ class SimpleChat(WebSocket):
 	def handleConnected(self):
 		print self.address, 'connected'
 		self.sendMessage('{"type":"WRITESTRING" ,"value":"' + encodestring("Connected to OOBD").replace('\n', '') + '"}')
-		self.sendMessage('{"type":"VALUE" , "to":{"name":"gauge_speed:"}, "value":"' + encodestring("120").replace('\n', '') + '"}')
+		self.sendMessage('{"type":"WSCONNECT"}')
 
 	def handleClose(self):
 		print self.address, 'closed'
