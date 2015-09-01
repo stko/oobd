@@ -18,7 +18,7 @@
 		}
 		
 		#info {
-			color: #000;
+			color: #FFF;
 			position: absolute;
 			top: 0px;
 			width: 100%;
@@ -50,7 +50,28 @@
 	<script src="oobdobjects.js"></script>
 	<script src="../libs/oobd/1/oobd.js"></script>
 	<script src="../libs/oobd/1/oobdthree.js"></script>
+	<!-- Code to display an information button and box when clicked. -->
+	<script src="../libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="../libs/jquery-ui/1.11.4/jquery-ui.js"></script>
+	<link rel=stylesheet href="../libs/jquery-ui-themes/1.11.4/themes/smoothness/jquery-ui.css" />
+	<link rel=stylesheet href="css/info.css"/>
+	<script src="js/info.js"></script>
+	<div id="infoButton"></div>
+	<div id="infoBox" title="OOBD Output">
+	This is a demo, part of the 
+	<a href="http://OOBD.org/">OOBD Tools</a>
+	</div>
+	<!-- ------------------------------------------------------------ -->
+
+	<div id="ThreeJS" style="z-index: 1; position: absolute; left:0px; top:0px"></div>
+
+
+
+
 	<script>
+
+
+
 		if (!Detector.webgl) Detector.addGetWebGLMessage();
 
 		var container, stats;
@@ -124,7 +145,7 @@
 
 			stats = new Stats();
 			stats.domElement.style.position = 'absolute';
-			stats.domElement.style.top = '0px';
+			stats.domElement.style.top = '40px';
 			stats.domElement.style.zIndex = 100;
 			container.appendChild(stats.domElement);
 
@@ -144,7 +165,10 @@
 			Oobd.onConnect=function () {
 				Oobd.update();
 			}
-			//Oobd.update();
+			Oobd.writeString=function addText(text) {
+				console.log("writeString");
+				document.getElementById("infoBox").innerHTML += "<br>"+text;
+			}
 			render();
 
 		}

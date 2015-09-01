@@ -593,7 +593,7 @@ public class ScriptengineLua extends OobdScriptengine {
                             new Object[]{
                                 Base64Coder.decodeString(on.getOnionString("actValue")),
                                 on.getOnionString("optid"),
-                                on.optInt("updType")})
+                                (double) on.optInt("updType")})
                             + "}")));
                 }
             } catch (JSONException ex) {

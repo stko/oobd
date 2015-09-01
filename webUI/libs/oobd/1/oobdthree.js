@@ -90,7 +90,7 @@ if (typeof Oobdthree == "undefined") {
 
 		// function for drawing rounded rectangles
 		roundRect : function (ctx, x, y, w, h, r) {
-			ctx.beginPath();
+ 			ctx.beginPath();
 			ctx.moveTo(x + r, y);
 			ctx.lineTo(x + w - r, y);
 			ctx.quadraticCurveTo(x + w, y, x + w, y + r);
@@ -157,9 +157,9 @@ if (typeof Oobdthree == "undefined") {
 			var spritey = Oobdthree.makeTextSprite(oobdObject.getAttribute("id"), {
 				fontsize: 20,
 				borderColor: {
-					r: 255,
-					g: 0,
-					b: 0,
+					r: 120,
+					g: 120,
+					b: 120,
 					a: 1.0
 				},
 				backgroundColor: color
@@ -206,9 +206,9 @@ if (typeof Oobdthree == "undefined") {
 				var spritey = Oobdthree.makeTextSprite(oobdObjects[i].getAttribute("id"), {
 					fontsize: 20,
 					borderColor: {
-						r: 255,
-						g: 0,
-						b: 0,
+						r: 120,
+						g: 120,
+						b: 120,
 						a: 1.0
 					},
 					backgroundColor: {
@@ -286,7 +286,7 @@ if (typeof Oobdthree == "undefined") {
 			}
 		},
 		init : function () {
-
+/*  Draw some coordinates 
 			for (var i = 0; i < 10; i++) {
 				var spritey = Oobdthree.makeTextSprite("x" + i, {
 					fontsize: 10,
@@ -350,6 +350,7 @@ if (typeof Oobdthree == "undefined") {
 				scene.add(spritey);
 
 			}
+*/
 			// when the mouse moves, call the given function
 			document.addEventListener('mousedown', Oobdthree.onDocumentMouseDown, false);
 

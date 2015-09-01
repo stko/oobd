@@ -107,15 +107,16 @@ if (typeof Oobd == "undefined") {
 							Oobd._timerTick();
 						}
 						if (obj.type=="WSCONNECT"){
-						if (typeof Oobd.onConnect != "undefined"  ){
-								// bizarre UTF-8 decoding...
-							  Oobd.onConnect();
+							if (typeof Oobd.onConnect != "undefined"  ){
+								Oobd.onConnect();
 							}
 						}
 						if (obj.type=="WRITESTRING"){
-						if (typeof Oobd.writeString != "undefined"  && typeof obj.data != "undefined" && obj.data.length>0){
+							
+							if (typeof Oobd.writeString != "undefined"  && typeof obj.data != "undefined" && obj.data.length>0){
+								console.log("try to WRITESTRING");
 								// bizarre UTF-8 decoding...
-							  Oobd.writeString(decodeURIComponent(escape(atob(obj.data)))+"\n");
+								Oobd.writeString(decodeURIComponent(escape(atob(obj.data)))+"\n");
 							}
 						}
 					}
@@ -144,6 +145,7 @@ if (typeof Oobd == "undefined") {
 					obj.oobd.value=initialValue;
 					thisElement = new Object();
 					thisElement["name"] = obj.getAttribute("id");
+					thisElement["value"] = initialValue;
 					thisElement["type"] = obj.getAttribute("oobd:type");
 					thisElement["command"] = obj.getAttribute("oobd:fc");
 					var params=obj.getAttribute("oobd:fc").match(/(\w+):(.+)/)
@@ -159,7 +161,7 @@ if (typeof Oobd == "undefined") {
 					console.log("add object as visualizer:"+thisElement["command"]); 
 					if (obj.getAttribute("oobd:click")=="yes"){
 						obj.addEventListener("click", function(){
-							console.log("clicked command "+obj.oobd.command);
+							console.log("clicked command "+this.oobd.command + "with value" + this.oobd.value);
 							Oobd.connection.send('{"name":"'+this.oobd.command+'","optid":"'+this.oobd.optid+'","value":"'+btoa(this.oobd.value)+'","updType":1}');
 						});
 					}

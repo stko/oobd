@@ -44,24 +44,24 @@ public class MessagePort {
         } catch (JSONException ex) {
             thisReplyID = -1;
         }
-        Logger.getLogger(MessagePort.class.getName()).log(Level.INFO, "Port " + portName + " Msg reply id:" + Integer.toString(thisReplyID) + " Waiting ID:" + Integer.toString(waitingforID));
+        //Logger.getLogger(MessagePort.class.getName()).log(Level.INFO, "Port " + portName + " Msg reply id:" + Integer.toString(thisReplyID) + " Waiting ID:" + Integer.toString(waitingforID));
         if (thisReplyID > 0) { // this is a reply for something
-            Logger.getLogger(MessagePort.class.getName()).log(Level.INFO, "A reply message " + thisReplyID);
+            //Logger.getLogger(MessagePort.class.getName()).log(Level.INFO, "A reply message " + thisReplyID);
             if (thisReplyID == waitingforID) { //only if this is really the message we are waiting for, otherways just forget this obviously old reply
                 synchronized (myMsgs) {
                     myMsgs.insertElementAt(thisMessage, 0); //put the message as the first one in the message quere
                     waitingforID = 0; // reset the waitingFor Flag
                     myMsgs.notify();
-                    Logger.getLogger(MessagePort.class.getName()).log(Level.INFO, "saved and notified");
+                    //Logger.getLogger(MessagePort.class.getName()).log(Level.INFO, "saved and notified");
                 }
             } else {
                 Logger.getLogger(MessagePort.class.getName()).log(Level.WARNING, "wrong reply id (" + thisReplyID + "<>" + waitingforID + ") message deleted");
             }
         } else { // this is a normal, non replied msg
-            Logger.getLogger(MessagePort.class.getName()).log(Level.INFO, "A non reply message " + thisReplyID);
+            //Logger.getLogger(MessagePort.class.getName()).log(Level.INFO, "A non reply message " + thisReplyID);
             synchronized (myMsgs) {
                 myMsgs.add(thisMessage);
-                Logger.getLogger(MessagePort.class.getName()).log(Level.INFO, "msg saved");
+               // Logger.getLogger(MessagePort.class.getName()).log(Level.INFO, "msg saved");
                 if (waitingforID == 0) { //if we not just waiting for a delicated reply message
                     Logger.getLogger(MessagePort.class.getName()).log(Level.INFO, "msg notified");
                     myMsgs.notify();

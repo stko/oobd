@@ -22,8 +22,6 @@ from decimal import Decimal
 
 logging.basicConfig(format = '%(asctime)s %(message)s', level = logging.DEBUG)
 
-global actValue
-actValue = 100
 global server
 
 class viz:
@@ -54,6 +52,8 @@ class viz:
 			elif self.value=="n":
 				self.value="y"
 			elif self.value=="y":
+				self.value="i"
+			else:
 				self.value="i"
 			return self.value
 		elif self.type=="num":
@@ -100,10 +100,6 @@ class SimpleChat(WebSocket):
 	def handleMessage(self):
 		if self.data is not None:
 			try:
-				global actValue
-				actValue += 10
-				if actValue > 200:
-					actValue = 50
 				print 'message: ' + str(self.data)
 				thisMsg = loads(str(self.data))
 				pprint(thisMsg)
@@ -115,7 +111,7 @@ class SimpleChat(WebSocket):
 
 	def handleConnected(self):
 		print self.address, 'connected'
-		self.sendMessage('{"type":"WRITESTRING" ,"value":"' + encodestring("Connected to OOBD").replace('\n', '') + '"}')
+		self.sendMessage('{"type":"WRITESTRING" ,"data":"' + encodestring("Connected to OOBD").replace('\n', '') + '"}')
 		self.sendMessage('{"type":"WSCONNECT"}')
 
 	def handleClose(self):
