@@ -11,7 +11,7 @@ oobdObjects[0].setAttribute("id","BCM");
 oobdObjects[0]["coord"] = new THREE.Vector3(1.10000, 0.20000, 0.30000);
 
 oobdObjects[1] = document.createElement("BUTTON");
-oobdObjects[1].setAttribute("oobd:fc","dtcStatus:125b11_721");
+oobdObjects[1].setAttribute("oobd:fc","dtcStatus:125b11_720");
 oobdObjects[1].setAttribute("oobd:type","spritebutton");
 oobdObjects[1].setAttribute("oobd:click","yes");
 oobdObjects[1].setAttribute("id","Cluster");

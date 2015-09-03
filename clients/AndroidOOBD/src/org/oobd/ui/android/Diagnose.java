@@ -13,6 +13,7 @@ import org.oobd.ui.android.application.OOBDApp;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -49,18 +50,18 @@ public class Diagnose extends ListActivity {
 	public static Diagnose myDiagnoseInstance = null;
 	public static Handler myRefreshHandler;
 	private ToggleButton myTimerButton;
-	private static int timerTickCounter=0;
+	private static int timerTickCounter = 0;
 	private ProgressDialog myProgressDialog;
 	private Handler myTimerHandler = new Handler();
 	private PowerManager.WakeLock wl;
 
 	private Runnable mUpdateTimeTask = new Runnable() {
 		public void run() {
-			if (timerTickCounter >OOBDConstants.LV_UPDATE_INTERVAL){
-				timerTickCounter=0;
+			if (timerTickCounter > OOBDConstants.LV_UPDATE_INTERVAL) {
+				timerTickCounter = 0;
 				MainActivity.myMainActivity.updateOobdUI();
 			}
-			if (timerTickCounter ==0 && myTimerButton.isChecked()) {
+			if (timerTickCounter == 0 && myTimerButton.isChecked()) {
 				refreshView(OOBDConstants.VE_TIMER, OOBDConstants.VE_TIMER);
 				// myTimerHandler.postDelayed(this, OOBDConstants.LV_UPDATE);
 			}
@@ -161,6 +162,34 @@ public class Diagnose extends ListActivity {
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
 		myTimerHandler.postDelayed(mUpdateTimeTask, OOBDConstants.LV_UPDATE_UI);
+		BroadcastReceiver mConnectionReceiver = new BroadcastReceiver() {
+
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				String action = intent.getAction();
+
+				if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+					// Ändere TextViewauf Connected
+					Log.d("BT Listener", "Bluetooth connected");
+				}
+
+				else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+					// Ändere TextView auf disconnectet bzw. versuche die BT
+					// Verbindung neu aufzubauen
+					Log.d("BT Listener", "Bluetooth lost!");
+				}
+
+			}
+		};
+		// };
+
+		// Diesen Teil dann in die onCreate() Methode
+		IntentFilter filter1 = new IntentFilter(
+				BluetoothDevice.ACTION_ACL_CONNECTED);
+		IntentFilter filter3 = new IntentFilter(
+				BluetoothDevice.ACTION_ACL_DISCONNECTED);
+		this.registerReceiver(mConnectionReceiver, filter1);
+		this.registerReceiver(mConnectionReceiver, filter3);
 	}
 
 	@Override

@@ -204,6 +204,7 @@ public class ComPort implements OOBDPort {
 
 	
 	public void close() {
+		Log.d("BT Socket", "Try to close socket");
 		if (serialPort != null) {
 			try {
 				inputStream.close();
