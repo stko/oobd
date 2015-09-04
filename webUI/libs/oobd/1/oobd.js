@@ -10,6 +10,7 @@ var readyStateCheckInterval = setInterval(function() {
 }, 10);
 
 
+
 /**
 * Oobd namespace.
 */
@@ -28,12 +29,12 @@ if (typeof Oobd == "undefined") {
 			for (index = 0; index < a.length; ++index) { // go through all images found
 				var oobdElement = a[index];
 				var type=oobdElement.getAttribute("oobd:type");
-				var name=oobdElement.getAttribute("id"); 
+				var initialValue=oobdElement.getAttribute("oobd:value"); 
 				if (type=="te"){
 					oobdElement.oodbupdate= function(input){
 						this.getElementsByClassName("value")[0].innerHTML = atob(input.value);
 					};
-					Oobd.addObject(oobdElement,"");
+					Oobd.addObject(oobdElement,initialValue);
 				}
 			}
 			// Get all svg images, which are defined as OOBDMap class
@@ -44,8 +45,8 @@ if (typeof Oobd == "undefined") {
 				for (i2 = 0; i2 < svgItem.length; ++i2) {
 					var type=svgItem[i2].getAttribute("oobd:type"); 
 					var fc=svgItem[i2].getAttribute("oobd:fc"); 
-					Oobd.addObject(svgItem[i2],"");
-					// svgItem[i2].oodbupdate("bla");
+					var initialValue=svgItem[i2].getAttribute("oobd:value"); 
+					Oobd.addObject(svgItem[i2],initialValue);
 				}
 			}
 		},

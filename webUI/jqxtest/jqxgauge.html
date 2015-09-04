@@ -18,7 +18,7 @@
 	<script type="text/javascript" src="./jqxgauge_files/jqxgauge.js"></script>
 
 	<script type="text/javascript" src="../libs/oobd/1/oobd.js"></script>
-	<!--<script type="text/javascript" src="../libs/oobd/1/oobdjqx.js"></script> -->
+	<script type="text/javascript" src="../libs/oobd/1/oobdjqx.js"></script> 
 
 
 	<style type="text/css">
@@ -162,10 +162,8 @@
 			});
 
 			$('#linearGauge').jqxLinearGauge('value', 40);
-			// after the page implementation is done, let OOBD sample the content. First intialize the basics
-			//Oobd.init();
 			// then initialize the frameworks you are using
-			//Oobdjqx.init();
+			Oobdjqx.init();
 			// set your hooks
 			Oobd.writeString=function addText(text) {
 				document.getElementById("textoutput").value += text;
@@ -180,10 +178,11 @@
 <body style="background:white;">
 <button onclick="Oobd.update()">Update</button><label><input type='checkbox' onclick='Oobd.timer(this.checked);'>Timer</label>
 <p />
+<h3>click on the gauge to change it's value</h3>
 	<div id="demoWidget" style="position: relative;">
-		<div class="OOBD" oobd:type="jqx" oobd:fc="gauge_speed:" oobd:click="yes"  style="float: left;" id="gaugeContainer"></div>
+		<div class="OOBD" oobd:type="jqx" oobd:fc="gauge_speed:" oobd:click="yes"  oobd:value="200"   style="float: left;" id="gaugeContainer"></div>
 		<div id="gaugeValue" style="position: absolute; top: 235px; left: 132px; font-family: Sans-Serif; text-align: center; font-size: 17px; width: 70px;"></div>
-		<div style="margin-left: 60px; float: left;" id="linearGauge"></div>
+		<div  class="OOBD" oobd:type="jqx" oobd:fc="gauge_temp:" oobd:click="yes"  oobd:value="50"style="margin-left: 60px; float: left;" id="linearGauge"></div>
 	</div>
 <p />
 <h2>Text Output from OOBD</h2>

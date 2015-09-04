@@ -18,6 +18,7 @@ if (typeof Oobdjqx == "undefined") {
 						var oobdElement = a[index];
 						var type=oobdElement.getAttribute("oobd:type");
 						var name=oobdElement.getAttribute("id"); 
+						var initialValue=oobdElement.getAttribute("oobd:value"); 
 						console.log("oobdtype:"+type);
 						console.log("id:"+name);
 						if (type=="jqx"){
@@ -26,9 +27,10 @@ if (typeof Oobdjqx == "undefined") {
 								console.log("Updatefunction erreicht!"+parseInt(atob(input.value)));
 								console.log($(this));
 								//$(this).jqxGauge('value',parseInt(atob(input.value)));
-								$(this)["jqxGauge"]('value',parseInt(atob(input.value)));
+								//$(this)["jqxGauge"]('value',parseInt(atob(input.value)));
+								$(this).val(parseInt(atob(input.value)));
 							};
-							Oobd.addObject(oobdElement,"");
+							Oobd.addObject(oobdElement,initialValue);
 							//$('#gaugeContainer').jqxGauge('value',100);
 						}
 					}

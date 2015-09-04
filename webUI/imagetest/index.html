@@ -5,34 +5,33 @@
 <head>
 	<meta charset="utf-8">
 	<script type="text/javascript" src="../libs/oobd/1/oobd.js"></script>
-	<script type="text/javascript">
-		Oobd.writeString = function addText(text) {
-			var targ = event.target || event.srcElement;
-			document.getElementById("textoutput").value += text;
-		}
-	</script>
 
 </head>
 
 <body>
 
+<button onclick="Oobd.update()">Update</button><label><input type='checkbox' onclick='Oobd.timer(this.checked);'>Timer</label>
+
+	<h3>Click on the circle to cycle its state<h3>
+	<object class="OOBDMap" data="imagetest.svg" type="image/svg+xml"></object>
+	<h3>Click on the arrow to turn it's angle<h3>
 	<object class="OOBDMap" data="arrow.svg" type="image/svg+xml"></object>
-	System Info:
+	<h3>System Info:</h3>
 
 	<table>
-		<tr class="OOBD" oobd:type="te" oobd:fc="interface_serial:" oobd:click="yes" id="Serial_number">
+		<tr class="OOBD" oobd:type="te" oobd:fc="interface_serial:" oobd:value="A3-4711" oobd:click="yes" id="Serial_number">
 			<td class="name">Serial</td>
 			<td class="value">Click for Update</td>
 		</tr>
-		<tr class="OOBD" oobd:type="te" oobd:click="yes" id="interface_Version">
+		<tr class="OOBD" oobd:type="te" oobd:fc="interface_version:" oobd:value="CANINVADER" oobd:click="yes" id="interface_Version">
 			<td class="name">BIOS</td>
 			<td class="value">Click for Update</td>
 		</tr>
-		<tr class="OOBD" oobd:type="te" oobd:click="yes" id="voltage">
+		<tr class="OOBD" oobd:type="te" oobd:fc="interface_voltage:" oobd:value="14.0 Volt" oobd:click="yes" id="voltage">
 			<td class="name">Voltage</td>
 			<td class="value">Click for Update</td>
 		</tr>
-		<tr class="OOBD" oobd:type="te" oobd:click="yes" id="bustype">
+		<tr class="OOBD" oobd:type="te" oobd:fc="interface_bus:" oobd:value="CAN" oobd:click="yes" id="bustype">
 			<td class="name">Bus</td>
 			<td class="value">Click for Update</td>
 		</tr>
@@ -52,11 +51,10 @@
 		(function() {
 			// your page initialization code here
 			// the DOM will be available here
-			Oobd.init();
 			Oobd.writeString = function addText(text) {
 				document.getElementById("textoutput").value += text;
 			}
-
+			Oobd.start();
 		})();
 	</script>
 </body>

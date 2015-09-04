@@ -23,6 +23,7 @@ function init(evt) {
 	var svgItem = svgDocument.getElementsByClassName("oobd");
 		for (i2 = 0; i2 < svgItem.length; ++i2) {
 		svgItem[i2].oodbupdate= function(input){
+			console.log("got click");
 			var value=atob(input.value);
 			if (value=="i"){ // no anser from module, so ignored
 				this.setAttribute("style", "fill:#75A3A3");
@@ -98,7 +99,12 @@ function init(evt) {
        sodipodi:ry="51.42857"
        d="m 257.14285,743.79077 c 0,28.40322 -23.02536,51.42857 -51.42857,51.42857 -28.40322,0 -51.42857,-23.02535 -51.42857,-51.42857 0,-28.40321 23.02535,-51.42857 51.42857,-51.42857 28.40321,0 51.42857,23.02536 51.42857,51.42857 z"
        transform="translate(140,-362.85714)"
-       inkscape:label="#path2987" />
+       inkscape:label="#path2987" 
+       oobd:type="ci"
+       oobd:click="yes"
+       oobd:value="i"
+       oobd:fc="svgbuttontest_left"
+       class="oobd" />
     <path
        d="m 257.14285,743.79077 a 51.42857,51.42857 0 1 1 -102.85714,0 51.42857,51.42857 0 1 1 102.85714,0 z"
        sodipodi:ry="51.42857"
@@ -112,7 +118,8 @@ function init(evt) {
        inkscape:label="#path2989"
        oobd:type="ci"
        oobd:click="yes"
-       oobd:fc="dtcStatus:125b11_741"
+       oobd:value="i"
+       oobd:fc="svgbuttontest_right"
        class="oobd" />
   </g>
 </svg>

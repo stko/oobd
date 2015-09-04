@@ -24,23 +24,13 @@ function init(evt) {
 	var svgItem = svgDocument.getElementsByClassName("oobd");
 		for (i2 = 0; i2 < svgItem.length; ++i2) {
 		svgItem[i2].oodbupdate= function(input){
-			var value=atob(input.value);
-			if (value=="i"){ // no anser from module, so ignored
-				this.setAttribute("style", "fill:#75A3A3");
-			} else if (value=="n"){ // no errors, so green
-					this.setAttribute("style", "fill:#66FF33");
-			} else if (value=="y"){ //  errors, so orange
-				this.setAttribute("style", "fill:#FF9933");
-			} else { // any kind of fatal error, so red
-				this.setAttribute("style", "fill:#FF0000");
-			}
+			var value=parseFloat(atob(input.value));
+			var numValue=parseFloat(value);
+			var coord= this.getBBox();
+			var x =coord.x + (coord.width/2);
+			var y =coord.y + (coord.height/2);
+			this.setAttribute("transform", " rotate("+ numValue +" " +x + " " + y +")");
 		};
-		var coord= svgItem[i2].getBBox();
-		console.log("transform " + svgItem[i2].getBBox());
-		console.log(coord);
-		var x =coord.x + (coord.width/2);
-		var y =coord.y + (coord.height/2);
-		svgItem[i2].setAttribute("transform", " rotate(120 " +x + " " + y +")");
 	}
 }
 
@@ -164,7 +154,8 @@ function init(evt) {
        inkscape:label="#path2993"
        oobd:type="ci"
        oobd:click="yes"
-       oobd:fc="dtcStatus:125b11_741"
+       oobd:value="270"
+       oobd:fc="arrowtest"
        class="oobd" />
   </g>
 </svg>

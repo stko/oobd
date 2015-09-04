@@ -35,13 +35,16 @@ class viz:
 			values =firstValue.split(None, 1)
 			try:
 				self.maxValue=Decimal(values[0]);
+				self.value=self.maxValue;
 				self.type="num"
 				if len(values)>1:
 					self.unit=values[1]
 				else:
 					self.unit=""
 			except:
-				self.type="none"
+				self.type="text"
+				self.text=firstValue
+				self.value=0
 				
 	def getValue(self):
 		if self.type=="none":
@@ -61,9 +64,14 @@ class viz:
 			if self.value>self.maxValue:
 				self.value=0
 			if self.unit !="":
-				return self.value + " " + self.unit
+				return str(self.value) + " " + self.unit
 			else:
 				return str(self.value)
+		elif self.type=="text":
+			self.value=self.value+1
+			if self.value>10:
+				self.value=0
+			return "{0}-{1}".format(self.text,self.value)
 			
 			
 class SimpleEcho(WebSocket):
@@ -104,12 +112,13 @@ class SimpleChat(WebSocket):
 				thisMsg = loads(str(self.data))
 				pprint(thisMsg)
 				self.sendMessage('{"type":"VALUE" , "to":{"name":"'+thisMsg['name'].encode("utf-8")+'"}, "value":"' + encodestring(self.guessAnswer(thisMsg)).replace('\n', '') + '"}')
-				# self.sendMessage('{"type":"VALUE" , "to":{"name":"gauge_speed:"}, "value":"' + encodestring("120").replace('\n', '') + '"}')# for client in self.server.connections.itervalues(): #print 'actual client: ' + client.channel#
+				#self.sendMessage('{"type":"VALUE" , "to":{"name":"gauge_speed:"}, "value":"' + encodestring("120").replace('\n', '') + '"}')# for client in self.server.connections.itervalues(): #print 'actual client: ' + client.channel#
 			except Exception as n:
 				print "Exception: ", n
 
 
 	def handleConnected(self):
+		self.clients={}
 		print self.address, 'connected'
 		self.sendMessage('{"type":"WRITESTRING" ,"data":"' + encodestring("Connected to OOBD").replace('\n', '') + '"}')
 		self.sendMessage('{"type":"WSCONNECT"}')
