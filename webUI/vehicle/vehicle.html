@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>OOBD Fehlerspeicher auslesen</title>
+	<link rel="stylesheet" href="themes/warnings.min.css" />
+	<link rel="stylesheet" href="themes/jquery.mobile.icons.min.css" />
+
+
+	<link rel="stylesheet" href="../libs/jquery.mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css" />
+	<link rel="stylesheet" href="../libs/jquery.mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+	<script src="../libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="../libs/jquery.mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+
+	<!--
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css" />
+	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+-->
+
+	<script src="carlines.js"></script>
+	<script src="../libs/oobd/1/oobd.js"></script>
+
+
+
+
+	<script>
+		$(function() {
+			var icons = {
+				header: "ui-icon-circle-arrow-e",
+				activeHeader: "ui-icon-circle-arrow-s"
+			};
+
+			$("#mycollapse").collapsibleset({
+				icons: icons
+			});
+
+			$("#carline").selectmenu();
+			var options = $("#carline");
+			carlines.forEach(function(entry) {
+				options.append("<option>" + entry.name + "</option>");
+			});
+			options.selectmenu("refresh");
+			$("#start")
+				.button()
+				.click(function(event) {
+					event.preventDefault();
+					var option = $("#carline").find('option:selected').val();
+					Oobd.clearVisualiers();
+					createModules(option);
+				});
+			Oobd.createXsltTransformer('./dtc.xsl', function(prozessor) {
+				self.xsltProcessor = prozessor;
+			});
+			Oobd.start();
+
+		});
+
+		function createModules(carline) {
+			for (var i = 0; i < carlines.length; i++) {
+				if (carlines[i].name == carline) {
+					$("#mycollapse").empty();
+					var modules = carlines[i].modules;
+					var anchors = $("#mycollapse");
+					for (var m = 0; m < modules.length; m++) {
+						var newdiv = $("<div></div>");
+						var oobdElement = newdiv[0];
+						var newhead = $('<h3>' + modules[m].name + '</h3>');
+						var topdiv = $('<div data-role="collapsible" data-collapsed="true"></div>');
+						anchors.append(topdiv);
+						topdiv.append(newhead);
+						newhead.after(newdiv);
+						oobdElement.setAttribute("oobd:fc", modules[m].id);
+						oobdElement.oodbupdate = function(input) {
+							var xml = Oobd.parseXml(input.value);
+							resultDocument = self.xsltProcessor.transformToFragment(xml, document);
+							if (typeof xml.getElementsByTagName("dtc")[0] != "undefined") {
+								$(this).append(resultDocument);
+								$(this).parent().prev().parent().collapsible({
+									theme: 'c',
+									refresh: true
+								});
+								$(this).append(' <a onclick="Oobd.sendUpdateReq(&quot;DeleteModuleDTC:&quot;,&quot;' + this.oobd.optid + '&quot;,&quot;&quot;,1)" data-role="button" data-theme="a"> Fehlerspeicher l&ouml;schen</a>').trigger("create");
+							} else if (typeof xml.getElementsByTagName("error")[0] != "undefined") {
+								$(this).append(resultDocument);
+								$(this).parent().prev().parent().collapsible({
+									theme: 'b',
+									refresh: true
+								});
+							} else {
+								$(this).parent().prev().parent().collapsible({
+									theme: 'a',
+									refresh: true
+								});
+							}
+
+							$(this).parent().parent().parent().collapsibleset("refresh");
+
+						};
+						Oobd.addObject(oobdElement, "");
+
+					}
+					anchors.collapsibleset("refresh");
+					Oobd.update();
+				}
+			}
+		}
+
+	</script>
+</head>
+
+<body>
+
+
+	<div id="home" data-role="page" data-theme="a">
+		<div role="main" class="ui-content">
+			<div class="ui-field-contain">
+				<label for="carline">Gewünschtes Fahrzeug auswählen</label>
+				<select id="carline">
+				</select>
+			</div>
+			<a class="ui-btn" id="start">Fehlerspeicher auslesen</a>
+			<div data-role="collapsible-set" id="mycollapse">
+				<div data-role="collapsible">
+					<h3>Reklame :-)</h3>
+					<div>
+						Dieser Fehlerausleser ist ein Beispiel für die vielf&auml;ltigen M&ouml;glichkeiten von OOBD, der kostenlosen und frei programmierbaren Diagnosesoftware
+						<br /> Mehr interessante Details gibts auf <a href="http://oobd.org/doku.php?id=web:features">OOBD.org</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+
+</html>

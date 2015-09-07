@@ -660,7 +660,7 @@ public class ScriptengineLua extends OobdScriptengine {
              return res;
 
         } catch (Exception ex) {
-            return Base64Coder.encodeString("'value':'"+"function " + functionName + " not found'");
+            return "'value':'"+Base64Coder.encodeString(ex.toString())+ "'";
         }
     }
 

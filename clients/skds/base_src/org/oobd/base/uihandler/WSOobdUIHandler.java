@@ -160,7 +160,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
                 
                 return null;
             } catch (JSONException ex) {
-                Logger.getLogger(WSOobdUIHandler.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(WSOobdUIHandler.class.getName()).log(Level.INFO, "failed Update Request, Scriptengine is not running yet");
             }
         }
 
@@ -439,16 +439,6 @@ class ChatServer extends WebSocketServer {
         System.out.println(conn + ": " + message);
         try {
             Onion webvis = new Onion(message);
-            System.out.println("messagetext:" + ""
-                    + "{" + "'type':'"
-                    + OOBDConstants.CM_UPDATE + "',"
-                    + "'vis':'" + webvis.getOnionString("name") + "',"
-                    + "'to':'" + WSOobdUIHandler.ownerEngine
-                    + "'," + "'optid':'" + webvis.getOnionString("optid")
-                    + "'," + "'actValue':'"
-                    + webvis.getOnionString("value") + "',"
-                    + "'updType':"
-                    + Integer.toString(webvis.getInt("updType")) + "}");
 
             Core.getSingleInstance().transferMsg(
                     new Message(Core.getSingleInstance(),
@@ -459,7 +449,7 @@ class ChatServer extends WebSocketServer {
                                     + "'to':'" + WSOobdUIHandler.ownerEngine
                                     + "'," + "'optid':'" + webvis.getOnionString("optid")
                                     + "'," + "'actValue':'"
-                                    + webvis.getOnionString("value") + "',"
+                                    + webvis.getOnionString("actValue") + "',"
                                     + "'updType':"
                                     + Integer.toString(webvis.getInt("updType")) + "}")));
         } catch (JSONException ex) {
