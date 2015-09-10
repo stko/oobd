@@ -11,7 +11,10 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />    
+	
     <application
         android:allowBackup="true"
         android:icon="@drawable/icon"
@@ -35,6 +38,12 @@
                   android:label="@string/select_device"
                   android:configChanges="orientation|keyboardHidden" 
                   android:screenOrientation="portrait"/>
+        
+        <activity android:name=".ActivityFlash"
+                  android:label="OOBD Flash"
+                  android:configChanges="orientation|keyboardHidden" 
+                  android:screenOrientation="portrait"/>
+       
        
         <service android:name="BluetoothService"> </service>
         

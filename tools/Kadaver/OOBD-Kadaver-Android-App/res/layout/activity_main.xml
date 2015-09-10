@@ -42,8 +42,7 @@
         android:id="@+id/rl_flash"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="45dp"
+        android:layout_below="@+id/TV_Status1"
         android:background="@color/white_transparent"
         android:orientation="horizontal"
         android:padding="5dp"
@@ -250,5 +249,16 @@
         android:layout_alignBottom="@+id/rl_flash"
         android:background="@drawable/drop_shadow_up" 
         android:visibility="gone"/>
+    
+    <TextView
+        android:id="@+id/TV_app_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       
+        android:layout_centerHorizontal="true"
+       	android:layout_alignParentBottom="true"
+        android:gravity="center|bottom"
+        android:textColor="@color/white"
+        android:text="@string/app_version" />
 
 </RelativeLayout>

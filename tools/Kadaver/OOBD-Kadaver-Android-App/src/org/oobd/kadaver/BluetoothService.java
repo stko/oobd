@@ -19,6 +19,7 @@ package org.oobd.kadaver;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.UUID;
@@ -30,9 +31,12 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.net.LocalSocket;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.ParcelFileDescriptor;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -101,6 +105,89 @@ public class BluetoothService {
      * Return the current connection state. */
     public synchronized int getState() {
         return mState;
+    }
+    
+    public static void cleanClose(BluetoothSocket btSocket)
+    {
+        if(btSocket == null)
+            return;
+
+        if(Build.VERSION.SDK_INT >= 17 && Build.VERSION.SDK_INT <= 20)
+        {
+            try { cleanCloseFix(btSocket); }
+            catch (Exception e)
+            {
+            }
+
+            //Go on to call BluetoothSocket.close() too, because our code didn't do quite everything
+        }
+
+        //Call BluetoothSocket.close()
+        try { btSocket.close(); }
+        catch (Exception e)
+        {
+        }
+
+    }
+
+    private static void cleanCloseFix(BluetoothSocket btSocket) throws IOException
+    {
+        synchronized(btSocket)
+        {
+            Field socketField = null;
+            LocalSocket mSocket = null;
+            try
+            {
+                socketField = btSocket.getClass().getDeclaredField("mSocket");
+                socketField.setAccessible(true);
+
+                mSocket = (LocalSocket)socketField.get(btSocket);
+            }
+            catch(Exception e)
+            {
+            }
+
+            if(mSocket != null)
+            {
+                mSocket.shutdownInput();
+                mSocket.shutdownOutput();
+                mSocket.close();
+
+                mSocket = null;
+
+                try { socketField.set(btSocket, mSocket); }
+                catch(Exception e)
+                {
+                }
+            }
+
+
+            Field pfdField = null;
+            ParcelFileDescriptor mPfd = null;
+            try
+            {
+                pfdField = btSocket.getClass().getDeclaredField("mPfd");
+                pfdField.setAccessible(true);
+
+                mPfd = (ParcelFileDescriptor)pfdField.get(btSocket);
+            }
+            catch(Exception e)
+            {
+            }
+
+            if(mPfd != null)
+            {
+                mPfd.close();
+
+                mPfd = null;
+
+                try { pfdField.set(btSocket, mPfd); }
+                catch(Exception e)
+                {
+                }
+            }       
+
+        } //synchronized
     }
     
     public synchronized void startFlash(String downloadURL, String flashFilename, Handler h){
@@ -254,6 +341,7 @@ public class BluetoothService {
         r.write(out);
     }
 
+    private int connectionFailedCounter = 0;
     /**
      * Indicate that the connection attempt failed and notify the UI Activity.
      */
@@ -266,7 +354,12 @@ public class BluetoothService {
 //        mHandler.sendMessage(msg);
 
         // Start the service over to restart listening mode
-        BluetoothService.this.start();
+    	if(mConnectThread==null){
+    	connectionFailedCounter++;
+    	System.out.println("CONNECTION FAILED: " + connectionFailedCounter);
+    	
+//    		BluetoothService.this.start();
+    	}
     }
 
     /**
@@ -361,6 +454,7 @@ public class BluetoothService {
         public void cancel() {
             if (D) Log.d(TAG, "Socket Type" + mSocketType + "cancel " + this);
             try {
+            	
                 mmServerSocket.close();
             } catch (IOException e) {
                 Log.e(TAG, "Socket Type" + mSocketType + "close() of server failed", e);
@@ -430,15 +524,17 @@ public class BluetoothService {
             try {
                 // This is a blocking call and will only return on a
                 // successful connection or an exception
-            	 System.out.println("BLUETOOTH KADEVER SERVICE: connectThread run3 ");
+            	System.out.println("BLUETOOTH KADEVER SERVICE: connectThread run3 ");
 
                 mmSocket.connect();
+                fallBackSuccessful = true;
                 System.out.println("BLUETOOTH KADEVER SERVICE: connectThread run4 ");
             } catch (IOException e) {
                 // Close the socket
             	fallBackSuccessful = false;
             	try {
-            		mmSocket.close();
+            		cleanClose(mmSocket);            		
+//            		mmSocket.close();
 					mmSocket =(BluetoothSocket) mmDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(mmDevice,1);
 					mmSocket.connect();
 					fallBackSuccessful = true;
@@ -464,11 +560,12 @@ public class BluetoothService {
         }
 
         public void cancel() {
-            try {
-                mmSocket.close();
-            } catch (IOException e) {
-                Log.e(TAG, "close() of connect " + mSocketType + " socket failed", e);
-            }
+//            try {
+            	cleanClose(mmSocket);
+//                mmSocket.close();
+//            } catch (IOException e) {
+//                Log.e(TAG, "close() of connect " + mSocketType + " socket failed", e);
+//            }
         }
     }
 
@@ -487,7 +584,7 @@ public class BluetoothService {
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
-           
+            connectionFailedCounter = 0;
             // Get the BluetoothSocket input and output streams
             try {
                 tmpIn = socket.getInputStream();
@@ -562,13 +659,14 @@ public class BluetoothService {
         }
 
         public void cancel() {
-            try {
+//            try {
             	stopThread = true;
-        		mmSocket.close();
+            	cleanClose(mmSocket);
+//        		mmSocket.close();
             	
-            } catch (IOException e) {
-                Log.e(TAG, "close() of connect socket failed", e);
-            }
+//            } catch (IOException e) {
+//                Log.e(TAG, "close() of connect socket failed", e);
+//            }
         }
         
         public void pauseThread(boolean state){

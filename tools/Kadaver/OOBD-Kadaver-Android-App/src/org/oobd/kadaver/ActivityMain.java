@@ -10,9 +10,11 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.URL;
 import java.nio.channels.NotYetConnectedException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -126,6 +128,7 @@ public class ActivityMain extends ActionBarActivity implements Constants{
     private int selectedLayout = 1;
     private int flash_selected_radio;
     
+    private String versionCode="";
     private KadaverWebSocketClient mConnection;
 ////    WebSocket mConnection;
 //    WebSocketConnection mConnction;
@@ -138,7 +141,7 @@ public class ActivityMain extends ActionBarActivity implements Constants{
     private StringBuffer mOutStringBuffer;
     // Name of the connected device
     private String mConnectedDeviceName = null;
-    private TextView mBTStatus,mStatus1;
+    private TextView mBTStatus,mStatus1, tv_BuildVersion;
     
     private Button mStatus2;
     private ImageView pv_1,pv_2,pv_3,pv_4;
@@ -251,8 +254,9 @@ public class ActivityMain extends ActionBarActivity implements Constants{
 		case BTCONNECTED:
 			if(selectedLayout==LAYOUT_KADAVER){
 				showStatusTexts(true);
+				startService();
 				mBTStatus.setText(R.string.title_connected_to);
-	            mBTStatus.append("\n"+mConnectedDeviceName);
+	            mBTStatus.append("\n"+mConnectedDeviceName+"\n"+versionCode);
 	            changeCarImage(STATE_CONNECTED_GREEN);
 	            if(isWSConnected || selectedLayout == LAYOUT_OOBDFLASH){
 	            	changeSmartphoneImage(STATE_CONNECTED_GREEN);
@@ -265,7 +269,7 @@ public class ActivityMain extends ActionBarActivity implements Constants{
 	            }
 			} else {
 				mBTStatus.setText(R.string.title_connected_to);
-	            mBTStatus.append("\n"+mConnectedDeviceName);
+	            mBTStatus.append("\n"+mConnectedDeviceName+"\n"+versionCode);
 				changeCarImage(STATE_CONNECTED_GREEN);
 				changeSmartphoneImage(STATE_CONNECTED_GREEN);
 			}
@@ -332,6 +336,16 @@ public class ActivityMain extends ActionBarActivity implements Constants{
 			break;
 		case BTRECEIVE:
 			Log.d(TAG,"BTRECEIVE..." + data);
+			if(data.contains("p 0 0 0")){
+				if(data.indexOf("OOBD")!=-1){
+					versionCode = data.substring(data.indexOf("OOBD"));
+					if(versionCode.indexOf("+")!=-1){
+						versionCode = versionCode.substring(0, versionCode.indexOf("+")+5);
+					}
+					mBTStatus.setText(R.string.title_connected_to);
+		            mBTStatus.append("\n"+mConnectedDeviceName+"\n"+versionCode);
+				}
+			}
 			runOnUiThread(new Runnable() {
 				
 				@Override
@@ -406,6 +420,7 @@ public class ActivityMain extends ActionBarActivity implements Constants{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mActivity = this;
+        createKadaverFolder();
         prefs = getSharedPreferences(PREF_KADAVER_PATH, MODE_PRIVATE);
         websocketURL = PREF_WEBSOCKET_URL_DEFAULT;
         defaultEmailReceiver = "";
@@ -428,6 +443,11 @@ public class ActivityMain extends ActionBarActivity implements Constants{
         
         mStatus1 = (TextView) findViewById(R.id.TV_Status1);
         mStatus2 = (Button) findViewById(R.id.BTN_Status2);
+        tv_BuildVersion = (TextView) findViewById(R.id.TV_app_version);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
+        String currentDateandTime = sdf.format(new Date());
+//        tv_BuildVersion.setText("Build: " + getResources().getString(R.string.app_version));
+        tv_BuildVersion.setText("Build: " + currentDateandTime);
         ll_pv1 = (LinearLayout) findViewById(R.id.ll_pv1);
         ll_pv2 = (LinearLayout) findViewById(R.id.ll_pv2);
         selectedLayout = LAYOUT_KADAVER;
@@ -574,19 +594,7 @@ public class ActivityMain extends ActionBarActivity implements Constants{
         }
 //        thisChannel = 12345678;
         initOOBDFlashViews();
-        BroadcastReceiver mReceiver = new BroadcastReceiver() {
-            
-
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(intent.getAction())){
-					if(selectedLayout == LAYOUT_KADAVER || !isFlashSuccessful){
-						eventFlowControl(BTDISCONNECTED, null);
-						
-					}
-				}
-			}
-		 };
+        
 		 
         IntentFilter f1 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
         IntentFilter f2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
@@ -594,6 +602,20 @@ public class ActivityMain extends ActionBarActivity implements Constants{
         this.registerReceiver(mReceiver, f2);
         
     }
+    
+    BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(intent.getAction())){
+				if(selectedLayout == LAYOUT_KADAVER || !isFlashSuccessful){
+					eventFlowControl(BTDISCONNECTED, null);
+					
+				}
+			}
+		}
+	 };
     
     private void startFlash(String downloadURL, String flashFilename){
     	setFlashStatusText("Initialize Flashing Sequence...", false);
@@ -747,6 +769,12 @@ public class ActivityMain extends ActionBarActivity implements Constants{
        }
        return fileArrayList;
    }
+    private void createKadaverFolder(){
+	    File parentDir = new File(Environment.getExternalStorageDirectory() + KADAVER_FOLDER);
+	    if(!parentDir.exists()){
+	 	   parentDir.mkdirs();
+	    }
+    }
     
     private void showStatusTexts(boolean show){
     	if(show){
@@ -822,9 +850,11 @@ public class ActivityMain extends ActionBarActivity implements Constants{
     
     @Override
     protected void onDestroy() {
+    	this.unregisterReceiver(mReceiver);
     	if (mBTService != null) mBTService.stop();
     	if(mConnection != null && mConnection.isConnecting()) mConnection.close();
     	if(mConnection != null && mConnection.isOpen()) mConnection.close();
+    	System.exit(0);
     	super.onDestroy();
     	
     }
