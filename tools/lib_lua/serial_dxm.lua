@@ -489,7 +489,7 @@ function interface_serial(oldvalue,id)
   elseif hardwareID == 3 or hardwareID == 4 then
 	echoWrite("p 0 0 1\r") -- get BT-MAC address of OOBD-Cup v5 and OOBD CAN Invader
     err, answ = readAnswerArray()
-    return answ[1]
+	if answ[1] == nil then		answ[1] = "NO DATA"	end    return answ[1]
   elseif hardwareID == 1 then -- DXM1
 	echoWrite("at!00\r")
     answ=serReadLn(2000, true)
