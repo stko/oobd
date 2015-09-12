@@ -152,9 +152,9 @@ function selectModuleID(oldvalue,id)
 		setBus("500b29")						-- set HS-CAN 500kbit/s, 29bit
 		activateBus()
 		if index == 10 then
-			setModuleID("18DA10F1")					-- set legislated OBD/WWH-OBD physical request 29bit CAN-ID for ECM		
+			setModuleID("18DA10F1")					-- set legislated OBD/WWH-OBD physical request 29bit CAN-ID for ECM#1		
 		elseif index == 11 then
-			setModuleID("18DA11F1")					-- set legislated OBD/WWH-OBD physical request 29bit CAN-ID	for TCM
+			setModuleID("18DA18F1")					-- set legislated OBD/WWH-OBD physical request 29bit CAN-ID	for TCM#1
 		else 	-- index == 9
 			setModuleID("18DB33F1")					-- set legislated OBD/WWH-OBD functional request 29bit CAN-ID
 		end
