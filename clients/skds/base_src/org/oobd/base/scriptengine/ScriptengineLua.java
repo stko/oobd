@@ -654,8 +654,8 @@ public class ScriptengineLua extends OobdScriptengine {
                 res+= Base64Coder.encodeString((String) results[1]);
             }
             res+="'";
-            if (results[0] == Boolean.TRUE && results.length > 2) {
-                res+= ", 'dataset':" +lua2Onion((LuaTableImpl) results[1]);
+            if (results[0] == Boolean.TRUE && results.length > 2 && results[2] instanceof LuaTableImpl) {
+                res+= ", 'dataset':" +lua2Onion((LuaTableImpl) results[2]);
             }
              return res;
 
