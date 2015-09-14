@@ -15,14 +15,29 @@
 	<script src="../libs/jquery.mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 
 
-	<!--
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css" />
-	<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-	<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
--->
+	<script>
+/*
+	The array "carlines" contains the different vehicle car lines and their modules for which we want to see their DTCs.
+	As these information from the different car manufactures are mostly not public, this array here is quite empty.. - but
+	in this package you'll also find the file README_vehicle.js.txt
+	When you rename that file to vehicle.js and place your personal vehicle settings into it, then that file will be
+	loaded at start and its content will override 	the default settings 
+*/
+	var carlines = [
+		{
+			name:     "Standard",
+			modules:    [
+				{
+					name:  "ECU",
+					id: "500b11_7E0"
+				}
 
+			]
+		} 
+	];
+	</script>
 	<script src="vehicle.js"></script>
+
 	<script src="../libs/oobd/1/oobd.js"></script>
 
 
