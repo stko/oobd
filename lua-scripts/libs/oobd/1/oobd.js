@@ -98,10 +98,13 @@ if (typeof Oobd == "undefined") {
 		clearVisualiers: function() {
 			this.visualizers = new Array();
 		},
-		start: function() {
+		start: function(webSocketURL) {
 			if ('WebSocket' in window) {
 				/* WebSocket is supported. You can proceed with your code*/
-				this.connection = new WebSocket(this.wsURL);
+				if (typeof webSocketURL == "undefined") {
+					webSocketURL=this.wsURL;
+				}
+				this.connection = new WebSocket(webSocketURL);
 				this.connection.onopen = function() {
 					/*Send a small message to the console once the connection is established */
 					console.log('Connection open!');
