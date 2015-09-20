@@ -51,6 +51,7 @@ Robot Framework test cases are created using a simple tabular syntax.
     *** Settings ***
     Library           OperatingSystem
     Library           lib/DongleCmdLine.py
+    Variables         local_settings.py
 
 
 
@@ -74,7 +75,7 @@ Robot Framework test cases are created using a simple tabular syntax.
 .. code:: robotframework
 
     *** Variables ***
-    ${port}               /tmp/DXM
+    
 
 Variables can also be given from the command line which is useful if
 the tests need to be executed in different environments. For example
@@ -132,7 +133,7 @@ starts and that every test also clears it afterwards:
 .. code:: robotframework
 
    *** Settings ***
-    test Setup       Open Port  ${port}
+    test Setup       Open Port  $(donglePort)
     test Teardown    close port
 
 Using tags

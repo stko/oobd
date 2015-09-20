@@ -1,6 +1,5 @@
 import os.path
 import websocket
-import asyncio
 import sys
 import re
 import time
@@ -52,6 +51,8 @@ class webUIClient(object):
 
 	def compareDicts(self,patternDict, inputDict):
 		for attr, value in patternDict.items():
+			#sys.stderr.write("Type of value:" +type(value).__name__+"\n");
+			#sys.stderr.write("Type of inputDict:" +type(inputDict[attr]).__name__+"\n");
 			if not attr in inputDict:
 				return False
 			elif type(value) != type(inputDict[attr]):
@@ -59,28 +60,29 @@ class webUIClient(object):
 			elif isinstance (value, dict) and not self.compareDicts(value,inputDict[attr]):
 				return False
 			else:
-				if isinstance( value, str):
+				if isinstance( value, str) or isinstance( value, unicode) :
 					inputValue = inputDict[attr]
 					regCompareFlag=False
 					if value[:1]=="%":
 						regCompareFlag = True
 						value=value[1:]
 					if value[:1]=="#":
+						value=value[1:]
 						try:
 							inputValue=b64decode(inputValue).decode('utf-8')
 						except:
 							raise AssertionError("RECEIVED jason element " + attr + "is not a valid BASE64 string!: "+inputDict[attr]+"\n")
-						value=value[1:]
+							return False
 					if regCompareFlag:
 						matchObj = re.match( value , inputValue, re.M|re.I)
 						if not matchObj:
-							print (" REGEX string compare for" ,value, "against" , inputValue, "failed" )
+							sys.stderr.write (" REGEX string compare for" + value + "against" + inputValue + "failed\n" )
 							return False
 					elif value != inputValue:
-						print (" normal string compare for" ,attr, value, "failed" )
+						sys.stderr.write (" normal string compare for" + value + "against" + inputValue + "failed\n" )
 						return False
 				elif  value != inputDict[attr]:
-					print ("other type, direct compare for" ,attr, value, "failed" )
+					sys.stderr.write ("other type, direct compare for " + value + "against" +inputDict[attr] + "failed\n" )
 					return False
 		return True
 			

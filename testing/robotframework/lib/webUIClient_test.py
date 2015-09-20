@@ -1,5 +1,5 @@
+ # -*- coding: utf-8 -*-
 import webUIClient
-
 
 from json import loads, dumps
 from base64 import encodestring, decodestring

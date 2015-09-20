@@ -1,10 +1,10 @@
 .. default-role:: code
 
 =====================================
-  Robot Framework Quick Start Guide
+  OOBD Core Test ing
 =====================================
 
-Copyright © Nokia Solutions and Networks. Licensed under the
+Robot Framework is Copyright © Nokia Solutions and Networks. Licensed under the
 `Creative Commons Attribution 3.0 Unported`__ license.
 
 __ http://creativecommons.org/licenses/by/3.0/
@@ -21,60 +21,57 @@ Test cases
 Workflow tests
 --------------
 
-Robot Framework test cases are created using a simple tabular syntax.
+This text is a so called "reStructuredText" as defined in docUtils (https://pypi.python.org/pypi/docutils), which e.g. Github interprets as Markdown syntax, while Robotframework (RF) reads the embedded testcases in it. This is a little bit scary, but why the other ones should not have scary ideas too?
+
+So the test cases can contain their own documentation 
+
+
+Syntax Info
+-----------
+
+In RF parameters can contain blanks. To seperate commands and parameters from each other, you have to use at least *two* blanks!
+
+Answer match algorythm: To be a valid answer, the answer must contain all the keys and values of the match pattern. Also the type of the values must be equal.
+
+To comparing strings, the algorythm support two leading modifiers, % and #. Both are optional, but the sequence first % and then # must be kept when using both.
+
+When the pattern begins with %, the remaining pattern is handled as a regular expression for the comparision. If the % modifier is not given, both strings are compared 1:1
+
+When the pattern starts with #, the string in the answer is seen as base64 coded and base64- encoded first before compared with the remaining pattern
+
+
+
+
 
 .. code:: robotframework
 
     *** Test Cases ***
-    Dongle reports version
-        send dongle command  p 0 0 0 
-        answer should match    .*(OBD).*
+    Test for initial connect message
+        answer should match    {"type":"WSCONNECT"}
+      #  send webUI command  {"name" : "test" , "to" : { "recp" : "Müller" } }
+      #  answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
 
-    test normal response
-       send dongle command  19018D
-       answer should match    .*(\\.\\+cr\\+>)
-       send dongle command  p 6 2 1000 0
-       answer should match    .*(\\.\\+cr\\+>)
-       send dongle command  1902CE
-       answer should match    .*(\\.\\+cr\\+>)
-       send dongle command  p 6 2 10
-       answer should match    .*(\\.\\+cr\\+>)
-       send dongle command  1902CE
-       answer should match    .*(:Error: \\d+ \\d+ \\d+ Answer time exeeded\\+cr\\+>)
-       send dongle command  p 6 2 1000 0
-       answer should match    .*(\\.\\+cr\\+>)
-       send dongle command  1902CE
-       answer should match    .*(\\.\\+cr\\+>)
+    Test the greeting command
+	answer should match    {"type":"WSCONNECT"}
+	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
+        send webUI command  {"name":"greet:","optid":"","actValue":"","updType":3}
+	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(Thanks).*"}
+
 
 .. code:: robotframework
 
     *** Settings ***
     Library           OperatingSystem
-    Library           lib/DongleCmdLine.py
+    Library           lib/webUIClient.py
+    Variables         local_settings.py
 
-
-
-.. code:: robotframework
-
-    *** Keywords ***
-
-    Create valid user
-        [Arguments]    ${username}    ${password}
-        Create user    ${username}    ${password}
-        Status should be    SUCCESS
-
- 
-    # Keywords below used by higher level tests. Notice how given/when/then/and
-    # prefixes can be dropped. And this is a commend.
-
-    A user has a valid account
-        Create valid user    ${USERNAME}    ${PASSWORD}
 
 
 .. code:: robotframework
 
     *** Variables ***
-    ${port}               /tmp/DXM
+   # ${wsOobdURL}               ws://localhost:8443
+    
 
 Variables can also be given from the command line which is useful if
 the tests need to be executed in different environments. For example
@@ -97,22 +94,7 @@ database content to `${database}` variable and then verifies the content
 using BuiltIn keyword `Should Contain`. Both library and user keywords can
 return values.
 
-Organizing test cases
-=====================
 
-Test suites
------------
-
-Collections of test cases are called test suites in Robot Framework. Every
-input file which contains test cases forms a test suite. When `executing this
-guide`, you see test suite `QuickStart` in the console output. This name is
-got from the file name and it is also visible in reports and logs.
-
-It is possible to organize test cases hierarchically by placing test case
-files into directories and these directories into other directories. All
-these directories automatically create higher level test suites that get their
-names from directory names. Since test suites are just files and directories,
-they are trivially placed into any version control system.
 
 Setups and teardowns
 --------------------
@@ -132,8 +114,8 @@ starts and that every test also clears it afterwards:
 .. code:: robotframework
 
    *** Settings ***
-    test Setup       Open Port  ${port}
-    test Teardown    close port
+    test Setup       open webUI  ${wsOobdURL}
+    test Teardown    close webUI
 
 Using tags
 ----------
