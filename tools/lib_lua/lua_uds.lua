@@ -49,7 +49,6 @@ udsServiceRequest() returns up to TWO (2!) values. The first one is a string, th
 function udsServiceRequest( service, did, bufferTime, handler)
 	echoWrite(service..did.."\r") 
 	udsLen=receive()
-	
 	if udsLen>0 then
 		if udsBuffer[1]== tonumber(service,16)+udsService_Response then
 			if handler ~= nil then

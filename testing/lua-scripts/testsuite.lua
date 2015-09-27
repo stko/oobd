@@ -7,32 +7,22 @@ local ModuleID = 0;  -- default functionl request ID for emission related ECUs
 
 dofile("../../tools/lib_lua/lua_utils.lua")
 dofile("../../tools/lib_lua/serial_dxm.lua")
+dofile("../../tools/lib_lua/lua_uds.lua")
 
 ---------------------- Vehicle Info Menu --------------------------------------
 
 function vin(oldvalue,id)
-	echoWrite("0902\r")
-	udsLen=receive()
-	if udsLen>0 then
-		if udsBuffer[1]==0x49 then
-			local pos=3
-			local res=""
-			while pos <= udsLen and pos < 36 do
-				if udsBuffer[pos]>31 then
-					res=res..string.char(udsBuffer[pos])
-				end
-				pos= pos +1
+	return udsServiceRequest("09","02" ,0 , function ()
+		local pos=3
+		local res=""
+		while pos <= udsLen and pos < 36 do
+			if udsBuffer[pos]>31 then
+				res=res..string.char(udsBuffer[pos])
 			end
-			return res
-		elseif udsBuffer[1]== 0x7F then
-			nrcCode= nrcCodes[udsBuffer[3]]			
-			return "NRC: "..string.format("0x%x",udsBuffer[3]).." = "..nrcCode
-		else
-			return "Error"
+			pos= pos +1
 		end
-	else
-		return "NO DATA"
-	end
+		return res
+	end )
 end
 ---------------------- Clear Trouble Codes --------------------------------------
 

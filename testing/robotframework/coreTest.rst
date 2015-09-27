@@ -56,6 +56,11 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
         send webUI command  {"name":"greet:","optid":"","actValue":"","updType":3}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(Thanks).*"}
+	# requesting ASCII-DID
+	send webUI command  {"name":"vin:","optid":"","actValue":"","updType":3}
+	answer should match    {"to":{"name":"vin:"},"value":"#OOBD-Sim-VIN-Nr","type":"VALUE"}
+	# answer should match    {"to":{"name":"vin:"},"value":"JE9PQkQtU2ltLVZJTi1Ocg==","type":"VALUE"}
+	# answer should match    {"to":{"name":"vin:"},"value":"JE9PQkQtU2ltLVZJTi1Ocg==","owner":{"name":"%ScriptengineLua\\\\.\\\\d+"},"type":"VALUE"}
 
 
 .. code:: robotframework
@@ -70,7 +75,6 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 .. code:: robotframework
 
     *** Variables ***
-   # ${wsOobdURL}               ws://localhost:8443
     
 
 Variables can also be given from the command line which is useful if
@@ -114,7 +118,7 @@ starts and that every test also clears it afterwards:
 .. code:: robotframework
 
    *** Settings ***
-    test Setup       open webUI  ${wsOobdURL}
+    test Setup       open webUI  ${wsOobdURL}  ${wsSocketTimeout}
     test Teardown    close webUI
 
 Using tags

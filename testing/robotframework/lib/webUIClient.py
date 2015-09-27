@@ -12,18 +12,21 @@ class webUIClient(object):
 	def __init__(self):
 		self._answer = ''
 		self._wsSocket = None
-	def open_webUI(self, wsURL):
+
+	def open_webUI(self, wsURL, timeout):
 		sys.stderr.write("open "+wsURL+"\n")
 		self._wsSocket = websocket.WebSocket()
 		if self._wsSocket is None:
 			raise AssertionError("could not open webUI- Websocket!")
 		self._wsSocket.connect(wsURL)
+		self._wsSocket.settimeout(timeout)
 
 	def close_webUI(self):
 		sys.stderr.write("close webUI\n")
 		self._wsSocket.close()
 
 	def send_webUI_command(self,cmd):
+		self._flush()
 		try: # do a sanity check first, if the given string is really a well formed JSON string
 			loads(cmd)
 		except:
@@ -47,6 +50,7 @@ class webUIClient(object):
 		if not self.compareDicts(pattern, answer):
 			raise AssertionError("Expected answer to be '%s' but was '%s'."
 		  		% (expected_answer, self._answer))
+		return 'SUCCESS'
 
 
 	def compareDicts(self,patternDict, inputDict):
@@ -76,18 +80,31 @@ class webUIClient(object):
 					if regCompareFlag:
 						matchObj = re.match( value , inputValue, re.M|re.I)
 						if not matchObj:
-							sys.stderr.write (" REGEX string compare for" + value + "against" + inputValue + "failed\n" )
+							sys.stderr.write (" REGEX string compare for " + value + "against " + inputValue + " failed\n" )
 							return False
 					elif value != inputValue:
-						sys.stderr.write (" normal string compare for" + value + "against" + inputValue + "failed\n" )
+						sys.stderr.write("normal string test")
+						sys.stderr.write (" normal string compare for " + value + " against " + inputValue + " failed\n" )
 						return False
+
 				elif  value != inputDict[attr]:
-					sys.stderr.write ("other type, direct compare for " + value + "against" +inputDict[attr] + "failed\n" )
+					sys.stderr.write ("other type, direct compare for " + value + "against " +inputDict[attr] + " failed\n" )
 					return False
 		return True
 			
+	def _flush(self):
+		timeout = self._wsSocket.gettimeout()
+		self._wsSocket.settimeout(0.3)
+		try:
 
-	#@asyncio.coroutine
+			s="dummy"
+			while s != "":
+				s= self._wsSocket.recv()
+		except Exception as e:
+				pass
+				#raise AssertionError("flush error :-("+repr(e)+"\n")
+		self._wsSocket.settimeout(timeout)
+
 	def _doLine(self):
 		if self._wsSocket is None:
 			raise AssertionError("_doLine: Websocket is not open!")
@@ -97,4 +114,4 @@ class webUIClient(object):
 				self._answer +=s
 				sys.stderr.write("Answer "+self._answer+"\n") 
 			except Exception as e:
-				raise AssertionError("something went wrong :-("+type(e)+"\n")
+				raise AssertionError("something went wrong :-("+repr(e)+"\n")

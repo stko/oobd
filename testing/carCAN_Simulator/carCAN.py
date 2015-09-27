@@ -49,6 +49,7 @@ s.bind((sys.argv[1],))
 
 def sendTele(msg,data):
 	d=data["d"]
+	time.sleep(0.01 * data["t"])
 #	msg[2]=data["e"]
 	#	print dump(data)
 	for i in range(len(d)):
@@ -66,7 +67,6 @@ def sendTele(msg,data):
 		print('Error sending CAN frame')
 
 	print ("sended: 0x%02X %d %02X %02X %02X %02X %02X %02X %02X %02X" % ( can_id, can_dlc, msg[0] , msg[1] , msg[2] , msg[3] , msg[4] , msg[5] , msg[6] , msg[7] ) )
-	time.sleep(0.01 * data["t"])
 
 
 
@@ -82,13 +82,17 @@ while True:
 		can_id=0x7E8 # changing functional address to answer address of ECU
 	else:
 		can_id=can_id | 8 # changing the physical address from ECU to tester
-	frameType=(msg[0] & 0xF0 ) / 16
+	frameType = (msg[0] & 0xF0 ) / 16
+	teleLength = msg[0] & 0x0F 
 	print (frameType)
 
 	##############  Single Frame ###############
 	if frameType == 0: 
 		i = 1
-		pid= "%02X%02X%02X" % ( msg[i+0] , msg[i+1] , msg[i+2])
+		if teleLength < 3 : 
+			pid= "%02X%02X" % ( msg[i+0] , msg[i+1] )
+		else:
+			pid= "%02X%02X%02X" % ( msg[i+0] , msg[i+1] , msg[i+2])
 		print ("Single Frame")
 		nextStep=1 # send the answer
 
