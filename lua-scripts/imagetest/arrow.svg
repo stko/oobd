@@ -24,7 +24,7 @@ function init(evt) {
 	var svgItem = svgDocument.getElementsByClassName("oobd");
 		for (i2 = 0; i2 < svgItem.length; ++i2) {
 		svgItem[i2].oodbupdate= function(input){
-			var value=parseFloat(atob(input.value));
+			var value=parseFloat(input.value);
 			var numValue=parseFloat(value);
 			var coord= this.getBBox();
 			var x =coord.x + (coord.width/2);

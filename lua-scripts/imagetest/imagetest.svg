@@ -24,7 +24,7 @@ function init(evt) {
 		for (i2 = 0; i2 < svgItem.length; ++i2) {
 		svgItem[i2].oodbupdate= function(input){
 			console.log("got click");
-			var value=atob(input.value);
+			var value=input.value;
 			if (value=="i"){ // no anser from module, so ignored
 				this.setAttribute("style", "fill:#75A3A3");
 			} else if (value=="n"){ // no errors, so green

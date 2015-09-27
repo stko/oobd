@@ -48,7 +48,7 @@ if (typeof Oobd == "undefined") {
 				var initialValue = oobdElement.getAttribute("oobd:value");
 				if (type == "te") {
 					oobdElement.oodbupdate = function(input) {
-						this.getElementsByClassName("value")[0].innerHTML = atob(input.value);
+						this.getElementsByClassName("value")[0].innerHTML = input.value;
 					};
 					Oobd.addObject(oobdElement, initialValue);
 				}
@@ -119,10 +119,10 @@ if (typeof Oobd == "undefined") {
 					try {
 						var obj = JSON.parse(rawMsg.data);
 						if (obj.type == "VALUE") {
+							obj.value = atob(obj.value);
 							var owner = obj.to.name;
 							for (i = 0; i < Oobd.visualizers.length; ++i) { // search for the real id of a function owner
 								if (Oobd.visualizers[i].command == owner) {
-									obj.value = atob(obj.value);
 									Oobd.visualizers[i].object.oobd.value = obj.value;
 									Oobd.visualizers[i].object.oodbupdate(obj);
 								}
