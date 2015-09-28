@@ -12,6 +12,7 @@ Response Error: https://www.emotive.de/doc/car-diagnostic-systems/protocols/dp
 --]]
 
 -- for better readibility, creating some GLOBAL constants
+udsService_Read_Data_By_LocalIdentifier = "21"
 udsService_Read_Data_By_Identifier = "22"
 udsService_Read_DTC = "19"
 udsService_Response = 0x40
@@ -47,6 +48,7 @@ udsServiceRequest() returns up to TWO (2!) values. The first one is a string, th
 --]]
 
 function udsServiceRequest( service, did, bufferTime, handler)
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - udsServiceRequest,%02d: %s", "00", "enter function udsServiceRequest")
 	echoWrite(service..did.."\r") 
 	udsLen=receive()
 	if udsLen>0 then
@@ -77,6 +79,7 @@ end
 ]]--
 
 function readBMPDiD(oldvalue, id)
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - readBMPDiD,%02d: %s", "00", "enter function readBMPDiD")
 	local bytepos = 4;
 
 	local did, data = translateTableID( id )
@@ -102,6 +105,7 @@ end
 
 
 function writeBMPDiD(oldvalue, id)
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - writeBMPDiD,%02d: %s", "00", "enter function writeBMPDiD")
 	local did, data = translateTableID( id )
 	local tabid = Split(id, "_") -- split id to it's pieces
 	local subdata = data[tabid[4]][tabid[4].."_"..tabid[5]]
@@ -163,7 +167,9 @@ function getIDValue(id) -- function delete prefix id0x of id
 	return string.sub(id,5)
 end
 
+
 function readAscDiD(oldvalue,id)
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - readAscDiD,%02d: %s", "00", "enter function readAscDiD")
 	local did, data = translateTableID( id )
 	if data.sev_r == nil then  -- check if data.sev_r is missing
 		data.sev_r = udsService_Read_Data_By_Identifier;
@@ -182,8 +188,8 @@ function readAscDiD(oldvalue,id)
 end
 
 
-
 function CalcNumDiD( byteNr , nrOfBytes, multiplier, offset, unit)
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - CalcNumDiD,%02d: %s", "00", "enter function CalcNumDiD")
 	local value=0
 	local i
 	for i = 0 , nrOfBytes -1, 1 do -- get raw value
@@ -196,6 +202,7 @@ end
 
 
 function sCalcNumDiD( bitLen, bitPos, byteNr , nrOfBytes, multiplier, offset, unit, endianess)
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - sCalcNumDiD,%02d: %s", "00", "enter function sCalcNumDiD")
 	local value = 0
 	value = CalcNumDiD_any( bitLen, bitPos, byteNr , multiplier, offset, endianess) -- calculate the "positive" value
 	-- first see on RAW value if signed value is negative
@@ -212,6 +219,7 @@ function sCalcNumDiD( bitLen, bitPos, byteNr , nrOfBytes, multiplier, offset, un
 end
 
 function CalcNumDiD_any( bitLen, bitPos, byteNr , multiplier, offset, endianess)
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - CalcNumDiD_any,%02d: %s", "00", "enter function CalcNumDiD_any")
 	local value=0
 	if (bitLen<=(8-bitPos)) then -- check if we have less than a byte signal or just a byte signal
 		value = bit.band (bit.brshift (udsBuffer[byteNr], bitPos), (2^bitLen)-1) -- move bit to bit position 0 and mask valid bits only
@@ -272,6 +280,7 @@ end
 
 
 function readNumDiD(oldvalue,id)
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua -  readNumDiD,%02d: %s", "00", "enter function readNumDiD")
 	local i
 	local did, data = translateTableID( id )
 	local content=getSubTable(id, 1,false)
@@ -328,6 +337,7 @@ end
 
 
 function calculatePacketedDiD(content, udsBuffer, bytepos)
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua -  calculatePacketedDiD,%02d: %s", "00", "enter function calculatePacketedDiD")
 	local res=""
 	local endianess=1 --default => Intel format
 	local bitPos=content.Bpos --init variable bitPos	
@@ -406,6 +416,7 @@ end
 
 
 function readPacketedDiD(oldvalue,id)
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua -  readPacketedDiD,%02d: %s", "00", "enter function readPacketedDiD")
 	local did, data = translateTableID( id )
 	subTable=getSubTable(id, 1,true) 
 	if subTable == nil then
@@ -414,12 +425,12 @@ function readPacketedDiD(oldvalue,id)
 	if data.sev_r == nil then  -- check if data.sev_r is missing
 		data.sev_r = udsService_Read_Data_By_Identifier;
 	end
-	return udsServiceRequest(data.sev_r,did ,0 , function ()
+	return udsServiceRequest(data.sev_r, did , 0 , function ()
 		openPage(data.t)   -- title/description of DID
 		for key,content in pairs(data.pv) do
 			if key~="dummy" then
 				bytepos = math.floor(content.Bpos/8)+4
-				res=calculatePacketedDiD(content, udsBuffer,bytepos)
+				res=calculatePacketedDiD(content, udsBuffer, bytepos)
 				addElement(content.t, "nothing",res,0x00, "")
 			end
 		end
@@ -575,6 +586,7 @@ end
 ---------------------- create DTC list as XML string --------------------------------------
 
 function getXmlDtc(oldvalue,id)
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - getXmlDtc,%02d: %s", "00", "enter function getXmlDtc")
 	local result="<dtcs>"
 	local res, err = udsServiceRequest(udsService_Read_DTC,"0202" ,stdBuffer , nil)
 	if err == 0 then
@@ -593,11 +605,10 @@ function getXmlDtc(oldvalue,id)
 	return result
 end
 
-
 ---------------------- getNrOfDTC--------------------------------------
 
 function getNrOfDTC()
-
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - getNrOfDTC,%02d: %s", "00", "enter function getNrOfDTC")
 -- if bit 1 (starting with 0) is set, then the active DTCs are requested. if bit 1 = 0 then the DTCs are the inactive ones
 	local res1
 	local res2
