@@ -2,9 +2,12 @@
 import sys
 import socket
 import time
+import pprint
 
 import struct
 from yaml import load, dump
+
+pp = pprint.PrettyPrinter(indent=4)
 
 try:
 	from yaml import CLoader as Loader
@@ -47,14 +50,20 @@ s.bind((sys.argv[1],))
  
 
 
-def sendTele(msg,data):
+def sendTele(data):
+	pp.pprint(data)
+	msg =bytearray()
 	d=data["d"]
 	time.sleep(0.01 * data["t"])
 #	msg[2]=data["e"]
 	#	print dump(data)
+	for i in range(0,8):
+	#	    print d[i]
+		msg+=b'\x00'
 	for i in range(len(d)):
 	#	    print d[i]
 		msg[0+i]=d[i]
+	#	msg+=d[i] & 0xFF
 	for i in range(len(d),7):
 		msg[1+i]=0
 	global s
@@ -68,6 +77,97 @@ def sendTele(msg,data):
 
 	print ("sended: 0x%02X %d %02X %02X %02X %02X %02X %02X %02X %02X" % ( can_id, can_dlc, msg[0] , msg[1] , msg[2] , msg[3] , msg[4] , msg[5] , msg[6] , msg[7] ) )
 
+def generateFrame(bytesSended,typeID):
+	
+	'''
+	TypeID definitions:
+	HNibble: Length of Answer
+	0 :  1 Byte
+	1 :  2 Byte
+	2 :  4 Byte
+	3 :  8 Byte
+	4 : 16 Byte
+	5 : 32 Byte ASCII
+
+	LNibble: Error types
+	0 : correct Answer
+	1 : General Responce Error 7F
+	2 : Timeout (200ms)
+	3 : no Answer
+	4 : Sequence error (only if multiframe)
+	5 : Answer too short (dlc = norminal length -1 )
+	6 : Answer too long (dlc  = norminal length + 1 )
+	'''
+	tClass=int(typeID[:1], 16)
+	tType=int(typeID[1:], 16)
+	print (tClass,tType)
+
+	telegram={}
+	telegram["t"]=2
+	telegram["e"]=0
+	telegram["d"]=[]
+	if tType == 2:
+		telegram["t"]=20 # timeout = 200 ms
+	if tType == 1: # generate general response
+		telegram["d"].append(0x7f)
+		telegram["d"].append(0xFF)
+		telegram["d"].append(0xFF)
+	else:
+		length = 2 ^ tClass
+		if bytesSended == 0: # initial  frame
+			dlc=length
+			if tType == 5:
+				dlc -=1 # make answer too short
+			if tType == 6:
+				dlc +=1 # make answer too short
+			if length < 7: # single frame
+				telegram["d"].append(dlc)
+				start=1
+				
+			else: # multi frames
+				telegram["d"].append(16 + dlc / 16)
+				telegram["d"].append(dlc % 16)
+				start=2
+			while start<7 and bytesSended < length :
+				if tType != 5: # if no ASCII type
+					contentValue = bytesSended % 16
+					telegram["d"].append( contentValue * 16 + (16 - contentValue))
+				else:
+					contentValue = bytesSended % 26
+					telegram["d"].append( contentValue + 65 )
+				start +=  1
+				bytesSended += 1
+			while start<7 : # fill frame
+				telegram["d"].append( 0 )
+				start +=  1
+		else: # consecute frames 
+			telegram["d"].append(32 + ((bytesSended- 6) / 7) % 16 )
+			print ("Sequence count" , ((bytesSended- 6) / 7) % 16 )
+			start=1
+			while start<7 and bytesSended < length :
+				if tType != 5: # if no ASCII type
+					contentValue = bytesSended % 16
+					telegram["d"].append( contentValue * 16 + (16 - contentValue))
+				else:
+					contentValue = bytesSended % 26
+					telegram["d"].append( contentValue + 65 )
+				start +=  1
+				bytesSended += 1
+			while start<7 : # fill frame
+				telegram["d"].append( 0 )
+				start +=  1
+
+	print ("generic send")
+	pp.pprint(telegram)
+	if tType != 3 : # no answer
+		sendTele(telegram)
+#	sendTele({'d':[0x30,0x30,0x0F,0x00],'t':2,'e':0})
+	if length <= bytesSended : # done?
+		bytesSended = -1 # stops further sends
+	return bytesSended
+      
+      
+ 
 
 
 while True:
@@ -102,9 +202,12 @@ while True:
 		nrOfBytes = (msg[0] & 0x0f ) *256 + msg[1]
 		print ("First Frame, expecting ",nrOfBytes, " Bytes")
 		nrOfBytes = nrOfBytes -6 # 6 bytes aready received
-		pid= "%02X%02X%02X" % ( msg[i+0] , msg[i+1] , msg[i+2])
+		if teleLength < 3 : 
+			pid= "%02X%02X" % ( msg[i+0] , msg[i+1] )
+		else:
+			pid= "%02X%02X%02X" % ( msg[i+0] , msg[i+1] , msg[i+2])
 		nextStep=0 # send FlowControl, wait for consecutive frames
-		sendTele(msg,{'d':[0x30,0x30,0x0F,0x00],'t':2,'e':0})
+		sendTele({'d':[0x30,0x30,0x0F,0x00],'t':2,'e':0})
 
 	################# Consecutive Frame #############
 	if frameType == 2: # consecutive frame
@@ -128,14 +231,31 @@ while True:
 			print (pid, "not found, send default")
 		# print dump(dArray[0])
 		print ("next step: ", nextStep)
-		if nextStep == 1: #Single Frame or end of Consecutive Frame series -> send the PID answer
-			sendTele(msg,dArray[0]) 
-		if nextStep == 2: # send remaining consecute frames
-			print ("Array Len: ", len(dArray))
-			for i in range(len(dArray)):
-				print ("i: ", i)
-				if i > 0 :
-					sendTele(msg,dArray[i])
+		
+		
+		#und hier kommt jetzt die generische Datenerzeugung..
+		print ("len",len(pid), "slice",  pid[4:6])
+		
+		if len(pid)==6 and pid[2:4]=="FF": # generic test case generation
+			print ("generic frame")
+			if nextStep == 1: #Single Frame or end of Consecutive Frame series -> send the PID answer
+				thisData=generateFrame(0,pid[4:6])
+			if nextStep == 2: # send remaining consecute frames
+				print ("Array Len: ", len(dArray))
+				for i in range(len(dArray)):
+					print ("i: ", i)
+					if i > 0 :
+						sendTele(dArray[i])
+		
+		else:
+			if nextStep == 1: #Single Frame or end of Consecutive Frame series -> send the PID answer
+				sendTele(dArray[0]) 
+			if nextStep == 2: # send remaining consecute frames
+				print ("Array Len: ", len(dArray))
+				for i in range(len(dArray)):
+					print ("i: ", i)
+					if i > 0 :
+						sendTele(dArray[i])
 	else:
 		print (pid, "nothing configured, just reply msg")
 		try:
@@ -144,7 +264,3 @@ while True:
 			print('Error sending CAN frame')
 
 
-
-      
-      
- 
