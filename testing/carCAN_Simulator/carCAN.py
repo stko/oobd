@@ -5,6 +5,10 @@ import time
 import pprint
 
 import struct
+
+# to get yaml, do sudo apt-get install python3-yaml
+
+
 from yaml import load, dump
 
 pp = pprint.PrettyPrinter(indent=4)
@@ -77,17 +81,19 @@ def sendTele(data):
 
 	print ("sended: 0x%02X %d %02X %02X %02X %02X %02X %02X %02X %02X" % ( can_id, can_dlc, msg[0] , msg[1] , msg[2] , msg[3] , msg[4] , msg[5] , msg[6] , msg[7] ) )
 
-def generateFrame(bytesSended,typeID):
+def generateFrame(bytesSended,typeID, service):
 	
 	'''
-	TypeID definitions:
+	typeID definitions:
 	HNibble: Length of Answer
-	0 :  1 Byte
-	1 :  2 Byte
-	2 :  4 Byte
-	3 :  8 Byte
-	4 : 16 Byte
-	5 : 32 Byte ASCII
+	0 :   1 Byte
+	1 :   2 Byte
+	2 :   4 Byte
+	3 :   8 Byte
+	4 :  16 Byte
+	5 :  32 Byte ASCII
+	6 : 256 Bytes
+	7: 4905 Bytes
 
 	LNibble: Error types
 	0 : correct Answer
@@ -101,7 +107,7 @@ def generateFrame(bytesSended,typeID):
 	tClass=int(typeID[:1], 16)
 	tType=int(typeID[1:], 16)
 	print (tClass,tType)
-
+	serviceResponse = int(service, 16) +0x40
 	telegram={}
 	telegram["t"]=2
 	telegram["e"]=0
@@ -109,51 +115,68 @@ def generateFrame(bytesSended,typeID):
 	if tType == 2:
 		telegram["t"]=20 # timeout = 200 ms
 	if tType == 1: # generate general response
+		dlc=4
+		length=4
+		bytesSended=length
+		telegram["d"].append(dlc)
 		telegram["d"].append(0x7f)
 		telegram["d"].append(0xFF)
+		telegram["d"].append(int(typeID,16))
 		telegram["d"].append(0xFF)
 	else:
-		length = 2 ^ tClass
+		if tClass < 6:
+			length = 2 ** tClass
+		elif tClass == 6:
+			length = 256
+		else:
+			length = 4095
+		dlc=length+3
+		print ("length, dlc: ", length,dlc)
 		if bytesSended == 0: # initial  frame
-			dlc=length
 			if tType == 5:
 				dlc -=1 # make answer too short
 			if tType == 6:
 				dlc +=1 # make answer too short
 			if length < 7: # single frame
 				telegram["d"].append(dlc)
-				start=1
+				telegram["d"].append(serviceResponse)
+				telegram["d"].append(0xFF)
+				telegram["d"].append(int(typeID,16))
+				start=4
 				
 			else: # multi frames
-				telegram["d"].append(16 + dlc / 16)
+				telegram["d"].append(16 + dlc // 16)
 				telegram["d"].append(dlc % 16)
-				start=2
-			while start<7 and bytesSended < length :
+				telegram["d"].append(serviceResponse)
+				telegram["d"].append(0xFF)
+				telegram["d"].append(int(typeID,16))
+				start=5
+			while start<8 and bytesSended <= length :
 				if tType != 5: # if no ASCII type
 					contentValue = bytesSended % 16
-					telegram["d"].append( contentValue * 16 + (16 - contentValue))
+					telegram["d"].append( contentValue * 16 + (15 - contentValue))
 				else:
 					contentValue = bytesSended % 26
 					telegram["d"].append( contentValue + 65 )
 				start +=  1
 				bytesSended += 1
-			while start<7 : # fill frame
+			while start<8 : # fill frame
 				telegram["d"].append( 0 )
 				start +=  1
 		else: # consecute frames 
-			telegram["d"].append(32 + ((bytesSended- 6) / 7) % 16 )
-			print ("Sequence count" , ((bytesSended- 6) / 7) % 16 )
+			telegram["d"].append(32 + ((bytesSended- 2) // 7 + 1) % 16 )
+			print ("bytesSended, Sequence count" , bytesSended ,((bytesSended- 3) // 7) % 16 )
 			start=1
-			while start<7 and bytesSended < length :
+			while start<8 and bytesSended <= length :
 				if tType != 5: # if no ASCII type
 					contentValue = bytesSended % 16
-					telegram["d"].append( contentValue * 16 + (16 - contentValue))
+					telegram["d"].append( contentValue * 16 + (15 - contentValue))
 				else:
 					contentValue = bytesSended % 26
 					telegram["d"].append( contentValue + 65 )
 				start +=  1
 				bytesSended += 1
-			while start<7 : # fill frame
+			while start<8 : # fill frame
 				telegram["d"].append( 0 )
 				start +=  1
 
@@ -195,6 +218,7 @@ while True:
 			pid= "%02X%02X%02X" % ( msg[i+0] , msg[i+1] , msg[i+2])
 		print ("Single Frame")
 		nextStep=1 # send the answer
+		bytesSended=0
 
 	############ First Frame  #################
 	if frameType == 1: 
@@ -235,18 +259,13 @@ while True:
 		
 		#und hier kommt jetzt die generische Datenerzeugung..
 		print ("len",len(pid), "slice",  pid[4:6])
-		
 		if len(pid)==6 and pid[2:4]=="FF": # generic test case generation
 			print ("generic frame")
 			if nextStep == 1: #Single Frame or end of Consecutive Frame series -> send the PID answer
-				thisData=generateFrame(0,pid[4:6])
+				bytesSended=generateFrame(bytesSended,pid[4:6],pid[:2])
 			if nextStep == 2: # send remaining consecute frames
-				print ("Array Len: ", len(dArray))
-				for i in range(len(dArray)):
-					print ("i: ", i)
-					if i > 0 :
-						sendTele(dArray[i])
-		
+				while bytesSended>-1:
+					bytesSended=generateFrame(bytesSended,pid[4:6],pid[:2])
 		else:
 			if nextStep == 1: #Single Frame or end of Consecutive Frame series -> send the PID answer
 				sendTele(dArray[0]) 
