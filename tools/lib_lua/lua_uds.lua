@@ -348,13 +348,11 @@ function calculatePacketedDiD(content, udsBuffer, bytepos)
 
 		--where is the lsb? (bit position and byte position)
 		if (content.Blen<=(content.Bpos%8+1)) then -- check if we have less than a byte signal or just a byte signal
-			print("Motorola - signal on less than one byte or one byte")
 			bitPos=bitPos-content.Blen+1 --lsb
 			--no change on byte position of the lsb
 		else --the signal is on at least two bytes
-			print("Motorola - signal at least on two bytes")
-			local nb_bits_first_byte=content.Bpos%8+1 --number of bits inside the first byte
-			local nb_bits_left=content.Blen-nb_bits_first_byte --number of bits left
+			local nb_bits_first_byte = content.Bpos%8+1 --number of bits inside the first byte
+			local nb_bits_left = content.Blen - nb_bits_first_byte --number of bits left
 			bitPos=(math.floor(content.Bpos/8)+math.ceil(nb_bits_left/8))*8+((8-nb_bits_left%8)%8) -- lsb
 			bytepos=bytepos+math.ceil(nb_bits_left/8) -- byte of the lsb
 		end
@@ -447,10 +445,10 @@ function readPacketedRTDDiD(oldvalue,id)
 		return string.format(getLocalePrintf("lua_uds",strID_DidNotDefined, "DID %s is not defined"),id)
 	end
 	local res, err=  udsServiceRequest(udsService_Read_Data_By_Identifier,did ,0 , function ()
-		if tonumber(firmware_revision,10) > 807 then
-			bytepos = math.floor(subTable.Bpos/8)+7  -- additional status byte added in OOBD Firmware for RTD protocol
-		else
+		if tonumber(firmware_revision,10) == 794 then
 			bytepos = math.floor(subTable.Bpos/8)+6
+		else
+			bytepos = math.floor(subTable.Bpos/8)+7   -- additional status byte added in OOBD Firmware for RTD protocol
 		end
 		res=calculatePacketedDiD(subTable, udsBuffer,bytepos)
 		--- timestamp fehlt noch
