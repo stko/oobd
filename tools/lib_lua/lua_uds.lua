@@ -348,12 +348,13 @@ function calculatePacketedDiD(content, udsBuffer, bytepos)
 			bitPos=bitPos-content.Blen+1 --lsb
 			--no change on byte position of the lsb
 		else --the signal is on at least two bytes
-			local nb_bits_first_byte = content.Bpos%8+1 --number of bits inside the first byte
-			local nb_bits_left = content.Blen - nb_bits_first_byte --number of bits left
-			bitPos=(math.floor(content.Bpos/8)+math.ceil(nb_bits_left/8))*8+((8-nb_bits_left%8)%8) -- lsb
-			bytepos=bytepos+math.ceil(nb_bits_left/8) -- byte of the lsb
+--			local nb_bits_first_byte = content.Bpos%8+1 --number of bits inside the first byte
+--			local nb_bits_left = content.Blen - nb_bits_first_byte --number of bits left
+--			bitPos=(math.floor(content.Bpos/8)+math.ceil(nb_bits_left/8))*8+((8-nb_bits_left%8)%8) -- lsb
+			bitPos = content.Bpos
+--			bytepos=bytepos+math.ceil(nb_bits_left/8) -- byte of the lsb
 		end
-	end
+end
 	--have a good bitPos
 	bitPos=bitPos%8	
 	if (content.dtype == "UNSIGNED") then
