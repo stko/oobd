@@ -498,19 +498,19 @@ function interface_serial(oldvalue,id)
   if hardwareID == 2 then
 	echoWrite("p 0 1\r")
 	answ=serReadLn(2000, true)
-	return answ
+	if answ ~= nil then		return answ	else		return "not available"	end
   elseif hardwareID == 3 or hardwareID == 4 then
 	echoWrite("p 0 0 1\r") -- get BT-MAC address of OOBD-Cup v5 and OOBD CAN Invader
-    err, answ = readAnswerArray()
-    return answ[1]
+    err, answ = readAnswerArray()	if answ[1] ~= nil then
+		return answ[1]	else		return "not available"	end
   elseif hardwareID == 1 then -- DXM1
 	echoWrite("at!00\r")
     answ=serReadLn(2000, true)
-	return answ
+	if answ ~= nil then		return answ	else		return "not available"	end
   else -- ELM327 specific
 	echoWrite("at @2\r")
     answ=serReadLn(2000, true)
-    return answ
+	if answ ~= nil then		return answ	else		return "not available"	end
   end
 end
 

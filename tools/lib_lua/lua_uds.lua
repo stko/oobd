@@ -66,7 +66,6 @@ function udsServiceRequest( service, did, bufferTime, handler)
 	else
 		return  "NO DATA", -3
 	end
-	
 end
 
 
@@ -280,7 +279,7 @@ end
 
 
 function readNumDiD(oldvalue,id)
-	DEBUGPRINT("nexulm", 1, "lua_uds.lua -  readNumDiD,%02d: %s", "00", "enter function readNumDiD")
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - readNumDiD,%02d: %s", "00", "enter function readNumDiD")
 	local i
 	local did, data = translateTableID( id )
 	local content=getSubTable(id, 1,false)
@@ -294,14 +293,14 @@ function readNumDiD(oldvalue,id)
 		local res=""
 		local bytepos = math.floor(content.Bpos/8)+4
 		if (content.dtype == "UNSIGNED") then
-			res=  CalcNumDiD( bytepos, mathfloor(content.Blen/8), content.mult, content.offset, content.unit) 
+			res=  CalcNumDiD( bytepos, math.floor(content.Blen/8), content.mult, content.offset, content.unit) 
 			
 		elseif (content.dtype == "BYTE") then
 			local value = ""
-			if (mathfloor(content.Blen/8) <= 8) then -- if byte length greater than 8 we'll interpret the datastream as raw values
-				res= CalcNumDiD( bytepos, mathfloor(content.Blen/8), content.mult, content.offset, content.unit)  
+			if (math.floor(content.Blen/8) <= 8) then -- if byte length greater than 8 we'll interpret the datastream as raw values
+				res= CalcNumDiD( bytepos, math.floor(content.Blen/8), content.mult, content.offset, content.unit)  
 			else
-				for i = 0, mathfloor(content.Blen/8) -1, 1 do -- get raw value
+				for i = 0, math.floor(content.Blen/8) -1, 1 do -- get raw value
 					value = value..string.format("%02x", udsBuffer[bytepos + i])
 				end
 				-- due to possible long response the raw response content is on output window 
@@ -312,11 +311,11 @@ function readNumDiD(oldvalue,id)
 			end
 			
 		elseif (content.dtype == "SIGNED") then
-			res=  sCalcNumDiD( bytepos , mathfloor(content.Blen/8) , content.mult , content.offset, content.unit) 
+			res=  sCalcNumDiD( bytepos , math.floor(content.Blen/8) , content.mult , content.offset, content.unit) 
 			
 		-- string.format for decimal transformation
 		elseif (content.dtype == "BCD") then
-			res=  CalcNumDiD( bytepos , mathfloor(content.Blen/8) , content.mult , content.offset, content.unit) 
+			res=  CalcNumDiD( bytepos , math.floor(content.Blen/8) , content.mult , content.offset, content.unit) 
 			
 		-- string.format for HEX transformation
 		elseif (content.dtype == "ENUM") then
@@ -337,45 +336,43 @@ end
 
 
 function calculatePacketedDiD(content, udsBuffer, bytepos)
-	DEBUGPRINT("nexulm", 1, "lua_uds.lua -  calculatePacketedDiD,%02d: %s", "00", "enter function calculatePacketedDiD")
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - calculatePacketedDiD,%02d: %s", "00", "enter function calculatePacketedDiD")
 	local res=""
 	local endianess=1 --default => Intel format
 	local bitPos=content.Bpos --init variable bitPos	
-
 	--check if Motorola format => in case of Motorola format invert udsBuffer
 	if (content.endianess=="Motorola") then
 		endianess=-1 -- => Motorola format
-
 		--where is the lsb? (bit position and byte position)
 		if (content.Blen<=(content.Bpos%8+1)) then -- check if we have less than a byte signal or just a byte signal
 			bitPos=bitPos-content.Blen+1 --lsb
 			--no change on byte position of the lsb
 		else --the signal is on at least two bytes
-			local nb_bits_first_byte = content.Bpos%8+1 --number of bits inside the first byte
-			local nb_bits_left = content.Blen - nb_bits_first_byte --number of bits left
-			bitPos=(math.floor(content.Bpos/8)+math.ceil(nb_bits_left/8))*8+((8-nb_bits_left%8)%8) -- lsb
-			bytepos=bytepos+math.ceil(nb_bits_left/8) -- byte of the lsb
+--			local nb_bits_first_byte = content.Bpos%8+1 --number of bits inside the first byte
+--			local nb_bits_left = content.Blen - nb_bits_first_byte --number of bits left
+--			bitPos=(math.floor(content.Bpos/8)+math.ceil(nb_bits_left/8))*8+((8-nb_bits_left%8)%8) -- lsb
+			bitPos = content.Bpos
+--			bytepos=bytepos+math.ceil(nb_bits_left/8) -- byte of the lsb
 		end
-	end
+end
 	--have a good bitPos
 	bitPos=bitPos%8	
-
 	if (content.dtype == "UNSIGNED") then
 		res= data ~= nil and CalcNumDiD_any( content.Blen, bitPos, bytepos, content.mult, content.offset, endianess)  or "index error"
 		res=string.format("%g ",res)..content.unit
 	elseif (content.dtype == "BYTE") then
-		res= data ~= nil and CalcNumDiD( bytepos, mathfloor(content.Blen/8), content.mult, content.offset, "")  or "index error"
+		res= data ~= nil and CalcNumDiD( bytepos, math.floor(content.Blen/8), content.mult, content.offset, "")  or "index error"
 		res=string.format("%g ",res)..content.unit
 	elseif (content.dtype == "SIGNED") then
-		res= data ~= nil and sCalcNumDiD( content.Blen, bitPos, bytepos , mathfloor(content.Blen/8) , content.mult , content.offset, "", endianess)  or "index error"
+		res= data ~= nil and sCalcNumDiD( content.Blen, bitPos, bytepos , math.floor(content.Blen/8) , content.mult , content.offset, "", endianess)  or "index error"
 		res=string.format("%g ",res)..content.unit
 	elseif (content.dtype == "BCD") then
-		res= data ~= nil and CalcNumDiD( bytepos , mathfloor(content.Blen/8) , content.mult , content.offset, "")  or "index error"
+		res= data ~= nil and CalcNumDiD( bytepos , math.floor(content.Blen/8) , content.mult , content.offset, "")  or "index error"
 		-- string.format for HEX transformation
 		res=string.format("%x ",res)..content.unit
 	elseif (content.dtype == "ASCII") then
 		local cnt = 0
-		while cnt<mathfloor(content.Blen/8) do
+		while cnt < math.floor(content.Blen/8) do
 			if udsBuffer[bytepos]>20 then  -- verify valid ASCII character from Space (0x20 till 0x7F)
 				res=res..string.char(udsBuffer[bytepos])
 			end
@@ -389,10 +386,10 @@ function calculatePacketedDiD(content, udsBuffer, bytepos)
 			res=content.lt
 		end					
 	elseif (content.dtype == "FLOAT") then
-		if mathfloor(content.Blen/8) == 4 then
+		if math.floor(content.Blen/8) == 4 then
 			for i = 3, 0, -1 do res = res..string.char(udsBuffer[bytepos+i]) end 
 			res=string.format("%f",str2float(res, "single"))
-		elseif mathfloor(content.Blen/8) == 8 then
+		elseif math.floor(content.Blen/8) == 8 then
 			for i = 7, 0, -1 do res = res..string.char(udsBuffer[bytepos+i]) end 
 			res=string.format("%f",str2float(res, "double"))
 		end
@@ -414,8 +411,11 @@ end
 
 
 function readPacketedDiD(oldvalue,id)
-	DEBUGPRINT("nexulm", 1, "lua_uds.lua -  readPacketedDiD,%02d: %s", "00", "enter function readPacketedDiD")
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - readPacketedDiD,%02d: %s", "00", "enter function readPacketedDiD")
 	local did, data = translateTableID( id )
+	if (data.sev_r == "21") then	 -- if ReadDataByLocalID the leading byte "00" is cut off
+		did = string.sub(did,3)
+	end
 	subTable=getSubTable(id, 1,true) 
 	if subTable == nil then
 		return string.format(getLocalePrintf("lua_uds",strID_DidNotDefined, "DID %s is not defined"),id)
@@ -425,7 +425,7 @@ function readPacketedDiD(oldvalue,id)
 	end
 	return udsServiceRequest(data.sev_r, did , 0 , function ()
 		openPage(data.t)   -- title/description of DID
-		for key,content in pairs(data.pv) do
+		for key,content in pairs(data.sd) do
 			if key~="dummy" then
 				bytepos = math.floor(content.Bpos/8)+4
 				res=calculatePacketedDiD(content, udsBuffer, bytepos)
@@ -435,10 +435,10 @@ function readPacketedDiD(oldvalue,id)
 		addElement("<< Packeted Data","PacketedData_Menu","<",0x10, "")
 		pageDone()
 	end )
-
 end
 
 function readPacketedRTDDiD(oldvalue,id)
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - readPacketedRTDDiD,%02d: %s", "00", "enter function readPacketedRTDDiD")
 	local did, data = translateTableID( id )
 	subTable=getSubTable(id, 1,false) 
 	if subTable == nil then
@@ -468,6 +468,7 @@ end
 
 
 function doSelfTest(oldvalue,id)
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - doSelfTest,%02d: %s", "00", "enter function doSelfTest")
 	paramList=moduleSpecial[id]
 	deleteDTC()
 	serSleepCall(1000)
@@ -480,6 +481,7 @@ end
 
 
 function evaluateDTCs(title)
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - evaluateDTCs,%02d: %s", "00", "enter function evaluateDTCs")
 	serDisplayWrite(title..":Start")
 	local i = 4
 	while i< ( udsLen -1 ) do
@@ -524,6 +526,7 @@ end
 
 ---------------------- Trouble Codes Menu --------------------------------------
 function showDTC(oldvalue,id)
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - showDTC,%02d: %s", "00", "enter function showDTC")
 	udsServiceRequest(udsService_Read_DTC,"0202" ,0 , function ()
 		evaluateDTCs("Actual DTCs of "..moduleName)
 	end)
@@ -535,6 +538,7 @@ end
 
 
 function createXmlDTCs(type)
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - createXmlDTCs,%02d: %s", "00", "enter function createXmlDTCs")
 	local i = 4
 	local res=""
 	local newArray
@@ -634,8 +638,8 @@ end
 ---------------------- delete DTC--------------------------------------
 
 function deleteDTC()
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - deleteDTC,%02d: %s", "00", "enter function deleteDTC")
 	return  udsServiceRequest(udsService_Clear_Diagnostic_Information,"FFFFFF" ,0 , function ()
 		return "Done"
 	end)
 end
-
