@@ -145,14 +145,14 @@ def generateFrame(bytesSended,typeID, service):
 				start=4
 				
 			else: # multi frames
-				telegram["d"].append(16 + dlc // 16)
-				telegram["d"].append(dlc % 16)
+				telegram["d"].append(16 + dlc // 256)
+				telegram["d"].append(dlc % 256)
 				telegram["d"].append(serviceResponse)
 				telegram["d"].append(0xFF)
 				telegram["d"].append(int(typeID,16))
 				start=5
 			while start<8 and bytesSended <= length :
-				if tType != 5: # if no ASCII type
+				if tClass != 5: # if no ASCII type
 					contentValue = bytesSended % 16
 					telegram["d"].append( contentValue * 16 + (15 - contentValue))
 				else:
@@ -164,11 +164,15 @@ def generateFrame(bytesSended,typeID, service):
 				telegram["d"].append( 0 )
 				start +=  1
 		else: # consecute frames 
-			telegram["d"].append(32 + ((bytesSended- 2) // 7 + 1) % 16 )
-			print ("bytesSended, Sequence count" , bytesSended ,((bytesSended- 3) // 7) % 16 )
+			if tType==4: # create wrong sequence count
+				sequenceCount=((bytesSended- 2) // 7 + 1 + 1 ) % 16
+			else:
+				sequenceCount=((bytesSended- 2) // 7 + 1 ) % 16
+			telegram["d"].append(32 + sequenceCount )
+			print ("bytesSended, Sequence count" , bytesSended ,sequenceCount )
 			start=1
 			while start<8 and bytesSended <= length :
-				if tType != 5: # if no ASCII type
+				if tClass != 5: # if no ASCII type
 					contentValue = bytesSended % 16
 					telegram["d"].append( contentValue * 16 + (15 - contentValue))
 				else:
