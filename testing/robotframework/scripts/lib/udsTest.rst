@@ -54,32 +54,13 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
     Requesting non- existiting function
 	send webUI command  {"name":"notExisting:","optid":"","actValue":"","updType":3}
 	answer should match    {"to":{"name":"notExisting:"},"value":"#tried to call nil","type":"VALUE"}
-    Requesting ASCII-DID directly
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF50","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEF","type":"VALUE"}
-    Requesting ASCII-DID directly with binary data
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF40","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#..-<KZix........","type":"VALUE"}
-    Requesting ASCII-DID directly with General Response Error
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF51","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#NRC: 0x51","type":"VALUE"}
-    Requesting ASCII-DID directly with Timeout
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF52","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No Data received","type":"VALUE"}
-    Requesting ASCII-DID directly with no Answer
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF53","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No Data received","type":"VALUE"}
-    Requesting ASCII-DID directly with sequence error
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF54","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No Data received","type":"VALUE"}
-
 
 .. code:: robotframework
 
     *** Settings ***
     Library           OperatingSystem
-    Library           lib/webUIClient.py
-    Variables         local_settings.py
+    Library           ../../lib/webUIClient.py
+    Variables         ../../local_settings.py
 
 
 
