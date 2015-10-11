@@ -84,6 +84,9 @@ def sendTele(data):
 def generateFrame(bytesSended,typeID, service):
 	
 	'''
+	
+	generic frame generation for all 0xFxxx DiDs
+	
 	typeID definitions:
 	HNibble: Length of Answer
 	0 :   1 Byte
@@ -263,7 +266,7 @@ while True:
 		
 		#und hier kommt jetzt die generische Datenerzeugung..
 		print ("len",len(pid), "slice",  pid[4:6])
-		if len(pid)==6 and pid[2:4]=="FF": # generic test case generation
+		if len(pid)==6 and pid[2:3]=="F": # generic test case generation
 			print ("generic frame")
 			if nextStep == 1: #Single Frame or end of Consecutive Frame series -> send the PID answer
 				bytesSended=generateFrame(bytesSended,pid[4:6],pid[:2])

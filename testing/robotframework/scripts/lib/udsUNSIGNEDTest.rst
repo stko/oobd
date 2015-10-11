@@ -46,24 +46,23 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 .. code:: robotframework
 
     *** Test Cases ***
-    Requesting ASCII-DID by table
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF50","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEF","type":"VALUE"}
-    Requesting ASCII-DID by table with binary data
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF40","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#..-<KZix........","type":"VALUE"}
-    Requesting ASCII-DID by table with General Response Error
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF51","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#NRC: 0x51","type":"VALUE"}
-    Requesting ASCII-DID by table with Timeout
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF52","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No Data received","type":"VALUE"}
-    Requesting ASCII-DID by table with no Answer
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF53","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No Data received","type":"VALUE"}
-    Requesting ASCII-DID by table with sequence error
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF54","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No Data received","type":"VALUE"}
+    Requesting UNSIGNED-DID by table
+	send webUI command  {"name":"readNumDiD:","optid":"TestData_0_F220_sd_00","actValue":"","updType":3}
+	answer should match    {"to":{"name":"readNumDiD:"},"value":"#80.8 Count","type":"VALUE"}
+     Requesting UNSIGNED-DID by table with General Response Error
+	send webUI command  {"name":"readNumDiD:","optid":"TestData_0_F221_sd_00","actValue":"","updType":3}
+	answer should match    {"to":{"name":"readNumDiD:"},"value":"#NRC: 0x21","type":"VALUE"}
+    Requesting UNSIGNED-DID by table with Timeout
+	send webUI command  {"name":"readNumDiD:","optid":"TestData_0_F222_sd_00","actValue":"","updType":3}
+	answer should match    {"to":{"name":"readNumDiD:"},"value":"#No Data received","type":"VALUE"}
+    Requesting UNSIGNED-DID by table with no Answer
+	send webUI command  {"name":"readNumDiD:","optid":"TestData_0_F223_sd_00","actValue":"","updType":3}
+	answer should match    {"to":{"name":"readNumDiD:"},"value":"#No Data received","type":"VALUE"}
+    Requesting UNSIGNED-DID by table with answer too short
+	send webUI command  {"name":"readNumDiD:","optid":"TestData_0_F225_sd_00","actValue":"","updType":3}
+	answer should match    {"to":{"name":"readNumDiD:"},"value":"#Answer too short","type":"VALUE"}
+
+
 
 
 .. code:: robotframework

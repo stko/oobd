@@ -1,4 +1,3 @@
-dofile("luaSVNRevs.inc")
 dofile("luaSVNRevs.inc")
 -- include the basic connectivity
 
@@ -235,6 +234,7 @@ end
 -- the global receiving routine. Trys to read single- or multiframe answers from the dxm and stores it in udsbuffer, setting the received length in udslen
 
 function receive_DXM(timeOut)
+	udsBuffer = {}
 	DEBUGPRINT("nexulm", 1, "lua_utils.lua - receive_DXM,%02d: %s", "00", "enter function receive_DXM")
 	udsLen=0
 	local timeOut =getPrefs("timeOut" , 1000)
@@ -430,6 +430,7 @@ function setBus(bus)
 end
 
 function receive_OOBD(timeOut)
+	udsBuffer = {}
 	DEBUGPRINT("nexulm", 1, "serial_dxm.lua - receive_OOBD,%02d: %s", "00", "enter function receive_OOBD")
 		udsLen=0
 		local timeOut =getPrefs("timeOut" , 2000)
@@ -498,19 +499,35 @@ function interface_serial(oldvalue,id)
   if hardwareID == 2 then
 	echoWrite("p 0 1\r")
 	answ=serReadLn(2000, true)
-	if answ ~= nil then		return answ	else		return "not available"	end
+	if answ ~= nil then
+		return answ
+	else
+		return "not available"
+	end
   elseif hardwareID == 3 or hardwareID == 4 then
 	echoWrite("p 0 0 1\r") -- get BT-MAC address of OOBD-Cup v5 and OOBD CAN Invader
-    err, answ = readAnswerArray()	if answ[1] ~= nil then
-		return answ[1]	else		return "not available"	end
+    err, answ = readAnswerArray()
+	if answ[1] ~= nil then
+		return answ[1]
+	else
+		return "not available"
+	end
   elseif hardwareID == 1 then -- DXM1
 	echoWrite("at!00\r")
     answ=serReadLn(2000, true)
-	if answ ~= nil then		return answ	else		return "not available"	end
+	if answ ~= nil then
+		return answ
+	else
+		return "not available"
+	end
   else -- ELM327 specific
 	echoWrite("at @2\r")
     answ=serReadLn(2000, true)
-	if answ ~= nil then		return answ	else		return "not available"	end
+	if answ ~= nil then
+		return answ
+	else
+		return "not available"
+	end
   end
 end
 

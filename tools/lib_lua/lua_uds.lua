@@ -4,6 +4,7 @@ local stdTimeout = 1000
 local stdBuffer = 500
 local strID_NoSecureCode = "NoSecureCode"
 local strID_DidNotDefined = "strID_DidNotDefined"
+local strID_AnswerToShort = "strID_AnswerToShort"
 
 --[[
 Sources:
@@ -193,6 +194,9 @@ function CalcNumDiD( byteNr , nrOfBytes, multiplier, offset, unit)
 	DEBUGPRINT("nexulm", 1, "lua_uds.lua - CalcNumDiD,%02d: %s", "00", "enter function CalcNumDiD")
 	local value=0
 	local i
+	if byteNr+nrOfBytes-1>#udsBuffer then
+		return string.format(getLocalePrintf("lua_uds",strID_AnswerToShort, "Answer too short"),id)
+	end
 	for i = 0 , nrOfBytes -1, 1 do -- get raw value
 		value = value * 256 + udsBuffer[ byteNr + i]
 	end
@@ -298,7 +302,6 @@ function readNumDiD(oldvalue,id)
 		local bytepos = math.floor(content.Bpos/8)+4
 		if (content.dtype == "UNSIGNED") then
 			res=  CalcNumDiD( bytepos, math.floor(content.Blen/8), content.mult, content.offset, content.unit) 
-			
 		elseif (content.dtype == "BYTE") then
 			local value = ""
 			if (math.floor(content.Blen/8) <= 8) then -- if byte length greater than 8 we'll interpret the datastream as raw values
@@ -358,7 +361,7 @@ function calculatePacketedDiD(content, udsBuffer, bytepos)
 			bitPos = content.Bpos
 --			bytepos=bytepos+math.ceil(nb_bits_left/8) -- byte of the lsb
 		end
-end
+	end
 	--have a good bitPos
 	bitPos=bitPos%8	
 	if (content.dtype == "UNSIGNED") then
