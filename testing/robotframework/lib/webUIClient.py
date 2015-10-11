@@ -7,34 +7,39 @@ from json import loads, dumps
 from base64 import encodestring,decodestring, b64decode
 from pprint import pprint
 
+_wsSocket = None
+
 class webUIClient(object):
 
 	def __init__(self):
 		self._answer = ''
-		self._wsSocket = None
 
 	def open_webUI(self, wsURL, timeout):
+		global _wsSocket
 		sys.stderr.write("open "+wsURL+"\n")
-		self._wsSocket = websocket.WebSocket()
-		if self._wsSocket is None:
+		_wsSocket = websocket.WebSocket()
+		if _wsSocket is None:
 			raise AssertionError("could not open webUI- Websocket!")
-		self._wsSocket.connect(wsURL)
-		self._wsSocket.settimeout(timeout)
+		_wsSocket.connect(wsURL)
+		_wsSocket.settimeout(timeout)
 
 	def close_webUI(self):
-		sys.stderr.write("close webUI\n")
-		self._wsSocket.close()
+		global _wsSocket
+		if not _wsSocket is None:
+			sys.stderr.write("close webUI\n")
+			_wsSocket.close()
 
 	def send_webUI_command(self,cmd):
+		global _wsSocket
 		self._flush()
 		try: # do a sanity check first, if the given string is really a well formed JSON string
 			loads(cmd)
 		except:
 			raise AssertionError("command is not a valid JSON string!: "+cmd+"\n")
-		if self._wsSocket is None:
+		if _wsSocket is None:
 			raise AssertionError("send_webUI_command: Websocket is not open!")
-		sys.stderr.write("webUI cmd: "+cmd+"\n")
-		self._wsSocket.send(cmd)      # write a string
+		# sys.stderr.write("webUI cmd: "+cmd+"\n")
+		_wsSocket.send(cmd)      # write a string
 
 	def answer_should_match(self, expected_answer):
 		self._answer = ""
@@ -83,7 +88,7 @@ class webUIClient(object):
 							sys.stderr.write (" REGEX string compare for " + value + "against " + inputValue + " failed\n" )
 							return False
 					elif value != inputValue:
-						sys.stderr.write("normal string test")
+						# sys.stderr.write("normal string test")
 						sys.stderr.write (" normal string compare for " + value + " against " + inputValue + " failed\n" )
 						return False
 
@@ -93,25 +98,30 @@ class webUIClient(object):
 		return True
 			
 	def _flush(self):
-		timeout = self._wsSocket.gettimeout()
-		self._wsSocket.settimeout(0.3)
-		try:
+		global _wsSocket
+		if _wsSocket is None:
+			raise AssertionError("_doLine: Websocket is not open!")
+		else:
+			timeout = _wsSocket.gettimeout()
+			_wsSocket.settimeout(0.3)
+			try:
 
-			s="dummy"
-			while s != "":
-				s= self._wsSocket.recv()
-		except Exception as e:
-				pass
-				#raise AssertionError("flush error :-("+repr(e)+"\n")
-		self._wsSocket.settimeout(timeout)
+				s="dummy"
+				while s != "":
+					s= _wsSocket.recv()
+			except Exception as e:
+					pass
+					#raise AssertionError("flush error :-("+repr(e)+"\n")
+			_wsSocket.settimeout(timeout)
 
 	def _doLine(self):
-		if self._wsSocket is None:
+		global _wsSocket
+		if _wsSocket is None:
 			raise AssertionError("_doLine: Websocket is not open!")
 		else:
 			try:
-				s = self._wsSocket.recv()          # read buffer
+				s = _wsSocket.recv()          # read buffer
 				self._answer +=s
-				sys.stderr.write("Answer "+self._answer+"\n") 
+				# sys.stderr.write("Answer "+self._answer+"\n") 
 			except Exception as e:
 				raise AssertionError("something went wrong :-("+repr(e)+"\n")

@@ -38,6 +38,10 @@
 #include "mc_serial_generic.h"
 #include "mc_serial.h"
 
+#include <termios.h>
+
+
+
 TaskHandle_t hSerialTask;
 /* file handle to communicate with the oobd side. */
 static int oobdIOHandle = 0;
@@ -50,7 +54,11 @@ void writeChar(char a)
     /* Echo it back to the sender. */
     //! \bug Echo off is not supported yet
     (void) write(oobdIOHandle, &a, 1);
+    (void) tcdrain(oobdIOHandle);
     putchar(a);
+    if (a==13){
+	    putchar(10);
+    }
 }
 
 
@@ -65,7 +73,7 @@ UBaseType_t serial_init_mc()
 
     // Set-up the Serial Console Echo task
     if (pdTRUE == lAsyncIOSerialOpen("/tmp/OOBD", &oobdIOHandle)) {
-	internalSerialRxQueue = xQueueCreate(2, sizeof(unsigned char));
+	internalSerialRxQueue = xQueueCreate(20, sizeof(unsigned char));
 	(void) lAsyncIORegisterCallback(oobdIOHandle,
 					vAsyncSerialIODataAvailableISR,
 					internalSerialRxQueue);

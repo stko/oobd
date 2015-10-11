@@ -64,7 +64,7 @@ function udsServiceRequest( service, did, bufferTime, handler)
 			return "Error" , -2
 		end
 	else
-		return  "NO DATA", -3
+		return  "No Data received", -3
 	end
 end
 
@@ -177,8 +177,10 @@ function readAscDiD(oldvalue,id)
 		local pos=4
 		local res=""
 		while pos <= udsLen and pos < 36 do
-			if udsBuffer[pos]>31 then
+			if udsBuffer[pos]>31 and udsBuffer[pos]<128 then
 				res=res..string.char(udsBuffer[pos])
+			else
+				res=res.."."
 			end
 			pos= pos +1
 		end
@@ -276,6 +278,8 @@ function str2float(x, datatype)
 		return 0
 	end
 end
+
+-- evaluates a DiD by its identifier, which is the reference to the content lookup table
 
 
 function readNumDiD(oldvalue,id)

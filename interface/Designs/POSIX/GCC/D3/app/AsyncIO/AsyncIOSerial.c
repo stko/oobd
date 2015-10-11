@@ -61,7 +61,7 @@ void vAsyncSerialIODataAvailableISR(int iFileDescriptor, void *pContext)
 	    if (pdTRUE !=
 		xQueueSendFromISR((QueueHandle_t) pContext, &ucRx,
 				  &xHigherPriorityTaskWoken)) {
-		/* the queue is full. */
+		 printf("serial input queue overflow!\n");
 	    }
 	}
     }

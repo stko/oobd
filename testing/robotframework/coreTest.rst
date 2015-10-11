@@ -47,20 +47,31 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 
     *** Test Cases ***
     Test for initial connect message
-        answer should match    {"type":"WSCONNECT"}
-      #  send webUI command  {"name" : "test" , "to" : { "recp" : "Müller" } }
-      #  answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
-
-    Test the greeting command
 	answer should match    {"type":"WSCONNECT"}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
         send webUI command  {"name":"greet:","optid":"","actValue":"","updType":3}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(Thanks).*"}
-	# requesting ASCII-DID
-	send webUI command  {"name":"vin:","optid":"","actValue":"","updType":3}
-	answer should match    {"to":{"name":"vin:"},"value":"#OOBD-Sim-VIN-Nr","type":"VALUE"}
-	# answer should match    {"to":{"name":"vin:"},"value":"JE9PQkQtU2ltLVZJTi1Ocg==","type":"VALUE"}
-	# answer should match    {"to":{"name":"vin:"},"value":"JE9PQkQtU2ltLVZJTi1Ocg==","owner":{"name":"%ScriptengineLua\\\\.\\\\d+"},"type":"VALUE"}
+    Requesting non- existiting function
+	send webUI command  {"name":"notExisting:","optid":"","actValue":"","updType":3}
+	answer should match    {"to":{"name":"notExisting:"},"value":"#tried to call nil","type":"VALUE"}
+    Requesting ASCII-DID directly
+	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF50","actValue":"","updType":3}
+	answer should match    {"to":{"name":"readAscDiD:"},"value":"#ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEF","type":"VALUE"}
+    Requesting ASCII-DID directly with binary data
+	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF40","actValue":"","updType":3}
+	answer should match    {"to":{"name":"readAscDiD:"},"value":"#..-<KZix........","type":"VALUE"}
+    Requesting ASCII-DID directly with General Response Error
+	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF51","actValue":"","updType":3}
+	answer should match    {"to":{"name":"readAscDiD:"},"value":"#NRC: 0x51","type":"VALUE"}
+    Requesting ASCII-DID directly with Timeout
+	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF52","actValue":"","updType":3}
+	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No Data received","type":"VALUE"}
+    Requesting ASCII-DID directly with no Answer
+	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF53","actValue":"","updType":3}
+	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No Data received","type":"VALUE"}
+    Requesting ASCII-DID directly with sequence error
+	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF54","actValue":"","updType":3}
+	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No Data received","type":"VALUE"}
 
 
 .. code:: robotframework
@@ -118,8 +129,8 @@ starts and that every test also clears it afterwards:
 .. code:: robotframework
 
    *** Settings ***
-    test Setup       open webUI  ${wsOobdURL}  ${wsSocketTimeout}
-    test Teardown    close webUI
+    suite Setup       open webUI  ${wsOobdURL}  ${wsSocketTimeout}
+    suite Teardown    close webUI
 
 Using tags
 ----------
