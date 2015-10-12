@@ -57,7 +57,7 @@ function evalResult(valService, valParams, valType , valStartBit , valBitLen , v
   result="unknown call.."
   if valType == "ascii" then
     tempParamTable['tempParamTable_NOP_'..valParams]={ sev_r = valService,  t="dummy title", call = "readAscPid", sd = {
-    sd_00 = {Bpos = valStartBit , Blen =  valBitLen , mult = valMult , offset = valOffset, unit = valUnit,  dtype = "UNSIGNED", t="dummy subtitle"}}}
+    sd_00 = {bitPos = valStartBit , bitLen =  valBitLen , mult = valMult , offset = valOffset, unit = valUnit,  dtype = "UNSIGNED", t="dummy subtitle"}}}
     result=readAscPid("",'tempParamTable_NOP_'..valParams)
   end
   if valType == "bit" then
@@ -68,7 +68,7 @@ sd_00 = { by = math.floor(valStartBit / 8) , bi = math.floor(valBitLen / 8), lt 
   end
   if valType == "numeric" then
     tempParamTable['tempParamTable_NOP_'..valParams]={ sev_r = valService,  t="dummy title", call = "readNumPid", sd = {
-    sd_00 = {Bpos = valStartBit , Blen =  valBitLen , bpos = math.floor(valStartBit / 8), blen =math.floor(valBitLen / 8),  mult = valMult , offset = valOffset, unit = valUnit,  dtype = "UNSIGNED", t="dummy subtitle"}}}
+    sd_00 = {bitPos = valStartBit , bitLen =  valBitLen , bytePos = math.floor(valStartBit / 8), byteLen =math.floor(valBitLen / 8),  mult = valMult , offset = valOffset, unit = valUnit,  dtype = "UNSIGNED", t="dummy subtitle"}}}
     result=readNumPid("",'tempParamTable_NOP_'..valParams.."_sd_00")
   end
   return result
