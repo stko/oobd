@@ -314,7 +314,7 @@ function readNumDiD(oldvalue,id)
 				serDisplayWrite("Response of Request $"..data.sev_r.." $"..did.."  - "..content.t..":")
 				serDisplayWrite(""..value)
 				-- normal response for application main request screen
-				res= data ~= nil and "see output window" or "index error"
+				res= content ~= nil and "see output window" or "index error"
 			end
 			
 		elseif (content.dtype == "SIGNED") then
@@ -329,7 +329,7 @@ function readNumDiD(oldvalue,id)
 			for key,contentEv in pairs(content.ev) do
 				if key~="dummy" then
 					if ( contentEv.bv == tonumber(udsBuffer[bytepos]) ) then
-						res= data ~= nil and contentEv.t or "index error"
+						res= content ~= nil and contentEv.t or "index error"
 						return res
 					else
 						res = "NO DATA"
@@ -365,16 +365,16 @@ function calculatePacketedDiD(content, udsBuffer, bytepos)
 	--have a good bitPos
 	bitPos=bitPos%8	
 	if (content.dtype == "UNSIGNED") then
-		res= data ~= nil and CalcNumDiD_any( content.Blen, bitPos, bytepos, content.mult, content.offset, endianess)  or "index error"
+		res= content ~= nil and CalcNumDiD_any( content.Blen, bitPos, bytepos, content.mult, content.offset, endianess)  or "index error"
 		res=string.format("%g ",res)..content.unit
 	elseif (content.dtype == "BYTE") then
-		res= data ~= nil and CalcNumDiD( bytepos, math.floor(content.Blen/8), content.mult, content.offset, "")  or "index error"
+		res= content ~= nil and CalcNumDiD( bytepos, math.floor(content.Blen/8), content.mult, content.offset, "")  or "index error"
 		res=string.format("%g ",res)..content.unit
 	elseif (content.dtype == "SIGNED") then
-		res= data ~= nil and sCalcNumDiD( content.Blen, bitPos, bytepos , math.floor(content.Blen/8) , content.mult , content.offset, "", endianess)  or "index error"
+		res= content ~= nil and sCalcNumDiD( content.Blen, bitPos, bytepos , math.floor(content.Blen/8) , content.mult , content.offset, "", endianess)  or "index error"
 		res=string.format("%g ",res)..content.unit
 	elseif (content.dtype == "BCD") then
-		res= data ~= nil and CalcNumDiD( bytepos , math.floor(content.Blen/8) , content.mult , content.offset, "")  or "index error"
+		res= content ~= nil and CalcNumDiD( bytepos , math.floor(content.Blen/8) , content.mult , content.offset, "")  or "index error"
 		-- string.format for HEX transformation
 		res=string.format("%x ",res)..content.unit
 	elseif (content.dtype == "ASCII") then
