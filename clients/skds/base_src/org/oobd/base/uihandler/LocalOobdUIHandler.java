@@ -86,7 +86,11 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
                 return null;
             }
             if (myOnion.isType(CM_WRITESTRING)) {
-                userInterface.sm(Base64Coder.decodeString(myOnion.getOnionString("data")));
+                String modifier=myOnion.getOnionString("modifier"); // an absolutely work around. Here's is why: https://github.com/stko/oobd/issues/164
+                if (modifier==null){
+                    modifier="";
+                }
+                userInterface.sm(Base64Coder.decodeString(myOnion.getOnionString("data")),Base64Coder.decodeString(modifier));
                 return null;
             }
             if (myOnion.isType(CM_PARAM)) {

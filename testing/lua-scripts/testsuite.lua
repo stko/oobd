@@ -203,24 +203,12 @@ function deleteDTC()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
----------------------- Vehicle Info Menu --------------------------------------
-
-
-
+function clearOutput(oldvalue,id)
+	serDisplayWrite("try to clear output")
+	serDisplayWrite("foo","clear")
+	serDisplayWrite("if you read only this, then it works..")
+	return oldvalue
+end
 
 
 
@@ -249,6 +237,7 @@ function Main(oldvalue,id)
 	openPage("OOBD-ME Main")
 	addElement("Sensor Data >", "createCMD01Menu",">>>",0x1, "")
 	addElement("Greetings", "greet","",0x0, "")
+	addElement("clear output", "clearOutput","",0x0, "")
 	pageDone()
 	return oldvalue
 end

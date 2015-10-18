@@ -13,8 +13,10 @@ public interface IFui {
      * The string is added to the content of the output area and the output area is made visible to the user
      *
      * @param msg
+     * 
+     * the modifier extends the meaning of the string and can be used optional to e.g. clear the output or save the content
      */
-    public void sm(String msg);
+    public void sm(String msg, String modifier);
 
     /**
      * \brief Builds an input window which allows the user to input some parameters

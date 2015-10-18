@@ -96,9 +96,9 @@ public class MainActivity extends FragmentActivity implements
 	OOBDVehicleDataSource source;
 	ServiceConnection mConnection;
 
-	public void sm(String msg) {
-		// TODO Auto-generated method stub
-		OutputActivity.getInstance().addText(msg + "\n");
+	public void sm(String msg, String modifier) {
+	
+	OutputActivity.getInstance().addText(msg + "\n",modifier);
 		// TODO outputtofront crashes
 		// DiagnoseTab.getInstance().outputToFront();
 	}

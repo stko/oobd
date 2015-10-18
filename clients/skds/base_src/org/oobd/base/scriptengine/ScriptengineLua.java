@@ -359,13 +359,23 @@ public class ScriptengineLua extends OobdScriptengine {
                 // BaseLib.luaAssert(nArguments >0, "not enough args");
                 initRPC(callFrame, nArguments);
                 try {
-                    core.transferMsg(new Message(myself, UIHandlerMailboxName,
-                            new Onion("{" + "'type':'" + CM_WRITESTRING + "',"
+                    
+                    String msg="{" + "'type':'" + CM_WRITESTRING + "',"
                             + "'owner':" + "{'name':'" + myself.getId()
                             + "'}," + "'command':'serDisplayWrite',"
                             + "'data':'"
                             + Base64Coder.encodeString(getString(0))
-                            + "'" + "}")));
+                            + "'";
+                    String cmd=getString(1);
+                    if (cmd != null ){
+                         msg=msg+ " , 'modifier':'"
+                            + Base64Coder.encodeString(cmd)
+                            + "'";
+                    }
+                    msg=msg+ "}";
+                         core.transferMsg(new Message(myself, UIHandlerMailboxName,
+                            new Onion(msg)));
+                   
                 } catch (JSONException ex) {
                     Logger.getLogger(ScriptengineLua.class.getName()).log(
                             Level.SEVERE, null, ex);

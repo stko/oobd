@@ -44,13 +44,21 @@ public class OutputActivity extends Activity {
 		myRefreshHandler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
+				OutputText myOutputText=(OutputText)msg.obj;
+			       if ( ! "".equalsIgnoreCase(myOutputText.modifier)) {
+			            if (myOutputText.modifier.equalsIgnoreCase("clear")){
+			            	mytext.setText("");
+			            }
+			        } else {
+						if (myLogActiveButton.isChecked()) {
+							mytext.setText(mytext.getText().toString()
+									+ msg.obj.toString()+"\n");
 
-				if (myLogActiveButton.isChecked()) {
-					mytext.setText(mytext.getText().toString()
-							+ msg.obj.toString());
+			            }
+			        }
 
 				}
-			}
+			
 		};
 		((ImageButton) findViewById(R.id.clearButton))
 				.setOnClickListener(new View.OnClickListener() {
@@ -59,7 +67,6 @@ public class OutputActivity extends Activity {
 						mytext.setText("");
 					}
 				});
-
 
 		((ImageButton) findViewById(R.id.diskButton))
 				.setOnClickListener(new View.OnClickListener() {
@@ -78,22 +85,21 @@ public class OutputActivity extends Activity {
 									public void onClick(DialogInterface dialog,
 											int item) {
 										if (item == 0) { // save locally
-/*											Intent intent = new Intent(
-													OutputActivity
-															.getInstance()
-															.getBaseContext(),
-													FileDialog.class);
-											intent.putExtra(
-													FileDialog.START_PATH,
-													"/sdcard/OOBD");
-											startActivityForResult(intent, 1);
-*/
-											Intent intent = new Intent("org.openintents.action.PICK_FILE");
-											intent.putExtra(
-													Intent.EXTRA_TITLE,
+										/*
+										 * Intent intent = new Intent(
+										 * OutputActivity .getInstance()
+										 * .getBaseContext(), FileDialog.class);
+										 * intent.putExtra(
+										 * FileDialog.START_PATH,
+										 * "/sdcard/OOBD");
+										 * startActivityForResult(intent, 1);
+										 */
+											Intent intent = new Intent(
+													"org.openintents.action.PICK_FILE");
+											intent.putExtra(Intent.EXTRA_TITLE,
 													"Save as text");
 											startActivityForResult(intent, 1);
-											} else { // send it somehow
+										} else { // send it somehow
 											Intent intent = new Intent(
 													Intent.ACTION_SEND);
 											intent.putExtra(
@@ -130,18 +136,16 @@ public class OutputActivity extends Activity {
 
 												if (!file.exists()
 														|| !file.canRead()) {
-													Toast
-															.makeText(
-																	myOutputActivityInstance,
-																	"Attachment Error",
-																	Toast.LENGTH_SHORT)
+													Toast.makeText(
+															myOutputActivityInstance,
+															"Attachment Error",
+															Toast.LENGTH_SHORT)
 															.show();
 													return;
 												}
-												intent
-														.putExtra(
-																Intent.EXTRA_TEXT,
-																Html.fromHtml("<html><body>With best regards from <a href='http://oobd.org'>OOBD</a></body></html>"));
+												intent.putExtra(
+														Intent.EXTRA_TEXT,
+														Html.fromHtml("<html><body>With best regards from <a href='http://oobd.org'>OOBD</a></body></html>"));
 
 												Uri uri = Uri.parse("file://"
 														+ file);
@@ -151,7 +155,8 @@ public class OutputActivity extends Activity {
 
 											}
 											startActivity(Intent.createChooser(
-													intent, "Forward Output Text..."));
+													intent,
+													"Forward Output Text..."));
 										}
 									}
 								});
@@ -180,14 +185,15 @@ public class OutputActivity extends Activity {
 						myOutputActivityInstance).create();
 				alertDialog.setTitle("File already exist!");
 				alertDialog.setMessage("OK to overwrite?");
-				alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,"OK",
+				alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK",
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
 								saveOutput(file);
 							}
 						});
-				alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,"Cancel", (DialogInterface.OnClickListener)null);
+				alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+						"Cancel", (DialogInterface.OnClickListener) null);
 				alertDialog.show();
 			} else {
 				saveOutput(file);
@@ -219,9 +225,10 @@ public class OutputActivity extends Activity {
 		return myOutputActivityInstance;
 	}
 
-	public void addText(String text) {
-		myRefreshHandler.sendMessage(Message.obtain(myRefreshHandler, 2, text));
+	public void addText(String text, String modifier) {
+		myRefreshHandler.sendMessage(Message.obtain(myRefreshHandler, 2, new OutputText(text,modifier)));
 	}
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// if back- button is pressed
@@ -233,4 +240,14 @@ public class OutputActivity extends Activity {
 		return super.onKeyDown(keyCode, event);
 	}
 
+}
+
+class OutputText {
+	public String text;
+	public String modifier;
+
+	public OutputText(String text, String modifier) {
+		this.text = text;
+		this.modifier = modifier;
+	}
 }
