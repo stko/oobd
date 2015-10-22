@@ -68,16 +68,16 @@ LicenseForceSelection checkbox
 Section "OOBDesk"
 SetOutPath $INSTDIR
 
-CreateDirectory $INSTDIR\lib
-File /oname=$INSTDIR\lib\appframework-1.0.3.jar dist/lib/appframework-1.0.3.jar
-File /oname=$INSTDIR\lib\jna.jar dist/lib/jna.jar
-File /oname=$INSTDIR\lib\kahlua.jar dist/lib/kahlua.jar
-File /oname=$INSTDIR\lib\purejavacomm.jar dist/lib/purejavacomm.jar
-File /oname=$INSTDIR\lib\RXTXcomm.jar dist/lib/RXTXcomm.jar
-File /oname=$INSTDIR\lib\swing-worker-1.1.jar dist/lib/swing-worker-1.1.jar
+#CreateDirectory $INSTDIR\lib
+#File /oname=$INSTDIR\lib\appframework-1.0.3.jar dist/lib/appframework-1.0.3.jar
+#File /oname=$INSTDIR\lib\jna.jar dist/lib/jna.jar
+#File /oname=$INSTDIR\lib\kahlua.jar dist/lib/kahlua.jar
+#File /oname=$INSTDIR\lib\purejavacomm.jar dist/lib/purejavacomm.jar
+#File /oname=$INSTDIR\lib\RXTXcomm.jar dist/lib/RXTXcomm.jar
+#File /oname=$INSTDIR\lib\swing-worker-1.1.jar dist/lib/swing-worker-1.1.jar
 
-File /oname=$INSTDIR\lib\java_websocket.jar dist/lib/java_websocket.jar
-#File /r dist/lib
+#File /oname=$INSTDIR\lib\java_websocket.jar dist/lib/java_websocket.jar
+File /r dist/lib
 
 
 

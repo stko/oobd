@@ -53,6 +53,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(Thanks).*"}
     Test for output clear msg
         send webUI command  {"name":"clearOutput:","optid":"","actValue":"","updType":3}
+	answer should match    {"type":"WRITESTRING" ,"data":"#try to clear output"}
 	answer should match    {"type":"WRITESTRING" ,"modifier":"#clear"}
  
 .. code:: robotframework
