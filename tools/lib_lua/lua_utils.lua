@@ -373,17 +373,10 @@ function getLocalePrintf( category, textID, default)
 		end
 		newArray= dbLookup(category.."_"..LOCALE..".oodb",textID) -- look up for the given category db and for the given LOCALE
 		if newArray ~= nil and newArray.len > 0 then -- if something was found
-			index=tostring(newArray.header["Template"])
-			return newArray.data["1"][index]
+			return getDBEntry(newArray, "Template","1",default)
 		else -- not found: either the LOCALE DB does not exist or the entry was not found
 			if LOCALE ~="en_en" then -- if the LOCALE is already english, then there's no need to search again
-				newArray= dbLookup(category.."_en_en.oodb",textID) --another trial, this time in english
-				if newArray ~= nil and newArray.len > 0 then
-					index=tostring(newArray.header["Template"])
-					return newArray.data["1"][index]
-				else --not found
-					return default -- just return the default
-				end
+				return getDBEntry(newArray, "Template","1",default)
 			else --english was already tried
 				return default -- just return the default
 			end
@@ -446,3 +439,45 @@ function selectModuleID(oldvalue,id)
 
 	return oldvalue 
 end
+
+
+
+-- helper function to read out of a dbtable, which is an result of precesing dbLookup, by taking care about the different error cases
+function getDBEntry(db, header, nr, default)
+		if db ~= nil and db.len > 0 then
+			local index = db.header[header]
+			if index==nil then
+				return default
+			end
+			index=tostring(index)
+			index = getArrayData(db.data, {nr, index})
+			if index==nil then
+				return default
+			end
+			return index
+		else --not found
+			return default -- just return the default
+		end
+
+end
+
+--[[
+    getArrayData returns the value out of a multidimensional array like result = array[a][b][c], but in opposite to such a direct access
+    it returns a clear nil, but it does not throw any java exceptions in case the addressing is invalid.
+
+	so its been called as getArrayData(array, {a,b,c})
+--]]
+
+function getArrayData(myArray, indexer)
+	for i = 1 , #indexer do
+		print ("search for index"..indexer[i])
+		if myArray[indexer[i]]==nil then
+			return nil
+		else
+			myArray=myArray[indexer[i]]
+		end
+	end
+	return myArray
+	
+end
+

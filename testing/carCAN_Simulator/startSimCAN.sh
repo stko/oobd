@@ -15,7 +15,7 @@ fi
 echo do not forget to create a serial connection with
 echo socat PTY,link=/tmp/DXM PTY,link=/tmp/OOBD
 echo and start the virtual car with 
-echo ~/bin/py33 carCAN.py oobdcan0
+echo python3 carCAN.py oobdcan0
 echo or play simulated CAN bus traffic with
 echo ./canplayer -l i -I canbusdata.sim
 

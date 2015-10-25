@@ -56,8 +56,8 @@ void writeChar(char a)
     (void) write(oobdIOHandle, &a, 1);
     (void) tcdrain(oobdIOHandle);
     putchar(a);
-    if (a==13){
-	    putchar(10);
+    if (a == 13) {
+	putchar(10);
     }
 }
 

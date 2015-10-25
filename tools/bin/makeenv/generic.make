@@ -11,6 +11,7 @@ SPECS=$(shell $(OOBDROOT)/tools/bin/filelist.sh mdx)
 SOURCES=$(shell $(OOBDROOT)/tools/bin/filelist.sh luasource)
 LBCFILES=$(shell $(OOBDROOT)/tools/bin/filelist.sh lbc)
 KCDFILES=$(shell $(OOBDROOT)/tools/bin/filelist.sh kcd)
+OODBFILES=$(shell $(OOBDROOT)/tools/bin/filelist.sh dbcsv)
 
 CFLAGS=
 MDXTFLAGS=$(OOBDROOT)/tools/xmltools/mdx2opendiagx.xslt $(OOBDROOT)/tools/xmltools/opendiagx2oobd.xslt
@@ -57,11 +58,19 @@ revision:
 	echo "$(SVNREVLUALIB)" > $(LUASVNFILE)
 	echo "$(SVNREVLUASCRIPT)" >> $(LUASVNFILE)
 
-source: revision specs $(CUSTOMSOURCE) luas kcds
+OODBSOURCES=$(OODBFILES:.dbcsv=.oodb) 
+%.oodb: %.dbcsv 
+	php $(OOBDROOT)/tools/oodbcreate/oodbCreateCLI.php  $< > $(@F) 
+
+
+
+
+source: revision specs $(CUSTOMSOURCE) luas kcds oodbs
 luas: $(LUASOURCES) 
 specs: $(SPECSOURCES) $(MDXTFLAGS) $(CUSTOMSPECSOURCES)
 kcds: $(KCDSOURCES) 
-
+oodbs: $(OODBSOURCES)
+	echo db $(OODBSOURCES)
 	echo target
 scripts: $(OBJECTS)
 

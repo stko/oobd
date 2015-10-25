@@ -420,7 +420,7 @@ end
 function readPacketedDiD(oldvalue,id)
 	DEBUGPRINT("nexulm", 1, "lua_uds.lua - readPacketedDiD,%02d: %s", "00", "enter function readPacketedDiD")
 	local did, data = translateTableID( id )
-	if (data.sev_r == "21") then	 -- if ReadDataByLocalID the leading byte "00" is cut off
+	if (data.sev_r == udsService_Read_Data_By_LocalIdentifier) then	 -- if ReadDataByLocalID the leading byte "00" is cut off
 		did = string.sub(did,3)
 	end
 	subTable=getSubTable(id, 1,true) 

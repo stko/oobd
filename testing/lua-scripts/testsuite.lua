@@ -199,9 +199,116 @@ function deleteDTC()
 
 
 
+--- this function is a copy of the lib_uds readPacketedDiD(9 function, but without the openpage/addelements commands
+
+function testreadPacketedDiD(oldvalue,id)
+	DEBUGPRINT("nexulm", 1, "lua_uds.lua - testreadPacketedDiD,%02d: %s", "00", "enter function testreadPacketedDiD")
+	local did, data = translateTableID( id )
+	if (data.sev_r == udsService_Read_Data_By_LocalIdentifier) then	 -- if ReadDataByLocalID the leading byte "00" is cut off
+		did = string.sub(did,3)
+	end
+	subTable=getSubTable(id, 1,true) 
+	if subTable == nil then
+		return string.format(getLocalePrintf("lua_uds",strID_DidNotDefined, "DID %s is not defined"),id)
+	end
+	if data.sev_r == nil then  -- check if data.sev_r is missing
+		data.sev_r = udsService_Read_Data_By_Identifier;
+	end
+	return udsServiceRequest(data.sev_r, did , 0 , function ()
+		-- openPage(data.t)   -- title/description of DID
+		for key,content in pairs(data.sd) do
+			if key~="dummy" then
+				bytepos = math.floor(content.bitPos/8)+4
+				res=calculatePacketedDiD(content, udsBuffer, bytepos)
+			--	addElement(content.t, "nothing",res,0x00, "")
+			end
+		end
+		-- addElement("<< Packeted Data","PacketedData_Menu","<",0x10, "")
+		-- pageDone()
+	end )
+end
 
 
 
+---- testing the database 
+
+function testdb(oldvalue,id)
+	local newArray
+	local index
+	local textID
+	local dbName
+	local colum
+	local nr
+	if id=="1" then  -- all correct
+		dbName = "testsuiteData"
+		textID = "005"
+		colum = "Value"
+		nr = "1"
+	end
+	if id=="2" then -- database does not exist
+		dbName = "foo"
+		textID = "005"
+		colum = "Value"
+		nr = "1"
+	end
+	if id=="3" then -- textID does not exist
+		dbName = "testsuiteData"
+		textID = "foo"
+		colum = "Value"
+		nr = "1"
+	end
+	if id=="4" then -- read from second column
+		dbName = "testsuiteData"
+		textID = "005"
+		colum = "Remark"
+		nr = "1"
+	end
+	if id=="5" then -- read from existing column
+		dbName = "testsuiteData"
+		textID = "005"
+		colum = "foo"
+		nr = "1"
+	end
+	if id=="6" then  -- read second row
+		dbName = "testsuiteData"
+		textID = "005"
+		colum = "Value"
+		nr = "2"
+	end
+	if id=="7" then  -- read second row from second column
+		dbName = "testsuiteData"
+		textID = "005"
+		colum = "Remark"
+		nr = "2"
+	end
+	if id=="8" then  -- read not existing row
+		dbName = "testsuiteData"
+		textID = "005"
+		colum = "Value"
+		nr = "99"
+	end
+	if id=="9" then  -- read not existing row from second column
+		dbName = "testsuiteData"
+		textID = "005"
+		colum = "Remark"
+		nr = "99"
+	end
+	if id=="10" then  -- read not existing row from non existing column
+		dbName = "testsuiteData"
+		textID = "005"
+		colum = "foo"
+		nr = "99"
+	end
+	if dbLookup ~= nil then -- db functionality implemented?
+		newArray= dbLookup(dbName..".oodb",textID) -- look up for the given category db and for the given LOCALE
+		return getDBEntry( newArray, colum ,  nr , textID.." not found" )
+	else -- no db functionality available
+		return "noDBlookup"
+	end
+end
+
+
+--- writes something, sends the output clear command and write something else
 
 function clearOutput(oldvalue,id)
 	serDisplayWrite("try to clear output")
