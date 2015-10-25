@@ -232,6 +232,32 @@ end
 
 ---- testing the database 
 
+function testlocale(oldvalue,id)
+	if id=="1" then  -- no locale set
+		setLocale(oldvalue,nil)
+		return getLocalePrintf("testlocale","004", "locale not found")
+	end
+	if id=="2" then  -- default locale set
+		setLocale(oldvalue,"en_en")
+		return getLocalePrintf("testlocale","004", "locale not found")
+	end
+	if id=="3" then  -- german locale set
+		setLocale(oldvalue,"de_de")
+		return getLocalePrintf("testlocale","004", "locale not found")
+	end
+	if id=="4" then  -- klingonian locale set
+		setLocale(oldvalue,"kl_kl")
+		return getLocalePrintf("testlocale","004", "locale not found")
+	end
+	if id=="5" then  -- klingonian locale set with unknown ID
+		setLocale(oldvalue,"kl_kl")
+		return getLocalePrintf("testlocale","foo", "locale not found")
+	end
+end
+
+
+---- testing the database 
+
 function testdb(oldvalue,id)
 	local newArray
 	local index

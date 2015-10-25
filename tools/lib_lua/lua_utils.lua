@@ -317,7 +317,11 @@ setLocale(oldvalue,id): Sets global LOCALE variable to "id". If not set, LOCALE 
 --]]
 function setLocale(oldvalue,id)
 	LOCALE=id
-	return "language set to "..id
+	if LOCALE ~= nil then
+		return "language set to "..id
+	else
+		return "no default Language"
+	end
 end 
 
 
@@ -365,8 +369,7 @@ return string.format(getLocalePrintf("nrc",string.format("0x%x",udsBuffer[3]), "
 
 function getLocalePrintf( category, textID, default)
 	DEBUGPRINT("nexulm", 1, "lua_utils.lua - getLocalePrintf,%02d: %s", "00", "enter function getLocalePrintf")
-		local newArray
-		local index
+	local newArray
 	if dbLookup ~= nil then -- db functionality implemented?
 		if LOCALE==nil then -- default language not set ?
 			LOCALE="en_en" -- then set it to english
@@ -376,6 +379,7 @@ function getLocalePrintf( category, textID, default)
 			return getDBEntry(newArray, "Template","1",default)
 		else -- not found: either the LOCALE DB does not exist or the entry was not found
 			if LOCALE ~="en_en" then -- if the LOCALE is already english, then there's no need to search again
+				newArray= dbLookup(category.."_".."en_en"..".oodb",textID) -- look up for the given category db and for the given LOCALE
 				return getDBEntry(newArray, "Template","1",default)
 			else --english was already tried
 				return default -- just return the default
