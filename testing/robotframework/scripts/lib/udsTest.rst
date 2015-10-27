@@ -54,6 +54,9 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
     Requesting non- existiting function
 	send webUI command  {"name":"notExisting:","optid":"","actValue":"","updType":3}
 	answer should match    {"to":{"name":"notExisting:"},"value":"#tried to call nil","type":"VALUE"}
+    Requesting non- existiting table entry
+	send webUI command  {"name":"readAscDiD:","optid":"DUMMY_0_F054","actValue":"","updType":3}
+	answer should match    {"to":{"name":"readAscDiD:"},"value":"#attempted index of non-table: null","type":"VALUE"}
 
 .. code:: robotframework
 

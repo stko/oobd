@@ -47,22 +47,22 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 
     *** Test Cases ***
     Requesting ASCII-DID by table
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF50","actValue":"","updType":3}
+	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F050","actValue":"","updType":3}
 	answer should match    {"to":{"name":"readAscDiD:"},"value":"#ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEF","type":"VALUE"}
     Requesting ASCII-DID by table with binary data
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF40","actValue":"","updType":3}
+	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F040","actValue":"","updType":3}
 	answer should match    {"to":{"name":"readAscDiD:"},"value":"#..-<KZix........","type":"VALUE"}
     Requesting ASCII-DID by table with General Response Error
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF51","actValue":"","updType":3}
+	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F051","actValue":"","updType":3}
 	answer should match    {"to":{"name":"readAscDiD:"},"value":"#NRC: 0x51","type":"VALUE"}
     Requesting ASCII-DID by table with Timeout
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF52","actValue":"","updType":3}
+	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F052","actValue":"","updType":3}
 	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No Data received","type":"VALUE"}
     Requesting ASCII-DID by table with no Answer
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF53","actValue":"","updType":3}
+	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F053","actValue":"","updType":3}
 	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No Data received","type":"VALUE"}
     Requesting ASCII-DID by table with sequence error
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_FF54","actValue":"","updType":3}
+	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F054","actValue":"","updType":3}
 	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No Data received","type":"VALUE"}
 
 
