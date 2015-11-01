@@ -272,7 +272,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         jLabel5 = new javax.swing.JLabel();
         jSpinnerProxyPort = new javax.swing.JSpinner();
         httpEnabled = new javax.swing.JCheckBox();
-        jComboBox1 = new javax.swing.JComboBox();
+        protocolComboBox = new javax.swing.JComboBox();
         jLabel6 = new javax.swing.JLabel();
         diagnose = new javax.swing.JPanel();
         toolPanelDiagnose = new javax.swing.JPanel();
@@ -540,15 +540,15 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(httpEnabled, gridBagConstraints);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Discovery", "Kadaver", "Bluetooth", "Telnet" }));
-        jComboBox1.setSelectedIndex(2);
-        jComboBox1.setToolTipText(resourceMap.getString("connectionTypeSpinner.toolTipText")); // NOI18N
-        jComboBox1.setName("connectionTypeSpinner"); // NOI18N
+        protocolComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Discovery", "Kadaver", "Bluetooth", "Telnet" }));
+        protocolComboBox.setSelectedIndex(2);
+        protocolComboBox.setToolTipText(resourceMap.getString("connectionTypeSpinner.toolTipText")); // NOI18N
+        protocolComboBox.setName("connectionTypeSpinner"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        settings.add(jComboBox1, gridBagConstraints);
+        settings.add(protocolComboBox, gridBagConstraints);
 
         jLabel6.setText(resourceMap.getString("jLabel6.text")); // NOI18N
         jLabel6.setName("jLabel6"); // NOI18N
@@ -935,6 +935,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         } else {
             comportComboBox.setSelectedItem(port);
         }
+        // as not supported yet, disable the protocol select combobox
+        protocolComboBox.setEnabled(false);
         scriptDir.setText(appProbs.get(OOBDConstants.PropName_ScriptDir, ""));
         httpEnabled.setSelected(UIHANDLER_WS_NAME.equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_UIHander, "")));
         pgpEnabled.setSelected("true".equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_PGPEnabled, "")));
@@ -1165,7 +1167,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JButton gridSmallerButton;
     private javax.swing.JCheckBox httpEnabled;
     private javax.swing.JCheckBoxMenuItem jCheckBoxRemoteConnect;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -1193,6 +1194,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JButton pgpImportKeys;
     private javax.swing.JLabel pgpStatus;
     private javax.swing.JProgressBar progressBar;
+    private javax.swing.JComboBox protocolComboBox;
     private javax.swing.JButton saveButton;
     private javax.swing.JTextField scriptDir;
     private javax.swing.JComboBox scriptSelectComboBox;
