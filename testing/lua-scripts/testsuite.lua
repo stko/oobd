@@ -214,7 +214,7 @@ function testreadPacketedDiD(oldvalue,id)
 	if data.sev_r == nil then  -- check if data.sev_r is missing
 		data.sev_r = udsService_Read_Data_By_Identifier;
 	end
-	return udsServiceRequest(data.sev_r, did , 0 , function ()
+	return udsServiceRequest(data.sev_r, did , {} , 0 , function ()
 		-- openPage(data.t)   -- title/description of DID
 		for key,content in pairs(data.sd) do
 			if key~="dummy" then
@@ -225,6 +225,13 @@ function testreadPacketedDiD(oldvalue,id)
 		end
 		-- addElement("<< Packeted Data","PacketedData_Menu","<",0x10, "")
 		-- pageDone()
+	end )
+end
+
+
+function testDidData(oldvalue,id)
+	return udsServiceRequest("22", "AABB" , {0xCC,0xDD} , 0 , function ()
+		return array2str(udsBuffer)
 	end )
 end
 

@@ -485,3 +485,17 @@ function getArrayData(myArray, indexer)
 	
 end
 
+ 
+--[[
+    array2str returns the string represenation of the given byte array
+--]]
+
+function array2str(byteArray)
+	ans="";
+	for i = 1 , #byteArray do
+		ans = ans .. string.format("%02X",byteArray[i])
+	end
+	return ans
+	
+end
+

@@ -222,7 +222,9 @@ while True:
 		if teleLength < 3 : 
 			pid= "%02X%02X" % ( msg[i+0] , msg[i+1] )
 		else:
-			pid= "%02X%02X%02X" % ( msg[i+0] , msg[i+1] , msg[i+2])
+			pid=""
+			for count in range(teleLength):
+				pid+= "%02X" % ( msg[i+count]) 
 		print ("Single Frame")
 		nextStep=1 # send the answer
 		bytesSended=0

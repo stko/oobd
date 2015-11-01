@@ -48,11 +48,12 @@ udsServiceRequest() returns up to TWO (2!) values. The first one is a string, th
 
 --]]
 
-function udsServiceRequest( service, did, bufferTime, handler)
+function udsServiceRequest( service, did, didData, bufferTime, handler)
 	DEBUGPRINT("nexulm", 1, "lua_uds.lua - udsServiceRequest,%02d: %s", "00", "enter function udsServiceRequest")
-	echoWrite(service..did.."\r") 
+	echoWrite(service..did..array2str(didData).."\r") 
 	udsLen=receive()
 	if udsLen>0 then
+		print(">"..string.format("0x%02X",udsBuffer[1]))
 		if udsBuffer[1]== tonumber(service,16)+udsService_Response then
 			if handler ~= nil then
 				return handler(service, did, udsLen, udsBuffer)
@@ -90,7 +91,7 @@ function readBMPDiD(oldvalue, id)
 		data.sev_r = udsService_Read_Data_By_Identifier;
 	end
  
-	return udsServiceRequest(data.sev_r,did ,0 , function ()
+	return udsServiceRequest(data.sev_r,did , {} , 0 , function ()
 		if udsLen > subdata.by then
 			if hasBit(udsBuffer[subdata.by+bytepos], subdata.bi) then
 				return subdata.ht
@@ -124,7 +125,7 @@ function writeBMPDiD(oldvalue, id)
 	end
 	local secCodeData=secCodes[shortName][session]
 	
-	return udsServiceRequest(data.sev_r,did ,0 , function ()
+	return udsServiceRequest(data.sev_r,did , {} , 0 , function ()
 		if udsLen <= subdata.by then
 			return string.format( "Read Error: %02X %02X",udsBuffer[1],udsBuffer[3])
 		end
@@ -156,7 +157,7 @@ function writeBMPDiD(oldvalue, id)
 			return string.format("Error Code %d",res)
 		end
 		print ("Access granted!! ")
-		return udsServiceRequest(data.sev_ioc,setCmd ,0 , function ()
+		return udsServiceRequest(data.sev_ioc,setCmd , {} , 0 , function ()
 			return readBMPDiD(oldvalue, id)
 		end )
 	end )
@@ -174,7 +175,7 @@ function readAscDiD(oldvalue,id)
 	if data.sev_r == nil then  -- check if data.sev_r is missing
 		data.sev_r = udsService_Read_Data_By_Identifier;
 	end
-	return udsServiceRequest(data.sev_r,did ,0 , function ()
+	return udsServiceRequest(data.sev_r,did , {} , 0 , function ()
 		local pos=4
 		local res=""
 		while pos <= udsLen and pos < 36 do
@@ -297,7 +298,7 @@ function readNumDiD(oldvalue,id)
 	if data.sev_r == nil then  -- check if data.sev_r is missing
 		data.sev_r = udsService_Read_Data_By_Identifier;
 	end
-	return udsServiceRequest(data.sev_r,did ,0 , function ()
+	return udsServiceRequest(data.sev_r,did , {} , 0 , function ()
 		local res=""
 		local bytepos = math.floor(content.bitPos/8)+4
 		if (content.dtype == "UNSIGNED") then
@@ -430,7 +431,7 @@ function readPacketedDiD(oldvalue,id)
 	if data.sev_r == nil then  -- check if data.sev_r is missing
 		data.sev_r = udsService_Read_Data_By_Identifier;
 	end
-	return udsServiceRequest(data.sev_r, did , 0 , function ()
+	return udsServiceRequest(data.sev_r, did , {} ,  0 , function ()
 		openPage(data.t)   -- title/description of DID
 		for key,content in pairs(data.sd) do
 			if key~="dummy" then
@@ -451,7 +452,7 @@ function readPacketedRTDDiD(oldvalue,id)
 	if subTable == nil then
 		return string.format(getLocalePrintf("lua_uds",strID_DidNotDefined, "DID %s is not defined"),id)
 	end
-	local res, err=  udsServiceRequest(udsService_Read_Data_By_Identifier,did ,0 , function ()
+	local res, err=  udsServiceRequest(udsService_Read_Data_By_Identifier,did , {} , 0 , function ()
 		if tonumber(firmware_revision,10) == 794 then
 			bytepos = math.floor(subTable.bitPos/8)+6
 		else
@@ -479,7 +480,7 @@ function doSelfTest(oldvalue,id)
 	paramList=moduleSpecial[id]
 	deleteDTC()
 	serSleepCall(1000)
-	return udsServiceRequest(udsService_Read_Data_By_Identifier,did ,0 , function ()
+	return udsServiceRequest(udsService_Read_Data_By_Identifier,did , {} , 0 , function ()
 		serSleepCall(paramlist.timeout)
 		showDTC()
 		return "Test Done"
@@ -534,10 +535,10 @@ end
 ---------------------- Trouble Codes Menu --------------------------------------
 function showDTC(oldvalue,id)
 	DEBUGPRINT("nexulm", 1, "lua_uds.lua - showDTC,%02d: %s", "00", "enter function showDTC")
-	udsServiceRequest(udsService_Read_DTC,"0202" ,0 , function ()
+	udsServiceRequest(udsService_Read_DTC,"0202" , {} , 0 , function ()
 		evaluateDTCs("Actual DTCs of "..moduleName)
 	end)
-	udsServiceRequest(udsService_Read_DTC,"028D" ,0 , function ()
+	udsServiceRequest(udsService_Read_DTC,"028D" , {} , 0 , function ()
 		evaluateDTCs("Old DTCs of "..moduleName)
 	end)
 	return "Done- See output for details"
@@ -597,13 +598,13 @@ end
 function getXmlDtc(oldvalue,id)
 	DEBUGPRINT("nexulm", 1, "lua_uds.lua - getXmlDtc,%02d: %s", "00", "enter function getXmlDtc")
 	local result="<dtcs>"
-	local res, err = udsServiceRequest(udsService_Read_DTC,"0202" ,stdBuffer , nil)
+	local res, err = udsServiceRequest(udsService_Read_DTC,"0202" , {} , stdBuffer , nil)
 	if err == 0 then
  		result=result..createXmlDTCs("actual")
 	else
 		result=result.."\n<error>\n<returncode>"..err.."</returncode>\n<desc>"..res.."</desc>\n<cmd>"..udsService_Read_DTC.."0202".."</cmd>\n</error>"
 	end
-	res, err = udsServiceRequest(udsService_Read_DTC,"028D" ,stdBuffer , nil)
+	res, err = udsServiceRequest(udsService_Read_DTC,"028D" , {} , stdBuffer , nil)
 	if err == 0 then
 		result=result..createXmlDTCs("old")
 	else
@@ -621,13 +622,13 @@ function getNrOfDTC()
 -- if bit 1 (starting with 0) is set, then the active DTCs are requested. if bit 1 = 0 then the DTCs are the inactive ones
 	local res1
 	local res2
-	local res, err = udsServiceRequest(udsService_Read_DTC,"0202" ,stdBuffer , nil)
+	local res, err = udsServiceRequest(udsService_Read_DTC,"0202" , {} , stdBuffer , nil)
 	if err == 0 and udsLen> 5 then
 			res1= udsBuffer[5] * 256 + udsBuffer[6]
 	else
 		res1= "Err."
 	end
-	local res, err = udsServiceRequest(udsService_Read_DTC,"018D" ,stdBuffer , nil)
+	local res, err = udsServiceRequest(udsService_Read_DTC,"018D" , {} , stdBuffer , nil)
 	if err == 0 and udsLen> 5 then
 			res2= udsBuffer[5] * 256 + udsBuffer[6]
 	else
@@ -646,7 +647,7 @@ end
 
 function deleteDTC()
 	DEBUGPRINT("nexulm", 1, "lua_uds.lua - deleteDTC,%02d: %s", "00", "enter function deleteDTC")
-	return  udsServiceRequest(udsService_Clear_Diagnostic_Information,"FFFFFF" ,0 , function ()
+	return  udsServiceRequest(udsService_Clear_Diagnostic_Information,"FFFFFF" , {} , 0 , function ()
 		return "Done"
 	end)
 end
