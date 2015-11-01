@@ -1239,18 +1239,24 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         if (i > -1) {
             scriptSelectComboBox.setSelectedIndex(i);
         }
-        PWDialog pwDialog = new PWDialog(null);
-        String str = pwDialog.showDialog();
-        // System.err.println("passwort="+str);
-        //       String str = JOptionPane.showInputDialog(null, "Enter your PGP PassPhrase : ",                "OOBD PGP Script Encryption", 1);
-        if (str != null) {
-            try {
-                oobdCore.getSystemIF().setUserPassPhrase(
-                        str);
-                str = "";
-            } catch (Exception e) {
-                // e.printStackTrace();
+        if (!appProbs.getBoolean(OOBDConstants.PropName_PGPEnabled, false)){
                 oobdCore.getSystemIF().setUserPassPhrase("");
+ 
+        }else{
+            
+            PWDialog pwDialog = new PWDialog(null);
+            String str = pwDialog.showDialog();
+            // System.err.println("passwort="+str);
+            //       String str = JOptionPane.showInputDialog(null, "Enter your PGP PassPhrase : ",                "OOBD PGP Script Encryption", 1);
+            if (str != null) {
+                try {
+                    oobdCore.getSystemIF().setUserPassPhrase(
+                            str);
+                    str = "";
+                } catch (Exception e) {
+                    // e.printStackTrace();
+                    oobdCore.getSystemIF().setUserPassPhrase("");
+                }
             }
         }
 

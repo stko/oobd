@@ -27,27 +27,27 @@ sd_06 = { by = 0 , bi = 6, t= "Bitmap Byte 0 Bit 6" , lt = "Off" ,  ht = "On"},
 -- read data for each Single value - ASCII
 
 TestData_0_F050 = { t = "Ascii Data", sev_r = "22", ses_r ="01;03;", sd = {
-sd_00 = {   Bpos = 0 , Blen = 192 , dtype = "ASCII", t = "ASCII Len 24" },
+sd_00 = {   bitPos = 0 , bitLen = 192 , dtype = "ASCII", t = "ASCII Len 24" },
 }
 },
 TestData_0_F040 = { t = "Ascii Data", sev_r = "22", ses_r ="01;03;", sd = {
-sd_00 = {   Bpos = 0 , Blen = 192 , dtype = "ASCII", t = "ASCII Len 24 with binary data" },
+sd_00 = {   bitPos = 0 , bitLen = 192 , dtype = "ASCII", t = "ASCII Len 24 with binary data" },
 }
 },
 TestData_0_F051 = { t = "Ascii Data", sev_r = "22", ses_r ="01;03;", sd = {
-sd_00 = {   Bpos = 0 , Blen = 192 , dtype = "ASCII", t = "ASCII Len 24 with General Response Error" },
+sd_00 = {   bitPos = 0 , bitLen = 192 , dtype = "ASCII", t = "ASCII Len 24 with General Response Error" },
 }
 },
 TestData_0_F052 = { t = "Ascii Data", sev_r = "22", ses_r ="01;03;", sd = {
-sd_00 = {   Bpos = 0 , Blen = 192 , dtype = "ASCII", t = "ASCII Len 24 with Timeout" },
+sd_00 = {   bitPos = 0 , bitLen = 192 , dtype = "ASCII", t = "ASCII Len 24 with Timeout" },
 }
 },
 TestData_0_F053 = { t = "Ascii Data", sev_r = "22", ses_r ="01;03;", sd = {
-sd_00 = {   Bpos = 0 , Blen = 192 , dtype = "ASCII", t = "ASCII Len 24 with no Answer" },
+sd_00 = {   bitPos = 0 , bitLen = 192 , dtype = "ASCII", t = "ASCII Len 24 with no Answer" },
 }
 },
 TestData_0_F054 = { t = "Ascii Data", sev_r = "22", ses_r ="01;03;", sd = {
-sd_00 = {   Bpos = 0 , Blen = 192 , dtype = "ASCII", t = "ASCII Len 24 with sequence error" },
+sd_00 = {   bitPos = 0 , bitLen = 192 , dtype = "ASCII", t = "ASCII Len 24 with sequence error" },
 }
 },
 
@@ -56,23 +56,23 @@ sd_00 = {   Bpos = 0 , Blen = 192 , dtype = "ASCII", t = "ASCII Len 24 with sequ
 -- read data for UNSIGNED
 
 TestData_0_F220 = { t = "UNSIGNED Data", sev_r = "22", ses_r ="01;03;", sd = {
-sd_00 = {  Bpos = 16 , Blen = 16 , mult = 0.01 , offset = -35 , min = "-35" , max = "6518.5" , unit = "Count" , dtype = "UNSIGNED" , t = "UNSIGNED 2 Bytes, start at Byte 2, mult 0.1, offset -35"} ,
+sd_00 = {  bitPos = 16 , bitLen = 16 , mult = 0.01 , offset = -35 , min = "-35" , max = "6518.5" , unit = "Count" , dtype = "UNSIGNED" , t = "UNSIGNED 2 Bytes, start at Byte 2, mult 0.1, offset -35"} ,
 }
 },
 TestData_0_F221 = { t = "UNSIGNED Data", sev_r = "22", ses_r ="01;03;", sd = {
-sd_00 = {  Bpos = 16 , Blen = 16 , mult = 0.01 , offset = -35 , min = "-35" , max = "6518.5" , unit = "Count" , dtype = "UNSIGNED" , t = "UNSIGNED 2 Bytes with General Response Error"} ,
+sd_00 = {  bitPos = 16 , bitLen = 16 , mult = 0.01 , offset = -35 , min = "-35" , max = "6518.5" , unit = "Count" , dtype = "UNSIGNED" , t = "UNSIGNED 2 Bytes with General Response Error"} ,
 }
 },
 TestData_0_F222 = { t = "UNSIGNED Data", sev_r = "22", ses_r ="01;03;", sd = {
-sd_00 = {  Bpos = 16 , Blen = 16 , mult = 0.01 , offset = -35 , min = "-35" , max = "6518.5" , unit = "Count" , dtype = "UNSIGNED" , t = "UNSIGNED 2 Bytes with Timeout"} ,
+sd_00 = {  bitPos = 16 , bitLen = 16 , mult = 0.01 , offset = -35 , min = "-35" , max = "6518.5" , unit = "Count" , dtype = "UNSIGNED" , t = "UNSIGNED 2 Bytes with Timeout"} ,
 }
 },
 TestData_0_F223 = { t = "UNSIGNED Data", sev_r = "22", ses_r ="01;03;", sd = {
-sd_00 = {  Bpos = 16 , Blen = 16 , mult = 0.01 , offset = -35 , min = "-35" , max = "6518.5" , unit = "Count" , dtype = "UNSIGNED" , t = "UNSIGNED 2 Bytes with no Answer"} ,
+sd_00 = {  bitPos = 16 , bitLen = 16 , mult = 0.01 , offset = -35 , min = "-35" , max = "6518.5" , unit = "Count" , dtype = "UNSIGNED" , t = "UNSIGNED 2 Bytes with no Answer"} ,
 }
 },
 TestData_0_F225 = { t = "UNSIGNED Data", sev_r = "22", ses_r ="01;03;", sd = {
-sd_00 = {  Bpos = 16 , Blen = 16 , mult = 0.01 , offset = -35 , min = "-35" , max = "6518.5" , unit = "Count" , dtype = "UNSIGNED" , t = "UNSIGNED 2 Bytes, answer too short"} ,
+sd_00 = {  bitPos = 16 , bitLen = 16 , mult = 0.01 , offset = -35 , min = "-35" , max = "6518.5" , unit = "Count" , dtype = "UNSIGNED" , t = "UNSIGNED 2 Bytes, answer too short"} ,
 }
 },
 
@@ -82,7 +82,7 @@ sd_00 = {  Bpos = 16 , Blen = 16 , mult = 0.01 , offset = -35 , min = "-35" , ma
 -- read data for each Single value - Number
 
 TestData_0_D100 = { t = "Active Diagnostic Session", sev_r = "22", ses_r ="01;03;", sd = {
-sd_00 = { Bpos = 0 , Blen = 8, dtype = "ENUM", t = "", ev = { 
+sd_00 = { bitPos = 0 , bitLen = 8, dtype = "ENUM", t = "", ev = { 
 ev_1 = { bv = 1 , t = "Default Session"},
 
 ev_5 = { bv = 5 , t = "Supplier Specific Diagnostic Session 0x60"},
@@ -90,7 +90,7 @@ ev_5 = { bv = 5 , t = "Supplier Specific Diagnostic Session 0x60"},
 }
 },
 TestData_0_F162 = { t = "Software Download Specification Version", sd = {
-sd_00 = { bpos = 0, blen = 1, Bpos = 0 , Blen = 8, dtype = "ENUM", t = "", ev = { 
+sd_00 = { bpos = 0, blen = 1, bitPos = 0 , bitLen = 8, dtype = "ENUM", t = "", ev = { 
 ev_0 = { bv = 0 , t = "SWDL 31808456 Issue P01"},
 ev_1 = { bv = 1 , t = "SWDL 31808456 Issue 001"},
 
@@ -98,19 +98,19 @@ ev_1 = { bv = 1 , t = "SWDL 31808456 Issue 001"},
 }
 },
 TestData_0_F163 = { t = "Numeric Enum Data", sd = {
-sd_00 = { bpos = 0, blen = 1, Bpos = 0 , Blen = 8, dtype = "ENUM", t = "", ev = { 
+sd_00 = { bpos = 0, blen = 1, bitPos = 0 , bitLen = 8, dtype = "ENUM", t = "", ev = { 
 ev_1 = { bv = 1 , t = "Enum Byte 0 Value 1"},
 ev_3 = { bv = 3 , t = "GGDS 31810161 Issue 003"},
 }},
 }
 },
 TestData_0_D91C = { t = "RSC/ARP Rollover Stability Control/Active Rollover Protection", sev_r = "22", ses_r ="01;03;", sd = {
-sd_00 = {  Bpos = 0 , Blen = 16 , mult = 1 , offset = 0 , min = "0" , max = "65535" , unit = "counts, counts, counts" , dtype = "UNSIGNED" , t = "RSC/ARP Rollover Stability Control/Active Rollover Protection"} ,
+sd_00 = {  bitPos = 0 , bitLen = 16 , mult = 1 , offset = 0 , min = "0" , max = "65535" , unit = "counts, counts, counts" , dtype = "UNSIGNED" , t = "RSC/ARP Rollover Stability Control/Active Rollover Protection"} ,
 }
 },
 
 TestData_0_2B0D = { t = "Brake Fluid Line Hydraulic Pressure", sev_r = "22", ses_r ="01;03;", sd = {
-sd_00 = {  Bpos = 0 , Blen = 16 , mult = 0.333333333333 , offset = 0 , min = "-10922.6666666557" , max = "10922.3333333224" , unit = "Bar" , dtype = "SIGNED", t = "Brake Fluid Line Hydraulic Pressure"} ,
+sd_00 = {  bitPos = 0 , bitLen = 16 , mult = 0.333333333333 , offset = 0 , min = "-10922.6666666557" , max = "10922.3333333224" , unit = "Bar" , dtype = "SIGNED", t = "Brake Fluid Line Hydraulic Pressure"} ,
 }
 },
 
@@ -119,19 +119,19 @@ sd_00 = {  Bpos = 0 , Blen = 16 , mult = 0.333333333333 , offset = 0 , min = "-1
 -- read data for each Packeted value - Number
 
 TestData_0_D10E = { t = "HSCAN Network Management State", sev_r = "22", ses_r ="01;03;", sd = {
-sd_00 = { Bpos = 0 , Blen = 8, dtype = "ENUM", t = "HSCAN Network Management State - Latest State", ev = { 
+sd_00 = { bitPos = 0 , bitLen = 8, dtype = "ENUM", t = "HSCAN Network Management State - Latest State", ev = { 
 ev_0x00 = { bv = 0x00 , t = "Reserved"},
 ev_0x01 = { bv = 0x01 , t = "Off"},
 }},
 }
 },
 TestData_0_F166 = { t = "NOS Message Database #1 Version Number", sd = {
-sd_00 = {  Bpos = 0 , Blen = 8 , mult = 1 , offset = 0 , min = "-" , max = "-" , unit = "" , dtype = "BCD", t = "Year"} ,
+sd_00 = {  bitPos = 0 , bitLen = 8 , mult = 1 , offset = 0 , min = "-" , max = "-" , unit = "" , dtype = "BCD", t = "Year"} ,
 }
 },
 TestData_0_F180 = { t = "Boot Software Identification", sd = {
-sd_00 = {  Bpos = 0 , Blen = 8 , mult = 1 , offset = 0 , min = "0" , max = "255" , unit = "Count" , dtype = "UNSIGNED" , t = "Number Of Modules (ISO14229 compatibility - always set to 01h)"} ,
-sd_10 = {  Bpos = 0 , Blen = 192 , dtype = "ASCII", t = "Boot Software Identifcation Data (Part no. of the bootloader)" },
+sd_00 = {  bitPos = 0 , bitLen = 8 , mult = 1 , offset = 0 , min = "0" , max = "255" , unit = "Count" , dtype = "UNSIGNED" , t = "Number Of Modules (ISO14229 compatibility - always set to 01h)"} ,
+sd_10 = {  bitPos = 0 , bitLen = 192 , dtype = "ASCII", t = "Boot Software Identifcation Data (Part no. of the bootloader)" },
 }
 },
 }
