@@ -75,6 +75,9 @@ public interface OOBDConstants {
      //PGP key file  names
     public final static String PGP_USER_KEYFILE_NAME = "userkey.sec";
     public final static String PGP_GROUP_KEYFILE_NAME = "groupkey.sec";
+      //UI Handler Identifier
+    public final static String UIHANDLER_LOCAL_NAME = "LocalUIHandler";
+    public final static String UIHANDLER_WS_NAME = "WSUIHandler";
     //Mailbox names
    public final static String CoreMailboxName = "core";
   public final static String UIHandlerMailboxName = "UIHandler";

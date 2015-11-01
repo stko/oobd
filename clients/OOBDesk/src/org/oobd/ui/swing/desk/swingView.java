@@ -271,6 +271,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         jLabel2 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jSpinnerProxyPort = new javax.swing.JSpinner();
+        httpEnabled = new javax.swing.JCheckBox();
+        jComboBox1 = new javax.swing.JComboBox();
+        jLabel6 = new javax.swing.JLabel();
         diagnose = new javax.swing.JPanel();
         toolPanelDiagnose = new javax.swing.JPanel();
         diagnoseTitle = new javax.swing.JLabel();
@@ -395,21 +398,26 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                 backButtonLabelMouseClicked(evt);
             }
         });
-        settings.add(backButtonLabel, new java.awt.GridBagConstraints());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        settings.add(backButtonLabel, gridBagConstraints);
 
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(jLabel1, gridBagConstraints);
 
         comportComboBox.setEditable(true);
         comportComboBox.setName("comportComboBox"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(comportComboBox, gridBagConstraints);
 
         chooseScriptDirectoryButton.setIcon(resourceMap.getIcon("chooseScriptDirectoryButton.icon")); // NOI18N
@@ -422,22 +430,22 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 4;
         settings.add(chooseScriptDirectoryButton, gridBagConstraints);
 
         jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
         jLabel4.setName("jLabel4"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(jLabel4, gridBagConstraints);
 
         scriptDir.setText(resourceMap.getString("scriptDir.text")); // NOI18N
         scriptDir.setName("scriptDir"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(scriptDir, gridBagConstraints);
@@ -450,8 +458,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(pgpEnabled, gridBagConstraints);
 
         pgpImportKeys.setText(resourceMap.getString("pgpImportKeys.text")); // NOI18N
@@ -462,63 +471,92 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(pgpImportKeys, gridBagConstraints);
 
         pgpStatus.setText(resourceMap.getString("pgpStatus.text")); // NOI18N
         pgpStatus.setName("pgpStatus"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(pgpStatus, gridBagConstraints);
 
         jLabelRemoteServer.setText(resourceMap.getString("jLabelRemoteServer.text")); // NOI18N
         jLabelRemoteServer.setName("jLabelRemoteServer"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(jLabelRemoteServer, gridBagConstraints);
 
         jTextFieldRemoteServer.setText(resourceMap.getString("jTextFieldRemoteServer.text")); // NOI18N
         jTextFieldRemoteServer.setName("jTextFieldRemoteServer"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(jTextFieldRemoteServer, gridBagConstraints);
 
         jTextFieldProxyHost.setText(resourceMap.getString("jTextFieldProxyHost.text")); // NOI18N
         jTextFieldProxyHost.setName("jTextFieldProxyHost"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(jTextFieldProxyHost, gridBagConstraints);
 
         jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
         jLabel2.setName("jLabel2"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(jLabel2, gridBagConstraints);
 
         jLabel5.setText(resourceMap.getString("jLabel5.text")); // NOI18N
         jLabel5.setName("jLabel5"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 7;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(jLabel5, gridBagConstraints);
 
         jSpinnerProxyPort.setName("jSpinnerProxyPort"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(jSpinnerProxyPort, gridBagConstraints);
+
+        httpEnabled.setText(resourceMap.getString("HTTPCheckBox.text")); // NOI18N
+        httpEnabled.setToolTipText(resourceMap.getString("HTTPCheckBox.toolTipText")); // NOI18N
+        httpEnabled.setName("HTTPCheckBox"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        settings.add(httpEnabled, gridBagConstraints);
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Discovery", "Kadaver", "Bluetooth", "Telnet" }));
+        jComboBox1.setSelectedIndex(2);
+        jComboBox1.setToolTipText(resourceMap.getString("connectionTypeSpinner.toolTipText")); // NOI18N
+        jComboBox1.setName("connectionTypeSpinner"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        settings.add(jComboBox1, gridBagConstraints);
+
+        jLabel6.setText(resourceMap.getString("jLabel6.text")); // NOI18N
+        jLabel6.setName("jLabel6"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        settings.add(jLabel6, gridBagConstraints);
 
         mainPanel.add(settings, "card4");
 
@@ -738,7 +776,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             .addGroup(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusMessageLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 333, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 319, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel)
@@ -762,6 +800,13 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }// </editor-fold>//GEN-END:initComponents
 
     private void backButtonLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonLabelMouseClicked
+
+        if (httpEnabled.isSelected()) {
+            appProbs.put(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME);
+        } else {
+            appProbs.put(OOBDConstants.PropName_UIHander, UIHANDLER_LOCAL_NAME);
+
+        }
 
         appProbs.put(OOBDConstants.PropName_ScriptDir, scriptDir.getText());
         appProbs.put(OOBDConstants.PropName_SerialPort, comportComboBox.getEditor().getItem().toString());
@@ -891,6 +936,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             comportComboBox.setSelectedItem(port);
         }
         scriptDir.setText(appProbs.get(OOBDConstants.PropName_ScriptDir, ""));
+        httpEnabled.setSelected(UIHANDLER_WS_NAME.equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_UIHander, "")));
         pgpEnabled.setSelected("true".equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_PGPEnabled, "")));
         jTextFieldRemoteServer.setText(appProbs.get(OOBDConstants.PropName_ConnectServerURL, OOBDConstants.PropName_KadaverServerDefault));
         jTextFieldProxyHost.setText(appProbs.get(OOBDConstants.PropName_ProxyHost, null));
@@ -1117,12 +1163,15 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JToolBar diagnoseToolBar;
     private javax.swing.JButton gridBiggerButton;
     private javax.swing.JButton gridSmallerButton;
+    private javax.swing.JCheckBox httpEnabled;
     private javax.swing.JCheckBoxMenuItem jCheckBoxRemoteConnect;
+    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabelRemoteServer;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -1163,8 +1212,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private JDialog aboutBox;
 
     public void sm(String msg, String modifier) {
-        if ( ! "".equalsIgnoreCase(modifier)) {
-            if (modifier.equalsIgnoreCase("clear")){
+        if (!"".equalsIgnoreCase(modifier)) {
+            if (modifier.equalsIgnoreCase("clear")) {
                 jTextAreaOutput.setText("");
             }
         } else {
@@ -1223,7 +1272,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     public void announceUIHandler(String id, String visibleName) {
         Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: UIHandler-ID: {0} visibleName:{1}", new Object[]{id, visibleName
         });
-        if (appProbs.get(OOBDConstants.PropName_UIHander, "LocalOobdUIHandler").equalsIgnoreCase(visibleName)) {
+        if (appProbs.get(OOBDConstants.PropName_UIHander, UIHANDLER_LOCAL_NAME).equalsIgnoreCase(visibleName)) {
             Onion onion = new Onion();
             String seID = oobdCore.createUIHandler(id, onion);
 
