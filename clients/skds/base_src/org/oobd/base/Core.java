@@ -154,7 +154,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * @param Name of the Plugin, just for debugging
      *
      */
-    public Core(IFui myUserInterface, IFsystem mySystemInterface, String name)  {
+    public Core(IFui myUserInterface, IFsystem mySystemInterface, String name) {
         super(name);
         if (thisInstance != null) {
             Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
@@ -326,86 +326,51 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
                     "Error while trying to load class", ex);
         }
-        // ----------- load Scriptengines AS CLASSES, NOT AS
-        // INSTANCES!-------------------------------
-        try {
-            scriptengines = loadOobdClasses(
-                    props.get("EngineClassPath",
-                            "org.oobd.base.scriptengine.ScriptengineLua"),
-                    "org.oobd.base.scriptengine.",
-                    Class.forName("org.oobd.base.scriptengine.OobdScriptengine"));
-            for (Iterator iter = scriptengines.keySet().iterator(); iter
-                    .hasNext();) {
-                String element = (String) iter.next();
-                Class<OobdScriptengine> value = scriptengines.get(element);
-                scriptengines.put(element, value);
-                // now I need to be a little bit tricky to involve the static
-                // class method of an untypized class
-                try {
-                    Class[] parameterTypes = new Class[]{};
-                    java.lang.reflect.Method method = value.getMethod(
-                            "publicName", new Class[]{}); // no parameters
-                    Object instance = null;
-                    String result = (String) method.invoke(instance,
-                            new Object[]{}); // no parameters
-                    // Android: String.isEmpty() not available
-                    // if (!result.isEmpty()) {
-                    if (result.length() != 0) {
-                        userInterface.announceScriptengine(element, result);
-                    }
-                } catch (Exception ex) {
-                    Logger.getLogger(Core.class.getName()).log(
-                            Level.WARNING,
-                            "can't call static method 'publicName' of "
-                            + element);
-                    ex.printStackTrace();
 
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
-                    "Error while trying to load class", ex);
-        }
-/*        // ----------- load UIHandlers AS CLASSES, NOT AS
-        
-        // INSTANCES!-------------------------------
-        try {
-            uiHandlers = loadOobdClasses(props.get("UIHandlerClassPath",
-                    "org.oobd.ui.uihandler.UIHandler"),
-                    "org.oobd.ui.uihandler.",
-                    Class.forName("org.oobd.base.uihandler.OobdUIHandler"));
-            for (Iterator iter = uiHandlers.keySet().iterator(); iter.hasNext();) {
-                String element = (String) iter.next();
-                Class<OobdUIHandler> value = uiHandlers.get(element);
-                uiHandlers.put(element, value);
-                // now I need to be a little bit tricky to involve the static
-                // class method of an untypized class
-                try {
-                    Class[] parameterTypes = new Class[]{};
-                    java.lang.reflect.Method method = value.getMethod(
-                            "publicName", new Class[]{}); // no parameters
-                    Object instance = null;
-                    String result = (String) method.invoke(instance,
-                            new Object[]{}); // no parameters
-                    // Android: String.isEmpty() not available
-                    // if (!result.isEmpty()) {
-                    if (result.length() != 0) {
-                        userInterface.announceUIHandler(element, result);
-                    }
-                } catch (Exception ex) {
-                    Logger.getLogger(Core.class.getName()).log(
-                            Level.WARNING,
-                            "can't call static method 'publicName' of "
-                            + element);
-                    ex.printStackTrace();
+        /*        
+         // ----------- load Scriptengines AS CLASSES, NOT AS
+         // INSTANCES!-------------------------------
+         try {
+         scriptengines = loadOobdClasses(
+         props.get("EngineClassPath",
+         "org.oobd.base.scriptengine.ScriptengineLua"),
+         "org.oobd.base.scriptengine.",
+         Class.forName("org.oobd.base.scriptengine.OobdScriptengine"));
+         for (Iterator iter = scriptengines.keySet().iterator(); iter
+         .hasNext();) {
+         String element = (String) iter.next();
+         Class<OobdScriptengine> value = scriptengines.get(element);
+         scriptengines.put(element, value);
+         // now I need to be a little bit tricky to involve the static
+         // class method of an untypized class
+         try {
+         Class[] parameterTypes = new Class[]{};
+         java.lang.reflect.Method method = value.getMethod(
+         "publicName", new Class[]{}); // no parameters
+         Object instance = null;
+                               System.out.println("load Scriptengine " + element);
+          String result = (String) method.invoke(instance,
+         new Object[]{}); // no parameters
+         // Android: String.isEmpty() not available
+         // if (!result.isEmpty()) {
+                               System.out.println("public Name of Scriptengine " + result);
+          if (result.length() != 0) {
+         userInterface.announceScriptengine(element, result);
+         }
+         } catch (Exception ex) {
+         Logger.getLogger(Core.class.getName()).log(
+         Level.WARNING,
+         "can't call static method 'publicName' of "
+         + element);
+         ex.printStackTrace();
 
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
-                    "Error while trying to load class", ex);
-        }
-*/
+         }
+         }
+         } catch (ClassNotFoundException ex) {
+         Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
+         "Error while trying to load class", ex);
+         }
+         */
         // ----------- load UIHandlers AS CLASSES, NOT AS
         // INSTANCES!-------------------------------
         try {
@@ -417,6 +382,42 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     System.out.println(strLine);
                     if (!"".equals(strLine)) {
                         String[] classConfig = strLine.split(":");
+
+                        if ("scriptengine".equals(classConfig[0])) { //load Scriptengines AS CLASSES, NOT AS INSTANCES!
+                            Class<OobdScriptengine> value = (Class<OobdScriptengine>) Class.forName(classConfig[1]);
+                            if (value==null)System.out.println("no class generated for scriptengine!");
+                            String[] classNameElements = classConfig[1].split("\\.");
+                            String element = classNameElements[classNameElements.length - 1];
+                            scriptengines.put(element, value);
+
+                            // now I need to be a little bit tricky to involve the static
+                            // class method of an untypized class
+                            try {
+                                Class[] parameterTypes = new Class[]{};
+                                java.lang.reflect.Method method = value.getMethod(
+                                        "publicName", new Class[]{}); // no parameters
+                              if (method==null)System.out.println("method publicName not found!");
+                              Object instance = null;
+                                System.out.println("load Scriptengine " + element);
+                                String result = (String) method.invoke(instance,
+                                        new Object[]{}); // no parameters
+                                // Android: String.isEmpty() not available
+                                // if (!result.isEmpty()) {
+                                System.out.println("public Name of Scriptengine " + result);
+                                if (result.length() != 0) {
+                                    System.out.println("announce  Scriptengine " + element + "as " + result);
+                                    userInterface.announceScriptengine(element, result);
+                                }
+                            } catch (Exception ex) {
+                                Logger.getLogger(Core.class.getName()).log(
+                                        Level.WARNING,
+                                        "can't call static method 'publicName' of "
+                                        + element);
+                                ex.printStackTrace();
+
+                            }
+
+                        }
                         if ("uihandler".equals(classConfig[0])) {
                             Class<OobdUIHandler> value = (Class<OobdUIHandler>) Class.forName(classConfig[1]);
 
@@ -424,7 +425,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                             String element = classNameElements[classNameElements.length - 1];
                             uiHandlers.put(element, value);
 
- 				// now I need to be a little bit tricky to involve the static
+                            // now I need to be a little bit tricky to involve the static
                             // class method of an untypized class
                             try {
                                 Class[] parameterTypes = new Class[]{};
@@ -663,7 +664,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             // classes
             Object[] args = {seID, this, systemInterface}; // creating the
             // args-array
-           o = (OobdUIHandler) con.newInstance(seID, this, systemInterface); // and finally create
+            o = (OobdUIHandler) con.newInstance(seID, this, systemInterface); // and finally create
             // the object from
             // the scriptengine
             // class with its

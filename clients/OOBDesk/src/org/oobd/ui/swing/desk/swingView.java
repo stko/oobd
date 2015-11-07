@@ -1023,7 +1023,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
         chooser.setCurrentDirectory(oldDir);
         chooser.setMultiSelectionEnabled(false);
-        chooser.setFileSelectionMode(JFileChooser.SAVE_DIALOG);
+        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        chooser.resetChoosableFileFilters();
         chooser.addChoosableFileFilter(new FileFilter() {
 
             public boolean accept(File f) {
