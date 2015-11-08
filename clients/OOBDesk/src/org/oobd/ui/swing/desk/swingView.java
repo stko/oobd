@@ -1025,13 +1025,61 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         chooser.setMultiSelectionEnabled(false);
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         chooser.resetChoosableFileFilters();
+        chooser.setAcceptAllFileFilterUsed(false);
         chooser.addChoosableFileFilter(new FileFilter() {
-
             public boolean accept(File f) {
                 if (f.isDirectory()) {
                     return true;
                 }
-                //return f.getName().toLowerCase().endsWith(".lbc");
+                String ext = null;
+                String s = f.getName();
+                int i = s.lastIndexOf('.');
+                if (i > 0 && i < s.length() - 1) {
+                    ext = s.substring(i + 1).toLowerCase();
+                }
+                if (ext != null) {
+                    if (ext.equals("txt") ||
+                            ext.equals("csv") ) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+                return false;
+            }
+
+            public String getDescription() {
+                return "Text Files";
+            }
+        });
+        chooser.addChoosableFileFilter(new FileFilter() {
+         public boolean accept(File f) {
+                if (f.isDirectory()) {
+                    return true;
+                }
+                String ext = null;
+                String s = f.getName();
+                int i = s.lastIndexOf('.');
+                if (i > 0 && i < s.length() - 1) {
+                    ext = s.substring(i + 1).toLowerCase();
+                }
+                if (ext != null) {
+                    if (ext.equals("xml")) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+                return false;
+            }
+
+            public String getDescription() {
+                return "XML Files";
+            }
+        });
+        chooser.addChoosableFileFilter(new FileFilter() {
+         public boolean accept(File f) {
+                
                 return true;
             }
 
@@ -1039,7 +1087,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                 return "All Files";
             }
         });
-        if (chooser.showSaveDialog(this.getFrame())
+           if (chooser.showSaveDialog(this.getFrame())
                 == JFileChooser.APPROVE_OPTION) {
             try {
                 FileWriter os = new FileWriter(chooser.getSelectedFile().toString());
@@ -1242,11 +1290,11 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         if (i > -1) {
             scriptSelectComboBox.setSelectedIndex(i);
         }
-        if (!appProbs.getBoolean(OOBDConstants.PropName_PGPEnabled, false)){
-                oobdCore.getSystemIF().setUserPassPhrase("");
- 
-        }else{
-            
+        if (!appProbs.getBoolean(OOBDConstants.PropName_PGPEnabled, false)) {
+            oobdCore.getSystemIF().setUserPassPhrase("");
+
+        } else {
+
             PWDialog pwDialog = new PWDialog(null);
             String str = pwDialog.showDialog();
             // System.err.println("passwort="+str);
