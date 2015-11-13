@@ -825,9 +825,11 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         int i = -1;
         ArrayList<Archive> files = Factory.getDirContent(appProbs.get(OOBDConstants.PropName_ScriptDir, null));
         for (Archive file : files) {
-            scriptSelectComboBox.addItem(file);
-            if (file.toString().equalsIgnoreCase(script)) {
-                i = scriptSelectComboBox.getItemCount() - 1;
+           if(file.toString().contains(".lbc") || file.toString().contains(".pgp")){
+                scriptSelectComboBox.addItem(file);
+                if (file.toString().equalsIgnoreCase(script)) {
+                    i = scriptSelectComboBox.getItemCount() - 1;
+                }
             }
         }
         if (i > -1) {
@@ -1282,9 +1284,11 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         int i = -1;
         ArrayList<Archive> files = Factory.getDirContent(appProbs.get(OOBDConstants.PropName_ScriptDir, null));
         for (Archive file : files) {
-            scriptSelectComboBox.addItem(file);
-            if (file.toString().equalsIgnoreCase(script)) {
-                i = scriptSelectComboBox.getItemCount() - 1;
+			if(file.toString().contains(".lbc") || file.toString().contains(".pgp")){
+                scriptSelectComboBox.addItem(file);
+                if (file.toString().equalsIgnoreCase(script)) {
+                    i = scriptSelectComboBox.getItemCount() - 1;
+                }
             }
         }
         if (i > -1) {
