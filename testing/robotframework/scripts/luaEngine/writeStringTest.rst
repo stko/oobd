@@ -55,7 +55,13 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
         send webUI command  {"name":"clearOutput:","optid":"","actValue":"","updType":3}
 	answer should match    {"type":"WRITESTRING" ,"data":"#try to clear output"}
 	answer should match    {"type":"WRITESTRING" ,"modifier":"#clear"}
+    Test for output save command msg
+        send webUI command  {"name":"saveOutputAs:","optid":"","actValue":"L21lZGlhL3JhbS9vdXRwdXR0ZXN0LnR4dA==","updType":3}
+	answer should match    {"type":"WRITESTRING" ,"modifier":"#clear"}
+	answer should match    {"type":"WRITESTRING" ,"data":"#/media/ram/outputtest.txt"}
+	answer should match    {"type":"WRITESTRING" ,"data":"#/media/ram/outputtest.txt" ,"modifier":"#saveas"}
  
+
 .. code:: robotframework
 
     *** Settings ***

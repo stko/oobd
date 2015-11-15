@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import org.oobd.base.*;
 import org.oobd.base.Core;
 import org.oobd.base.IFui;
@@ -64,6 +65,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import org.json.JSONArray;
 import org.json.JSONException;
+import static org.oobd.base.OOBDConstants.FT_PROPS;
 import org.oobd.base.archive.*;
 
 /**
@@ -825,11 +827,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         int i = -1;
         ArrayList<Archive> files = Factory.getDirContent(appProbs.get(OOBDConstants.PropName_ScriptDir, null));
         for (Archive file : files) {
-           if(file.toString().contains(".lbc") || file.toString().contains(".pgp")){
-                scriptSelectComboBox.addItem(file);
-                if (file.toString().equalsIgnoreCase(script)) {
-                    i = scriptSelectComboBox.getItemCount() - 1;
-                }
+            scriptSelectComboBox.addItem(file);
+            if (file.toString().equalsIgnoreCase(script)) {
+                i = scriptSelectComboBox.getItemCount() - 1;
             }
         }
         if (i > -1) {
@@ -1017,91 +1017,12 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }//GEN-LAST:event_mainComponentShown
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        JFileChooser chooser = new JFileChooser();
-        File oldDir = null;
-        String oldDirName = appProbs.get(OOBDConstants.PropName_OutputDir, null);
+        String oldDirName = appProbs.get(OOBDConstants.PropName_OutputFile, null);
+        oldDirName = saveBufferAsFileRequest(oldDirName, jTextAreaOutput.getText().toCharArray(), false);
         if (oldDirName != null) {
-            oldDir = new File(oldDirName);
-        }
-        chooser.setCurrentDirectory(oldDir);
-        chooser.setMultiSelectionEnabled(false);
-        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        chooser.resetChoosableFileFilters();
-        chooser.setAcceptAllFileFilterUsed(false);
-        chooser.addChoosableFileFilter(new FileFilter() {
-            public boolean accept(File f) {
-                if (f.isDirectory()) {
-                    return true;
-                }
-                String ext = null;
-                String s = f.getName();
-                int i = s.lastIndexOf('.');
-                if (i > 0 && i < s.length() - 1) {
-                    ext = s.substring(i + 1).toLowerCase();
-                }
-                if (ext != null) {
-                    if (ext.equals("txt") ||
-                            ext.equals("csv") ) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-                return false;
-            }
-
-            public String getDescription() {
-                return "Text Files";
-            }
-        });
-        chooser.addChoosableFileFilter(new FileFilter() {
-         public boolean accept(File f) {
-                if (f.isDirectory()) {
-                    return true;
-                }
-                String ext = null;
-                String s = f.getName();
-                int i = s.lastIndexOf('.');
-                if (i > 0 && i < s.length() - 1) {
-                    ext = s.substring(i + 1).toLowerCase();
-                }
-                if (ext != null) {
-                    if (ext.equals("xml")) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-                return false;
-            }
-
-            public String getDescription() {
-                return "XML Files";
-            }
-        });
-        chooser.addChoosableFileFilter(new FileFilter() {
-         public boolean accept(File f) {
-                
-                return true;
-            }
-
-            public String getDescription() {
-                return "All Files";
-            }
-        });
-           if (chooser.showSaveDialog(this.getFrame())
-                == JFileChooser.APPROVE_OPTION) {
-            try {
-                FileWriter os = new FileWriter(chooser.getSelectedFile().toString());
-                os.write(jTextAreaOutput.getText());
-                os.close();
-                appProbs.put(OOBDConstants.PropName_OutputDir, chooser.getCurrentDirectory().toString());
-                oobdCore.getSystemIF().savePreferences(FT_PROPS,
-                        OOBDConstants.AppPrefsFileName, appProbs);
-
-            } catch (IOException ex) {
-                Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            appProbs.put(OOBDConstants.PropName_OutputFile, oldDirName);
+            oobdCore.getSystemIF().savePreferences(FT_PROPS,
+                    OOBDConstants.AppPrefsFileName, appProbs);
         }
     }//GEN-LAST:event_saveButtonActionPerformed
 
@@ -1263,15 +1184,81 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private final Icon[] busyIcons = new Icon[15];
     private int busyIconIndex = 0;
     private JDialog aboutBox;
+    private Hashtable<String, ArrayList<Character>> outputBuffers = new Hashtable<String, ArrayList<Character>>();
+    private String actualBufferName = OB_DEFAULT_NAME; // name of the actual writestring output, default is "display" for screen output
+
+    /* as char[] and Arraylist<Character> are not compatible, we need to handle dislpay output and normal
+     buffer handling independet from each other and only convert, when really needed.
+     */
+    char[] arrayListToCharArray(ArrayList<Character> input) {
+        char[] actBuffer = new char[input.size()];
+        int position = 0;
+        for (char i : input) {
+            actBuffer[position] = i;
+            position++;
+        }
+        return actBuffer;
+    }
 
     public void sm(String msg, String modifier) {
+
+        char[] actBuffer;
         if (!"".equalsIgnoreCase(modifier)) {
-            if (modifier.equalsIgnoreCase("clear")) {
+            if (modifier.equalsIgnoreCase(OB_CMD_SETBUFFER)) {
+                actualBufferName = msg.toLowerCase().trim();
+                if (!actualBufferName.equals(OB_DEFAULT_NAME)) {
+                    if (!outputBuffers.containsKey(actualBufferName)) {
+                        outputBuffers.put(actualBufferName, new ArrayList<Character>());
+                        actBuffer = new char[0];
+                    }
+                }
+            }
+            if (modifier.equalsIgnoreCase(OB_CMD_CLEAR)) {
+                if (actualBufferName.equals(OB_DEFAULT_NAME)) { // do the special handling of the UI textbox here
+                    jTextAreaOutput.setText("");
+                } else {
+                    outputBuffers.put(actualBufferName, new ArrayList<Character>());
+                    actBuffer = new char[0];
+                }
+            } else if (modifier.equalsIgnoreCase(OB_CMD_CLEARALL)) {
                 jTextAreaOutput.setText("");
+                outputBuffers = new Hashtable<String, ArrayList<Character>>();
+                actBuffer = new char[0];
+            } else {
+                // here we need the buffer content, so we need to do the time consuming conversion here
+                if (actualBufferName.equals(OB_DEFAULT_NAME)) {
+                    actBuffer = jTextAreaOutput.getText().toCharArray();
+                } else {
+                    if (outputBuffers.containsKey(actualBufferName)) {
+                        actBuffer = arrayListToCharArray(outputBuffers.get(actualBufferName));
+                    } else {
+                        outputBuffers.put(actualBufferName, new ArrayList<Character>());
+                        actBuffer = new char[0];
+                    }
+                }
+                if (modifier.equalsIgnoreCase(OB_CMD_SAVEAS)) {
+                    saveBufferAsFileRequest(msg, actBuffer, false);
+                }
+                if (modifier.equalsIgnoreCase(OB_CMD_SAVE)) {
+                    saveBufferToFile(msg, actBuffer, false);
+                }
+                if (modifier.equalsIgnoreCase(OB_CMD_APPENDAS)) {
+                    saveBufferAsFileRequest(msg, actBuffer, true);
+                }
+                if (modifier.equalsIgnoreCase(OB_CMD_APPEND)) {
+                    saveBufferToFile(msg, actBuffer, true);
+                }
             }
         } else {
-            if (logButton.isSelected()) {
-                jTextAreaOutput.append(msg + "\n");
+            if (actualBufferName.equals(OB_DEFAULT_NAME)) {
+                if (logButton.isSelected()) {
+                    jTextAreaOutput.append(msg + "\n");
+                }
+            } else {
+                ArrayList<Character> actBufferArrayList = outputBuffers.get(actualBufferName);
+                for (char c : msg.toCharArray()) {
+                    actBufferArrayList.add(c);
+                }
             }
         }
     }
@@ -1284,11 +1271,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         int i = -1;
         ArrayList<Archive> files = Factory.getDirContent(appProbs.get(OOBDConstants.PropName_ScriptDir, null));
         for (Archive file : files) {
-			if(file.toString().contains(".lbc") || file.toString().contains(".pgp")){
-                scriptSelectComboBox.addItem(file);
-                if (file.toString().equalsIgnoreCase(script)) {
-                    i = scriptSelectComboBox.getItemCount() - 1;
-                }
+            scriptSelectComboBox.addItem(file);
+            if (file.toString().equalsIgnoreCase(script)) {
+                i = scriptSelectComboBox.getItemCount() - 1;
             }
         }
         if (i > -1) {
@@ -1659,6 +1644,99 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     }
 
+    boolean saveBufferToFile(String fileName, char[] content, boolean append) {
+        try {
+            FileWriter os = new FileWriter(fileName, append);
+            os.write(content);
+            os.close();
+            return true;
+        } catch (IOException ex) {
+            Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    private String saveBufferAsFileRequest(String FileName, char[] content, boolean append) {
+        JFileChooser chooser = new JFileChooser();
+        File oldDir = null;
+        if (FileName != null) {
+            oldDir = new File(FileName);
+            chooser.setCurrentDirectory(oldDir.getParentFile());
+            chooser.setSelectedFile(oldDir);
+        }
+        chooser.setMultiSelectionEnabled(false);
+        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        chooser.resetChoosableFileFilters();
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.addChoosableFileFilter(new FileFilter() {
+            public boolean accept(File f) {
+                if (f.isDirectory()) {
+                    return true;
+                }
+                String ext = null;
+                String s = f.getName();
+                int i = s.lastIndexOf('.');
+                if (i > 0 && i < s.length() - 1) {
+                    ext = s.substring(i + 1).toLowerCase();
+                }
+                if (ext != null) {
+                    if (ext.equals("txt")
+                            || ext.equals("csv")) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+                return false;
+            }
+
+            public String getDescription() {
+                return "Text Files";
+            }
+        });
+        chooser.addChoosableFileFilter(new FileFilter() {
+            public boolean accept(File f) {
+                if (f.isDirectory()) {
+                    return true;
+                }
+                String ext = null;
+                String s = f.getName();
+                int i = s.lastIndexOf('.');
+                if (i > 0 && i < s.length() - 1) {
+                    ext = s.substring(i + 1).toLowerCase();
+                }
+                if (ext != null) {
+                    if (ext.equals("xml")) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+                return false;
+            }
+
+            public String getDescription() {
+                return "XML Files";
+            }
+        });
+        chooser.addChoosableFileFilter(new FileFilter() {
+            public boolean accept(File f) {
+
+                return true;
+            }
+
+            public String getDescription() {
+                return "All Files";
+            }
+        });
+        if (chooser.showSaveDialog(this.getFrame())
+                == JFileChooser.APPROVE_OPTION && saveBufferToFile(chooser.getSelectedFile().toString(), content, append)) {
+            return chooser.getSelectedFile().toString();
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public void openXCVehicleData(Onion onion) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -1749,4 +1827,5 @@ class PWDialog extends JDialog implements ActionListener {
             setVisible(false);
         }
     }
+
 }

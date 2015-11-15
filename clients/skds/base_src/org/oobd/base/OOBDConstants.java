@@ -63,7 +63,7 @@ public interface OOBDConstants {
      public final static String PropName_ProxyPort ="ServerProxyPort";
      public final static String PropName_ScriptDir ="ScriptDir";
      public final static String PropName_ScriptName ="Script";
-     public final static String PropName_OutputDir ="OutputDir";
+     public final static String PropName_OutputFile ="OutputDir";
      public final static String PropName_PGPEnabled ="PGPEnabled";
      public final static String PropName_UIHander ="UIHandler";
      public final static String PropName_ConnectType ="ConnectType";
@@ -78,6 +78,15 @@ public interface OOBDConstants {
       //UI Handler Identifier
     public final static String UIHANDLER_LOCAL_NAME = "LocalUIHandler";
     public final static String UIHANDLER_WS_NAME = "WSUIHandler";
+    // default names for the Output Buffer commands
+    public final static String OB_DEFAULT_NAME = "display";
+    public final static String OB_CMD_SETBUFFER = "setbuffer";
+    public final static String OB_CMD_CLEAR = "clear";
+    public final static String OB_CMD_CLEARALL = "clearall";
+    public final static String OB_CMD_SAVE = "save";
+    public final static String OB_CMD_SAVEAS = "saveas";
+    public final static String OB_CMD_APPEND = "append";
+    public final static String OB_CMD_APPENDAS = "appendas";
     //Mailbox names
    public final static String CoreMailboxName = "core";
   public final static String UIHandlerMailboxName = "UIHandler";

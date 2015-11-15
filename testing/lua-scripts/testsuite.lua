@@ -352,6 +352,51 @@ end
 
 
 
+--- sends the output clear command,write content and saves it with file Dialog
+
+function saveOutputAs(oldvalue,id)
+	serDisplayWrite("foo","clear")
+	serDisplayWrite(oldvalue)
+	serDisplayWrite(oldvalue,"saveas")
+	return oldvalue
+end
+
+--- sends the output clear command,write content and saves it directly
+
+function saveOutput(oldvalue,id)
+	serDisplayWrite("foo","clear")
+	serDisplayWrite(oldvalue)
+	serDisplayWrite(oldvalue,"save")
+	return oldvalue
+end
+
+--- sends the output clear command,write content and saves it directly
+
+function saveBuffer1(oldvalue,id)
+	serDisplayWrite("foo","clearall") -- clears all buffers
+	serDisplayWrite("buffer1","setbuffer") -- test the create buffer function
+	serDisplayWrite(oldvalue)
+	serDisplayWrite(oldvalue,"saveas") -- test the save function
+	serDisplayWrite("display","setbuffer")
+	serDisplayWrite("foo","clear")
+	serDisplayWrite(oldvalue)
+	serDisplayWrite("written and saved")
+	serDisplayWrite("buffer1","setbuffer")
+	serDisplayWrite("foo","clear")
+	serDisplayWrite(oldvalue.."_clear","save")
+	serDisplayWrite("buffer2","setbuffer")
+	serDisplayWrite("one line\n")
+	serDisplayWrite(oldvalue.."_append","save")
+	serDisplayWrite("second line\n")
+	serDisplayWrite(oldvalue.."_append","append")
+	serDisplayWrite("display","setbuffer")
+	serDisplayWrite("buffer1 cleared and saved as"..oldvalue.."_clear")
+	serDisplayWrite("buffer2 created, wrote, saved, wrote and append as"..oldvalue.."_append")
+	return oldvalue
+end
+
+
+
 ---------------------- Main Menu --------------------------------------
 
 -- This function is called at start and at each re- coonect, so all neccesary (re-)initalisation needs to be done here
@@ -378,6 +423,9 @@ function Main(oldvalue,id)
 	addElement("Sensor Data >", "createCMD01Menu",">>>",0x1, "")
 	addElement("Greetings", "greet","",0x0, "")
 	addElement("clear output", "clearOutput","",0x0, "")
+	addElement("Save output As", "saveOutputAs","/media/ram/saveOutputAs.txt",0x0, "")
+	addElement("Save output", "saveOutput","/media/ram/saveOutput.txt",0x0, "")
+	addElement("create Buffer1", "saveBuffer1","/media/ram/buffer1.txt",0x0, "")
 	pageDone()
 	return oldvalue
 end
