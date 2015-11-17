@@ -1657,15 +1657,17 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }
 
     private String saveBufferAsFileRequest(String FileName, char[] content, boolean append) {
-        JFileChooser chooser = new JFileChooser();
+        String oldDirName = appProbs.get(OOBDConstants.PropName_OutputFile, null);
+        JFileChooser chooser = new JFileChooser(oldDirName);
         File oldDir = null;
+                
         if (FileName != null) {
             oldDir = new File(FileName);
-            chooser.setCurrentDirectory(oldDir.getParentFile());
             chooser.setSelectedFile(oldDir);
         }
+
         chooser.setMultiSelectionEnabled(false);
-        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.resetChoosableFileFilters();
         chooser.setAcceptAllFileFilterUsed(false);
         chooser.addChoosableFileFilter(new FileFilter() {
@@ -1729,14 +1731,16 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                 return "All Files";
             }
         });
+
+
         if (chooser.showSaveDialog(this.getFrame())
-                == JFileChooser.APPROVE_OPTION && saveBufferToFile(chooser.getSelectedFile().toString(), content, append)) {
-            return chooser.getSelectedFile().toString();
+== JFileChooser.APPROVE_OPTION && saveBufferToFile(chooser.getSelectedFile().toString(), content, append)) {
+            appProbs.put(OOBDConstants.PropName_OutputFile, chooser.getCurrentDirectory().toString());
+	return chooser.getSelectedFile().toString();
         } else {
-            return null;
+           return null;
         }
     }
-
     @Override
     public void openXCVehicleData(Onion onion) {
         throw new UnsupportedOperationException("Not supported yet.");
