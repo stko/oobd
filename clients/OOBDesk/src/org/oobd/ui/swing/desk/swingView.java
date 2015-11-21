@@ -1657,7 +1657,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }
 
     private String saveBufferAsFileRequest(String FileName, char[] content, boolean append) {
-        JFileChooser chooser = new JFileChooser();
+        String oldDirName = appProbs.get(OOBDConstants.PropName_OutputFile, null);
+        JFileChooser chooser = new JFileChooser(oldDirName);
         File oldDir = null;
         if (FileName != null) {
             oldDir = new File(FileName);
@@ -1730,8 +1731,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             }
         });
         if (chooser.showSaveDialog(this.getFrame())
-                == JFileChooser.APPROVE_OPTION && saveBufferToFile(chooser.getSelectedFile().toString(), content, append)) {
-            return chooser.getSelectedFile().toString();
+== JFileChooser.APPROVE_OPTION && saveBufferToFile(chooser.getSelectedFile().toString(), content, append)) {
+            appProbs.put(OOBDConstants.PropName_OutputFile, chooser.getCurrentDirectory().toString());
+	return chooser.getSelectedFile().toString();
         } else {
             return null;
         }
