@@ -1661,7 +1661,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         File oldDir = null;
         if (FileName != null) {
             oldDir = new File(FileName);
-            chooser.setCurrentDirectory(oldDir.getParentFile());
+            chooser.setCurrentDirectory(oldDir);
             chooser.setSelectedFile(oldDir);
         }
         chooser.setMultiSelectionEnabled(false);
