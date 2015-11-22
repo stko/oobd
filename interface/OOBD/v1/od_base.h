@@ -120,7 +120,9 @@ typedef struct error_data {
 /* define values of parameter */
 #define VALUE_PARAM_INFO_VERSION 				( 0 )
 #define VALUE_PARAM_INFO_SERIALNUMBER   		( 1 )
-#define VALUE_PARAM_INFO_ABOUT		( 2 )
+#define VALUE_PARAM_INFO_VOLTAGE		( 2 )
+#define VALUE_PARAM_INFO_ABOUT		( 4 )
+#define VALUE_PARAM_INFO_DEVICE		( 8 )
 /*! \addtogroup prot_can_generic_parm
  *  @{
  */

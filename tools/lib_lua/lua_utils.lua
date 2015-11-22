@@ -269,6 +269,75 @@ function getSubTable(id, level,wholeTable)
 end
 
 
+-- returns substring nr. "index" of of a string of space separated substring
+
+function getStringPart(text, index)
+	DEBUGPRINT("nexulm", 1, "serial_dxm.lua - getStringPart,%02d: %s", "00", "enter function getStringPart")
+	if text==nil then
+		return ""
+	end
+	local start, finish = string.find(text," ")
+	local loop = 0
+	local first = ""
+	while loop < index and text ~="" do
+		loop = loop + 1
+		start, finish = string.find(text," ")
+		if start ~=  nil then
+			first=string.sub(text,1,finish-1)
+			text=string.sub(text,finish+1)
+			if first=="" then
+				loop = loop -1 -- jump over additional blanks
+			end
+		else
+			first = text
+			text=""
+		end
+	end
+	return first
+end
+
+-- formats "num" to a float string with "idp" number of digits
+
+function round(num, idp)
+  return tonumber(string.format("%." .. (idp or 0) .. "f", num))
+end
+
+-- translate DTC bytes into their offical notation
+-- as descripted on http://en.wikipedia.org/wiki/OBD-II_PIDs (30.4.11)
+
+function translateDTC(highByte, lowByte)
+	DEBUGPRINT("nexulm", 1, "lua_utils.lua - translateDTC,%02d: %s", "00", "enter function translateDTC")
+	local hNibble= (highByte -(highByte % 16)) / 16 -- tricky to do an integer devide with luas float numbers..
+	local lNibble =highByte % 16
+	local start = "??"
+	if hNibble ==  0 then start = "P0" 
+	elseif hNibble ==  1 then start = "P1" 
+	elseif hNibble ==  2 then start = "P2" 
+	elseif hNibble ==  3 then start = "P3" 
+	elseif hNibble ==  4 then start = "C0" 
+	elseif hNibble ==  5 then start = "C1" 
+	elseif hNibble ==  6 then start = "C2" 
+	elseif hNibble ==  7 then start = "C3" 
+	elseif hNibble ==  8 then start = "B0" 
+	elseif hNibble ==  9 then start = "B1" 
+	elseif hNibble == 10 then start = "B2" 
+	elseif hNibble == 11 then start = "B3" 
+	elseif hNibble == 12 then start = "U0" 
+	elseif hNibble == 13 then start = "U1" 
+	elseif hNibble == 14 then start = "U2" 
+	elseif hNibble == 15 then start = "U3"
+	end
+	return start..string.format("%X",lNibble)..string.format("%02X",lowByte)
+end
+
+function notyet(oldvalue,id)
+	return "not implemented yet"
+end
+
+function nothing(oldvalue,id)
+	return oldvalue
+end
+
 --[[
 debug helper to print tables
 

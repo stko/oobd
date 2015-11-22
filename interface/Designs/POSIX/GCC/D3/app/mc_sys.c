@@ -99,6 +99,16 @@ void printParam_sys_specific(UBaseType_t msgType, void *data,
 	    printLF();
 	    printEOT();
 	    break;
+	case VALUE_PARAM_INFO_VOLTAGE:	/* p 0 2 */
+	    printser_string("12000");
+	    printLF();
+	    printEOT();
+	    break;
+	case VALUE_PARAM_INFO_DEVICE:	/* p 0 3 */
+	    printser_string("OOBD-Posix 4711");
+	    printLF();
+	    printEOT();
+	    break;
 	default:
 	    evalResult
 		(FBID_SYS_SPEC, ERR_CODE_OS_UNKNOWN_COMMAND, 0,
@@ -117,6 +127,8 @@ UBaseType_t eval_param_sys_specific(param_data * args)
 	switch (args->args[ARG_VALUE_1]) {
 	case VALUE_PARAM_INFO_VERSION:
 	case VALUE_PARAM_INFO_SERIALNUMBER:
+	case VALUE_PARAM_INFO_VOLTAGE:
+	case VALUE_PARAM_INFO_DEVICE:
 	    CreateParamOutputMsg(args, printParam_sys_specific);
 	    return pdTRUE;
 	    break;
