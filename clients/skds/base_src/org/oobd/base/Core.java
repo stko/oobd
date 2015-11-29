@@ -348,13 +348,13 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
          java.lang.reflect.Method method = value.getMethod(
          "publicName", new Class[]{}); // no parameters
          Object instance = null;
-                               System.out.println("load Scriptengine " + element);
-          String result = (String) method.invoke(instance,
+         System.out.println("load Scriptengine " + element);
+         String result = (String) method.invoke(instance,
          new Object[]{}); // no parameters
          // Android: String.isEmpty() not available
          // if (!result.isEmpty()) {
-                               System.out.println("public Name of Scriptengine " + result);
-          if (result.length() != 0) {
+         System.out.println("public Name of Scriptengine " + result);
+         if (result.length() != 0) {
          userInterface.announceScriptengine(element, result);
          }
          } catch (Exception ex) {
@@ -385,7 +385,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
                         if ("scriptengine".equals(classConfig[0])) { //load Scriptengines AS CLASSES, NOT AS INSTANCES!
                             Class<OobdScriptengine> value = (Class<OobdScriptengine>) Class.forName(classConfig[1]);
-                            if (value==null)System.out.println("no class generated for scriptengine!");
+                            if (value == null) {
+                                System.out.println("no class generated for scriptengine!");
+                            }
                             String[] classNameElements = classConfig[1].split("\\.");
                             String element = classNameElements[classNameElements.length - 1];
                             scriptengines.put(element, value);
@@ -396,8 +398,10 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                                 Class[] parameterTypes = new Class[]{};
                                 java.lang.reflect.Method method = value.getMethod(
                                         "publicName", new Class[]{}); // no parameters
-                              if (method==null)System.out.println("method publicName not found!");
-                              Object instance = null;
+                                if (method == null) {
+                                    System.out.println("method publicName not found!");
+                                }
+                                Object instance = null;
                                 System.out.println("load Scriptengine " + element);
                                 String result = (String) method.invoke(instance,
                                         new Object[]{}); // no parameters
@@ -519,6 +523,19 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public Object supplyHardwareHandle(Onion typ) {
         return systemInterface.supplyHardwareHandle(typ);
+    }
+
+    /**
+     * ends a scriptEngine
+     *
+     * @param id
+     *
+     */
+    public void closeScriptEngine(String id) {
+        OobdScriptengine thisEngine = activeEngines.remove(id);
+        if (thisEngine != null) {
+            thisEngine.close();
+        }
     }
 
     /**
@@ -765,26 +782,29 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     public boolean actionRequest(Onion myOnion) {
         try {
             if (myOnion.isType(CM_CHANNEL)) {
-                this.getMsgPort().sendAndWait(
-                        new Message(Core.getSingleInstance(), BusMailboxName,
-                                new Onion("" + "{'type':'" + CM_BUSTEST + "',"
-                                        + "'command':'connect',"
-                                        + "'connecturl':'"
-                                        + myOnion.getString("connecturl")
-                                        + "'}")), 35000); // 35 secs to
-                // connect
-                // to a
-                // device
-                // (BT has
-                // ~30sec
-                // Timeout)
-                return true;
+                if ("connect".equalsIgnoreCase(myOnion.getString("command"))) {
+                    this.getMsgPort().sendAndWait(
+                            new Message(Core.getSingleInstance(), BusMailboxName,
+                                    new Onion("" + "{'type':'" + CM_BUSTEST + "',"
+                                            + "'command':'" + myOnion.getString("command") + "',"
+                                            + "'connecturl':'"
+                                            + myOnion.getString("connecturl")
+                                            + "'}")), 35000); // 35 secs to
+                    // connect
+                    // to a
+                    // device
+                    // (BT has
+                    // ~30sec
+                    // Timeout)
+                    return true;
+                }
             }
-        } catch (org.json.JSONException e) {
+         } catch (org.json.JSONException e) {
             Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
                     "JSON exception..");
             return false;
         }
+
         return false;
     }
 
@@ -829,11 +849,13 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      *
      * \ingroup core
      */
-    public boolean transferMsg(Message msg) {
-        Logger.getLogger(Core.class.getName()).log(
-                Level.INFO,
-                "Msg: " + msg.sender + " ==> " + msg.rec + " content:"
-                + msg.getContent().toString());
+    public
+            boolean transferMsg(Message msg) {
+        Logger.getLogger(Core.class
+                .getName()).log(
+                        Level.INFO,
+                        "Msg: " + msg.sender + " ==> " + msg.rec + " content:"
+                        + msg.getContent().toString());
         if (OOBDConstants.CoreMailboxName.equals(msg.rec)) { // is the core the
             // receiver?
             this.sendMsg(msg);
@@ -883,8 +905,10 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                             + Core.getSingleInstance().getId() + "'},"
                             + "'command':'serDisplayWrite'," + "'data':'"
                             + Base64Coder.encodeString(output) + "'" + "}")));
+
         } catch (JSONException ex) {
-            Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Core.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -909,9 +933,11 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                             thisOnion), -1);
             if (answerMsg != null) {
                 answer = answerMsg.getContent();
+
             }
         } catch (JSONException ex) {
-            Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Core.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
         return answer;
     }
@@ -967,11 +993,14 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     try {
                         thisMsg.content.setValue("replyID",
                                 thisMsg.content.getInt("msgID"));
+
                     } catch (JSONException ex) {
-                        Logger.getLogger(Core.class.getName()).log(
-                                Level.SEVERE, null, ex);
+                        Logger.getLogger(Core.class
+                                .getName()).log(
+                                        Level.SEVERE, null, ex);
                     }
                     msgPort.replyMsg(thisMsg, thisMsg.content);
+
                 }
 
             }

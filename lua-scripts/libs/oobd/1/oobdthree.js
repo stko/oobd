@@ -44,7 +44,7 @@ if (typeof Oobdthree == "undefined") {
 
 			var canvas = document.createElement('canvas');
 			var context = canvas.getContext('2d');
-			context.font = "Bold " + fontsize + "px " + fontface;
+			context.font = "Normal " + fontsize + "px " + fontface;
 
 			// get size data (height depends only on font size)
 			var metrics = context.measureText(message);
@@ -53,7 +53,7 @@ if (typeof Oobdthree == "undefined") {
 			canvas.height = fontsize * 1.4 + 2 * borderThickness;
 
 			context = canvas.getContext('2d');
-			context.font = "Bold " + fontsize + "px " + fontface;
+			context.font = "Normal " + fontsize + "px " + fontface;
 			var metrics = context.measureText(message);
 			var textWidth = metrics.width;
 
@@ -83,7 +83,8 @@ if (typeof Oobdthree == "undefined") {
 				useScreenCoordinates: false
 			});
 			var sprite = new THREE.Sprite(spriteMaterial);
-			//sprite.scale.set(100,50,1.0);
+			var scale=1.2
+			sprite.scale.set(textWidth / fontsize * scale, scale, 1);
 			sprite.name = message;
 			return sprite;
 		},

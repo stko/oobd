@@ -34,7 +34,7 @@ public abstract class OobdPlugin implements Runnable {
         return msgPort;
     }
 
-    public void cancel() {
+    public void close() {
         keepRunning = false;
     }
 

@@ -93,6 +93,15 @@ public class MessagePort {
     }
 
     /**
+     * \brief get the name of that message port
+     * \ingroup core
+     * @return message port name
+     */
+    public String getMsgPortName( ) {
+        return portName;
+    }
+
+    /**
      * \brief sends an answer to a message
      * \ingroup core
      * @param msg the original message

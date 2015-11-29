@@ -77,7 +77,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
     public void start() {
         System.err.println("Start WEB SERVER");
 
-        WebSocketImpl.DEBUG = true;
+        WebSocketImpl.DEBUG = false;
         int port = 8887; // 843 flash policy port
         try {
             wsServer = new ChatServer(8443);
@@ -436,7 +436,7 @@ class ChatServer extends WebSocketServer {
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        System.out.println(conn + ": " + message);
+        System.out.println("WS from Socket: " + message);
         try {
             Onion webvis = new Onion(message);
 
@@ -505,6 +505,7 @@ class ChatServer extends WebSocketServer {
      * @throws InterruptedException When socket related I/O errors occur.
      */
     public void sendToAll(String text) {
+       System.out.println("WS to Socket: " + text);
         Collection<WebSocket> con = connections();
         synchronized (con) {
             for (WebSocket c : con) {

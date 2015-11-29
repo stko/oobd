@@ -92,6 +92,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private int defaultGridWidth = 200;
     private String pageTitle;
     String connectURLDefault = "";
+    private String seID;
 
     public swingView(SingleFrameApplication app) {
         super(app);
@@ -1096,6 +1097,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         if (back != null) {
             back.getVisualizer().updateRequest(OOBDConstants.UR_USER);
         } else {
+            oobdCore.closeScriptEngine(seID);
             CardLayout cl = (CardLayout) (mainPanel.getLayout());
             cl.show(mainPanel, MAINPANEL);
         }
@@ -1460,7 +1462,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     public void startScriptEngine(Onion onion) {
 
         if (scriptEngineID != null) {
-            String seID = oobdCore.createScriptEngine(scriptEngineID, onion);
+            seID = oobdCore.createScriptEngine(scriptEngineID, onion);
 
             //JTabbedPane newjTabPane = new JTabbedPane(); //create a inner JTabbedPane as container for the later coming scriptengine pages
             //newjTabPane.setName(seID); // set the name of that canvas that it can be found again later

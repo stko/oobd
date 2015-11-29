@@ -570,7 +570,6 @@ public class ScriptengineLua extends OobdScriptengine {
             Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE,
                     "couldn't run script engine", ex);
         }
-        int i = 0;
         while (keepRunning == true) {
             Message msg = getMsg(true);
             Onion on = msg.getContent();
@@ -610,10 +609,44 @@ public class ScriptengineLua extends OobdScriptengine {
                 Logger.getLogger(ScriptengineTerminal.class.getName()).log(
                         Level.SEVERE, null, ex);
             }
-            i++;
         }
+        // end of objects lifetime
+        System.out.println("End of Scriptengine");
     }
 
+    public void close(){
+        keepRunning=false;
+                 try {
+                    core.transferMsg(
+                            new Message(myself, BusMailboxName, new Onion(""
+                            + "{'type':'" + CM_BUSTEST + "'"
+                            + ",'owner':'" + myself.getId() + "'"
+                            + ",'command':'close'"
+                            + "}")));
+                } catch (JSONException ex) {
+                    Logger.getLogger(ScriptengineLua.class.getName()).log(
+                            Level.SEVERE, null, ex);
+                }
+          try { // send a message to myself to make sure that the receive loop ends
+                 
+ /*                   core.transferMsg(
+                            new Message(myself, myself.getId(), new Onion(""
+                            + "{'type':'" + CM_CHANNEL + "'"
+                            + ",'owner':'" + myself.getId() + "'"
+                            + ",'command':'connect'"
+                            + "}")));
+*/
+              getMsgPort().receive(new Message(myself, myself.getId(), new Onion(""
+                            + "{'type':'" + CM_CHANNEL + "'"
+                            + ",'owner':'" + myself.getId() + "'"
+                            + ",'command':'connect'"
+                            + "}")));
+                 } catch (JSONException ex) {
+                    Logger.getLogger(ScriptengineLua.class.getName()).log(
+                            Level.SEVERE, null, ex);
+                }
+               super.close(); 
+    }
     public boolean doScript(String fileName) throws IOException {
         InputStream resource = UISystem.generateResourceStream(FT_SCRIPT,
                 fileName);
