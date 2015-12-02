@@ -20,7 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.FileOutputStream;
 
-import purejavacomm.CommPortIdentifier;
+import jssc.*;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -898,37 +898,23 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     private void settingsComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_settingsComponentShown
         String osname = System.getProperty("os.name", "").toLowerCase();
+        String[] portList;
+        String portname;  
         Enumeration pList = null;
         Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "OS detected: {0}", osname);
         int portListIndex = -1;
         String port = appProbs.get(OOBDConstants.PropName_SerialPort, null);
         try {
             if (osname.startsWith("windows")) {
-                pList = purejavacomm.CommPortIdentifier.getPortIdentifiers();
-                // Process the list.
-                while (pList.hasMoreElements()) {
-                    purejavacomm.CommPortIdentifier cpi = (purejavacomm.CommPortIdentifier) pList.nextElement();
-                    if (cpi.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-                        comportComboBox.addItem(cpi.getName());
-                        if (cpi.getName().equalsIgnoreCase(port)) {
+	            portList = SerialPortList.getPortNames();
+                // Process the list.                for(int i = 0; i < portList.length; i++){
+                    portname = portList[i]; 
+                        comportComboBox.addItem(portname);
+                        if (portname.equalsIgnoreCase(port)) {
                             portListIndex = comportComboBox.getItemCount() - 1;
                         }
-                    }
                 }
-            } else {
-                pList = gnu.io.CommPortIdentifier.getPortIdentifiers();
-                // Process the list.
-                while (pList.hasMoreElements()) {
-                    gnu.io.CommPortIdentifier cpi = (gnu.io.CommPortIdentifier) pList.nextElement();
-                    if (cpi.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-                        comportComboBox.addItem(cpi.getName());
-                        if (cpi.getName().equalsIgnoreCase(port)) {
-                            portListIndex = comportComboBox.getItemCount() - 1;
-                        }
-                    }
-                }
-            }
-
+            } 
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -1664,11 +1650,10 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         File oldDir = null;
         if (FileName != null) {
             oldDir = new File(FileName);
-            chooser.setCurrentDirectory(oldDir);
             chooser.setSelectedFile(oldDir);
         }
         chooser.setMultiSelectionEnabled(false);
-        chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.resetChoosableFileFilters();
         chooser.setAcceptAllFileFilterUsed(false);
         chooser.addChoosableFileFilter(new FileFilter() {
