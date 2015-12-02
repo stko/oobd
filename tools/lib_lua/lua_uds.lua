@@ -13,6 +13,7 @@ Response Error: https://www.emotive.de/doc/car-diagnostic-systems/protocols/dp
 --]]
 
 -- for better readibility, creating some GLOBAL constants
+udsService_Session_Control = "10"
 udsService_Read_Data_By_LocalIdentifier = "21"
 udsService_Read_Data_By_Identifier = "22"
 udsService_Read_DTC = "19"
@@ -53,7 +54,6 @@ function udsServiceRequest( service, did, didData, bufferTime, handler)
 	echoWrite(service..did..array2str(didData).."\r") 
 	udsLen=receive()
 	if udsLen>0 then
-		print(">"..string.format("0x%02X",udsBuffer[1]))
 		if udsBuffer[1]== tonumber(service,16)+udsService_Response then
 			if handler ~= nil then
 				return handler(service, did, udsLen, udsBuffer)
@@ -66,11 +66,9 @@ function udsServiceRequest( service, did, didData, bufferTime, handler)
 			return "Error" , -2
 		end
 	else
-		return  "No Data received", -3
+		return  "No data received", -3
 	end
 end
-
-
 
 
 --[[
@@ -78,6 +76,7 @@ function readBMPDiDByTable(value, id)
 	return readBMPDiD( string.sub(value.cmd,7) , value.by, value.bi , value.lt , value.ht ) 
 end
 ]]--
+
 
 function readBMPDiD(oldvalue, id)
 	DEBUGPRINT("nexulm", 1, "lua_uds.lua - readBMPDiD,%02d: %s", "00", "enter function readBMPDiD")
@@ -144,7 +143,7 @@ function writeBMPDiD(oldvalue, id)
 		for i = subdata.by+5, udsLen, 1 do
 			setCmd=setCmd.."00"  
 		end
-		print ("Toogle cmd: ",setCmd)
+		DEBUGPRINT("stko", 1, "lua_uds.lua - getXmlDtc,%02d: Toogle cmd = %s", "00", setCmd)
 		local securityLevel=secCodeData.level
 		if secCodeData.code =="" then
 			securityLevel=0 -- avoids security access challenge message in accessmode()
@@ -156,7 +155,7 @@ function writeBMPDiD(oldvalue, id)
 		if res < 0 then
 			return string.format("Error Code %d",res)
 		end
-		print ("Access granted!! ")
+		DEBUGPRINT("stko", 1, "lua_uds.lua - getXmlDtc,%02d: %s", "00", "Access granted!!")
 		return udsServiceRequest(data.sev_ioc,setCmd , {} , 0 , function ()
 			return readBMPDiD(oldvalue, id)
 		end )
@@ -224,12 +223,13 @@ function sCalcNumDiD( bitLen, bitPos, byteNr , nrOfBytes, multiplier, offset, un
 	return value .." "..unit
 end
 
+
 function CalcNumDiD_any( bitLen, bitPos, byteNr , multiplier, offset, endianess)
 	DEBUGPRINT("nexulm", 1, "lua_uds.lua - CalcNumDiD_any,%02d: %s", "00", "enter function CalcNumDiD_any")
 	local value=0
+
 	if (bitLen<=(8-bitPos)) then -- check if we have less than a byte signal or just a byte signal
 		value = bit.band (bit.brshift (udsBuffer[byteNr], bitPos), (2^bitLen)-1) -- move bit to bit position 0 and mask valid bits only
-
 	else --the signal is on at least two bytes
 		local value1=0
 		local length_1=8-bitPos
@@ -445,6 +445,7 @@ function readPacketedDiD(oldvalue,id)
 	end )
 end
 
+
 function readPacketedRTDDiD(oldvalue,id)
 	DEBUGPRINT("nexulm", 1, "lua_uds.lua - readPacketedRTDDiD,%02d: %s", "00", "enter function readPacketedRTDDiD")
 	local did, data = translateTableID( id )
@@ -593,8 +594,8 @@ function createXmlDTCs(type)
 	return res
 end
 
----------------------- create DTC list as XML string --------------------------------------
 
+---------------------- create DTC list as XML string --------------------------------------
 function getXmlDtc(oldvalue,id)
 	DEBUGPRINT("nexulm", 1, "lua_uds.lua - getXmlDtc,%02d: %s", "00", "enter function getXmlDtc")
 	local result="<dtcs>"
@@ -611,12 +612,12 @@ function getXmlDtc(oldvalue,id)
 		result=result.."\n<error>\n<returncode>"..err.."</returncode>\n<desc>"..res.."</desc>\n<cmd>"..udsService_Read_DTC.."028D".."</cmd>\n</error>"
 	end
 	result=result.."</dtcs>"
-	print( "result=" , result)
+	DEBUGPRINT("stko", 1, "lua_uds.lua - getXmlDtc,%02d: result = %s", "00", result)
 	return result
 end
 
----------------------- getNrOfDTC--------------------------------------
 
+---------------------- getNrOfDTC--------------------------------------
 function getNrOfDTC()
 	DEBUGPRINT("nexulm", 1, "lua_uds.lua - getNrOfDTC,%02d: %s", "00", "enter function getNrOfDTC")
 -- if bit 1 (starting with 0) is set, then the active DTCs are requested. if bit 1 = 0 then the DTCs are the inactive ones
@@ -643,8 +644,8 @@ function getNrOfDTC()
 	end
 end
 
----------------------- delete DTC--------------------------------------
 
+---------------------- delete DTC--------------------------------------
 function deleteDTC()
 	DEBUGPRINT("nexulm", 1, "lua_uds.lua - deleteDTC,%02d: %s", "00", "enter function deleteDTC")
 	return  udsServiceRequest(udsService_Clear_Diagnostic_Information,"FFFFFF" , {} , 0 , function ()
