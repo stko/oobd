@@ -14,15 +14,15 @@ Response Error: https://www.emotive.de/doc/car-diagnostic-systems/protocols/dp
 
 -- for better readibility, creating some GLOBAL constants
 udsService_Session_Control = "10"
+udsService_Clear_Diagnostic_Information ="14"
 udsService_Read_Data_By_LocalIdentifier = "21"
 udsService_Read_Data_By_Identifier = "22"
+udsService_Write_Data_By_Identifier = "2E"
+udsService_Input_Output_Control_By_Identifier = "2F"
+udsService_Routine_Control = "31"
 udsService_Read_DTC = "19"
 udsService_Response = 0x40
 udsService_Error = 0x7f
-udsService_Input_Output_Control_By_Identifier = "2F"
-udsService_Clear_Diagnostic_Information ="14"
-udsService_Routine_Control = "31"
-
 
 --[[
 udsServiceRequest : helper function to cover the standard, always reoccuring part of a service request. 
