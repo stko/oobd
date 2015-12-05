@@ -31,7 +31,6 @@ import javax.swing.JFileChooser;
 import org.oobd.base.archive.Archive;
 import org.oobd.base.archive.Factory;
 import org.oobd.base.support.Onion;
-import org.oobd.base.port.ComPort_Unix;
 import org.oobd.base.port.ComPort_Kadaver;
 import org.oobd.base.port.ComPort_Telnet;
 import org.oobd.crypt.AES.PassPhraseProvider;
@@ -134,8 +133,8 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     }
 
     String mapDirectory(String mapDir, String path) {
-             System.err.println("MapDirecory mapdir "+mapDir+" path "+path+ " Startswith: "+"/" + mapDir.toLowerCase());
-       if (path.toLowerCase().startsWith("/" + mapDir.toLowerCase())) {
+        System.err.println("MapDirecory mapdir " + mapDir + " path " + path + " Startswith: " + "/" + mapDir.toLowerCase());
+        if (path.toLowerCase().startsWith("/" + mapDir.toLowerCase())) {
             path = path.substring(mapDir.length() + 1);
             return path;
         } else {
@@ -151,9 +150,9 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         try {
             switch (pathID) {
                 case OOBDConstants.FT_WEBPAGE:
-                    String newPath=mapDirectory("libs",resourceName);
-                    if (!newPath.equals("")){
-                        resourceName="/../../libs/"+newPath;
+                    String newPath = mapDirectory("libs", resourceName);
+                    if (!newPath.equals("")) {
+                        resourceName = "/../../libs/" + newPath;
                     }
                 // please notice: here's no case "break"!
                 case OOBDConstants.FT_PROPS:
@@ -225,12 +224,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "OS detected: " + osname);
 
             try {
-                if (osname.startsWith("windows") || true) {
-                    return new ComPort_Win();
-                } else {
-                    return new ComPort_Unix();
-                }
-
+                return new ComPort_Win();
             } catch (Exception ex) {
                 ex.printStackTrace();
                 return null;
