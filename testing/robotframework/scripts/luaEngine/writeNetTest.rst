@@ -51,7 +51,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
     Test for Slack msg
         send webUI command  {"name":"writeSlackMsg:","optid":"","actValue":"${slackURL}","updType":3}
-	answer should match    {"type":"VALUE" ,"value":"#try to clear output"}
+	answer should match    {"type":"VALUE" ,"value":"#-ok-"}
  
 
 .. code:: robotframework
