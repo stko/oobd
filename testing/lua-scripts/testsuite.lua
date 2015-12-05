@@ -395,7 +395,15 @@ function saveBuffer1(oldvalue,id)
 	return oldvalue
 end
 
-
+function writeSlackMsg(oldvalue,id)
+	-- this is just a test, for all Slack options visit https://api.slack.com/incoming-webhooks
+	-- contacting slack as jsonrpc server, suppling the parameters as lua table
+	jsonrpcparams={username="RobotFrame",text="This is a script message"}
+	newfile = ioInput(oldvalue,jsonrpcparams,"json")
+	-- reading the whole result as text string
+	res = ioRead("*all")
+	return "-"..res.."-"
+end
 
 ---------------------- Main Menu --------------------------------------
 
