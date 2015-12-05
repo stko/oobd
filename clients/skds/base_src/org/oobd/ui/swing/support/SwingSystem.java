@@ -225,7 +225,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "OS detected: " + osname);
 
             try {
-                if (osname.startsWith("windows")) {
+                if (osname.startsWith("windows") || true) {
                     return new ComPort_Win();
                 } else {
                     return new ComPort_Unix();

@@ -899,22 +899,23 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private void settingsComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_settingsComponentShown
         String osname = System.getProperty("os.name", "").toLowerCase();
         String[] portList;
-        String portname;  
+        String portname;
         Enumeration pList = null;
         Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "OS detected: {0}", osname);
         int portListIndex = -1;
         String port = appProbs.get(OOBDConstants.PropName_SerialPort, null);
         try {
             if (osname.startsWith("windows")) {
-	            portList = SerialPortList.getPortNames();
-                // Process the list.                for(int i = 0; i < portList.length; i++){
-                    portname = portList[i]; 
-                        comportComboBox.addItem(portname);
-                        if (portname.equalsIgnoreCase(port)) {
-                            portListIndex = comportComboBox.getItemCount() - 1;
-                        }
+                portList = SerialPortList.getPortNames();
+                // Process the list.
+                for (int i = 0; i < portList.length; i++) {
+                    portname = portList[i];
+                    comportComboBox.addItem(portname);
+                    if (portname.equalsIgnoreCase(port)) {
+                        portListIndex = comportComboBox.getItemCount() - 1;
+                    }
                 }
-            } 
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -1718,9 +1719,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             }
         });
         if (chooser.showSaveDialog(this.getFrame())
-== JFileChooser.APPROVE_OPTION && saveBufferToFile(chooser.getSelectedFile().toString(), content, append)) {
+                == JFileChooser.APPROVE_OPTION && saveBufferToFile(chooser.getSelectedFile().toString(), content, append)) {
             appProbs.put(OOBDConstants.PropName_OutputFile, chooser.getCurrentDirectory().toString());
-	return chooser.getSelectedFile().toString();
+            return chooser.getSelectedFile().toString();
         } else {
             return null;
         }

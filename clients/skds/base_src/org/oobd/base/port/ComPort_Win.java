@@ -24,15 +24,17 @@ import java.lang.*;
  * @author jayakumar
  */
 public class ComPort_Win implements OOBDPort, SerialPortEventListener {
-    
+
     String[] portList;
-    String portname;    
+    String portname;
     SerialPort serialPort;
     OobdBus msgReceiver;
-    String defaultPort = "";    
+    String defaultPort = "";
 
     public boolean connect(Onion options, OobdBus receiveListener) {
-        if(serialPort != null) close();
+        if (serialPort != null) {
+            close();
+        }
         Preferences props = Core.getSingleInstance().getSystemIF().loadPreferences(OOBDConstants.FT_RAW, OOBDConstants.AppPrefsFileName);
         Boolean portFound = false;
         msgReceiver = receiveListener;
@@ -53,42 +55,29 @@ public class ComPort_Win implements OOBDPort, SerialPortEventListener {
             return false;
         }
 
-        defaultPort = props.get(OOBDConstants.PropName_SerialPort, defaultPort);       
-        System.setProperty("gnu.io.rxtx.SerialPorts", defaultPort);
-        
-        portList = SerialPortList.getPortNames();
-        for(int i = 0; i < portList.length; i++){
-            portname = portList[i];           
-            if (portname.equals(defaultPort)) {
-                Logger.getLogger(ComPort_Win.class.getName()).log(Level.CONFIG, "Found port: " + defaultPort);
-                portFound = true;  
-                serialPort = new SerialPort(portname);
-                try {
-                serialPort.openPort();//Open serial port
-                serialPort.setParams(SerialPort.BAUDRATE_115200, SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);//Set params. Also you can set params by this string: serialPort.setParams(115200, 8, 1, 0);
-                serialPort.addEventListener(this,SerialPort.MASK_RXCHAR);
-                } catch (SerialPortException ex) {
-                  System.out.println(ex);
-                  return false;
-                } 
-            attachShutDownHook();
-            return true;                    
-            }
-        }       
-        if (!portFound) {
+        defaultPort = props.get(OOBDConstants.PropName_SerialPort, defaultPort);
+        serialPort = new SerialPort(defaultPort);
+        try {
+            serialPort.openPort();//Open serial port
+            serialPort.setParams(SerialPort.BAUDRATE_115200, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);//Set params. Also you can set params by this string: serialPort.setParams(115200, 8, 1, 0);
+            serialPort.addEventListener(this, SerialPort.MASK_RXCHAR);
+        } catch (SerialPortException ex) {
+            System.out.println(ex);
             Logger.getLogger(ComPort_Win.class.getName()).log(Level.WARNING, "serial port " + defaultPort + " not found.");
+            return false;
         }
-        return portFound;
+        attachShutDownHook();
+        return true;
     }
 
     public void close() {
         System.out.println("CLOSE PORT!! " + serialPort);
         if (serialPort != null) {
-            try{
+            try {
                 serialPort.removeEventListener();
             } catch (SerialPortException ex) {
-                 System.out.println(ex);
-            }            
+                System.out.println(ex);
+            }
             try {
                 serialPort.closePort();
                 serialPort = null;
@@ -98,7 +87,6 @@ public class ComPort_Win implements OOBDPort, SerialPortEventListener {
         }
     }
 
-    
     public void attachShutDownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread() {
 
@@ -114,23 +102,23 @@ public class ComPort_Win implements OOBDPort, SerialPortEventListener {
     }
 
     public void serialEvent(SerialPortEvent spe) {
-        if(spe.isRXCHAR() && spe.getEventValue() > 0){            
+        if (spe.isRXCHAR() && spe.getEventValue() > 0) {
             try {
                 byte buffer[] = serialPort.readBytes(spe.getEventValue());
-                msgReceiver.receiveString(new String(buffer));             
+                msgReceiver.receiveString(new String(buffer));
             } catch (SerialPortException ex) {
-                   System.out.println("Error in receiving string from COM-port: " + ex);                  
+                System.out.println("Error in receiving string from COM-port: " + ex);
             }
         }
     }
 
-    public synchronized void write(String s) {        
+    public synchronized void write(String s) {
         try {
             Logger.getLogger(ComPort_Win.class.getName()).log(Level.INFO,
                     "Serial output:" + s);
-            serialPort.writeBytes(s.getBytes());               
-        }  catch (SerialPortException ex) {
-              System.out.println(ex);                  
+            serialPort.writeBytes(s.getBytes());
+        } catch (SerialPortException ex) {
+            System.out.println(ex);
         }
     }
 
