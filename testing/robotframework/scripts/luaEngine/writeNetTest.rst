@@ -50,9 +50,34 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	answer should match    {"type":"WSCONNECT"}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
     Test for Slack msg
+	[tags]  slack
         send webUI command  {"name":"writeSlackMsg:","optid":"","actValue":"${slackURL}","updType":3}
 	answer should match    {"type":"VALUE" ,"value":"#-ok-"}
- 
+    Test open URL
+        send webUI command  {"name":"openURL:","optid":"","actValue":"","updType":3}
+	answer should match    {"type":"VALUE" ,"value":"#-https://httpbin.org/html-"}
+    Test openURL, returning first line of test page
+        send webUI command  {"name":"readFirstLine:","optid":"","actValue":"","updType":3}
+	answer should match    {"type":"VALUE" ,"value":"#<!DOCTYPE html>"}
+    Test openURL, returning sha256 hash of page content
+        send webUI command  {"name":"hashHoleFile:","optid":"","actValue":"","updType":3}
+	answer should match    {"type":"VALUE" ,"value":"#e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
+    Test remoteJsonRPC per String, returning a json string
+        send webUI command  {"name":"jsonStringService:","optid":"","actValue":"","updType":3}
+	answer should match    {"type":"VALUE" ,"value":"LXsiaWQiOjEsInJlc3VsdCI6NX0t"}
+    Test remoteJsonRPC per table parameter, returning a json string
+        send webUI command  {"name":"jsontableService:","optid":"","actValue":"","updType":3}
+	answer should match    {"type":"VALUE" ,"value":"LXsiaWQiOjIsInJlc3VsdCI6N30t"}
+    Test remoteJsonRPC per table parameter, returning a lua table
+        send webUI command  {"name":"jsonrpcService:","optid":"","actValue":"","updType":3}
+	answer should match    {"type":"VALUE" ,"value":"#-11-"}
+     Test open local file Loremipsum.txt
+        send webUI command  {"name":"openIOFile:","optid":"","actValue":"TG9yZW1pcHN1bS50eHQ=","updType":3}
+	answer should match    {"type":"VALUE" ,"value":"%#.*Loremipsum.*"}
+    Test openURL, returning sha256 hash of test file content
+        send webUI command  {"name":"hashHoleFile:","optid":"","actValue":"","updType":3}
+	answer should match    {"type":"VALUE" ,"value":"#a3614fe562b348399b7e0a97c5720f71857caa90906434b2a7ad4d2e4ea5c27d"}
+  
 
 .. code:: robotframework
 

@@ -4,6 +4,7 @@
  */
 package org.oobd.base.scriptengine;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,6 +12,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import org.oobd.base.*;
 import org.oobd.base.support.*;
 import java.util.logging.Level;
@@ -19,6 +22,7 @@ import org.json.JSONException;
 
 /**
  * generic abstract for the implementation of scriptengines
+ *
  * @author steffen
  */
 abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstants {
@@ -28,6 +32,7 @@ abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstan
     protected FileInputStream actualOobdInputStream = null;
     protected File myTempOutputFile = null;
     protected OobdScriptengine myself;
+    private BufferedReader actualOobdInputStreamReader = null;
 
     public static String publicName() {
         /* the abstract class also needs to have this method, because it's also loaded during dynamic loading, and the empty return string
@@ -50,8 +55,9 @@ abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstan
     }
 
     /**
-     * \brief tells the Scriptengine, which actual tempfile the systemIF has reserved
-     * 
+     * \brief tells the Scriptengine, which actual tempfile the systemIF has
+     * reserved
+     *
      * @param the temp file path
      */
     public void setTempInputFile(File newFile) {
@@ -60,7 +66,7 @@ abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstan
 
     /**
      * \brief reports which actual tempfile the Scriptengine is using
-     * 
+     *
      * @return the actual temp file path
      */
     public File getTempInputFile() {
@@ -69,7 +75,7 @@ abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstan
 
     /**
      * \brief deletes the actual temporary input file, if exists
-     * 
+     *
      */
     public void removeTempInputFile() {
         try {
@@ -81,6 +87,10 @@ abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstan
                 myTempInputFile.delete();
                 myTempInputFile = null;
             }
+            if (actualOobdInputStreamReader != null) {
+                actualOobdInputStreamReader.close();
+                actualOobdInputStreamReader = null;
+            }
         } catch (IOException ex) {
             Logger.getLogger(OobdScriptengine.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -88,7 +98,7 @@ abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstan
 
     /**
      * \brief tries to open an Input file
-     * 
+     *
      * @return true if success
      */
     public String createInputTempFile(String filepath, String extension, String message) {
@@ -97,26 +107,26 @@ abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstan
         try {
             answer = myself.getMsgPort().sendAndWait(
                     new Message(
-                    myself,
-                    UIHandlerMailboxName,
-                    new Onion(
-                    ""
-                    + "{'type':'"
-                    + CM_IOINPUT
-                    + "',"
-                    + "'owner':"
-                    + "{'name':'"
-                    + myself.getId()
-                    + "'},"
-                    + "'filepath':'"
-                    + Base64Coder.encodeString(filepath)
-                    + "',"
-                    + "'extension':'"
-                    + Base64Coder.encodeString(extension)
-                    + "',"
-                    + "'message':'"
-                    + Base64Coder.encodeString(message)
-                    + "'}")),
+                            myself,
+                            UIHandlerMailboxName,
+                            new Onion(
+                                    ""
+                                    + "{'type':'"
+                                    + CM_IOINPUT
+                                    + "',"
+                                    + "'owner':"
+                                    + "{'name':'"
+                                    + myself.getId()
+                                    + "'},"
+                                    + "'filepath':'"
+                                    + Base64Coder.encodeString(filepath)
+                                    + "',"
+                                    + "'extension':'"
+                                    + Base64Coder.encodeString(extension)
+                                    + "',"
+                                    + "'message':'"
+                                    + Base64Coder.encodeString(message)
+                                    + "'}")),
                     -1); // timeout -1 = wait forever
             if (answer != null) {
                 Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO,
@@ -137,9 +147,9 @@ abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstan
 
     /**
      * \brief fills the temp file with data
-     * 
+     *
      * @param the inputstream
-     * @return true if success 
+     * @return true if success
      */
     public boolean fillTempInputFile(InputStreamReader in) {
         boolean res = false;
@@ -159,29 +169,56 @@ abstract public class OobdScriptengine extends OobdPlugin implements OOBDConstan
     }
 
     /**
-     * \brief fills the temp file with data
-     * 
-     * @param the inputstream
-     * @return true if success 
+     * \brief reads "lua like" from an stored input file
+     *
+     * @param format defines the kind of returned string
+     * @return string, nil if EOL
      */
     public String readTempInputFile(String format) {
-        String res = "";
+        String res = null;
         if (myTempInputFile != null) {
             try {
                 if (actualOobdInputStream == null) {
                     actualOobdInputStream = new FileInputStream(myTempInputFile);
                 }
-                res = org.apache.commons.io.IOUtils.toString(actualOobdInputStream);
-                actualOobdInputStream.close();
-                actualOobdInputStream = null;
+                format = format.toLowerCase().trim();
+                if ("*all".equals(format) || "*json".equals(format)) {
+                    res = org.apache.commons.io.IOUtils.toString(actualOobdInputStream);
+                    actualOobdInputStream.close();
+                    actualOobdInputStream = null;
+                }
+                if ("*sha256".equals(format)) {
+                    res = org.apache.commons.io.IOUtils.toString(actualOobdInputStream);
+                    actualOobdInputStream.close();
+                    actualOobdInputStream = null;
+                    MessageDigest md = MessageDigest.getInstance("SHA-256");
+                    md.update(res.getBytes("UTF-8")); // Change this to "UTF-16" if needed
+                    byte[] digest = md.digest();
+                    res = String.format("%064x", new java.math.BigInteger(1, digest));
+                }
+                if ("*line".equals(format)) {
+                    if (actualOobdInputStreamReader == null) {
+                        actualOobdInputStreamReader = new BufferedReader(new InputStreamReader(actualOobdInputStream));
+                    }
+
+                    res = actualOobdInputStreamReader.readLine();
+                    if (res == null) {
+                        actualOobdInputStreamReader.close();
+                        actualOobdInputStreamReader = null;
+                        actualOobdInputStream.close();
+                        actualOobdInputStream = null;
+                    }
+                }
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(OobdScriptengine.class.getName()).log(Level.SEVERE, null, ex);
 
             } catch (IOException ex) {
                 Logger.getLogger(OobdScriptengine.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NoSuchAlgorithmException ex) {
+                Logger.getLogger(OobdScriptengine.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return res;
     }
-    
+
 }

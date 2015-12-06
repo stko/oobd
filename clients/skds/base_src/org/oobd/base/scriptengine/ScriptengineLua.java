@@ -36,7 +36,7 @@ import se.krka.kahlua.vm.LuaTableImpl;
 import org.json.JSONException;
 
 /**
- * 
+ *
  * @author steffen
  */
 public class ScriptengineLua extends OobdScriptengine {
@@ -67,7 +67,7 @@ public class ScriptengineLua extends OobdScriptengine {
 
     /**
      * @todo open & write files MUST go through an generic stream supported by
-     *       core to handle different sources and encrypted files
+     * core to handle different sources and encrypted files
      */
     public void run() {
         state = new LuaState(System.out);
@@ -85,18 +85,18 @@ public class ScriptengineLua extends OobdScriptengine {
                 // BaseLib.luaAssert(nArguments >0, "not enough args");
                 initRPC(callFrame, nArguments);
                 // cellList = new List();
-                String connectURLParameter= getString(0);
-                if (connectURLParameter!=null && !"".equals(connectURLParameter)){
-                    connectURL=Base64Coder.encodeString(connectURLParameter);
+                String connectURLParameter = getString(0);
+                if (connectURLParameter != null && !"".equals(connectURLParameter)) {
+                    connectURL = Base64Coder.encodeString(connectURLParameter);
                 }
                 try {
                     myself.getMsgPort().sendAndWait(
                             new Message(myself, CoreMailboxName, new Onion(""
-                            + "{'type':'" + CM_CHANNEL + "'"
-                            + ",'owner':'" + myself.getId() + "'"
-                            + ",'command':'connect'"
-                            + ",'connecturl':'" + connectURL + "'" //just as reminder : connectURL comes already base64 coded
-                            + "}")), -1);
+                                            + "{'type':'" + CM_CHANNEL + "'"
+                                            + ",'owner':'" + myself.getId() + "'"
+                                            + ",'command':'connect'"
+                                            + ",'connecturl':'" + connectURL + "'" //just as reminder : connectURL comes already base64 coded
+                                            + "}")), -1);
                 } catch (JSONException ex) {
                     Logger.getLogger(ScriptengineLua.class.getName()).log(
                             Level.SEVERE, null, ex);
@@ -115,8 +115,8 @@ public class ScriptengineLua extends OobdScriptengine {
                 try {
                     core.transferMsg(new Message(myself, UIHandlerMailboxName,
                             new Onion("" + "{'type':'" + CM_PAGE + "',"
-                            + "'owner':'" + myself.getId() + "',"
-                            + "'name':'" + getString(0) + "'}")));
+                                    + "'owner':'" + myself.getId() + "',"
+                                    + "'name':'" + getString(0) + "'}")));
                 } catch (JSONException ex) {
                     Logger.getLogger(ScriptengineLua.class.getName()).log(
                             Level.SEVERE, null, ex);
@@ -190,8 +190,8 @@ public class ScriptengineLua extends OobdScriptengine {
                 try {
                     core.transferMsg(new Message(myself, UIHandlerMailboxName,
                             new Onion("" + "{'type':'" + CM_PAGEDONE + "',"
-                            + "'owner':'" + myself.getId() + "',"
-                            + "'name':'Canvastest_1'}")));
+                                    + "'owner':'" + myself.getId() + "',"
+                                    + "'name':'Canvastest_1'}")));
                 } catch (JSONException ex) {
                     Logger.getLogger(ScriptengineLua.class.getName()).log(
                             Level.SEVERE, null, ex);
@@ -211,12 +211,12 @@ public class ScriptengineLua extends OobdScriptengine {
                 try {
                     answer = myself.getMsgPort().sendAndWait(
                             new Message(myself, BusMailboxName, new Onion(""
-                            + "{'type':'" + CM_BUSTEST + "',"
-                            + "'owner':" + "{'name':'" + myself.getId()
-                            + "'}," + "'command':'serReadLn',"
-                            + "'timeout':'" + getInt(0) + "',"
-                            + "'ignore':'"
-                            + Boolean.toString(getBoolean(1)) + "'}")),
+                                            + "{'type':'" + CM_BUSTEST + "',"
+                                            + "'owner':" + "{'name':'" + myself.getId()
+                                            + "'}," + "'command':'serReadLn',"
+                                            + "'timeout':'" + getInt(0) + "',"
+                                            + "'ignore':'"
+                                            + Boolean.toString(getBoolean(1)) + "'}")),
                             +(getInt(0) * 12) / 10);
                     if (answer != null) {
                         result = answer.getContent().getString("result");
@@ -253,24 +253,24 @@ public class ScriptengineLua extends OobdScriptengine {
                     try {
                         answer = myself.getMsgPort().sendAndWait(
                                 new Message(
-                                myself,
-                                BusMailboxName,
-                                new Onion(
-                                ""
-                                + "{'type':'"
-                                + CM_BUSTEST
-                                + "',"
-                                + "'owner':"
-                                + "{'name':'"
-                                + myself.getId()
-                                + "'},"
-                                + "'command':'serWait',"
-                                + "'timeout':'"
-                                + getInt(1)
-                                + "',"
-                                + "'data':'"
-                                + Base64Coder.encodeString(getString(0))
-                                + "'}")),
+                                        myself,
+                                        BusMailboxName,
+                                        new Onion(
+                                                ""
+                                                + "{'type':'"
+                                                + CM_BUSTEST
+                                                + "',"
+                                                + "'owner':"
+                                                + "{'name':'"
+                                                + myself.getId()
+                                                + "'},"
+                                                + "'command':'serWait',"
+                                                + "'timeout':'"
+                                                + getInt(1)
+                                                + "',"
+                                                + "'data':'"
+                                                + Base64Coder.encodeString(getString(0))
+                                                + "'}")),
                                 +(getInt(1) * 12) / 10);
 
                         if (answer != null) {
@@ -315,11 +315,11 @@ public class ScriptengineLua extends OobdScriptengine {
                 try {
                     core.transferMsg(new Message(myself, BusMailboxName,
                             new Onion("{" + "'type':'" + CM_BUSTEST + "',"
-                            + "'owner':" + "{'name':'" + myself.getId()
-                            + "'}," + "'command':'serWrite',"
-                            + "'data':'"
-                            + Base64Coder.encodeString(getString(0))
-                            + "'" + "}")));
+                                    + "'owner':" + "{'name':'" + myself.getId()
+                                    + "'}," + "'command':'serWrite',"
+                                    + "'data':'"
+                                    + Base64Coder.encodeString(getString(0))
+                                    + "'" + "}")));
                 } catch (JSONException ex) {
                     Logger.getLogger(ScriptengineLua.class.getName()).log(
                             Level.SEVERE, null, ex);
@@ -339,8 +339,8 @@ public class ScriptengineLua extends OobdScriptengine {
                 try {
                     core.transferMsg(new Message(myself, BusMailboxName,
                             new Onion("" + "{'type':'" + CM_BUSTEST + "',"
-                            + "'owner':" + "{'name':'" + myself.getId()
-                            + "'}," + "'command':'serFlush'}")));
+                                    + "'owner':" + "{'name':'" + myself.getId()
+                                    + "'}," + "'command':'serFlush'}")));
                 } catch (JSONException ex) {
                     Logger.getLogger(ScriptengineLua.class.getName()).log(
                             Level.SEVERE, null, ex);
@@ -359,23 +359,23 @@ public class ScriptengineLua extends OobdScriptengine {
                 // BaseLib.luaAssert(nArguments >0, "not enough args");
                 initRPC(callFrame, nArguments);
                 try {
-                    
-                    String msg="{" + "'type':'" + CM_WRITESTRING + "',"
+
+                    String msg = "{" + "'type':'" + CM_WRITESTRING + "',"
                             + "'owner':" + "{'name':'" + myself.getId()
                             + "'}," + "'command':'serDisplayWrite',"
                             + "'data':'"
                             + Base64Coder.encodeString(getString(0))
                             + "'";
-                    String cmd=getString(1);
-                    if (cmd != null ){
-                         msg=msg+ " , 'modifier':'"
-                            + Base64Coder.encodeString(cmd)
-                            + "'";
+                    String cmd = getString(1);
+                    if (cmd != null) {
+                        msg = msg + " , 'modifier':'"
+                                + Base64Coder.encodeString(cmd)
+                                + "'";
                     }
-                    msg=msg+ "}";
-                         core.transferMsg(new Message(myself, UIHandlerMailboxName,
+                    msg = msg + "}";
+                    core.transferMsg(new Message(myself, UIHandlerMailboxName,
                             new Onion(msg)));
-                   
+
                 } catch (JSONException ex) {
                     Logger.getLogger(ScriptengineLua.class.getName()).log(
                             Level.SEVERE, null, ex);
@@ -394,18 +394,18 @@ public class ScriptengineLua extends OobdScriptengine {
                 try {
                     answer = myself.getMsgPort().sendAndWait(
                             new Message(myself, DBName, new Onion(""
-                            + "{'type':'"
-                            + CM_DBLOOKUP
-                            + "',"
-                            + "'owner':"
-                            + "{'name':'"
-                            + myself.getId()
-                            + "'},"
-                            + "'command':'lookup',"
-                            + "'dbfilename':'"
-                            + Base64Coder.encodeString(scriptDir
-                            + File.separator + getString(0))
-                            + "'," + "'key':'" + getString(1) + "'}")),
+                                            + "{'type':'"
+                                            + CM_DBLOOKUP
+                                            + "',"
+                                            + "'owner':"
+                                            + "{'name':'"
+                                            + myself.getId()
+                                            + "'},"
+                                            + "'command':'lookup',"
+                                            + "'dbfilename':'"
+                                            + Base64Coder.encodeString(scriptDir
+                                                    + File.separator + getString(0))
+                                            + "'," + "'key':'" + getString(1) + "'}")),
                             -1);
                     if (answer != null) {
                         result = answer.getContent().getOnion("result");
@@ -449,22 +449,22 @@ public class ScriptengineLua extends OobdScriptengine {
                 try {
                     answer = myself.getMsgPort().sendAndWait(
                             new Message(myself, DBName, new Onion(""
-                            + "{'type':'"
-                            + CM_DBLOOKUP
-                            + "',"
-                            + "'owner':"
-                            + "{'name':'"
-                            + myself.getId()
-                            + "'},"
-                            + "'command':'lookup',"
-                            + "'dbfilename':'"
-                            + Base64Coder.encodeString(scriptDir
-                            + File.separator + getString(0))
-                            + "',"
-                            // + "'dbfilename':'" + getString(0) + "',"
-                            + "'key':'"
-                            + Base64Coder.encodeString(getString(1))
-                            + "'}")), -1);
+                                            + "{'type':'"
+                                            + CM_DBLOOKUP
+                                            + "',"
+                                            + "'owner':"
+                                            + "{'name':'"
+                                            + myself.getId()
+                                            + "'},"
+                                            + "'command':'lookup',"
+                                            + "'dbfilename':'"
+                                            + Base64Coder.encodeString(scriptDir
+                                                    + File.separator + getString(0))
+                                            + "',"
+                                            // + "'dbfilename':'" + getString(0) + "',"
+                                            + "'key':'"
+                                            + Base64Coder.encodeString(getString(1))
+                                            + "'}")), -1);
                     if (answer != null) {
                         result = answer.getContent().getOnion("result");
                     }
@@ -533,7 +533,11 @@ public class ScriptengineLua extends OobdScriptengine {
                     newTable = onion2Lua(answer);
                     callFrame.push(newTable);
                 } else {
-                    callFrame.push(result.intern());
+                    if (result == null) {
+                        callFrame.push(null);
+                    } else {
+                        callFrame.push(result.intern());
+                    }
                 }
                 finishRPC(callFrame, nArguments);
                 return 1;
@@ -559,8 +563,8 @@ public class ScriptengineLua extends OobdScriptengine {
                 try {
                     core.transferMsg(new Message(myself, UIHandlerMailboxName,
                             new Onion("" + "{'type':'" + CM_PAGEDONE + "',"
-                            + "'owner':'" + myself.getId() + "',"
-                            + "'name':'Canvastest_1'}")));
+                                    + "'owner':'" + myself.getId() + "',"
+                                    + "'name':'Canvastest_1'}")));
                 } catch (JSONException ex) {
                     Logger.getLogger(ScriptengineLua.class.getName()).log(
                             Level.SEVERE, null, ex);
@@ -582,28 +586,28 @@ public class ScriptengineLua extends OobdScriptengine {
                             this,
                             UIHandlerMailboxName,
                             new Onion(
-                            ""
-                            + "{'type':'"
-                            + CM_VALUE
-                            + "',"
-                            + "'owner':"
-                            + "{'name':'"
-                            + this.id
-                            + "'},"
-                            + "'to':"
-                            + "{'name':'"
-                            + vis
-                            + "'},"
-                            // + "'value':'" +
-                            // Integer.toString(i)
+                                    ""
+                                    + "{'type':'"
+                                    + CM_VALUE
+                                    + "',"
+                                    + "'owner':"
+                                    + "{'name':'"
+                                    + this.id
+                                    + "'},"
+                                    + "'to':"
+                                    + "{'name':'"
+                                    + vis
+                                    + "'},"
+                                    // + "'value':'" +
+                                    // Integer.toString(i)
                                     // adds a preformed JSON string, containing a value string plus an optional "dataset" sub- table
-                            + callFunction(
-                            vis,
-                            new Object[]{
-                                Base64Coder.decodeString(on.getOnionString("actValue")),
-                                on.getOnionString("optid"),
-                                (double) on.optInt("updType")})
-                            + "}")));
+                                    + callFunction(
+                                            vis,
+                                            new Object[]{
+                                                Base64Coder.decodeString(on.getOnionString("actValue")),
+                                                on.getOnionString("optid"),
+                                                (double) on.optInt("updType")})
+                                    + "}")));
                 }
             } catch (JSONException ex) {
                 Logger.getLogger(ScriptengineTerminal.class.getName()).log(
@@ -614,39 +618,40 @@ public class ScriptengineLua extends OobdScriptengine {
         System.out.println("End of Scriptengine");
     }
 
-    public void close(){
-        keepRunning=false;
-                 try {
-                    core.transferMsg(
-                            new Message(myself, BusMailboxName, new Onion(""
-                            + "{'type':'" + CM_BUSTEST + "'"
-                            + ",'owner':'" + myself.getId() + "'"
-                            + ",'command':'close'"
-                            + "}")));
-                } catch (JSONException ex) {
-                    Logger.getLogger(ScriptengineLua.class.getName()).log(
-                            Level.SEVERE, null, ex);
-                }
-          try { // send a message to myself to make sure that the receive loop ends
-                 
- /*                   core.transferMsg(
-                            new Message(myself, myself.getId(), new Onion(""
-                            + "{'type':'" + CM_CHANNEL + "'"
-                            + ",'owner':'" + myself.getId() + "'"
-                            + ",'command':'connect'"
-                            + "}")));
-*/
-              getMsgPort().receive(new Message(myself, myself.getId(), new Onion(""
-                            + "{'type':'" + CM_CHANNEL + "'"
-                            + ",'owner':'" + myself.getId() + "'"
-                            + ",'command':'connect'"
-                            + "}")));
-                 } catch (JSONException ex) {
-                    Logger.getLogger(ScriptengineLua.class.getName()).log(
-                            Level.SEVERE, null, ex);
-                }
-               super.close(); 
+    public void close() {
+        keepRunning = false;
+        try {
+            core.transferMsg(
+                    new Message(myself, BusMailboxName, new Onion(""
+                                    + "{'type':'" + CM_BUSTEST + "'"
+                                    + ",'owner':'" + myself.getId() + "'"
+                                    + ",'command':'close'"
+                                    + "}")));
+        } catch (JSONException ex) {
+            Logger.getLogger(ScriptengineLua.class.getName()).log(
+                    Level.SEVERE, null, ex);
+        }
+        try { // send a message to myself to make sure that the receive loop ends
+
+            /*                   core.transferMsg(
+             new Message(myself, myself.getId(), new Onion(""
+             + "{'type':'" + CM_CHANNEL + "'"
+             + ",'owner':'" + myself.getId() + "'"
+             + ",'command':'connect'"
+             + "}")));
+             */
+            getMsgPort().receive(new Message(myself, myself.getId(), new Onion(""
+                    + "{'type':'" + CM_CHANNEL + "'"
+                    + ",'owner':'" + myself.getId() + "'"
+                    + ",'command':'connect'"
+                    + "}")));
+        } catch (JSONException ex) {
+            Logger.getLogger(ScriptengineLua.class.getName()).log(
+                    Level.SEVERE, null, ex);
+        }
+        super.close();
     }
+
     public boolean doScript(String fileName) throws IOException {
         InputStream resource = UISystem.generateResourceStream(FT_SCRIPT,
                 fileName);
@@ -669,7 +674,7 @@ public class ScriptengineLua extends OobdScriptengine {
         // the
         // :
         // seperator
-        String res="'value':'";
+        String res = "'value':'";
         Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO,
                 "function to call in Lua:" + functionName);
         try {
@@ -683,27 +688,27 @@ public class ScriptengineLua extends OobdScriptengine {
                 Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO,
                         results[2].toString());
                 /*
-                Throwable stacktrace = (Throwable) (results[3]);
+                 Throwable stacktrace = (Throwable) (results[3]);
                 
-                if (stacktrace != null) {
-                    stacktrace.printStackTrace();
-                }
-             */
+                 if (stacktrace != null) {
+                 stacktrace.printStackTrace();
+                 }
+                 */
             }
 
             // String response = BaseLib.rawTostring(fObject.env.rawget(1));
             // fObject.push(response.intern());
             if (results.length > 1) {
-                res+= Base64Coder.encodeString((String) results[1]);
+                res += Base64Coder.encodeString((String) results[1]);
             }
-            res+="'";
+            res += "'";
             if (results[0] == Boolean.TRUE && results.length > 2 && results[2] instanceof LuaTableImpl) {
-                res+= ", 'dataset':" +lua2Onion((LuaTableImpl) results[2]);
+                res += ", 'dataset':" + lua2Onion((LuaTableImpl) results[2]);
             }
-             return res;
+            return res;
 
         } catch (Exception ex) {
-            return "'value':'"+Base64Coder.encodeString(ex.toString())+ "'";
+            return "'value':'" + Base64Coder.encodeString(ex.toString()) + "'";
         }
     }
 

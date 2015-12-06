@@ -153,11 +153,10 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
             try {
                 //core.transferMsg(new Message(this, myOnion.getString("to"), myOnion));
                 //core.transferMsg(new Message(this, ownerEngine, myOnion));
-                System.out.println("Ownerengine:"+ownerEngine);
+                System.out.println("Ownerengine:" + ownerEngine);
                 myOnion.put("to", ownerEngine);
                 core.transferMsg(new Message(this, myOnion.getString("to"), myOnion));
-                
-                
+
                 return null;
             } catch (JSONException ex) {
                 Logger.getLogger(WSOobdUIHandler.class.getName()).log(Level.INFO, "failed Update Request, Scriptengine is not running yet");
@@ -165,15 +164,15 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
         }
 
         if (myOnion.isType(CM_PAGE)) {
-                //userInterface.openPage(myOnion.getOnionString("owner"),
+            //userInterface.openPage(myOnion.getOnionString("owner"),
             //       myOnion.getOnionString("name"), 1, 1);
-             System.out.println("Openpage onion:"+myOnion);
+            System.out.println("Openpage onion:" + myOnion);
             ownerEngine = myOnion.getOnionString("owner");
             wsServer.sendToAll(myOnion.toString());
             return null;
         }
         if (myOnion.isType(CM_PAGEDONE)) {
-                //userInterface.openPageCompleted(
+            //userInterface.openPageCompleted(
             //       myOnion.getOnionString("owner"),
             //      myOnion.getOnionString("name"));
             wsServer.sendToAll(myOnion.toString());
@@ -232,16 +231,14 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
         }
     }
 
-
     /**
      * \brief Tells Value to all visualizers of a scriptengine
      *
      * @param value Onion containing value and scriptengine
      *
      */
-
     public void handleValue(Onion value) {
-        String owner = value.getOnionString("owner/name"); // who'wsServer the owner of
+        String owner = value.getOnionString("owner/name"); // who's the owner of
         // that value?
         if (owner == null) {
             Logger.getLogger(Core.class.getName()).log(Level.WARNING,
@@ -273,7 +270,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
         InputStreamReader myInputStream = null;
         String myFileName = null;
         try {
-            String owner = value.getOnionString("owner/name"); // who'wsServer the owner of
+            String owner = value.getOnionString("owner/name"); // who's the owner of
             // that value?
             if (owner == null) {
                 Logger.getLogger(Core.class.getName()).log(Level.WARNING,
@@ -324,10 +321,15 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
                         System.err.println(conn.getResponseMessage());
                     }
                 } else {
-                    myFileName = getCore().getSystemIF().doFileSelector(filePath, fileExtension, fileMessage, false);
+                    if ("direct".equalsIgnoreCase(fileMessage)) {
+                        myFileName = filePath;
+                    } else {
+                        myFileName = getCore().getSystemIF().doFileSelector(filePath, fileExtension, fileMessage, false);
+                    }
                     if (myFileName != null) {
                         try {
-                            myInputStream = new FileReader(myFileName);
+                            myFileName=getCore().getSystemIF().generateUIFilePath(FT_SCRIPT, myFileName);
+                            myInputStream = new FileReader(getCore().getSystemIF().generateUIFilePath(FT_SCRIPT, myFileName));
                         } catch (FileNotFoundException ex) {
                             Logger.getLogger(LocalOobdUIHandler.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -338,7 +340,6 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
             if (myInputStream != null) {
                 OobdScriptengine actEngine = getCore().getScriptEngine(owner);
                 getCore().getSystemIF().createEngineTempInputFile(actEngine);
-
 
                 actEngine.fillTempInputFile(myInputStream);
             } else {
@@ -425,8 +426,8 @@ class ChatServer extends WebSocketServer {
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
         System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
-         conn.send("{\"type\":\"WSCONNECT\"}");
-         conn.send("{\"type\":\"WRITESTRING\" ,\"data\":\"" + Base64Coder.encodeString("Connected to OOBD") + "\"}");
+        conn.send("{\"type\":\"WSCONNECT\"}");
+        conn.send("{\"type\":\"WRITESTRING\" ,\"data\":\"" + Base64Coder.encodeString("Connected to OOBD") + "\"}");
     }
 
     @Override
@@ -505,7 +506,7 @@ class ChatServer extends WebSocketServer {
      * @throws InterruptedException When socket related I/O errors occur.
      */
     public void sendToAll(String text) {
-       System.out.println("WS to Socket: " + text);
+        System.out.println("WS to Socket: " + text);
         Collection<WebSocket> con = connections();
         synchronized (con) {
             for (WebSocket c : con) {

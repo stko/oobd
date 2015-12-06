@@ -405,6 +405,76 @@ function writeSlackMsg(oldvalue,id)
 	return "-"..res.."-"
 end
 
+
+
+
+myfile="test"
+
+function openIOFile(oldvalue,id)
+	-- harmless: open a file. If success, the function returns the file path
+	newfile = ioInput(oldvalue,"","direct")
+	if newfile ~="" then
+		oldvalue = newfile
+	end
+	return "-"..oldvalue.."-"
+end
+
+function openURL(oldvalue,id)
+	-- more intesting: Reads a URL
+	newfile = ioInput("https://httpbin.org/html",".egal","html")
+	return "-"..newfile.."-"
+end
+
+function jsonStringService(oldvalue,id)
+	-- contacting a jsonrpc server, suppling the parameters as json string
+	ioInput("http://www.raboof.com/projects/jayrock/demo.ashx",' { "method": "add", "params": {"a":2,"b":3}, "id": 1}',"json")
+	-- reading the whole result as tex string
+	res = ioRead("*all")..""
+	return "-"..res.."-"
+end
+
+function jsontableService(oldvalue,id)
+	-- contacting a jsonrpc server, suppling the parameters as lua table
+	jsonrpcparams={method="add",params={a=3,b=4},id=2}
+	newfile = ioInput("http://www.raboof.com/projects/jayrock/demo.ashx",jsonrpcparams,"json")
+	-- reading the whole result as text string
+	res = ioRead("*all")
+	return "-"..res.."-"
+end
+
+function jsonrpcService(oldvalue,id)
+	-- contacting a jsonrpc server, suppling the parameters as lua table
+	jsonrpcparams={method="add",params={a=5,b=6},id=2}
+	ioInput("http://www.raboof.com/projects/jayrock/demo.ashx",jsonrpcparams,"json")
+	-- reading the whole result as lua table..
+	res = ioRead("*json")
+	 -- here we certainly will need some convinience functions for the json-rpc format
+	
+	if res ~=nil then
+		if res.result ~=nil then
+			return "-"..res.result.."-"
+		else
+			return res.error
+		end
+	else
+		return "no valid answer :-("
+	end
+end
+
+
+function readFirstLine(oldvalue,id)
+	return ioRead("*line")
+end
+
+
+
+
+function hashHoleFile(oldvalue,id)
+	return ioRead("*sha256")
+end
+
+
+
 ---------------------- Main Menu --------------------------------------
 
 -- This function is called at start and at each re- coonect, so all neccesary (re-)initalisation needs to be done here

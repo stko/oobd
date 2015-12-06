@@ -46,6 +46,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     Core core;
     private String userPassPhrase = "";
     String webRootDir = "";
+    Preferences appProbs;
 
     public void registerOobdCore(Core thisCore) {
         core = thisCore;
@@ -126,7 +127,16 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                 return System.getProperty("user.home") + java.io.File.separator + fileName;
 
             default:
-                return fileName;
+                File myFile = new File(fileName);
+                if (myFile.exists()) {
+                    return myFile.getAbsolutePath();
+                } else {
+                    myFile = new File(appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + fileName);
+                    if (myFile.exists()) {
+                        return myFile.getAbsolutePath();
+                    }
+                    return fileName;
+                }
 
         }
 
@@ -165,7 +175,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
 
                 case OOBDConstants.FT_DATABASE:
                 case OOBDConstants.FT_SCRIPT:
-                    Preferences appProbs = core.getSystemIF().loadPreferences(FT_PROPS,
+                    appProbs = core.getSystemIF().loadPreferences(FT_PROPS,
                             OOBDConstants.AppPrefsFileName);
                     // save actual script directory to buffer it for later as webroot directory
                     webRootDir = appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator;
@@ -196,7 +206,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     }
 
     public Object supplyHardwareHandle(Onion typ) {
-        Preferences appProbs = core.getSystemIF().loadPreferences(FT_PROPS,
+        appProbs = core.getSystemIF().loadPreferences(FT_PROPS,
                 OOBDConstants.AppPrefsFileName);
 
         String connectURL = typ.getOnionBase64String("connecturl");
