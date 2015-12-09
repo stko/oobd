@@ -1,9 +1,6 @@
 UDSLIB=../lib_protocol
 LUALIB=$(OOBDROOT)/tools/lib_lua/
 LUASVNFILE=$(OOBDROOT)/tools/lib_lua/luaSVNRevs.inc
-SVNREVLUASCRIPT=$(shell $(OOBDROOT)/tools/lib_lua/echoLuaRev.sh SVNREVLUASCRIPT)
-SVNREVLUALIB=$(shell (cd $(OOBDROOT)/tools/lib_lua/ ; ./echoLuaRev.sh SVNREVLUALIB) )
-
 LUAS=$(shell $(OOBDROOT)/tools/bin/filelist.sh lua)
 
 SPECS=$(shell $(OOBDROOT)/tools/bin/filelist.sh mdx)
@@ -33,7 +30,7 @@ ALLSOURCES=$(LUA_REFS) $(LUAS)
 SPECS+=$(MDX_POOL)
 
 OBJECTS=$(SOURCES:.luasource=.lbc)
-%.lbc: %.luasource 
+%.lbc: %.luasource
 	$(OLP) $< > m4.tmp
 	m4 $(OPTM4) -DDBGUSER=$(DBGUSER) -DDBGLEVEL=$(DBGLEVEL) -P m4.tmp > lua.tmp
 	$(CC) $(CFLAGS) -o $@ lua.tmp
@@ -47,25 +44,28 @@ SPECSOURCES=$(SPECS:.mdx=.luasource)
 LUASOURCES=$(ALLSOURCES:.lua=.luasource) 
 %.luasource: %.lua 
 	cp -p $< $(@F) 
-
+	echo $(shell $(OOBDROOT)/tools/lib_lua/echoLuaRev.sh $< SVNREVLUASCRIPT) > $(*F).luaSVNrev
+	echo $(shell (cd $(OOBDROOT)/tools/lib_lua/ ; ./echoLuaRev.sh ./ SVNREVLUALIB) ) >> $(*F).luaSVNrev
+	cat $(@F) >> $(*F).luaSVNrev
+	mv $(*F).luaSVNrev $(@F)
+	
 KCDSOURCES=$(KCDFILES:.kcd=.luasource) 
 %.luasource: %.kcd 
 	xmlstarlet $(KCDFLAGS) $< > $(@F) 
 	xmlstarlet $(KCDHTMLFLAGS) $<  > $(*F).html
 
-revision:
-	echo "$(SVNREVLUALIB)" > $(LUASVNFILE)
-	echo "$(SVNREVLUASCRIPT)" >> $(LUASVNFILE)
+source: specs $(CUSTOMSOURCE) luas kcds
 
-source: revision specs $(CUSTOMSOURCE) luas kcds
 luas: $(LUASOURCES) 
+
 specs: $(SPECSOURCES) $(MDXTFLAGS) $(CUSTOMSPECSOURCES)
+
 kcds: $(KCDSOURCES) 
 
-	echo target
 scripts: $(OBJECTS)
 
 debug: setdebug scripts
+
 setdebug:
 	$(eval OPTM4=-DDEBUG)
  
