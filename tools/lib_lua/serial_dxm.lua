@@ -1,4 +1,3 @@
-dofile("luaSVNRevs.inc")
 -- include the basic connectivity
 
 --- use the following lines for debugging in lua editor
