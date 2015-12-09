@@ -463,7 +463,7 @@ end
 function selectModuleID(oldvalue,id)
 	DEBUGPRINT("nexulm", 1, "lua_utils.lua - selectModuleID,%02d: %s", "00", "enter function selectModuleID")
 	local index = tonumber(oldvalue)
-	local ModuleID
+--	local ModuleID -- if local ModuleID is set the combo box selected value won't be reused
 	if index == 0 or index == 1 or index == 2 then
 		if hardwareID == 0 or hardwareID == 1 then	-- if ELM327/DXM1 is selected so default is set autoprobing diag protocol on
      		setBus("autoprobing")					-- set automatic protocol detection
