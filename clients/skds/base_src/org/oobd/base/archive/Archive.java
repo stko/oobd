@@ -44,7 +44,7 @@ public interface Archive {
       * @param defaultValue
       * @return 
       */
-     String getProperty(String property, String defaultValue);
+    public String getProperty(String property, String defaultValue);
     
     @Override
      public String toString();

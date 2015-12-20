@@ -54,10 +54,10 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	answer should match    {"to":{"name":"readNumDiD:"},"value":"#NRC: 0x21","type":"VALUE"}
     Requesting UNSIGNED-DID by table with Timeout
 	send webUI command  {"name":"readNumDiD:","optid":"TestData_0_F222_sd_00","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readNumDiD:"},"value":"#No Data received","type":"VALUE"}
+	answer should match    {"to":{"name":"readNumDiD:"},"value":"#No data received","type":"VALUE"}
     Requesting UNSIGNED-DID by table with no Answer
 	send webUI command  {"name":"readNumDiD:","optid":"TestData_0_F223_sd_00","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readNumDiD:"},"value":"#No Data received","type":"VALUE"}
+	answer should match    {"to":{"name":"readNumDiD:"},"value":"#No data received","type":"VALUE"}
     Requesting UNSIGNED-DID by table with answer too short
 	send webUI command  {"name":"readNumDiD:","optid":"TestData_0_F225_sd_00","actValue":"","updType":3}
 	answer should match    {"to":{"name":"readNumDiD:"},"value":"#Answer too short","type":"VALUE"}

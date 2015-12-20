@@ -33,8 +33,11 @@ public class Factory {
                 // only class names without $ are taken
                 if (name.length > 1) {
                     String ext = name[name.length - 1];
-                    if (ext.equalsIgnoreCase("pgp")
-                            || ext.equalsIgnoreCase("lbc")) {
+                    if (
+                            ext.equalsIgnoreCase("pgp")
+                            || ext.equalsIgnoreCase("lbc")
+                            || ext.equalsIgnoreCase("epa")
+                            ) {
                         actFile = getArchive(files[i].getPath());
                     }
                 }
@@ -63,6 +66,11 @@ public class Factory {
                             Level.WARNING,
                             "PGP File found: {0}" + file.getName());
                     return new FileHandlerPGP(Core.getSingleInstance());
+                } else if (name[name.length - 1].equalsIgnoreCase("epa")) {
+                    Logger.getLogger(Factory.class.getName()).log(
+                            Level.WARNING,
+                            "Epa File found: {0}" + file.getName());
+                    return new FileHandlerEpa(Core.getSingleInstance());
                 } else {
                     return new FileHandlerPlain(Core.getSingleInstance());
                 }

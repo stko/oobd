@@ -57,13 +57,13 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	answer should match    {"to":{"name":"readAscDiD:"},"value":"#NRC: 0x51","type":"VALUE"}
     Requesting ASCII-DID by table with Timeout
 	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F052","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No Data received","type":"VALUE"}
+	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No data received","type":"VALUE"}
     Requesting ASCII-DID by table with no Answer
 	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F053","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No Data received","type":"VALUE"}
+	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No data received","type":"VALUE"}
     Requesting ASCII-DID by table with sequence error
 	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F054","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No Data received","type":"VALUE"}
+	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No data received","type":"VALUE"}
 
 
 .. code:: robotframework

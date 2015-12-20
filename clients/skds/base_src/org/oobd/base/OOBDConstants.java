@@ -115,4 +115,7 @@ public interface OOBDConstants {
     public final static int LV_STATUS = 1000;
     // UDP Broadcast defined
     public final static int UDP_PORT = 34807;
+    // identifier for File properties
+    public static String MANIFEST_NAME ="manifest";
+  public static String MANIFEST_SCRIPTNAME ="script";
 }

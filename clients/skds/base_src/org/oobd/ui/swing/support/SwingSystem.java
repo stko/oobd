@@ -180,9 +180,9 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                     // save actual script directory to buffer it for later as webroot directory
                     webRootDir = appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator;
                     String filePath = generateUIFilePath(pathID, resourceName);
-                    Archive achive = Factory.getArchive(filePath);
-                    achive.bind(filePath);
-                    resource = achive.getInputStream("");
+                    Archive archive = Factory.getArchive(filePath);
+                    archive.bind(filePath);
+                    resource = archive.getInputStream(archive.getProperty( OOBDConstants.MANIFEST_SCRIPTNAME, ""));
                     Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
                             + " loaded");
                     break;
