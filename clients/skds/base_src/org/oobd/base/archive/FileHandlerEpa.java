@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.*;
 import org.json.JSONException;
+import org.oobd.base.Base64Coder;
 import org.oobd.base.Core;
 import static org.oobd.base.OOBDConstants.*;
 import org.oobd.base.support.Onion;
@@ -109,6 +110,10 @@ public class FileHandlerEpa implements Archive {
         return myFileName;
     }
 
+    public String getID() {
+        return Base64Coder.encodeString(myFileName);
+    }
+    
     public String getFilePath() {
         return myFilePath;
     }

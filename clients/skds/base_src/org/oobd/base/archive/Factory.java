@@ -33,11 +33,9 @@ public class Factory {
                 // only class names without $ are taken
                 if (name.length > 1) {
                     String ext = name[name.length - 1];
-                    if (
-                            ext.equalsIgnoreCase("pgp")
+                    if (ext.equalsIgnoreCase("pgp")
                             || ext.equalsIgnoreCase("lbc")
-                            || ext.equalsIgnoreCase("epa")
-                            ) {
+                            || ext.equalsIgnoreCase("epa")) {
                         actFile = getArchive(files[i].getPath());
                     }
                 }
@@ -45,6 +43,7 @@ public class Factory {
                     if (actFile.bind(path
                             + System.getProperty("file.separator")
                             + files[i].getName())) {
+                        System.out.println("Archive found:" + actFile.toString() + " ID:" + actFile.getID());
                         res.add(actFile);
                     }
                 }

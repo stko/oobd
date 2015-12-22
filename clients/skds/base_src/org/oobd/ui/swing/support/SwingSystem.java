@@ -47,6 +47,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     private String userPassPhrase = "";
     String webRootDir = "";
     Preferences appProbs;
+    Archive scriptArchive = null;
 
     public void registerOobdCore(Core thisCore) {
         core = thisCore;
@@ -160,6 +161,9 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         try {
             switch (pathID) {
                 case OOBDConstants.FT_WEBPAGE:
+                    // in case the resource name points to a "executable" scriptengine, the engine get started 
+                    // and the resourcename is corrected to the html start page to be used
+                    resourceName=core.startScriptEngineByURL(resourceName); 
                     String newPath = mapDirectory("libs", resourceName);
                     if (!newPath.equals("")) {
                         resourceName = "/../../libs/" + newPath;
@@ -174,15 +178,19 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                     break;
 
                 case OOBDConstants.FT_DATABASE:
+                    if (scriptArchive != null) {
+                        resource = scriptArchive.getInputStream(resourceName);
+                    }
+                    break;
                 case OOBDConstants.FT_SCRIPT:
                     appProbs = core.getSystemIF().loadPreferences(FT_PROPS,
                             OOBDConstants.AppPrefsFileName);
                     // save actual script directory to buffer it for later as webroot directory
                     webRootDir = appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator;
                     String filePath = generateUIFilePath(pathID, resourceName);
-                    Archive archive = Factory.getArchive(filePath);
-                    archive.bind(filePath);
-                    resource = archive.getInputStream(archive.getProperty( OOBDConstants.MANIFEST_SCRIPTNAME, ""));
+                    scriptArchive = Factory.getArchive(filePath);
+                    scriptArchive.bind(filePath);
+                    resource = scriptArchive.getInputStream(scriptArchive.getProperty(OOBDConstants.MANIFEST_SCRIPTNAME, ""));
                     Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
                             + " loaded");
                     break;

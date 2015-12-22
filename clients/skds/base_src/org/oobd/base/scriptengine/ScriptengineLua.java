@@ -458,8 +458,11 @@ public class ScriptengineLua extends OobdScriptengine {
                                             + "'},"
                                             + "'command':'lookup',"
                                             + "'dbfilename':'"
-                                            + Base64Coder.encodeString(scriptDir
-                                                    + File.separator + getString(0))
+                                            + Base64Coder.encodeString(
+//                                                    scriptDir +
+//                                                    File.separator + 
+                                                            getString(0)
+                                            )
                                             + "',"
                                             // + "'dbfilename':'" + getString(0) + "',"
                                             + "'key':'"

@@ -48,6 +48,8 @@ public interface Archive {
     
     @Override
      public String toString();
+ 
+     public String getID();
     
     public String getFilePath();
 }

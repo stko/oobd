@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.oobd.base.Base64Coder;
 
 import org.oobd.base.Core;
 
@@ -22,11 +23,11 @@ public class FileHandlerPlain implements Archive {
 
     String myFilePath;
     String myFileName;
-	Core core;
+    Core core;
 
-	public FileHandlerPlain(Core c){
-		core=c;
-	}
+    public FileHandlerPlain(Core c) {
+        core = c;
+    }
 
     public InputStream getInputStream(String innerPath) {
         if (myFilePath != null) {
@@ -73,8 +74,12 @@ public class FileHandlerPlain implements Archive {
     public String toString() {
         return myFileName;
     }
-    
-    public String getFilePath(){
+
+    public String getID() {
+        return Base64Coder.encodeString(myFileName);
+    }
+
+    public String getFilePath() {
         return myFilePath;
     }
 }

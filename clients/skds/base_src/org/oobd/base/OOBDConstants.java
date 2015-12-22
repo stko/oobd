@@ -118,4 +118,5 @@ public interface OOBDConstants {
     // identifier for File properties
     public static String MANIFEST_NAME ="manifest";
   public static String MANIFEST_SCRIPTNAME ="script";
+    public static String HTML_DEFAULTPAGEURL="/theme/default/startpage.html";
 }

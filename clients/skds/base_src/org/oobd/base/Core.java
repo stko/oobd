@@ -48,6 +48,8 @@ import java.util.Collections;
 import java.util.prefs.Preferences;
 
 import org.json.JSONException;
+import org.oobd.base.archive.Archive;
+import org.oobd.base.archive.Factory;
 import org.oobd.base.support.Onion;
 import org.oobd.base.bus.OobdBus;
 import org.oobd.base.db.OobdDB;
@@ -142,6 +144,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     CoreTick ticker;
     Preferences props;
     boolean runCore = true;
+    String actualRunningScriptengine = "";
 
     /**
      * \brief The Application creates one single instance of the core class
@@ -531,7 +534,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * @param id
      *
      */
-    public void closeScriptEngine(String id) {
+    public void stopScriptEngine(String id) {
         OobdScriptengine thisEngine = activeEngines.remove(id);
         if (thisEngine != null) {
             thisEngine.close();
@@ -628,6 +631,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         Logger.getLogger(Core.class.getName()).log(Level.CONFIG,
                 "Start scriptengine: " + id);
         OobdScriptengine o = activeEngines.get(id);
+        actualRunningScriptengine = id;
         o.setStartupParameter(onion);
         Thread t1 = new Thread(o);
         t1.start();
@@ -799,7 +803,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     return true;
                 }
             }
-         } catch (org.json.JSONException e) {
+        } catch (org.json.JSONException e) {
             Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
                     "JSON exception..");
             return false;
@@ -1006,6 +1010,41 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             }
             // transferMsg(new Message(this, "ScriptengineTerminal.1", null));
         }
+    }
+
+    public String startScriptEngineByURL(String resourceName) {
+        String connectURL = "serial"; //this looks obviously not like an URL yet, but maybe in a  later extension
+
+        Onion cmdOnion;
+        Preferences appProbs;
+        appProbs = getSystemIF().loadPreferences(FT_PROPS,
+                OOBDConstants.AppPrefsFileName);
+
+        ArrayList<Archive> files = Factory.getDirContent(appProbs.get(OOBDConstants.PropName_ScriptDir, null));
+        for (Archive file : files) {
+            if (("/"+file.getID()).equalsIgnoreCase(resourceName)) {
+
+                try {
+                    cmdOnion = new Onion("{" + "'scriptpath':'" + file.getFilePath() + "'"
+                            + ",'connecturl':'" + Base64Coder.encodeString(connectURL) + "'"
+                            + "}");
+                    stopScriptEngine(actualRunningScriptengine);
+                    String seID = createScriptEngine("ScriptengineLua", cmdOnion);
+
+                    startScriptEngine(seID, cmdOnion);
+                    String startPage=file.getProperty("startpage", "");
+                    if (startPage.equals("")){ // no startpage given?
+                        return OOBDConstants.HTML_DEFAULTPAGEURL;
+                    }else{
+                    return file.toString()+"/"+startPage;
+                    }
+                } catch (JSONException ex) {
+                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
+                    return resourceName;
+                }
+            }
+        }
+        return resourceName;
     }
 }
 

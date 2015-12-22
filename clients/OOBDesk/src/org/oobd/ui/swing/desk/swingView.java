@@ -1084,7 +1084,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         if (back != null) {
             back.getVisualizer().updateRequest(OOBDConstants.UR_USER);
         } else {
-            oobdCore.closeScriptEngine(seID);
+            oobdCore.stopScriptEngine(seID);
             CardLayout cl = (CardLayout) (mainPanel.getLayout());
             cl.show(mainPanel, MAINPANEL);
         }
