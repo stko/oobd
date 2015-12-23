@@ -115,8 +115,14 @@ public interface OOBDConstants {
     public final static int LV_STATUS = 1000;
     // UDP Broadcast defined
     public final static int UDP_PORT = 34807;
-    // identifier for File properties
+    // identifier for manifest properties
     public static String MANIFEST_NAME ="manifest";
   public static String MANIFEST_SCRIPTNAME ="script";
-    public static String HTML_DEFAULTPAGEURL="/theme/default/startpage.html";
+ //  some HTML constants
+  public static String HTML_DEFAULTPAGEURL="/theme/default/startpage.html";
+  // Identifiers for the Data Pool. Please always use the symbolic names, as their values can change all the time
+  public final static int DP_WEBUI_ACTUAL_THEME = 0;
+  public final static int DP_WEBUI_WS_READY_SIGNAL = 1;
+ public final static int DP_RUNNING_SCRIPTENGINE = 2;
+  public final static int DP_ARRAY_SIZE = 3;
 }

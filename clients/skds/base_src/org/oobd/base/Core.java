@@ -45,6 +45,7 @@ import java.util.Iterator;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 import org.json.JSONException;
@@ -145,6 +146,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     Preferences props;
     boolean runCore = true;
     String actualRunningScriptengine = "";
+    final ArrayList dataPoolList = new ArrayList(DP_ARRAY_SIZE);
 
     /**
      * \brief The Application creates one single instance of the core class
@@ -182,6 +184,11 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         // Userinterface
         props = systemInterface.loadPreferences(FT_PROPS,
                 OOBDConstants.CorePrefsFileName);
+        // absolutely scary, but the datapool array list need to be filled once to not
+        // crash later when trying to (re)assign a value...
+        for (int i = 0; i < DP_ARRAY_SIZE; i++) {
+            dataPoolList.add(null);
+        }
 
         // ----------- load Busses -------------------------------
         try {
@@ -813,12 +820,61 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     }
 
     /**
+     * @brief add an object to the global data pool, used for most of the
+     * variables used in OOBD
+     *
+     * @param id a numeric identifier, defined in OOBDConstants in DP_ (Data
+     * Pool) section
+     * @param data object reference to be stored
+     */
+    public void writeDataPool(int id, Object data) {
+        System.out.println("Actual Datapool size:" + dataPoolList.size());
+        synchronized (dataPoolList) {
+            dataPoolList.set(id, data);
+        }
+    }
+
+    /**
+     * @brief gets an object to the global data pool, used for most of the
+     * variables used in OOBD
+     *
+     * @param id a numeric identifier, defined in OOBDConstants in DP_ (Data
+     * Pool) section
+     * @param defaultObject object returned, if object is null
+     * @return Object
+     */
+    public Object readDataPool(int id, Object defaultObject) {
+        synchronized (dataPoolList) {
+            try {
+                return dataPoolList.get(id);
+            } catch (IndexOutOfBoundsException ex) {
+                return defaultObject;
+            }
+        }
+    }
+
+    /**
+     * @brief removes an object from the global data pool, used for most of the
+     * variables used in OOBD
+     *
+     * @param id a numeric identifier, defined in OOBDConstants in DP_ (Data
+     * Pool) section
+     * @return removed object
+     */
+    public Object removeDataPool(int id, Object defaultObject) {
+        synchronized (dataPoolList) {
+            return dataPoolList.remove(id);
+        }
+    }
+
+    /**
      * generic hashtable to store several relational data assignments during
      * runtine
      *
      * @param id string identifier
      * @param subclass string sub identifier
      * @param data object reference to store
+     * @todo depreciated
      */
     public void setAssign(String id, String subclass, Object data) {
         assignments.put(id + ":" + subclass, data);
@@ -829,6 +885,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      *
      * @param id string identifier
      * @param subclass string sub identifier
+     * @todo depreciated
      */
     public Object getAssign(String id, String subclass) {
         return assignments.get(id + ":" + subclass);
@@ -839,6 +896,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      *
      * @param id string identifier
      * @param subclass string sub identifier
+     * @todo depreciated
      */
     public void removeAssign(String id, String subclass) {
         assignments.remove(id + ":" + subclass);
@@ -1022,7 +1080,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
         ArrayList<Archive> files = Factory.getDirContent(appProbs.get(OOBDConstants.PropName_ScriptDir, null));
         for (Archive file : files) {
-            if (("/"+file.getID()).equalsIgnoreCase(resourceName)) {
+            if (("/" + file.getID()).equalsIgnoreCase(resourceName)) {
 
                 try {
                     cmdOnion = new Onion("{" + "'scriptpath':'" + file.getFilePath() + "'"
@@ -1032,11 +1090,11 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     String seID = createScriptEngine("ScriptengineLua", cmdOnion);
 
                     startScriptEngine(seID, cmdOnion);
-                    String startPage=file.getProperty("startpage", "");
-                    if (startPage.equals("")){ // no startpage given?
+                    String startPage = file.getProperty("startpage", "");
+                    if (startPage.equals("")) { // no startpage given?
                         return OOBDConstants.HTML_DEFAULTPAGEURL;
-                    }else{
-                    return file.toString()+"/"+startPage;
+                    } else {
+                        return file.toString() + "/" + startPage;
                     }
                 } catch (JSONException ex) {
                     Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);

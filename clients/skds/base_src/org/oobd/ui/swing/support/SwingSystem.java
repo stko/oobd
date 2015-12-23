@@ -143,14 +143,23 @@ public class SwingSystem implements IFsystem, OOBDConstants {
 
     }
 
-    String mapDirectory(String mapDir, String path) {
-        System.err.println("MapDirecory mapdir " + mapDir + " path " + path + " Startswith: " + "/" + mapDir.toLowerCase());
-        if (path.toLowerCase().startsWith("/" + mapDir.toLowerCase())) {
-            path = path.substring(mapDir.length() + 1);
-            return path;
-        } else {
-            return "";
+    /*
+     replaces leading directory alias against their physical location
+     */
+    String mapDirectory(String[] mapDir, String path) {
+        int i = 0;
+        while (i < mapDir.length) {
+            if (path.toLowerCase().startsWith("/" + mapDir[i].toLowerCase())) {
+                path = path.substring(mapDir[i].length() + 1);
+                core.writeDataPool(DP_WEBUI_ACTUAL_THEME, "meier");
+                if (mapDir[i].toLowerCase().equalsIgnoreCase("theme") && path.toLowerCase().startsWith("/default")) { //map the theme folder to  the actual theme
+                    path = core.readDataPool(DP_WEBUI_ACTUAL_THEME, "default") + path.substring("/default".length());
+                }
+                return mapDir[i + 1] + path;
+            }
+            i += 2;
         }
+        return path;
     }
 
     public InputStream generateResourceStream(int pathID, String resourceName)
@@ -163,11 +172,9 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                 case OOBDConstants.FT_WEBPAGE:
                     // in case the resource name points to a "executable" scriptengine, the engine get started 
                     // and the resourcename is corrected to the html start page to be used
-                    resourceName=core.startScriptEngineByURL(resourceName); 
-                    String newPath = mapDirectory("libs", resourceName);
-                    if (!newPath.equals("")) {
-                        resourceName = "/../../libs/" + newPath;
-                    }
+                    resourceName = core.startScriptEngineByURL(resourceName);
+                    resourceName = mapDirectory(new String[]{"libs", "/../../libs/","theme", "/../../theme/"}, resourceName);
+
                 // please notice: here's no case "break"!
                 case OOBDConstants.FT_PROPS:
                 case OOBDConstants.FT_RAW:
@@ -208,7 +215,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             }
 
         } catch (Exception e) {
-            Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "generateResourceStream: File {0} not loaded", resourceName);
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "generateResourceStream: File "+resourceName+ " not loaded because of ",e);
         }
         return resource;
     }

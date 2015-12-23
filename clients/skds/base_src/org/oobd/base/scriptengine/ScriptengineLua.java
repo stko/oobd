@@ -53,7 +53,7 @@ public class ScriptengineLua extends OobdScriptengine {
         Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG,
                 "Construct ScriptengineLua instance " + id);
         myself = this;
-
+        core.writeDataPool(DP_RUNNING_SCRIPTENGINE, this);
     }
 
     @Override
@@ -459,9 +459,9 @@ public class ScriptengineLua extends OobdScriptengine {
                                             + "'command':'lookup',"
                                             + "'dbfilename':'"
                                             + Base64Coder.encodeString(
-//                                                    scriptDir +
-//                                                    File.separator + 
-                                                            getString(0)
+                                                    //                                                    scriptDir +
+                                                    //                                                    File.separator + 
+                                                    getString(0)
                                             )
                                             + "',"
                                             // + "'dbfilename':'" + getString(0) + "',"
@@ -656,6 +656,14 @@ public class ScriptengineLua extends OobdScriptengine {
     }
 
     public boolean doScript(String fileName) throws IOException {
+        System.out.println("Scriptengine: Waiting for WS to connect");
+        while (keepRunning && !(Boolean) Core.getSingleInstance().readDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, false)) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ex) {
+            }
+        }
+         System.out.println("Scriptengine: WS to connected");
         InputStream resource = UISystem.generateResourceStream(FT_SCRIPT,
                 fileName);
         if (resource == null) {

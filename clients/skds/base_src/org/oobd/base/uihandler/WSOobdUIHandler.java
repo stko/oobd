@@ -5,12 +5,11 @@
 package org.oobd.base.uihandler;
 
 import org.oobd.base.*;
-import org.oobd.base.OOBDConstants;
+import org.oobd.base.OOBDConstants.*;
 import org.oobd.base.support.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONException;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +41,7 @@ import java.io.IOException;
 import fi.iki.elonen.NanoHTTPD;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import static org.oobd.base.OOBDConstants.DP_RUNNING_SCRIPTENGINE;
 
 /**
  * generic abstract for the implementation of scriptengines
@@ -328,7 +328,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
                     }
                     if (myFileName != null) {
                         try {
-                            myFileName=getCore().getSystemIF().generateUIFilePath(FT_SCRIPT, myFileName);
+                            myFileName = getCore().getSystemIF().generateUIFilePath(FT_SCRIPT, myFileName);
                             myInputStream = new FileReader(getCore().getSystemIF().generateUIFilePath(FT_SCRIPT, myFileName));
                         } catch (FileNotFoundException ex) {
                             Logger.getLogger(LocalOobdUIHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -428,11 +428,17 @@ class ChatServer extends WebSocketServer {
         System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
         conn.send("{\"type\":\"WSCONNECT\"}");
         conn.send("{\"type\":\"WRITESTRING\" ,\"data\":\"" + Base64Coder.encodeString("Connected to OOBD") + "\"}");
+        Core.getSingleInstance().writeDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, true);
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         System.out.println(conn + " has left the room!");
+        Core.getSingleInstance().writeDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, false);
+        if (Core.getSingleInstance().readDataPool(DP_RUNNING_SCRIPTENGINE, null) != null) {
+            ((OobdScriptengine) Core.getSingleInstance().readDataPool(DP_RUNNING_SCRIPTENGINE, null)).close();
+        }
+
     }
 
     @Override
