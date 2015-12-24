@@ -12,7 +12,7 @@ public interface OOBDConstants {
 
     public static final String CM_VISUALIZE = "VISUALIZE";
     public static final String CM_PAGE = "PAGE";
-    public static final String CM_CHANNEL="CHANNEL";
+    public static final String CM_CHANNEL = "CHANNEL";
     public static final String CM_PAGEDONE = "PAGEDONE";
     public static final String CM_VALUE = "VALUE";
     public static final String CM_UPDATE = "UPDATE";
@@ -46,7 +46,7 @@ public interface OOBDConstants {
     public static final String FN_OPTMAX = "opts/max";
     public static final String FN_OPTSTEP = "opts/step";
     public static final String FN_OPTUNIT = "opts/unit";
-     // Types of the different visualizer update requests
+    // Types of the different visualizer update requests
     public static final Integer UR_USER = 0;
     public static final Integer UR_UPDATE = 1;
     public static final Integer UR_TIMER = 2;
@@ -55,27 +55,27 @@ public interface OOBDConstants {
     // file names for property files:
     public final static String CorePrefsFileName = "oobdcore.props";
     public final static String AppPrefsFileName = "app.props";
-     //key names for properties
-     public final static String PropName_SerialPort ="SerialPort";
-     public final static String PropName_ConnectServerURL ="ConnectServerURL";
-     public final static String PropName_KadaverServerDefault ="ws://oobd.luxen.de/websock/";
-     public final static String PropName_ProxyHost ="ServerProxyHost";
-     public final static String PropName_ProxyPort ="ServerProxyPort";
-     public final static String PropName_ScriptDir ="ScriptDir";
-     public final static String PropName_ScriptName ="Script";
-     public final static String PropName_OutputFile ="OutputDir";
-     public final static String PropName_PGPEnabled ="PGPEnabled";
-     public final static String PropName_UIHander ="UIHandler";
-     public final static String PropName_ConnectType ="ConnectType";
-     public final static String PropName_ConnectTypeBT ="Bluetooth";
-     public final static String PropName_ConnectTypeRemoteConnect ="Kadaver";
-     public final static String PropName_ConnectTypeTelnet ="Telnet";
-     public final static String PropName_ConnectTypeRemoteDiscovery ="Discovery";
-         public final static String PropName_ConnectDevice ="ConnectDevice";
-     //PGP key file  names
+    //key names for properties
+    public final static String PropName_SerialPort = "SerialPort";
+    public final static String PropName_ConnectServerURL = "ConnectServerURL";
+    public final static String PropName_KadaverServerDefault = "ws://oobd.luxen.de/websock/";
+    public final static String PropName_ProxyHost = "ServerProxyHost";
+    public final static String PropName_ProxyPort = "ServerProxyPort";
+    public final static String PropName_ScriptDir = "ScriptDir";
+    public final static String PropName_ScriptName = "Script";
+    public final static String PropName_OutputFile = "OutputDir";
+    public final static String PropName_PGPEnabled = "PGPEnabled";
+    public final static String PropName_UIHander = "UIHandler";
+    public final static String PropName_ConnectType = "ConnectType";
+    public final static String PropName_ConnectTypeBT = "Bluetooth";
+    public final static String PropName_ConnectTypeRemoteConnect = "Kadaver";
+    public final static String PropName_ConnectTypeTelnet = "Telnet";
+    public final static String PropName_ConnectTypeRemoteDiscovery = "Discovery";
+    public final static String PropName_ConnectDevice = "ConnectDevice";
+    //PGP key file  names
     public final static String PGP_USER_KEYFILE_NAME = "userkey.sec";
     public final static String PGP_GROUP_KEYFILE_NAME = "groupkey.sec";
-      //UI Handler Identifier
+    //UI Handler Identifier
     public final static String UIHANDLER_LOCAL_NAME = "LocalUIHandler";
     public final static String UIHANDLER_WS_NAME = "WSUIHandler";
     // default names for the Output Buffer commands
@@ -88,12 +88,12 @@ public interface OOBDConstants {
     public final static String OB_CMD_APPEND = "append";
     public final static String OB_CMD_APPENDAS = "appendas";
     //Mailbox names
-   public final static String CoreMailboxName = "core";
-  public final static String UIHandlerMailboxName = "UIHandler";
-   public final static String BusMailboxName = "BusCom";
+    public final static String CoreMailboxName = "core";
+    public final static String UIHandlerMailboxName = "UIHandler";
+    public final static String BusMailboxName = "BusCom";
     public final static String DBName = "AVLLookup";
     // definitions of the Visual Elements Handling flags (=bitpositions)
-     public final static int VE_MENU = 0;
+    public final static int VE_MENU = 0;
     public final static int VE_UPDATE = 1;
     public final static int VE_TIMER = 2;
     public final static int VE_LOG = 3;
@@ -116,13 +116,14 @@ public interface OOBDConstants {
     // UDP Broadcast defined
     public final static int UDP_PORT = 34807;
     // identifier for manifest properties
-    public static String MANIFEST_NAME ="manifest";
-  public static String MANIFEST_SCRIPTNAME ="script";
- //  some HTML constants
-  public static String HTML_DEFAULTPAGEURL="/theme/default/startpage.html";
-  // Identifiers for the Data Pool. Please always use the symbolic names, as their values can change all the time
-  public final static int DP_WEBUI_ACTUAL_THEME = 0;
-  public final static int DP_WEBUI_WS_READY_SIGNAL = 1;
- public final static int DP_RUNNING_SCRIPTENGINE = 2;
-  public final static int DP_ARRAY_SIZE = 3;
+    public static String MANIFEST_NAME = "manifest";
+    public static String MANIFEST_SCRIPTNAME = "script";
+    //  some HTML constants
+    public static String HTML_DEFAULTPAGEURL = "/theme/default/startpage.html";
+    // Identifiers for the Data Pool. Please always use the symbolic names, as their values can change all the time
+    public final static int DP_WEBUI_ACTUAL_THEME = 0;
+    public final static int DP_WEBUI_WS_READY_SIGNAL = 1;
+    public final static int DP_RUNNING_SCRIPTENGINE = 2;
+    public final static int DP_WWW_LIB_DIR = 3;
+    public final static int DP_ARRAY_SIZE = 4;
 }

@@ -114,16 +114,10 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         switch (pathID) {
 
             case FT_RAW:
+            case FT_WEBPAGE:
             case FT_DATABASE:
                 return fileName;
-            case FT_WEBPAGE:
-                if (!webRootDir.equals("")) {
-                    System.err.println("web path generated:" + webRootDir + fileName);
-                    return webRootDir + fileName;
-                } else {
-                    return "";
-                }
-            case FT_KEY:
+             case FT_KEY:
                 System.err.println("key path generated:" + System.getProperty("user.home") + java.io.File.separator + fileName);
                 return System.getProperty("user.home") + java.io.File.separator + fileName;
 
@@ -151,7 +145,6 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         while (i < mapDir.length) {
             if (path.toLowerCase().startsWith("/" + mapDir[i].toLowerCase())) {
                 path = path.substring(mapDir[i].length() + 1);
-                core.writeDataPool(DP_WEBUI_ACTUAL_THEME, "meier");
                 if (mapDir[i].toLowerCase().equalsIgnoreCase("theme") && path.toLowerCase().startsWith("/default")) { //map the theme folder to  the actual theme
                     path = core.readDataPool(DP_WEBUI_ACTUAL_THEME, "default") + path.substring("/default".length());
                 }
@@ -170,10 +163,13 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         try {
             switch (pathID) {
                 case OOBDConstants.FT_WEBPAGE:
+                    appProbs = core.getSystemIF().loadPreferences(FT_PROPS, OOBDConstants.AppPrefsFileName);
+                    webRootDir = appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator;
+                    core.writeDataPool(DP_WWW_LIB_DIR, appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator);
                     // in case the resource name points to a "executable" scriptengine, the engine get started 
                     // and the resourcename is corrected to the html start page to be used
                     resourceName = core.startScriptEngineByURL(resourceName);
-                    resourceName = mapDirectory(new String[]{"libs", "/../../libs/","theme", "/../../theme/"}, resourceName);
+                    resourceName = mapDirectory(new String[]{"libs", webRootDir + "libs/", "theme", webRootDir + "theme/"}, resourceName);
 
                 // please notice: here's no case "break"!
                 case OOBDConstants.FT_PROPS:
@@ -193,7 +189,6 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                     appProbs = core.getSystemIF().loadPreferences(FT_PROPS,
                             OOBDConstants.AppPrefsFileName);
                     // save actual script directory to buffer it for later as webroot directory
-                    webRootDir = appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator;
                     String filePath = generateUIFilePath(pathID, resourceName);
                     scriptArchive = Factory.getArchive(filePath);
                     scriptArchive.bind(filePath);
@@ -215,7 +210,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             }
 
         } catch (Exception e) {
-            Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "generateResourceStream: File "+resourceName+ " not loaded because of ",e);
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "generateResourceStream: File " + resourceName + " not loaded because of ", e);
         }
         return resource;
     }

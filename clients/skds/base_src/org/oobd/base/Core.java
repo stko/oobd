@@ -846,7 +846,11 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     public Object readDataPool(int id, Object defaultObject) {
         synchronized (dataPoolList) {
             try {
-                return dataPoolList.get(id);
+                Object data= dataPoolList.get(id);
+                if(data==null){
+                    return defaultObject;
+                }
+                return data;
             } catch (IndexOutOfBoundsException ex) {
                 return defaultObject;
             }
@@ -1094,7 +1098,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     if (startPage.equals("")) { // no startpage given?
                         return OOBDConstants.HTML_DEFAULTPAGEURL;
                     } else {
-                        return file.toString() + "/" + startPage;
+                        return file.getFileName()+ "/" + startPage;
                     }
                 } catch (JSONException ex) {
                     Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);

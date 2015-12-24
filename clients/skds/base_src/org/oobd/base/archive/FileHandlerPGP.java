@@ -28,6 +28,7 @@ import org.spongycastle.openpgp.PGPException;
  */
 public class FileHandlerPGP implements Archive {
 
+    String myFileDirectory;
     String myFilePath;
     String myFileName;
     Core core;
@@ -40,7 +41,7 @@ public class FileHandlerPGP implements Archive {
         if (myFilePath != null) {
             FileInputStream mfp = null;
             try {
-                mfp = new FileInputStream(myFilePath);
+                mfp = new FileInputStream(myFileDirectory + java.io.File.separator + innerPath);
             } catch (FileNotFoundException e) {
                 Core.getSingleInstance().userAlert(
                         "Error: Can't read PGP crypted file", "Diagnose");
@@ -87,7 +88,8 @@ public class FileHandlerPGP implements Archive {
             file = new File(filePath);
         }
         if (file.exists()) {
-            myFilePath = filePath;
+            myFileDirectory = file.getParent();
+            myFilePath = file.getAbsolutePath();
             myFileName = file.getName();
             return true;
         } else {
@@ -100,6 +102,9 @@ public class FileHandlerPGP implements Archive {
     }
 
     public String getProperty(String property, String defaultValue) {
+        if(OOBDConstants.MANIFEST_SCRIPTNAME.equalsIgnoreCase(property)){
+            return myFileName;
+        }
         return defaultValue;
     }
 
@@ -114,5 +119,9 @@ public class FileHandlerPGP implements Archive {
 
     public String getFilePath() {
         return myFilePath;
+    }
+
+    public String getFileName() {
+        return myFileName;
     }
 }

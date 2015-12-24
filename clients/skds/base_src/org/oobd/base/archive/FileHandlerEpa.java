@@ -24,6 +24,7 @@ import org.oobd.base.support.Onion;
  */
 public class FileHandlerEpa implements Archive {
 
+    String myFileDirectory;
     String myFilePath;
     String myFileName;
     Core core;
@@ -67,16 +68,17 @@ public class FileHandlerEpa implements Archive {
     public boolean bind(String filePath) {
         File file = new File(filePath);
         if (file.exists()) {
-            myFilePath = filePath;
+            myFileDirectory = file.getParent();
+            myFilePath = file.getAbsolutePath();
             myFileName = file.getName();
             try {
                 if (!file.isDirectory()) {
                     outerZipFile = new ZipFile(file.getAbsolutePath());
                     isDirectory = false;
-                 } else {
+                } else {
                     outerZipFile = null;
                     isDirectory = true;
-                 }
+                }
                 String manifestString = new String(org.apache.commons.io.IOUtils.toByteArray(getInputStream(MANIFEST_NAME)));
                 manifest = new Onion(manifestString);
 
@@ -113,8 +115,12 @@ public class FileHandlerEpa implements Archive {
     public String getID() {
         return Base64Coder.encodeString(myFileName);
     }
-    
+
     public String getFilePath() {
         return myFilePath;
+    }
+
+    public String getFileName() {
+        return myFileName;
     }
 }

@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import org.oobd.base.Base64Coder;
 
 import org.oobd.base.Core;
+import org.oobd.base.OOBDConstants;
 
 /**
  *
@@ -21,6 +22,7 @@ import org.oobd.base.Core;
  */
 public class FileHandlerPlain implements Archive {
 
+    String myFileDirectory;
     String myFilePath;
     String myFileName;
     Core core;
@@ -32,7 +34,7 @@ public class FileHandlerPlain implements Archive {
     public InputStream getInputStream(String innerPath) {
         if (myFilePath != null) {
             try {
-                return new FileInputStream(myFilePath);
+                return new FileInputStream(myFileDirectory + java.io.File.separator + innerPath);
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(FileHandlerPlain.class.getName()).log(Level.SEVERE, null, ex);
                 return null;
@@ -54,7 +56,8 @@ public class FileHandlerPlain implements Archive {
     public boolean bind(String filePath) {
         File file = new File(filePath);
         if (file.exists()) {
-            myFilePath = filePath;
+            myFileDirectory = file.getParent();
+            myFilePath = file.getAbsolutePath();
             myFileName = file.getName();
             return true;
         } else {
@@ -67,6 +70,9 @@ public class FileHandlerPlain implements Archive {
     }
 
     public String getProperty(String property, String defaultValue) {
+        if(OOBDConstants.MANIFEST_SCRIPTNAME.equalsIgnoreCase(property)){
+            return myFileName;
+        }
         return defaultValue;
     }
 
@@ -81,5 +87,9 @@ public class FileHandlerPlain implements Archive {
 
     public String getFilePath() {
         return myFilePath;
+    }
+
+    public String getFileName() {
+        return myFileName;
     }
 }

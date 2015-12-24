@@ -46,6 +46,20 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 .. code:: robotframework
 
     *** Test Cases ***
+    Starting the script testsuite.lbc via HTTP
+	Create Http Context  localhost:8080
+	Get  /dGVzdHN1aXRlLmxiYw==
+    Test for initial connect message
+	answer should match    {"type":"WSCONNECT"}
+	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
+ 	answer should match    {"type":"PAGE" , "name":"OOBD-ME Main"}
+	answer should match    {"type":"VISUALIZE" ,"name":"createCMD01Menu:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"greet:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"clearOutput:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"saveOutputAs:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"saveOutput:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"saveBuffer1:"}
+	answer should match    {"type":"PAGEDONE" ,"name":"Canvastest_1"}
     Requesting UNSIGNED-DID by table
 	send webUI command  {"name":"readNumDiD:","optid":"TestData_0_F220_sd_00","actValue":"","updType":3}
 	answer should match    {"to":{"name":"readNumDiD:"},"value":"#80.8 Count","type":"VALUE"}
@@ -71,6 +85,9 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
     Library           OperatingSystem
     Library           ../../lib/webUIClient.py
     Variables         ../../local_settings.py
+    Library           HttpLibrary.HTTP
+
+for HTTP testing we choose the testing library from https://github.com/peritus/robotframework-httplibrary/
 
 
 

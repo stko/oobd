@@ -594,11 +594,9 @@ class OOBDHttpServer extends NanoHTTPD {
         System.err.println("url path:" + session.getUri());
         String msg = "<html><body><h1>Hello server</h1>\n";
         Map<String, String> parms = session.getParms();
-        if (parms.get("username") == null) {
-            msg += "<form action='?' method='get'>\n  <p>Your name: <input type='text' name='username'></p>\n" + "</form>\n";
-        } else {
-            msg += "<p>Hello, " + parms.get("username") + "!</p>";
-        }
+        if (parms.get("theme") != null) {
+            Core.getSingleInstance().writeDataPool(OOBDConstants.DP_WEBUI_ACTUAL_THEME, parms.get("theme"));
+         }
         //return newFixedLengthResponse( msg + "</body></html>\n" );
         InputStream myFileStream = Core.getSingleInstance().getSystemIF().generateResourceStream(OOBDConstants.FT_WEBPAGE, session.getUri());
         if (myFileStream != null) {

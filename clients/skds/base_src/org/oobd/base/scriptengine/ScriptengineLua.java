@@ -663,18 +663,21 @@ public class ScriptengineLua extends OobdScriptengine {
             } catch (InterruptedException ex) {
             }
         }
-         System.out.println("Scriptengine: WS to connected");
-        InputStream resource = UISystem.generateResourceStream(FT_SCRIPT,
-                fileName);
-        if (resource == null) {
-            return false;
+        if (keepRunning) {
+            System.out.println("Scriptengine: WS to connected");
+            InputStream resource = UISystem.generateResourceStream(FT_SCRIPT,
+                    fileName);
+            if (resource == null) {
+                return false;
+            }
+            LuaClosure callback = LuaPrototype.loadByteCode(resource,
+                    state.getEnvironment());
+            state.call(callback, null, null, null);
+            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG,
+                    "Start Lua Script" + fileName);
+            return true;
         }
-        LuaClosure callback = LuaPrototype.loadByteCode(resource,
-                state.getEnvironment());
-        state.call(callback, null, null, null);
-        Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG,
-                "Start Lua Script" + fileName);
-        return true;
+        return false;
     }
 
     public String callFunction(String functionName, Object[] params) {

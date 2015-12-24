@@ -52,4 +52,6 @@ public interface Archive {
      public String getID();
     
     public String getFilePath();
+
+    public String getFileName();
 }
