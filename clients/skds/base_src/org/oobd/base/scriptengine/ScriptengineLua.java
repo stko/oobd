@@ -578,50 +578,55 @@ public class ScriptengineLua extends OobdScriptengine {
                     "couldn't run script engine", ex);
         }
         while (keepRunning == true) {
-            Message msg = getMsg(true);
-            Onion on = msg.getContent();
-            String vis = on.getOnionString("vis");
-            Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO,
-                    "Msg received:" + msg.getContent().toString());
-            try {
-                if (CM_UPDATE.equals(on.get("type"))) {
-                    core.transferMsg(new Message(
-                            this,
-                            UIHandlerMailboxName,
-                            new Onion(
-                                    ""
-                                    + "{'type':'"
-                                    + CM_VALUE
-                                    + "',"
-                                    + "'owner':"
-                                    + "{'name':'"
-                                    + this.id
-                                    + "'},"
-                                    + "'to':"
-                                    + "{'name':'"
-                                    + vis
-                                    + "'},"
-                                    // + "'value':'" +
-                                    // Integer.toString(i)
-                                    // adds a preformed JSON string, containing a value string plus an optional "dataset" sub- table
-                                    + callFunction(
-                                            vis,
-                                            new Object[]{
-                                                Base64Coder.decodeString(on.getOnionString("actValue")),
-                                                on.getOnionString("optid"),
-                                                (double) on.optInt("updType")})
-                                    + "}")));
+            Message msg = msgPort.getMsg(10);
+            if (msg != null) {
+                Onion on = msg.getContent();
+                String vis = on.getOnionString("vis");
+                Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO,
+                        "Msg received:" + msg.getContent().toString());
+                try {
+                    if (CM_UPDATE.equals(on.get("type"))) {
+                        core.transferMsg(new Message(
+                                this,
+                                UIHandlerMailboxName,
+                                new Onion(
+                                        ""
+                                        + "{'type':'"
+                                        + CM_VALUE
+                                        + "',"
+                                        + "'owner':"
+                                        + "{'name':'"
+                                        + this.id
+                                        + "'},"
+                                        + "'to':"
+                                        + "{'name':'"
+                                        + vis
+                                        + "'},"
+                                        // + "'value':'" +
+                                        // Integer.toString(i)
+                                        // adds a preformed JSON string, containing a value string plus an optional "dataset" sub- table
+                                        + callFunction(
+                                                vis,
+                                                new Object[]{
+                                                    Base64Coder.decodeString(on.getOnionString("actValue")),
+                                                    on.getOnionString("optid"),
+                                                    (double) on.optInt("updType")})
+                                        + "}")));
+                    }
+                } catch (JSONException ex) {
+                    Logger.getLogger(ScriptengineTerminal.class.getName()).log(
+                            Level.SEVERE, null, ex);
                 }
-            } catch (JSONException ex) {
-                Logger.getLogger(ScriptengineTerminal.class.getName()).log(
-                        Level.SEVERE, null, ex);
             }
         }
         // end of objects lifetime
         System.out.println("End of Scriptengine");
+        core.writeDataPool(DP_RUNNING_SCRIPTENGINE, null);
+
     }
 
     public void close() {
+        System.out.println("Send Scriptengine close request");
         keepRunning = false;
         try {
             core.transferMsg(
@@ -676,6 +681,8 @@ public class ScriptengineLua extends OobdScriptengine {
             Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG,
                     "Start Lua Script" + fileName);
             return true;
+        } else {
+            System.out.println("Scriptengine: Aborting doScript");
         }
         return false;
     }

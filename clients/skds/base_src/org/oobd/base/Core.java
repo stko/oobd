@@ -128,9 +128,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     // scriptengine classes
     HashMap<String, OobdDB> databases; // /<stores all available
     // database classes
-    HashMap<String, OobdScriptengine> activeEngines; // /<stores all active
-    // (instanced)
-    // scriptengine objects
     HashMap<String, OobdUIHandler> activeUIHandlers; // /<stores all active
     // (instanced)
     // UIHandlers objects
@@ -145,7 +142,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     CoreTick ticker;
     Preferences props;
     boolean runCore = true;
-    String actualRunningScriptengine = "";
     final ArrayList dataPoolList = new ArrayList(DP_ARRAY_SIZE);
 
     /**
@@ -174,7 +170,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         protocols = new HashMap<String, OobdProtocol>();
         uiHandlers = new HashMap<String, Class<OobdUIHandler>>();
         scriptengines = new HashMap<String, Class<OobdScriptengine>>();
-        activeEngines = new HashMap<String, OobdScriptengine>();
         activeUIHandlers = new HashMap<String, OobdUIHandler>();
         assignments = new HashMap<String, Object>();
         databases = new HashMap<String, OobdDB>();
@@ -521,8 +516,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      *
      * @return OobdScriptengine
      */
-    public OobdScriptengine getScriptEngine(String id) {
-        return activeEngines.get(id);
+    public OobdScriptengine getScriptEngine() {
+        return (OobdScriptengine) readDataPool(OOBDConstants.DP_RUNNING_SCRIPTENGINE, null);
     }
 
     /**
@@ -541,11 +536,11 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * @param id
      *
      */
-    public void stopScriptEngine(String id) {
-        OobdScriptengine thisEngine = activeEngines.remove(id);
+    public void stopScriptEngine() {
+        OobdScriptengine thisEngine = (OobdScriptengine) readDataPool(OOBDConstants.DP_RUNNING_SCRIPTENGINE, null);
         if (thisEngine != null) {
             thisEngine.close();
-        }
+         }
     }
 
     /**
@@ -579,19 +574,11 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     public String createScriptEngine(String id, Onion onion) {
         Logger.getLogger(Core.class.getName()).log(Level.CONFIG,
                 "Core should create scriptengine: " + id);
-        Integer i = 1;
-        while (activeEngines.containsKey(id + "." + i.toString())) { // searching
-            // for a
-            // free
-            // id
-            i++;
-        }
-        String seID = id + "." + i.toString();
         OobdScriptengine o = null;
         Class[] argsClass = new Class[3]; // first we set up an pseudo - args -
         // array for the scriptengine-
         // constructor
-        argsClass[0] = seID.getClass(); // and fill it with the info of the
+        argsClass[0] = id.getClass(); // and fill it with the info of the
         // arguments classes
         argsClass[1] = this.getClass();
         argsClass[2] = IFsystem.class;
@@ -607,7 +594,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             // to the
             // args
             // classes
-            Object[] args = {seID, this, systemInterface}; // creating the
+            Object[] args = {id, this, systemInterface}; // creating the
             // args-array
             o = (OobdScriptengine) con.newInstance(args); // and finally create
             // the object from
@@ -618,8 +605,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        activeEngines.put(seID, o); // store the new created scriptengine
-        return seID;
+        return id;
     }
 
     /**
@@ -634,11 +620,10 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      *
      * @param onion addional param
      */
-    public void startScriptEngine(String id, Onion onion) {
+    public void startScriptEngine(Onion onion) {
         Logger.getLogger(Core.class.getName()).log(Level.CONFIG,
                 "Start scriptengine: " + id);
-        OobdScriptengine o = activeEngines.get(id);
-        actualRunningScriptengine = id;
+        OobdScriptengine o = (OobdScriptengine) readDataPool(OOBDConstants.DP_RUNNING_SCRIPTENGINE, null);
         o.setStartupParameter(onion);
         Thread t1 = new Thread(o);
         t1.start();
@@ -846,8 +831,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     public Object readDataPool(int id, Object defaultObject) {
         synchronized (dataPoolList) {
             try {
-                Object data= dataPoolList.get(id);
-                if(data==null){
+                Object data = dataPoolList.get(id);
+                if (data == null) {
                     return defaultObject;
                 }
                 return data;
@@ -927,7 +912,11 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             this.sendMsg(msg);
             return true;
         } else {// find receipient
-            OobdPlugin receiver = activeEngines.get(msg.rec);
+            OobdPlugin receiver = null;
+            OobdScriptengine scriptEngine = (OobdScriptengine) readDataPool(OOBDConstants.DP_RUNNING_SCRIPTENGINE, null);
+            if (scriptEngine != null && scriptEngine.getId().equals(msg.rec)) {
+                receiver = scriptEngine;
+            }
             if (receiver == null
                     && OOBDConstants.UIHandlerMailboxName.equals(msg.rec)) {
                 receiver = activeUIHandlers.get(uiHandlerID);
@@ -1090,15 +1079,14 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     cmdOnion = new Onion("{" + "'scriptpath':'" + file.getFilePath() + "'"
                             + ",'connecturl':'" + Base64Coder.encodeString(connectURL) + "'"
                             + "}");
-                    stopScriptEngine(actualRunningScriptengine);
-                    String seID = createScriptEngine("ScriptengineLua", cmdOnion);
-
-                    startScriptEngine(seID, cmdOnion);
+                    stopScriptEngine();
+                    createScriptEngine("ScriptengineLua", cmdOnion);
+                    startScriptEngine(cmdOnion);
                     String startPage = file.getProperty("startpage", "");
                     if (startPage.equals("")) { // no startpage given?
                         return OOBDConstants.HTML_DEFAULTPAGEURL;
                     } else {
-                        return file.getFileName()+ "/" + startPage;
+                        return file.getFileName() + "/" + startPage;
                     }
                 } catch (JSONException ex) {
                     Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);

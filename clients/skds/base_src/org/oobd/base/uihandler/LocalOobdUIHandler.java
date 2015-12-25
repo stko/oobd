@@ -254,7 +254,7 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
             }
 
             if (myInputStream != null) {
-                OobdScriptengine actEngine = getCore().getScriptEngine(owner);
+                OobdScriptengine actEngine = getCore().getScriptEngine();
                 getCore().getSystemIF().createEngineTempInputFile(actEngine);
 
                 actEngine.fillTempInputFile(myInputStream);

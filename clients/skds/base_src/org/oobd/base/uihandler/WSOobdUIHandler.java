@@ -338,7 +338,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
             }
 
             if (myInputStream != null) {
-                OobdScriptengine actEngine = getCore().getScriptEngine(owner);
+                OobdScriptengine actEngine = getCore().getScriptEngine();
                 getCore().getSystemIF().createEngineTempInputFile(actEngine);
 
                 actEngine.fillTempInputFile(myInputStream);
@@ -435,10 +435,7 @@ class ChatServer extends WebSocketServer {
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         System.out.println(conn + " has left the room!");
         Core.getSingleInstance().writeDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, false);
-        if (Core.getSingleInstance().readDataPool(DP_RUNNING_SCRIPTENGINE, null) != null) {
-            ((OobdScriptengine) Core.getSingleInstance().readDataPool(DP_RUNNING_SCRIPTENGINE, null)).close();
-        }
-
+        Core.getSingleInstance().stopScriptEngine();
     }
 
     @Override
@@ -596,7 +593,7 @@ class OOBDHttpServer extends NanoHTTPD {
         Map<String, String> parms = session.getParms();
         if (parms.get("theme") != null) {
             Core.getSingleInstance().writeDataPool(OOBDConstants.DP_WEBUI_ACTUAL_THEME, parms.get("theme"));
-         }
+        }
         //return newFixedLengthResponse( msg + "</body></html>\n" );
         InputStream myFileStream = Core.getSingleInstance().getSystemIF().generateResourceStream(OOBDConstants.FT_WEBPAGE, session.getUri());
         if (myFileStream != null) {

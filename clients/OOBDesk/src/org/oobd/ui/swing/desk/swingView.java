@@ -92,8 +92,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private int defaultGridWidth = 200;
     private String pageTitle;
     String connectURLDefault = "";
-    private String seID;
-
+   
     public swingView(SingleFrameApplication app) {
         super(app);
 
@@ -1084,7 +1083,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         if (back != null) {
             back.getVisualizer().updateRequest(OOBDConstants.UR_USER);
         } else {
-            oobdCore.stopScriptEngine(seID);
+            oobdCore.stopScriptEngine();
             CardLayout cl = (CardLayout) (mainPanel.getLayout());
             cl.show(mainPanel, MAINPANEL);
         }
@@ -1449,16 +1448,16 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     public void startScriptEngine(Onion onion) {
 
         if (scriptEngineID != null) {
-            seID = oobdCore.createScriptEngine(scriptEngineID, onion);
+            oobdCore.createScriptEngine(scriptEngineID, onion);
 
             //JTabbedPane newjTabPane = new JTabbedPane(); //create a inner JTabbedPane as container for the later coming scriptengine pages
             //newjTabPane.setName(seID); // set the name of that canvas that it can be found again later
             //mainSeTabbedPane.addTab(seID, newjTabPane); // and put this canvas inside the pane which belongs to that particular scriptengine
             // and now, after initialisation of the UI, let the games begin...
-            oobdCore.setAssign(seID, org.oobd.base.OOBDConstants.CL_PANE, new Object()); //store the related drawing pane, the TabPane for that scriptengine
+            oobdCore.setAssign(scriptEngineID, org.oobd.base.OOBDConstants.CL_PANE, new Object()); //store the related drawing pane, the TabPane for that scriptengine
             //stop the Progress Dialog BEFORE the script starts
             //Diagnose.getInstance().stopProgressDialog();
-            oobdCore.startScriptEngine(seID, onion);
+            oobdCore.startScriptEngine(onion);
         }
     }
 
