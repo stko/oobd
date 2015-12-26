@@ -384,15 +384,11 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                 String strLine = "";
                 br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/org/oobd/base/classloader.cfg")));
                 while ((strLine = br.readLine()) != null) {
-                    System.out.println(strLine);
                     if (!"".equals(strLine)) {
                         String[] classConfig = strLine.split(":");
 
                         if ("scriptengine".equals(classConfig[0])) { //load Scriptengines AS CLASSES, NOT AS INSTANCES!
                             Class<OobdScriptengine> value = (Class<OobdScriptengine>) Class.forName(classConfig[1]);
-                            if (value == null) {
-                                System.out.println("no class generated for scriptengine!");
-                            }
                             String[] classNameElements = classConfig[1].split("\\.");
                             String element = classNameElements[classNameElements.length - 1];
                             scriptengines.put(element, value);
@@ -403,18 +399,12 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                                 Class[] parameterTypes = new Class[]{};
                                 java.lang.reflect.Method method = value.getMethod(
                                         "publicName", new Class[]{}); // no parameters
-                                if (method == null) {
-                                    System.out.println("method publicName not found!");
-                                }
                                 Object instance = null;
-                                System.out.println("load Scriptengine " + element);
                                 String result = (String) method.invoke(instance,
                                         new Object[]{}); // no parameters
                                 // Android: String.isEmpty() not available
                                 // if (!result.isEmpty()) {
-                                System.out.println("public Name of Scriptengine " + result);
                                 if (result.length() != 0) {
-                                    System.out.println("announce  Scriptengine " + element + "as " + result);
                                     userInterface.announceScriptengine(element, result);
                                 }
                             } catch (Exception ex) {
@@ -540,7 +530,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         OobdScriptengine thisEngine = (OobdScriptengine) readDataPool(OOBDConstants.DP_RUNNING_SCRIPTENGINE, null);
         if (thisEngine != null) {
             thisEngine.close();
-         }
+        }
     }
 
     /**
@@ -813,7 +803,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * @param data object reference to be stored
      */
     public void writeDataPool(int id, Object data) {
-        System.out.println("Actual Datapool size:" + dataPoolList.size());
         synchronized (dataPoolList) {
             dataPoolList.set(id, data);
         }
@@ -1072,27 +1061,30 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                 OOBDConstants.AppPrefsFileName);
 
         ArrayList<Archive> files = Factory.getDirContent(appProbs.get(OOBDConstants.PropName_ScriptDir, null));
-        for (Archive file : files) {
-            if (("/" + file.getID()).equalsIgnoreCase(resourceName)) {
+        files = (ArrayList<Archive>) readDataPool(DP_LIST_OF_SCRIPTS, null);
+        if (files != null) {
+            for (Archive file : files) {
+                if (("/" + file.getID()).equalsIgnoreCase(resourceName)) {
 
-                try {
-                    cmdOnion = new Onion("{" + "'scriptpath':'" + file.getFilePath() + "'"
-                            + ",'connecturl':'" + Base64Coder.encodeString(connectURL) + "'"
-                            + "}");
-                    stopScriptEngine();
-                    createScriptEngine("ScriptengineLua", cmdOnion);
-                    startScriptEngine(cmdOnion);
-                    writeDataPool(DP_ACTIVE_ARCHIVE, file);
-                    String startPage = file.getProperty(MANIFEST_STARTPAGE, "");
-                    if (startPage.equals("")) { // no startpage given?
-                        return OOBDConstants.HTML_DEFAULTPAGEURL;
-                    } else {
+                    try {
+                        cmdOnion = new Onion("{" + "'scriptpath':'" + file.getFilePath() + "'"
+                                + ",'connecturl':'" + Base64Coder.encodeString(connectURL) + "'"
+                                + "}");
+                        stopScriptEngine();
+                        createScriptEngine("ScriptengineLua", cmdOnion);
+                        startScriptEngine(cmdOnion);
+                        writeDataPool(DP_ACTIVE_ARCHIVE, file);
+                        String startPage = file.getProperty(MANIFEST_STARTPAGE, "");
+                        if (startPage.equals("")) { // no startpage given?
+                            return OOBDConstants.HTML_DEFAULTPAGEURL;
+                        } else {
 //                        return file.getFileName() + "/" + startPage;
-                        return startPage;
+                            return startPage;
+                        }
+                    } catch (JSONException ex) {
+                        Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
+                        return resourceName;
                     }
-                } catch (JSONException ex) {
-                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
-                    return resourceName;
                 }
             }
         }

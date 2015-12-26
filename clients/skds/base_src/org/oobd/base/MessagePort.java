@@ -63,8 +63,7 @@ public class MessagePort {
                 myMsgs.add(thisMessage);
                // Logger.getLogger(MessagePort.class.getName()).log(Level.INFO, "msg saved");
                 if (waitingforID == 0) { //if we not just waiting for a delicated reply message
-                    Logger.getLogger(MessagePort.class.getName()).log(Level.INFO, "msg notified");
-                    myMsgs.notify();
+                     myMsgs.notify();
                 } else {
                     Logger.getLogger(MessagePort.class.getName()).log(Level.INFO, "Msg NOT notified, as we wait for " + waitingforID);
                 }

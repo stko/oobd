@@ -861,6 +861,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         oobdCore.writeDataPool(DP_SCRIPTDIR, actualScriptDir);
         oobdCore.writeDataPool(DP_WWW_LIB_DIR, appProbs.get(OOBDConstants.PropName_LibraryDir, null));
         ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
+        oobdCore.writeDataPool(DP_LIST_OF_SCRIPTS, files);
         for (Archive file : files) {
             scriptSelectComboBox.addItem(file);
             if (file.toString().equalsIgnoreCase(script)) {
@@ -1329,6 +1330,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         oobdCore.writeDataPool(DP_SCRIPTDIR, actualScriptDir);
         oobdCore.writeDataPool(DP_WWW_LIB_DIR, appProbs.get(OOBDConstants.PropName_LibraryDir, null));
         ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
+        oobdCore.writeDataPool(DP_LIST_OF_SCRIPTS, files);
         for (Archive file : files) {
             scriptSelectComboBox.addItem(file);
             if (file.toString().equalsIgnoreCase(script)) {

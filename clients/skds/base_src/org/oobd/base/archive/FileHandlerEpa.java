@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.*;
@@ -37,6 +38,9 @@ public class FileHandlerEpa implements Archive {
     }
 
     public InputStream getInputStream(String innerPath) {
+        while (innerPath.startsWith("/")) {
+            innerPath = innerPath.substring("/".length());
+        }
         if (myFilePath != null) {
             try {
                 if (isDirectory) {
@@ -74,6 +78,7 @@ public class FileHandlerEpa implements Archive {
             try {
                 if (!file.isDirectory()) {
                     outerZipFile = new ZipFile(file.getAbsolutePath());
+                    Enumeration<? extends ZipEntry> entries = outerZipFile.entries();
                     isDirectory = false;
                 } else {
                     outerZipFile = null;

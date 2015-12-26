@@ -129,5 +129,6 @@ public interface OOBDConstants {
     public final static int DP_WWW_LIB_DIR = 3;
     public final static int DP_ACTIVE_ARCHIVE = 4;
     public final static int DP_SCRIPTDIR = 5;
-    public final static int DP_ARRAY_SIZE = 6;
+    public final static int DP_LIST_OF_SCRIPTS = 6;
+    public final static int DP_ARRAY_SIZE = 7;
 }

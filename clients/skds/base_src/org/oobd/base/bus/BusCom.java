@@ -227,7 +227,6 @@ class ComReader {
     public void close() {
         if (comHandle != null) {
             try {
-                System.out.println("Close Comport Handle");
                 comHandle.close();
                 comHandle = null;
             } catch (Exception e) {

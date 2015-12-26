@@ -156,8 +156,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
             try {
                 //core.transferMsg(new Message(this, myOnion.getString("to"), myOnion));
                 //core.transferMsg(new Message(this, ownerEngine, myOnion));
-                System.out.println("Ownerengine:" + ownerEngine);
-                myOnion.put("to", ownerEngine);
+                 myOnion.put("to", ownerEngine);
                 core.transferMsg(new Message(this, myOnion.getString("to"), myOnion));
 
                 return null;
@@ -169,8 +168,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
         if (myOnion.isType(CM_PAGE)) {
             //userInterface.openPage(myOnion.getOnionString("owner"),
             //       myOnion.getOnionString("name"), 1, 1);
-            System.out.println("Openpage onion:" + myOnion);
-            ownerEngine = myOnion.getOnionString("owner");
+             ownerEngine = myOnion.getOnionString("owner");
             wsServer.sendToAll(myOnion.toString());
             return null;
         }

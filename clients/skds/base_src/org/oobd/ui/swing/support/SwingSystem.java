@@ -118,7 +118,6 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             case FT_DATABASE:
                 return fileName;
             case FT_KEY:
-                System.err.println("key path generated:" + System.getProperty("user.home") + java.io.File.separator + fileName);
                 return System.getProperty("user.home") + java.io.File.separator + fileName;
 
             default:
