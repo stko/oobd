@@ -33,17 +33,20 @@ Robot Framework test cases are created using a simple tabular syntax.
     test normal response
        send dongle command  19018D
        answer should match    .*(\\.\\+cr\\+>)
-       send dongle command  p 6 2 1000 0
+    increase time out and request timeout msg
+       send dongle command  p 6 1 1000 0
        answer should match    .*(\\.\\+cr\\+>)
-       send dongle command  1902CE
+       send dongle command  22F222
        answer should match    .*(\\.\\+cr\\+>)
-       send dongle command  p 6 2 10
+    restore time out and request timeout msg
+       send dongle command  p 6 1 10
        answer should match    .*(\\.\\+cr\\+>)
-       send dongle command  1902CE
+       send dongle command  22F222
        answer should match    .*(:Error: \\d+ \\d+ \\d+ Answer time exeeded\\+cr\\+>)
-       send dongle command  p 6 2 1000 0
+    increase time out and request timeout msg again
+       send dongle command  p 6 1 1000
        answer should match    .*(\\.\\+cr\\+>)
-       send dongle command  1902CE
+       send dongle command  22F222
        answer should match    .*(\\.\\+cr\\+>)
 
 .. code:: robotframework
@@ -133,8 +136,8 @@ starts and that every test also clears it afterwards:
 .. code:: robotframework
 
    *** Settings ***
-    test Setup       Open Port  ${donglePort}
-    test Teardown    close port
+    suite Setup       Open Port  ${donglePort}
+    suite Teardown    close port
 
 Using tags
 ----------

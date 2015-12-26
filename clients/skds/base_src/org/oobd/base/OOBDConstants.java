@@ -62,6 +62,7 @@ public interface OOBDConstants {
     public final static String PropName_ProxyHost = "ServerProxyHost";
     public final static String PropName_ProxyPort = "ServerProxyPort";
     public final static String PropName_ScriptDir = "ScriptDir";
+    public final static String PropName_LibraryDir = "LibraryDir";
     public final static String PropName_ScriptName = "Script";
     public final static String PropName_OutputFile = "OutputDir";
     public final static String PropName_PGPEnabled = "PGPEnabled";
@@ -118,6 +119,7 @@ public interface OOBDConstants {
     // identifier for manifest properties
     public static String MANIFEST_NAME = "manifest";
     public static String MANIFEST_SCRIPTNAME = "script";
+    public static String MANIFEST_STARTPAGE = "startpage";
     //  some HTML constants
     public static String HTML_DEFAULTPAGEURL = "/theme/default/startpage.html";
     // Identifiers for the Data Pool. Please always use the symbolic names, as their values can change all the time
@@ -125,5 +127,7 @@ public interface OOBDConstants {
     public final static int DP_WEBUI_WS_READY_SIGNAL = 1;
     public final static int DP_RUNNING_SCRIPTENGINE = 2;
     public final static int DP_WWW_LIB_DIR = 3;
-    public final static int DP_ARRAY_SIZE = 4;
+    public final static int DP_ACTIVE_ARCHIVE = 4;
+    public final static int DP_SCRIPTDIR = 5;
+    public final static int DP_ARRAY_SIZE = 6;
 }

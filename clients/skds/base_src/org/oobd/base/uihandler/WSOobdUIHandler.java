@@ -42,6 +42,9 @@ import fi.iki.elonen.NanoHTTPD;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import static org.oobd.base.OOBDConstants.DP_RUNNING_SCRIPTENGINE;
+import static org.oobd.base.OOBDConstants.DP_SCRIPTDIR;
+import org.oobd.base.archive.Archive;
+import org.oobd.base.archive.Factory;
 
 /**
  * generic abstract for the implementation of scriptengines
@@ -534,6 +537,7 @@ class OOBDHttpServer extends NanoHTTPD {
             put("htm", "text/html");
             put("html", "text/html");
             put("xml", "text/xml");
+            put("xsl", "text/xsl");
             put("java", "text/x-java-source, text/java");
             put("md", "text/plain");
             put("txt", "text/plain");
@@ -583,24 +587,40 @@ class OOBDHttpServer extends NanoHTTPD {
         if (dot >= 0) {
             mime = MIME_TYPES.get(uri.substring(dot + 1).toLowerCase());
         }
-        return mime == null ? MIME_DEFAULT_BINARY : mime;
+        //return mime == null ? MIME_DEFAULT_BINARY : mime;
+        return mime == null ? NanoHTTPD.MIME_HTML : mime;
     }
 
     @Override
     public NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
         System.err.println("url path:" + session.getUri());
-        String msg = "<html><body><h1>Hello server</h1>\n";
         Map<String, String> parms = session.getParms();
         if (parms.get("theme") != null) {
             Core.getSingleInstance().writeDataPool(OOBDConstants.DP_WEBUI_ACTUAL_THEME, parms.get("theme"));
         }
-        //return newFixedLengthResponse( msg + "</body></html>\n" );
-        InputStream myFileStream = Core.getSingleInstance().getSystemIF().generateResourceStream(OOBDConstants.FT_WEBPAGE, session.getUri());
-        if (myFileStream != null) {
-            return newChunkedResponse(Response.Status.OK, getMimeTypeForFile(session.getUri()), myFileStream);
+        if ("/".equals(session.getUri())) {
+            String catalog = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                    + "<?xml-stylesheet type=\"text/xsl\" href=\"/theme/default/xslt/start.xsl\"?>\n"
+                    + "<catalog>\n";
+            ArrayList<Archive> files = Factory.getDirContent((String)Core.getSingleInstance().readDataPool(OOBDConstants.DP_SCRIPTDIR,  null));
+            for (Archive file : files) {
+                catalog +="<script>";
+                catalog +="<fileid>"+file.getID()+"</fileid>";
+                catalog +="<title>"+file.toString()+"</title>";
+                catalog +="</script>";
+            }
+            catalog += "</catalog>";
+            return newFixedLengthResponse(Response.Status.OK, "text/xml", catalog);
         } else {
+            //return newFixedLengthResponse( msg + "</body></html>\n" );
+            InputStream myFileStream = Core.getSingleInstance().getSystemIF().generateResourceStream(OOBDConstants.FT_WEBPAGE, session.getUri());
+            if (myFileStream != null) {
+                return newChunkedResponse(Response.Status.OK, getMimeTypeForFile(session.getUri()), myFileStream);
+            } else {
 
-            return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "war nix..");
+                return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "war nix..");
+            }
         }
     }
+
 }

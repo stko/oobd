@@ -92,7 +92,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private int defaultGridWidth = 200;
     private String pageTitle;
     String connectURLDefault = "";
-   
+
     public swingView(SingleFrameApplication app) {
         super(app);
 
@@ -276,6 +276,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         httpEnabled = new javax.swing.JCheckBox();
         protocolComboBox = new javax.swing.JComboBox();
         jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        libraryDir = new javax.swing.JTextField();
+        chooseLibsDirectoryButton = new javax.swing.JButton();
         diagnose = new javax.swing.JPanel();
         toolPanelDiagnose = new javax.swing.JPanel();
         diagnoseTitle = new javax.swing.JLabel();
@@ -410,7 +413,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         jLabel1.setName("jLabel1"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridy = 10;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(jLabel1, gridBagConstraints);
 
@@ -418,7 +421,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         comportComboBox.setName("comportComboBox"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridy = 10;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(comportComboBox, gridBagConstraints);
 
@@ -490,7 +493,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         jLabelRemoteServer.setName("jLabelRemoteServer"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(jLabelRemoteServer, gridBagConstraints);
 
@@ -498,7 +501,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         jTextFieldRemoteServer.setName("jTextFieldRemoteServer"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(jTextFieldRemoteServer, gridBagConstraints);
 
@@ -506,7 +509,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         jTextFieldProxyHost.setName("jTextFieldProxyHost"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(jTextFieldProxyHost, gridBagConstraints);
 
@@ -514,7 +517,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         jLabel2.setName("jLabel2"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(jLabel2, gridBagConstraints);
 
@@ -522,14 +525,14 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         jLabel5.setName("jLabel5"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 9;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(jLabel5, gridBagConstraints);
 
         jSpinnerProxyPort.setName("jSpinnerProxyPort"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 9;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(jSpinnerProxyPort, gridBagConstraints);
 
@@ -548,7 +551,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         protocolComboBox.setName("connectionTypeSpinner"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(protocolComboBox, gridBagConstraints);
 
@@ -556,9 +559,38 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         jLabel6.setName("jLabel6"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(jLabel6, gridBagConstraints);
+
+        jLabel7.setText(resourceMap.getString("jLabel7.text")); // NOI18N
+        jLabel7.setName("jLabel7"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        settings.add(jLabel7, gridBagConstraints);
+
+        libraryDir.setText(resourceMap.getString("libraryDir.text")); // NOI18N
+        libraryDir.setName("libraryDir"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        settings.add(libraryDir, gridBagConstraints);
+
+        chooseLibsDirectoryButton.setIcon(resourceMap.getIcon("chooseLibsDirectoryButton.icon")); // NOI18N
+        chooseLibsDirectoryButton.setText(resourceMap.getString("chooseLibsDirectoryButton.text")); // NOI18N
+        chooseLibsDirectoryButton.setName("chooseLibsDirectoryButton"); // NOI18N
+        chooseLibsDirectoryButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chooseLibsDirectoryButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 5;
+        settings.add(chooseLibsDirectoryButton, gridBagConstraints);
 
         mainPanel.add(settings, "card4");
 
@@ -825,7 +857,10 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         String script = appProbs.get(OOBDConstants.PropName_ScriptName, null);
         scriptSelectComboBox.removeAllItems();
         int i = -1;
-        ArrayList<Archive> files = Factory.getDirContent(appProbs.get(OOBDConstants.PropName_ScriptDir, null));
+        String actualScriptDir = appProbs.get(OOBDConstants.PropName_ScriptDir, null);
+        oobdCore.writeDataPool(DP_SCRIPTDIR, actualScriptDir);
+        oobdCore.writeDataPool(DP_WWW_LIB_DIR, appProbs.get(OOBDConstants.PropName_LibraryDir, null));
+        ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
         for (Archive file : files) {
             scriptSelectComboBox.addItem(file);
             if (file.toString().equalsIgnoreCase(script)) {
@@ -1070,6 +1105,36 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
     }//GEN-LAST:event_pgpImportKeysActionPerformed
 
+    private void chooseLibsDirectoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseLibsDirectoryButtonActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        File oldDir = null;
+        String oldDirName = appProbs.get(OOBDConstants.PropName_LibraryDir, null);
+        if (oldDirName != null) {
+            oldDir = new File(oldDirName);
+        }
+        chooser.setCurrentDirectory(oldDir);
+        chooser.addChoosableFileFilter(new FileFilter() {
+
+            public boolean accept(File f) {
+                if (f.isDirectory()) {
+                    return true;
+                }
+                return f.getName().toLowerCase().endsWith(".lbc");
+            }
+
+            public String getDescription() {
+                return "OOBD Library Folder";
+            }
+        });
+        chooser.setMultiSelectionEnabled(false);
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        if (chooser.showOpenDialog(this.getFrame())
+                == JFileChooser.APPROVE_OPTION) {
+            appProbs.put(OOBDConstants.PropName_LibraryDir, chooser.getSelectedFile().toString());
+            libraryDir.setText(chooser.getSelectedFile().toString());
+        }
+    }//GEN-LAST:event_chooseLibsDirectoryButtonActionPerformed
+
     @Action
     public void onClickButton_Back() {
         IFvisualizer back = null;
@@ -1113,6 +1178,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JButton backButton;
     private javax.swing.JLabel backButtonLabel;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JButton chooseLibsDirectoryButton;
     private javax.swing.JButton chooseScriptDirectoryButton;
     private javax.swing.JComboBox comportComboBox;
     private javax.swing.JLabel connectSymbol;
@@ -1133,6 +1199,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabelRemoteServer;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -1142,6 +1209,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JTextArea jTextAreaOutput;
     private javax.swing.JTextField jTextFieldProxyHost;
     private javax.swing.JTextField jTextFieldRemoteServer;
+    private javax.swing.JTextField libraryDir;
     private javax.swing.JToggleButton logButton;
     private javax.swing.JPanel main;
     private javax.swing.JPanel mainPanel;
@@ -1257,7 +1325,10 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                 OOBDConstants.AppPrefsFileName);
         String script = appProbs.get(OOBDConstants.PropName_ScriptName, null);
         int i = -1;
-        ArrayList<Archive> files = Factory.getDirContent(appProbs.get(OOBDConstants.PropName_ScriptDir, null));
+        String actualScriptDir = appProbs.get(OOBDConstants.PropName_ScriptDir, null);
+        oobdCore.writeDataPool(DP_SCRIPTDIR, actualScriptDir);
+        oobdCore.writeDataPool(DP_WWW_LIB_DIR, appProbs.get(OOBDConstants.PropName_LibraryDir, null));
+        ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
         for (Archive file : files) {
             scriptSelectComboBox.addItem(file);
             if (file.toString().equalsIgnoreCase(script)) {

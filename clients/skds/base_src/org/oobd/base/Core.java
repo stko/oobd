@@ -173,17 +173,17 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         activeUIHandlers = new HashMap<String, OobdUIHandler>();
         assignments = new HashMap<String, Object>();
         databases = new HashMap<String, OobdDB>();
+        // absolutely scary, but the datapool array list need to be filled once to not
+        // crash later when trying to (re)assign a value...
+        for (int i = 0; i < DP_ARRAY_SIZE; i++) {
+            dataPoolList.add(null);
+        }
         systemInterface.registerOobdCore(this); // Anounce itself at the
         // Systeminterface
         userInterface.registerOobdCore(this); // Anounce itself at the
         // Userinterface
         props = systemInterface.loadPreferences(FT_PROPS,
                 OOBDConstants.CorePrefsFileName);
-        // absolutely scary, but the datapool array list need to be filled once to not
-        // crash later when trying to (re)assign a value...
-        for (int i = 0; i < DP_ARRAY_SIZE; i++) {
-            dataPoolList.add(null);
-        }
 
         // ----------- load Busses -------------------------------
         try {
@@ -1082,11 +1082,13 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     stopScriptEngine();
                     createScriptEngine("ScriptengineLua", cmdOnion);
                     startScriptEngine(cmdOnion);
-                    String startPage = file.getProperty("startpage", "");
+                    writeDataPool(DP_ACTIVE_ARCHIVE, file);
+                    String startPage = file.getProperty(MANIFEST_STARTPAGE, "");
                     if (startPage.equals("")) { // no startpage given?
                         return OOBDConstants.HTML_DEFAULTPAGEURL;
                     } else {
-                        return file.getFileName() + "/" + startPage;
+//                        return file.getFileName() + "/" + startPage;
+                        return startPage;
                     }
                 } catch (JSONException ex) {
                     Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);

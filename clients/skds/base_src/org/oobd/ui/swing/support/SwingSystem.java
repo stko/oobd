@@ -46,8 +46,8 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     Core core;
     private String userPassPhrase = "";
     String webRootDir = "";
+    String webLibraryDir= "";
     Preferences appProbs;
-    Archive scriptArchive = null;
 
     public void registerOobdCore(Core thisCore) {
         core = thisCore;
@@ -117,7 +117,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             case FT_WEBPAGE:
             case FT_DATABASE:
                 return fileName;
-             case FT_KEY:
+            case FT_KEY:
                 System.err.println("key path generated:" + System.getProperty("user.home") + java.io.File.separator + fileName);
                 return System.getProperty("user.home") + java.io.File.separator + fileName;
 
@@ -143,16 +143,16 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     String mapDirectory(String[] mapDir, String path) {
         int i = 0;
         while (i < mapDir.length) {
-            if (path.toLowerCase().startsWith("/" + mapDir[i].toLowerCase())) {
-                path = path.substring(mapDir[i].length() + 1);
-                if (mapDir[i].toLowerCase().equalsIgnoreCase("theme") && path.toLowerCase().startsWith("/default")) { //map the theme folder to  the actual theme
-                    path = core.readDataPool(DP_WEBUI_ACTUAL_THEME, "default") + path.substring("/default".length());
+            if (path.toLowerCase().startsWith("/" + mapDir[i].toLowerCase()+"/")) {
+                path = path.substring(mapDir[i].length() + 2);
+                if (mapDir[i].toLowerCase().equalsIgnoreCase("theme") && path.toLowerCase().startsWith("default/")) { //map the theme folder to  the actual theme
+                    path = core.readDataPool(DP_WEBUI_ACTUAL_THEME, "default") +"/"+ path.substring("default/".length());
                 }
                 return mapDir[i + 1] + path;
             }
             i += 2;
         }
-        return path;
+        return null;
     }
 
     public InputStream generateResourceStream(int pathID, String resourceName)
@@ -160,18 +160,26 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "Try to load: " + resourceName
                 + " with path ID : " + pathID);
         InputStream resource = null;
+        Archive scriptArchive = (Archive) core.readDataPool(DP_ACTIVE_ARCHIVE, null);
         try {
             switch (pathID) {
                 case OOBDConstants.FT_WEBPAGE:
                     appProbs = core.getSystemIF().loadPreferences(FT_PROPS, OOBDConstants.AppPrefsFileName);
-                    webRootDir = appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator;
-                    core.writeDataPool(DP_WWW_LIB_DIR, appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator);
-                    // in case the resource name points to a "executable" scriptengine, the engine get started 
+                    webRootDir = (String)core.readDataPool(DP_SCRIPTDIR, "")+ java.io.File.separator;
+                    webLibraryDir = (String)core.readDataPool(DP_WWW_LIB_DIR, "")+ java.io.File.separator;
+                     // in case the resource name points to a "executable" scriptengine, the engine get started 
                     // and the resourcename is corrected to the html start page to be used
                     resourceName = core.startScriptEngineByURL(resourceName);
-                    resourceName = mapDirectory(new String[]{"libs", webRootDir + "libs/", "theme", webRootDir + "theme/"}, resourceName);
+                    scriptArchive = (Archive) core.readDataPool(DP_ACTIVE_ARCHIVE, null);
+                    String mapping = mapDirectory(new String[]{"libs", webLibraryDir + "libs/", "theme", webLibraryDir + "theme/"}, resourceName);
+                    if (mapping != null) {
+                        return new FileInputStream(generateUIFilePath(pathID, mapping));
+                    }
+                    if (scriptArchive != null) {
+                        return scriptArchive.getInputStream(resourceName);
+                    }
 
-                // please notice: here's no case "break"!
+                    break;
                 case OOBDConstants.FT_PROPS:
                 case OOBDConstants.FT_RAW:
                     resource = new FileInputStream(generateUIFilePath(pathID,
@@ -189,9 +197,10 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                     appProbs = core.getSystemIF().loadPreferences(FT_PROPS,
                             OOBDConstants.AppPrefsFileName);
                     // save actual script directory to buffer it for later as webroot directory
-                    String filePath = generateUIFilePath(pathID, resourceName);
-                    scriptArchive = Factory.getArchive(filePath);
-                    scriptArchive.bind(filePath);
+/*                    String filePath = generateUIFilePath(pathID, resourceName);
+                     scriptArchive = Factory.getArchive(filePath);
+                     scriptArchive.bind(filePath);
+                     */
                     resource = scriptArchive.getInputStream(scriptArchive.getProperty(OOBDConstants.MANIFEST_SCRIPTNAME, ""));
                     Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
                             + " loaded");
