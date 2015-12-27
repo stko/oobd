@@ -613,7 +613,14 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     public void startScriptEngine(Onion onion) {
         Logger.getLogger(Core.class.getName()).log(Level.CONFIG,
                 "Start scriptengine: " + id);
-        OobdScriptengine o = (OobdScriptengine) readDataPool(OOBDConstants.DP_RUNNING_SCRIPTENGINE, null);
+        while (core.readDataPool(DP_RUNNING_SCRIPTENGINE, null) != null) {
+            try {
+                Thread.sleep(10);
+                System.out.println("Old Scriptengine not finished yet");
+            } catch (InterruptedException ex) {
+            }
+        }
+        OobdScriptengine o = (OobdScriptengine) readDataPool(OOBDConstants.DP_LAST_CREATED_SCRIPTENGINE, null);
         o.setStartupParameter(onion);
         Thread t1 = new Thread(o);
         t1.start();

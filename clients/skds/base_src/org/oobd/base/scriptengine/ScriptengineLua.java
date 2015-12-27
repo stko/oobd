@@ -53,7 +53,7 @@ public class ScriptengineLua extends OobdScriptengine {
         Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG,
                 "Construct ScriptengineLua instance " + id);
         myself = this;
-        core.writeDataPool(DP_RUNNING_SCRIPTENGINE, this);
+        core.writeDataPool(DP_LAST_CREATED_SCRIPTENGINE, this);
     }
 
     @Override
@@ -620,13 +620,13 @@ public class ScriptengineLua extends OobdScriptengine {
             }
         }
         // end of objects lifetime
-        System.out.println("End of Scriptengine");
+        System.out.println("End of Scriptengine"+this.toString());
         core.writeDataPool(DP_RUNNING_SCRIPTENGINE, null);
 
     }
 
     public void close() {
-        System.out.println("Send Scriptengine close request");
+        System.out.println("Send Scriptengine close request"+this.toString());
         keepRunning = false;
         try {
             core.transferMsg(
@@ -661,15 +661,19 @@ public class ScriptengineLua extends OobdScriptengine {
     }
 
     public boolean doScript(String fileName) throws IOException {
-        System.out.println("Scriptengine: Waiting for WS to connect");
-        while (keepRunning && !(Boolean) Core.getSingleInstance().readDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, false)) {
+        System.out.println("Scriptengine: Waiting for WS to connect"+this.toString());
+        while (keepRunning && (!(Boolean) Core.getSingleInstance().readDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, false) || (core.readDataPool(DP_RUNNING_SCRIPTENGINE, null)!=null && core.readDataPool(DP_RUNNING_SCRIPTENGINE, null)!=this))) {
             try {
                 Thread.sleep(10);
+                if (core.readDataPool(DP_RUNNING_SCRIPTENGINE, null)!=null){
+                    System.out.println("Old Scriptengine not finished yet");
+                }
             } catch (InterruptedException ex) {
             }
         }
         if (keepRunning) {
-            System.out.println("Scriptengine: WS to connected");
+            System.out.println("Scriptengine: WS connected"+this.toString());
+            core.writeDataPool(DP_RUNNING_SCRIPTENGINE, this);
             InputStream resource = UISystem.generateResourceStream(FT_SCRIPT,
                     fileName);
             if (resource == null) {

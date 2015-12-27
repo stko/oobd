@@ -125,10 +125,11 @@ public interface OOBDConstants {
     // Identifiers for the Data Pool. Please always use the symbolic names, as their values can change all the time
     public final static int DP_WEBUI_ACTUAL_THEME = 0;
     public final static int DP_WEBUI_WS_READY_SIGNAL = 1;
-    public final static int DP_RUNNING_SCRIPTENGINE = 2;
-    public final static int DP_WWW_LIB_DIR = 3;
-    public final static int DP_ACTIVE_ARCHIVE = 4;
-    public final static int DP_SCRIPTDIR = 5;
-    public final static int DP_LIST_OF_SCRIPTS = 6;
-    public final static int DP_ARRAY_SIZE = 7;
+    public final static int DP_LAST_CREATED_SCRIPTENGINE = 2;
+    public final static int DP_RUNNING_SCRIPTENGINE = 3;
+    public final static int DP_WWW_LIB_DIR = 4;
+    public final static int DP_ACTIVE_ARCHIVE = 5;
+    public final static int DP_SCRIPTDIR = 6;
+    public final static int DP_LIST_OF_SCRIPTS = 7;
+    public final static int DP_ARRAY_SIZE = 8;
 }

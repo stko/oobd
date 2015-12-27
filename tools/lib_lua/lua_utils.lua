@@ -1,7 +1,80 @@
 -- m4_define(`DEBUGPRINT', `m4_ifdef(`DEBUG', if "DBGUSER" ==$1 and DBGLEVEL >=$2 then  print(string.format(m4_shift(m4_shift( $@ ))) ) end)')
 
 
+---[[
+openPage = openPageCall
+addElement = addElementCall
+pageDone = pageDoneCall
+openChannel = openChannelCall
+dbLookup = dbLookupCall
+--]]
+---[[
+serFlush = serFlushCall
+serWrite = serWriteCall
+serWait = serWaitCall
+serReadLn = serReadLnCall
+serDisplayWrite = serDisplayWriteCall
+openXCVehicleData =openXCVehicleDataCall
+ioInput = ioInputCall
+ioRead = ioReadCall
+ioWrite = ioWriteCall
+--]]
 
+--[[
+readcount= 1
+input = {}
+input[1]="OOBD D2 212 Lux-Wolf Ostern"
+input[2]="Searching"
+input[3]="41 00 FF FF FF FF"
+input[4]=">"
+input[5]="41 14 FF FF FF FF"
+input[6]=">"
+
+
+function serReadLn()
+	res= input[readcount]
+	DEBUGPRINT("stko", 1, "serial_dxm.lua - serReadLn,%02d: %s %d, %d", "00", "read from input: ", res, readcount)
+	readcount=readcount +1
+	if readcount >#input then
+		readcount = 1
+	end
+	return res
+end
+
+function serWait()
+	return 0
+end
+
+function serWrite(data)
+	DEBUGPRINT("stko", 1, "serial_dxm.lua - serWrite,%02d: %s %d", "00", "Serwrite: ", data)
+end
+
+function serFlush()
+end
+
+--]]
+
+
+--[[
+function openPage(title)
+	DEBUGPRINT("stko", 1, "serial_dxm.lua - openPage,%02d: %s %s", "00", "Start Menu generation: ", title)
+end
+
+function addElement(title, func , intial,flags , id)
+	DEBUGPRINT("stko", 1, "serial_dxm.lua - addElement,%02d: %s", "00", "<---")
+	DEBUGPRINT("stko", 1, "serial_dxm.lua - addElement,%02d: %s %s", "01", "title: ", title)
+	DEBUGPRINT("stko", 1, "serial_dxm.lua - addElement,%02d: %s %s", "02", "function: ", func)
+	DEBUGPRINT("stko", 1, "serial_dxm.lua - addElement,%02d: %s %s", "03", "id: ", id)
+	DEBUGPRINT("stko", 1, "serial_dxm.lua - addElement,%02d: %s", "00", "--->")
+end
+
+function pageDone()
+	DEBUGPRINT("stko", 1, "serial_dxm.lua - pageDone,%02d: %s", "00", "Show Menu")
+end
+
+
+
+--]]
 
 -------------------- CRC32 ---
 --Copyright (c) 2007-2008 Neil Richardson (nrich@iinet.net.au)

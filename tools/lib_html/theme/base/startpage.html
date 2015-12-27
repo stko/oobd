@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+ 
+<html lang="en">
+ 
+<head>
+	<meta charset="utf-8">
+	<script type="text/javascript" src="/libs/oobd/1/oobd.js"></script>
+ 
+</head>
+ 
+<body>
+<p>
+This design is as ugly as it can be, because it does not contain any HTML beautyfication, just bare functionality to explain the way the interface works
+</p>
+
+<button onclick="Oobd.update()">Update</button><label><input type='checkbox' onclick='Oobd.timer(this.checked);'>Timer</label>
+ 
+
+	<table id="field">
+	</table>
+	<p>Outputs</p>
+	<p />
+	<textarea id="textoutput"></textarea>
+ 
+ 
+ 
+	<script>
+		// put here inits here as browser independent, pure javascript solution for document.ready
+		(function() {
+			// your page initialization code here
+			// the DOM will be available here
+
+			//define here what to do if a text comes in to be shown
+			Oobd.writeString = function addText(text) {
+				document.getElementById("textoutput").value += text;
+			}
+
+			// initialize a new OOBD page to be shown
+			Oobd.openPage = function openPage(text) {
+				window.document.title=text;
+				var myTable=document.getElementById("field");
+				while(myTable.hasChildNodes())
+				{
+					myTable.removeChild(myTable.firstChild);
+				}
+				Oobd.clearVisualiers();
+			}
+
+			// add a new visual element to the page
+			Oobd.visualize = function visualize(obj) {
+				var table = document.getElementById("field");
+				// Create an empty <tr> element and add it to the last position of the table:
+				var row = table.insertRow(-1);
+				row.classList.add("OOBD");
+				row.setAttribute("oobd:fc",obj.name);
+				row.setAttribute("oobd:click","yes");
+				row.setAttribute("oobd:value",decodeURIComponent(escape(atob(obj.value))));
+				if (typeof obj.updevents != "undefined" ) {
+					row.setAttribute("oobd:updevents",obj.updevents);
+				}else{
+					row.setAttribute("oobd:updevents",0);
+				}
+				row.oodbupdate = function(input) {
+					this.getElementsByClassName("value")[0].innerHTML = input.value;
+				};
+
+				// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+				var cell1 = row.insertCell(0);
+				var cell2 = row.insertCell(1);
+				cell1.classList.add("name");
+				cell2.classList.add("value");
+				// Add some text to the new cells:
+				cell1.innerHTML = decodeURIComponent(escape(atob(obj.tooltip)));
+				cell2.innerHTML = decodeURIComponent(escape(atob(obj.value)));
+				Oobd.addObject(row, decodeURIComponent(escape(atob(obj.value))));
+
+			}
+
+			Oobd.start();
+		})();
+	</script>
+</body>
+ 
+</html>

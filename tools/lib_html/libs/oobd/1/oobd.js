@@ -40,7 +40,19 @@ if (typeof Oobd == "undefined") {
 					return null;
 				}
 			}
+			// try to disconnect the websocket as much early as possible before the new page is loaded
+			window.addEventListener("unload", function() {
+					/*Send a small message to the console once the connection is established */
+					console.log('try to close Websocket');
+					if (typeof Oobd.connection != "undefined"){
+						Oobd.connection.close();
+						console.log('Websocket closed');
 
+					}
+				});
+			this.scanDOM();
+		},
+		scanDOM: function() {
 			var a = document.getElementsByClassName("OOBD");
 			for (index = 0; index < a.length; ++index) { // go through all images found
 				var oobdElement = a[index];
@@ -129,19 +141,47 @@ if (typeof Oobd == "undefined") {
 							}
 							Oobd._timerTick();
 						}
+
 						if (obj.type == "WSCONNECT") {
 							if (typeof Oobd.onConnect != "undefined") {
 								Oobd.onConnect();
 							}
 						}
-						if (obj.type == "WRITESTRING") {
 
+						if (obj.type == "WRITESTRING") {
 							if (typeof Oobd.writeString != "undefined" && typeof obj.data != "undefined" && obj.data.length > 0) {
 								console.log("try to WRITESTRING");
 								// bizarre UTF-8 decoding...
 								Oobd.writeString(decodeURIComponent(escape(atob(obj.data))) + "\n");
 							}
 						}
+
+						if (obj.type == "PAGE") {
+							if (typeof Oobd.openPage != "undefined" && typeof obj.name != "undefined" && obj.name.length > 0) {
+								console.log("try to OpenPage");
+								// bizarre UTF-8 decoding...
+								// for later, if name comes base64encoded: Oobd.openPage(decodeURIComponent(escape(atob(obj.name))) + "\n");
+								Oobd.openPage(decodeURIComponent(escape(obj.name)));
+							}
+						}
+						
+						if (obj.type == "VISUALIZE") {
+							if (typeof Oobd.visualize != "undefined" ) {
+								console.log("try to Visualize");
+								Oobd.visualize(obj);
+							}
+						}
+						
+						if (obj.type == "PAGEDONE") {
+							if (typeof Oobd.pageDone != "undefined" ) {
+								console.log("Page done");
+								// bizarre UTF-8 decoding...
+								// for later, if name comes base64encoded: Oobd.openPage(decodeURIComponent(escape(atob(obj.name))) + "\n");
+								Oobd.pageDone();
+							}
+						}
+						
+						
 					} catch (err) {
 						console.log("received msg Error " + err.message);
 					}

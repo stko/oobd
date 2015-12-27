@@ -436,7 +436,7 @@ class ChatServer extends WebSocketServer {
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         System.out.println(conn + " has left the room!");
         Core.getSingleInstance().writeDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, false);
-        Core.getSingleInstance().stopScriptEngine();
+        //Core.getSingleInstance().stopScriptEngine();
     }
 
     @Override
