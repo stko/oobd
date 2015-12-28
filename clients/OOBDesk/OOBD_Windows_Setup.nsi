@@ -46,6 +46,8 @@ function .onInit
 	StrCpy $INSTDIR  "$APPDATA\OOBD\OOBDesk"
 	StrCpy $menutype  "OOBDesk(local)"
 	WriteRegStr HKCU "SOFTWARE\OOBD\OOBDesk" "InstDir" $INSTDIR
+	WriteRegStr HKCU "Software\JavaSoft\Prefs\com.oobd.preference.app.props" "/Script/Dir" "$DOCUMENTS\OOBD-Scripts"
+	WriteRegStr HKCU "Software\JavaSoft\Prefs\com.oobd.preference.app.props" "/Library/Dir" "$DOCUMENTS\OOBD-Library"
 
 	 
 	Done:
@@ -134,6 +136,11 @@ File "../../lua-scripts/obdII-standard/dtc.oodb"
 File "../../lua-scripts/examples/UICreation.lua"
 File "../../lua-scripts/examples/UICreation.lbc"
 File /oname=stdlib.lbc "../OOBD-ME/res/stdlib.lbc"
+
+# create the html library
+SetOutPath "$DOCUMENTS\OOBD-Library"
+File /r "../../tools/lib_html/libs"
+File /r "../../tools/lib_html/theme"
 
 
 SectionEnd
