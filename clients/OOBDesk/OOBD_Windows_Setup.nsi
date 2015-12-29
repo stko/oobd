@@ -64,7 +64,7 @@ SetOutPath $INSTDIR
 
 
 
-File "store/OOBDesk.jar"
+File /oname=OOBDesk.jar "store/OOBDesk_Rxxx_Branded.jar"
 File "oobd.url"
 File "jlogviewer.jar"
 File "logging.props"

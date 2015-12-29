@@ -44,13 +44,13 @@ public class FileHandlerEpa implements Archive {
         if (myFilePath != null) {
             try {
                 if (isDirectory) {
-                    return new FileInputStream(myFilePath + java.io.File.separator + innerPath);
+                    return new FileInputStream(myFilePath + "/" + innerPath);
                 } else {
                     ZipEntry zipFile = outerZipFile.getEntry(innerPath);
                     return outerZipFile.getInputStream(zipFile);
                 }
             } catch (FileNotFoundException ex) {
-                Logger.getLogger(FileHandlerEpa.class.getName()).log(Level.SEVERE, "Could not open EPA input file:" + myFilePath + java.io.File.separator + innerPath, ex);
+                Logger.getLogger(FileHandlerEpa.class.getName()).log(Level.SEVERE, "Could not open EPA input file:" + myFilePath + "/" + innerPath, ex);
                 return null;
             } catch (IOException ex) {
                 Logger.getLogger(FileHandlerEpa.class.getName()).log(Level.SEVERE, null, ex);
@@ -72,8 +72,8 @@ public class FileHandlerEpa implements Archive {
     public boolean bind(String filePath) {
         File file = new File(filePath);
         if (file.exists()) {
-            myFileDirectory = file.getParent();
-            myFilePath = file.getAbsolutePath();
+            myFileDirectory = file.getParent().replace("\\", "/");
+            myFilePath = file.getAbsolutePath().replace("\\", "/");
             myFileName = file.getName();
             try {
                 if (!file.isDirectory()) {

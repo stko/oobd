@@ -41,7 +41,7 @@ public class FileHandlerPGP implements Archive {
         if (myFilePath != null) {
             FileInputStream mfp = null;
             try {
-                mfp = new FileInputStream(myFileDirectory + java.io.File.separator + innerPath);
+                mfp = new FileInputStream(myFileDirectory + "/" + innerPath);
             } catch (FileNotFoundException e) {
                 Core.getSingleInstance().userAlert(
                         "Error: Can't read PGP crypted file", "Diagnose");
@@ -88,8 +88,8 @@ public class FileHandlerPGP implements Archive {
             file = new File(filePath);
         }
         if (file.exists()) {
-            myFileDirectory = file.getParent();
-            myFilePath = file.getAbsolutePath();
+            myFileDirectory = file.getParent().replace("\\", "/");;
+            myFilePath = file.getAbsolutePath().replace("\\", "/");;
             myFileName = file.getName();
             return true;
         } else {

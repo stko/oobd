@@ -426,34 +426,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     }
 
     /**
-     * \brief starts a scriptengine
-     *
-     * During startup, the core reports all available scriptengines to the User
-     * Interface to let the user choose with which one he wants to work with.
-     *
-     * This engine is then been first created with createScriptEngine(), and
-     * when all initalisation is been done, it's started with
-     * startScriptEngine() \ingroup visualisation
-     *
-     * @param onion addional param
-     */
-    public void startScriptEngine(Onion onion) {
-        Logger.getLogger(Core.class.getName()).log(Level.CONFIG,
-                "Start scriptengine: " + id);
-        while (core.readDataPool(DP_RUNNING_SCRIPTENGINE, null) != null) {
-            try {
-                Thread.sleep(10);
-                System.out.println("Old Scriptengine not finished yet");
-            } catch (InterruptedException ex) {
-            }
-        }
-        OobdScriptengine o = (OobdScriptengine) readDataPool(OOBDConstants.DP_LAST_CREATED_SCRIPTENGINE, null);
-        o.setStartupParameter(onion);
-        Thread t1 = new Thread(o);
-        t1.start();
-    }
-
-    /**
      * \brief create ScriptEngine identified by its public Name
      *
      * Returns a unique ID which is used from now on for all communication
@@ -857,6 +829,36 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         }
     }
 
+    
+    /**
+     * \brief starts a scriptengine
+     *
+     * During startup, the core reports all available scriptengines to the User
+     * Interface to let the user choose with which one he wants to work with.
+     *
+     * This engine is then been first created with createScriptEngine(), and
+     * when all initalisation is been done, it's started with
+     * startScriptEngine() \ingroup visualisation
+     *
+     * @param onion addional param
+     */
+    public void startScriptEngine(Onion onion) {
+        Logger.getLogger(Core.class.getName()).log(Level.CONFIG,
+                "Start scriptengine: " + id);
+        while (core.readDataPool(DP_RUNNING_SCRIPTENGINE, null) != null) {
+            try {
+                Thread.sleep(10);
+                System.out.println("Old Scriptengine not finished yet");
+            } catch (InterruptedException ex) {
+            }
+        }
+        OobdScriptengine o = (OobdScriptengine) readDataPool(OOBDConstants.DP_LAST_CREATED_SCRIPTENGINE, null);
+        o.setStartupParameter(onion);
+        Thread t1 = new Thread(o);
+        t1.start();
+    }
+
+    
     public String startScriptEngineByURL(String resourceName) {
         String connectURL = "serial"; //this looks obviously not like an URL yet, but maybe in a  later extension
 
@@ -872,13 +874,13 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                 if (("/" + file.getID()).equalsIgnoreCase(resourceName)) {
 
                     try {
-                        cmdOnion = new Onion("{" + "'scriptpath':'" + file.getFilePath() + "'"
+                        cmdOnion = new Onion("{" + "'scriptpath':'" +  file.getFilePath().replace("\\", "/") + "'"
                                 + ",'connecturl':'" + Base64Coder.encodeString(connectURL) + "'"
                                 + "}");
                         stopScriptEngine();
+                        writeDataPool(DP_ACTIVE_ARCHIVE, file);
                         createScriptEngine("ScriptengineLua", cmdOnion);
                         startScriptEngine(cmdOnion);
-                        writeDataPool(DP_ACTIVE_ARCHIVE, file);
                         return file.getProperty(MANIFEST_STARTPAGE, OOBDConstants.HTML_DEFAULTPAGEURL);
                     } catch (JSONException ex) {
                         Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);

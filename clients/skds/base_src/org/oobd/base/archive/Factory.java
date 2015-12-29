@@ -41,7 +41,7 @@ public class Factory {
                 }
                 if (actFile != null) {
                     if (actFile.bind(path
-                            + System.getProperty("file.separator")
+                            + "/"
                             + files[i].getName())) {
                         res.add(actFile);
                     }

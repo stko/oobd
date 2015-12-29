@@ -34,7 +34,7 @@ public class FileHandlerPlain implements Archive {
     public InputStream getInputStream(String innerPath) {
         if (myFilePath != null) {
             try {
-                return new FileInputStream(myFileDirectory + java.io.File.separator + innerPath);
+                return new FileInputStream(myFileDirectory + "/" + innerPath);
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(FileHandlerPlain.class.getName()).log(Level.SEVERE, null, ex);
                 return null;
@@ -56,8 +56,8 @@ public class FileHandlerPlain implements Archive {
     public boolean bind(String filePath) {
         File file = new File(filePath);
         if (file.exists()) {
-            myFileDirectory = file.getParent();
-            myFilePath = file.getAbsolutePath();
+            myFileDirectory = file.getParent().replace("\\", "/");;
+            myFilePath = file.getAbsolutePath().replace("\\", "/");;
             myFileName = file.getName();
             return true;
         } else {

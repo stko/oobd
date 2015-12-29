@@ -60,14 +60,14 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             case FT_DATABASE:
                 return fileName;
             case FT_KEY:
-                return System.getProperty("user.home") + java.io.File.separator + fileName;
+                return System.getProperty("user.home") + "/" + fileName;
 
             default:
                 File myFile = new File(fileName);
                 if (myFile.exists()) {
                     return myFile.getAbsolutePath();
                 } else {
-                    myFile = new File(appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + fileName);
+                    myFile = new File(appProbs.get(OOBDConstants.PropName_ScriptDir, "") + "/" + fileName);
                     if (myFile.exists()) {
                         return myFile.getAbsolutePath();
                     }
@@ -107,8 +107,8 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             switch (pathID) {
                 case OOBDConstants.FT_WEBPAGE:
                     appProbs = core.getSystemIF().loadPreferences(FT_PROPS, OOBDConstants.AppPrefsFileName);
-                    webRootDir = (String)core.readDataPool(DP_SCRIPTDIR, "")+ java.io.File.separator;
-                    webLibraryDir = (String)core.readDataPool(DP_WWW_LIB_DIR, "")+ java.io.File.separator;
+                    webRootDir = (String)core.readDataPool(DP_SCRIPTDIR, "")+ "/";
+                    webLibraryDir = (String)core.readDataPool(DP_WWW_LIB_DIR, "")+ "/";
                      // in case the resource name points to a "executable" scriptengine, the engine get started 
                     // and the resourcename is corrected to the html start page to be used
                     resourceName = core.startScriptEngineByURL(resourceName);
@@ -145,7 +145,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                     break;
 
                 case OOBDConstants.FT_KEY:
-                    resource = new FileInputStream(System.getProperty("user.home") + java.io.File.separator + resourceName);
+                    resource = new FileInputStream(System.getProperty("user.home") + "/" + resourceName);
                     Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "Key File "
                             + resourceName + " loaded");
                     break;
@@ -157,7 +157,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             }
 
         } catch (Exception e) {
-            Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "generateResourceStream: File " + resourceName + " not loaded because of ", e);
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "generateResourceStream: File " + resourceName + " not loaded");
         }
         return resource;
     }
