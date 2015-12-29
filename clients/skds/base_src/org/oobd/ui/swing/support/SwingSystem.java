@@ -200,7 +200,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                      scriptArchive = Factory.getArchive(filePath);
                      scriptArchive.bind(filePath);
                      */
-                    resource = scriptArchive.getInputStream(scriptArchive.getProperty(OOBDConstants.MANIFEST_SCRIPTNAME, ""));
+                    resource = scriptArchive.getInputStream(scriptArchive.getProperty(OOBDConstants.MANIFEST_SCRIPTNAME, OOBDConstants.MANIFEST_SCRIPTNAME_DEFAULT));
                     Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
                             + " loaded");
                     break;

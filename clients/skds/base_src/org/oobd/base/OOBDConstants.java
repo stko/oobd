@@ -119,8 +119,9 @@ public interface OOBDConstants {
     // identifier for manifest properties
     public static String MANIFEST_NAME = "manifest";
     public static String MANIFEST_SCRIPTNAME = "script";
+    public static String MANIFEST_SCRIPTNAME_DEFAULT = "start.lbc";
     public static String MANIFEST_STARTPAGE = "startpage";
-    //  some HTML constants
+     //  some HTML constants
     public static String HTML_DEFAULTPAGEURL = "/theme/default/startpage.html";
     // Identifiers for the Data Pool. Please always use the symbolic names, as their values can change all the time
     public final static int DP_WEBUI_ACTUAL_THEME = 0;

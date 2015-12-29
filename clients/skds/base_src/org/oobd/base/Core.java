@@ -1081,14 +1081,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                         createScriptEngine("ScriptengineLua", cmdOnion);
                         startScriptEngine(cmdOnion);
                         writeDataPool(DP_ACTIVE_ARCHIVE, file);
-                        String startPage = file.getProperty(MANIFEST_STARTPAGE, "");
-                        if (startPage.equals("")) { // no startpage given?
-                            return OOBDConstants.HTML_DEFAULTPAGEURL;
-                        } else {
-//                        return file.getFileName() + "/" + startPage;
-                            return startPage;
-                        }
-                    } catch (JSONException ex) {
+                        return file.getProperty(MANIFEST_STARTPAGE, OOBDConstants.HTML_DEFAULTPAGEURL);
+                     } catch (JSONException ex) {
                         Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
                         return resourceName;
                     }
