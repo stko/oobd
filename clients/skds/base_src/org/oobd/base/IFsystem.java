@@ -26,14 +26,7 @@ public interface IFsystem {
      */
     public void registerOobdCore(Core core);
 
-    /**
-     * \brief Load classes for bus, engine, etc...
-     *
-     * @param path directory to seach in
-     * @param classtype reference class for what to search for
-     * @return Hashmap of classes with the class names as key
-     */
-    public HashMap loadOobdClasses(String path, String classPrefix, Class<?> classType);
+    
 
     /**
      * \brief generates UI specific paths for standard files

@@ -4,14 +4,11 @@
  */
 package org.oobd.ui.swing.support;
 
-import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.prefs.Preferences;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.FileHandler;
 import java.util.HashMap;
-import org.json.JSONException;
 import org.oobd.base.*;
 import org.oobd.base.OOBDConstants;
 import java.net.URL;
@@ -29,7 +26,6 @@ import java.net.URI;
 import java.util.Hashtable;
 import javax.swing.JFileChooser;
 import org.oobd.base.archive.Archive;
-import org.oobd.base.archive.Factory;
 import org.oobd.base.support.Onion;
 import org.oobd.base.port.ComPort_Kadaver;
 import org.oobd.base.port.ComPort_Telnet;
@@ -49,67 +45,13 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     String webLibraryDir= "";
     Preferences appProbs;
 
+    @Override
     public void registerOobdCore(Core thisCore) {
         core = thisCore;
     }
 
-    public HashMap loadOobdClasses(String path, String classPrefix, Class<?> classType) {
-        HashMap<String, Class<?>> myInstances = new HashMap<String, Class<?>>();
-        // TODO copy this code section to Swing / ME IFSystem implementation
 
-        File directory = new File(path);
-        if (directory.exists()) {
-            File[] files = directory.listFiles();
-            URL sourceURL = null;
-            try {
-                // read the path of the directory
-                sourceURL = directory.toURI().toURL();
-            } catch (java.net.MalformedURLException ex) {
-                Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "", ex.getMessage());
-            }
-            // generate URLClassLoader for that directory
-
-            URLClassLoader loader = new URLClassLoader(new java.net.URL[]{sourceURL}, Thread.currentThread().getContextClassLoader());
-            // For each file in dir...
-            for (int i = 0; i
-                    < files.length; i++) {
-                // split file name into name and extension
-                Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "File to be load as class: " + files[i].getName());
-                String name[] = files[i].getName().split("\\.");
-                // only class names without $ are taken
-                if (name.length > 1 && name[1].equals("class") && name[1].indexOf("$") == -1) {
-                    try {
-                        // load the class itself
-                        Class<?> source = loader.loadClass(classPrefix + name[0]);
-                        // Prüfen, ob die geladene Klasse das Interface implementiert
-                        // bzw. ob sie das Interface beerbt
-                        // Das Interface darf dabei natürlich nicht im selben Verzeichnis liegen
-                        // oder man muss prüfen, ob es sich um ein Interface handelt Class.isInterface()
-                        if (classType.isAssignableFrom(source)) {
-                            // save unitialized class object in hashmap
-                            myInstances.put(name[0], source);
-                        } else {
-                            Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, classPrefix + name[0] + "can not be inherited from " + classType.getName());
-                        }
-
-                    } catch (ClassNotFoundException ex) {
-                        // Wird geworfen, wenn die Klasse nicht gefunden wurde
-                        Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "couldn't load class", ex);
-                        ex.printStackTrace();
-                    }
-
-                }
-            }
-        }// if
-        else {
-            Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "Directory " + directory.getName() + " does not exist. Class " + classPrefix + " could not be loaded.");
-        }
-        // returns Hashmap filled with classes found
-
-        return myInstances;
-
-    }
-
+    @Override
     public String generateUIFilePath(int pathID, String fileName) {
         switch (pathID) {
 
@@ -154,6 +96,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         return null;
     }
 
+    @Override
     public InputStream generateResourceStream(int pathID, String resourceName)
             throws java.util.MissingResourceException {
         Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "Try to load: " + resourceName
@@ -196,10 +139,6 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                     appProbs = core.getSystemIF().loadPreferences(FT_PROPS,
                             OOBDConstants.AppPrefsFileName);
                     // save actual script directory to buffer it for later as webroot directory
-/*                    String filePath = generateUIFilePath(pathID, resourceName);
-                     scriptArchive = Factory.getArchive(filePath);
-                     scriptArchive.bind(filePath);
-                     */
                     resource = scriptArchive.getInputStream(scriptArchive.getProperty(OOBDConstants.MANIFEST_SCRIPTNAME, OOBDConstants.MANIFEST_SCRIPTNAME_DEFAULT));
                     Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
                             + " loaded");
@@ -223,6 +162,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         return resource;
     }
 
+    @Override
     public Object supplyHardwareHandle(Onion typ) {
         appProbs = core.getSystemIF().loadPreferences(FT_PROPS,
                 OOBDConstants.AppPrefsFileName);
@@ -262,6 +202,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         }
     }
 
+    @Override
     public Preferences loadPreferences(int pathID, String filename) {
         Preferences myPrefs = null;
 
@@ -270,16 +211,6 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             prefsRoot = Preferences.userRoot();
             prefsRoot.sync();
             myPrefs = prefsRoot.node("com.oobd.preference." + filename);
-/*            if (myPrefs.keys().length == 0 && OOBDConstants.CorePrefsFileName.equalsIgnoreCase(filename)) { //no entries yet
-                //generate system specific settings
-                myPrefs.put("EngineClassPath", "scriptengine");
-                myPrefs.put("ProtocolClassPath", "protocol");
-                myPrefs.put("BusClassPath", "bus");
-                myPrefs.put("DatabaseClassPath", "db");
-                myPrefs.put("UIHandlerClassPath", "uihandler");
-                myPrefs.flush();
-            }
-*/
             return myPrefs;
 
         } catch (Exception e) {
@@ -288,6 +219,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         return myPrefs;
     }
 
+    @Override
     public boolean savePreferences(int pathID, String filename, Preferences properties) {
         try {
             properties.flush();
@@ -300,38 +232,40 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         }
     }
 
+    @Override
     public char[] getAppPassPhrase() {
         return PassPhraseProvider.getPassPhrase();
     }
 
+    @Override
     public String getUserPassPhrase() {
         if (userPassPhrase.equals("")) {
             return "";
         } else {
             try {
-                return new String(EncodeDecodeAES.decrypt(new String(
-                        getAppPassPhrase()), userPassPhrase));
+                return EncodeDecodeAES.decrypt(new String(
+                        getAppPassPhrase()), userPassPhrase);
             } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                 e.printStackTrace();
                 return "";
             }
         }
     }
 
+    @Override
     public void setUserPassPhrase(String upp) {
         try {
             userPassPhrase = EncodeDecodeAES.encrypt(new String(
                     getAppPassPhrase()), upp);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             userPassPhrase = "";
         }
     }
 
+    @Override
     public void createEngineTempInputFile(OobdScriptengine eng) {
-        File f = null;
+        File f;
 
         try {
             //do we have to delete a previous first?
@@ -352,6 +286,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
 
     }
 
+    @Override
     public String doFileSelector(String path, final String extension, String message, Boolean save) {
         JFileChooser chooser = new JFileChooser();
         File oldDir = null;
@@ -369,6 +304,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         }
         chooser.addChoosableFileFilter(new javax.swing.filechooser.FileFilter() {
 
+            @Override
             public boolean accept(File f) {
                 if (f.isDirectory()) {
                     return true;
@@ -380,13 +316,14 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                 }
             }
 
+            @Override
             public String getDescription() {
                 return extension + " Ext";
             }
         });
         if ((save && chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) || (!save && chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION)) {
             try {
-                return chooser.getSelectedFile().getAbsolutePath().toString();
+                return chooser.getSelectedFile().getAbsolutePath();
 
             } catch (Exception ex) {
                 Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);
@@ -398,8 +335,9 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         }
     }
 
+    @Override
     public Hashtable<String, Class> getConnectorList() {
-        Hashtable<String, Class> connectClasses = new Hashtable<String, Class>();
+        Hashtable<String, Class> connectClasses = new Hashtable<>();
         connectClasses.put(OOBDConstants.PropName_ConnectTypeBT, ComPort_Win.class);
         connectClasses.put(OOBDConstants.PropName_ConnectTypeRemoteConnect,
                 ComPort_Kadaver.class);
@@ -411,6 +349,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         return connectClasses;
     }
 
+    @Override
     public DatagramSocket getUDPBroadcastSocket() {
         try {
             DatagramSocket socket = null;
@@ -420,7 +359,6 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             socket.setBroadcast(true);
             return socket;
         } catch (Exception e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
             return null;
         }

@@ -41,11 +41,6 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.prefs.Preferences;
 
 import org.json.JSONException;
@@ -57,11 +52,7 @@ import org.oobd.base.db.OobdDB;
 import org.oobd.base.connector.OobdConnector;
 import org.oobd.base.protocol.OobdProtocol;
 import org.oobd.base.scriptengine.OobdScriptengine;
-import org.oobd.base.scriptengine.ScriptengineLua;
-import org.oobd.base.support.OnionNoEntryException;
-import org.oobd.base.support.History;
 import org.oobd.base.uihandler.*;
-import org.oobd.base.visualizer.Visualizer;
 
 /**
  * \defgroup init Initialisation during startup
@@ -152,7 +143,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * to handle all visual in- and output
      * @param mySystemInterface reference to the actual application and runtime
      * enviroment, on which OOBD is actual running on
-     * @param Name of the Plugin, just for debugging
+     * @param name of the Plugin, just for debugging
      *
      */
     public Core(IFui myUserInterface, IFsystem mySystemInterface, String name) {
@@ -165,223 +156,25 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         id = CoreMailboxName;
         userInterface = myUserInterface;
         systemInterface = mySystemInterface;
-        busses = new HashMap<String, OobdBus>();
-        connectors = new HashMap<String, OobdConnector>();
-        protocols = new HashMap<String, OobdProtocol>();
-        uiHandlers = new HashMap<String, Class<OobdUIHandler>>();
-        scriptengines = new HashMap<String, Class<OobdScriptengine>>();
-        activeUIHandlers = new HashMap<String, OobdUIHandler>();
-        assignments = new HashMap<String, Object>();
-        databases = new HashMap<String, OobdDB>();
+//        busses = new HashMap<String, OobdBus>();
+        busses = new HashMap<>();
+        connectors = new HashMap<>();
+        protocols = new HashMap<>();
+        uiHandlers = new HashMap<>();
+        scriptengines = new HashMap<>();
+        activeUIHandlers = new HashMap<>();
+        assignments = new HashMap<>();
+        databases = new HashMap<>();
         // absolutely scary, but the datapool array list need to be filled once to not
         // crash later when trying to (re)assign a value...
         for (int i = 0; i < DP_ARRAY_SIZE; i++) {
             dataPoolList.add(null);
         }
-        systemInterface.registerOobdCore(this); // Anounce itself at the
-        // Systeminterface
-        userInterface.registerOobdCore(this); // Anounce itself at the
-        // Userinterface
-        //props = systemInterface.loadPreferences(FT_PROPS,
-        //        OOBDConstants.CorePrefsFileName);
-
-/*
-        // ----------- load Busses -------------------------------
+        systemInterface.registerOobdCore(this); // Anounce itself at the Systeminterface
+        userInterface.registerOobdCore(this); // Anounce itself at the Userinterface
         try {
-            Logger.getLogger(Core.class.getName()).log(
-                    Level.CONFIG,
-                    "Try to load: "
-                    + props.get("BusClassPath",
-                            "org.oobd.base.bus.BusCom"));
-            HashMap<String, Class<?>> classObjects = loadOobdClasses(
-                    props.get("BusClassPath", "org.oobd.base.bus.BusCom"),
-                    props.get("BusClassPrefix", "org.oobd.base.bus."),
-                    Class.forName("org.oobd.base.bus.OobdBus"));
-            for (Iterator iter = classObjects.keySet().iterator(); iter
-                    .hasNext();) {
-                String element = (String) iter.next();
-                Class<?> value = (Class<?>) classObjects.get(element);
-                try {
-                    OobdBus thisClass = (OobdBus) value.newInstance();
-                    thisClass.registerCore(this);
-                    new Thread(thisClass).start();
-                    busses.put(element, thisClass);
-                    Logger.getLogger(Core.class.getName()).log(Level.CONFIG,
-                            "Register " + element + " as bus");
-                } catch (InstantiationException ex) {
-                    // Wird geworfen, wenn die Klasse nicht "instanziert" werden
-                    // kann
-                    Logger.getLogger(Core.class.getName()).log(
-                            Level.WARNING,
-                            "InstantiationException: can't instance of Bus "
-                            + element);
-                } catch (IllegalAccessException ex) {
-                    Logger.getLogger(Core.class.getName()).log(
-                            Level.WARNING,
-                            "IllegalAccessException: can't create instance of Bus "
-                            + element);
-                }
-
-            }
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
-                    "Error while trying to load class", ex);
-        }
-        // ----------- load Connectors -------------------------------
-        try {
-            HashMap<String, Class<?>> classObjects = loadOobdClasses(props.get(
-                    "ConnectorClassPath",
-                    "org.oobd.base.connector.ConnectorLocal"),
-                    "org.oobd.base.connector.",
-                    Class.forName("org.oobd.base.connector.OobdConnector"));
-            for (Iterator iter = classObjects.keySet().iterator(); iter
-                    .hasNext();) {
-                String element = (String) iter.next();
-                Class<?> value = (Class<?>) classObjects.get(element);
-                try {
-                    OobdConnector thisClass = (OobdConnector) value
-                            .newInstance();
-                    thisClass.registerCore(this);
-                    connectors.put(element, thisClass);
-
-                } catch (InstantiationException ex) {
-                    // Wird geworfen, wenn die Klasse nicht "instanziert" werden
-                    // kann
-                    Logger.getLogger(Core.class.getName()).log(
-                            Level.WARNING,
-                            "InstantiationException: can't instance of Connector "
-                            + element);
-                } catch (IllegalAccessException ex) {
-                    Logger.getLogger(Core.class.getName()).log(
-                            Level.WARNING,
-                            "IllegalAccessException: can't create instance of Connector "
-                            + element);
-                }
-
-            }
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
-                    "Error while trying to load class", ex);
-        }
-         // ----------- load Protocols -------------------------------
-        try {
-            HashMap<String, Class<?>> classObjects = loadOobdClasses(props.get(
-                    "ProtocolClassPath", "org.oobd.base.protocol.ProtocolUDS"),
-                    "org.oobd.base.protocol.",
-                    Class.forName("org.oobd.base.protocol.OobdProtocol"));
-            for (Iterator iter = classObjects.keySet().iterator(); iter
-                    .hasNext();) {
-                String element = (String) iter.next();
-                Class<?> value = (Class<?>) classObjects.get(element);
-                try {
-                    OobdProtocol thisClass = (OobdProtocol) value.newInstance();
-                    thisClass.registerCore(this);
-                    protocols.put(element, thisClass);
-
-                } catch (InstantiationException ex) {
-                    // Wird geworfen, wenn die Klasse nicht "instanziert" werden
-                    // kann
-                    Logger.getLogger(Core.class.getName()).log(
-                            Level.WARNING,
-                            "InstantiationException: can't instance of Protocol "
-                            + element);
-                } catch (IllegalAccessException ex) {
-                    Logger.getLogger(Core.class.getName()).log(
-                            Level.WARNING,
-                            "IllegalAccessException: can't create instance of Protocol "
-                            + element);
-                }
-
-            }
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
-                    "Error while trying to load class", ex);
-        }
-        // ----------- load Databases -------------------------------
-        try {
-            HashMap<String, Class<?>> classObjects = loadOobdClasses(props.get(
-                    "DatabaseClassPath", "org.oobd.base.db.AVLLookup"),
-                    "org.oobd.base.db.",
-                    Class.forName("org.oobd.base.db.OobdDB"));
-            for (Iterator iter = classObjects.keySet().iterator(); iter
-                    .hasNext();) {
-                String element = (String) iter.next();
-                Class<?> value = (Class<?>) classObjects.get(element);
-                try {
-                    OobdDB thisClass = (OobdDB) value.newInstance();
-                    thisClass.registerCore(this);
-                    new Thread(thisClass).start();
-                    databases.put(element, thisClass);
-
-                } catch (InstantiationException ex) {
-                    // Wird geworfen, wenn die Klasse nicht "instanziert" werden
-                    // kann
-                    Logger.getLogger(Core.class.getName()).log(
-                            Level.WARNING,
-                            "InstantiationException: can't instance of Database "
-                            + element);
-                } catch (IllegalAccessException ex) {
-                    Logger.getLogger(Core.class.getName()).log(
-                            Level.WARNING,
-                            "IllegalAccessException: can't create instance of Database "
-                            + element);
-                }
-
-            }
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
-                    "Error while trying to load class", ex);
-        }
-*/
-        /*        
-         // ----------- load Scriptengines AS CLASSES, NOT AS
-         // INSTANCES!-------------------------------
-         try {
-         scriptengines = loadOobdClasses(
-         props.get("EngineClassPath",
-         "org.oobd.base.scriptengine.ScriptengineLua"),
-         "org.oobd.base.scriptengine.",
-         Class.forName("org.oobd.base.scriptengine.OobdScriptengine"));
-         for (Iterator iter = scriptengines.keySet().iterator(); iter
-         .hasNext();) {
-         String element = (String) iter.next();
-         Class<OobdScriptengine> value = scriptengines.get(element);
-         scriptengines.put(element, value);
-         // now I need to be a little bit tricky to involve the static
-         // class method of an untypized class
-         try {
-         Class[] parameterTypes = new Class[]{};
-         java.lang.reflect.Method method = value.getMethod(
-         "publicName", new Class[]{}); // no parameters
-         Object instance = null;
-         System.out.println("load Scriptengine " + element);
-         String result = (String) method.invoke(instance,
-         new Object[]{}); // no parameters
-         // Android: String.isEmpty() not available
-         // if (!result.isEmpty()) {
-         System.out.println("public Name of Scriptengine " + result);
-         if (result.length() != 0) {
-         userInterface.announceScriptengine(element, result);
-         }
-         } catch (Exception ex) {
-         Logger.getLogger(Core.class.getName()).log(
-         Level.WARNING,
-         "can't call static method 'publicName' of "
-         + element);
-         ex.printStackTrace();
-
-         }
-         }
-         } catch (ClassNotFoundException ex) {
-         Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
-         "Error while trying to load class", ex);
-         }
-         */
-        // ----------- load UIHandlers AS CLASSES, NOT AS
-        // INSTANCES!-------------------------------
-        try {
-            BufferedReader br = null;
-            String strLine = "";
+            BufferedReader br;
+            String strLine;
             br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/org/oobd/base/classloader.cfg")));
             while ((strLine = br.readLine()) != null) {
                 if (!"".equals(strLine)) {
@@ -393,28 +186,28 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     Class value = Class.forName(classConfig[1]);
                     String[] classNameElements = classConfig[1].split("\\.");
                     String element = classNameElements[classNameElements.length - 1];
-                    OobdPlugin thisClass=null;
+                    OobdPlugin thisClass = null;
                     switch (classConfig[0]) {
                         case "scriptengine":
-                         case "uihandler":
+                        case "uihandler":
                             loadAsClass = true;
                             break;
                         case "oobddb":
                         case "protocol":
                         case "bus":
-                       case "connector":
+                        case "connector":
                             loadAsInstance = true;
                             break;
 
                     }
                     if (loadAsInstance) {
-                         try {
+                        try {
                             thisClass = (OobdPlugin) value.newInstance();
                             thisClass.registerCore(this);
                             new Thread(thisClass).start();
-  
+
                         } catch (InstantiationException ex) {
-                    // Wird geworfen, wenn die Klasse nicht "instanziert" werden
+                            // Wird geworfen, wenn die Klasse nicht "instanziert" werden
                             // kann
                             Logger.getLogger(Core.class.getName()).log(
                                     Level.WARNING,
@@ -429,16 +222,16 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                         // after creation, save results
                         switch (classConfig[0]) {
                             case "oobddb":
-                                databases.put(element, (OobdDB)thisClass);
+                                databases.put(element, (OobdDB) thisClass);
                                 break;
-                          case "protocol":
-                                protocols.put(element, (OobdProtocol)thisClass);
+                            case "protocol":
+                                protocols.put(element, (OobdProtocol) thisClass);
                                 break;
-                          case "bus":
-                                busses.put(element, (OobdBus)thisClass);
+                            case "bus":
+                                busses.put(element, (OobdBus) thisClass);
                                 break;
-                          case "connector":
-                                connectors.put(element, (OobdConnector)thisClass);
+                            case "connector":
+                                connectors.put(element, (OobdConnector) thisClass);
                                 break;
                         }
                     }
@@ -480,72 +273,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                                     userInterface.announceUIHandler(element, result);
                                 }
                                 break;
-
                         }
-
-                        /*                      
-                        
-                         if ("scriptengine".equals(classConfig[0])) { //load Scriptengines AS CLASSES, NOT AS INSTANCES!
-                         //Class<OobdScriptengine> value = (Class<OobdScriptengine>) Class.forName(classConfig[1]);
-                         Class value =  Class.forName(classConfig[1]);
-                         String[] classNameElements = classConfig[1].split("\\.");
-                         String element = classNameElements[classNameElements.length - 1];
-                         scriptengines.put(element, value);
-
-                         // now I need to be a little bit tricky to involve the static
-                         // class method of an untypized class
-                         try {
-                         java.lang.reflect.Method method = value.getMethod(
-                         "publicName", new Class[]{}); // no parameters
-                         Object instance = null;
-                         String result = (String) method.invoke(instance,
-                         new Object[]{}); // no parameters
-                         // Android: String.isEmpty() not available
-                         // if (!result.isEmpty()) {
-                         if (result.length() != 0) {
-                         userInterface.announceScriptengine(element, result);
-                         }
-                         } catch (Exception ex) {
-                         Logger.getLogger(Core.class.getName()).log(
-                         Level.WARNING,
-                         "can't call static method 'publicName' of "
-                         + element);
-                         ex.printStackTrace();
-
-                         }
-
-                         }
-                         if ("uihandler".equals(classConfig[0])) {
-                         //Class<OobdUIHandler> value = (Class<OobdUIHandler>) Class.forName(classConfig[1]);
-                         Class value =  Class.forName(classConfig[1]);
-
-                         String[] classNameElements = classConfig[1].split("\\.");
-                         String element = classNameElements[classNameElements.length - 1];
-                         uiHandlers.put(element, value);
-
-                         // now I need to be a little bit tricky to involve the static
-                         // class method of an untypized class
-                         try {
-                         java.lang.reflect.Method method = value.getMethod(
-                         "publicName", new Class[]{}); // no parameters
-                         Object instance = null;
-                         String result = (String) method.invoke(instance,
-                         new Object[]{}); // no parameters
-                         // Android: String.isEmpty() not available
-                         // if (!result.isEmpty()) {
-                         if (result.length() != 0) {
-                         userInterface.announceUIHandler(element, result);
-                         }
-                         } catch (Exception ex) {
-                         Logger.getLogger(Core.class.getName()).log(
-                         Level.WARNING,
-                         "can't call static method 'publicName' of "
-                         + element);
-                         ex.printStackTrace();
-
-                         }
-                         }
-                         */
                     }
                 }
             }
@@ -810,35 +538,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             // t1.start();
             uiHandler.start();
         }
-    }
-
-    /**
-     * \brief generate the lists of available OOBD classes for scriptengines,
-     * busses etc. Loads different dynamic classes via an URLClassLoader. As an
-     * URLClassloader is generic and can handle URLs, file systems and also jar
-     * files, this loader is located in the core section of oobd. Just the
-     * information about the correct load path is environment specific and needs
-     * to come from the systemInterface
-     *
-     * @param path directory to seach in
-     * @param classtype reference class for what to search for
-     * @return Hashmap
-     * @todo loadOobdClasses supports actual only class files in a dir, but not
-     * in a jar file. The jar UISystem from
-     * "Dynamisches_laden_von_Klassen_example.txt" needs to be implemented also
-     * @todo the classloader needs to be extended to support encrypted
-     * (=licenced) class files
-     * @bug what do do that the procedure also support relative filepaths?
-     *
-     */
-    public HashMap loadOobdClasses(String path, String classPrefix,
-            Class classType) {
-        // inspired by http://de.wikibooks.org/wiki/Java_Standard:_Class
-        Logger.getLogger(Core.class.getName()).log(Level.CONFIG,
-                "Scanne Directory: " + path);
-        HashMap<String, Class<?>> myInstances = systemInterface
-                .loadOobdClasses(path, classPrefix, classType);
-        return myInstances;
     }
 
     /**

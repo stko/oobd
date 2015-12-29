@@ -16,7 +16,6 @@ XPStyle on
 
 
 
-
 var menutype
 
 function .onInit
@@ -62,20 +61,10 @@ LicenseForceSelection checkbox
 Section "OOBDesk"
 SetOutPath $INSTDIR
 
-#CreateDirectory $INSTDIR\lib
-#File /oname=$INSTDIR\lib\appframework-1.0.3.jar dist/lib/appframework-1.0.3.jar
-#File /oname=$INSTDIR\lib\jna.jar dist/lib/jna.jar
-#File /oname=$INSTDIR\lib\kahlua.jar dist/lib/kahlua.jar
-#File /oname=$INSTDIR\lib\purejavacomm.jar dist/lib/purejavacomm.jar
-#File /oname=$INSTDIR\lib\RXTXcomm.jar dist/lib/RXTXcomm.jar
-#File /oname=$INSTDIR\lib\swing-worker-1.1.jar dist/lib/swing-worker-1.1.jar
-
-#File /oname=$INSTDIR\lib\java_websocket.jar dist/lib/java_websocket.jar
-File /r dist/lib
 
 
 
-File "dist/OOBDesk.jar"
+File "store/OOBDesk.jar"
 File "oobd.url"
 File "jlogviewer.jar"
 File "logging.props"
@@ -121,13 +110,6 @@ Section "un.Uninstall"
 SetOutPath "$INSTDIR"
 RMDir /r $INSTDIR\lib
 RMDir /r $INSTDIR\logs
-RMDir /r $INSTDIR\bus
-RMDir /r $INSTDIR\port
-RMDir /r $INSTDIR\db
-RMDir /r $INSTDIR\scriptengine
-RMDir /r $INSTDIR\protocol
-RMDir /r $INSTDIR\uihandler
-RMDir /r $INSTDIR\OOBDesk
 Delete "$INSTDIR\jlogviewer.jar"
 Delete "$INSTDIR\OOBDesk.jar"
 Delete "$INSTDIR\oobd.url"
