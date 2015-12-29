@@ -554,9 +554,7 @@ public class ScriptengineLua extends OobdScriptengine {
         }
         // given filename overrides config settings
         if (scriptFileName == null) {
-            Preferences props = Core.getSingleInstance().getSystemIF().loadPreferences(FT_PROPS, "enginelua.props");
-            scriptFileName = props.get("LuaDefaultScript",
-                    ENG_LUA_DEFAULT);
+            scriptFileName = ENG_LUA_DEFAULT;
         }
         try {
             scriptDir = (new File(UISystem.generateUIFilePath(FT_SCRIPT,

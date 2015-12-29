@@ -16,16 +16,8 @@ XPStyle on
 
 
 
-var fileToMake
+
 var menutype
-Function createDummy 
-	ClearErrors
-	FileOpen $0 $fileToMake w
-	IfErrors noFile
-	FileWrite $0 "just a dummy file to satisfy the class loader"
-	FileClose $0
-noFile:
-FunctionEnd
 
 function .onInit
 	ClearErrors
@@ -83,27 +75,7 @@ File /r dist/lib
 
 
 
-
-
-
-CreateDirectory $INSTDIR\bus
-StrCpy $fileToMake "$INSTDIR\bus\BusCom.class"
-Call createDummy 
-CreateDirectory $INSTDIR\scriptengine
-StrCpy $fileToMake  "$INSTDIR\scriptengine\ScriptengineLua.class"
-Call createDummy
-CreateDirectory $INSTDIR\uihandler
-StrCpy $fileToMake  "$INSTDIR\uihandler\UIHandler.class"
-Call createDummy
-StrCpy $fileToMake  "$INSTDIR\uihandler\WsUIHandler.class"
-Call createDummy
-CreateDirectory $INSTDIR\db
-StrCpy $fileToMake  "$INSTDIR\db\AVLLookup.class"
-Call createDummy
-
 File "dist/OOBDesk.jar"
-File /oname=oobdcore.props  "oobdcore_dist.props"
-#File  "enginelua_dist.props"
 File "oobd.url"
 File "jlogviewer.jar"
 File "logging.props"

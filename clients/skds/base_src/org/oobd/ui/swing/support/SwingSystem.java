@@ -270,7 +270,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             prefsRoot = Preferences.userRoot();
             prefsRoot.sync();
             myPrefs = prefsRoot.node("com.oobd.preference." + filename);
-            if (myPrefs.keys().length == 0 && OOBDConstants.CorePrefsFileName.equalsIgnoreCase(filename)) { //no entries yet
+/*            if (myPrefs.keys().length == 0 && OOBDConstants.CorePrefsFileName.equalsIgnoreCase(filename)) { //no entries yet
                 //generate system specific settings
                 myPrefs.put("EngineClassPath", "scriptengine");
                 myPrefs.put("ProtocolClassPath", "protocol");
@@ -279,6 +279,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                 myPrefs.put("UIHandlerClassPath", "uihandler");
                 myPrefs.flush();
             }
+*/
             return myPrefs;
 
         } catch (Exception e) {

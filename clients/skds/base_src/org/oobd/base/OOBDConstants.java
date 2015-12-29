@@ -53,7 +53,7 @@ public interface OOBDConstants {
     // file names for Disclaimer files:
     public final static String DisclaimerFileName = "disclaim.html";
     // file names for property files:
-    public final static String CorePrefsFileName = "oobdcore.props";
+    //public final static String CorePrefsFileName = "oobdcore.props";
     public final static String AppPrefsFileName = "app.props";
     //key names for properties
     public final static String PropName_SerialPort = "SerialPort";
