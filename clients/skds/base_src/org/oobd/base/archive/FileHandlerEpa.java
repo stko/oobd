@@ -49,13 +49,10 @@ public class FileHandlerEpa implements Archive {
                     ZipEntry zipFile = outerZipFile.getEntry(innerPath);
                     return outerZipFile.getInputStream(zipFile);
                 }
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(FileHandlerEpa.class.getName()).log(Level.SEVERE, "Could not open EPA input file:" + myFilePath + "/" + innerPath, ex);
-                return null;
-            } catch (IOException ex) {
-                Logger.getLogger(FileHandlerEpa.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException  ex) {
+                Logger.getLogger(FileHandlerEpa.class.getName()).log(Level.INFO, "Could not open EPA input file:" + myFilePath + "/" + innerPath);
             }
-        }
+         }
         return null;
     }
 
@@ -78,7 +75,7 @@ public class FileHandlerEpa implements Archive {
             try {
                 if (!file.isDirectory()) {
                     outerZipFile = new ZipFile(file.getAbsolutePath());
-                    Enumeration<? extends ZipEntry> entries = outerZipFile.entries();
+                    //Enumeration<? extends ZipEntry> entries = outerZipFile.entries();
                     isDirectory = false;
                 } else {
                     outerZipFile = null;
@@ -87,10 +84,9 @@ public class FileHandlerEpa implements Archive {
                 String manifestString = new String(org.apache.commons.io.IOUtils.toByteArray(getInputStream(MANIFEST_NAME)));
                 manifest = new Onion(manifestString);
 
-            } catch (IOException ex) {
-                Logger.getLogger(FileHandlerEpa.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (JSONException ex) {
-                Logger.getLogger(FileHandlerEpa.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NullPointerException | IOException | JSONException ex) {
+                manifest = new Onion();
+               Logger.getLogger(FileHandlerEpa.class.getName()).log(Level.INFO, "Could not bind EPA input file:" + myFilePath + "/" + filePath);
             }
             return true;
         } else {

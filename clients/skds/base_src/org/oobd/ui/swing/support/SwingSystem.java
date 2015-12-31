@@ -23,8 +23,13 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import javax.swing.JFileChooser;
+import org.json.JSONException;
+import static org.oobd.base.OOBDConstants.DP_ACTIVE_ARCHIVE;
+import static org.oobd.base.OOBDConstants.DP_LIST_OF_SCRIPTS;
+import static org.oobd.base.OOBDConstants.MANIFEST_STARTPAGE;
 import org.oobd.base.archive.Archive;
 import org.oobd.base.support.Onion;
 import org.oobd.base.port.ComPort_Kadaver;
@@ -42,14 +47,13 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     Core core;
     private String userPassPhrase = "";
     String webRootDir = "";
-    String webLibraryDir= "";
+    String webLibraryDir = "";
     Preferences appProbs;
 
     @Override
     public void registerOobdCore(Core thisCore) {
         core = thisCore;
     }
-
 
     @Override
     public String generateUIFilePath(int pathID, String fileName) {
@@ -84,10 +88,10 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     String mapDirectory(String[] mapDir, String path) {
         int i = 0;
         while (i < mapDir.length) {
-            if (path.toLowerCase().startsWith("/" + mapDir[i].toLowerCase()+"/")) {
+            if (path.toLowerCase().startsWith("/" + mapDir[i].toLowerCase() + "/")) {
                 path = path.substring(mapDir[i].length() + 2);
                 if (mapDir[i].toLowerCase().equalsIgnoreCase("theme") && path.toLowerCase().startsWith("default/")) { //map the theme folder to  the actual theme
-                    path = core.readDataPool(DP_WEBUI_ACTUAL_THEME, "default") +"/"+ path.substring("default/".length());
+                    path = core.readDataPool(DP_WEBUI_ACTUAL_THEME, "default") + "/" + path.substring("default/".length());
                 }
                 return mapDir[i + 1] + path;
             }
@@ -107,17 +111,30 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             switch (pathID) {
                 case OOBDConstants.FT_WEBPAGE:
                     appProbs = core.getSystemIF().loadPreferences(FT_PROPS, OOBDConstants.AppPrefsFileName);
-                    webRootDir = (String)core.readDataPool(DP_SCRIPTDIR, "")+ "/";
-                    webLibraryDir = (String)core.readDataPool(DP_WWW_LIB_DIR, "")+ "/";
-                     // in case the resource name points to a "executable" scriptengine, the engine get started 
+                    webRootDir = (String) core.readDataPool(DP_SCRIPTDIR, "") + "/";
+                    webLibraryDir = (String) core.readDataPool(DP_WWW_LIB_DIR, "") + "/";
+                    // in case the resource name points to a "executable" scriptengine, the engine get started 
                     // and the resourcename is corrected to the html start page to be used
                     resourceName = core.startScriptEngineByURL(resourceName);
                     scriptArchive = (Archive) core.readDataPool(DP_ACTIVE_ARCHIVE, null);
                     String mapping = mapDirectory(new String[]{"libs", webLibraryDir + "libs/", "theme", webLibraryDir + "theme/"}, resourceName);
-                    if (mapping != null) {
+                    if (mapping != null) { //its a mapped request
                         return new FileInputStream(generateUIFilePath(pathID, mapping));
                     }
-                    if (scriptArchive != null) {
+                    // let's see, if it's a passthrough request;
+                    String[] parts = resourceName.split("/", 3); //remember that resourceName starts with /, so the first split part should be empty
+                    if (parts.length > 2) {
+                        ArrayList<Archive> files = (ArrayList<Archive>) core.readDataPool(DP_LIST_OF_SCRIPTS, null);
+                        if (files != null) {
+                            for (Archive file : files) {
+                                if (parts[1].equals(file.getFileName())) {
+                                    return file.getInputStream(parts[2]);
+                                }
+                            }
+                        }
+                    }
+
+                    if (scriptArchive != null) { // if everything else fails, try to load the file out of the package
                         return scriptArchive.getInputStream(resourceName);
                     }
 
@@ -246,7 +263,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                 return EncodeDecodeAES.decrypt(new String(
                         getAppPassPhrase()), userPassPhrase);
             } catch (Exception e) {
-                 e.printStackTrace();
+                e.printStackTrace();
                 return "";
             }
         }

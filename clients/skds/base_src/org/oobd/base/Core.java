@@ -867,8 +867,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         appProbs = getSystemIF().loadPreferences(FT_PROPS,
                 OOBDConstants.AppPrefsFileName);
 
-        ArrayList<Archive> files = Factory.getDirContent(appProbs.get(OOBDConstants.PropName_ScriptDir, null));
-        files = (ArrayList<Archive>) readDataPool(DP_LIST_OF_SCRIPTS, null);
+        ArrayList<Archive> files = (ArrayList<Archive>) readDataPool(DP_LIST_OF_SCRIPTS, null);
         if (files != null) {
             for (Archive file : files) {
                 if (("/" + file.getID()).equalsIgnoreCase(resourceName)) {

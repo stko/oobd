@@ -36,7 +36,7 @@ public class Factory {
                     if (ext.equalsIgnoreCase("pgp")
                             || ext.equalsIgnoreCase("lbc")
                             || ext.equalsIgnoreCase("epa")) {
-                         actFile = getArchive(files[i].getPath());
+                        actFile = getArchive(files[i].getPath());
                     }
                 }
                 if (actFile != null) {
@@ -44,6 +44,8 @@ public class Factory {
                             + "/"
                             + files[i].getName())) {
                         res.add(actFile);
+                        Logger.getLogger(Factory.class.getName()).log(Level.INFO, "Archive found : {0} with ID {1} ", new Object[]{actFile.getFileName(), actFile.getID()});
+
                     }
                 }
             }
@@ -62,9 +64,6 @@ public class Factory {
                 if (name[name.length - 1].equalsIgnoreCase("pgp")) {
                     return new FileHandlerPGP(Core.getSingleInstance());
                 } else if (name[name.length - 1].equalsIgnoreCase("epa")) {
-                    Logger.getLogger(Factory.class.getName()).log(
-                            Level.WARNING,
-                            "Epa File found: {0}" + file.getName());
                     return new FileHandlerEpa(Core.getSingleInstance());
                 } else {
                     return new FileHandlerPlain(Core.getSingleInstance());
