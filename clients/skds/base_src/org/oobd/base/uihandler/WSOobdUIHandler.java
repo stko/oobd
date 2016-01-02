@@ -4,6 +4,7 @@
  */
 package org.oobd.base.uihandler;
 
+import fi.iki.elonen.NanoFileUpload;
 import org.oobd.base.*;
 import org.oobd.base.OOBDConstants.*;
 import org.oobd.base.support.*;
@@ -39,12 +40,16 @@ import org.oobd.base.visualizer.Visualizer;
 import java.util.Map;
 import java.io.IOException;
 import fi.iki.elonen.NanoHTTPD;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
+import org.apache.commons.fileupload.FileItem;
 import static org.oobd.base.OOBDConstants.DP_RUNNING_SCRIPTENGINE;
 import static org.oobd.base.OOBDConstants.DP_SCRIPTDIR;
 import org.oobd.base.archive.Archive;
 import org.oobd.base.archive.Factory;
+
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 
 /**
  * generic abstract for the implementation of scriptengines
@@ -156,7 +161,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
             try {
                 //core.transferMsg(new Message(this, myOnion.getString("to"), myOnion));
                 //core.transferMsg(new Message(this, ownerEngine, myOnion));
-                 myOnion.put("to", ownerEngine);
+                myOnion.put("to", ownerEngine);
                 core.transferMsg(new Message(this, myOnion.getString("to"), myOnion));
 
                 return null;
@@ -168,7 +173,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
         if (myOnion.isType(CM_PAGE)) {
             //userInterface.openPage(myOnion.getOnionString("owner"),
             //       myOnion.getOnionString("name"), 1, 1);
-             ownerEngine = myOnion.getOnionString("owner");
+            ownerEngine = myOnion.getOnionString("owner");
             wsServer.sendToAll(myOnion.toString());
             return null;
         }
@@ -524,6 +529,18 @@ class OOBDHttpServer extends NanoHTTPD {
 
     public static final String MIME_DEFAULT_BINARY = "application/octet-stream";
 
+    NanoFileUpload uploader;
+
+    public String uri;
+
+    public Method method;
+
+    public Map<String, String> header;
+
+    public Map<String, String> parms;
+
+    public Map<String, List<FileItem>> files;
+
     /**
      * Hashtable mapping (String)FILENAME_EXTENSION -> (String)MIME_TYPE
      */
@@ -566,6 +583,8 @@ class OOBDHttpServer extends NanoHTTPD {
 
     public OOBDHttpServer() throws IOException {
         super(8080);
+ //       uploader = new NanoFileUpload(new DiskFileItemFactory());
+
         start();
         System.out.println("\nRunning! Point your browers to http://localhost:8080/ \n");
     }
@@ -591,6 +610,15 @@ class OOBDHttpServer extends NanoHTTPD {
 
     @Override
     public NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+        this.uri = session.getUri();
+        this.method = session.getMethod();
+        this.header = session.getHeaders();
+        this.parms = session.getParms();
+        /*
+         if (NanoFileUpload.isMultipartContent(session)) {
+           
+         }
+         */
         System.err.println("url path:" + session.getUri());
         Map<String, String> parms = session.getParms();
         if (parms.get("theme") != null) {
@@ -600,12 +628,12 @@ class OOBDHttpServer extends NanoHTTPD {
             String catalog = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                     + "<?xml-stylesheet type=\"text/xsl\" href=\"/theme/default/xslt/start.xsl\"?>\n"
                     + "<catalog>\n";
-            ArrayList<Archive> files = Factory.getDirContent((String)Core.getSingleInstance().readDataPool(OOBDConstants.DP_SCRIPTDIR,  null));
+            ArrayList<Archive> files = Factory.getDirContent((String) Core.getSingleInstance().readDataPool(OOBDConstants.DP_SCRIPTDIR, null));
             for (Archive file : files) {
-                catalog +="<script>";
-                catalog +="<fileid>"+file.getID()+"</fileid>";
-                catalog +="<title>"+file.toString()+"</title>";
-                catalog +="</script>";
+                catalog += "<script>";
+                catalog += "<fileid>" + file.getID() + "</fileid>";
+                catalog += "<title>" + file.toString() + "</title>";
+                catalog += "</script>";
             }
             catalog += "</catalog>";
             return newFixedLengthResponse(Response.Status.OK, "text/xml", catalog);

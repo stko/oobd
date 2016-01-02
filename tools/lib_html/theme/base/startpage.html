@@ -10,7 +10,7 @@
  
 <body>
 <p>
-This design is as ugly as it can be, because it does not contain any HTML beautyfication, just bare functionality to explain the way the interface works
+This design is as ugly as it can be, because it does not contain any HTML beautyfication, just bare functionality to show how the interface works
 </p>
 
 <button onclick="Oobd.update()">Update</button><label><input type='checkbox' onclick='Oobd.timer(this.checked);'>Timer</label>
@@ -21,7 +21,8 @@ This design is as ugly as it can be, because it does not contain any HTML beauty
 	<p>Outputs</p>
 	<p />
 	<textarea id="textoutput"></textarea>
- 
+	<p />
+	<a href="#" onclick="return saveOutput('output.txt');">Save Output</a>
  
  
 	<script>
@@ -31,8 +32,18 @@ This design is as ugly as it can be, because it does not contain any HTML beauty
 			// the DOM will be available here
 
 			//define here what to do if a text comes in to be shown
-			Oobd.writeString = function addText(text) {
-				document.getElementById("textoutput").value += text;
+			Oobd.writeString = function addText(text,cmd) {
+				switch (cmd){
+					case "clear":
+						document.getElementById("textoutput").value="";
+						break;
+					case "save":
+						saveOutput(text);
+						break;
+					default:
+						document.getElementById("textoutput").value += text;
+						break;
+				}
 			}
 
 			// initialize a new OOBD page to be shown
@@ -78,6 +89,22 @@ This design is as ugly as it can be, because it does not contain any HTML beauty
 
 			Oobd.start();
 		})();
+		function saveOutput(fileName){
+			var blob = new Blob([document.getElementById("textoutput").value], {
+			type: "text/plain;charset=utf-8"
+			});
+			var url = URL.createObjectURL(blob);
+
+			var a = document.createElement('a');
+			a.download = fileName;
+			a.href = url;
+			a.textContent = "Save Output";
+			a.click();
+			//if the click() function dosen't work you can try using onclick() fucntion like this
+			//a.onclick();
+			return false;
+		};
+
 	</script>
 </body>
  

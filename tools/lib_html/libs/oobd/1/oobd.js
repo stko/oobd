@@ -22,6 +22,12 @@ if (typeof Oobd == "undefined") {
 		timerObject: null,
 		visualizers: new Array(),
 		parseXml: null,
+		fileSystem: null,
+		onInitFs: null,
+		onInitFserrorHandler: null,
+		bufferName: "display",
+		fsBufferArray: new Array(),
+		fsBufferCounter: 0,
 		init: function(uri) {
 			// preparing utility funktion parse xmlDoc
 			if (window.DOMParser) {
@@ -51,6 +57,139 @@ if (typeof Oobd == "undefined") {
 					}
 				});
 			this.scanDOM();
+			// try to init the file system
+			Oobd.onInitFs = function onInitFs(fs) {
+				console.log('Opened file system: ' + fs.name);
+				Oobd.fileSystem=fs;
+			};
+			Oobd.onInitFserrorHandler = function errorHandler(e) {
+				console.log('FileSystem '+e.name +'  ' + e.message);
+			}
+			// trying to be compatible
+			window.URL = window.URL || window.webkitURL;
+			window.resolveLocalFileSystemURL = window.resolveLocalFileSystemURL || window.webkitResolveLocalFileSystemURL || window.resolveLocalFileSystemURI;
+			window.BlobBuilder = window.WebKitBlobBuilder || window.MozBlobBuilder || window.BlobBuilder;
+			window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
+			window.requestFileSystem(window.TEMPORARY, 5*1024*1024 /*5MB*/, Oobd.onInitFs, Oobd.onInitFserrorHandler);
+		},
+		_handleWriteString: function(msg){
+			var data="";
+			var modifier="";
+			if (typeof msg.modifier != "undefined" && msg.modifier.length > 0){
+				modifier=decodeURIComponent(escape(atob(msg.modifier))).toLowerCase();
+			}
+			if (typeof msg.data != "undefined" && msg.data.length > 0){
+				data=decodeURIComponent(escape(atob(msg.data)));
+			}
+			switch (modifier){
+				case "setbuffer":
+					Oobd.bufferName=data.toLowerCase();
+				break;
+				case "save":
+				case "saveas":
+					if (Oobd.bufferName == "display" ){ // a normal writestring
+						if (typeof Oobd.writeString != "undefined"){
+							console.log("try to WRITESTRING");
+							console.log(msg);
+							Oobd.writeString(data,"save");
+						}
+					}else{ // savefile
+							if(typeof Oobd.fileSystem != "undefined"){
+								//do we have the actual buffer already?
+								var actBufferIndex=Oobd.fsBufferArray[Oobd.bufferName];
+								if (typeof actBufferIndex != "undefined"){
+									Oobd.fileSystem.root.getFile(actBufferIndex, {create: false}, function(fileEntry) {
+										console.log('Try to download'+fileEntry.toURL());
+										var a = document.createElement('a');
+										a.download = data;
+										a.href = fileEntry.toURL();
+										a.textContent = "Save: "+Oobd.bufferName;
+										a.click();
+
+									}, Oobd.onInitFserrorHandler);
+								}
+							}
+					}
+				break;
+				case "clear":
+					if (Oobd.bufferName == "display" ){ // a normal writestring
+						if (typeof Oobd.writeString != "undefined"){
+							console.log("try to WRITESTRING");
+							console.log(msg);
+							Oobd.writeString(data,"clear");
+						}
+					}else{ // delete
+							if(typeof Oobd.fileSystem != "undefined"){
+								//do we have the actual buffer already?
+								var thisBufferName=Oobd.bufferName;
+								var actBufferIndex=Oobd.fsBufferArray[thisBufferName];
+								if (typeof actBufferIndex != "undefined"){
+									Oobd.fileSystem.root.getFile(actBufferIndex, {create: false}, function(fileEntry) {
+										console.log('Try delete buffer '+ thisBufferName + " with index "+fileEntry.name);
+										fileEntry.remove(function() {
+											console.log('File removed.');
+											delete Oobd.fsBufferArray[thisBufferName];
+										}, Oobd.onInitFserrorHandler);
+
+									}, Oobd.onInitFserrorHandler);
+								}
+							}
+					}
+				break;
+				default:
+					if (typeof data != "undefined" && data.length > 0){
+						if (Oobd.bufferName == "display" ){ // a normal writestring
+							if (typeof Oobd.writeString != "undefined"){
+								console.log("try to WRITESTRING");
+								console.log(msg);
+								Oobd.writeString(data + "\n","");
+							}
+						}else{ // writetofile
+							console.log("WRITESTRING modifier "+modifier);
+							if(typeof Oobd.fileSystem != "undefined"){
+								//do we have the actual buffer already?
+								var actBufferIndex=Oobd.fsBufferArray[Oobd.bufferName];
+								if (typeof actBufferIndex == "undefined"){
+									actBufferIndex= Oobd.fsBufferCounter++;
+									Oobd.fsBufferArray[Oobd.bufferName]=actBufferIndex;
+									console.log('new Buffer "'+Oobd.bufferName+'" created with index:'+actBufferIndex);
+								}
+								Oobd.fileSystem.root.getFile(actBufferIndex, {create: true}, function(fileEntry) {
+
+									// Create a FileWriter object for our FileEntry (log.txt).
+									fileEntry.createWriter(function(fileWriter) {
+										fileWriter.fe=fileEntry;
+										fileWriter.onwriteend = function(e) {
+											var src = e.target.fe.toURL();
+											var src2 = fileEntry.toURL();
+											console.log('Write completed with URL'+src2);
+										};
+
+										fileWriter.onerror = function(e) {
+											console.log('Write failed: ' + e.toString());
+										};
+										fileWriter.seek(fileWriter.length); // Start write position at EOF.
+										// Create a new Blob and write it to log.txt.
+										window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder;// Note: window.WebKitBlobBuilder in Chrome 12.
+										var blob = new Blob([data], {type: 'application/octet-stream'});
+										fileWriter.write(blob);
+									}, Oobd.onInitFserrorHandler);
+								}, Oobd.onInitFserrorHandler);
+							}
+						}
+					}
+				}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 		},
 		scanDOM: function() {
 			var a = document.getElementsByClassName("OOBD");
@@ -149,11 +288,7 @@ if (typeof Oobd == "undefined") {
 						}
 
 						if (obj.type == "WRITESTRING") {
-							if (typeof Oobd.writeString != "undefined" && typeof obj.data != "undefined" && obj.data.length > 0) {
-								console.log("try to WRITESTRING");
-								// bizarre UTF-8 decoding...
-								Oobd.writeString(decodeURIComponent(escape(atob(obj.data))) + "\n");
-							}
+							Oobd._handleWriteString(obj);
 						}
 
 						if (obj.type == "PAGE") {
