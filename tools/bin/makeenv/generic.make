@@ -112,6 +112,22 @@ else
 	find $(PACKDIR)/oobd -name .svn -exec rm -rf {} \; 
 endif
 
+epa:
+	thisdir=$$(pwd) ; \
+	filename=$$(basename "$$thisdir") ; \
+	extension="$${filename##*.}" ; \
+	filename="$${filename%.*}" ; \
+	if [ "$$extension" != "epd" ]; then \
+		echo "directory $$filename does not have the required .epd extension. Packing canceled!" ; \
+	else \
+		if  [ ! -s "content" ]; then \
+			echo "directory $$filename does not contain a \"content\" file. Packing canceled!" ; \
+		else \
+			rm ../$$filename.zip ; \
+			cat content | zip -r -@ ../$$filename.zip ; \
+		fi ; \
+	fi 
+
 clean: genericclean $(CUSTOMCLEAN)
 
 genericclean:

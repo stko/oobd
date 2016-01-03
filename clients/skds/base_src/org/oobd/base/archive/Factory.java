@@ -35,6 +35,7 @@ public class Factory {
                     String ext = name[name.length - 1];
                     if (ext.equalsIgnoreCase("pgp")
                             || ext.equalsIgnoreCase("lbc")
+                            || ext.equalsIgnoreCase("epd")
                             || ext.equalsIgnoreCase("epa")) {
                         actFile = getArchive(files[i].getPath());
                     }
@@ -63,7 +64,7 @@ public class Factory {
             if (name.length > 1) {
                 if (name[name.length - 1].equalsIgnoreCase("pgp")) {
                     return new FileHandlerPGP(Core.getSingleInstance());
-                } else if (name[name.length - 1].equalsIgnoreCase("epa")) {
+                } else if (name[name.length - 1].equalsIgnoreCase("epd") || name[name.length - 1].equalsIgnoreCase("epa")) {
                     return new FileHandlerEpa(Core.getSingleInstance());
                 } else {
                     return new FileHandlerPlain(Core.getSingleInstance());
