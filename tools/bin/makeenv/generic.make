@@ -1,6 +1,9 @@
 UDSLIB=../lib_protocol
 LUALIB=$(OOBDROOT)/tools/lib_lua/
 LUASVNFILE=$(OOBDROOT)/tools/lib_lua/luaSVNRevs.inc
+SVNREVLUASCRIPT=$(shell $(OOBDROOT)/tools/lib_lua/echoLuaRev.sh SVNREVLUASCRIPT)
+SVNREVLUALIB=$(shell (cd $(OOBDROOT)/tools/lib_lua/ ; ./echoLuaRev.sh SVNREVLUALIB) )
+
 LUAS=$(shell $(OOBDROOT)/tools/bin/filelist.sh lua)
 
 SPECS=$(shell $(OOBDROOT)/tools/bin/filelist.sh mdx)
@@ -8,6 +11,7 @@ SPECS=$(shell $(OOBDROOT)/tools/bin/filelist.sh mdx)
 SOURCES=$(shell $(OOBDROOT)/tools/bin/filelist.sh luasource)
 LBCFILES=$(shell $(OOBDROOT)/tools/bin/filelist.sh lbc)
 KCDFILES=$(shell $(OOBDROOT)/tools/bin/filelist.sh kcd)
+OODBFILES=$(shell $(OOBDROOT)/tools/bin/filelist.sh dbcsv)
 
 CFLAGS=
 MDXTFLAGS=$(OOBDROOT)/tools/xmltools/mdx2opendiagx.xslt $(OOBDROOT)/tools/xmltools/opendiagx2oobd.xslt
@@ -30,7 +34,7 @@ ALLSOURCES=$(LUA_REFS) $(LUAS)
 SPECS+=$(MDX_POOL)
 
 OBJECTS=$(SOURCES:.luasource=.lbc)
-%.lbc: %.luasource
+%.lbc: %.luasource 
 	$(OLP) $< > m4.tmp
 	m4 $(OPTM4) -DDBGUSER=$(DBGUSER) -DDBGLEVEL=$(DBGLEVEL) -P m4.tmp > lua.tmp
 	$(CC) $(CFLAGS) -o $@ lua.tmp
@@ -54,18 +58,27 @@ KCDSOURCES=$(KCDFILES:.kcd=.luasource)
 	xmlstarlet $(KCDFLAGS) $< > $(@F) 
 	xmlstarlet $(KCDHTMLFLAGS) $<  > $(*F).html
 
-source: specs $(CUSTOMSOURCE) luas kcds
+revision:
+	echo "$(SVNREVLUALIB)" > $(LUASVNFILE)
+	echo "$(SVNREVLUASCRIPT)" >> $(LUASVNFILE)
 
+OODBSOURCES=$(OODBFILES:.dbcsv=.oodb) 
+%.oodb: %.dbcsv 
+	php $(OOBDROOT)/tools/oodbcreate/oodbCreateCLI.php  $< > $(@F) 
+
+
+
+
+source: revision specs $(CUSTOMSOURCE) luas kcds oodbs
 luas: $(LUASOURCES) 
-
 specs: $(SPECSOURCES) $(MDXTFLAGS) $(CUSTOMSPECSOURCES)
-
 kcds: $(KCDSOURCES) 
-
+oodbs: $(OODBSOURCES)
+	echo db $(OODBSOURCES)
+	echo target
 scripts: $(OBJECTS)
 
 debug: setdebug scripts
-
 setdebug:
 	$(eval OPTM4=-DDEBUG)
  
@@ -102,6 +115,22 @@ else
 	done ; \
 	find $(PACKDIR)/oobd -name .svn -exec rm -rf {} \; 
 endif
+
+epa:
+	thisdir=$$(pwd) ; \
+	filename=$$(basename "$$thisdir") ; \
+	extension="$${filename##*.}" ; \
+	filename="$${filename%.*}" ; \
+	if [ "$$extension" != "epd" ]; then \
+		echo "directory $$filename does not have the required .epd extension. Packing canceled!" ; \
+	else \
+		if  [ ! -s "content" ]; then \
+			echo "directory $$filename does not contain a \"content\" file. Packing canceled!" ; \
+		else \
+			rm ../$$filename.epa ; \
+			cat content | zip -r -@ ../$$filename.epa ; \
+		fi ; \
+	fi 
 
 clean: genericclean $(CUSTOMCLEAN)
 
