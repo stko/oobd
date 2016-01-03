@@ -123,8 +123,8 @@ epa:
 		if  [ ! -s "content" ]; then \
 			echo "directory $$filename does not contain a \"content\" file. Packing canceled!" ; \
 		else \
-			rm ../$$filename.zip ; \
-			cat content | zip -r -@ ../$$filename.zip ; \
+			rm ../$$filename.epa ; \
+			cat content | zip -r -@ ../$$filename.epa ; \
 		fi ; \
 	fi 
 
