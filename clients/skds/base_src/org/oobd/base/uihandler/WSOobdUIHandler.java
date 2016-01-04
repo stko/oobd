@@ -50,6 +50,7 @@ import org.oobd.base.archive.Archive;
 import org.oobd.base.archive.Factory;
 
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import static org.oobd.base.OOBDConstants.DP_ACTIVE_ARCHIVE;
 
 /**
  * generic abstract for the implementation of scriptengines
@@ -583,7 +584,7 @@ class OOBDHttpServer extends NanoHTTPD {
 
     public OOBDHttpServer() throws IOException {
         super(8080);
- //       uploader = new NanoFileUpload(new DiskFileItemFactory());
+        //       uploader = new NanoFileUpload(new DiskFileItemFactory());
 
         start();
         System.out.println("\nRunning! Point your browers to http://localhost:8080/ \n");
@@ -625,23 +626,41 @@ class OOBDHttpServer extends NanoHTTPD {
             Core.getSingleInstance().writeDataPool(OOBDConstants.DP_WEBUI_ACTUAL_THEME, parms.get("theme"));
         }
         if ("/".equals(session.getUri())) {
+            Core.getSingleInstance().stopScriptEngine(); // back to start: stop actual script engine
+            Core.getSingleInstance().writeDataPool(OOBDConstants.DP_ACTIVE_ARCHIVE, null); // set active Archive to null
             String catalog = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                     + "<?xml-stylesheet type=\"text/xsl\" href=\"/theme/default/xslt/start.xsl\"?>\n"
                     + "<catalog>\n";
             ArrayList<Archive> files = Factory.getDirContent((String) Core.getSingleInstance().readDataPool(OOBDConstants.DP_SCRIPTDIR, null));
             for (Archive file : files) {
                 catalog += "<script>";
-                catalog += "<fileid>" + file.getID() + "</fileid>";
-                catalog += "<title>" + file.toString() + "</title>";
+                catalog += "<fileid>" + encodeHTML(file.getID()) + "</fileid>";
+                catalog += "<title>" + encodeHTML(file.toString()) + "</title>";
+                catalog += generateOptionalTag(file, "name", "name");
+                catalog += generateOptionalTag(file, "shortname", "shortname");
+                catalog += generateOptionalTag(file, "description", "description");
+                catalog += generateOptionalTag(file, "version", "version");
+                catalog += generateOptionalTag(file, "copyright", "copyright");
+                catalog += generateOptionalTag(file, "author", "author");
+                catalog += generateOptionalTag(file, "security", "security");
+                catalog += generateOptionalTag(file, "date", "date");
+                catalog += generateOptionalTag(file, "icon", "icon");
+                catalog += generateOptionalTag(file, "screenshot", "screenshot");
+                catalog += generateOptionalTag(file, "url", "url");
+                catalog += generateOptionalTag(file, "email", "email");
+                catalog += generateOptionalTag(file, "phone", "phone");
                 catalog += "</script>";
             }
             catalog += "</catalog>";
             return newFixedLengthResponse(Response.Status.OK, "text/xml", catalog);
         } else {
-            //return newFixedLengthResponse( msg + "</body></html>\n" );
             InputStream myFileStream = Core.getSingleInstance().getSystemIF().generateResourceStream(OOBDConstants.FT_WEBPAGE, session.getUri());
+            String mimeType=getMimeTypeForFile(session.getUri());
+            if (myFileStream != null &&myFileStream  instanceof FileInputStream ){
+               mimeType=getMimeTypeForFile((String) Core.getSingleInstance().readDataPool(OOBDConstants.DP_LAST_OPENED_PATH, mimeType));
+            }
             if (myFileStream != null) {
-                return newChunkedResponse(Response.Status.OK, getMimeTypeForFile(session.getUri()), myFileStream);
+                return newChunkedResponse(Response.Status.OK,mimeType , myFileStream);
             } else {
 
                 return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "war nix..");
@@ -649,4 +668,16 @@ class OOBDHttpServer extends NanoHTTPD {
         }
     }
 
+    String generateOptionalTag(Archive file, String key, String tag) {
+        String result;
+        result = file.getProperty(key, "");
+        if (!"".equals(result)) {
+            result = "<" + tag + ">" + encodeHTML(result) + "</" + tag + ">";
+        }
+        return result;
+    }
+
+    String encodeHTML(String text) {
+        return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+    }
 }

@@ -124,4 +124,23 @@ public class FileHandlerPGP implements Archive {
     public String getFileName() {
         return myFileName;
     }
+    
+    @Override
+    public void relocateManifest(String luaFileName) {
+   // do nothing..
+    }
+
+    @Override
+    public boolean fileExist(String fileName) {
+        InputStream in =getInputStream(fileName);
+        if (in==null){
+            return false;
+        }else{
+            try {
+                in.close();
+            } catch (IOException ex) {
+            }
+            return true;
+        }
+    }
 }

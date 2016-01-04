@@ -49,10 +49,10 @@ public class FileHandlerEpa implements Archive {
                     ZipEntry zipFile = outerZipFile.getEntry(innerPath);
                     return outerZipFile.getInputStream(zipFile);
                 }
-            } catch (IOException  ex) {
+            } catch (IOException ex) {
                 Logger.getLogger(FileHandlerEpa.class.getName()).log(Level.INFO, "Could not open EPA input file:" + myFilePath + "/" + innerPath);
             }
-         }
+        }
         return null;
     }
 
@@ -64,6 +64,17 @@ public class FileHandlerEpa implements Archive {
                 Logger.getLogger(FileHandlerEpa.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+
+    void readManifest(String manifestName) {
+        try {
+            String manifestString = new String(org.apache.commons.io.IOUtils.toByteArray(getInputStream(manifestName)));
+            manifest = new Onion(manifestString);
+
+        } catch (NullPointerException | IOException | JSONException ex) {
+            manifest = new Onion();
+         }
+
     }
 
     public boolean bind(String filePath) {
@@ -81,12 +92,11 @@ public class FileHandlerEpa implements Archive {
                     outerZipFile = null;
                     isDirectory = true;
                 }
-                String manifestString = new String(org.apache.commons.io.IOUtils.toByteArray(getInputStream(MANIFEST_NAME)));
-                manifest = new Onion(manifestString);
+                readManifest(MANIFEST_NAME);
 
-            } catch (NullPointerException | IOException | JSONException ex) {
+            } catch (NullPointerException | IOException ex) {
                 manifest = new Onion();
-               Logger.getLogger(FileHandlerEpa.class.getName()).log(Level.INFO, "Could not bind EPA input file:" + myFilePath + "/" + filePath);
+                Logger.getLogger(FileHandlerEpa.class.getName()).log(Level.INFO, "Could not bind EPA input file:" + myFilePath + "/" + filePath);
             }
             return true;
         } else {
@@ -123,5 +133,26 @@ public class FileHandlerEpa implements Archive {
 
     public String getFileName() {
         return myFileName;
+    }
+
+    @Override
+    public void relocateManifest(String luaFileName) {
+        if (luaFileName.endsWith(".lbc")){
+            readManifest(luaFileName.substring(0, luaFileName.length()-4)+".mf"); 
+        }
+    }
+
+    @Override
+    public boolean fileExist(String fileName) {
+        InputStream in =getInputStream(fileName);
+        if (in==null){
+            return false;
+        }else{
+            try {
+                in.close();
+            } catch (IOException ex) {
+            }
+            return true;
+        }
     }
 }

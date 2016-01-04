@@ -53,6 +53,7 @@ public class FileHandlerPlain implements Archive {
         }
     }
 
+    @Override
     public boolean bind(String filePath) {
         File file = new File(filePath);
         if (file.exists()) {
@@ -65,11 +66,13 @@ public class FileHandlerPlain implements Archive {
         }
     }
 
+    @Override
     public void unBind() {
         myFilePath = null;
     }
 
-    public String getProperty(String property, String defaultValue) {
+     @Override
+   public String getProperty(String property, String defaultValue) {
         if(OOBDConstants.MANIFEST_SCRIPTNAME.equalsIgnoreCase(property)){
             return myFileName;
         }
@@ -81,15 +84,37 @@ public class FileHandlerPlain implements Archive {
         return myFileName;
     }
 
+    @Override
     public String getID() {
         return Base64Coder.encodeString(myFileName);
     }
-
+    
+    @Override
     public String getFilePath() {
         return myFilePath;
     }
 
+    @Override
     public String getFileName() {
         return myFileName;
+    }
+
+    @Override
+    public void relocateManifest(String luaFileName) {
+   // do nothing..
+    }
+
+    @Override
+    public boolean fileExist(String fileName) {
+        InputStream in =getInputStream(fileName);
+        if (in==null){
+            return false;
+        }else{
+            try {
+                in.close();
+            } catch (IOException ex) {
+            }
+            return true;
+        }
     }
 }

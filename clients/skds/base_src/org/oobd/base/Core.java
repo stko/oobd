@@ -581,6 +581,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public void writeDataPool(int id, Object data) {
         synchronized (dataPoolList) {
+            if (id >= dataPoolList.size()) {
+                dataPoolList.ensureCapacity(id);
+            }
             dataPoolList.set(id, data);
         }
     }
@@ -829,7 +832,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         }
     }
 
-    
     /**
      * \brief starts a scriptengine
      *
@@ -857,35 +859,54 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         Thread t1 = new Thread(o);
         t1.start();
     }
+    /*
+     checks, if the URL points to a lbc file. if yes, starts it and returns the path to the start page read out of the manifest file of that script
+     */
 
-    
     public String startScriptEngineByURL(String resourceName) {
         String connectURL = "serial"; //this looks obviously not like an URL yet, but maybe in a  later extension
 
         Onion cmdOnion;
-        Preferences appProbs;
-        appProbs = getSystemIF().loadPreferences(FT_PROPS,
-                OOBDConstants.AppPrefsFileName);
 
         ArrayList<Archive> files = (ArrayList<Archive>) readDataPool(DP_LIST_OF_SCRIPTS, null);
-        if (files != null) {
+        Archive activeArchive = (Archive) readDataPool(DP_ACTIVE_ARCHIVE, null);
+        String scriptPath = "";
+        if (activeArchive != null && resourceName.endsWith(".lbc")) {//lets see if the innerpath points to a lbc file
+            if (activeArchive.fileExist(resourceName)) {
+                scriptPath = resourceName; //define the script path relative to the open Archive
+                //this is a lbc, so lets try to load its own manifest
+                activeArchive.relocateManifest(resourceName);
+            }
+        }
+        if (files != null && scriptPath.equals("")) { // if the resource does not point to an archive internal lbc file, see if it matches to another archive
             for (Archive file : files) {
                 if (("/" + file.getID()).equalsIgnoreCase(resourceName)) {
-
-                    try {
-                        cmdOnion = new Onion("{" + "'scriptpath':'" +  file.getFilePath().replace("\\", "/") + "'"
-                                + ",'connecturl':'" + Base64Coder.encodeString(connectURL) + "'"
-                                + "}");
-                        stopScriptEngine();
-                        writeDataPool(DP_ACTIVE_ARCHIVE, file);
-                        createScriptEngine("ScriptengineLua", cmdOnion);
-                        startScriptEngine(cmdOnion);
-                        return file.getProperty(MANIFEST_STARTPAGE, OOBDConstants.HTML_DEFAULTPAGEURL);
-                    } catch (JSONException ex) {
-                        Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
-                        return resourceName;
+                    activeArchive = file;
+                    writeDataPool(DP_ACTIVE_ARCHIVE, file);
+                    scriptPath = activeArchive.getProperty(OOBDConstants.MANIFEST_SCRIPTNAME, "");
+                    if (!scriptPath.equals("") && !activeArchive.fileExist(scriptPath)) {
+                        scriptPath = "";
                     }
+                    //lets see if the archive gives us a startpage
+                    resourceName=activeArchive.getProperty(OOBDConstants.MANIFEST_STARTPAGE, resourceName);
                 }
+            }
+        }
+        if (!scriptPath.equals("")) { //if only the root file name is given or the innerpath really points to a .lbc file
+
+            try {
+                cmdOnion = new Onion("{" + "'scriptpath':'" + scriptPath + "'"
+                        + ",'connecturl':'" + Base64Coder.encodeString(connectURL) + "'"
+                        + "}");
+                stopScriptEngine();
+                writeDataPool(DP_ACTIVE_ARCHIVE, activeArchive);
+                System.out.println("start scriptengine for " + scriptPath);
+                createScriptEngine("ScriptengineLua", cmdOnion);
+                startScriptEngine(cmdOnion);
+                return activeArchive.getProperty(MANIFEST_STARTPAGE, OOBDConstants.HTML_DEFAULTPAGEURL);
+            } catch (JSONException ex) {
+                Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
+                return resourceName;
             }
         }
         return resourceName;

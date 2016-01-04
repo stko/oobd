@@ -119,6 +119,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                     scriptArchive = (Archive) core.readDataPool(DP_ACTIVE_ARCHIVE, null);
                     String mapping = mapDirectory(new String[]{"libs", webLibraryDir + "libs/", "theme", webLibraryDir + "theme/"}, resourceName);
                     if (mapping != null) { //its a mapped request
+                        core.writeDataPool(DP_LAST_OPENED_PATH, mapping);
                         return new FileInputStream(generateUIFilePath(pathID, mapping));
                     }
                     // let's see, if it's a passthrough request;
@@ -128,6 +129,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                         if (files != null) {
                             for (Archive file : files) {
                                 if (parts[1].equals(file.getFileName())) {
+                                    core.writeDataPool(DP_LAST_OPENED_PATH, parts[2]);
                                     return file.getInputStream(parts[2]);
                                 }
                             }
@@ -135,6 +137,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                     }
 
                     if (scriptArchive != null) { // if everything else fails, try to load the file out of the package
+                        core.writeDataPool(DP_LAST_OPENED_PATH, resourceName);
                         return scriptArchive.getInputStream(resourceName);
                     }
 
@@ -156,7 +159,8 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                     appProbs = core.getSystemIF().loadPreferences(FT_PROPS,
                             OOBDConstants.AppPrefsFileName);
                     // save actual script directory to buffer it for later as webroot directory
-                    resource = scriptArchive.getInputStream(scriptArchive.getProperty(OOBDConstants.MANIFEST_SCRIPTNAME, OOBDConstants.MANIFEST_SCRIPTNAME_DEFAULT));
+//           resource = scriptArchive.getInputStream(scriptArchive.getProperty(OOBDConstants.MANIFEST_SCRIPTNAME, OOBDConstants.MANIFEST_SCRIPTNAME_DEFAULT));
+                    resource = scriptArchive.getInputStream(scriptArchive.getProperty(OOBDConstants.MANIFEST_SCRIPTNAME, resourceName));
                     Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "File " + resourceName
                             + " loaded");
                     break;

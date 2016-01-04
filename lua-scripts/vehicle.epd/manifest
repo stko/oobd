@@ -1,4 +1,3 @@
 {
-  "script": "vehicle.lbc" ,
-  "startpage": "vehicle.html"
+  "startpage": "content.xml"
 }
