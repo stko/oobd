@@ -1,0 +1,7 @@
+{
+  "startpage": "oobd_vehicle.html",
+  "script": "main.lbc",
+  "icon": "images/icon-info.png",
+  "description": "Demo which uses three.js to show module status",
+  "author" : "Steffen Köhler"
+}

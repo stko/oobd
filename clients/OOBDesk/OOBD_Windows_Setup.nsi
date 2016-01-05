@@ -90,10 +90,7 @@ CreateShortCut "$SMPROGRAMS\OOBD\$menutype\Uninstall OOBDesk.lnk" "$INSTDIR\unin
 
 # create the sample files
 SetOutPath "$DOCUMENTS\OOBD-Scripts"
-File "../../lua-scripts/obdII-standard/OOBD.lbc"
-File "../../lua-scripts/obdII-standard/OOBD.lua"
-File "../../lua-scripts/obdII-standard/dtc.csv"
-File "../../lua-scripts/obdII-standard/dtc.oodb"
+File "../../lua-scripts/*.epa"
 File "../../lua-scripts/examples/UICreation.lua"
 File "../../lua-scripts/examples/UICreation.lbc"
 File /oname=stdlib.lbc "../OOBD-ME/res/stdlib.lbc"

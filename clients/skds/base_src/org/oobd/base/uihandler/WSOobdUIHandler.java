@@ -633,11 +633,12 @@ class OOBDHttpServer extends NanoHTTPD {
                     + "<catalog>\n";
             ArrayList<Archive> files = Factory.getDirContent((String) Core.getSingleInstance().readDataPool(OOBDConstants.DP_SCRIPTDIR, null));
             for (Archive file : files) {
-                catalog += "<script>";
-                catalog += "<fileid>" + encodeHTML(file.getID()) + "</fileid>";
-                catalog += "<title>" + encodeHTML(file.toString()) + "</title>";
-                catalog += generateOptionalTag(file, "name", "name");
-                catalog += generateOptionalTag(file, "shortname", "shortname");
+                catalog += "<script>\n";
+                catalog += "<fileid>" + encodeHTML(file.getID()) + "</fileid>\n";
+                catalog += "<filename>" + encodeHTML(file.toString()) + "</filename>\n";
+                catalog += generateOptionalTag(file, "title", "title");
+               catalog += generateOptionalTag(file, "name", "name");
+                 catalog += generateOptionalTag(file, "shortname", "shortname");
                 catalog += generateOptionalTag(file, "description", "description");
                 catalog += generateOptionalTag(file, "version", "version");
                 catalog += generateOptionalTag(file, "copyright", "copyright");
@@ -649,18 +650,18 @@ class OOBDHttpServer extends NanoHTTPD {
                 catalog += generateOptionalTag(file, "url", "url");
                 catalog += generateOptionalTag(file, "email", "email");
                 catalog += generateOptionalTag(file, "phone", "phone");
-                catalog += "</script>";
+                catalog += "</script>\n";
             }
             catalog += "</catalog>";
             return newFixedLengthResponse(Response.Status.OK, "text/xml", catalog);
         } else {
             InputStream myFileStream = Core.getSingleInstance().getSystemIF().generateResourceStream(OOBDConstants.FT_WEBPAGE, session.getUri());
-            String mimeType=getMimeTypeForFile(session.getUri());
-            if (myFileStream != null &&myFileStream  instanceof FileInputStream ){
-               mimeType=getMimeTypeForFile((String) Core.getSingleInstance().readDataPool(OOBDConstants.DP_LAST_OPENED_PATH, mimeType));
+            String mimeType = getMimeTypeForFile(session.getUri());
+            if (myFileStream != null && myFileStream instanceof FileInputStream) {
+                mimeType = getMimeTypeForFile((String) Core.getSingleInstance().readDataPool(OOBDConstants.DP_LAST_OPENED_PATH, mimeType));
             }
             if (myFileStream != null) {
-                return newChunkedResponse(Response.Status.OK,mimeType , myFileStream);
+                return newChunkedResponse(Response.Status.OK, mimeType, myFileStream);
             } else {
 
                 return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "war nix..");
@@ -672,7 +673,7 @@ class OOBDHttpServer extends NanoHTTPD {
         String result;
         result = file.getProperty(key, "");
         if (!"".equals(result)) {
-            result = "<" + tag + ">" + encodeHTML(result) + "</" + tag + ">";
+            result = "<" + tag + ">" + encodeHTML(result) + "</" + tag + ">\n";
         }
         return result;
     }

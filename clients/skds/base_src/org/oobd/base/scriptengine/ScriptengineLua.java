@@ -404,7 +404,7 @@ public class ScriptengineLua extends OobdScriptengine {
                                             + "'command':'lookup',"
                                             + "'dbfilename':'"
                                             + Base64Coder.encodeString(scriptDir
-                                                    + "/" + getString(0))
+                                                    + getString(0))
                                             + "'," + "'key':'" + getString(1) + "'}")),
                             -1);
                     if (answer != null) {
@@ -557,8 +557,12 @@ public class ScriptengineLua extends OobdScriptengine {
             scriptFileName = ENG_LUA_DEFAULT;
         }
         try {
-            scriptDir = (new File(UISystem.generateUIFilePath(FT_SCRIPT,
-                    scriptFileName))).getParentFile().getAbsolutePath();
+            try{
+                scriptDir = (new File(UISystem.generateUIFilePath(FT_SCRIPT,
+                    scriptFileName))).getParentFile().getAbsolutePath()+"/";
+            }catch (Exception ex){
+                scriptDir ="";
+            }
             if (!doScript(scriptFileName)) { //fire an page done event 
                 keepRunning = false;
                 try {
