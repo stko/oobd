@@ -4,7 +4,6 @@
  */
 package org.oobd.base.uihandler;
 
-import fi.iki.elonen.NanoFileUpload;
 import org.oobd.base.*;
 import org.oobd.base.OOBDConstants.*;
 import org.oobd.base.support.*;
@@ -43,14 +42,17 @@ import fi.iki.elonen.NanoHTTPD;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import org.apache.commons.fileupload.FileItem;
 import static org.oobd.base.OOBDConstants.DP_RUNNING_SCRIPTENGINE;
 import static org.oobd.base.OOBDConstants.DP_SCRIPTDIR;
+import static org.oobd.base.OOBDConstants.DP_ACTIVE_ARCHIVE;
 import org.oobd.base.archive.Archive;
 import org.oobd.base.archive.Factory;
 
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import static org.oobd.base.OOBDConstants.DP_ACTIVE_ARCHIVE;
+// the NanoHTTPD FileUpload dependencies have been commented as they do not work at all and caused proGuard errors
+
+//import fi.iki.elonen.NanoFileUpload;
+//import org.apache.commons.fileupload.FileItem;
+//import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 
 /**
  * generic abstract for the implementation of scriptengines
@@ -530,7 +532,7 @@ class OOBDHttpServer extends NanoHTTPD {
 
     public static final String MIME_DEFAULT_BINARY = "application/octet-stream";
 
-    NanoFileUpload uploader;
+//    NanoFileUpload uploader;
 
     public String uri;
 
@@ -540,7 +542,7 @@ class OOBDHttpServer extends NanoHTTPD {
 
     public Map<String, String> parms;
 
-    public Map<String, List<FileItem>> files;
+//    public Map<String, List<FileItem>> files;
 
     /**
      * Hashtable mapping (String)FILENAME_EXTENSION -> (String)MIME_TYPE

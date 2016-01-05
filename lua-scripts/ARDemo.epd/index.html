@@ -75,15 +75,15 @@
 //			var text3dItemV = new THREE.Mesh(text3d_volume, material); 
 
 */
-				var mygeometry = new THREE.CubeGeometry(10,10,10);
-				var mymaterial = new THREE.MeshBasicMaterial({color: 0xFF5555});
+				var mygeometry = new THREE.CubeGeometry(100,100,100);
+				var mymaterial = new THREE.MeshBasicMaterial({color: 0x8888FF});
 				var mymesh = new THREE.Mesh(mygeometry, mymaterial);
 
 			        awe.projections.add({ 
 				id:'projection_1', 
 //				geometry: { shape: 'cube', x:120, y:120, z:120 },
 				customMesh: mymesh,
-			          material:{ type: 'phong', color: 0xFFFFFF }, 
+			          material:{ type: 'phong', color: 0x8888FF }, 
                 texture: { path: 'awe_by_buildAR.png' },
 			        }, { poi_id: 'poi_1' });
 			        awe.events.add([{
