@@ -57,7 +57,7 @@ public interface OOBDConstants {
     //key names for properties
     public final static String PropName_SerialPort = "SerialPort";
     public final static String PropName_ConnectServerURL = "ConnectServerURL";
-    public final static String PropName_KadaverServerDefault = "ws://oobd.luxen.de/websock/";
+    public final static String PropName_KadaverServerDefault = "wss://oobd.luxen.de/websockssl/";
     public final static String PropName_ProxyHost = "ServerProxyHost";
     public final static String PropName_ProxyPort = "ServerProxyPort";
     public final static String PropName_ScriptDir = "ScriptDir";
@@ -132,5 +132,6 @@ public interface OOBDConstants {
     public final static int DP_SCRIPTDIR = 6;
     public final static int DP_LIST_OF_SCRIPTS = 7;
     public final static int DP_LAST_OPENED_PATH = 8;
-    public final static int DP_ARRAY_SIZE = 9;
+    public final static int DP_ACTUAL_CONNECTION_TYPE = 9;
+    public final static int DP_ARRAY_SIZE = 10;
 }

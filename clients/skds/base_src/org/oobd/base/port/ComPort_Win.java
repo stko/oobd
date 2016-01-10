@@ -131,6 +131,29 @@ public class ComPort_Win implements OOBDPort, SerialPortEventListener {
         }
     }
 
+    public static String getUrlFormat() {
+        return "serial://{device}";
+    }
+
+    public static PortInfo[] getPorts() {
+        PortInfo[] DeviceSet;
+        String osName = System.getProperty("os.name", "").toLowerCase();
+        Logger.getLogger(ComPort_Win.class.getName()).log(Level.CONFIG, "OS detected: {0}", osName);
+
+        if (osName.startsWith("windows")) {
+            String[] WindowsPortList = SerialPortList.getPortNames();
+            DeviceSet = new PortInfo[WindowsPortList.length];
+            // Process the list.
+            for (int i = 0; i < WindowsPortList.length; i++) {
+                DeviceSet[i] = new PortInfo(WindowsPortList[i], WindowsPortList[i]);
+            }
+        } else {
+            DeviceSet = new PortInfo[1];
+            DeviceSet[0] = new PortInfo("", "No Devices visible");
+        }
+        return DeviceSet;
+    }
+
     public int adjustTimeOut(int originalTimeout) {
         return originalTimeout;
     }

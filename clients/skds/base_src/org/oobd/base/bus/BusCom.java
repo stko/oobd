@@ -173,7 +173,8 @@ public class BusCom extends OobdBus implements OOBDConstants {
                                         broadcast.getOnionString("ip")
                                         + ":"
                                         + broadcast.getInt("port"),
-                                        broadcast.getOnionString("device"));
+                                        broadcast.getOnionString("device")
+                               );
                             }
                             ComPort_Telnet.setPorts(udpDeviceList);
                         }

@@ -39,6 +39,7 @@ import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import org.oobd.base.*;
 import org.oobd.base.Core;
 import org.oobd.base.IFui;
@@ -53,6 +54,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -67,6 +69,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import static org.oobd.base.OOBDConstants.FT_PROPS;
 import org.oobd.base.archive.*;
+import org.oobd.base.port.OOBDPort;
+import org.oobd.base.port.PortInfo;
 
 /**
  * The application's main frame.
@@ -92,6 +96,10 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private int defaultGridWidth = 200;
     private String pageTitle;
     String connectURLDefault = "";
+    private String connectDeviceName;
+    private String connectTypeName;
+    private String oldConnectTypeName = null;
+    private Hashtable<String, Class> supplyHardwareConnects;
 
     public swingView(SingleFrameApplication app) {
         super(app);
@@ -149,45 +157,44 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         Pmenu.setBorder(BorderFactory.createTitledBorder("Toggle Flags"));
         Pmenu.setBorderPainted(true);
 
-        popupMenuHandle
-                = new MouseAdapter() {
+        popupMenuHandle = new MouseAdapter() {
 
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                        maybeShowPopup(e);
-                    }
+            @Override
+            public void mousePressed(MouseEvent e) {
+                maybeShowPopup(e);
+            }
 
-                    @Override
-                    public void mouseEntered(MouseEvent e) {
-                        //((JPanel) e.getComponent()).setBackground(Color.white);
-                        ((JPanel) e.getComponent()).setBorder(BorderFactory.createLineBorder(Color.black));
-                    }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                //((JPanel) e.getComponent()).setBackground(Color.white);
+                ((JPanel) e.getComponent()).setBorder(BorderFactory.createLineBorder(Color.black));
+            }
 
-                    @Override
-                    public void mouseExited(MouseEvent e) {
-                        //((JPanel) e.getComponent()).setBackground(Color.lightGray);
-                        ((JPanel) e.getComponent()).setBorder(BorderFactory.createEmptyBorder());
-                    }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                //((JPanel) e.getComponent()).setBackground(Color.lightGray);
+                ((JPanel) e.getComponent()).setBorder(BorderFactory.createEmptyBorder());
+            }
 
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                        maybeShowPopup(e);
-                    }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                maybeShowPopup(e);
+            }
 
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        if (e.getClickCount() == 1) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 1) {
 
-                            ((IFvisualizer) e.getComponent()).getVisualizer().updateRequest(OOBDConstants.UR_USER);
-                        }
-                    }
+                    ((IFvisualizer) e.getComponent()).getVisualizer().updateRequest(OOBDConstants.UR_USER);
+                }
+            }
 
-                    public void maybeShowPopup(MouseEvent e) {
-                        if (e.isPopupTrigger()) {
-                            Pmenu.show(e.getComponent(), e.getX(), e.getY());
-                        }
-                    }
-                };
+            public void maybeShowPopup(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    Pmenu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        };
         timer = new Timer(1000, this);
         timer.setInitialDelay(500);
         timer.start();
@@ -253,7 +260,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         mainPanel = new javax.swing.JPanel();
         main = new javax.swing.JPanel();
         scriptSelectComboBox = new javax.swing.JComboBox();
-        jLabel3 = new javax.swing.JLabel();
+        startButtonLabel = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         oobdImage = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
@@ -305,7 +312,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         settingsMenuItem = new javax.swing.JMenuItem();
-        jCheckBoxRemoteConnect = new javax.swing.JCheckBoxMenuItem();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         statusPanel = new javax.swing.JPanel();
@@ -340,17 +346,17 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         scriptSelectComboBox.setName("scriptSelectComboBox"); // NOI18N
         main.add(scriptSelectComboBox, java.awt.BorderLayout.PAGE_END);
 
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setIcon(resourceMap.getIcon("jLabel3.icon")); // NOI18N
-        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
-        jLabel3.setToolTipText(resourceMap.getString("jLabel3.toolTipText")); // NOI18N
-        jLabel3.setName("jLabel3"); // NOI18N
-        jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
+        startButtonLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        startButtonLabel.setIcon(resourceMap.getIcon("startButtonLabel.icon")); // NOI18N
+        startButtonLabel.setText(resourceMap.getString("startButtonLabel.text")); // NOI18N
+        startButtonLabel.setToolTipText(resourceMap.getString("startButtonLabel.toolTipText")); // NOI18N
+        startButtonLabel.setName("startButtonLabel"); // NOI18N
+        startButtonLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel3MouseClicked(evt);
+                startButtonLabelMouseClicked(evt);
             }
         });
-        main.add(jLabel3, java.awt.BorderLayout.CENTER);
+        main.add(startButtonLabel, java.awt.BorderLayout.CENTER);
 
         jPanel2.setBackground(resourceMap.getColor("jPanel2.background")); // NOI18N
         jPanel2.setName("jPanel2"); // NOI18N
@@ -419,6 +425,11 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
         comportComboBox.setEditable(true);
         comportComboBox.setName("comportComboBox"); // NOI18N
+        comportComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comportComboBoxActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 10;
@@ -499,6 +510,11 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
         jTextFieldRemoteServer.setText(resourceMap.getString("jTextFieldRemoteServer.text")); // NOI18N
         jTextFieldRemoteServer.setName("jTextFieldRemoteServer"); // NOI18N
+        jTextFieldRemoteServer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldRemoteServerActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 7;
@@ -507,6 +523,11 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
         jTextFieldProxyHost.setText(resourceMap.getString("jTextFieldProxyHost.text")); // NOI18N
         jTextFieldProxyHost.setName("jTextFieldProxyHost"); // NOI18N
+        jTextFieldProxyHost.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldProxyHostActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 8;
@@ -530,6 +551,15 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         settings.add(jLabel5, gridBagConstraints);
 
         jSpinnerProxyPort.setName("jSpinnerProxyPort"); // NOI18N
+        jSpinnerProxyPort.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                jSpinnerProxyPortAncestorAdded(evt);
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 9;
@@ -549,6 +579,11 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         protocolComboBox.setSelectedIndex(2);
         protocolComboBox.setToolTipText(resourceMap.getString("connectionTypeSpinner.toolTipText")); // NOI18N
         protocolComboBox.setName("connectionTypeSpinner"); // NOI18N
+        protocolComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                protocolComboBoxActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 6;
@@ -776,11 +811,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         settingsMenuItem.setName("settingsMenuItem"); // NOI18N
         fileMenu.add(settingsMenuItem);
 
-        jCheckBoxRemoteConnect.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
-        jCheckBoxRemoteConnect.setText(resourceMap.getString("jCheckBoxRemoteConnect.text")); // NOI18N
-        jCheckBoxRemoteConnect.setName("jCheckBoxRemoteConnect"); // NOI18N
-        fileMenu.add(jCheckBoxRemoteConnect);
-
         aboutMenuItem.setAction(actionMap.get("showAboutBox")); // NOI18N
         aboutMenuItem.setName("aboutMenuItem"); // NOI18N
         fileMenu.add(aboutMenuItem);
@@ -843,15 +873,22 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
 
         appProbs.put(OOBDConstants.PropName_ScriptDir, scriptDir.getText());
-        appProbs.put(OOBDConstants.PropName_SerialPort, comportComboBox.getEditor().getItem().toString());
-        appProbs.put(OOBDConstants.PropName_ConnectServerURL, jTextFieldRemoteServer.getText());
-        appProbs.put(OOBDConstants.PropName_ProxyHost, jTextFieldProxyHost.getText());
-        try {
-            jSpinnerProxyPort.commitEdit();
-        } catch (ParseException ex) {
-            Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
+
+        connectTypeName = protocolComboBox.getSelectedItem().toString();
+        if (connectTypeName != null && !connectTypeName.equalsIgnoreCase("")) {
+            core.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
+// !! The value of the connection device is not stored here, as this already controlled in the comportComboBox change() event
+            appProbs.put(connectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, jTextFieldRemoteServer.getText());
+            appProbs.put(connectTypeName + "_" + OOBDConstants.PropName_ProxyHost, jTextFieldProxyHost.getText());
+            try {
+                jSpinnerProxyPort.commitEdit();
+            } catch (ParseException ex) {
+                Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            appProbs.putInt(connectTypeName + "_" + OOBDConstants.PropName_ProxyPort, ((Integer) jSpinnerProxyPort.getValue()));
+
         }
-        appProbs.putInt(OOBDConstants.PropName_ProxyPort, ((Integer) jSpinnerProxyPort.getValue()));
+
         core.getSystemIF().savePreferences(FT_PROPS,
                 OOBDConstants.AppPrefsFileName, appProbs);
         String script = appProbs.get(OOBDConstants.PropName_ScriptName, null);
@@ -875,12 +912,47 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         cl.show(mainPanel, MAINPANEL);
     }//GEN-LAST:event_backButtonLabelMouseClicked
 
-    private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
+    private void startButtonLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startButtonLabelMouseClicked
         if (scriptSelectComboBox.getSelectedItem() == null) {
             return;
         }
+
+        String formatURL;
+        connectTypeName = (String) core.readDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, OOBDConstants.PropName_ConnectTypeBT);
+
+        Class<OOBDPort> value = supplyHardwareConnects.get(connectTypeName);
+        try { // tricky: try to call a static method of an interface, where a
+            // interface don't have static values by definition..
+
+            java.lang.reflect.Method method = value.getMethod("getUrlFormat", new Class[]{}); // no parameters
+            Object instance = null;
+            formatURL = (String) method.invoke(instance, new Object[]{}); // no parameters
+
+        } catch (Exception ex) {
+            Logger.getLogger(Core.class.getName())
+                    .log(Level.WARNING,
+                            "can't call static methods 'getUrlFormat' of "
+                            + value.getName());
+            ex.printStackTrace();
+            return;
+        }
+
         String connectURL = "serial"; //this looks obviously not like an URL yet, but maybe in a  later extension
-        if (jCheckBoxRemoteConnect.isSelected()) {
+        String protocol = "";
+        String domain = "";
+        String userID = "";
+        String serverURL = appProbs.get(connectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, "");
+        if (!"".equals(serverURL)) {
+            String[] parts = serverURL.split("://");
+            if (parts.length != 2) {
+                JOptionPane.showMessageDialog(null, "The Remote Connect URL is not a valid URL", "Wrong Format", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            protocol = parts[0];
+            domain = parts[1];
+        }
+
+        if (connectTypeName.equalsIgnoreCase("Kadaver")) {
             try {
                 Onion answer = requestParamInput(new Onion("{" + "'param' : [{ " + "'type':'String',"
                         + "'title':'" + Base64Coder.encodeString("Enter the Connect Number") + "',"
@@ -891,38 +963,35 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                     JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-                connectURL = answer.getOnionBase64String("answer");
-                if (connectURL == null || connectURL.equals("")) {
+                userID = answer.getOnionBase64String("answer");
+                if (userID == null || userID.equals("")) {
                     JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-                connectURLDefault = connectURL;
-
-                String serverURL = appProbs.get(OOBDConstants.PropName_ConnectServerURL, PropName_KadaverServerDefault);
-                String[] parts = serverURL.split("://");
-                if (parts.length != 2) {
-                    JOptionPane.showMessageDialog(null, "The Remote Connect URL is not a valid URL", "Wrong Format", JOptionPane.WARNING_MESSAGE);
-                    return;
-
-                }
-                connectURL = parts[0] + "://" + Base64Coder.encodeString(connectURL) + "@" + parts[1];
+                connectURLDefault = userID;
+                userID = Base64Coder.encodeString(userID); // in the later URL the connect
 
             } catch (JSONException ex) {
                 Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
                 return;
             }
         }
+        connectURL = formatURL;
+        connectURL = connectURL.replace("{device}", appProbs.get(connectTypeName + "_" + OOBDConstants.PropName_SerialPort, ""));
+        connectURL = connectURL.replace("{protocol}", protocol);
+        connectURL = connectURL.replace("{user}", userID);
+        connectURL = connectURL.replace("{urlpath}", domain);
+
         String scriptName = scriptSelectComboBox.getSelectedItem().toString();
         appProbs.put(OOBDConstants.PropName_ScriptName, scriptName);
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         cl.show(mainPanel, DIAGNOSEPANEL);
         try {
-            Archive file =(Archive) scriptSelectComboBox.getSelectedItem();
-            Onion cmdOnion
-                    = new Onion("{" + "'scriptpath':'" + file.getFilePath().replace("\\", "/") + "'"
-                            + ",'connecturl':'" + Base64Coder.encodeString(connectURL) + "'"
-                            + "}");
-                                   core.writeDataPool(DP_ACTIVE_ARCHIVE, file);
+            Archive file = (Archive) scriptSelectComboBox.getSelectedItem();
+            Onion cmdOnion = new Onion("{" + "'scriptpath':'" + file.getFilePath().replace("\\", "/") + "'"
+                    + ",'connecturl':'" + Base64Coder.encodeString(connectURL) + "'"
+                    + "}");
+            core.writeDataPool(DP_ACTIVE_ARCHIVE, file);
 
             startScriptEngine(cmdOnion);
         } catch (JSONException ex) {
@@ -930,47 +999,68 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             Logger.getLogger(swingView.class.getName()).log(Level.WARNING, "JSON creation error with file name:" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath(), ex.getMessage());
         }
 
-    }//GEN-LAST:event_jLabel3MouseClicked
+    }//GEN-LAST:event_startButtonLabelMouseClicked
 
     private void settingsComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_settingsComponentShown
-        String osname = System.getProperty("os.name", "").toLowerCase();
-        String[] portList;
-        Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "OS detected: {0}", osname);
-        int portListIndex = -1;
-        String port = appProbs.get(OOBDConstants.PropName_SerialPort, null);
-        try {
-            if (osname.startsWith("windows")) {
-                portList = SerialPortList.getPortNames();
-                // Process the list.
-                for (String portname : portList) {
-                   comportComboBox.addItem(portname);
-                    if (portname.equalsIgnoreCase(port)) {
-                        portListIndex = comportComboBox.getItemCount() - 1;
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
 
-        if (portListIndex > -1) {
-            comportComboBox.setSelectedIndex(portListIndex);
-        } else {
-            comportComboBox.setSelectedItem(port);
-        }
-        // as not supported yet, disable the protocol select combobox
-        protocolComboBox.setEnabled(false);
-        libraryDir.setText(appProbs.get(OOBDConstants.PropName_LibraryDir, ""));
-        scriptDir.setText(appProbs.get(OOBDConstants.PropName_ScriptDir, ""));
-        httpEnabled.setSelected(UIHANDLER_WS_NAME.equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_UIHander, "")));
-        pgpEnabled.setSelected("true".equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_PGPEnabled, "")));
-        jTextFieldRemoteServer.setText(appProbs.get(OOBDConstants.PropName_ConnectServerURL, OOBDConstants.PropName_KadaverServerDefault));
-        jTextFieldProxyHost.setText(appProbs.get(OOBDConstants.PropName_ProxyHost, null));
-        jSpinnerProxyPort.setValue(appProbs.getInt(OOBDConstants.PropName_ProxyPort, 0));
-        updateUI();
+        updateUI(false);
     }
 
-    private void updateUI() {
+    private void updateUI(boolean calledFromEvent) {
+
+        PortInfo[] portList = new PortInfo[0];
+        connectTypeName = appProbs.get(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
+        core.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
+        connectDeviceName = appProbs.get(connectTypeName + "_" + OOBDConstants.PropName_SerialPort, "");
+        pgpEnabled.setSelected("true".equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_PGPEnabled, "")));
+        httpEnabled.setSelected(UIHANDLER_WS_NAME.equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_UIHander, "")));
+        jTextFieldRemoteServer.setText(appProbs.get(connectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, OOBDConstants.PropName_KadaverServerDefault));
+        jTextFieldProxyHost.setText(appProbs.get(connectTypeName + "_" + OOBDConstants.PropName_ProxyHost, ""));
+        jSpinnerProxyPort.setValue(appProbs.getInt(connectTypeName + "_" + OOBDConstants.PropName_ProxyPort, 0));
+        if (!calledFromEvent) { //t
+            for (int i = 0; i < protocolComboBox.getItemCount(); i++) {
+                if (protocolComboBox.getItemAt(i).toString().equals(connectTypeName)) {
+                    protocolComboBox.setSelectedIndex(i);
+                }
+            }
+        }
+
+        Class<OOBDPort> value = supplyHardwareConnects.get(connectTypeName);
+        try { // tricky: try to call a static method of an interface, where a
+            // interface don't have static values by definition..
+            // Class[] parameterTypes = new Class[]{};
+            java.lang.reflect.Method method = value.getMethod("getPorts", new Class[]{}); // no parameters
+            Object instance = null;
+            portList = (PortInfo[]) method.invoke(instance, new Object[]{}); // no parameters
+
+        } catch (Exception ex) {
+            Logger.getLogger(Core.class.getName())
+                    .log(Level.WARNING,
+                            "can't call static methods  of "
+                            + value.getName());
+            ex.printStackTrace();
+            return;
+        }
+
+        int portListIndex = -1;
+        String port = appProbs.get(connectTypeName + "_" + OOBDConstants.PropName_SerialPort, null);
+        PortInfo[] portCopyPlusOne = new PortInfo[portList.length + 1]; // needed maybe later, in case the port is not part of the port list, which was delivered by the port-getPorts() function
+        for (int i = 0; i < portList.length; i++) {
+            portCopyPlusOne[i + 1] = portList[i];
+            if (portList[i].getDevice().equals(port)) {
+                portListIndex = i;
+            }
+        }
+        if (portListIndex == -1) { // now we use the List, which has space on item[0] to add the port which was not found in the device list
+            portCopyPlusOne[0] = new PortInfo(port, port);
+            comportComboBox.setModel(new javax.swing.DefaultComboBoxModel(portCopyPlusOne));
+            comportComboBox.setSelectedIndex(0);
+        } else {
+            comportComboBox.setModel(new javax.swing.DefaultComboBoxModel(portList));
+            comportComboBox.setSelectedIndex(portListIndex);
+        }
+        libraryDir.setText(appProbs.get(OOBDConstants.PropName_LibraryDir, ""));
+        scriptDir.setText(appProbs.get(OOBDConstants.PropName_ScriptDir, ""));
         int pgp = checkKeyFiles();
         String pgpStatusText;
         if ((pgp & 0x01) > 0) {
@@ -1092,13 +1182,13 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private void pgpImportKeysActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pgpImportKeysActionPerformed
         if (checkKeyFiles() != 0) {
             importKeyFiles();
-            updateUI();
+            updateUI(false);
         } else {
             int answer = JOptionPane.showConfirmDialog(settings, "Do you REALLY want to delete your PGP keys??");
             if (answer == JOptionPane.YES_OPTION) {
                 try {
                     deleteKeyFiles();
-                    updateUI();
+                    updateUI(false);
                 } catch (Exception e) {
                 }
             }
@@ -1134,6 +1224,56 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             libraryDir.setText(chooser.getSelectedFile().toString());
         }
     }//GEN-LAST:event_chooseLibsDirectoryButtonActionPerformed
+
+    private void protocolComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolComboBoxActionPerformed
+        JComboBox cb = (JComboBox) evt.getSource();
+        connectTypeName = cb.getSelectedItem().toString();
+        if (connectTypeName != null && !connectTypeName.equalsIgnoreCase("")) {
+            core.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
+            if (oldConnectTypeName != null) {
+                appProbs.put(OOBDConstants.PropName_ConnectType, connectTypeName);
+                // !! The value of the connection device is not stored here, as this already controlled in the comportComboBox change() event
+                appProbs.put(oldConnectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, jTextFieldRemoteServer.getText());
+                appProbs.put(oldConnectTypeName + "_" + OOBDConstants.PropName_ProxyHost, jTextFieldProxyHost.getText());
+                try {
+                    jSpinnerProxyPort.commitEdit();
+                } catch (ParseException ex) {
+                    Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                appProbs.putInt(oldConnectTypeName + "_" + OOBDConstants.PropName_ProxyPort, ((Integer) jSpinnerProxyPort.getValue()));
+            }
+            oldConnectTypeName = connectTypeName;
+            updateUI(true);
+        }
+
+    }//GEN-LAST:event_protocolComboBoxActionPerformed
+
+    private void jTextFieldRemoteServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldRemoteServerActionPerformed
+        //
+    }//GEN-LAST:event_jTextFieldRemoteServerActionPerformed
+
+    private void jTextFieldProxyHostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldProxyHostActionPerformed
+        //
+    }//GEN-LAST:event_jTextFieldProxyHostActionPerformed
+
+    private void jSpinnerProxyPortAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_jSpinnerProxyPortAncestorAdded
+        //
+    }//GEN-LAST:event_jSpinnerProxyPortAncestorAdded
+
+    private void comportComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comportComboBoxActionPerformed
+        JComboBox cb = (JComboBox) evt.getSource();
+        Object item = cb.getSelectedItem();
+        if (item != null) {
+            if (item instanceof PortInfo) {
+                connectDeviceName = ((PortInfo) item).getDevice();
+            } else {
+                connectDeviceName = item.toString();
+            }
+            if (connectDeviceName != null && !connectDeviceName.equalsIgnoreCase("")) {
+                appProbs.put(connectTypeName + "_" + OOBDConstants.PropName_SerialPort, connectDeviceName);
+            }
+        }
+    }//GEN-LAST:event_comportComboBoxActionPerformed
 
     @Action
     public void onClickButton_Back() {
@@ -1192,10 +1332,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JButton gridBiggerButton;
     private javax.swing.JButton gridSmallerButton;
     private javax.swing.JCheckBox httpEnabled;
-    private javax.swing.JCheckBoxMenuItem jCheckBoxRemoteConnect;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -1228,6 +1366,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JComboBox scriptSelectComboBox;
     private javax.swing.JPanel settings;
     private javax.swing.JMenuItem settingsMenuItem;
+    private javax.swing.JLabel startButtonLabel;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
@@ -1359,7 +1498,17 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                 }
             }
         }
+        List<String> list = new ArrayList<>();
+        supplyHardwareConnects = core.getConnectorList();
 
+        Enumeration<String> e = supplyHardwareConnects.keys();
+
+        // iterate through Hashtable keys Enumeration
+        while (e.hasMoreElements()) {
+            list.add(e.nextElement());
+        }
+        protocolComboBox.setModel(new javax.swing.DefaultComboBoxModel(list.toArray())); //al.toArray(new String[al.size()])
+        updateUI(false);
     }
 
     @Override
@@ -1729,6 +1878,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         chooser.resetChoosableFileFilters();
         chooser.setAcceptAllFileFilterUsed(false);
         chooser.addChoosableFileFilter(new FileFilter() {
+
             public boolean accept(File f) {
                 if (f.isDirectory()) {
                     return true;
@@ -1755,6 +1905,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             }
         });
         chooser.addChoosableFileFilter(new FileFilter() {
+
             public boolean accept(File f) {
                 if (f.isDirectory()) {
                     return true;
@@ -1780,6 +1931,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             }
         });
         chooser.addChoosableFileFilter(new FileFilter() {
+
             public boolean accept(File f) {
 
                 return true;
@@ -1888,5 +2040,4 @@ class PWDialog extends JDialog implements ActionListener {
             setVisible(false);
         }
     }
-
 }

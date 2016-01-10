@@ -168,6 +168,10 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
         }
     }
 
+    public static String getUrlFormat() {
+        return "{protocol}://{user}@{urlpath}";
+    }
+
     public static PortInfo[] getPorts() {
 
         PortInfo[] DeviceSet = new PortInfo[1];

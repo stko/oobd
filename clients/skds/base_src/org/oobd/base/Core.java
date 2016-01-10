@@ -582,7 +582,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     public void writeDataPool(int id, Object data) {
         synchronized (dataPoolList) {
             if (id >= dataPoolList.size()) {
-                dataPoolList.ensureCapacity(id);
+                dataPoolList.ensureCapacity(id+1);
             }
             dataPoolList.set(id, data);
         }
