@@ -120,25 +120,7 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
                 attachShutDownHook();
                 connectBlocking();
                 return true;
-            } catch (IOException ex) {
-                Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
-            } catch (NoSuchAlgorithmException ex) {
-                Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
-            } catch (CertificateException ex) {
-                Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
-            } catch (KeyStoreException ex) {
-                Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
-            } catch (UnrecoverableKeyException ex) {
-                Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
-            } catch (KeyManagementException ex) {
-                Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
-            } catch (InterruptedException ex) {
+            } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | UnrecoverableKeyException | KeyManagementException | InterruptedException ex) {
                 Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
                 return false;
             }

@@ -148,6 +148,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public Core(IFui myUserInterface, IFsystem mySystemInterface, String name) {
         super(name);
+        System.out.println("Java Runtime Version:"+System.getProperty("java.version"));
         if (thisInstance != null) {
             Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
                     "Core Creator called more as once!!");

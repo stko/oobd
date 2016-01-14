@@ -600,16 +600,6 @@ class OOBDHttpServer extends NanoHTTPD {
         }
     }
 
-    // Get MIME type from file name extension, if possible
-    private String getMimeTypeForFile(String uri) {
-        int dot = uri.lastIndexOf('.');
-        String mime = null;
-        if (dot >= 0) {
-            mime = MIME_TYPES.get(uri.substring(dot + 1).toLowerCase());
-        }
-        //return mime == null ? MIME_DEFAULT_BINARY : mime;
-        return mime == null ? NanoHTTPD.MIME_HTML : mime;
-    }
 
     @Override
     public NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {

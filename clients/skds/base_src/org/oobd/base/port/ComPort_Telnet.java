@@ -85,7 +85,7 @@ public class ComPort_Telnet implements OOBDPort, Runnable {
     }
 
     public static void setPorts(PortInfo[] newPorts) {
-        udpAnouncements = newPorts;
+        udpAnouncements = newPorts.clone();
     }
 
     public void run() {

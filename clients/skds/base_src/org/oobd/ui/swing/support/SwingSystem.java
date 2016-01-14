@@ -374,8 +374,6 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         connectClasses.put(OOBDConstants.PropName_ConnectTypeBT, ComPort_Win.class);
         connectClasses.put(OOBDConstants.PropName_ConnectTypeRemoteConnect,
                 ComPort_Kadaver.class);
-        connectClasses.put(OOBDConstants.PropName_ConnectTypeRemoteDiscovery,
-                ComPort_Telnet.class);
         connectClasses.put(OOBDConstants.PropName_ConnectTypeTelnet,
                 ComPort_Telnet.class);
 
