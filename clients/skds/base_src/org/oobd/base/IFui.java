@@ -118,13 +118,7 @@ public interface IFui {
      */
     public void openPageCompleted(String seID, String Name);
 
-    /**
-     * \brief Starts an Scriptengine
-     * \ingroup visualisation
-     * @param onion 
-     */
-    public void startScriptEngine(Onion onion);
-    /**
+     /**
      * \brief sends a JSON data set to the openXC interface
      * \ingroup visualisation
      * @param onion 

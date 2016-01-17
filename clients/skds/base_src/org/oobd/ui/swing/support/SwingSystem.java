@@ -213,13 +213,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
 
             }
         } else if ("telnet".equalsIgnoreCase(protocol)) {
-            Proxy thisProxy = Proxy.NO_PROXY;
-            if (!"".equals(proxyHost) && proxyPort != 0) {
-                thisProxy = new Proxy(Proxy.Type.HTTP,
-                        new InetSocketAddress(proxyHost, proxyPort));
-            }
             return new ComPort_Telnet(connectURL);
-
         } else if ("serial".equalsIgnoreCase(protocol)) {
             String osname = System.getProperty("os.name", "").toLowerCase();
             Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "OS detected: " + osname);

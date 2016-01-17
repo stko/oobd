@@ -82,8 +82,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     final static String SETTINGSPANEL = "card4";
     Core core;
     Preferences appProbs;
-    private String scriptEngineID = null;
-    private String scriptEngineVisibleName;
     private Vector<IFvisualizer> pageObjects = null;
     private boolean alreadyRefreshing;
     private final String popupText_update = "Toggle Update Flag";
@@ -877,8 +875,10 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         connectTypeName = protocolComboBox.getSelectedItem().toString();
         if (connectTypeName != null && !connectTypeName.equalsIgnoreCase("")) {
             core.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
+
 // !! The value of the connection device is not stored here, as this already controlled in the comportComboBox change() event
             appProbs.put(connectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, jTextFieldRemoteServer.getText());
+            core.writeDataPool(DP_ACTUAL_REMOTECONNECT_SERVER, jTextFieldRemoteServer.getText());
             appProbs.put(connectTypeName + "_" + OOBDConstants.PropName_ProxyHost, jTextFieldProxyHost.getText());
             try {
                 jSpinnerProxyPort.commitEdit();
@@ -913,92 +913,15 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }//GEN-LAST:event_backButtonLabelMouseClicked
 
     private void startButtonLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startButtonLabelMouseClicked
-        if (scriptSelectComboBox.getSelectedItem() == null) {
+        Archive ActiveArchive = (Archive) scriptSelectComboBox.getSelectedItem();
+        if (ActiveArchive == null) {
             return;
         }
-
-        String formatURL;
-        connectTypeName = (String) core.readDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, OOBDConstants.PropName_ConnectTypeBT);
-
-        Class<OOBDPort> value = supplyHardwareConnects.get(connectTypeName);
-        try { // tricky: try to call a static method of an interface, where a
-            // interface don't have static values by definition..
-
-            java.lang.reflect.Method method = value.getMethod("getUrlFormat", new Class[]{}); // no parameters
-            Object instance = null;
-            formatURL = (String) method.invoke(instance, new Object[]{}); // no parameters
-
-        } catch (Exception ex) {
-            Logger.getLogger(Core.class.getName())
-                    .log(Level.WARNING,
-                            "can't call static methods 'getUrlFormat' of "
-                            + value.getName());
-            ex.printStackTrace();
-            return;
-        }
-
-        String connectURL = "serial"; //this looks obviously not like an URL yet, but maybe in a  later extension
-        String protocol = "";
-        String domain = "";
-        String userID = "";
-        String serverURL = appProbs.get(connectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, "");
-        if (!"".equals(serverURL)) {
-            String[] parts = serverURL.split("://");
-            if (parts.length != 2) {
-                JOptionPane.showMessageDialog(null, "The Remote Connect URL is not a valid URL", "Wrong Format", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            protocol = parts[0];
-            domain = parts[1];
-        }
-
-        if (connectTypeName.equalsIgnoreCase("Kadaver")) {
-            try {
-                Onion answer = requestParamInput(new Onion("{" + "'param' : [{ " + "'type':'String',"
-                        + "'title':'" + Base64Coder.encodeString("Enter the Connect Number") + "',"
-                        + "'default':'" + Base64Coder.encodeString(connectURLDefault) + "',"
-                        + "'message':'" + Base64Coder.encodeString("Please ask the person, who's connecting the dongle to the vehicle for the Connect Number displayed by his software") + "'"
-                        + "}]}"));
-                if (answer == null) {
-                    JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                userID = answer.getOnionBase64String("answer");
-                if (userID == null || userID.equals("")) {
-                    JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                connectURLDefault = userID;
-                userID = Base64Coder.encodeString(userID); // in the later URL the connect
-
-            } catch (JSONException ex) {
-                Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
-                return;
-            }
-        }
-        connectURL = formatURL;
-        connectURL = connectURL.replace("{device}", appProbs.get(connectTypeName + "_" + OOBDConstants.PropName_SerialPort, ""));
-        connectURL = connectURL.replace("{protocol}", protocol);
-        connectURL = connectURL.replace("{user}", userID);
-        connectURL = connectURL.replace("{urlpath}", domain);
-
-        String scriptName = scriptSelectComboBox.getSelectedItem().toString();
-        appProbs.put(OOBDConstants.PropName_ScriptName, scriptName);
+        appProbs.put(OOBDConstants.PropName_ScriptName, ActiveArchive.toString());
         CardLayout cl = (CardLayout) (mainPanel.getLayout());
         cl.show(mainPanel, DIAGNOSEPANEL);
-        try {
-            Archive file = (Archive) scriptSelectComboBox.getSelectedItem();
-            Onion cmdOnion = new Onion("{" + "'scriptpath':'" + file.getFilePath().replace("\\", "/") + "'"
-                    + ",'connecturl':'" + Base64Coder.encodeString(connectURL) + "'"
-                    + "}");
-            core.writeDataPool(DP_ACTIVE_ARCHIVE, file);
-
-            startScriptEngine(cmdOnion);
-        } catch (JSONException ex) {
-            // TODO Auto-generated catch block
-            Logger.getLogger(swingView.class.getName()).log(Level.WARNING, "JSON creation error with file name:" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath(), ex.getMessage());
-        }
-
+        core.writeDataPool(DP_ACTIVE_ARCHIVE, ActiveArchive);
+        core.startScriptArchive(ActiveArchive);
     }//GEN-LAST:event_startButtonLabelMouseClicked
 
     private void settingsComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_settingsComponentShown
@@ -1043,16 +966,16 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
 
         int portListIndex = -1;
-        String port = appProbs.get(connectTypeName + "_" + OOBDConstants.PropName_SerialPort, null);
+
         PortInfo[] portCopyPlusOne = new PortInfo[portList.length + 1]; // needed maybe later, in case the port is not part of the port list, which was delivered by the port-getPorts() function
         for (int i = 0; i < portList.length; i++) {
             portCopyPlusOne[i + 1] = portList[i];
-            if (portList[i].getDevice().equals(port)) {
+            if (portList[i].getDevice().equals(connectTypeName)) {
                 portListIndex = i;
             }
         }
         if (portListIndex == -1) { // now we use the List, which has space on item[0] to add the port which was not found in the device list
-            portCopyPlusOne[0] = new PortInfo(port, port);
+            portCopyPlusOne[0] = new PortInfo(connectTypeName, connectTypeName);
             comportComboBox.setModel(new javax.swing.DefaultComboBoxModel(portCopyPlusOne));
             comportComboBox.setSelectedIndex(0);
         } else {
@@ -1271,6 +1194,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             }
             if (connectDeviceName != null && !connectDeviceName.equalsIgnoreCase("")) {
                 appProbs.put(connectTypeName + "_" + OOBDConstants.PropName_SerialPort, connectDeviceName);
+                core.writeDataPool(OOBDConstants.DP_ACTUAL_DONGLE_PORT_ID, connectDeviceName);
             }
         }
     }//GEN-LAST:event_comportComboBoxActionPerformed
@@ -1515,13 +1439,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     public void announceScriptengine(String id, String visibleName) {
         Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: Scriptengine-ID: {0} visibleName:{1}", new Object[]{id, visibleName
         });
-        // more as one scriptengine is not used in this app
-        //scriptEngineMap.put(id, visibleName);
-        if ("ScriptengineLua".equalsIgnoreCase(id)) {
-            scriptEngineID = id;
-            scriptEngineVisibleName = visibleName;
-        }
-    }
+     }
 
     @Override
     public void announceUIHandler(String id, String visibleName) {
@@ -1665,22 +1583,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
     }
 
-    @Override
-    public void startScriptEngine(Onion onion) {
 
-        if (scriptEngineID != null) {
-            core.createScriptEngine(scriptEngineID, onion);
-
-            //JTabbedPane newjTabPane = new JTabbedPane(); //create a inner JTabbedPane as container for the later coming scriptengine pages
-            //newjTabPane.setName(seID); // set the name of that canvas that it can be found again later
-            //mainSeTabbedPane.addTab(seID, newjTabPane); // and put this canvas inside the pane which belongs to that particular scriptengine
-            // and now, after initialisation of the UI, let the games begin...
-            core.setAssign(scriptEngineID, org.oobd.base.OOBDConstants.CL_PANE, new Object()); //store the related drawing pane, the TabPane for that scriptengine
-            //stop the Progress Dialog BEFORE the script starts
-            //Diagnose.getInstance().stopProgressDialog();
-            core.startScriptEngine(onion);
-        }
-    }
 
     @Action
     public void onClickButton_Update() {
@@ -1730,7 +1633,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         boolean valid = false;
         JSONArray params;
         try {
-            params = msg.getJSONArray("param");
+            params = msg.getJSONArray(CM_PARAM);
             if (params != null) {
                 Onion p0Onion = new Onion(params.get(0).toString());
                 if (p0Onion != null) {

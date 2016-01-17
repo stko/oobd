@@ -49,11 +49,9 @@ import org.oobd.base.archive.Archive;
 import org.oobd.base.archive.Factory;
 
 // the NanoHTTPD FileUpload dependencies have been commented as they do not work at all and caused proGuard errors
-
 //import fi.iki.elonen.NanoFileUpload;
 //import org.apache.commons.fileupload.FileItem;
 //import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-
 /**
  * generic abstract for the implementation of scriptengines
  *
@@ -533,7 +531,6 @@ class OOBDHttpServer extends NanoHTTPD {
     public static final String MIME_DEFAULT_BINARY = "application/octet-stream";
 
 //    NanoFileUpload uploader;
-
     public String uri;
 
     public Method method;
@@ -543,7 +540,6 @@ class OOBDHttpServer extends NanoHTTPD {
     public Map<String, String> parms;
 
 //    public Map<String, List<FileItem>> files;
-
     /**
      * Hashtable mapping (String)FILENAME_EXTENSION -> (String)MIME_TYPE
      */
@@ -600,22 +596,44 @@ class OOBDHttpServer extends NanoHTTPD {
         }
     }
 
-
     @Override
     public NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
         this.uri = session.getUri();
         this.method = session.getMethod();
         this.header = session.getHeaders();
-        this.parms = session.getParms();
         /*
          if (NanoFileUpload.isMultipartContent(session)) {
            
          }
          */
         System.err.println("url path:" + session.getUri());
-        Map<String, String> parms = session.getParms();
-        if (parms.get("theme") != null) {
+
+        Map<String, String> postFiles = new HashMap<>();
+
+        if (Method.PUT.equals(method) || Method.POST.equals(method)) {
+            try {
+                session.parseBody(postFiles);
+            } catch (IOException ioe) {
+                System.err.println( "SERVER INTERNAL ERROR: IOException: " + ioe.getMessage());
+            } catch (ResponseException re) {
+                System.err.println( "SERVER INTERNAL ERROR: IOException: " + re.getMessage());
+            }
+        }
+        // get the POST body
+        String postBody = session.getQueryParameterString();
+        // or you can access the POST request's parameters
+        String postParameter = session.getParms().get("parameter");
+        this.parms = session.getParms();
+
+
+        if (parms.get("theme") != null && !"".equals(parms.get("theme"))) {
             Core.getSingleInstance().writeDataPool(OOBDConstants.DP_WEBUI_ACTUAL_THEME, parms.get("theme"));
+        }
+        if (parms.get("pgppw") != null && !"".equals(parms.get("pgppw"))) {
+            Core.getSingleInstance().getSystemIF().setUserPassPhrase(parms.get("pgppw"));
+        }
+        if (parms.get("rcid") != null && !"".equals(parms.get("rcid"))) {
+            Core.getSingleInstance().writeDataPool(OOBDConstants.DP_REMOTE_CONNECT_ID, parms.get("rcid"));
         }
         if ("/".equals(session.getUri())) {
             Core.getSingleInstance().stopScriptEngine(); // back to start: stop actual script engine
@@ -629,8 +647,8 @@ class OOBDHttpServer extends NanoHTTPD {
                 catalog += "<fileid>" + encodeHTML(file.getID()) + "</fileid>\n";
                 catalog += "<filename>" + encodeHTML(file.toString()) + "</filename>\n";
                 catalog += generateOptionalTag(file, "title", "title");
-               catalog += generateOptionalTag(file, "name", "name");
-                 catalog += generateOptionalTag(file, "shortname", "shortname");
+                catalog += generateOptionalTag(file, "name", "name");
+                catalog += generateOptionalTag(file, "shortname", "shortname");
                 catalog += generateOptionalTag(file, "description", "description");
                 catalog += generateOptionalTag(file, "version", "version");
                 catalog += generateOptionalTag(file, "copyright", "copyright");

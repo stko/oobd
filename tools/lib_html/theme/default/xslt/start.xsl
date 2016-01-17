@@ -7,6 +7,15 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<html>
 	<body>
 	<h2><xsl:value-of select="catalog/title"/></h2>
+	<form action="#" method="post" id="form_2">
+		<label id="h2" form="form_2">Your Settings</label>
+		<label for="pgppw">PGP passphrase</label> 
+		<input type="text" name="pgppw" id="pgppw" maxlength="30"/>
+
+		<label for="rcid">Remote Connect ID</label>  
+		<input type="text" name="rcid" id="rcid" maxlength="40"/>
+		<button type="submit">Set</button>
+	</form>
 	<table>
 	<xsl:for-each select="catalog/script">
 		<tr>

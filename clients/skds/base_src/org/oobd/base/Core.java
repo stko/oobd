@@ -50,6 +50,7 @@ import org.oobd.base.support.Onion;
 import org.oobd.base.bus.OobdBus;
 import org.oobd.base.db.OobdDB;
 import org.oobd.base.connector.OobdConnector;
+import org.oobd.base.port.OOBDPort;
 import org.oobd.base.protocol.OobdProtocol;
 import org.oobd.base.scriptengine.OobdScriptengine;
 import org.oobd.base.uihandler.*;
@@ -148,7 +149,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public Core(IFui myUserInterface, IFsystem mySystemInterface, String name) {
         super(name);
-        System.out.println("Java Runtime Version:"+System.getProperty("java.version"));
+        System.out.println("Java Runtime Version:" + System.getProperty("java.version"));
         if (thisInstance != null) {
             Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
                     "Core Creator called more as once!!");
@@ -389,7 +390,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * Needed to link UI canvas to this object
      *
      */
-    public String createScriptEngine(String id, Onion onion) {
+    public OobdScriptengine createScriptEngine(String id, Onion onion) {
         Logger.getLogger(Core.class.getName()).log(Level.CONFIG,
                 "Core should create scriptengine: " + id);
         OobdScriptengine o = null;
@@ -423,7 +424,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return id;
+        writeDataPool(OOBDConstants.DP_LAST_CREATED_SCRIPTENGINE, o);
+
+        return o;
     }
 
     /**
@@ -583,7 +586,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     public void writeDataPool(int id, Object data) {
         synchronized (dataPoolList) {
             if (id >= dataPoolList.size()) {
-                dataPoolList.ensureCapacity(id+1);
+                dataPoolList.ensureCapacity(id + 1);
             }
             dataPoolList.set(id, data);
         }
@@ -846,6 +849,15 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * @param onion addional param
      */
     public void startScriptEngine(Onion onion) {
+        OobdScriptengine o = (OobdScriptengine) readDataPool(OOBDConstants.DP_LAST_CREATED_SCRIPTENGINE, null);
+        if (o == null) {
+            o = createScriptEngine("ScriptengineLua", onion);
+            if (o == null) {
+                Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
+                        "Could not create Scriptengine! ");
+                return;
+            }
+        }
         Logger.getLogger(Core.class.getName()).log(Level.CONFIG,
                 "Start scriptengine: " + id);
         while (core.readDataPool(DP_RUNNING_SCRIPTENGINE, null) != null) {
@@ -855,31 +867,27 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             } catch (InterruptedException ex) {
             }
         }
-        OobdScriptengine o = (OobdScriptengine) readDataPool(OOBDConstants.DP_LAST_CREATED_SCRIPTENGINE, null);
         o.setStartupParameter(onion);
         Thread t1 = new Thread(o);
         t1.start();
     }
     /*
-     checks, if the URL points to a lbc file. if yes, starts it and returns the path to the start page read out of the manifest file of that script
+     checks, if the URL points to a lbc ActiveArchive. if yes, starts it and returns the path to the start page read out of the manifest ActiveArchive of that script
      */
 
     public String startScriptEngineByURL(String resourceName) {
-        String connectURL = "serial"; //this looks obviously not like an URL yet, but maybe in a  later extension
-
-        Onion cmdOnion;
 
         ArrayList<Archive> files = (ArrayList<Archive>) readDataPool(DP_LIST_OF_SCRIPTS, null);
         Archive activeArchive = (Archive) readDataPool(DP_ACTIVE_ARCHIVE, null);
         String scriptPath = "";
-        if (activeArchive != null && resourceName.endsWith(".lbc")) {//lets see if the innerpath points to a lbc file
+        if (activeArchive != null && resourceName.endsWith(".lbc")) {//lets see if the innerpath points to a lbc ActiveArchive
             if (activeArchive.fileExist(resourceName)) {
                 scriptPath = resourceName; //define the script path relative to the open Archive
                 //this is a lbc, so lets try to load its own manifest
                 activeArchive.relocateManifest(resourceName);
             }
         }
-        if (files != null && scriptPath.equals("")) { // if the resource does not point to an archive internal lbc file, see if it matches to another archive
+        if (files != null && scriptPath.equals("")) { // if the resource does not point to an archive internal lbc ActiveArchive, see if it matches to another archive
             for (Archive file : files) {
                 if (("/" + file.getID()).equalsIgnoreCase(resourceName)) {
                     activeArchive = file;
@@ -889,29 +897,102 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                         scriptPath = "";
                     }
                     //lets see if the archive gives us a startpage
-                    resourceName=activeArchive.getProperty(OOBDConstants.MANIFEST_STARTPAGE, resourceName);
+                    resourceName = activeArchive.getProperty(OOBDConstants.MANIFEST_STARTPAGE, resourceName);
                 }
             }
         }
-        if (!scriptPath.equals("")) { //if only the root file name is given or the innerpath really points to a .lbc file
+        if (!scriptPath.equals("") && activeArchive != null) { //if only the root ActiveArchive name is given or the innerpath really points to a .lbc ActiveArchive
 
-            try {
-                cmdOnion = new Onion("{" + "'scriptpath':'" + scriptPath + "'"
-                        + ",'connecturl':'" + Base64Coder.encodeString(connectURL) + "'"
-                        + "}");
-                stopScriptEngine();
-                writeDataPool(DP_ACTIVE_ARCHIVE, activeArchive);
-                System.out.println("start scriptengine for " + scriptPath);
-                createScriptEngine("ScriptengineLua", cmdOnion);
-                startScriptEngine(cmdOnion);
-                return activeArchive.getProperty(MANIFEST_STARTPAGE, OOBDConstants.HTML_DEFAULTPAGEURL);
-            } catch (JSONException ex) {
-                Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
-                return resourceName;
-            }
+            writeDataPool(DP_ACTIVE_ARCHIVE, activeArchive);
+            System.out.println("start scriptengine for " + scriptPath);
+            startScriptArchive(activeArchive);
+            return activeArchive.getProperty(MANIFEST_STARTPAGE, OOBDConstants.HTML_DEFAULTPAGEURL);
         }
         return resourceName;
     }
+
+    public void startScriptArchive(Archive ActiveArchive) {
+
+        String formatURL;
+        String connectTypeName = (String) core.readDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, OOBDConstants.PropName_ConnectTypeBT);
+
+        Class<OOBDPort> value;
+        value = systemInterface.getConnectorList().get(connectTypeName);
+        try { // tricky: try to call a static method of an interface, where a
+            // interface don't have static values by definition..
+
+            java.lang.reflect.Method method = value.getMethod("getUrlFormat", new Class[]{}); // no parameters
+            Object instance = null;
+            formatURL = (String) method.invoke(instance, new Object[]{}); // no parameters
+
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            Logger.getLogger(Core.class.getName())
+                    .log(Level.WARNING,
+                            "can't call static methods 'getUrlFormat' of "
+                            + value.getName());
+            ex.printStackTrace();
+            return;
+        }
+
+        String connectURL;
+        String protocol = "";
+        String domain = "";
+        String userID = "";
+        und hier ist der Fehler: beim Initalisieren werden die DataPoolwerte nicht gleich anhand der Preferences gesetzt, und darum sind wichtige Felder leer
+        String serverURL = (String) readDataPool(DP_ACTUAL_REMOTECONNECT_SERVER, "");
+        if (!"".equals(serverURL)) {
+            String[] parts = serverURL.split("://");
+            if (parts.length != 2) {
+                //\todo error message JOptionPane.showMessageDialog(null, "The Remote Connect URL is not a valid URL", "Wrong Format", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            protocol = parts[0];
+            domain = parts[1];
+        }
+
+        if (connectTypeName.equalsIgnoreCase("Kadaver")) {
+            try {
+                Onion answer = getUiIF().requestParamInput(new Onion("{" + "'" + CM_PARAM + "' : [{ " + "'type':'String',"
+                        + "'title':'" + Base64Coder.encodeString("Enter the Connect Number") + "',"
+                        + "'default':'" + Base64Coder.encodeString((String) readDataPool(OOBDConstants.DP_REMOTE_CONNECT_ID, "")) + "',"
+                        + "'message':'" + Base64Coder.encodeString("Please ask the person, who's connecting the dongle to the vehicle for the Connect Number displayed by his software") + "'"
+                        + "}]}"));
+                if (answer == null) {
+                    //\todo error message JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                userID = answer.getOnionBase64String("answer");
+                if (userID == null || userID.equals("")) {
+                    //\todo error message JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                writeDataPool(OOBDConstants.DP_REMOTE_CONNECT_ID, userID);
+                userID = Base64Coder.encodeString(userID); // in the later URL the connect
+
+            } catch (JSONException ex) {
+                Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
+                return;
+            }
+        }
+        connectURL = formatURL;
+        connectURL = connectURL.replace("{device}", (String) readDataPool(OOBDConstants.DP_ACTUAL_DONGLE_PORT_ID, ""));
+        connectURL = connectURL.replace("{protocol}", protocol);
+        connectURL = connectURL.replace("{user}", userID);
+        connectURL = connectURL.replace("{urlpath}", domain);
+
+        try {
+            Onion cmdOnion = new Onion("{" + "'scriptpath':'" + ActiveArchive.getFilePath().replace("\\", "/") + "'"
+                    + ",'connecturl':'" + Base64Coder.encodeString(connectURL) + "'"
+                    + "}");
+            core.writeDataPool(DP_ACTIVE_ARCHIVE, ActiveArchive);
+
+            startScriptEngine(cmdOnion);
+        } catch (JSONException ex) {
+            // TODO Auto-generated catch block
+            Logger.getLogger(Core.class.getName()).log(Level.WARNING, "JSON creation error with file name:" + ActiveArchive.getFilePath(), ex.getMessage());
+        }
+    }
+
 }
 
 /**
