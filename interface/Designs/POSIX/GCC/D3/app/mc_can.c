@@ -106,11 +106,11 @@ UBaseType_t bus_init_can()
 // CAN use the same socket for send and receive
 //iSocketSend = iSocketOpenCAN(NULL, NULL, NULL);
     iSocketSend = iSocketReceive;
-/*
     int mystate;
-    DEBUGPRINT("get CAN State returns %ld\n",
+    DEBUGPRINT("get CAN State for %s returns %ld\n", CAN_INTERFACE,
 	       can_get_state(CAN_INTERFACE, &mystate));
     DEBUGPRINT("get CAN State mystate %ld\n", mystate);
+/*
     struct can_ctrlmode cm;
     memset(&cm, 0, sizeof(cm));
     cm.mask = CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_LISTENONLY;
