@@ -861,6 +861,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         setStatusBar(statusPanel);
     }// </editor-fold>//GEN-END:initComponents
 
+
     private void backButtonLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonLabelMouseClicked
 
         if (httpEnabled.isSelected()) {
@@ -1386,13 +1387,12 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         this.core = core;
         appProbs = this.core.getSystemIF().loadPreferences(FT_PROPS,
                 OOBDConstants.AppPrefsFileName);
+                connectTypeName = appProbs.get(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
+                transferPreferences2System(connectTypeName);
         String script = appProbs.get(OOBDConstants.PropName_ScriptName, null);
         int i = -1;
         String actualScriptDir = appProbs.get(OOBDConstants.PropName_ScriptDir, null);
-        this.core.writeDataPool(DP_SCRIPTDIR, actualScriptDir);
-        this.core.writeDataPool(DP_WWW_LIB_DIR, appProbs.get(OOBDConstants.PropName_LibraryDir, null));
         ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
-        this.core.writeDataPool(DP_LIST_OF_SCRIPTS, files);
         for (Archive file : files) {
             scriptSelectComboBox.addItem(file);
             if (file.toString().equalsIgnoreCase(script)) {
@@ -1439,7 +1439,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     public void announceScriptengine(String id, String visibleName) {
         Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: Scriptengine-ID: {0} visibleName:{1}", new Object[]{id, visibleName
         });
-     }
+    }
 
     @Override
     public void announceUIHandler(String id, String visibleName) {
@@ -1582,8 +1582,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             alreadyRefreshing = false;
         }
     }
-
-
 
     @Action
     public void onClickButton_Update() {
@@ -1857,6 +1855,23 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     public void openXCVehicleData(Onion onion) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    private void transferPreferences2System(String localConnectTypeName) {
+
+        if (localConnectTypeName != null && !localConnectTypeName.equalsIgnoreCase("")) {
+            core.writeDataPool(DP_ACTUAL_REMOTECONNECT_SERVER, appProbs.get(localConnectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, ""));
+            core.writeDataPool(DP_ACTUAL_PROXY_HOST, appProbs.get(localConnectTypeName + "_" + OOBDConstants.PropName_ProxyHost, ""));
+            core.writeDataPool(DP_ACTUAL_PROXY_PORT, appProbs.getInt(localConnectTypeName + "_" + OOBDConstants.PropName_ProxyPort, 0));
+
+        }
+        core.writeDataPool(DP_ACTUAL_UIHANDLER,appProbs.get(OOBDConstants.PropName_UIHander, ""));
+        String actualScriptDir = appProbs.get(OOBDConstants.PropName_ScriptDir, null);
+        core.writeDataPool(DP_SCRIPTDIR, actualScriptDir);
+        core.writeDataPool(DP_WWW_LIB_DIR, appProbs.get(OOBDConstants.PropName_LibraryDir, null));
+        ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
+        core.writeDataPool(DP_LIST_OF_SCRIPTS, files);
+    }
+
 }
 
 class PWDialog extends JDialog implements ActionListener {
@@ -1943,4 +1958,5 @@ class PWDialog extends JDialog implements ActionListener {
             setVisible(false);
         }
     }
+
 }

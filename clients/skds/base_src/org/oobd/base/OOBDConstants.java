@@ -134,7 +134,10 @@ public interface OOBDConstants {
     public final static int DP_LAST_OPENED_PATH = 8;
     public final static int DP_ACTUAL_CONNECTION_TYPE = 9;
     public final static int DP_ACTUAL_REMOTECONNECT_SERVER = 10;
-    public final static int DP_ACTUAL_DONGLE_PORT_ID = 11;
-    public final static int DP_REMOTE_CONNECT_ID = 12;
-    public final static int DP_ARRAY_SIZE = 13;
+    public final static int DP_ACTUAL_PROXY_HOST = 11;
+    public final static int DP_ACTUAL_PROXY_PORT = 12;
+    public final static int DP_ACTUAL_DONGLE_PORT_ID = 13;
+    public final static int DP_REMOTE_CONNECT_ID = 14;
+    public final static int DP_ACTUAL_UIHANDLER = 15;
+    public final static int DP_ARRAY_SIZE = 16;
 }

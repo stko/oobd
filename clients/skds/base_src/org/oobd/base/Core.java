@@ -938,7 +938,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         String protocol = "";
         String domain = "";
         String userID = "";
-        und hier ist der Fehler: beim Initalisieren werden die DataPoolwerte nicht gleich anhand der Preferences gesetzt, und darum sind wichtige Felder leer
         String serverURL = (String) readDataPool(DP_ACTUAL_REMOTECONNECT_SERVER, "");
         if (!"".equals(serverURL)) {
             String[] parts = serverURL.split("://");
@@ -951,27 +950,33 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         }
 
         if (connectTypeName.equalsIgnoreCase("Kadaver")) {
-            try {
-                Onion answer = getUiIF().requestParamInput(new Onion("{" + "'" + CM_PARAM + "' : [{ " + "'type':'String',"
-                        + "'title':'" + Base64Coder.encodeString("Enter the Connect Number") + "',"
-                        + "'default':'" + Base64Coder.encodeString((String) readDataPool(OOBDConstants.DP_REMOTE_CONNECT_ID, "")) + "',"
-                        + "'message':'" + Base64Coder.encodeString("Please ask the person, who's connecting the dongle to the vehicle for the Connect Number displayed by his software") + "'"
-                        + "}]}"));
-                if (answer == null) {
-                    //\todo error message JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                userID = answer.getOnionBase64String("answer");
-                if (userID == null || userID.equals("")) {
-                    //\todo error message JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                writeDataPool(OOBDConstants.DP_REMOTE_CONNECT_ID, userID);
-                userID = Base64Coder.encodeString(userID); // in the later URL the connect
+            if (UIHANDLER_WS_NAME.equalsIgnoreCase((String) readDataPool(DP_ACTUAL_UIHANDLER, ""))) {
+                userID = (String) readDataPool(DP_REMOTE_CONNECT_ID, "");
+                //\todo cancel and error message, if connect id is empty
+                userID = Base64Coder.encodeString(userID);
+            } else {
+                try {
+                    Onion answer = getUiIF().requestParamInput(new Onion("{" + "'" + CM_PARAM + "' : [{ " + "'type':'String',"
+                            + "'title':'" + Base64Coder.encodeString("Enter the Connect Number") + "',"
+                            + "'default':'" + Base64Coder.encodeString((String) readDataPool(OOBDConstants.DP_REMOTE_CONNECT_ID, "")) + "',"
+                            + "'message':'" + Base64Coder.encodeString("Please ask the person, who's connecting the dongle to the vehicle for the Connect Number displayed by his software") + "'"
+                            + "}]}"));
+                    if (answer == null) {
+                        //\todo error message JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    userID = answer.getOnionBase64String("answer");
+                    if (userID == null || userID.equals("")) {
+                        //\todo error message JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    writeDataPool(OOBDConstants.DP_REMOTE_CONNECT_ID, userID);
+                    userID = Base64Coder.encodeString(userID); // in the later URL the connect
 
-            } catch (JSONException ex) {
-                Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
-                return;
+                } catch (JSONException ex) {
+                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
+                    return;
+                }
             }
         }
         connectURL = formatURL;
