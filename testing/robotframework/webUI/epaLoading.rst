@@ -48,7 +48,9 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
     *** Test Cases ***
     Starting the script testsuite.lbc via HTTP
 	Create Http Context  localhost:8080
-	:FOR    ${ELEMENT}    IN    /dGVzdHN1aXRlLmxiYw==?theme=default 
+	Set Request Body  theme=default
+	POST  /
+	:FOR    ${ELEMENT}    IN    /dGVzdHN1aXRlLmxiYw== 
 	\	Log    ${ELEMENT}
 	\	Get  ${ELEMENT}
 	\	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
@@ -82,11 +84,15 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	\	close webUI
     Testing non existing theme settings with script testsuite.lbc via HTTP
 	Create Http Context  localhost:8080
+	Set Request Body  theme=foo
+	POST  /
 	Next Request Should Have Status Code  404
-	Get  /dGVzdHN1aXRlLmxiYw==?theme=foo
+	Get  /dGVzdHN1aXRlLmxiYw==
     Testing default theme script testsuite.lbc via HTTP
 	Create Http Context  localhost:8080
-	Get  /dGVzdHN1aXRlLmxiYw==?theme=default
+	Set Request Body  theme=default
+	POST  /
+	Get  /dGVzdHN1aXRlLmxiYw==
     Testing passthrough access on epaZip.epa for manifest
 	Create Http Context  localhost:8080
 	Get  /epaZip.epa/manifest
