@@ -971,12 +971,12 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         PortInfo[] portCopyPlusOne = new PortInfo[portList.length + 1]; // needed maybe later, in case the port is not part of the port list, which was delivered by the port-getPorts() function
         for (int i = 0; i < portList.length; i++) {
             portCopyPlusOne[i + 1] = portList[i];
-            if (portList[i].getDevice().equals(connectTypeName)) {
+            if (portList[i].getDevice().equals(connectDeviceName)) {
                 portListIndex = i;
             }
         }
         if (portListIndex == -1) { // now we use the List, which has space on item[0] to add the port which was not found in the device list
-            portCopyPlusOne[0] = new PortInfo(connectTypeName, connectTypeName);
+            portCopyPlusOne[0] = new PortInfo(connectDeviceName, connectDeviceName);
             comportComboBox.setModel(new javax.swing.DefaultComboBoxModel(portCopyPlusOne));
             comportComboBox.setSelectedIndex(0);
         } else {
@@ -1856,7 +1856,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    private void transferPreferences2System(String localConnectTypeName) {
+    
+    @Override
+    public void transferPreferences2System(String localConnectTypeName) {
 
         if (localConnectTypeName != null && !localConnectTypeName.equalsIgnoreCase("")) {
             core.writeDataPool(DP_ACTUAL_REMOTECONNECT_SERVER, appProbs.get(localConnectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, ""));

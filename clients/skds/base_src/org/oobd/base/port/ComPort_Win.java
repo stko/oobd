@@ -55,7 +55,7 @@ public class ComPort_Win implements OOBDPort, SerialPortEventListener {
             return false;
         }
 
-        defaultPort = props.get(OOBDConstants.PropName_SerialPort, defaultPort);
+        defaultPort = props.get(OOBDConstants.PropName_ConnectTypeBT + "_" + OOBDConstants.PropName_SerialPort, "");
         serialPort = new SerialPort(defaultPort);
         try {
             serialPort.openPort();//Open serial port

@@ -42,11 +42,13 @@ import fi.iki.elonen.NanoHTTPD;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Hashtable;
 import static org.oobd.base.OOBDConstants.DP_RUNNING_SCRIPTENGINE;
 import static org.oobd.base.OOBDConstants.DP_SCRIPTDIR;
 import static org.oobd.base.OOBDConstants.DP_ACTIVE_ARCHIVE;
 import org.oobd.base.archive.Archive;
 import org.oobd.base.archive.Factory;
+import org.oobd.base.port.OOBDPort;
 
 // the NanoHTTPD FileUpload dependencies have been commented as they do not work at all and caused proGuard errors
 //import fi.iki.elonen.NanoFileUpload;
@@ -614,9 +616,9 @@ class OOBDHttpServer extends NanoHTTPD {
             try {
                 session.parseBody(postFiles);
             } catch (IOException ioe) {
-                System.err.println( "SERVER INTERNAL ERROR: IOException: " + ioe.getMessage());
+                System.err.println("SERVER INTERNAL ERROR: IOException: " + ioe.getMessage());
             } catch (ResponseException re) {
-                System.err.println( "SERVER INTERNAL ERROR: IOException: " + re.getMessage());
+                System.err.println("SERVER INTERNAL ERROR: IOException: " + re.getMessage());
             }
         }
         // get the POST body
@@ -624,7 +626,6 @@ class OOBDHttpServer extends NanoHTTPD {
         // or you can access the POST request's parameters
         String postParameter = session.getParms().get("parameter");
         this.parms = session.getParms();
-
 
         if (parms.get("theme") != null && !"".equals(parms.get("theme"))) {
             Core.getSingleInstance().writeDataPool(OOBDConstants.DP_WEBUI_ACTUAL_THEME, parms.get("theme"));
@@ -635,12 +636,30 @@ class OOBDHttpServer extends NanoHTTPD {
         if (parms.get("rcid") != null && !"".equals(parms.get("rcid"))) {
             Core.getSingleInstance().writeDataPool(OOBDConstants.DP_REMOTE_CONNECT_ID, parms.get("rcid"));
         }
+        if (parms.get("connectType") != null && !"".equals(parms.get("connectType"))) {
+            String connectTypeName = parms.get("connectType");
+            Class<OOBDPort> value = Core.getSingleInstance().getConnectorList().get(connectTypeName);
+            if (value != null) {
+                Core.getSingleInstance().writeDataPool(OOBDConstants.DP_REMOTE_CONNECT_ID, connectTypeName);
+                Core.getSingleInstance().getUiIF().transferPreferences2System(connectTypeName);
+                Core.getSingleInstance().writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
+            }
+        }
         if ("/".equals(session.getUri())) {
             Core.getSingleInstance().stopScriptEngine(); // back to start: stop actual script engine
             Core.getSingleInstance().writeDataPool(OOBDConstants.DP_ACTIVE_ARCHIVE, null); // set active Archive to null
             String catalog = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                     + "<?xml-stylesheet type=\"text/xsl\" href=\"/theme/default/xslt/start.xsl\"?>\n"
                     + "<catalog>\n";
+            Hashtable<String, Class> connectionTypes = Core.getSingleInstance().getConnectorList();
+            String actualConnectTypeName = (String) Core.getSingleInstance().readDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, "");
+            for (String connectionName : connectionTypes.keySet()) {
+                if (connectionName.equalsIgnoreCase(actualConnectTypeName)) {
+                    catalog += "<connection selected =\"yes\">" + encodeHTML(connectionName) + "</connection>\n";
+                } else {
+                    catalog += "<connection>" + encodeHTML(connectionName) + "</connection>\n";
+                }
+            }
             ArrayList<Archive> files = Factory.getDirContent((String) Core.getSingleInstance().readDataPool(OOBDConstants.DP_SCRIPTDIR, null));
             for (Archive file : files) {
                 catalog += "<script>\n";
