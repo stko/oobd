@@ -645,7 +645,7 @@ class OOBDHttpServer extends NanoHTTPD {
                 Core.getSingleInstance().writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
             }
         }
-        if ("/".equals(session.getUri())) {
+        if ("/".equals(session.getUri()) || "/#".equals(session.getUri())) {
             Core.getSingleInstance().stopScriptEngine(); // back to start: stop actual script engine
             Core.getSingleInstance().writeDataPool(OOBDConstants.DP_ACTIVE_ARCHIVE, null); // set active Archive to null
             String catalog = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"

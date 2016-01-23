@@ -350,7 +350,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     }
 
     /**
-     * ends a scriptEngine
+     * ends a scriptEngine call this only at end of program or when reaching the main page During normal
+     * operation, the engine change is handled by the startEngine()routine
+     * already
      *
      * @param id
      *
@@ -852,18 +854,21 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         OobdScriptengine o = (OobdScriptengine) readDataPool(OOBDConstants.DP_LAST_CREATED_SCRIPTENGINE, null);
         if (o == null) {
             o = createScriptEngine("ScriptengineLua", onion);
-            if (o == null) {
-                Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
-                        "Could not create Scriptengine! ");
-                return;
-            }
+        } else {
+            o.close();// stop the old engine
+            o = createScriptEngine("ScriptengineLua", onion);
+        }
+        if (o == null) {
+            Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
+                    "Could not create Scriptengine! ");
+            return;
         }
         Logger.getLogger(Core.class.getName()).log(Level.CONFIG,
                 "Start scriptengine: " + id);
         while (core.readDataPool(DP_RUNNING_SCRIPTENGINE, null) != null) {
             try {
-                Thread.sleep(10);
-                System.out.println("Old Scriptengine not finished yet");
+                Thread.sleep(100);
+                System.out.println("core StartScriptEngine: Old Scriptengine not finished yet");
             } catch (InterruptedException ex) {
             }
         }

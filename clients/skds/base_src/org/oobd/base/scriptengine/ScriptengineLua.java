@@ -630,6 +630,7 @@ public class ScriptengineLua extends OobdScriptengine {
     public void close() {
         System.out.println("Send Scriptengine close request"+this.toString());
         keepRunning = false;
+  /*
         try {
             core.transferMsg(
                     new Message(myself, BusMailboxName, new Onion(""
@@ -643,13 +644,6 @@ public class ScriptengineLua extends OobdScriptengine {
         }
         try { // send a message to myself to make sure that the receive loop ends
 
-            /*                   core.transferMsg(
-             new Message(myself, myself.getId(), new Onion(""
-             + "{'type':'" + CM_CHANNEL + "'"
-             + ",'owner':'" + myself.getId() + "'"
-             + ",'command':'connect'"
-             + "}")));
-             */
             getMsgPort().receive(new Message(myself, myself.getId(), new Onion(""
                     + "{'type':'" + CM_CHANNEL + "'"
                     + ",'owner':'" + myself.getId() + "'"
@@ -659,16 +653,17 @@ public class ScriptengineLua extends OobdScriptengine {
             Logger.getLogger(ScriptengineLua.class.getName()).log(
                     Level.SEVERE, null, ex);
         }
-        super.close();
+ */       super.close();
     }
 
     public boolean doScript(String fileName) throws IOException {
         System.out.println("Scriptengine: Waiting for WS to connect"+this.toString());
         while (keepRunning && (!(Boolean) Core.getSingleInstance().readDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, false) || (core.readDataPool(DP_RUNNING_SCRIPTENGINE, null)!=null && core.readDataPool(DP_RUNNING_SCRIPTENGINE, null)!=this))) {
             try {
-                Thread.sleep(10);
-                if (core.readDataPool(DP_RUNNING_SCRIPTENGINE, null)!=null){
-                    System.out.println("Old Scriptengine not finished yet");
+                Thread.sleep(100);
+                OobdScriptengine oldEngine=(OobdScriptengine)core.readDataPool(DP_RUNNING_SCRIPTENGINE, null);
+                if (oldEngine!=null){
+                    System.out.println("doScript: Old Scriptengine not finished yet:"+oldEngine.toString());
                 }
             } catch (InterruptedException ex) {
             }
