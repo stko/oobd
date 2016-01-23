@@ -441,7 +441,7 @@ if (typeof Oobd == "undefined") {
 					obj.addEventListener("click", function() {
 						console.log("clicked command " + this.oobd.command + "with value" + this.oobd.value);
 						//							Oobd.connection.send('{"name":"'+this.oobd.command+'","optid":"'+this.oobd.optid+'","value":"'+btoa(this.oobd.value)+'","updType":1}');
-						Oobd.sendUpdateReq(this.oobd.command, this.oobd.optid, this.oobd.value, 1);
+						Oobd.sendUpdateReq(this.oobd.command, this.oobd.optid, this.oobd.value, 0);
 					});
 				}
 			}

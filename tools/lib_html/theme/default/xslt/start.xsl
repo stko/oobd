@@ -8,12 +8,25 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<body>
 	<h2><xsl:value-of select="catalog/title"/></h2>
 	<form action="#" method="post" id="form_2">
-		<label id="h2" form="form_2">Your Settings</label>
+		<label id="h2" form="form_2">Your Settings</label><br/>
 		<label for="pgppw">PGP passphrase</label> 
-		<input type="text" name="pgppw" id="pgppw" maxlength="30"/>
+		<input type="text" name="pgppw" id="pgppw" maxlength="30"/><br/>
 
 		<label for="rcid">Remote Connect ID</label>  
-		<input type="text" name="rcid" id="rcid" maxlength="40"/>
+		<input type="text" name="rcid" id="rcid" maxlength="40"/><br/>
+		<label for="connectType">Connection Type</label>  
+		<select name="connectType" id="connectType" size="1">
+			<xsl:for-each select="catalog/connection">
+						<xsl:choose>
+							<xsl:when test="@selected">
+								<option selected="selected"><xsl:value-of select="."/></option>
+							</xsl:when>
+							<xsl:otherwise>
+								<option><xsl:value-of select="."/></option>
+							</xsl:otherwise>
+						</xsl:choose>
+			</xsl:for-each>
+		</select><br/>
 		<button type="submit">Set</button>
 	</form>
 	<table>

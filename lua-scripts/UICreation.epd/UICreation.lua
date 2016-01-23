@@ -1,6 +1,4 @@
-
-
-dofile("../../tools/lib_lua/serial_dxm.lua")
+dofile("../../tools/lib_lua/lua_utils.lua")
 
 myedit=""
 
@@ -34,7 +32,6 @@ end
 
 -- This function is called at start and at each re- coonect, so all neccesary (re-)initalisation needs to be done here
 function Start(oldvalue,id)
-	identifyOOBDInterface()
 	Main(oldvalue,id)
 	return oldvalue
 end
@@ -50,7 +47,7 @@ function Main(oldvalue,id)
 	addElement("Click here to see last input value", "showlastValue", myedit, 0x0, "")
         addElement("Checkbox with longer Text...", "bool","True",0x0, "",{ type="CheckBox" } )
         addElement("Value Slider", "donothing","40",0x0, "",{  type="Slider", min=10, max=60})
-        addElement("Gauge with last Slider Value", "donothing","40",0x0, "",{  type="Gauge", min=10, max=60, unit=" km/h"} )
+        addElement("Gauge with last Slider Value", "donothing","40",0x0, "",{  type="Gauge", min=10, low=20 , optimum= 30, high=50 , max=60, unit=" km/h"} )
         addElement("Combobox", "donothing2","2",0x0, "",{  type="Combo", content={"one","two","three","four","five","six"}} )
 	pageDone()
 	return oldvalue

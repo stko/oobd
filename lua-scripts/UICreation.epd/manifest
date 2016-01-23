@@ -1,0 +1,5 @@
+{
+  "script": "UICreation.lbc",
+  "description": "OOBD Demo which shows the features of the standard UI Elements",
+  "author" : "The OOBD Team"
+}

@@ -5,7 +5,11 @@
 <head>
 	<meta charset="utf-8">
 	<script type="text/javascript" src="/libs/oobd/1/oobd.js"></script>
- 
+	<style>
+		:invalid {
+		border: 2px solid #ff0000;
+}	</style>
+
 </head>
  
 <body>
@@ -64,16 +68,12 @@ This design is as ugly as it can be, because it does not contain any HTML beauty
 				var row = table.insertRow(-1);
 				row.classList.add("OOBD");
 				row.setAttribute("oobd:fc",obj.name);
-				row.setAttribute("oobd:click","yes");
 				row.setAttribute("oobd:value",decodeURIComponent(escape(atob(obj.value))));
 				if (typeof obj.updevents != "undefined" ) {
 					row.setAttribute("oobd:updevents",obj.updevents);
 				}else{
 					row.setAttribute("oobd:updevents",0);
 				}
-				row.oodbupdate = function(input) {
-					this.getElementsByClassName("value")[0].innerHTML = input.value;
-				};
 
 				// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
 				var cell1 = row.insertCell(0);
@@ -82,7 +82,121 @@ This design is as ugly as it can be, because it does not contain any HTML beauty
 				cell2.classList.add("value");
 				// Add some text to the new cells:
 				cell1.innerHTML = decodeURIComponent(escape(atob(obj.tooltip)));
-				cell2.innerHTML = decodeURIComponent(escape(atob(obj.value)));
+				//let see, if the visualizer is a graphic element
+				if(typeof obj.opts == 'undefined'){
+					//the simple way
+					row.setAttribute("oobd:click","yes");
+					cell2.innerHTML = decodeURIComponent(escape(atob(obj.value)));
+					row.oodbupdate = function(input) {
+						this.getElementsByClassName("value")[0].innerHTML = input.value;
+					};
+				}else{
+					switch (obj.opts.type){
+					case "TextEdit":
+					case "Password":
+						 var feld = document.createElement("input");
+						if ( obj.opts.type == "Password" ){
+							feld.setAttribute("type","text"); 
+						}else{
+							feld.setAttribute("type","text"); 
+						}
+						feld.setAttribute("size","30"); 
+						feld.value=decodeURIComponent(escape(atob(obj.value)));
+						if(typeof obj.opts.regex != 'undefined'){
+							feld.setAttribute("pattern",obj.opts.regex); 
+						}
+						row.oodbupdate = function(input) {
+							feld.value = input.value;
+						};
+						feld.onchange=function(){
+							if (feld.checkValidity()){
+								console.log("update text input");
+								Oobd.sendUpdateReq(row.oobd.command, row.oobd.optid, feld.value, 0);
+							}
+						};
+						cell2.appendChild(feld); 
+						break;
+					case "CheckBox":
+						 var feld = document.createElement("input");
+						feld.setAttribute("type","checkbox"); 
+						feld.checked = "true" == decodeURIComponent(escape(atob(obj.value))).toLowerCase();
+						row.oodbupdate = function(input) {
+							feld.checked = "true" == input.value.toLowerCase();
+						};
+						feld.onchange=function(){
+							console.log("update checkbox");
+							var flag= feld.checked ? "True" : "False";
+							Oobd.sendUpdateReq(row.oobd.command, row.oobd.optid, flag, 0);
+						};
+						cell2.appendChild(feld); 
+						break;
+					case "Slider":
+						var feld = document.createElement("input");
+						feld.setAttribute("type","range");
+						feld.setAttribute("min",obj.opts.min); 
+						feld.setAttribute("max",obj.opts.max); 
+						feld.setAttribute("step",obj.opts.step); 
+						feld.value = parseFloat(decodeURIComponent(escape(atob(obj.value))));
+						row.oodbupdate = function(input) {
+							feld.value = parseFloat(input.value);
+						};
+						feld.onchange=function(){
+							console.log("update range");
+							var flag= feld.value.toString();
+							Oobd.sendUpdateReq(row.oobd.command, row.oobd.optid, flag, 0);
+						};
+						cell2.appendChild(feld); 
+						break;					case "Combo":
+						 var feld = document.createElement("select");
+						var opt = null;
+						var unsortedList = obj.opts.content;
+						var deptList= new Array(unsortedList.length);
+						for (var prop in unsortedList) {
+							if (unsortedList.hasOwnProperty(prop)) { 
+								// or if (Object.prototype.hasOwnProperty.call(obj,prop)) for safety...
+								deptList[parseInt(prop)-1]=unsortedList[prop];
+							}
+						}
+						for(i = 0; i< deptList.length; i++) { 
+
+							opt = document.createElement('option');
+							opt.value = i+1;
+							opt.innerHTML = deptList[i];
+							feld.appendChild(opt);
+						}
+						feld.selectedIndex =parseInt(decodeURIComponent(escape(atob(obj.value))))-1;
+						row.oodbupdate = function(input) {
+							feld.selectedIndex =  parseInt(input.value)-1;
+						};
+						feld.onchange=function(){
+							console.log("update combobox");
+							var flag= (feld.selectedIndex+1).toString();
+							Oobd.sendUpdateReq(row.oobd.command, row.oobd.optid, flag, 0);
+						};
+						cell2.appendChild(feld); 
+						break;
+					case "Gauge":
+						 var feld = document.createElement("meter");
+						feld.setAttribute("min",obj.opts.min); 
+						feld.setAttribute("max",obj.opts.max); 
+						feld.setAttribute("high",obj.opts.high); 
+						feld.setAttribute("low",obj.opts.low); 
+						feld.setAttribute("optimum",obj.opts.optimum); 
+						feld.value = parseFloat(decodeURIComponent(escape(atob(obj.value))));
+						row.oodbupdate = function(input) {
+							feld.value = parseFloat(input.value);
+						};
+						/* A meter is readonly, so no onchange 
+						feld.onchange=function(){
+							console.log("update checkbox");
+							var flag= feld.checked ? "True" : "False";
+							Oobd.sendUpdateReq(row.oobd.command, row.oobd.optid, flag, 0);
+						};
+						*/
+						cell2.appendChild(feld); 
+						break;
+					}
+				}
 				Oobd.addObject(row, decodeURIComponent(escape(atob(obj.value))));
 
 			}
