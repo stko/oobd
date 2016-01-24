@@ -18,4 +18,5 @@ do
 done
 rm *.groupsec
 gpg --no-default-keyring  --keyring $3 --list-keys
-
+echo Add result to repository
+svn add *.sec

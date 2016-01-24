@@ -48,8 +48,8 @@ SPECSOURCES=$(SPECS:.mdx=.luasource)
 LUASOURCES=$(ALLSOURCES:.lua=.luasource) 
 %.luasource: %.lua 
 	cp -p $< $(@F) 
-	echo $(shell $(OOBDROOT)/tools/lib_lua/echoLuaRev.sh $< SVNREVLUASCRIPT) > $(*F).luaSVNrev
-	echo $(shell (cd $(OOBDROOT)/tools/lib_lua/ ; ./echoLuaRev.sh ./ SVNREVLUALIB) ) >> $(*F).luaSVNrev
+	echo $(shell $(OOBDROOT)/tools/lib_lua/echoLuaRev.sh SVNREVLUASCRIPT) > $(*F).luaSVNrev
+	echo $(shell (cd $(OOBDROOT)/tools/lib_lua/ ; ./echoLuaRev.sh SVNREVLUALIB) ) >> $(*F).luaSVNrev
 	cat $(@F) >> $(*F).luaSVNrev
 	mv $(*F).luaSVNrev $(@F)
 	
@@ -92,13 +92,13 @@ ifdef ENABLEPGP
 	for file in $(LBCFILES) ; do \
 		export basefile=$$(basename $$file .lbc) ;\
 		echo $$basefile ; \
-		gpg --trust-model always --yes --no-default-keyring  --keyring ../../oobd_groups.pub -r $$GROUPNAME --output $$basefile.lbc.pgp --encrypt $$basefile.lbc ; \
+		gpg --trust-model always --yes --options ../../keymaster/gpg.conf --no-default-keyring  --keyring ../../oobd_groups.pub -r $$GROUPNAME --output $$basefile.lbc.pgp --encrypt $$basefile.lbc ; \
 		cp $$basefile.lbc.pgp  $$TARGETDIR ; \
 	done  ; \
 	for cpfile in $(CPFILES) ; do \
 		export basefile=$$(basename $$cpfile) ;\
 		echo $$basefile ; \
-		gpg --trust-model always --yes --no-default-keyring  --keyring ../../oobd_groups.pub -r $$GROUPNAME --output $$TARGETDIR/$$basefile.pgp --encrypt $$cpfile ; \
+		gpg --trust-model always --yes --options ../../keymaster/gpg.conf --no-default-keyring  --keyring ../../oobd_groups.pub -r $$GROUPNAME --output $$TARGETDIR/$$basefile.pgp --encrypt $$cpfile ; \
 	done ; \
 	(cd $$TARGETDIR ; md5sum * > md5sum.txt) ;\
 	find $(PACKDIR)/oobd -name .svn -exec rm -rf {} \; 

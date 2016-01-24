@@ -11,8 +11,8 @@ while read line ; do
 	USERS[$user]=$user
 	echo "user: [$user]"
 	echo "group:[$group]"
-	gpg --yes --batch --no-default-keyring --secret-keyring ./$group.sec  --export-secret-key $group >> $user.groupring.tmp
-	gpg --yes --batch --no-default-keyring --keyring ../oobd_groups.pub  --fingerprint $group >> $user.groupkeys.fingerprint
+	gpg --yes --batch --options ./gpg.conf --no-default-keyring --secret-keyring ./$group.sec  --export-secret-key $group >> $user.groupring.tmp
+	gpg --yes --batch --options ./gpg.conf --no-default-keyring --keyring ../oobd_groups.pub  --fingerprint $group >> $user.groupkeys.fingerprint
 done < $1
 for user in "${!USERS[@]}"
 do
@@ -23,9 +23,9 @@ do
 	gpg --yes --batch --no-default-keyring --secret-keyring ./$user.groupring.tmp  -o $user.groupring --export-secret-keys
 	echo "adminreader :" $ADMINREADER
 
-	gpg --yes --batch --no-default-keyring  --keyring ./userkeyring.pub --fingerprint $user >> $user.groupkeys.fingerprint
-	gpg --yes --batch --no-default-keyring --trust-model always  --keyring ./userkeyring.pub --recipient $user $ADMINREADER --output $user.groupkeys --encrypt $user.groupring
-#	gpg -v --yes --batch --no-default-keyring --trust-model always  --keyring ./userkeyring.pub --recipient $user --output $user.groupkeys --encrypt ./oobd_groups.sec
+	gpg --yes --batch --options ./gpg.conf --no-default-keyring  --keyring ./userkeyring.pub --fingerprint $user >> $user.groupkeys.fingerprint
+	gpg --yes --batch --options ./gpg.conf --no-default-keyring --trust-model always  --keyring ./userkeyring.pub --recipient $user $ADMINREADER --output $user.groupkeys --encrypt $user.groupring
+#	gpg -v --yes --batch --options ./gpg.conf --no-default-keyring --trust-model always  --keyring ./userkeyring.pub --recipient $user --output $user.groupkeys --encrypt ./oobd_groups.sec
 	grep -i "$user" useraccess.txt > $user.groupkeys.lst
 	if [[ -d "${INSTALLERSOURCEDIR}" &&  -d "${INSTALLERTARGETDIR}" ]] ; then
 		echo "make Installer!"
