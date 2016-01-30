@@ -306,6 +306,15 @@ if (typeof Oobd == "undefined") {
 								Oobd.visualize(obj);
 							}
 						}
+						if (obj.type == "PARAM") {
+							if (typeof Oobd.alert != "undefined" ) {
+								console.log("try to open Alert");
+								Oobd.visualize(obj);
+							}else{
+								window.alert(obj.PARAM.tooltip);
+								Oobd.connection.send('{"type":"PARAM","answer":""}');
+							}
+						}
 						
 						if (obj.type == "PAGEDONE") {
 							if (typeof Oobd.pageDone != "undefined" ) {

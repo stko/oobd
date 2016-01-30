@@ -68,6 +68,8 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
     final HashMap<String, ArrayList<Visualizer>> visualizers = new HashMap<String, ArrayList<Visualizer>>();// /<stores all available visalizers
     IFui userInterface;
     public static String ownerEngine;
+    public static Message lastOutstandingQuestion = null;
+    public static MessagePort wsMsgPort;
 
     public static String publicName() {
         /* the abstract class also needs to have this method, because it'wsServer also loaded during dynamic loading, and the empty return string
@@ -78,6 +80,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
 
     public WSOobdUIHandler(String myID, Core myCore, IFsystem mySystem, String name) {
         super(myID, myCore, mySystem, name);
+        wsMsgPort = msgPort;
         id = myID;
         core = myCore;
         UISystem = mySystem;
@@ -144,7 +147,10 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
          */
     }
 
-    Onion actionRequest(Onion myOnion) {
+    /* return the incoming msg, in case we've to wait for answer to reply to that message, otherways null
+    
+     */
+    Message actionRequest(Message incomingMsg, Onion myOnion) {
         if (myOnion.isType(CM_VISUALIZE)) {
             //userInterface.visualize(myOnion);
             ownerEngine = myOnion.getOnion(OOBDConstants.FN_OWNER).getOnionString(OOBDConstants.FN_NAME);
@@ -158,7 +164,17 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
         }
         if (myOnion.isType(CM_IOINPUT)) {
             openTempFile(myOnion);
-            return new Onion();
+            try {
+                incomingMsg.setContent(incomingMsg.getContent().setValue("replyID",
+                        incomingMsg.getContent().getInt("msgID")));
+            } catch (JSONException ex) {
+                Logger.getLogger(Core.class.getName()).log(
+                        Level.SEVERE, null, ex);
+
+            }
+            incomingMsg.getContent().setValue("answer", new Onion());
+            msgPort.replyMsg(incomingMsg, incomingMsg.getContent());
+            return null;
         }
         if (myOnion.isType(CM_UPDATE)) {
             try {
@@ -192,8 +208,19 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
             wsServer.sendToAll(myOnion.toString());
             return null;
         }
-        if (myOnion.isType(CM_PARAM)) {
-            //return userInterface.requestParamInput(myOnion);
+        if (myOnion.isType(CM_PARAM) && wsServer != null && wsServer.connections() != null && !wsServer.connections().isEmpty()) {
+            wsServer.sendToAll(myOnion.toString());
+            return incomingMsg;
+        } else {
+            try {
+                incomingMsg.setContent(incomingMsg.getContent().setValue("replyID",
+                        incomingMsg.getContent().getInt("msgID")));
+            } catch (JSONException ex) {
+                Logger.getLogger(Core.class.getName()).log(
+                        Level.SEVERE, null, ex);
+            }
+            incomingMsg.getContent().setValue("answer", "");
+            WSOobdUIHandler.wsMsgPort.replyMsg(incomingMsg, incomingMsg.getContent());
         }
         return null;
     }
@@ -203,20 +230,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
         while ((thisMsg = this.getMsgPort().getMsg(0)) != null) { // just waiting
             // and handling
             // messages
-            Onion answer = actionRequest(thisMsg.getContent());
-            if (answer != null) {
-                try {
-                    thisMsg.setContent(thisMsg.getContent().setValue("replyID",
-                            thisMsg.getContent().getInt("msgID")));
-                } catch (JSONException ex) {
-                    Logger.getLogger(Core.class.getName()).log(
-                            Level.SEVERE, null, ex);
-
-                }
-                thisMsg.getContent().setValue("answer", answer);
-                msgPort.replyMsg(thisMsg, thisMsg.getContent());
-            }
-
+            lastOutstandingQuestion = actionRequest(thisMsg, thisMsg.getContent());
         }
         //updateVisualizers();
     }
@@ -452,19 +466,32 @@ class ChatServer extends WebSocketServer {
         System.out.println("WS from Socket: " + message);
         try {
             Onion webvis = new Onion(message);
-
-            Core.getSingleInstance().transferMsg(
-                    new Message(Core.getSingleInstance(),
-                            OOBDConstants.UIHandlerMailboxName, new Onion(""
-                                    + "{" + "'type':'"
-                                    + OOBDConstants.CM_UPDATE + "',"
-                                    + "'vis':'" + webvis.getOnionString("name") + "',"
-                                    + "'to':'" + WSOobdUIHandler.ownerEngine
-                                    + "'," + "'optid':'" + webvis.getOnionString("optid")
-                                    + "'," + "'actValue':'"
-                                    + webvis.getOnionString("actValue") + "',"
-                                    + "'updType':"
-                                    + Integer.toString(webvis.getInt("updType")) + "}")));
+            if ("PARAM".equalsIgnoreCase(webvis.getOnionString("type"))) {
+                if (WSOobdUIHandler.lastOutstandingQuestion != null) {
+                    try {
+                        WSOobdUIHandler.lastOutstandingQuestion.setContent(WSOobdUIHandler.lastOutstandingQuestion.getContent().setValue("replyID",
+                                WSOobdUIHandler.lastOutstandingQuestion.getContent().getInt("msgID")));
+                    } catch (JSONException ex) {
+                        Logger.getLogger(Core.class.getName()).log(
+                                Level.SEVERE, null, ex);
+                    }
+                    WSOobdUIHandler.lastOutstandingQuestion.getContent().setValue("answer", webvis);
+                    WSOobdUIHandler.wsMsgPort.replyMsg(WSOobdUIHandler.lastOutstandingQuestion, WSOobdUIHandler.lastOutstandingQuestion.getContent());
+                }
+            } else {
+                Core.getSingleInstance().transferMsg(
+                        new Message(Core.getSingleInstance(),
+                                OOBDConstants.UIHandlerMailboxName, new Onion(""
+                                        + "{" + "'type':'"
+                                        + OOBDConstants.CM_UPDATE + "',"
+                                        + "'vis':'" + webvis.getOnionString("name") + "',"
+                                        + "'to':'" + WSOobdUIHandler.ownerEngine
+                                        + "'," + "'optid':'" + webvis.getOnionString("optid")
+                                        + "'," + "'actValue':'"
+                                        + webvis.getOnionString("actValue") + "',"
+                                        + "'updType':"
+                                        + Integer.toString(webvis.getInt("updType")) + "}")));
+            }
         } catch (JSONException ex) {
             Logger.getLogger(Visualizer.class.getName()).log(
                     Level.SEVERE, null, ex);
@@ -686,14 +713,17 @@ class OOBDHttpServer extends NanoHTTPD {
         } else {
             InputStream myFileStream = Core.getSingleInstance().getSystemIF().generateResourceStream(OOBDConstants.FT_WEBPAGE, session.getUri());
             String mimeType = getMimeTypeForFile(session.getUri());
-            if (myFileStream != null && myFileStream instanceof FileInputStream) {
-                mimeType = getMimeTypeForFile((String) Core.getSingleInstance().readDataPool(OOBDConstants.DP_LAST_OPENED_PATH, mimeType));
-            }
+            /*
+             if (myFileStream != null && myFileStream instanceof FileInputStream ) {
+             mimeType = getMimeTypeForFile((String) Core.getSingleInstance().readDataPool(OOBDConstants.DP_LAST_OPENED_PATH, mimeType));
+             }
+             */
             if (myFileStream != null) {
+                mimeType = getMimeTypeForFile((String) Core.getSingleInstance().readDataPool(OOBDConstants.DP_LAST_OPENED_PATH, mimeType));
                 return newChunkedResponse(Response.Status.OK, mimeType, myFileStream);
             } else {
 
-                return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "war nix..");
+                return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "OOBD reports: File not found");
             }
         }
     }

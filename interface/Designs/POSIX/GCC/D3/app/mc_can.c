@@ -392,6 +392,7 @@ UBaseType_t bus_param_can_spec(param_data * args)
 
 	    /* CAN filter mask ID reconfig */
 	    if (args->args[ARG_VALUE_1] & 1) {
+		createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	    } else {
 //      CAN_FilterInit(&CAN_FilterInitStructure);
 		createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
