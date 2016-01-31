@@ -208,6 +208,11 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
             wsServer.sendToAll(myOnion.toString());
             return null;
         }
+        if (myOnion.isType(CM_DIALOG_INFO)) {
+            //userInterface.sm(Base64Coder.decodeString(myOnion.getOnionString("data")));
+            wsServer.sendToAll(myOnion.toString());
+            return null;
+        }
         if (myOnion.isType(CM_PARAM) && wsServer != null && wsServer.connections() != null && !wsServer.connections().isEmpty()) {
             wsServer.sendToAll(myOnion.toString());
             return incomingMsg;

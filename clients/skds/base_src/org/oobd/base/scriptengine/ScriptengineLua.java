@@ -272,7 +272,6 @@ public class ScriptengineLua extends OobdScriptengine {
                                                 + Base64Coder.encodeString(getString(0))
                                                 + "'}")),
                                 +(getInt(1) * 12) / 10);
-
                         if (answer != null) {
                             Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO,
                                     "Lua calls serWait returns with onion:"
@@ -380,6 +379,49 @@ public class ScriptengineLua extends OobdScriptengine {
                     Logger.getLogger(ScriptengineLua.class.getName()).log(
                             Level.SEVERE, null, ex);
                 }
+                finishRPC(callFrame, nArguments);
+                return 1;
+            }
+        });
+        register("msgBoxCall", new JavaFunction() {
+
+            public int call(LuaCallFrame callFrame, int nArguments) {
+
+                // BaseLib.luaAssert(nArguments >0, "not enough args");
+                initRPC(callFrame, nArguments);
+                String result = "";
+                String typeOfBox = getString(0).toLowerCase();
+                if ("alert".equals(typeOfBox)) {
+                    core.userAlert(getString(2), getString(1));
+                } else {
+                    try {
+                        String msg = "{'" + CM_PARAM + "' : { "
+                                + "'type':'String'," + "'title':'"
+                                + Base64Coder.encodeString(getString(1))
+                                + "'," + "'default':'"
+                                + Base64Coder.encodeString(getString(3))
+                                + "',"
+                                + "'text':'"
+                                + Base64Coder.encodeString(getString(2))
+                                + "'";
+                        if ("confirm".equals(typeOfBox)) {
+                            msg = msg + " , 'confirm':'yes'";
+                        }
+                        msg = msg + "}}";
+                        Onion answer = core.requestParamInput(myself, new Onion(msg));
+                        Onion answerOnion = answer.getOnion("answer");
+                        if (answerOnion != null) {
+                            result = answerOnion.getString("answer");
+                            if (result != null && result.length() > 0) {
+                                result = Base64Coder.decodeString(result);
+                            }
+                        }
+                    } catch (JSONException ex) {
+                        Logger.getLogger(ScriptengineLua.class.getName()).log(
+                                Level.SEVERE, null, ex);
+                    }
+                }
+                callFrame.push(result.intern());
                 finishRPC(callFrame, nArguments);
                 return 1;
             }
@@ -557,11 +599,11 @@ public class ScriptengineLua extends OobdScriptengine {
             scriptFileName = ENG_LUA_DEFAULT;
         }
         try {
-            try{
+            try {
                 scriptDir = (new File(UISystem.generateUIFilePath(FT_SCRIPT,
-                    scriptFileName))).getParentFile().getAbsolutePath()+"/";
-            }catch (Exception ex){
-                scriptDir ="";
+                        scriptFileName))).getParentFile().getAbsolutePath() + "/";
+            } catch (Exception ex) {
+                scriptDir = "";
             }
             if (!doScript(scriptFileName)) { //fire an page done event 
                 keepRunning = false;
@@ -622,54 +664,54 @@ public class ScriptengineLua extends OobdScriptengine {
             }
         }
         // end of objects lifetime
-        System.out.println("End of Scriptengine"+this.toString());
+        System.out.println("End of Scriptengine" + this.toString());
         core.writeDataPool(DP_RUNNING_SCRIPTENGINE, null);
 
     }
 
     public void close() {
-        System.out.println("Send Scriptengine close request"+this.toString());
+        System.out.println("Send Scriptengine close request" + this.toString());
         keepRunning = false;
-  /*
-        try {
-            core.transferMsg(
-                    new Message(myself, BusMailboxName, new Onion(""
-                                    + "{'type':'" + CM_BUSTEST + "'"
-                                    + ",'owner':'" + myself.getId() + "'"
-                                    + ",'command':'close'"
-                                    + "}")));
-        } catch (JSONException ex) {
-            Logger.getLogger(ScriptengineLua.class.getName()).log(
-                    Level.SEVERE, null, ex);
-        }
-        try { // send a message to myself to make sure that the receive loop ends
+        /*
+         try {
+         core.transferMsg(
+         new Message(myself, BusMailboxName, new Onion(""
+         + "{'type':'" + CM_BUSTEST + "'"
+         + ",'owner':'" + myself.getId() + "'"
+         + ",'command':'close'"
+         + "}")));
+         } catch (JSONException ex) {
+         Logger.getLogger(ScriptengineLua.class.getName()).log(
+         Level.SEVERE, null, ex);
+         }
+         try { // send a message to myself to make sure that the receive loop ends
 
-            getMsgPort().receive(new Message(myself, myself.getId(), new Onion(""
-                    + "{'type':'" + CM_CHANNEL + "'"
-                    + ",'owner':'" + myself.getId() + "'"
-                    + ",'command':'connect'"
-                    + "}")));
-        } catch (JSONException ex) {
-            Logger.getLogger(ScriptengineLua.class.getName()).log(
-                    Level.SEVERE, null, ex);
-        }
- */       super.close();
+         getMsgPort().receive(new Message(myself, myself.getId(), new Onion(""
+         + "{'type':'" + CM_CHANNEL + "'"
+         + ",'owner':'" + myself.getId() + "'"
+         + ",'command':'connect'"
+         + "}")));
+         } catch (JSONException ex) {
+         Logger.getLogger(ScriptengineLua.class.getName()).log(
+         Level.SEVERE, null, ex);
+         }
+         */ super.close();
     }
 
     public boolean doScript(String fileName) throws IOException {
-        System.out.println("Scriptengine: Waiting for WS to connect"+this.toString());
-        while (keepRunning && (!(Boolean) Core.getSingleInstance().readDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, false) || (core.readDataPool(DP_RUNNING_SCRIPTENGINE, null)!=null && core.readDataPool(DP_RUNNING_SCRIPTENGINE, null)!=this))) {
+        System.out.println("Scriptengine: Waiting for WS to connect" + this.toString());
+        while (keepRunning && (!(Boolean) Core.getSingleInstance().readDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, false) || (core.readDataPool(DP_RUNNING_SCRIPTENGINE, null) != null && core.readDataPool(DP_RUNNING_SCRIPTENGINE, null) != this))) {
             try {
                 Thread.sleep(100);
-                OobdScriptengine oldEngine=(OobdScriptengine)core.readDataPool(DP_RUNNING_SCRIPTENGINE, null);
-                if (oldEngine!=null){
-                    System.out.println("doScript: Old Scriptengine not finished yet:"+oldEngine.toString());
+                OobdScriptengine oldEngine = (OobdScriptengine) core.readDataPool(DP_RUNNING_SCRIPTENGINE, null);
+                if (oldEngine != null) {
+                    System.out.println("doScript: Old Scriptengine not finished yet:" + oldEngine.toString());
                 }
             } catch (InterruptedException ex) {
             }
         }
         if (keepRunning) {
-            System.out.println("Scriptengine: WS connected"+this.toString());
+            System.out.println("Scriptengine: WS connected" + this.toString());
             core.writeDataPool(DP_RUNNING_SCRIPTENGINE, this);
             InputStream resource = UISystem.generateResourceStream(FT_SCRIPT,
                     fileName);
@@ -775,7 +817,7 @@ public class ScriptengineLua extends OobdScriptengine {
     public boolean getBoolean(int index) {
         Boolean response = (Boolean) callFrame.get(index);
         // callFrame.push(response);
-        return response.booleanValue();
+        return response;
     }
 
     public int getInt(int index) {

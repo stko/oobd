@@ -307,12 +307,30 @@ if (typeof Oobd == "undefined") {
 							}
 						}
 						if (obj.type == "PARAM") {
+							if (typeof obj.PARAM.confirm !="undefined"){ // do we need a yes/no dialog or a value input?
+								if (typeof Oobd.confirm != "undefined" ) {
+									console.log("try to open confirm");
+									Oobd.confirm(obj);
+								}else{
+									var answer = window.confirm(atob(obj.PARAM.text)) ? "true":"false";
+									Oobd.connection.send('{"type":"PARAM","answer":"'+btoa(answer)+'"}');
+								}
+							}else{
+								if (typeof Oobd.prompt != "undefined" ) {
+									console.log("try to open prompt");
+									Oobd.prompt(obj);
+								}else{
+									var answer = window.prompt(atob(obj.PARAM.text),atob(obj.PARAM.default));
+									Oobd.connection.send('{"type":"PARAM","answer":"'+btoa(answer)+'"}');
+								}
+							}
+						}
+						if (obj.type == "DIALOG_INFO") {
 							if (typeof Oobd.alert != "undefined" ) {
 								console.log("try to open Alert");
-								Oobd.visualize(obj);
+								Oobd.alert(obj);
 							}else{
-								window.alert(obj.PARAM.tooltip);
-								Oobd.connection.send('{"type":"PARAM","answer":""}');
+								window.alert(atob(obj.DIALOG_INFO.tooltip));
 							}
 						}
 						

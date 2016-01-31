@@ -85,15 +85,15 @@ class webUIClient(object):
 					if regCompareFlag:
 						matchObj = re.match( value , inputValue, re.M|re.I)
 						if not matchObj:
-							sys.stderr.write (" REGEX string compare for " + value + "against " + inputValue + " failed\n" )
+							sys.stderr.write (" REGEX string compare for " + str(value) + "against " + str(inputValue) + " failed\n" )
 							return False
 					elif value != inputValue:
 						# sys.stderr.write("normal string test")
-						sys.stderr.write (" normal string compare for " + value + " against " + inputValue + " failed\n" )
+						sys.stderr.write (" normal string compare for " + str(value) + " against " + str(inputValue) + " failed\n" )
 						return False
 
 				elif  value != inputDict[attr]:
-					sys.stderr.write ("other type, direct compare for " + value + "against " +inputDict[attr] + " failed\n" )
+					sys.stderr.write ("other type, direct compare for " + str(value) + "against " +str(inputDict[attr]) + " failed\n" )
 					return False
 		return True
 			

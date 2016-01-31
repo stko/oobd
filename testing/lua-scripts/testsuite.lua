@@ -473,6 +473,26 @@ function hashHoleFile(oldvalue,id)
 	return ioRead("*sha256")
 end
 
+---------------------- Dialog tests --------------------------------------
+
+
+
+function userAlert(oldvalue,id)
+	msgBox("alert","Alert Test", "main text", "default value")
+	return "done"
+end
+
+
+
+function userConfirm(oldvalue,id)
+	return msgBox("confirm","Confirm Test", "main text", "default value")
+end
+
+
+function userPrompt(oldvalue,id)
+	return msgBox("prompt","Prompt Test", "Please enter 123", "default value")
+end
+
 
 
 ---------------------- Main Menu --------------------------------------
@@ -504,6 +524,9 @@ function Main(oldvalue,id)
 	addElement("Save output As", "saveOutputAs","/media/ram/saveOutputAs.txt",0x0, "")
 	addElement("Save output", "saveOutput","/media/ram/saveOutput.txt",0x0, "")
 	addElement("create Buffer1", "saveBuffer1","/media/ram/buffer1.txt",0x0, "")
+	addElement("User alert", "userAlert","",0x0, "")
+	addElement("User confirm", "userConfirm","",0x0, "")
+	addElement("User prompt", "userPrompt","",0x0, "")
 	pageDone()
 	return oldvalue
 end

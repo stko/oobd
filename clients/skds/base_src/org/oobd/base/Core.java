@@ -350,9 +350,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     }
 
     /**
-     * ends a scriptEngine call this only at end of program or when reaching the main page During normal
-     * operation, the engine change is handled by the startEngine()routine
-     * already
+     * ends a scriptEngine call this only at end of program or when reaching the
+     * main page During normal operation, the engine change is handled by the
+     * startEngine()routine already
      *
      * @param id
      *
@@ -751,15 +751,15 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      *
      * @param msg the parameter description
      */
-    public Onion requestParamInput(Onion msg) {
-        Onion answer = null;
+    public Onion requestParamInput(OobdPlugin sender, Onion msg) {
+        Onion answer = new Onion();
         try {
             Onion thisOnion = new Onion("{" + "'type':'" + CM_PARAM + "',"
                     + "'owner':" + "{'name':'"
-                    + Core.getSingleInstance().getId() + "'}" + "}");
-            thisOnion.put(CM_PARAM, msg.getJSONArray(CM_PARAM));
-            Message answerMsg = this.getMsgPort().sendAndWait(
-                    new Message(Core.getSingleInstance(), UIHandlerMailboxName,
+                    + sender.getId() + "'}" + "}");
+            thisOnion.put(CM_PARAM, msg.get(CM_PARAM));
+            Message answerMsg = sender.getMsgPort().sendAndWait(
+                    new Message(sender, UIHandlerMailboxName,
                             thisOnion), -1);
             if (answerMsg != null) {
                 answer = answerMsg.getContent();
@@ -779,23 +779,29 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * @param msg the text to show
      */
     public void userAlert(String msg, String windowName) {
+
         try {
-            requestParamInput(new Onion("{'" + CM_PARAM + "' : [{ "
+            Onion msgOnion = new Onion("{'" + CM_DIALOG_INFO + "' : { "
                     + "'type':'String'," + "'title':'"
                     + Base64Coder.encodeString("Info") + "'," + "'default':'"
                     // + Base64Coder.encodeString(connectURLDefault)
                     + "',"
                     + "'window':'"
-                    + windowName
+                    + Base64Coder.encodeString(windowName)
                     + "',"
                     + "'tooltip':'" + Base64Coder.encodeString(msg)
-                    + "'" + "}]}"));
+                    + "'" + "}}");
+            Onion thisOnion = new Onion("{" + "'type':'" + CM_DIALOG_INFO + "',"
+                    + "'owner':" + "{'name':'"
+                    + Core.getSingleInstance().getId() + "'}" + "}");
+            thisOnion.put(CM_DIALOG_INFO, msgOnion.get(CM_DIALOG_INFO));
+            transferMsg(new Message(Core.getSingleInstance(), UIHandlerMailboxName,
+                    thisOnion));
 
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (JSONException ex) {
+            Logger.getLogger(Core.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     /**

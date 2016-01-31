@@ -18,6 +18,7 @@ openXCVehicleData =openXCVehicleDataCall
 ioInput = ioInputCall
 ioRead = ioReadCall
 ioWrite = ioWriteCall
+msgBox = msgBoxCall
 --]]
 
 --[[
