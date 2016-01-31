@@ -39,6 +39,7 @@ import org.oobd.base.visualizer.Visualizer;
 import java.util.Map;
 import java.io.IOException;
 import fi.iki.elonen.NanoHTTPD;
+import java.io.File;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -230,6 +231,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
         return null;
     }
 
+    @Override
     public void handleMsg() {
         Message thisMsg;
         while ((thisMsg = this.getMsgPort().getMsg(0)) != null) { // just waiting
@@ -249,6 +251,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
      * @param owner who owns the visualizer
      * @param vis the visualizer
      */
+    @Override
     public void addVisualizer(String owner, Visualizer vis) {
         if (visualizers.containsKey(owner)) {
             ((ArrayList) visualizers.get(owner)).add(vis);
@@ -690,6 +693,24 @@ class OOBDHttpServer extends NanoHTTPD {
                     catalog += "<connection selected =\"yes\">" + encodeHTML(connectionName) + "</connection>\n";
                 } else {
                     catalog += "<connection>" + encodeHTML(connectionName) + "</connection>\n";
+                }
+            }
+            // prepare a list of available themes
+            String actualTheme = (String) Core.getSingleInstance().readDataPool(OOBDConstants.DP_WEBUI_ACTUAL_THEME, "default");
+            File themeDirectory = new File((String) Core.getSingleInstance().readDataPool(OOBDConstants.DP_WWW_LIB_DIR, "") + "/theme");
+            if (themeDirectory.exists()) {
+                File[] files = themeDirectory.listFiles();
+                for (File dirFile : files) {
+                    if (dirFile.isDirectory()) {
+                        String dirName = dirFile.getName();
+                        if (actualTheme.equalsIgnoreCase(dirName)) {
+                            catalog += "<theme selected =\"yes\">\n";
+                        } else {
+                            catalog += "<theme>\n";
+                        }
+                        catalog += encodeHTML(dirName);
+                        catalog += "</theme>\n";
+                    }
                 }
             }
             ArrayList<Archive> files = Factory.getDirContent((String) Core.getSingleInstance().readDataPool(OOBDConstants.DP_SCRIPTDIR, null));
