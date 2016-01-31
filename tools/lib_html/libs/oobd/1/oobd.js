@@ -72,6 +72,12 @@ if (typeof Oobd == "undefined") {
 			window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
 			window.requestFileSystem(window.TEMPORARY, 5*1024*1024 /*5MB*/, Oobd.onInitFs, Oobd.onInitFserrorHandler);
 		},
+		_announceFileChange: function(id,url,change){
+			console.log("Announce File change: " + change + " for id " + id + " with URL "+ url );
+			if (typeof Oobd.fileChange != "undefined"){
+				Oobd.fileChange(id,url,change);
+			}
+		},
 		_handleWriteString: function(msg){
 			var data="";
 			var modifier="";
@@ -111,6 +117,21 @@ if (typeof Oobd == "undefined") {
 							}
 					}
 				break;
+				case "close":
+					if (Oobd.bufferName != "display" ){ // a normal writestring
+							if(typeof Oobd.fileSystem != "undefined"){
+								//do we have the actual buffer already?
+								var actBufferIndex=Oobd.fsBufferArray[Oobd.bufferName];
+								if (typeof actBufferIndex != "undefined"){
+									Oobd.fileSystem.root.getFile(actBufferIndex, {create: false}, function(fileEntry) {
+										console.log('Try to download'+fileEntry.toURL());
+										Oobd._announceFileChange(Oobd.bufferName,fileEntry.toURL(),"close");
+
+									}, Oobd.onInitFserrorHandler);
+								}
+							}
+					}
+				break;
 				case "clear":
 					if (Oobd.bufferName == "display" ){ // a normal writestring
 						if (typeof Oobd.writeString != "undefined"){
@@ -129,6 +150,7 @@ if (typeof Oobd == "undefined") {
 										fileEntry.remove(function() {
 											console.log('File removed.');
 											delete Oobd.fsBufferArray[thisBufferName];
+											Oobd._announceFileChange(Oobd.bufferName,"","clear");
 										}, Oobd.onInitFserrorHandler);
 
 									}, Oobd.onInitFserrorHandler);
@@ -149,10 +171,12 @@ if (typeof Oobd == "undefined") {
 							if(typeof Oobd.fileSystem != "undefined"){
 								//do we have the actual buffer already?
 								var actBufferIndex=Oobd.fsBufferArray[Oobd.bufferName];
+								var isNewfile=false;
 								if (typeof actBufferIndex == "undefined"){
 									actBufferIndex= Oobd.fsBufferCounter++;
 									Oobd.fsBufferArray[Oobd.bufferName]=actBufferIndex;
 									console.log('new Buffer "'+Oobd.bufferName+'" created with index:'+actBufferIndex);
+									isNewfile=true;
 								}
 								Oobd.fileSystem.root.getFile(actBufferIndex, {create: true}, function(fileEntry) {
 
@@ -168,6 +192,11 @@ if (typeof Oobd == "undefined") {
 										fileWriter.onerror = function(e) {
 											console.log('Write failed: ' + e.toString());
 										};
+										console.log("FileWriter.length=",fileWriter.length);
+										if (isNewfile){ // new file
+											isNewfile=false;
+											Oobd._announceFileChange(Oobd.bufferName,fileEntry.toURL(),"create");
+										}
 										fileWriter.seek(fileWriter.length); // Start write position at EOF.
 										// Create a new Blob and write it to log.txt.
 										window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder;// Note: window.WebKitBlobBuilder in Chrome 12.

@@ -27,6 +27,8 @@ This design is as ugly as it can be, because it does not contain any HTML beauty
 	<textarea id="textoutput"></textarea>
 	<p />
 	<a href="#" onclick="return saveOutput('output.txt');">Save Output</a>
+	<table id="files">
+	</table>
  
  
 	<script>
@@ -199,6 +201,32 @@ This design is as ugly as it can be, because it does not contain any HTML beauty
 				}
 				Oobd.addObject(row, decodeURIComponent(escape(atob(obj.value))));
 
+			}
+
+			// add file buffer changes to the page
+			Oobd.fileChange = function fileChange(id,url,change) {
+				console.log("callback on File change: " + change + " for id " + id + " with URL "+ url );
+				var table = document.getElementById("files");
+				// Create an empty <tr> element and add it to the last position of the table:
+				var row = table.insertRow(-1);
+
+				row.setAttribute("id","oobd-file-"+id);
+
+
+				// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+				var cell1 = row.insertCell(0);
+				var cell2 = row.insertCell(1);
+				if (url!=""){
+				var a = document.createElement('a');
+					a.download = id;
+					a.href = url;
+					a.textContent = id;
+					cell1.appendChild(a);
+				}else{
+					cell1.innerHTML = decodeURIComponent(escape(id));
+				}
+				// Add some text to the new cells:
+				cell2.innerHTML = decodeURIComponent(escape(change));
 			}
 
 			Oobd.start();
