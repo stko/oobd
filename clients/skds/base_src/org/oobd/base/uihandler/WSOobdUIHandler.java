@@ -457,7 +457,7 @@ class ChatServer extends WebSocketServer {
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
         System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
-        conn.send("{\"type\":\"WSCONNECT\"}");
+        conn.send("{\"type\":\"WSCONNECT\",\"script\":\""+Core.getSingleInstance().readDataPool(OOBDConstants.DP_RUNNING_SCRIPT_NAME, "")+"\"}");
         conn.send("{\"type\":\"WRITESTRING\" ,\"data\":\"" + Base64Coder.encodeString("Connected to OOBD") + "\"}");
         Core.getSingleInstance().writeDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, true);
     }

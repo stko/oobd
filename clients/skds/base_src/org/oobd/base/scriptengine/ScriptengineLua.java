@@ -721,6 +721,7 @@ public class ScriptengineLua extends OobdScriptengine {
             LuaClosure callback = LuaPrototype.loadByteCode(resource,
                     state.getEnvironment());
             state.call(callback, null, null, null);
+            core.writeDataPool(DP_RUNNING_SCRIPT_NAME, fileName);
             Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG,
                     "Start Lua Script" + fileName);
             return true;
