@@ -1,3 +1,4 @@
 {
-  "startpage": "content.xml"
+  "startpage": "vehicle.html",
+  "script"   : "vehicle.lbc"
 }

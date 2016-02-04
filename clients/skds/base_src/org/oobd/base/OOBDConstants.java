@@ -140,5 +140,6 @@ public interface OOBDConstants {
     public final static int DP_ACTUAL_DONGLE_PORT_ID = 13;
     public final static int DP_REMOTE_CONNECT_ID = 14;
     public final static int DP_ACTUAL_UIHANDLER = 15;
-    public final static int DP_ARRAY_SIZE = 16;
+    public final static int DP_RUNNING_SCRIPT_NAME=16;
+    public final static int DP_ARRAY_SIZE = 17;
 }

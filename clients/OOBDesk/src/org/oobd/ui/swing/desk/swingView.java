@@ -1857,7 +1857,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }
 
     
-    @Override
     public void transferPreferences2System(String localConnectTypeName) {
 
         if (localConnectTypeName != null && !localConnectTypeName.equalsIgnoreCase("")) {

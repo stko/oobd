@@ -41,6 +41,12 @@ This design is as ugly as it can be, because it does not contain any HTML beauty
 
 	<table id="field">
 	</table>
+	<div id="dropzone" class="dropzone">Dropzone</div>
+	<table id="dashboard">
+	</table>
+	<div id="trashbin" class="dropzone" ondragenter="return handleDragEnter(event)" 
+            ondrop="return handledragDrop(event)" 
+            ondragover="return handleDragOver(event)">trashbin</div>
 	<p>Outputs</p>
 	<p />
 	<textarea id="textoutput"></textarea>
@@ -87,9 +93,20 @@ This design is as ugly as it can be, because it does not contain any HTML beauty
 				var table = document.getElementById("field");
 				// Create an empty <tr> element and add it to the last position of the table:
 				var row = table.insertRow(-1);
+				constructVisualizer(row,obj);
+				}
+			Oobd.start();
+		})();
+		function constructVisualizer(row,obj){
 				row.classList.add("OOBD");
 				row.setAttribute("oobd:fc",obj.name);
 				row.setAttribute("oobd:value",decodeURIComponent(escape(atob(obj.value))));
+				row.setAttribute("draggable","true");
+				row.addEventListener('dragstart', handleDragStart, false);
+				//row.addEventListener('dragenter', handleDragEnter, false);
+				//row.addEventListener('dragover', handleDragOver, false);
+				//row.addEventListener('dragleave', handleDragLeave, false);
+
 				if (typeof obj.updevents != "undefined" ) {
 					row.setAttribute("oobd:updevents",obj.updevents);
 				}else{
@@ -246,10 +263,7 @@ This design is as ugly as it can be, because it does not contain any HTML beauty
 				}
 				// Add some text to the new cells:
 				cell2.innerHTML = decodeURIComponent(escape(change));
-			}
-
-			Oobd.start();
-		})();
+			};		
 		function saveOutput(fileName){
 			var blob = new Blob([document.getElementById("textoutput").value], {
 			type: "text/plain;charset=utf-8"
@@ -265,6 +279,29 @@ This design is as ugly as it can be, because it does not contain any HTML beauty
 			//a.onclick();
 			return false;
 		};
+		function handleDragStart(ev) {
+			ev.dataTransfer.effectAllowed='move';
+			ev.dataTransfer.setData("Text", ev.target.getAttribute('id'));
+			ev.dataTransfer.setDragImage(ev.target,0,0);
+			return true;
+  		}
+		function handleDragOver(e) {
+			return false;
+		}
+		function handleDragEnter(e) {
+			event.preventDefault();
+			return true;
+		}
+
+		function handleDragLeave(e) {
+			this.classList.remove('over');  // this / e.target is previous target element.
+		}
+		function handledragDrop(ev) {
+			var src = ev.dataTransfer.getData("Text");
+			ev.target.appendChild(document.getElementById(src));
+			ev.stopPropagation();
+			return false;
+		}
 
 	</script>
 </body>
