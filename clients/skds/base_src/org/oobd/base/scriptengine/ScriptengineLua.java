@@ -34,6 +34,8 @@ import se.krka.kahlua.vm.LuaState;
 import se.krka.kahlua.vm.LuaTable;
 import se.krka.kahlua.vm.LuaTableImpl;
 import org.json.JSONException;
+import static org.oobd.base.OOBDConstants.DP_ACTIVE_ARCHIVE;
+import org.oobd.base.archive.Archive;
 
 /**
  *
@@ -699,7 +701,9 @@ public class ScriptengineLua extends OobdScriptengine {
     }
 
     public boolean doScript(String fileName) throws IOException {
-        System.out.println("Scriptengine: Waiting for WS to connect" + this.toString());
+         Archive scriptArchive = (Archive) core.readDataPool(DP_ACTIVE_ARCHIVE, null);
+        core.writeDataPool(DP_RUNNING_SCRIPT_NAME, scriptArchive.getID() + "/" + scriptArchive.getProperty(OOBDConstants.MANIFEST_SCRIPTNAME, fileName));
+        System.out.println("Scriptengine: Waiting for WS to connect " + this.toString());
         while (keepRunning && (!(Boolean) Core.getSingleInstance().readDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, false) || (core.readDataPool(DP_RUNNING_SCRIPTENGINE, null) != null && core.readDataPool(DP_RUNNING_SCRIPTENGINE, null) != this))) {
             try {
                 Thread.sleep(100);
@@ -711,7 +715,7 @@ public class ScriptengineLua extends OobdScriptengine {
             }
         }
         if (keepRunning) {
-            System.out.println("Scriptengine: WS connected" + this.toString());
+            System.out.println("Scriptengine: WS connected " + this.toString());
             core.writeDataPool(DP_RUNNING_SCRIPTENGINE, this);
             InputStream resource = UISystem.generateResourceStream(FT_SCRIPT,
                     fileName);
@@ -721,7 +725,6 @@ public class ScriptengineLua extends OobdScriptengine {
             LuaClosure callback = LuaPrototype.loadByteCode(resource,
                     state.getEnvironment());
             state.call(callback, null, null, null);
-            core.writeDataPool(DP_RUNNING_SCRIPT_NAME, fileName);
             Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG,
                     "Start Lua Script" + fileName);
             return true;

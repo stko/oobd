@@ -17,7 +17,9 @@ if (typeof Oobd == "undefined") {
 		 * Initializes this object.
 		 */
 		wsURL: "ws://localhost:8443",
+		session: null,
 		connection: "",
+		scriptID: "",
 		timerFlag: -1,
 		timerObject: null,
 		visualizers: new Array(),
@@ -28,6 +30,21 @@ if (typeof Oobd == "undefined") {
 		bufferName: "display",
 		fsBufferArray: new Array(),
 		fsBufferCounter: 0,
+		isTouchDevice : 'ontouchstart' in document.documentElement,
+		loadSession: function(){
+			if (Oobd.session==null){
+				Oobd.session = JSON.parse(localStorage.getItem('session'));
+			};
+			if (Oobd.session==null){
+					Oobd.session = {
+					dashboard : [],
+					connectType : "",
+					pgpid : "",
+					theme : "",
+					connectID : ""
+				}
+			}
+		},
 		init: function(uri) {
 			// preparing utility funktion parse xmlDoc
 			if (window.DOMParser) {
@@ -71,12 +88,43 @@ if (typeof Oobd == "undefined") {
 			window.BlobBuilder = window.WebKitBlobBuilder || window.MozBlobBuilder || window.BlobBuilder;
 			window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
 			window.requestFileSystem(window.TEMPORARY, 5*1024*1024 /*5MB*/, Oobd.onInitFs, Oobd.onInitFserrorHandler);
+			Oobd.loadSession();
 		},
 		_announceFileChange: function(id,url,change){
 			console.log("Announce File change: " + change + " for id " + id + " with URL "+ url );
 			if (typeof Oobd.fileChange != "undefined"){
 				Oobd.fileChange(id,url,change);
 			}
+		},
+		addToDash: function(constructor){
+			Oobd.session.dashboard.push({ 'name': constructor, 'file': Oobd.scriptID });
+			localStorage.setItem('session', JSON.stringify(Oobd.session));
+			return Oobd.getDashContructors();
+		},
+		removeFromDash: function(constructor){
+			var index =-1
+			for (var i = 0; i < Oobd.session.dashboard.length; i++) {
+				if (Oobd.session.dashboard[i].file==Oobd.scriptID){
+					if (Oobd.session.dashboard[i].name==constructor){
+						index=i;
+					}
+				}
+			}
+			if (index > -1) {
+				Oobd.session.dashboard.splice(index, 1);
+			}
+			localStorage.setItem('session', JSON.stringify(Oobd.session));
+			return Oobd.getDashContructors();
+		},
+		getDashContructors: function(){
+			Oobd.loadSession();
+			var res=[];
+			for (var i = 0; i < Oobd.session.dashboard.length; i++) {
+				if (Oobd.session.dashboard[i].file==Oobd.scriptID){
+					res.push(Oobd.session.dashboard[i].name);
+				}
+			}
+			return res;
 		},
 		_handleWriteString: function(msg){
 			var data="";
@@ -311,9 +359,10 @@ if (typeof Oobd == "undefined") {
 						}
 
 						if (obj.type == "WSCONNECT") {
+							Oobd.scriptID=obj.script;
 							if (typeof Oobd.onConnect != "undefined") {
 								Oobd.onConnect();
-							}
+							}							
 						}
 
 						if (obj.type == "WRITESTRING") {
@@ -326,6 +375,10 @@ if (typeof Oobd == "undefined") {
 								// bizarre UTF-8 decoding...
 								// for later, if name comes base64encoded: Oobd.openPage(decodeURIComponent(escape(atob(obj.name))) + "\n");
 								Oobd.openPage(decodeURIComponent(escape(obj.name)));
+								// as OpenPages resets the list of available visualizers also for the Dashboard, we have to redraw the dashboard after each new page
+								if (typeof Oobd.fillDashboard != "undefined") {
+									Oobd.fillDashboard();
+								}
 							}
 						}
 						

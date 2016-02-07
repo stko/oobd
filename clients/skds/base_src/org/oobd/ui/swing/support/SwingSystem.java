@@ -186,8 +186,8 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     @Override
     public Object supplyHardwareHandle(Onion typ) {
         appProbs = core.getSystemIF().loadPreferences(FT_PROPS, OOBDConstants.AppPrefsFileName);
-         String actualConnectionType=(String)core.readDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, "");
-       String connectURL = typ.getOnionBase64String("connecturl");
+        String actualConnectionType = (String) core.readDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, "");
+        String connectURL = typ.getOnionBase64String("connecturl");
         String[] parts = connectURL.split("://");
         if (parts.length != 2 || "".equals(actualConnectionType)) {
             return null;

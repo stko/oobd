@@ -35,18 +35,24 @@
 <p>
 This design is as ugly as it can be, because it does not contain any HTML beautyfication, just bare functionality to show how the interface works
 </p>
-
+<hr/>
+These are the two buttons to "Update the List" and "Cycling Refresh"<br/>
 <button onclick="Oobd.update()">Update</button><label><input type='checkbox' onclick='Oobd.timer(this.checked);'>Timer</label>
- 
+<hr/>
+This is the table for the OOBD values:
+
 
 	<table id="field">
 	</table>
-	<div id="dropzone" class="dropzone">Dropzone</div>
-	<table id="dashboard">
-	</table>
-	<div id="trashbin" class="dropzone" ondragenter="return handleDragEnter(event)" 
-            ondrop="return handledragDrop(event)" 
-            ondragover="return handleDragOver(event)">trashbin</div>
+	<hr/>
+	<div id="dropzone" class="dropzone" ondragenter="return handleDragEnter(event)" ondrop="return handledragDropAdd(event)"   ondragover="return handleDragOver(event)">Dashboard<br/>(drop items here for quick access,<br/>
+your selection will be saved in the browser)
+		<table id="dashboard">
+		</table>
+	</div>
+	<hr/>
+	<div id="trashbin" class="dropzone" ondragenter="return handleDragEnter(event)" ondrop="return handledragDropDelete(event)"   ondragover="return handleDragOver(event)">Trashbin<br/>(drop your dashboard items here to remove them)
+	</div>
 	<p>Outputs</p>
 	<p />
 	<textarea id="textoutput"></textarea>
@@ -95,13 +101,24 @@ This design is as ugly as it can be, because it does not contain any HTML beauty
 				var row = table.insertRow(-1);
 				constructVisualizer(row,obj);
 				}
+			Oobd.fillDashboard = function fillDash() {
+				var table = document.getElementById("dashboard");
+				var res=Oobd.getDashContructors();
+				for (var i = 0; i < res.length; i++) {
+					// Create an empty <tr> element and add it to the last position of the table:
+					var row = table.insertRow(-1);
+					constructVisualizer(row,JSON.parse(res[i]));
+				}
+			}
 			Oobd.start();
+			// load Dashboard objects
 		})();
 		function constructVisualizer(row,obj){
 				row.classList.add("OOBD");
 				row.setAttribute("oobd:fc",obj.name);
 				row.setAttribute("oobd:value",decodeURIComponent(escape(atob(obj.value))));
 				row.setAttribute("draggable","true");
+				row.setAttribute("oobd:constructor",JSON.stringify(obj));
 				row.addEventListener('dragstart', handleDragStart, false);
 				//row.addEventListener('dragenter', handleDragEnter, false);
 				//row.addEventListener('dragover', handleDragOver, false);
@@ -281,7 +298,7 @@ This design is as ugly as it can be, because it does not contain any HTML beauty
 		};
 		function handleDragStart(ev) {
 			ev.dataTransfer.effectAllowed='move';
-			ev.dataTransfer.setData("Text", ev.target.getAttribute('id'));
+			ev.dataTransfer.setData("Text", ev.target.getAttribute('oobd:constructor'));
 			ev.dataTransfer.setDragImage(ev.target,0,0);
 			return true;
   		}
@@ -296,9 +313,37 @@ This design is as ugly as it can be, because it does not contain any HTML beauty
 		function handleDragLeave(e) {
 			this.classList.remove('over');  // this / e.target is previous target element.
 		}
-		function handledragDrop(ev) {
+		function handledragDropAdd(ev) {
 			var src = ev.dataTransfer.getData("Text");
-			ev.target.appendChild(document.getElementById(src));
+			var table = document.getElementById("dashboard");
+			while(table.hasChildNodes())
+			{
+				table.removeChild(table.firstChild);
+			}
+
+			var res=Oobd.addToDash(src);
+			for (var i = 0; i < res.length; i++) {
+				// Create an empty <tr> element and add it to the last position of the table:
+				var row = table.insertRow(-1);
+				constructVisualizer(row,JSON.parse(res[i]));
+			}
+			ev.stopPropagation();
+			return false;
+		}
+		function handledragDropDelete(ev) {
+			var src = ev.dataTransfer.getData("Text");
+			var table = document.getElementById("dashboard");
+			while(table.hasChildNodes())
+			{
+				table.removeChild(table.firstChild);
+			}
+
+			var res=Oobd.removeFromDash(src);
+			for (var i = 0; i < res.length; i++) {
+				// Create an empty <tr> element and add it to the last position of the table:
+				var row = table.insertRow(-1);
+				constructVisualizer(row,JSON.parse(res[i]));
+			}
 			ev.stopPropagation();
 			return false;
 		}
