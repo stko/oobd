@@ -254,7 +254,12 @@ typedef UBaseType_t(*bus_param) (param_data * args);
 typedef UBaseType_t(*bus_paramPrint) (param_data * args);
 typedef void (*bus_close) ();
 
-
+//! the command line params for Posix
+extern int argc;
+extern char **argv;
+extern char *serialPort;
+extern char *tcpPort;
+extern char *canChannel;
 
 #include "od_protocols.h"
 

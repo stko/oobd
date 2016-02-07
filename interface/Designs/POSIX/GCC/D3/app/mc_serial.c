@@ -34,6 +34,7 @@
  */
 
 /* OOBD headers. */
+#include "od_base.h"
 #include "od_config.h"
 #include "mc_serial_generic.h"
 #include "mc_serial.h"
@@ -72,7 +73,7 @@ UBaseType_t serial_init_mc()
     printChar = writeChar;
 
     // Set-up the Serial Console Echo task
-    if (pdTRUE == lAsyncIOSerialOpen("/tmp/OOBD", &oobdIOHandle)) {
+    if (pdTRUE == lAsyncIOSerialOpen(serialPort, &oobdIOHandle)) {
 	internalSerialRxQueue = xQueueCreate(20, sizeof(unsigned char));
 	(void) lAsyncIORegisterCallback(oobdIOHandle,
 					vAsyncSerialIODataAvailableISR,

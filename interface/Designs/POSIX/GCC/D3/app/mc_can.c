@@ -107,8 +107,8 @@ UBaseType_t bus_init_can()
 //iSocketSend = iSocketOpenCAN(NULL, NULL, NULL);
     iSocketSend = iSocketReceive;
     int mystate;
-    DEBUGPRINT("get CAN State for %s returns %ld\n", CAN_INTERFACE,
-	       can_get_state(CAN_INTERFACE, &mystate));
+    DEBUGPRINT("get CAN State for %s returns %ld\n", canChannel,
+	       can_get_state(canChannel, &mystate));
     DEBUGPRINT("get CAN State mystate %ld\n", mystate);
 /*
     struct can_ctrlmode cm;
@@ -116,9 +116,9 @@ UBaseType_t bus_init_can()
     cm.mask = CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_LISTENONLY;
     cm.flags = CAN_CTRLMODE_LOOPBACK;
     DEBUGPRINT("can_set_ctrlmode: %ld\n",
-	       can_set_ctrlmode(CAN_INTERFACE, &cm));
+	       can_set_ctrlmode(canChannel, &cm));
     DEBUGPRINT("can_set_bitrate: %ld\n",
-	       can_set_bitrate(CAN_INTERFACE, 500000));
+	       can_set_bitrate(canChannel, 500000));
 */
     if (iSocketSend != 0) {
 	return pdPASS;

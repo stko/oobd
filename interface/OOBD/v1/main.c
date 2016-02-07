@@ -80,6 +80,8 @@
 
 /* Constant definition used to turn on/off the pre-emptive scheduler. */
 static const short sUsingPreemption = configUSE_PREEMPTION;
+int argc = 0;
+char **argv = NULL;
 
 
 #define SERIAL_COMM_TASK_PRIORITY			( tskIDLE_PRIORITY + 3 )
@@ -112,8 +114,10 @@ void tickTask(void *pvParameters)
 
 /*---------------------------------------------------------------------------*/
 
-int main(void)
+int main(int _argc, char **_argv)
 {
+    argc = _argc;
+    argv = _argv;
     /* set up the controller */
     mc_init_sys_boot();
 
