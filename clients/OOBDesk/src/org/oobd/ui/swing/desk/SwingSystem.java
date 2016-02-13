@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.oobd.ui.swing.support;
+package org.oobd.ui.swing.desk;
 
 import java.net.URISyntaxException;
 import java.util.prefs.Preferences;
@@ -35,6 +35,7 @@ import org.oobd.base.support.Onion;
 import org.oobd.base.port.ComPort_Kadaver;
 import org.oobd.base.port.ComPort_Telnet;
 import org.oobd.crypt.AES.PassPhraseProvider;
+import javax.jmdns.*;
 
 /**
  * This class is the connection between the generic oobd system and the
@@ -49,10 +50,30 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     String webRootDir = "";
     String webLibraryDir = "";
     Preferences appProbs;
+    JmDNS jmdns;
 
     @Override
     public void registerOobdCore(Core thisCore) {
         core = thisCore;
+
+        try {
+
+            final HashMap<String, String> values = new HashMap<String, String>();
+            jmdns = JmDNS.create();
+            values.put("host-name", "OOBD-" + jmdns.getHostName());
+            // ServiceInfo service_info =  ServiceInfo.create("_http._tcp.local.", "foo._http._tcp.local.", 1234, 0, 0, "path=index.html")
+            //  ServiceInfo service_info = ServiceInfo.create("_http._tcp.", "OOBDesk", 8080, "path=/")
+            // ServiceInfo service_info =   ServiceInfo.create("_http._tcp.", "OOBDesk", 8080, 0,0,values)
+            String service_type = "_http._tcp.";
+            //       String service_name = "http://www.mycompany.com/xyz.html";
+            String service_name = "xyz";
+            int service_port = 80;
+            ServiceInfo service_info = ServiceInfo.create(service_type, service_name, service_port, "");
+            jmdns.registerService(service_info);
+        } catch (IOException ex) {
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     @Override
