@@ -16,7 +16,7 @@ if (typeof Oobd == "undefined") {
 		/**
 		 * Initializes this object.
 		 */
-		wsURL: "ws://localhost:8443",
+		wsURL: "ws://"+window.location.hostname+":8443",
 		session: null,
 		connection: "",
 		scriptID: "",
