@@ -675,7 +675,6 @@ class OOBDHttpServer extends NanoHTTPD {
             String connectTypeName = parms.get("connectType");
             Class<OOBDPort> value = Core.getSingleInstance().getConnectorList().get(connectTypeName);
             if (value != null) {
-                Core.getSingleInstance().writeDataPool(OOBDConstants.DP_REMOTE_CONNECT_ID, connectTypeName);
                 Core.getSingleInstance().getUiIF().transferPreferences2System(connectTypeName);
                 Core.getSingleInstance().writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
             }

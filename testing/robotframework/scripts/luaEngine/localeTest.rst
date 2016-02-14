@@ -59,6 +59,9 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	answer should match    {"type":"VISUALIZE" ,"name":"saveOutputAs:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"saveOutput:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"saveBuffer1:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"userAlert:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"userConfirm:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"userPrompt:"}
 	answer should match    {"type":"PAGEDONE" ,"name":"Canvastest_1"}
     Test localize message - no locale set
         send webUI command  {"name":"testlocale:","optid":"1","actValue":"","updType":3}

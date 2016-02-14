@@ -188,6 +188,7 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
         String onionMsg;
         try {
             onionMsg = new Onion("{'msg':'" + Base64Coder.encodeString(s) + "','channel': '" + channel + "'}").toString();
+            System.err.println("Send to cadaver server:"+onionMsg);
             send(onionMsg);
         } catch (JSONException ex) {
             Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);

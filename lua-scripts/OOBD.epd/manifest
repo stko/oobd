@@ -1,0 +1,5 @@
+{
+  "script": "OOBD.lbc",
+  "description": "OOBD Demo which shows the features of a normal OBD Tester",
+  "author" : "The OOBD Team"
+}

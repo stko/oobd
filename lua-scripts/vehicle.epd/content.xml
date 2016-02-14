@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/theme/default/xslt/start.xsl"?>
+<catalog>
+<script>
+<fileid>vehicle.lbc</fileid>
+<filename>vehicle</filename>
+</script>
+<script>
+<fileid>vehicle2.lbc</fileid>
+<filename>vehicle2</filename>
+</script>
+</catalog>

@@ -1,7 +1,7 @@
 .. default-role:: code
 
 =====================================
-  OOBD Core Test ing
+  OOBD Lua UDS ASCII testing
 =====================================
 
 Robot Framework is Copyright © Nokia Solutions and Networks. Licensed under the
@@ -63,35 +63,47 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	answer should match    {"type":"VISUALIZE" ,"name":"userConfirm:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"userPrompt:"}
 	answer should match    {"type":"PAGEDONE" ,"name":"Canvastest_1"}
-    Test for Slack msg
-	[tags]  slack
-        send webUI command  {"name":"writeSlackMsg:","optid":"","actValue":"${slackURL}","updType":3}
-	answer should match    {"type":"VALUE" ,"value":"#-ok-"}
-    Test open URL
-        send webUI command  {"name":"openURL:","optid":"","actValue":"","updType":3}
-	answer should match    {"type":"VALUE" ,"value":"#-https://httpbin.org/html-"}
-    Test openURL, returning first line of test page
-        send webUI command  {"name":"readFirstLine:","optid":"","actValue":"","updType":3}
-	answer should match    {"type":"VALUE" ,"value":"#<!DOCTYPE html>"}
-    Test openURL, returning sha256 hash of page content
-        send webUI command  {"name":"hashHoleFile:","optid":"","actValue":"","updType":3}
-	answer should match    {"type":"VALUE" ,"value":"#e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}
-    Test remoteJsonRPC per String, returning a json string
-        send webUI command  {"name":"jsonStringService:","optid":"","actValue":"","updType":3}
-	answer should match    {"type":"VALUE" ,"value":"LXsiaWQiOjEsInJlc3VsdCI6NX0t"}
-    Test remoteJsonRPC per table parameter, returning a json string
-        send webUI command  {"name":"jsontableService:","optid":"","actValue":"","updType":3}
-	answer should match    {"type":"VALUE" ,"value":"LXsiaWQiOjIsInJlc3VsdCI6N30t"}
-    Test remoteJsonRPC per table parameter, returning a lua table
-        send webUI command  {"name":"jsonrpcService:","optid":"","actValue":"","updType":3}
-	answer should match    {"type":"VALUE" ,"value":"#-11-"}
-     Test open local file Loremipsum.txt
-        send webUI command  {"name":"openIOFile:","optid":"","actValue":"TG9yZW1pcHN1bS50eHQ=","updType":3}
-	answer should match    {"type":"VALUE" ,"value":"%#.*Loremipsum.*"}
-    Test openURL, returning sha256 hash of test file content
-        send webUI command  {"name":"hashHoleFile:","optid":"","actValue":"","updType":3}
-	answer should match    {"type":"VALUE" ,"value":"#a3614fe562b348399b7e0a97c5720f71857caa90906434b2a7ad4d2e4ea5c27d"}
-  
+    Requesting ASCII-DID by table
+	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F050","actValue":"","updType":3}
+	answer should match    {"to":{"name":"readAscDiD:"},"value":"#ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEF","type":"VALUE"}
+    Requesting ASCII-DID by table with binary data
+	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F040","actValue":"","updType":3}
+	answer should match    {"to":{"name":"readAscDiD:"},"value":"#..-<KZix........","type":"VALUE"}
+    Requesting ASCII-DID by table with General Response Error
+	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F051","actValue":"","updType":3}
+	answer should match    {"to":{"name":"readAscDiD:"},"value":"#NRC: 0x51","type":"VALUE"}
+    Requesting ASCII-DID by table with Timeout
+	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F052","actValue":"","updType":3}
+	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No data received","type":"VALUE"}
+    Requesting ASCII-DID by table with no Answer
+	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F053","actValue":"","updType":3}
+	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No data received","type":"VALUE"}
+    Requesting ASCII-DID by table with sequence error
+	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F054","actValue":"","updType":3}
+	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No data received","type":"VALUE"}
+	close webUI
+    Starting the script testsuite.lbc via HTTP for the second time
+	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
+	Create Http Context  localhost:8080
+	Get  /dGVzdHN1aXRlLmxiYw==
+    Test for second connect message
+	answer should match    {"type":"WSCONNECT"}
+	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
+ 	answer should match    {"type":"PAGE" , "name":"OOBD-ME Main"}
+	answer should match    {"type":"VISUALIZE" ,"name":"createCMD01Menu:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"greet:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"clearOutput:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"saveOutputAs:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"saveOutput:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"saveBuffer1:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"userAlert:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"userConfirm:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"userPrompt:"}
+	answer should match    {"type":"PAGEDONE" ,"name":"Canvastest_1"}
+    Test calling udsServiceRequest with some DiDdata
+        send webUI command  {"name":"testDidData:","optid":"","actValue":"","updType":3}
+	answer should match    {"type":"VALUE" ,"value":"#62AABBDDCC"}
+
 
 .. code:: robotframework
 
