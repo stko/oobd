@@ -34,7 +34,7 @@ public class ComPort_Telnet implements OOBDPort, Runnable {
     static PortInfo[] udpAnouncements;
 
     public ComPort_Telnet(String thisURL) {
-        String[] parts = thisURL.toString().split("://");
+        String[] parts = thisURL.split("://");
         parts = parts[1].split(":");
         Server = parts[0];
         port = Integer.decode(parts[1]);
@@ -70,7 +70,7 @@ public class ComPort_Telnet implements OOBDPort, Runnable {
     }
 
     public static String getUrlFormat() {
-        return "telnet://{device}";
+        return "telnet://{remoteconnectid}";
     }
 
     public static PortInfo[] getPorts() {

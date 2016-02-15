@@ -948,7 +948,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         String connectURL;
         String protocol = "";
         String domain = "";
-        String userID = "";
+        String remoteConnectID = (String) readDataPool(DP_REMOTE_CONNECT_ID, "");
+        //\todo cancel and error message, if connect id is empty
         String serverURL = (String) readDataPool(DP_ACTUAL_REMOTECONNECT_SERVER, "");
         if (!"".equals(serverURL)) {
             String[] parts = serverURL.split("://");
@@ -961,11 +962,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         }
 
         if (connectTypeName.equalsIgnoreCase("Kadaver")) {
-            if (UIHANDLER_WS_NAME.equalsIgnoreCase((String) readDataPool(DP_ACTUAL_UIHANDLER, ""))) {
-                userID = (String) readDataPool(DP_REMOTE_CONNECT_ID, "");
-                //\todo cancel and error message, if connect id is empty
-                userID = Base64Coder.encodeString(userID);
-            } else {
+            remoteConnectID = Base64Coder.encodeString(remoteConnectID); //in Kadaver the remoteId is base64 coded
+            if (!UIHANDLER_WS_NAME.equalsIgnoreCase((String) readDataPool(DP_ACTUAL_UIHANDLER, ""))) { // no webUI, so rquest the number from the user
                 try {
                     Onion answer = getUiIF().requestParamInput(new Onion("{" + "'" + CM_PARAM + "' : [{ " + "'type':'String',"
                             + "'title':'" + Base64Coder.encodeString("Enter the Connect Number") + "',"
@@ -976,13 +974,13 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                         //\todo error message JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
                         return;
                     }
-                    userID = answer.getOnionBase64String("answer");
-                    if (userID == null || userID.equals("")) {
+                    remoteConnectID = answer.getOnionBase64String("answer");
+                    if (remoteConnectID == null || remoteConnectID.equals("")) {
                         //\todo error message JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
                         return;
                     }
-                    writeDataPool(OOBDConstants.DP_REMOTE_CONNECT_ID, userID);
-                    userID = Base64Coder.encodeString(userID); // in the later URL the connect
+                    writeDataPool(OOBDConstants.DP_REMOTE_CONNECT_ID, remoteConnectID);
+                    remoteConnectID = Base64Coder.encodeString(remoteConnectID); // in the later URL the connect
 
                 } catch (JSONException ex) {
                     Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
@@ -993,7 +991,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         connectURL = formatURL;
         connectURL = connectURL.replace("{device}", (String) readDataPool(OOBDConstants.DP_ACTUAL_DONGLE_PORT_ID, ""));
         connectURL = connectURL.replace("{protocol}", protocol);
-        connectURL = connectURL.replace("{user}", userID);
+        connectURL = connectURL.replace("{remoteconnectid}", remoteConnectID);
         connectURL = connectURL.replace("{urlpath}", domain);
 
         try {
