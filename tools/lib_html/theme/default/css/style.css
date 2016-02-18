@@ -1,0 +1,29 @@
+body {
+	background-color: #FF0000;
+	color: #F0F0F0;
+	background-image: url("/libs/images/Free-Simple-Black-Seamless-Pattern-for-Website-Background.jpg");
+	font-size: 2em;
+	font-family: arial, verdana, sans-serif;
+}
+
+table.OOBD {
+	background-color: #000080;
+	border-collapse:separate;
+	border:solid black 1px;
+	border-radius:5px;
+	-moz-border-radius:5px;
+}
+
+td.OOBD, th.OOBD {
+	border-left:solid black 1px;
+	border-top:solid black 1px;
+}
+
+th.OOBD {
+	background-color: blue;
+	border-top: none;
+}
+
+td.OOBD:first-child {
+	border-left: none;
+}

@@ -20,6 +20,42 @@
 	<meta name="msapplication-TileColor" content="#ffffff">
 	<meta name="msapplication-TileImage" content="/theme/default/favicon/ms-icon-144x144.png">
 	<meta name="theme-color" content="#ffffff">
+	<meta charset="utf-8">
+	<title>OOBD Fehlerspeicher auslesen</title>
+	<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+	<!--
+	<link rel="stylesheet" href="themes/warnings.min.css" />
+	<link rel="stylesheet" href="themes/jquery.mobile.icons.min.css" />
+	-->
+	<link rel="stylesheet" type="text/css" href="/theme/default/css/style.css" />
+	<link rel="stylesheet" type="text/css" href="/libs/gridster/0.5.6/jquery.gridster.css">
+
+
+	<!--
+	<link rel="stylesheet" href="libs/jquery.mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css" />
+	<link rel="stylesheet" href="/libs/jquery.mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+	-->
+	<script src="/libs/jquery/2.1.4/jquery.min.js"></script>
+	<!--
+	<script src="/libs/jquery.mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+	-->
+	<script src="/libs/gridster/0.5.6/jquery.gridster.js" type="text/javascript" charset="utf-8"></script>
+
+
+	<meta content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+	<meta name="msapplication-tap-highlight" content="no" />
+	<link rel="stylesheet" href="/libs/jqwidgets/3.8.2/styles/jqx.base.css" type="text/css" />
+	<link rel="stylesheet" href="/libs/jqwidgets/3.8.2/styles/jqx.windowsphone.css" type="text/css" />
+	<link rel="stylesheet" href="/libs/jqwidgets/3.8.2/styles/jqx.blackberry.css" type="text/css" />
+	<link rel="stylesheet" href="/libs/jqwidgets/3.8.2/styles/jqx.android.css" type="text/css" />
+	<link rel="stylesheet" href="/libs/jqwidgets/3.8.2/styles/jqx.mobile.css" type="text/css" />
+	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxcore.js"></script>
+	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxdata.js"></script>
+	<!--script type="text/javascript" src="../simulator.js"></script-->
+	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxchart.js"></script>
+	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxgauge.js"></script>
+	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxbuttons.js"></script>
+
 
 
 	<meta charset="utf-8">
@@ -27,7 +63,8 @@
 	<style>
 		:invalid {
 		border: 2px solid #ff0000;
-}	</style>
+		}
+	</style>
 
 </head>
  
@@ -45,10 +82,17 @@ This is the table for the OOBD values:
 	<table id="field">
 	</table>
 	<hr/>
+	<div id="values" class="gridster">
+		<ul>
+		</ul>
+	</div>
+	<hr/>
 	<div id="dropzone" class="dropzone" ondragenter="return handleDragEnter(event)" ondrop="return handledragDropAdd(event)"   ondragover="return handleDragOver(event)">Dashboard<br/>(drop items here for quick access,<br/>
 your selection will be saved in the browser)
-		<table id="dashboard">
-		</table>
+	<div id="dashboard" class="gridster">
+		<ul>
+		</ul>
+	</div>
 	</div>
 	<hr/>
 	<div id="trashbin" class="dropzone" ondragenter="return handleDragEnter(event)" ondrop="return handledragDropDelete(event)"   ondragover="return handleDragOver(event)">Trashbin<br/>(drop your dashboard items here to remove them)
@@ -63,8 +107,8 @@ your selection will be saved in the browser)
  
  
 	<script>
-		// put here inits here as browser independent, pure javascript solution for document.ready
-		(function() {
+		var gridster=[];
+		$(function(){ //DOM Ready
 			// your page initialization code here
 			// the DOM will be available here
 
@@ -83,14 +127,28 @@ your selection will be saved in the browser)
 				}
 			}
 
+			gridster[0]=$("#values ul").gridster({
+				namespace: '#values',
+				widget_margins: [5, 5],
+				widget_base_dimensions: [140, 140],
+				helper: 'clone',
+				resize: {
+					enabled: true
+				}
+			}).data('gridster');
+			gridster[1]=$("#dashboard ul").gridster({
+				namespace: '#dashboard',
+				widget_margins: [5, 5],
+				widget_base_dimensions: [140, 140],
+				helper: 'clone',
+				resize: {
+					enabled: true
+				}
+			}).data('gridster');
 			// initialize a new OOBD page to be shown
 			Oobd.openPage = function openPage(text) {
 				window.document.title=text;
-				var myTable=document.getElementById("field");
-				while(myTable.hasChildNodes())
-				{
-					myTable.removeChild(myTable.firstChild);
-				}
+				gridster[0].remove_all_widgets();
 				Oobd.clearVisualiers();
 			}
 
@@ -99,40 +157,44 @@ your selection will be saved in the browser)
 				var table = document.getElementById("field");
 				// Create an empty <tr> element and add it to the last position of the table:
 				var row = table.insertRow(-1);
-				constructVisualizer(row,obj);
+				gridster[0].add_widget(constructVisualizer(obj));
 				}
 			Oobd.fillDashboard = function fillDash() {
-				var table = document.getElementById("dashboard");
 				var res=Oobd.getDashContructors();
 				for (var i = 0; i < res.length; i++) {
 					// Create an empty <tr> element and add it to the last position of the table:
-					var row = table.insertRow(-1);
-					constructVisualizer(row,JSON.parse(res[i]));
+					gridster[1].add_widget(constructVisualizer(JSON.parse(res[i])));
 				}
 			}
 			Oobd.start();
-			// load Dashboard objects
-		})();
-		function constructVisualizer(row,obj){
-				row.classList.add("OOBD");
-				row.setAttribute("oobd:fc",obj.name);
-				row.setAttribute("oobd:value",decodeURIComponent(escape(atob(obj.value))));
-				row.setAttribute("draggable","true");
-				row.setAttribute("oobd:constructor",JSON.stringify(obj));
-				row.addEventListener('dragstart', handleDragStart, false);
+		});
+		function constructVisualizer(obj){
+				var tbl = document.createElement('table');
+				//tbl.style.width = '100%';
+				tbl.setAttribute('border', '1');
+				var tbdy = document.createElement('tbody');
+				var row = document.createElement('tr');
+				tbl.classList.add("OOBD");
+				tbl.setAttribute("oobd:fc",obj.name);
+				tbl.setAttribute("oobd:value",decodeURIComponent(escape(atob(obj.value))));
+				tbl.setAttribute("draggable","true");
+				tbl.setAttribute("oobd:constructor",JSON.stringify(obj));
+				tbl.addEventListener('dragstart', handleDragStart, false);
 				//row.addEventListener('dragenter', handleDragEnter, false);
 				//row.addEventListener('dragover', handleDragOver, false);
 				//row.addEventListener('dragleave', handleDragLeave, false);
 
 				if (typeof obj.updevents != "undefined" ) {
-					row.setAttribute("oobd:updevents",obj.updevents);
+					tbl.setAttribute("oobd:updevents",obj.updevents);
 				}else{
-					row.setAttribute("oobd:updevents",0);
+					tbl.setAttribute("oobd:updevents",0);
 				}
 
 				// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
 				var cell1 = row.insertCell(0);
-				var cell2 = row.insertCell(1);
+				tbdy.appendChild(row);
+				row = document.createElement('tr');
+				var cell2 = row.insertCell(0);
 				cell1.classList.add("name");
 				cell2.classList.add("value");
 				// Add some text to the new cells:
@@ -140,9 +202,9 @@ your selection will be saved in the browser)
 				//let see, if the visualizer is a graphic element
 				if(typeof obj.opts == 'undefined'){
 					//the simple way
-					row.setAttribute("oobd:click","yes");
+					tbl.setAttribute("oobd:click","yes");
 					cell2.innerHTML = decodeURIComponent(escape(atob(obj.value)));
-					row.oodbupdate = function(input) {
+					tbl.oodbupdate = function(input) {
 						this.getElementsByClassName("value")[0].innerHTML = input.value;
 					};
 				}else{
@@ -160,13 +222,13 @@ your selection will be saved in the browser)
 						if(typeof obj.opts.regex != 'undefined'){
 							feld.setAttribute("pattern",obj.opts.regex); 
 						}
-						row.oodbupdate = function(input) {
+						tbl.oodbupdate = function(input) {
 							feld.value = input.value;
 						};
 						feld.onchange=function(){
 							if (feld.checkValidity()){
 								console.log("update text input");
-								Oobd.sendUpdateReq(row.oobd.command, row.oobd.optid, feld.value, 0);
+								Oobd.sendUpdateReq(tbl.oobd.command, tbl.oobd.optid, feld.value, 0);
 							}
 						};
 						cell2.appendChild(feld); 
@@ -175,13 +237,13 @@ your selection will be saved in the browser)
 						 var feld = document.createElement("input");
 						feld.setAttribute("type","checkbox"); 
 						feld.checked = "true" == decodeURIComponent(escape(atob(obj.value))).toLowerCase();
-						row.oodbupdate = function(input) {
+						tbl.oodbupdate = function(input) {
 							feld.checked = "true" == input.value.toLowerCase();
 						};
 						feld.onchange=function(){
 							console.log("update checkbox");
 							var flag= feld.checked ? "True" : "False";
-							Oobd.sendUpdateReq(row.oobd.command, row.oobd.optid, flag, 0);
+							Oobd.sendUpdateReq(tbl.oobd.command, tbl.oobd.optid, flag, 0);
 						};
 						cell2.appendChild(feld); 
 						break;
@@ -192,13 +254,13 @@ your selection will be saved in the browser)
 						feld.setAttribute("max",obj.opts.max); 
 						feld.setAttribute("step",obj.opts.step); 
 						feld.value = parseFloat(decodeURIComponent(escape(atob(obj.value))));
-						row.oodbupdate = function(input) {
+						tbl.oodbupdate = function(input) {
 							feld.value = parseFloat(input.value);
 						};
 						feld.onchange=function(){
 							console.log("update range");
 							var flag= feld.value.toString();
-							Oobd.sendUpdateReq(row.oobd.command, row.oobd.optid, flag, 0);
+							Oobd.sendUpdateReq(tbl.oobd.command, tbl.oobd.optid, flag, 0);
 						};
 						cell2.appendChild(feld); 
 						break;					case "Combo":
@@ -220,13 +282,13 @@ your selection will be saved in the browser)
 							feld.appendChild(opt);
 						}
 						feld.selectedIndex =parseInt(decodeURIComponent(escape(atob(obj.value))))-1;
-						row.oodbupdate = function(input) {
+						tbl.oodbupdate = function(input) {
 							feld.selectedIndex =  parseInt(input.value)-1;
 						};
 						feld.onchange=function(){
 							console.log("update combobox");
 							var flag= (feld.selectedIndex+1).toString();
-							Oobd.sendUpdateReq(row.oobd.command, row.oobd.optid, flag, 0);
+							Oobd.sendUpdateReq(tbl.oobd.command, tbl.oobd.optid, flag, 0);
 						};
 						cell2.appendChild(feld); 
 						break;
@@ -238,22 +300,24 @@ your selection will be saved in the browser)
 						feld.setAttribute("low",obj.opts.low); 
 						feld.setAttribute("optimum",obj.opts.optimum); 
 						feld.value = parseFloat(decodeURIComponent(escape(atob(obj.value))));
-						row.oodbupdate = function(input) {
+						tbl.oodbupdate = function(input) {
 							feld.value = parseFloat(input.value);
 						};
 						/* A meter is readonly, so no onchange 
 						feld.onchange=function(){
 							console.log("update checkbox");
 							var flag= feld.checked ? "True" : "False";
-							Oobd.sendUpdateReq(row.oobd.command, row.oobd.optid, flag, 0);
+							Oobd.sendUpdateReq(tbl.oobd.command, tbl.oobd.optid, flag, 0);
 						};
 						*/
 						cell2.appendChild(feld); 
 						break;
 					}
 				}
-				Oobd.addObject(row, decodeURIComponent(escape(atob(obj.value))));
-
+				tbdy.appendChild(row);
+				tbl.appendChild(tbdy);		
+				Oobd.addObject(tbl, decodeURIComponent(escape(atob(obj.value))));
+				return tbl
 			}
 
 			// add file buffer changes to the page
@@ -315,17 +379,9 @@ your selection will be saved in the browser)
 		}
 		function handledragDropAdd(ev) {
 			var src = ev.dataTransfer.getData("Text");
-			var table = document.getElementById("dashboard");
-			while(table.hasChildNodes())
-			{
-				table.removeChild(table.firstChild);
-			}
-
 			var res=Oobd.addToDash(src);
 			for (var i = 0; i < res.length; i++) {
-				// Create an empty <tr> element and add it to the last position of the table:
-				var row = table.insertRow(-1);
-				constructVisualizer(row,JSON.parse(res[i]));
+				gridster[1].add_widget(constructVisualizer(JSON.parse(res[i])));
 			}
 			ev.stopPropagation();
 			return false;
@@ -342,7 +398,7 @@ your selection will be saved in the browser)
 			for (var i = 0; i < res.length; i++) {
 				// Create an empty <tr> element and add it to the last position of the table:
 				var row = table.insertRow(-1);
-				constructVisualizer(row,JSON.parse(res[i]));
+				gridster[1].add_widget(constructVisualizer(JSON.parse(res[i])));
 			}
 			ev.stopPropagation();
 			return false;
