@@ -132,7 +132,7 @@ public class ComPort_Win implements OOBDPort, SerialPortEventListener {
     }
 
     public static String getUrlFormat() {
-        return "serial://{device}";
+        return "serial://{connectid}";
     }
 
     public static PortInfo[] getPorts() {

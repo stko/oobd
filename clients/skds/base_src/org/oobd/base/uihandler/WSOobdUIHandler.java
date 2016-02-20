@@ -669,7 +669,7 @@ class OOBDHttpServer extends NanoHTTPD {
             Core.getSingleInstance().getSystemIF().setUserPassPhrase(parms.get("pgppw"));
         }
         if (parms.get("rcid") != null && !"".equals(parms.get("rcid"))) {
-            Core.getSingleInstance().writeDataPool(OOBDConstants.DP_REMOTE_CONNECT_ID, parms.get("rcid"));
+            Core.getSingleInstance().writeDataPool(OOBDConstants.DP_ACTUAL_CONNECT_ID, parms.get("rcid"));
         }
         if (parms.get("connectType") != null && !"".equals(parms.get("connectType"))) {
             String connectTypeName = parms.get("connectType");

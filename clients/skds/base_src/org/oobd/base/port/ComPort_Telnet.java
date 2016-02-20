@@ -70,7 +70,7 @@ public class ComPort_Telnet implements OOBDPort, Runnable {
     }
 
     public static String getUrlFormat() {
-        return "telnet://{remoteconnectid}";
+        return "telnet://{connectid}";
     }
 
     public static PortInfo[] getPorts() {

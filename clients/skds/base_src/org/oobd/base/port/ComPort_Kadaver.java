@@ -148,7 +148,7 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
     }
 
     public static String getUrlFormat() {
-        return "{protocol}://{remoteconnectid}@{urlpath}";
+        return "{protocol}://{connectid}@{urlpath}";
     }
 
     public static PortInfo[] getPorts() {
