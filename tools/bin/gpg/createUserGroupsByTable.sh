@@ -29,8 +29,9 @@ do
 	grep -i "$user" useraccess.txt > $user.groupkeys.lst
 	if [[ -d "${INSTALLERSOURCEDIR}" &&  -d "${INSTALLERTARGETDIR}" ]] ; then
 		echo "make Installer!"
-		php $DIR/createNSISfiles.php  $NEWUSERACCESS $user $user.groupkeys $INSTALLERTEMPLATE $INSTALLERLICENCE $INSTALLERSOURCEDIR $INSTALLERTARGETDIR
-		(cd $INSTALLERTARGETDIR && $INSTALLEREXE $user.nsi && zip $user.zip $user.exe)
+		echo  $NEWUSERACCESS $user $user.groupkeys $INSTALLERTEMPLATE $INSTALLERLICENCE $INSTALLERSOURCEDIR $INSTALLERTARGETDIR $GETFULLPATHCMD
+		php $DIR/createNSISfiles.php  "$NEWUSERACCESS" "$user" "$user.groupkeys" "$INSTALLERTEMPLATE" "$INSTALLERLICENCE" "$INSTALLERSOURCEDIR" "$INSTALLERTARGETDIR" "$GETFULLPATHCMD"
+		(cd "$INSTALLERTARGETDIR" && "$INSTALLEREXE" $user.nsi && zip "$user".zip "$user".exe)
 		
 		
 	fi

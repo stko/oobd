@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 	$jobDone=false;
-	if ($argc==8){ // = 7 parameters, param 0 is the script name itself
+	if ($argc==9){ // = 8 parameters, param 0 is the script name itself
 		$useraccesslist=$argv[1];
 		$username=strtolower($argv[2]);
 		$groupfilename =$argv[3];
@@ -10,6 +10,7 @@
 		$scriptinputdir=$argv[6];
 		print("create Installer for $username\n");
 		$outputdir=$argv[7]. DIRECTORY_SEPARATOR .$username;
+		$getFullPathCmd=$argv[8];
 		$allowedGroups=array();
 		$userGroupListArray=file($useraccesslist);
 		foreach ($userGroupListArray as $line){
@@ -107,7 +108,8 @@ function exitProg($message, $exitCode){
 }
 
 function createOSdependendPath($path){
-	$newpath= exec('cygpath -aw '.$path,$out, $err);
+	global $getFullPathCmd;
+	$newpath= exec($getFullPathCmd.' '.$path,$out, $err);
 	if ($err!=0){
 		return $path;
 	}else{
@@ -118,11 +120,14 @@ function createOSdependendPath($path){
 
 function usage(){
 	global $argv;
+	global $argc;
 	exitProg( basename($argv[0])." - the OOBD Script Installer Generator tool
 Part of the OOBD tool set (www.oobd.org)
 
+wrong number of parameters: found $argc parameters
+
 Usage:
-	".basename($argv[0])." useraccesslist username groupfile nsistemplate licencefile scriptinputdir outputdir
+	".basename($argv[0])." useraccesslist username groupfile nsistemplate licencefile scriptinputdir outputdir getpathcmd
 
 useraccesslist: the file containing the users and their groups
 
@@ -142,6 +147,8 @@ licencefile: The file containing the licence text of the pack
 scriptinputdir: directore, where the access group subdirs are in
 
 outputdir: directory, where the finished installer should be placed
+
+getpathcmd: the shell comand, which provides the full path of a file to be included in the installer
 ",0);
 }
 ?>

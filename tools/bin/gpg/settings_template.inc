@@ -96,6 +96,9 @@ export GROUPPUBKEYS=../oobd_groups.pub
 #
 # INSTALLERLICENCE : The licence text for the installer
 #
+# GETFULLPATHCMD : shell command to get the full path name of a file in the right
+# environment format for the nsis installer, which expects windows path format,
+# so it's 'cygpath -aw ' in cygwin (windows), 'readlink -f ' in bash (Unix)
 # to use, uncommend the lines below
 #
 ##########################################################################
@@ -103,5 +106,6 @@ export GROUPPUBKEYS=../oobd_groups.pub
 #export INSTALLERTARGETDIR=""
 #export INSTALLERTEMPLATE=""
 #export INSTALLERLICENCE=""
+#export GETFULLPATHCMD="cygpath -aw"
 
 
