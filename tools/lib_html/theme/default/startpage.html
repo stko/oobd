@@ -29,13 +29,15 @@
 	-->
 	<link rel="stylesheet" type="text/css" href="/theme/default/css/style.css" />
 	<link rel="stylesheet" type="text/css" href="/libs/gridster/0.5.6/jquery.gridster.css">
-
+	<link rel="stylesheet" href="/libs/jquery-ui/1.11.4/jquery-ui.css">
+ 
 
 	<!--
 	<link rel="stylesheet" href="libs/jquery.mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css" />
 	<link rel="stylesheet" href="/libs/jquery.mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
 	-->
 	<script src="/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="/libs/jquery-ui/1.11.4/jquery-ui.js"></script>
 	<!--
 	<script src="/libs/jquery.mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 	-->
@@ -65,7 +67,11 @@
 		border: 2px solid #ff0000;
 		}
 	</style>
-
+	<script>
+		$(function() {
+			$( "#tabs" ).tabs();
+		});
+	</script>
 </head>
  
 <body>
@@ -79,32 +85,36 @@ These are the two buttons to "Update the List" and "Cycling Refresh"<br/>
 This is the table for the OOBD values:
 
 
-	<table id="field">
-	</table>
-	<hr/>
-	<div id="values" class="gridster">
-		<ul>
-		</ul>
+<div id="tabs">
+	<ul>
+	<li><a href="#datatab">Data</a></li>
+	<li><a href="#outputtab">Output and Buffer</a></li>
+	<li><a href="#dashtab">Dashboard</a></li>
+	</ul>
+	<div id="datatab">
+		<div id="values" class="gridster">
+			<ul>
+			</ul>
+		</div>
+		<div id="dropzone" class="dropzone" ondragenter="return handleDragEnter(event)" ondrop="return handledragDropAdd(event)"   ondragover="return handleDragOver(event)">Dashboard<br/>(drop items here for quick access,<br/>
+		your selection will be saved in the browser)
+		</div>
 	</div>
-	<hr/>
-	<div id="dropzone" class="dropzone" ondragenter="return handleDragEnter(event)" ondrop="return handledragDropAdd(event)"   ondragover="return handleDragOver(event)">Dashboard<br/>(drop items here for quick access,<br/>
-your selection will be saved in the browser)
-	<div id="dashboard" class="gridster">
-		<ul>
-		</ul>
+	<div id="dashtab">
+		<div id="dashboard" class="gridster">
+			<ul>
+			</ul>
+		</div>
+		<div id="trashbin" class="dropzone" ondragenter="return handleDragEnter(event)" ondrop="return handledragDropDelete(event)"   ondragover="return handleDragOver(event)">Trashbin<br/>(drop your dashboard items here to remove them)
+		</div>
 	</div>
+	<div id="outputtab">
+		<textarea id="textoutput"></textarea>
+		<p />
+		<a href="#" onclick="return saveOutput('output.txt');">Save Output</a>
+		<table id="files">
+		</table>
 	</div>
-	<hr/>
-	<div id="trashbin" class="dropzone" ondragenter="return handleDragEnter(event)" ondrop="return handledragDropDelete(event)"   ondragover="return handleDragOver(event)">Trashbin<br/>(drop your dashboard items here to remove them)
-	</div>
-	<p>Outputs</p>
-	<p />
-	<textarea id="textoutput"></textarea>
-	<p />
-	<a href="#" onclick="return saveOutput('output.txt');">Save Output</a>
-	<table id="files">
-	</table>
- 
  
 	<script>
 		var gridster=[];
@@ -130,7 +140,8 @@ your selection will be saved in the browser)
 			gridster[0]=$("#values ul").gridster({
 				namespace: '#values',
 				widget_margins: [5, 5],
-				widget_base_dimensions: [140, 140],
+				//widget_base_dimensions: [300, 300],
+				max_cols: 6,
 				helper: 'clone',
 				resize: {
 					enabled: true
@@ -139,7 +150,7 @@ your selection will be saved in the browser)
 			gridster[1]=$("#dashboard ul").gridster({
 				namespace: '#dashboard',
 				widget_margins: [5, 5],
-				widget_base_dimensions: [140, 140],
+				//widget_base_dimensions: [300, 300],
 				helper: 'clone',
 				resize: {
 					enabled: true
@@ -154,26 +165,27 @@ your selection will be saved in the browser)
 
 			// add a new visual element to the page
 			Oobd.visualize = function visualize(obj) {
-				var table = document.getElementById("field");
-				// Create an empty <tr> element and add it to the last position of the table:
-				var row = table.insertRow(-1);
-				gridster[0].add_widget(constructVisualizer(obj));
+				gridster[0].add_widget(constructVisualizer(obj),2,1);
 				}
 			Oobd.fillDashboard = function fillDash() {
 				var res=Oobd.getDashContructors();
 				for (var i = 0; i < res.length; i++) {
-					// Create an empty <tr> element and add it to the last position of the table:
-					gridster[1].add_widget(constructVisualizer(JSON.parse(res[i])));
+					gridster[1].add_widget(constructVisualizer(JSON.parse(res[i])),2,1);
 				}
 			}
 			Oobd.start();
 		});
 		function constructVisualizer(obj){
-				var tbl = document.createElement('table');
+				var tbl = document.createElement('li');
 				//tbl.style.width = '100%';
-				tbl.setAttribute('border', '1');
-				var tbdy = document.createElement('tbody');
-				var row = document.createElement('tr');
+				// to not do this all with DOM commands, we do it at once as innerHTML
+				tbl.innerHTML='<div class="oobd-name" display="block">blu</div>\
+				<div class="oobd-value" display="block">bla</div>\
+				<div class="oobd-unit" display="block">Volt</div>\
+				<div class="oobd-update-icon_0"></div>\
+				</tr>';
+				//var tbdy = document.createElement('tbody');
+				//var row = document.createElement('tr');
 				tbl.classList.add("OOBD");
 				tbl.setAttribute("oobd:fc",obj.name);
 				tbl.setAttribute("oobd:value",decodeURIComponent(escape(atob(obj.value))));
@@ -191,12 +203,14 @@ your selection will be saved in the browser)
 				}
 
 				// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
-				var cell1 = row.insertCell(0);
-				tbdy.appendChild(row);
-				row = document.createElement('tr');
-				var cell2 = row.insertCell(0);
-				cell1.classList.add("name");
-				cell2.classList.add("value");
+				// var cell1 = row.insertCell(0);
+				var cell1 = tbl.getElementsByClassName("oobd-name")[0];
+				var cell2 = tbl.getElementsByClassName("oobd-value")[0];
+				//tbdy.appendChild(row);
+				//row = document.createElement('tr');
+				//var cell2 = row.insertCell(0);
+				//cell1.classList.add("name");
+				//cell2.classList.add("value");
 				// Add some text to the new cells:
 				cell1.innerHTML = decodeURIComponent(escape(atob(obj.tooltip)));
 				//let see, if the visualizer is a graphic element
@@ -205,7 +219,8 @@ your selection will be saved in the browser)
 					tbl.setAttribute("oobd:click","yes");
 					cell2.innerHTML = decodeURIComponent(escape(atob(obj.value)));
 					tbl.oodbupdate = function(input) {
-						this.getElementsByClassName("value")[0].innerHTML = input.value;
+						//this.getElementsByClassName("value")[0].innerHTML = input.value;
+						cell2.innerHTML=input.value;
 					};
 				}else{
 					switch (obj.opts.type){
@@ -314,8 +329,8 @@ your selection will be saved in the browser)
 						break;
 					}
 				}
-				tbdy.appendChild(row);
-				tbl.appendChild(tbdy);		
+				//tbdy.appendChild(row);
+				//tbl.appendChild(tbdy);		
 				Oobd.addObject(tbl, decodeURIComponent(escape(atob(obj.value))));
 				return tbl
 			}
@@ -381,7 +396,7 @@ your selection will be saved in the browser)
 			var src = ev.dataTransfer.getData("Text");
 			var res=Oobd.addToDash(src);
 			for (var i = 0; i < res.length; i++) {
-				gridster[1].add_widget(constructVisualizer(JSON.parse(res[i])));
+				gridster[1].add_widget(constructVisualizer(JSON.parse(res[i])),2,1);
 			}
 			ev.stopPropagation();
 			return false;
@@ -398,7 +413,7 @@ your selection will be saved in the browser)
 			for (var i = 0; i < res.length; i++) {
 				// Create an empty <tr> element and add it to the last position of the table:
 				var row = table.insertRow(-1);
-				gridster[1].add_widget(constructVisualizer(JSON.parse(res[i])));
+				gridster[1].add_widget(constructVisualizer(JSON.parse(res[i])),2,1);
 			}
 			ev.stopPropagation();
 			return false;

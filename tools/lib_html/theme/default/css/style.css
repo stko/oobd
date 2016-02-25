@@ -1,29 +1,50 @@
 body {
-	background-color: #FF0000;
+	background-color: silver;
 	color: #F0F0F0;
-	background-image: url("/libs/images/Free-Simple-Black-Seamless-Pattern-for-Website-Background.jpg");
-	font-size: 2em;
+	background-image: url("/libs/images/binding_dark.png");
+	font-size: 1em;
 	font-family: arial, verdana, sans-serif;
 }
 
-table.OOBD {
-	background-color: #000080;
-	border-collapse:separate;
-	border:solid black 1px;
+
+div.oobd-name, div.oobd-value, div.oobd-unit {
 	border-radius:5px;
 	-moz-border-radius:5px;
+	border-collapse:separate;
+	background-color: darkslategray;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding: 0px 0px 0px 20px;
+	border: 0px 0px 0px 0px;
 }
 
-td.OOBD, th.OOBD {
-	border-left:solid black 1px;
-	border-top:solid black 1px;
+@font-face {
+  font-family: "Lcd";
+  src: url("/libs/fonts/LEDBDREV.TTF") format("truetype");
 }
 
-th.OOBD {
-	background-color: blue;
-	border-top: none;
+
+.oobd-name {
+	padding: 1px 1px 1px 20px;
+	text-overflow: ellipsis;
+	
+}
+.oobd-value {
+	font-family: "Lcd";
+	color: yellow;
+	font-size: 4em;
+	padding: 1px 20px 1px 20px;
+	text-overflow: ellipsis;
+	
 }
 
-td.OOBD:first-child {
-	border-left: none;
+.oobd-unit {
+	padding: 1px 1px 1px 10px;
+	color: cyan;
+	font-size: 1em;
+}
+
+.ui-tabs-panel {
+	background-image: url("/libs/images/binding_dark.png");
 }
