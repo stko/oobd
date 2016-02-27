@@ -724,10 +724,19 @@ public class ScriptengineLua extends OobdScriptengine {
             }
             LuaClosure callback = LuaPrototype.loadByteCode(resource,
                     state.getEnvironment());
+            try{
             state.call(callback, null, null, null);
             Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG,
                     "Start Lua Script" + fileName);
             return true;
+            }catch(java.lang.RuntimeException ex){
+                keepRunning=false;
+                Logger.getLogger(ScriptengineLua.class.getName()).log(Level.WARNING,"Lua script crashed during initialisation:",
+                     fileName);
+               core.userAlert(
+                        "Lua script crashed during initialisation", "Script Failure");
+            return false;
+            }
         } else {
             System.out.println("Scriptengine: Aborting doScript");
         }

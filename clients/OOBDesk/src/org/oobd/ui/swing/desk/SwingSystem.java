@@ -56,23 +56,28 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     public void registerOobdCore(Core thisCore) {
         core = thisCore;
 
-        try {
+        final HashMap<String, String> values = new HashMap<String, String>();
 
-            final HashMap<String, String> values = new HashMap<String, String>();
-            jmdns = JmDNS.create();
-            values.put("host-name", "OOBD-" + jmdns.getHostName());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    jmdns = JmDNS.create();
+                    values.put("host-name", "OOBD-" + jmdns.getHostName());
             // ServiceInfo service_info =  ServiceInfo.create("_http._tcp.local.", "foo._http._tcp.local.", 1234, 0, 0, "path=index.html")
-            //  ServiceInfo service_info = ServiceInfo.create("_http._tcp.", "OOBDesk", 8080, "path=/")
-            // ServiceInfo service_info =   ServiceInfo.create("_http._tcp.", "OOBDesk", 8080, 0,0,values)
-            String service_type = "_http._tcp.";
-            //       String service_name = "http://www.mycompany.com/xyz.html";
-            String service_name = "xyz";
-            int service_port = 80;
-            ServiceInfo service_info = ServiceInfo.create(service_type, service_name, service_port, "");
-            jmdns.registerService(service_info);
-        } catch (IOException ex) {
-            Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);
-        }
+                    //  ServiceInfo service_info = ServiceInfo.create("_http._tcp.", "OOBDesk", 8080, "path=/")
+                    // ServiceInfo service_info =   ServiceInfo.create("_http._tcp.", "OOBDesk", 8080, 0,0,values)
+                    String service_type = "_http._tcp.";
+                    //       String service_name = "http://www.mycompany.com/xyz.html";
+                    String service_name = "xyz";
+                    int service_port = 80;
+                    ServiceInfo service_info = ServiceInfo.create(service_type, service_name, service_port, "");
+                    jmdns.registerService(service_info);
+                } catch (IOException ex) {
+                    Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }).start();
 
     }
 
