@@ -28,8 +28,11 @@
 	<link rel="stylesheet" href="themes/jquery.mobile.icons.min.css" />
 	-->
 	<link rel="stylesheet" type="text/css" href="/libs/gridster/0.5.6/jquery.gridster.css">
-	<link rel="stylesheet" href="/libs/jquery-ui/1.11.4/jquery-ui.css">
- 
+	<!--link rel="stylesheet" href="/libs/jquery-ui-themes/1.11.4/jquery-ui.css"-->
+	<link rel="stylesheet" href="/libs/jquery-ui-themes/1.11.4/themes/dark-hive/jquery-ui.css">
+	<link rel="stylesheet" href="/libs/jquery-ui-themes/1.11.4/themes/dark-hive/theme.css">
+
+
 
 	<!--
 	<link rel="stylesheet" href="libs/jquery.mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css" />
@@ -45,18 +48,7 @@
 
 	<meta content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
 	<meta name="msapplication-tap-highlight" content="no" />
-	<link rel="stylesheet" href="/libs/jqwidgets/3.8.2/styles/jqx.base.css" type="text/css" />
-	<link rel="stylesheet" href="/libs/jqwidgets/3.8.2/styles/jqx.windowsphone.css" type="text/css" />
-	<link rel="stylesheet" href="/libs/jqwidgets/3.8.2/styles/jqx.blackberry.css" type="text/css" />
-	<link rel="stylesheet" href="/libs/jqwidgets/3.8.2/styles/jqx.android.css" type="text/css" />
-	<link rel="stylesheet" href="/libs/jqwidgets/3.8.2/styles/jqx.mobile.css" type="text/css" />
 	<link rel="stylesheet" type="text/css" href="/theme/default/css/style.css" />
-	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxcore.js"></script>
-	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxdata.js"></script>
-	<!--script type="text/javascript" src="../simulator.js"></script-->
-	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxchart.js"></script>
-	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxgauge.js"></script>
-	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxbuttons.js"></script>
 
 
 
@@ -70,15 +62,129 @@
 	<script>
 		$(function() {
 			$( "#tabs" ).tabs();
-		});
-	</script>
+			$( "#accordion" ).accordion();
+
+
+
+			var availableTags = [
+				"ActionScript",
+				"AppleScript",
+				"Asp",
+				"BASIC",
+				"C",
+				"C++",
+				"Clojure",
+				"COBOL",
+				"ColdFusion",
+				"Erlang",
+				"Fortran",
+				"Groovy",
+				"Haskell",
+				"Java",
+				"JavaScript",
+				"Lisp",
+				"Perl",
+				"PHP",
+				"Python",
+				"Ruby",
+				"Scala",
+				"Scheme"
+			];
+			$( "#autocomplete" ).autocomplete({
+				source: availableTags
+			});
+
+
+
+			$( "#button" ).button();
+			$( "#check" ).button();
+			$( "#radioset" ).buttonset();
+
+
+
+			$( "#tabs" ).tabs();
+
+
+
+			$( "#dialog" ).dialog({
+				autoOpen: false,
+				width: 400,
+				buttons: [
+					{
+						text: "Ok",
+						click: function() {
+							$( this ).dialog( "close" );
+						}
+					},
+					{
+						text: "Cancel",
+						click: function() {
+							$( this ).dialog( "close" );
+						}
+					}
+				]
+			});
+
+			// Link to open the dialog
+			$( "#dialog-link" ).click(function( event ) {
+				$( "#dialog" ).dialog( "open" );
+				event.preventDefault();
+			});
+
+
+
+			$( "#datepicker" ).datepicker({
+				inline: true
+			});
+
+
+
+			$( "#slider" ).slider({
+				range: true,
+				values: [ 17, 67 ]
+			});
+
+
+
+			$( "#progressbar" ).progressbar({
+				value: 20
+			});
+
+
+
+			$( "#spinner" ).spinner();
+
+
+
+			$( "#menu" ).menu();
+
+
+
+			$( "#tooltip" ).tooltip();
+
+
+
+			$( "#selectmenu" ).selectmenu();
+
+
+			// Hover states on the static widgets
+			$( "#dialog-link, #icons li" ).hover(
+				function() {
+					$( this ).addClass( "ui-state-hover" );
+				},
+				function() {
+					$( this ).removeClass( "ui-state-hover" );
+				}
+			);
+					});
+				</script>
 </head>
  
 <body>
 
 <img src="/libs/images/oobd_logo_tron.png" width="100">
 
-<button onclick="Oobd.update()">Update</button><label><input type='checkbox' onclick='Oobd.timer(this.checked);'>Timer</label>
+<button onclick="Oobd.update()" id="button">Update</button><input type='checkbox' onclick='Oobd.timer(this.checked);' id="check"><label for="check">Timer</label>
 
 <div id="tabs">
 	<ul>

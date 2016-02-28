@@ -1,12 +1,11 @@
 body {
-	background-color: black;
-	color: #F0F0F0;
-/*
-	background-image: url("/libs/images/tex2res4.png");
-*/	font-size: 1em;
+/*	background-color: black;
+*/	color: #F0F0F0;
+
+	background-image: url("/libs/images/px_by_Gre3g.png");
+	font-size: 1em;
 	font-family: arial, verdana, sans-serif;
 }
-
 
 div.oobd-name, div.oobd-value, div.oobd-unit {
 	border-radius:5px;
@@ -49,6 +48,53 @@ div.oobd-name, div.oobd-value, div.oobd-unit {
 	font-size: 1em;
 }
 
+
+
+
+	body{
+		font: 62.5% "Trebuchet MS", sans-serif;
+		margin: 50px;
+	}
+	.demoHeaders {
+		margin-top: 2em;
+	}
+	#dialog-link {
+		padding: .4em 1em .4em 20px;
+		text-decoration: none;
+		position: relative;
+	}
+	#dialog-link span.ui-icon {
+		margin: 0 5px 0 0;
+		position: absolute;
+		left: .2em;
+		top: 50%;
+		margin-top: -8px;
+	}
+	#icons {
+		margin: 0;
+		padding: 0;
+	}
+	#icons li {
+		margin: 2px;
+		position: relative;
+		padding: 4px 0;
+		cursor: pointer;
+		float: left;
+		list-style: none;
+	}
+	#icons span.ui-icon {
+		float: left;
+		margin: 0 4px;
+	}
+	.fakewindowcontain .ui-widget-overlay {
+		position: absolute;
+	}
+	select {
+		width: 200px;
+	}
+
+/*
+
 .ui-tabs-panel {
 	background-image: url("/libs/images/tex2res4.png");
 }
@@ -60,9 +106,11 @@ background: lightblue;
 
 }
 
-.ui-tabs .ui-tabs-panel  .ui-widget-content/* just in case you want to change the panel */
+.ui-tabs .ui-tabs-panel  .ui-widget-content
 {
 background: blue;
 	background-image: url("/libs/images/tex2res4.png");
 
 }
+
+*/
