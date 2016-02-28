@@ -27,7 +27,6 @@
 	<link rel="stylesheet" href="themes/warnings.min.css" />
 	<link rel="stylesheet" href="themes/jquery.mobile.icons.min.css" />
 	-->
-	<link rel="stylesheet" type="text/css" href="/theme/default/css/style.css" />
 	<link rel="stylesheet" type="text/css" href="/libs/gridster/0.5.6/jquery.gridster.css">
 	<link rel="stylesheet" href="/libs/jquery-ui/1.11.4/jquery-ui.css">
  
@@ -51,6 +50,7 @@
 	<link rel="stylesheet" href="/libs/jqwidgets/3.8.2/styles/jqx.blackberry.css" type="text/css" />
 	<link rel="stylesheet" href="/libs/jqwidgets/3.8.2/styles/jqx.android.css" type="text/css" />
 	<link rel="stylesheet" href="/libs/jqwidgets/3.8.2/styles/jqx.mobile.css" type="text/css" />
+	<link rel="stylesheet" type="text/css" href="/theme/default/css/style.css" />
 	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxcore.js"></script>
 	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxdata.js"></script>
 	<!--script type="text/javascript" src="../simulator.js"></script-->
@@ -75,15 +75,10 @@
 </head>
  
 <body>
-<p>
-This design is as ugly as it can be, because it does not contain any HTML beautyfication, just bare functionality to show how the interface works
-</p>
-<hr/>
-These are the two buttons to "Update the List" and "Cycling Refresh"<br/>
-<button onclick="Oobd.update()">Update</button><label><input type='checkbox' onclick='Oobd.timer(this.checked);'>Timer</label>
-<hr/>
-This is the table for the OOBD values:
 
+<img src="/libs/images/oobd_logo_tron.png" width="100">
+
+<button onclick="Oobd.update()">Update</button><label><input type='checkbox' onclick='Oobd.timer(this.checked);'>Timer</label>
 
 <div id="tabs">
 	<ul>
@@ -140,7 +135,7 @@ This is the table for the OOBD values:
 			gridster[0]=$("#values ul").gridster({
 				namespace: '#values',
 				widget_margins: [5, 5],
-				//widget_base_dimensions: [300, 300],
+				widget_base_dimensions: [140, 140],
 				max_cols: 6,
 				helper: 'clone',
 				resize: {

@@ -1,8 +1,9 @@
 body {
-	background-color: silver;
+	background-color: black;
 	color: #F0F0F0;
-	background-image: url("/libs/images/binding_dark.png");
-	font-size: 1em;
+/*
+	background-image: url("/libs/images/tex2res4.png");
+*/	font-size: 1em;
 	font-family: arial, verdana, sans-serif;
 }
 
@@ -26,6 +27,8 @@ div.oobd-name, div.oobd-value, div.oobd-unit {
 
 
 .oobd-name {
+	color: white;
+	font-size: 1.2em;
 	padding: 1px 1px 1px 20px;
 	text-overflow: ellipsis;
 	
@@ -40,11 +43,26 @@ div.oobd-name, div.oobd-value, div.oobd-unit {
 }
 
 .oobd-unit {
-	padding: 1px 1px 1px 10px;
+	padding: 10px 1px 1px 10px;
 	color: cyan;
+	text-align: right;
 	font-size: 1em;
 }
 
 .ui-tabs-panel {
-	background-image: url("/libs/images/binding_dark.png");
+	background-image: url("/libs/images/tex2res4.png");
+}
+
+.ui-tabs .ui-tabs-nav
+{
+background: lightblue;
+	background-image: url("/libs/images/tex2res4.png");
+
+}
+
+.ui-tabs .ui-tabs-panel  .ui-widget-content/* just in case you want to change the panel */
+{
+background: blue;
+	background-image: url("/libs/images/tex2res4.png");
+
 }

@@ -731,7 +731,7 @@ public class ScriptengineLua extends OobdScriptengine {
             return true;
             }catch(java.lang.RuntimeException ex){
                 keepRunning=false;
-                Logger.getLogger(ScriptengineLua.class.getName()).log(Level.WARNING,"Lua script crashed during initialisation:",
+                Logger.getLogger(ScriptengineLua.class.getName()).log(Level.WARNING,"Lua script crashed during initialisation: Please go back to main page",
                      fileName);
                core.userAlert(
                         "Lua script crashed during initialisation", "Script Failure");
