@@ -96,8 +96,31 @@
 
 
 
-			$( "#button" ).button();
-			$( "#check" ).button();
+			$( "#button" ).button({
+				icons: {
+					primary: "ui-icon-refresh"
+				}
+			});
+			$( "#check" ).button({
+				icons: {
+					primary: "ui-icon-clock"
+				}
+			});
+			$( "#outputclear" ).button({
+				icons: {
+					primary: "ui-icon-trash"
+				}
+			});
+			$( "#outputlog" ).button({
+				icons: {
+					primary: "ui-icon-pencil"
+				}
+			});
+			$( "#outputsave" ).button({
+				icons: {
+					primary: "ui-icon-disk"
+				}
+			});
 			$( "#radioset" ).buttonset();
 
 
@@ -188,9 +211,9 @@
 
 <div id="tabs">
 	<ul>
-	<li><a href="#datatab">Data</a></li>
-	<li><a href="#outputtab">Output and Buffer</a></li>
-	<li><a href="#dashtab">Dashboard</a></li>
+		<li><a href="#datatab">Data</a></li>
+		<li><a href="#outputtab">Output and Buffer</a></li>
+		<li><a href="#dashtab">Dashboard</a></li>
 	</ul>
 	<div id="datatab">
 		<div id="values" class="gridster">
@@ -210,9 +233,13 @@
 		</div>
 	</div>
 	<div id="outputtab">
+		<div id="toolbar" class="ui-widget-header ui-corner-all">
+			<button id="outputclear">Clear</button>
+			<input type="checkbox" id="outputlog" checked><label for="outputlog">Log</label>
+			<button id="outputsave" onclick="return saveOutput('output.txt');">Save</button>
+		</div>
 		<textarea id="textoutput"></textarea>
 		<p />
-		<a href="#" onclick="return saveOutput('output.txt');">Save Output</a>
 		<table id="files">
 		</table>
 	</div>
@@ -283,7 +310,7 @@
 				tbl.innerHTML='<div class="oobd-name" display="block">blu</div>\
 				<div class="oobd-value" display="block">bla</div>\
 				<div class="oobd-unit" display="block">Volt</div>\
-				<div class="oobd-update-icon_0"></div>\
+				<div class="oobd-icons" display="block"></div>\
 				</tr>';
 				//var tbdy = document.createElement('tbody');
 				//var row = document.createElement('tr');
@@ -307,6 +334,62 @@
 				// var cell1 = row.insertCell(0);
 				var cell1 = tbl.getElementsByClassName("oobd-name")[0];
 				var cell2 = tbl.getElementsByClassName("oobd-value")[0];
+				var icondiv = tbl.getElementsByClassName("oobd-icons")[0];
+
+				var checkbox = document.createElement('input');
+				checkbox.type = "checkbox";
+				checkbox.name = "name";
+				checkbox.value = "value";
+				checkbox.id = "id_";
+
+				var label = document.createElement('label')
+				label.htmlFor = "id_";
+				label.appendChild(document.createTextNode('text for label after checkbox'));
+
+				//container.appendChild(checkbox);
+				//container.appendChild(label);
+				icondiv.appendChild(checkbox);
+				icondiv.appendChild(label);
+
+				$( checkbox ).button({
+					icons: {
+						primary: "ui-icon-clipboard"
+					},
+					text: false
+				});
+
+
+
+				// - update Icon ---
+				var btn = document.createElement('button');
+				$( btn ).button({
+					icons: {
+						primary: "ui-icon-refresh"
+					},
+					text: false
+				});
+				icondiv.appendChild(btn);
+
+				// - timer Icon ---
+				var btn = document.createElement('button');
+				$( btn ).button({
+					icons: {
+						primary: "ui-icon-clock"
+					},
+					text: false
+				});
+				icondiv.appendChild(btn);
+
+				// - log Icon ---
+				var btn = document.createElement('button');
+				$( btn ).button({
+					icons: {
+						primary: "ui-icon-pencil"
+					},
+					text: false
+				});
+				icondiv.appendChild(btn);
+
 				//tbdy.appendChild(row);
 				//row = document.createElement('tr');
 				//var cell2 = row.insertCell(0);

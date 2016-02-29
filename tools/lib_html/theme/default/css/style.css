@@ -7,7 +7,20 @@ body {
 	font-family: arial, verdana, sans-serif;
 }
 
-div.oobd-name, div.oobd-value, div.oobd-unit {
+textarea{
+	border-radius:5px;
+	-moz-border-radius:5px;
+	height: 40em;
+	width: 100%;
+	background-color: dimgray;
+	font-size: 1.2em;
+	color: #F0F0F0;
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
+}
+
+div.oobd-name, div.oobd-value, div.oobd-unit  {
 	border-radius:5px;
 	-moz-border-radius:5px;
 	border-collapse:separate;
