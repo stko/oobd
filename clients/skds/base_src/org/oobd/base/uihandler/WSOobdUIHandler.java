@@ -64,7 +64,7 @@ import org.oobd.base.port.OOBDPort;
 abstract public class WSOobdUIHandler extends OobdUIHandler {
 
     protected Onion myStartupParam;
-    ChatServer wsServer;
+    protected static ChatServer wsServer;
     OOBDHttpServer myWebServer;
     final HashMap<String, ArrayList<Visualizer>> visualizers = new HashMap<String, ArrayList<Visualizer>>();// /<stores all available visalizers
     IFui userInterface;
@@ -457,7 +457,7 @@ class ChatServer extends WebSocketServer {
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
         System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
-        conn.send("{\"type\":\"WSCONNECT\",\"script\":\""+Core.getSingleInstance().readDataPool(OOBDConstants.DP_RUNNING_SCRIPT_NAME, "")+"\"}");
+        conn.send("{\"type\":\"WSCONNECT\",\"script\":\"" + Core.getSingleInstance().readDataPool(OOBDConstants.DP_RUNNING_SCRIPT_NAME, "") + "\"}");
         conn.send("{\"type\":\"WRITESTRING\" ,\"data\":\"" + Base64Coder.encodeString("Connected to OOBD") + "\"}");
         Core.getSingleInstance().writeDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, true);
     }
@@ -558,6 +558,22 @@ class ChatServer extends WebSocketServer {
         synchronized (con) {
             for (WebSocket c : con) {
                 c.send(text);
+            }
+        }
+    }
+
+    /**
+     * Close all currently connected WebSocket clients.
+     *
+     * @param text The String to send across the network.
+     * @throws InterruptedException When socket related I/O errors occur.
+     */
+    public void closeAllConnects() {
+        System.out.println("close all websockets");
+        Collection<WebSocket> con = connections();
+        synchronized (con) {
+            for (WebSocket c : con) {
+                c.close();
             }
         }
     }
@@ -745,6 +761,10 @@ class OOBDHttpServer extends NanoHTTPD {
              */
             if (myFileStream != null) {
                 mimeType = getMimeTypeForFile((String) Core.getSingleInstance().readDataPool(OOBDConstants.DP_LAST_OPENED_PATH, mimeType));
+                if (WSOobdUIHandler.wsServer != null && "text/html".equalsIgnoreCase(mimeType) ) { // we load a new page, so we have to kill the websocket to make sure the communication goes to the new page
+                    WSOobdUIHandler.wsServer.closeAllConnects();
+                }
+
                 return newChunkedResponse(Response.Status.OK, mimeType, myFileStream);
             } else {
 
