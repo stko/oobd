@@ -31,6 +31,35 @@ if (typeof Oobd == "undefined") {
 		fsBufferArray: new Array(),
 		fsBufferCounter: 0,
 		isTouchDevice : 'ontouchstart' in document.documentElement,
+		uniqueID: 0,
+		getUniqueID: function(){
+			try {
+				Oobd.uniqueID++;
+			} catch (ex) {
+				Oobd.uniqueID=0;
+			}
+			return Oobd.uniqueID;
+		},
+		FLAG_SUBMENU : 1,
+		FLAG_UPDATE  : 2,
+		FLAG_TIMER   : 4,
+		FLAG_LOG     : 8,
+		FLAG_BACK    : 16,
+		FLAG_GRAPH   : 32,
+		setUpdateFlag: function(obj,flagID,flag){
+			var viz=obj.oobd.visualizer;
+			var flagValue = viz.updevents;
+			if(flag){
+				flagValue = flagValue | flagID;
+			}else{
+				flagValue = flagValue ^ flagID;
+			}
+			viz.updevents=flagValue;
+			console.log(obj, flagValue);
+		},
+		getUpdateFlag: function(viz,flagID){
+			return  (viz.updevents & flagID) != 0;
+		},
 		loadSession: function(){
 			if (Oobd.session==null){
 				Oobd.session = JSON.parse(localStorage.getItem('session'));
@@ -296,22 +325,30 @@ if (typeof Oobd == "undefined") {
 		},
 		update: function() {
 			for (i = 0; i < Oobd.visualizers.length; ++i) {
-				console.log("update:" + Oobd.visualizers[i].command);
-				Oobd.sendUpdateReq(Oobd.visualizers[i].command, Oobd.visualizers[i].optid, Oobd.visualizers[i].value, 1);
+				console.log("check for normal update:"+i);
+				if (Oobd.getUpdateFlag(Oobd.visualizers[i],Oobd.FLAG_UPDATE)){
+					console.log("update:" + Oobd.visualizers[i].command);
+					Oobd.sendUpdateReq(Oobd.visualizers[i].command, Oobd.visualizers[i].optid, Oobd.visualizers[i].value, 1);
+				}
 			}
 		},
 		_timerTick: function() {
 			if (Oobd.timerFlag > -1) {
+				var waitForNext=100; // in case we find nothing to update, we'll wait short before try the next
 				if (Oobd.timerObject != null) window.clearTimeout(Oobd.timerObject);
 				if (Oobd.timerFlag < Oobd.visualizers.length) {
-					console.log("timer update:" + Oobd.visualizers[Oobd.timerFlag].command);
-					Oobd.sendUpdateReq(Oobd.visualizers[Oobd.timerFlag].command, Oobd.visualizers[Oobd.timerFlag].optid, Oobd.visualizers[Oobd.timerFlag].value, 2);
+					console.log("check for timer update:"+Oobd.timerFlag);
+					if (Oobd.getUpdateFlag(Oobd.visualizers[Oobd.timerFlag],Oobd.FLAG_TIMER)){
+						waitForNext=1000; // we found something to update, so'll have to wait longer (for an potential answer)
+						console.log("timer update:" + Oobd.visualizers[Oobd.timerFlag].command);
+						Oobd.sendUpdateReq(Oobd.visualizers[Oobd.timerFlag].command, Oobd.visualizers[Oobd.timerFlag].optid, Oobd.visualizers[Oobd.timerFlag].value, 2);
+					}
 					Oobd.timerFlag++;
 				}
 				if (Oobd.timerFlag == Oobd.visualizers.length) {
 					Oobd.timerFlag = 0;
 				}
-				Oobd.timerObject = window.setTimeout(Oobd._timerTick, 1000);
+				Oobd.timerObject = window.setTimeout(Oobd._timerTick, waitForNext);
 			}
 		},
 		timer: function(on) {
@@ -535,6 +572,7 @@ if (typeof Oobd == "undefined") {
 				thisElement["value"] = initialValue;
 				thisElement["type"] = obj.getAttribute("oobd:type");
 				thisElement["command"] = obj.getAttribute("oobd:fc");
+				thisElement["updevents"] = obj.getAttribute("oobd:updevents");
 				var params = obj.getAttribute("oobd:fc").match(/(\w+):(.+)/)
 				if (params != null && params.length > 2) {
 					thisElement["optid"] = params[2];
@@ -544,6 +582,7 @@ if (typeof Oobd == "undefined") {
 				thisElement["object"] = obj;
 				obj.oobd.command = thisElement["command"];
 				obj.oobd.optid = thisElement["optid"];
+				obj.oobd.visualizer = thisElement;
 				Oobd.visualizers.push(thisElement);
 				console.log("add object as visualizer:" + thisElement["command"]);
 				if (obj.getAttribute("oobd:click") == "yes") {
