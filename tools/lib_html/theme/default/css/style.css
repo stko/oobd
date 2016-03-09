@@ -64,7 +64,9 @@ div.oobd-name, div.oobd-value, div.oobd-unit  {
 	font-size: 1em;
 }
 
-
+#dashboard {
+	height: 15 px;
+}
 
 #gaugeValue {
 	background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fafafa), color-stop(100%, #f3f3f3));
@@ -131,6 +133,8 @@ div.oobd-name, div.oobd-value, div.oobd-unit  {
 	}
 
 /*
+
+	
 
 .ui-tabs-panel {
 	background-image: url("/libs/images/tex2res4.png");

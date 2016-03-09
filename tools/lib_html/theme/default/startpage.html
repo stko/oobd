@@ -75,35 +75,6 @@
 
 
 
-			var availableTags = [
-				"ActionScript",
-				"AppleScript",
-				"Asp",
-				"BASIC",
-				"C",
-				"C++",
-				"Clojure",
-				"COBOL",
-				"ColdFusion",
-				"Erlang",
-				"Fortran",
-				"Groovy",
-				"Haskell",
-				"Java",
-				"JavaScript",
-				"Lisp",
-				"Perl",
-				"PHP",
-				"Python",
-				"Ruby",
-				"Scala",
-				"Scheme"
-			];
-			$( "#autocomplete" ).autocomplete({
-				source: availableTags
-			});
-
-
 
 			$( "#button" ).button({
 				icons: {
@@ -131,11 +102,6 @@
 				}
 			});
 			$( "#radioset" ).buttonset();
-
-
-
-			$( "#tabs" ).tabs();
-
 
 
 			$( "#dialog" ).dialog({
@@ -225,19 +191,19 @@
 	</ul>
 	<div id="datatab">
 
-		<div id="dropzone" class="dropzone" ondragenter="return handleDragEnter(event)" ondrop="return handledragDropAdd(event)"   ondragover="return handleDragOver(event)">Dashboard<br/>(drop items here for quick access,<br/>
+		<div id="dropzone" class="dropzone" >Dashboard<br/>(drop items here for quick access,<br/>
 		your selection will be saved in the browser)
 		</div>
 		<div id="values" class="gridster">
 			<div></div>
 		</div>
 
-	</div>
-	<div id="dashtab">
 		<div id="dashboard" class="gridster">
 			<div></div>
 		</div>
-		<div id="trashbin" class="dropzone" ondragenter="return handleDragEnter(event)" ondrop="return handledragDropDelete(event)"   ondragover="return handleDragOver(event)">Trashbin<br/>(drop your dashboard items here to remove them)
+	</div>
+	<div id="dashtab">
+		<div id="trashbin" class="dropzone" >Trashbin<br/>(drop your dashboard items here to remove them)
 		</div>
 	</div>
 	<div id="outputtab">
@@ -303,6 +269,7 @@
 						if (target && target.id=="dropzone"){
 							console.log(target);
 							Oobd.addToDash(ui.$player[0].getAttribute('oobd:constructor'));
+							constructVisualizer(gridster[1],ui.$player[0].getAttribute('oobd:constructor'));
 						}
 					}
  					
@@ -318,16 +285,34 @@
 				helper: 'clone',
 				resize: {
 					enabled: true
+				},
+				draggable: {
+					enabled: true,
+
+					start: function(e, ui, $widget) 
+					{
+						console.log('START position: ' + ui.position.top + ' ' + ui.position.left);
+					},
+
+					drag: function(e, ui, $widget) 
+					{
+						console.log('DRAG offset: ' + ui.pointer.diff_top + ' ' + ui.pointer.diff_left );
+					},
+					stop: function(e, ui, $widget) 
+					{
+						console.log('Stop position: ' + ui.position.top + ' ' + ui.position.left );
+						console.log(ui.$player[0].getAttribute('oobd:constructor'));
+						
+						var target=document.elementFromPoint(ui.position.left, ui.position.top);
+						if (target && target.id=="trashbin"){
+							console.log(target);
+							Oobd.removeFromDash(ui.$player[0].getAttribute('oobd:constructor'));
+							gridster[1].removeWidget(ui.$player[0]);
+						}
+					}
 				}
 
 			}).data('gridster');
-			
-			var options = {
-				cellHeight: 80,
-				verticalMargin: 10
-			};
-
-
 			// initialize a new OOBD page to be shown
 			Oobd.openPage = function openPage(text) {
 				window.document.title=text;
@@ -344,8 +329,8 @@
 				var res=Oobd.getDashContructors();
 				for (var i = 0; i < res.length; i++) {
 					constructVisualizer(gridster[1],JSON.parse(res[i]));
-					//gridster[1].add_widget(constructVisualizer(JSON.parse(res[i])),2,1);
 				}
+				document.getElementById("dashtab").appendChild(document.getElementById("dashboard"));
 			}
 			Oobd.start();
 		});
@@ -379,34 +364,22 @@
 		function constructVisualizer(grid,obj){
 				var tbl = document.createElement('div');
 				tbl.display="table";
-				//tbl.style.width = '100%';
 				// to not do this all with DOM commands, we do it at once as innerHTML
 				tbl.innerHTML='<div class="oobd-name" display="table-row" >blu</div>\
 				<div class="oobd-value" display="table-row"></div>\
 				<div class="oobd-unit" display="table-row"></div>\
 				<div class="oobd-icons" display="table-row"></div>\
 				</tr>';
-				//var tbdy = document.createElement('tbody');
-				//var row = document.createElement('tr');
 				tbl.classList.add("OOBD");
 				tbl.setAttribute("oobd:fc",obj.name);
 				tbl.setAttribute("oobd:value",decodeURIComponent(escape(atob(obj.value))));
-				//tbl.setAttribute("draggable","true");
 				tbl.setAttribute("oobd:constructor",JSON.stringify(obj));
-				//tbl.addEventListener('dragstart', handleDragStart, false);
-				//row.addEventListener('dragenter', handleDragEnter, false);
-				//row.addEventListener('dragover', handleDragOver, false);
-				//row.addEventListener('dragleave', handleDragLeave, false);
-
 				if (typeof obj.updevents != "undefined" ) {
 					tbl.setAttribute("oobd:updevents",obj.updevents);
 				}else{
 					tbl.setAttribute("oobd:updevents",0);
 				}
 				grid.add_widget(tbl,2,1);
-				// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
-				// var cell1 = row.insertCell(0);
-				
 				var cell1 = tbl.getElementsByClassName("oobd-name")[0];
 				var cell2 = tbl.getElementsByClassName("oobd-value")[0];
 				var cell3 = tbl.getElementsByClassName("oobd-unit")[0];
@@ -415,13 +388,6 @@
 				createUpdateflag(icondiv, tbl, Oobd.FLAG_UPDATE , "ui-icon-refresh" , 'Refresh Flag');
 				createUpdateflag(icondiv, tbl, Oobd.FLAG_TIMER , "ui-icon-clock" , 'Timer Flag');
 				createUpdateflag(icondiv, tbl, Oobd.FLAG_LOG , "ui-icon-pencil" , 'Log changes');
-
-
-				//tbdy.appendChild(row);
-				//row = document.createElement('tr');
-				//var cell2 = row.insertCell(0);
-				//cell1.classList.add("name");
-				//cell2.classList.add("value");
 				// Add some text to the new cells:
 				cell1.innerHTML = decodeURIComponent(escape(atob(obj.tooltip)));
 				//let see, if the visualizer is a graphic element
@@ -430,7 +396,6 @@
 					tbl.setAttribute("oobd:click","yes");
 					cell2.innerHTML = decodeURIComponent(escape(atob(obj.value)));
 					tbl.oodbupdate = function(input) {
-						//this.getElementsByClassName("value")[0].innerHTML = input.value;
 						cell2.innerHTML=input.value;
 					};
 				}else{
@@ -578,8 +543,6 @@
 						break;
 					}
 				}
-				//tbdy.appendChild(row);
-				//tbl.appendChild(tbdy);		
 				Oobd.addObject(tbl, decodeURIComponent(escape(atob(obj.value))));
 				return tbl
 			}
@@ -624,24 +587,6 @@
 			//a.onclick();
 			return false;
 		};
-		function handleDragStart(ev) {
-			console.log("Start drag");
-			ev.dataTransfer.effectAllowed='move';
-			ev.dataTransfer.setData("Text", ev.target.getAttribute('oobd:constructor'));
-			ev.dataTransfer.setDragImage(ev.target,0,0);
-			return true;
-  		}
-		function handleDragOver(e) {
-			return false;
-		}
-		function handleDragEnter(e) {
-			event.preventDefault();
-			return true;
-		}
-
-		function handleDragLeave(e) {
-			this.classList.remove('over');  // this / e.target is previous target element.
-		}
 		function handledragDropAdd(ev) {
 			var src = ev.dataTransfer.getData("Text");
 			var res=Oobd.addToDash(src);
