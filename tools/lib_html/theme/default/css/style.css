@@ -7,6 +7,15 @@ body {
 	font-family: arial, verdana, sans-serif;
 }
 
+#headline{
+	font-size: 3em;
+	display: inline;
+}
+
+.highlight {
+	color : red;
+}
+
 textarea{
 	border-radius:5px;
 	-moz-border-radius:5px;
@@ -94,6 +103,7 @@ div.oobd-name, div.oobd-value, div.oobd-unit  {
 		font: 62.5% "Trebuchet MS", sans-serif;
 		margin: 50px;
 	}
+	
 	.demoHeaders {
 		margin-top: 2em;
 	}

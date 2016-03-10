@@ -183,6 +183,8 @@
 
 <button onclick="Oobd.update()" id="button">Refresh</button><input type='checkbox' onclick='Oobd.timer(this.checked);' id="check"><label for="check">Timer</label>
 
+<span id="headline"></span>
+
 <div id="tabs">
 	<ul>
 		<li><a href="#datatab">Data</a></li>
@@ -191,7 +193,7 @@
 	</ul>
 	<div id="datatab">
 
-		<div id="dropzone" class="dropzone" >Dashboard<br/>(drop items here for quick access,<br/>
+		<div id="dropzone" class="dropzone" width="100%" >Dashboard<br/>(drop items here for quick access,<br/>
 		your selection will be saved in the browser)
 		</div>
 		<div id="values" class="gridster">
@@ -253,23 +255,25 @@
 
 					start: function(e, ui, $widget) 
 					{
-						console.log('START position: ' + ui.position.top + ' ' + ui.position.left);
 					},
 
 					drag: function(e, ui, $widget) 
 					{
-						console.log('DRAG offset: ' + ui.pointer.diff_top + ' ' + ui.pointer.diff_left );
+						var target=document.elementFromPoint(ui.pointer.left, ui.pointer.top);
+						if (target && target.id=="dropzone"){
+							$(target).addClass("highlight");
+						}else{
+							$("#dropzone").removeClass("highlight");
+						}
 					},
 					stop: function(e, ui, $widget) 
 					{
-						console.log('Stop position: ' + ui.position.top + ' ' + ui.position.left );
-						console.log(ui.$player[0].getAttribute('oobd:constructor'));
-						
+						$("#dropzone").removeClass("highlight");
 						var target=document.elementFromPoint(ui.position.left, ui.position.top);
 						if (target && target.id=="dropzone"){
-							console.log(target);
+							console.log("add dashboard item");
 							Oobd.addToDash(ui.$player[0].getAttribute('oobd:constructor'));
-							constructVisualizer(gridster[1],ui.$player[0].getAttribute('oobd:constructor'));
+							constructVisualizer(gridster[1],JSON.parse(ui.$player[0].getAttribute('oobd:constructor')));
 						}
 					}
  					
@@ -291,23 +295,25 @@
 
 					start: function(e, ui, $widget) 
 					{
-						console.log('START position: ' + ui.position.top + ' ' + ui.position.left);
 					},
 
 					drag: function(e, ui, $widget) 
 					{
-						console.log('DRAG offset: ' + ui.pointer.diff_top + ' ' + ui.pointer.diff_left );
+						var target=document.elementFromPoint(ui.pointer.left, ui.pointer.top);
+						if (target && target.id=="trashbin"){
+							$(target).addClass("highlight");
+						}else{
+							$("#trashbin").removeClass("highlight");
+						}
 					},
 					stop: function(e, ui, $widget) 
 					{
-						console.log('Stop position: ' + ui.position.top + ' ' + ui.position.left );
-						console.log(ui.$player[0].getAttribute('oobd:constructor'));
-						
+						$("#trashbin").removeClass("highlight");
 						var target=document.elementFromPoint(ui.position.left, ui.position.top);
 						if (target && target.id=="trashbin"){
-							console.log(target);
+							console.log("remove dashboard item");
 							Oobd.removeFromDash(ui.$player[0].getAttribute('oobd:constructor'));
-							gridster[1].removeWidget(ui.$player[0]);
+							gridster[1].remove_widget(ui.$player[0]);
 						}
 					}
 				}
@@ -316,6 +322,7 @@
 			// initialize a new OOBD page to be shown
 			Oobd.openPage = function openPage(text) {
 				window.document.title=text;
+				$("#headline").text(text);
 				gridster[0].remove_all_widgets();
 				Oobd.clearVisualiers();
 			}
@@ -372,6 +379,10 @@
 				</tr>';
 				tbl.classList.add("OOBD");
 				tbl.setAttribute("oobd:fc",obj.name);
+				console.log(obj.value);
+				console.log(atob(obj.value));
+				console.log(escape(atob(obj.value)));
+				console.log(decodeURIComponent(escape(atob(obj.value))));
 				tbl.setAttribute("oobd:value",decodeURIComponent(escape(atob(obj.value))));
 				tbl.setAttribute("oobd:constructor",JSON.stringify(obj));
 				if (typeof obj.updevents != "undefined" ) {
