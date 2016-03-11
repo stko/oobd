@@ -1,5 +1,5 @@
 #!/bin/sh
-REV=$(svn info $1 | grep Revision  |  awk -F: '{print $2}')
+REV=$(svn info $1 | grep Rev: | awk -F: '{print $2}')
 
 if [ $? -ne 0 ] || [ -z $REV ]; then
 	REV=$(git rev-list HEAD --count)
