@@ -141,6 +141,16 @@ public class MessagePort {
     }
 
     /**
+     * \brief interupts the waiting thread
+     *
+     */
+    public void interuptWait() {
+        synchronized (myMsgs) {
+            myMsgs.notify();
+        }
+    }
+
+    /**
      * \brief get the next message in the quere \ingroup core
      *
      * @param timeout in ms to wait for an message . 0: wait forever, <0 don't
@@ -220,7 +230,7 @@ public class MessagePort {
                 } catch (InterruptedException ex) {
                     return null;
                 }
-                 if (myMsgs.isEmpty()) {
+                if (myMsgs.isEmpty()) {
                     return null;
                 } else {
                     return (Message) myMsgs.remove(0);

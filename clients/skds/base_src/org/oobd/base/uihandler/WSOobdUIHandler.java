@@ -466,6 +466,19 @@ class ChatServer extends WebSocketServer {
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         System.out.println(conn + " has left the room!");
         Core.getSingleInstance().writeDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, false);
+        if (WSOobdUIHandler.lastOutstandingQuestion != null) {
+            try {
+                WSOobdUIHandler.lastOutstandingQuestion.setContent(WSOobdUIHandler.lastOutstandingQuestion.getContent().setValue("replyID",
+                        WSOobdUIHandler.lastOutstandingQuestion.getContent().getInt("msgID")));
+            } catch (JSONException ex) {
+                Logger.getLogger(Core.class.getName()).log(
+                        Level.SEVERE, null, ex);
+            }
+            WSOobdUIHandler.lastOutstandingQuestion.getContent().setValue("answer", "");
+            WSOobdUIHandler.wsMsgPort.replyMsg(WSOobdUIHandler.lastOutstandingQuestion, WSOobdUIHandler.lastOutstandingQuestion.getContent());
+            WSOobdUIHandler.lastOutstandingQuestion = null;
+        }
+
         //Core.getSingleInstance().stopScriptEngine();
     }
 
@@ -485,6 +498,7 @@ class ChatServer extends WebSocketServer {
                     }
                     WSOobdUIHandler.lastOutstandingQuestion.getContent().setValue("answer", webvis);
                     WSOobdUIHandler.wsMsgPort.replyMsg(WSOobdUIHandler.lastOutstandingQuestion, WSOobdUIHandler.lastOutstandingQuestion.getContent());
+                    WSOobdUIHandler.lastOutstandingQuestion = null;
                 }
             } else {
                 Core.getSingleInstance().transferMsg(
@@ -761,7 +775,7 @@ class OOBDHttpServer extends NanoHTTPD {
              */
             if (myFileStream != null) {
                 mimeType = getMimeTypeForFile((String) Core.getSingleInstance().readDataPool(OOBDConstants.DP_LAST_OPENED_PATH, mimeType));
-                if (WSOobdUIHandler.wsServer != null && "text/html".equalsIgnoreCase(mimeType) ) { // we load a new page, so we have to kill the websocket to make sure the communication goes to the new page
+                if (WSOobdUIHandler.wsServer != null && "text/html".equalsIgnoreCase(mimeType)) { // we load a new page, so we have to kill the websocket to make sure the communication goes to the new page
                     WSOobdUIHandler.wsServer.closeAllConnects();
                 }
 

@@ -50,7 +50,6 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	Create Http Context  localhost:8080
 	Set Request Body	rcid=123
 	POST	/
-	Response Should Succeed
 	:FOR    ${ELEMENT}    IN    /dGVzdHN1aXRlLmxiYw==?theme=default 
 	\	Log    ${ELEMENT}
 	\	Get  ${ELEMENT}
@@ -64,6 +63,9 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	\	answer should match    {"type":"VISUALIZE" ,"name":"saveOutputAs:"}
 	\	answer should match    {"type":"VISUALIZE" ,"name":"saveOutput:"}
 	\	answer should match    {"type":"VISUALIZE" ,"name":"saveBuffer1:"}
+	\	answer should match    {"type":"VISUALIZE" ,"name":"userAlert:"}
+	\	answer should match    {"type":"VISUALIZE" ,"name":"userConfirm:"}
+	\	answer should match    {"type":"VISUALIZE" ,"name":"userPrompt:"}
 	\	answer should match    {"type":"PAGEDONE" ,"name":"Canvastest_1"}
 	\	send webUI command  {"name":"testdb:","optid":"1","actValue":"","updType":3}
 	\	answer should match    {"type":"VALUE" ,"value":"#Index 5"}

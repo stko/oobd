@@ -49,16 +49,19 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
     Starting the script Y3Jhc2gubGJj via HTTP
 	Create Http Context  localhost:8080
 	Get  /Y3Jhc2gubGJj
-    Test for initial connect message
+ 	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
+   Test for initial connect message
 	answer should match    {"type":"WSCONNECT"}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
 	answer should match    {"type":"DIALOG_INFO"}
-	answer should match    {"type":"PAGEDONE" ,"name":"Canvastest_1"}
     Starting the script testsuite.lbc via HTTP
 	Create Http Context  localhost:8080
 	Get  /dGVzdHN1aXRlLmxiYw==
+	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
     Test for second connect message
- 	answer should match    {"type":"PAGE" , "name":"OOBD-ME Main"}
+	answer should match    {"type":"WSCONNECT"}
+	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
+	answer should match    {"type":"PAGE" , "name":"OOBD-ME Main"}
 	answer should match    {"type":"VISUALIZE" ,"name":"createCMD01Menu:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"greet:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"clearOutput:"}
@@ -69,7 +72,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	answer should match    {"type":"VISUALIZE" ,"name":"userConfirm:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"userPrompt:"}
 	answer should match    {"type":"PAGEDONE" ,"name":"Canvastest_1"}
-     call a function which contains a non existing function
+    call a function which contains a non existing function
         send webUI command  {"name":"callCrash:","optid":"1","actValue":"","updType":3}
 	answer should match    {"type":"VALUE" ,"value":"%#[Tt]ried to call nil"}
     call a non existing function
@@ -145,8 +148,8 @@ starts and that every test also clears it afterwards:
 .. code:: robotframework
 
    *** Settings ***
-    suite Setup       open webUI  ${wsOobdURL}  ${wsSocketTimeout}
-    suite Teardown    close webUI
+    #suite Setup       open webUI  ${wsOobdURL}  ${wsSocketTimeout}
+    #suite Teardown    close webUI
 
 Using tags
 ----------

@@ -609,7 +609,7 @@ public class ScriptengineLua extends OobdScriptengine {
             }
             if (!doScript(scriptFileName)) { //fire an page done event 
                 keepRunning = false;
-                try {
+/*                try {
                     core.transferMsg(new Message(myself, UIHandlerMailboxName,
                             new Onion("" + "{'type':'" + CM_PAGEDONE + "',"
                                     + "'owner':'" + myself.getId() + "',"
@@ -618,7 +618,9 @@ public class ScriptengineLua extends OobdScriptengine {
                     Logger.getLogger(ScriptengineLua.class.getName()).log(
                             Level.SEVERE, null, ex);
                 }
+  */    
             }
+            
         } catch (IOException ex) {
             Logger.getLogger(ScriptengineLua.class.getName()).log(Level.SEVERE,
                     "couldn't run script engine", ex);
@@ -673,6 +675,7 @@ public class ScriptengineLua extends OobdScriptengine {
 
     public void close() {
         System.out.println("Send Scriptengine close request" + this.toString());
+        getMsgPort().interuptWait();
         keepRunning = false;
         /*
          try {

@@ -52,6 +52,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	Set Request Body  connectType=Kadaver&rcid=1234
 	POST  /
 	Get  /dGVzdHN1aXRlLmxiYw==
+	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
     Test for initial connect message
 	answer should match    {"type":"WSCONNECT"}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
@@ -146,8 +147,8 @@ starts and that every test also clears it afterwards:
 .. code:: robotframework
 
    *** Settings ***
-    suite Setup       open webUI  ${wsOobdURL}  ${wsSocketTimeout}
-    suite Teardown    close webUI
+    #suite Setup       open webUI  ${wsOobdURL}  ${wsSocketTimeout}
+    #suite Teardown    close webUI
 
 Using tags
 ----------
