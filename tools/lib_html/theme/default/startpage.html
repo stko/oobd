@@ -21,7 +21,7 @@
 	<meta name="msapplication-TileImage" content="/theme/default/favicon/ms-icon-144x144.png">
 	<meta name="theme-color" content="#ffffff">
 	<meta charset="utf-8">
-	<title>OOBD Fehlerspeicher auslesen</title>
+	<title>OOBD Main Page</title>
 	<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
 	<!--
 	<link rel="stylesheet" href="themes/warnings.min.css" />
@@ -172,7 +172,7 @@
 		</div>
 		<div id="outputtab">
 			<div id="toolbar" class="ui-widget-header ui-corner-all">
-				<button id="outputclear">Clear</button>
+				<button id="outputclear" onclick='$("#textoutput").value="";'>Clear</button>
 				<input type="checkbox" id="outputlog" checked><label for="outputlog">Log</label>
 				<button id="outputsave" onclick="return saveOutput('output.txt');">Save</button>
 			</div>
@@ -254,7 +254,7 @@
 					enabled: true,
 					start: function(e, ui, $widget) {},
 					drag: function(e, ui, $widget) {
-						var target = document.elementFromPoint(ui.pointer.left, ui.pointer.top);
+						var target = document.elementFromPoint(e.clientX, e.clientY);
 						if (target && target.id == "trashbin") {
 							$(target).addClass("highlight");
 						} else {
@@ -263,7 +263,7 @@
 					},
 					stop: function(e, ui, $widget) {
 						$("#trashbin").removeClass("highlight");
-						var target = document.elementFromPoint(ui.position.left, ui.position.top);
+						var target = document.elementFromPoint(e.clientX, e.clientY);
 						if (target && target.id == "trashbin") {
 							console.log("remove dashboard item");
 							Oobd.removeFromDash(ui.$player[0].getAttribute('oobd:constructor'));

@@ -7,14 +7,111 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<html>
 	<head>
 	<meta charset="utf-8" />
+	<link rel="apple-touch-icon" sizes="57x57" href="/theme/default/favicon/apple-icon-57x57.png" />
+	<link rel="apple-touch-icon" sizes="60x60" href="/theme/default/favicon/apple-icon-60x60.png" />
+	<link rel="apple-touch-icon" sizes="72x72" href="/theme/default/favicon/apple-icon-72x72.png" />
+	<link rel="apple-touch-icon" sizes="76x76" href="/theme/default/favicon/apple-icon-76x76.png" />
+	<link rel="apple-touch-icon" sizes="114x114" href="/theme/default/favicon/apple-icon-114x114.png" />
+	<link rel="apple-touch-icon" sizes="120x120" href="/theme/default/favicon/apple-icon-120x120.png" />
+	<link rel="apple-touch-icon" sizes="144x144" href="/theme/default/favicon/apple-icon-144x144.png" />
+	<link rel="apple-touch-icon" sizes="152x152" href="/theme/default/favicon/apple-icon-152x152.png" />
+	<link rel="apple-touch-icon" sizes="180x180" href="/theme/default/favicon/apple-icon-180x180.png" />
+	<link rel="icon" type="image/png" sizes="192x192" href="/theme/default/favicon/android-icon-192x192.png" />
+	<link rel="icon" type="image/png" sizes="32x32" href="/theme/default/favicon/favicon-32x32.png" />
+	<link rel="icon" type="image/png" sizes="96x96" href="/theme/default/favicon/favicon-96x96.png" />
+	<link rel="icon" type="image/png" sizes="16x16" href="/theme/default/favicon/favicon-16x16.png" />
+	<link rel="manifest" href="/theme/default/favicon/manifest.json" />
+	<meta name="msapplication-TileColor" content="#ffffff" />
+	<meta name="msapplication-TileImage" content="/theme/default/favicon/ms-icon-144x144.png" />
+	<meta name="theme-color" content="#ffffff" />
+	<title>OOBD Main Page</title>
+	<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+	<link rel="stylesheet" href="/libs/jquery-ui-themes/1.11.4/themes/dark-hive/jquery-ui.css" />
+	<link rel="stylesheet" href="/libs/jquery-ui-themes/1.11.4/themes/dark-hive/theme.css" />
+
+
+	<script src="/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="/libs/jquery-ui/1.11.4/jquery-ui.js"></script>
+	<script type="text/javascript" src="/libs/slick/1.5.9/slick.min.js"></script>
+
+	<link rel="stylesheet" href="/libs/jqwidgets/3.8.2/styles/jqx.base.css" type="text/css" />
+	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxcore.js"></script>
+	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxchart.js"></script>
+	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxgauge.js"></script>
+
+	<meta content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+	<meta name="msapplication-tap-highlight" content="no" />
+	<link rel="stylesheet" type="text/css" href="/theme/default/css/style.css" />
+
+	<!-- <script type="text/javascript" src="/libs/oobd/1/oobd.js"></script> -->
+	<style>
+		:invalid {
+			border: 2px solid #ff0000;
+		}
+	</style>
+	<script>
+		$(function() {
+			$("#tabs").tabs();
+			$("#accordion").accordion();
+			$("#theme").selectmenu();
+			$("#pgppw").button();
+			$("#rcid").button();
+			$("#connectType").selectmenu();
+			$("#submitbuton").button();
+			$("#radioset").buttonset();
+			$("#dialog").dialog({
+				autoOpen: false,
+				width: 400,
+				buttons: [{
+					text: "Ok",
+					click: function() {
+						$(this).dialog("close");
+					}
+				}, {
+					text: "Cancel",
+					click: function() {
+						$(this).dialog("close");
+					}
+				}]
+			});
+			// Link to open the dialog
+			$("#dialog-link").click(function(event) {
+				$("#dialog").dialog("open");
+				event.preventDefault();
+			});
+			$("#datepicker").datepicker({
+				inline: true
+			});
+			$("#slider").slider({
+				range: true,
+				values: [17, 67]
+			});
+			$("#progressbar").progressbar({
+				value: 20
+			});
+			$("#spinner").spinner();
+			$("#menu").menu();
+			$("#tooltip").tooltip();
+			$("#selectmenu").selectmenu();
+			// Hover states on the static widgets
+			$("#dialog-link, #icons li").hover(
+				function() {
+					$(this).addClass("ui-state-hover");
+				},
+				function() {
+					$(this).removeClass("ui-state-hover");
+				}
+			);
+		});
+	</script>
 	<link rel="stylesheet" type="text/css" href="/libs/slick/1.5.9/slick.css"/>
-	// Add the new slick-theme.css if you want the default styling
 	<link rel="stylesheet" type="text/css" href="/libs/slick/1.5.9/slick-theme.css"/>
 	</head>
 	<body>
 	<h2><xsl:value-of select="catalog/title"/></h2>
 	<form action="#" method="post" id="form_2">
-		<label id="h2" form="form_2">Your Settings</label><br/>
+		<img src="/libs/images/oobd_logo_tron.png" width="100"/>
+
 		<label for="theme">UI Theme</label>  
 		<select name="theme" id="theme" size="1">
 			<xsl:for-each select="catalog/theme">
@@ -27,12 +124,12 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:for-each>
-		</select><br/>
+		</select>
 		<label for="pgppw">PGP passphrase</label> 
-		<input type="text" name="pgppw" id="pgppw" maxlength="30"/><br/>
+		<input type="text" name="pgppw" id="pgppw" maxlength="30"/>
 
 		<label for="rcid">Remote Connect ID</label>  
-		<input type="text" name="rcid" id="rcid" maxlength="40"/><br/>
+		<input type="text" name="rcid" id="rcid" maxlength="40"/>
 		<label for="connectType">Connection Type</label>  
 		<select name="connectType" id="connectType" size="1">
 			<xsl:for-each select="catalog/connection">
@@ -45,8 +142,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:for-each>
-		</select><br/>
-		<button type="submit">Set</button>
+		</select>
+		<button type="submit" id="submitbuton">Set</button>
 	</form>
 	<!-- Slider from http://kenwheeler.github.io/slick/ -->
 	
@@ -127,8 +224,6 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	</div>
 
 	
-	<script src="/libs/jquery/2.1.4/jquery.min.js"></script>
-	<script type="text/javascript" src="/libs/slick/1.5.9/slick.min.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function(){
 		$('.oobdslider').slick({
