@@ -108,9 +108,11 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<link rel="stylesheet" type="text/css" href="/libs/slick/1.5.9/slick-theme.css"/>
 	</head>
 	<body>
-	<h2><xsl:value-of select="catalog/title"/></h2>
+		<h2><img src="/libs/images/oobd_logo_tron.png" width="100"/>
+	<!-- <h2><xsl:value-of select="catalog/title"/></h2> -->
+	OOBD - Open Onboard Diagnostics</h2>
+	<div id="toolbar" class="ui-widget-header ui-corner-all">
 	<form action="#" method="post" id="form_2">
-		<img src="/libs/images/oobd_logo_tron.png" width="100"/>
 
 		<label for="theme">UI Theme</label>  
 		<select name="theme" id="theme" size="1">
@@ -145,6 +147,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 		</select>
 		<button type="submit" id="submitbuton">Set</button>
 	</form>
+	</div>
 	<!-- Slider from http://kenwheeler.github.io/slick/ -->
 	
 	<div class="slider oobdslider">
@@ -154,71 +157,76 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 				<td>filename</td>
 				<td><a href="{fileid}"><xsl:value-of select="filename"/></a></td>
 			</tr>
-			<tr>
-				<td>title</td>
-				<td><xsl:value-of select="title"/></td>
-			</tr>
-			<tr>
-				<td>name</td>
-				<td><xsl:value-of select="name"/></td>
-			</tr>
-			<tr>
-				<td>shortname</td>
-				<td><xsl:value-of select="shortname"/></td>
-			</tr>
-			<tr>
-				<td>description</td>
-				<td><xsl:value-of select="description"/></td>
-			</tr>
-			<tr>
-				<td>version</td>
-				<td><xsl:value-of select="version"/></td>
-			</tr>
-			<tr>
-				<td>copyright</td>
-				<td><xsl:value-of select="copyright"/></td>
-			</tr>
-			<tr>
-				<td>author</td>
-				<td><xsl:value-of select="author"/></td>
-			</tr>
-			<tr>
-				<td>security</td>
-				<td><xsl:value-of select="security"/></td>
-			</tr>
-			<tr>
-				<td>date</td>
-				<td><xsl:value-of select="date"/></td>
-			</tr>
-			<tr>
-				<td>icon</td>
-				<td>
-					<xsl:choose>
-						<xsl:when test="icon !=''">
-							<xsl:value-of select="icon"/><img src="{filename}/{icon}"/>
-						</xsl:when>
-						<xsl:otherwise>
-							-
-						</xsl:otherwise>
-					</xsl:choose>
-				</td>
-			</tr>
-			<tr>
-				<td>screenshot</td>
-				<td><xsl:value-of select="screenshot"/></td>
-			</tr>
-			<tr>
-				<td>url</td>
-				<td><xsl:value-of select="url"/></td>
-			</tr>
-			<tr>
-				<td>email</td>
-				<td><xsl:value-of select="email"/></td>
-			</tr>
-			<tr>
-				<td>phone</td>
-				<td><xsl:value-of select="phone"/></td>
-			</tr>
+			<xsl:choose>
+				<xsl:when test="title !=''">
+					<tr><td>title</td><td><xsl:value-of select="title"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="name !=''">
+					<tr><td>name</td><td><xsl:value-of select="name"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="shortname !=''">
+					<tr><td>shortname</td><td><xsl:value-of select="shortname"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="description !=''">
+					<tr><td>description</td><td><xsl:value-of select="description"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="version !=''">
+					<tr><td>version</td><td><xsl:value-of select="version"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="copyright !=''">
+					<tr><td>copyright</td><td><xsl:value-of select="copyright"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="author !=''">
+					<tr><td>author</td><td><xsl:value-of select="author"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="security !=''">
+					<tr><td>security</td><td><xsl:value-of select="security"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="date !=''">
+					<tr><td>date</td><td><xsl:value-of select="date"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="icon !=''">
+					<tr><td>icon</td><td><xsl:value-of select="icon"/><img src="{filename}/{icon}"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="screenshot !=''">
+					<tr><td>screenshot</td><td><xsl:value-of select="screenshot"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="url !=''">
+					<tr><td>url</td><td><xsl:value-of select="url"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="email !=''">
+					<tr><td>email</td><td><xsl:value-of select="email"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="phone !=''">
+					<tr><td>phone</td><td><xsl:value-of select="phone"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
 		</table></div>
 	</xsl:for-each>
 	</div>
@@ -232,6 +240,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			speed: 300,
 			slidesToShow: 3,
 			swipeToSlide : true,
+			centerMode: true,
+			//variableWidth: true,
 			adaptiveHeight: true
 		});
 	});
