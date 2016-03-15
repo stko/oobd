@@ -127,4 +127,4 @@ epa:
 clean: genericclean $(CUSTOMCLEAN)
 
 genericclean:
-	rm -f *.html *.lbc *.luasource *.lbc.pgp lua.tmp m4.tmp gn.txt tmp
+	rm -f *.lbc *.luasource *.lbc.pgp lua.tmp m4.tmp gn.txt tmp
