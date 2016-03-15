@@ -5,10 +5,115 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 <xsl:template match="/">
 	<html>
+	<head>
+	<meta charset="utf-8" />
+	<link rel="apple-touch-icon" sizes="57x57" href="/theme/default/favicon/apple-icon-57x57.png" />
+	<link rel="apple-touch-icon" sizes="60x60" href="/theme/default/favicon/apple-icon-60x60.png" />
+	<link rel="apple-touch-icon" sizes="72x72" href="/theme/default/favicon/apple-icon-72x72.png" />
+	<link rel="apple-touch-icon" sizes="76x76" href="/theme/default/favicon/apple-icon-76x76.png" />
+	<link rel="apple-touch-icon" sizes="114x114" href="/theme/default/favicon/apple-icon-114x114.png" />
+	<link rel="apple-touch-icon" sizes="120x120" href="/theme/default/favicon/apple-icon-120x120.png" />
+	<link rel="apple-touch-icon" sizes="144x144" href="/theme/default/favicon/apple-icon-144x144.png" />
+	<link rel="apple-touch-icon" sizes="152x152" href="/theme/default/favicon/apple-icon-152x152.png" />
+	<link rel="apple-touch-icon" sizes="180x180" href="/theme/default/favicon/apple-icon-180x180.png" />
+	<link rel="icon" type="image/png" sizes="192x192" href="/theme/default/favicon/android-icon-192x192.png" />
+	<link rel="icon" type="image/png" sizes="32x32" href="/theme/default/favicon/favicon-32x32.png" />
+	<link rel="icon" type="image/png" sizes="96x96" href="/theme/default/favicon/favicon-96x96.png" />
+	<link rel="icon" type="image/png" sizes="16x16" href="/theme/default/favicon/favicon-16x16.png" />
+	<link rel="manifest" href="/theme/default/favicon/manifest.json" />
+	<meta name="msapplication-TileColor" content="#ffffff" />
+	<meta name="msapplication-TileImage" content="/theme/default/favicon/ms-icon-144x144.png" />
+	<meta name="theme-color" content="#ffffff" />
+	<title>OOBD Main Page</title>
+	<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+	<link rel="stylesheet" href="/libs/jquery-ui-themes/1.11.4/themes/dark-hive/jquery-ui.css" />
+	<link rel="stylesheet" href="/libs/jquery-ui-themes/1.11.4/themes/dark-hive/theme.css" />
+
+
+	<script src="/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="/libs/jquery-ui/1.11.4/jquery-ui.js"></script>
+	<script type="text/javascript" src="/libs/slick/1.5.9/slick.min.js"></script>
+
+	<link rel="stylesheet" href="/libs/jqwidgets/3.8.2/styles/jqx.base.css" type="text/css" />
+	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxcore.js"></script>
+	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxchart.js"></script>
+	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxgauge.js"></script>
+
+	<meta content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+	<meta name="msapplication-tap-highlight" content="no" />
+	<link rel="stylesheet" type="text/css" href="/theme/default/css/style.css" />
+
+	<!-- <script type="text/javascript" src="/libs/oobd/1/oobd.js"></script> -->
+	<style>
+		:invalid {
+			border: 2px solid #ff0000;
+		}
+	</style>
+	<script>
+		$(function() {
+			$("#tabs").tabs();
+			$("#accordion").accordion();
+			$("#theme").selectmenu();
+			$("#pgppw").button();
+			$("#rcid").button();
+			$("#connectType").selectmenu();
+			$("#submitbuton").button();
+			$("#radioset").buttonset();
+			$("#dialog").dialog({
+				autoOpen: false,
+				width: 400,
+				buttons: [{
+					text: "Ok",
+					click: function() {
+						$(this).dialog("close");
+					}
+				}, {
+					text: "Cancel",
+					click: function() {
+						$(this).dialog("close");
+					}
+				}]
+			});
+			// Link to open the dialog
+			$("#dialog-link").click(function(event) {
+				$("#dialog").dialog("open");
+				event.preventDefault();
+			});
+			$("#datepicker").datepicker({
+				inline: true
+			});
+			$("#slider").slider({
+				range: true,
+				values: [17, 67]
+			});
+			$("#progressbar").progressbar({
+				value: 20
+			});
+			$("#spinner").spinner();
+			$("#menu").menu();
+			$("#tooltip").tooltip();
+			$("#selectmenu").selectmenu();
+			// Hover states on the static widgets
+			$("#dialog-link, #icons li").hover(
+				function() {
+					$(this).addClass("ui-state-hover");
+				},
+				function() {
+					$(this).removeClass("ui-state-hover");
+				}
+			);
+		});
+	</script>
+	<link rel="stylesheet" type="text/css" href="/libs/slick/1.5.9/slick.css"/>
+	<link rel="stylesheet" type="text/css" href="/libs/slick/1.5.9/slick-theme.css"/>
+	</head>
 	<body>
-	<h2><xsl:value-of select="catalog/title"/></h2>
+		<h2><img src="/libs/images/oobd_logo_tron.png" width="100"/>
+	<!-- <h2><xsl:value-of select="catalog/title"/></h2> -->
+	OOBD - Open Onboard Diagnostics</h2>
+	<div id="toolbar" class="ui-widget-header ui-corner-all">
 	<form action="#" method="post" id="form_2">
-		<label id="h2" form="form_2">Your Settings</label><br/>
+
 		<label for="theme">UI Theme</label>  
 		<select name="theme" id="theme" size="1">
 			<xsl:for-each select="catalog/theme">
@@ -21,12 +126,12 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:for-each>
-		</select><br/>
+		</select>
 		<label for="pgppw">PGP passphrase</label> 
-		<input type="text" name="pgppw" id="pgppw" maxlength="30"/><br/>
+		<input type="text" name="pgppw" id="pgppw" maxlength="30"/>
 
 		<label for="rcid">Remote Connect ID</label>  
-		<input type="text" name="rcid" id="rcid" maxlength="40"/><br/>
+		<input type="text" name="rcid" id="rcid" maxlength="40"/>
 		<label for="connectType">Connection Type</label>  
 		<select name="connectType" id="connectType" size="1">
 			<xsl:for-each select="catalog/connection">
@@ -39,82 +144,108 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:for-each>
-		</select><br/>
-		<button type="submit">Set</button>
+		</select>
+		<button type="submit" id="submitbuton">Set</button>
 	</form>
-	<table>
+	</div>
+	<!-- Slider from http://kenwheeler.github.io/slick/ -->
+	
+	<div class="slider oobdslider">
 	<xsl:for-each select="catalog/script">
-		<tr>
-			<td>filename</td>
-			<td><a href="{fileid}"><xsl:value-of select="filename"/></a></td>
-		</tr>
-		<tr>
-			<td>title</td>
-			<td><xsl:value-of select="title"/></td>
-		</tr>
-		<tr>
-			<td>name</td>
-			<td><xsl:value-of select="name"/></td>
-		</tr>
-		<tr>
-			<td>shortname</td>
-			<td><xsl:value-of select="shortname"/></td>
-		</tr>
-		<tr>
-			<td>description</td>
-			<td><xsl:value-of select="description"/></td>
-		</tr>
-		<tr>
-			<td>version</td>
-			<td><xsl:value-of select="version"/></td>
-		</tr>
-		<tr>
-			<td>copyright</td>
-			<td><xsl:value-of select="copyright"/></td>
-		</tr>
-		<tr>
-			<td>author</td>
-			<td><xsl:value-of select="author"/></td>
-		</tr>
-		<tr>
-			<td>security</td>
-			<td><xsl:value-of select="security"/></td>
-		</tr>
-		<tr>
-			<td>date</td>
-			<td><xsl:value-of select="date"/></td>
-		</tr>
-		<tr>
-			<td>icon</td>
-			<td>
-				<xsl:choose>
-					<xsl:when test="icon !=''">
-						<xsl:value-of select="icon"/><img src="{filename}/{icon}"/>
-					</xsl:when>
-					<xsl:otherwise>
-						-
-					</xsl:otherwise>
-				</xsl:choose>
-			</td>
-		</tr>
-		<tr>
-			<td>screenshot</td>
-			<td><xsl:value-of select="screenshot"/></td>
-		</tr>
-		<tr>
-			<td>url</td>
-			<td><xsl:value-of select="url"/></td>
-		</tr>
-		<tr>
-			<td>email</td>
-			<td><xsl:value-of select="email"/></td>
-		</tr>
-		<tr>
-			<td>phone</td>
-			<td><xsl:value-of select="phone"/></td>
-		</tr>
+		<div><table>
+			<tr>
+				<td>filename</td>
+				<td><a href="{fileid}"><xsl:value-of select="filename"/></a></td>
+			</tr>
+			<xsl:choose>
+				<xsl:when test="title !=''">
+					<tr><td>title</td><td><xsl:value-of select="title"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="name !=''">
+					<tr><td>name</td><td><xsl:value-of select="name"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="shortname !=''">
+					<tr><td>shortname</td><td><xsl:value-of select="shortname"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="description !=''">
+					<tr><td>description</td><td><xsl:value-of select="description"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="version !=''">
+					<tr><td>version</td><td><xsl:value-of select="version"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="copyright !=''">
+					<tr><td>copyright</td><td><xsl:value-of select="copyright"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="author !=''">
+					<tr><td>author</td><td><xsl:value-of select="author"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="security !=''">
+					<tr><td>security</td><td><xsl:value-of select="security"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="date !=''">
+					<tr><td>date</td><td><xsl:value-of select="date"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="icon !=''">
+					<tr><td>icon</td><td><xsl:value-of select="icon"/><img src="{filename}/{icon}"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="screenshot !=''">
+					<tr><td>screenshot</td><td><xsl:value-of select="screenshot"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="url !=''">
+					<tr><td>url</td><td><xsl:value-of select="url"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="email !=''">
+					<tr><td>email</td><td><xsl:value-of select="email"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+			<xsl:choose>
+				<xsl:when test="phone !=''">
+					<tr><td>phone</td><td><xsl:value-of select="phone"/></td></tr>
+				</xsl:when>
+			</xsl:choose>
+		</table></div>
 	</xsl:for-each>
-	</table>
+	</div>
+
+	
+	<script type="text/javascript">
+	$(document).ready(function(){
+		$('.oobdslider').slick({
+			dots: true,
+			infinite: true,
+			speed: 300,
+			slidesToShow: 3,
+			swipeToSlide : true,
+			centerMode: true,
+			//variableWidth: true,
+			adaptiveHeight: true
+		});
+	});
+	</script>
 	</body>
 	</html>
 </xsl:template>

@@ -49,6 +49,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
     Starting the script testsuite.lbc via HTTP
 	Create Http Context  localhost:8080
 	Get  /dGVzdHN1aXRlLmxiYw==
+	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
     Test for initial connect message
 	answer should match    {"type":"WSCONNECT"}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
@@ -86,6 +87,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
 	Create Http Context  localhost:8080
 	Get  /dGVzdHN1aXRlLmxiYw==
+	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
     Test for second connect message
 	answer should match    {"type":"WSCONNECT"}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
@@ -103,6 +105,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
     Test calling udsServiceRequest with some DiDdata
         send webUI command  {"name":"testDidData:","optid":"","actValue":"","updType":3}
 	answer should match    {"type":"VALUE" ,"value":"#62AABBDDCC"}
+	close webUI
 
 
 .. code:: robotframework
@@ -163,8 +166,8 @@ starts and that every test also clears it afterwards:
 .. code:: robotframework
 
    *** Settings ***
-    suite Setup       open webUI  ${wsOobdURL}  ${wsSocketTimeout}
-    suite Teardown    close webUI
+   # suite Setup       open webUI  ${wsOobdURL}  ${wsSocketTimeout}
+   # suite Teardown    close webUI
 
 Using tags
 ----------

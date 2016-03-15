@@ -1192,10 +1192,12 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                 connectDeviceName = ((PortInfo) item).getDevice();
             } else {
                 connectDeviceName = item.toString();
+                connectDeviceName = connectDeviceName.replaceAll("\\(.*\\)", "").trim();
+                cb.getEditor().setItem(connectDeviceName);
             }
             if (connectDeviceName != null && !connectDeviceName.equalsIgnoreCase("")) {
                 appProbs.put(connectTypeName + "_" + OOBDConstants.PropName_SerialPort, connectDeviceName);
-                core.writeDataPool(OOBDConstants.DP_ACTUAL_DONGLE_PORT_ID, connectDeviceName);
+                core.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECT_ID, connectDeviceName);
             }
         }
     }//GEN-LAST:event_comportComboBoxActionPerformed

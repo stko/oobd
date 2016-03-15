@@ -36,7 +36,7 @@ public class FileHandlerPlain implements Archive {
             try {
                 return new FileInputStream(myFileDirectory + "/" + innerPath);
             } catch (FileNotFoundException ex) {
-                Logger.getLogger(FileHandlerPlain.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(FileHandlerPlain.class.getName()).log(Level.INFO, "could not open file {0}", innerPath);
                 return null;
             }
         }

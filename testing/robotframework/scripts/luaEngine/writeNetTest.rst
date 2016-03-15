@@ -49,6 +49,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
     Starting the script testsuite.lbc via HTTP
 	Create Http Context  localhost:8080
 	Get  /dGVzdHN1aXRlLmxiYw==
+	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
     Test for initial connect message
 	answer should match    {"type":"WSCONNECT"}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
@@ -91,7 +92,8 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
     Test openURL, returning sha256 hash of test file content
         send webUI command  {"name":"hashHoleFile:","optid":"","actValue":"","updType":3}
 	answer should match    {"type":"VALUE" ,"value":"#a3614fe562b348399b7e0a97c5720f71857caa90906434b2a7ad4d2e4ea5c27d"}
-  
+  	close webUI
+
 
 .. code:: robotframework
 
@@ -151,8 +153,8 @@ starts and that every test also clears it afterwards:
 .. code:: robotframework
 
    *** Settings ***
-    suite Setup       open webUI  ${wsOobdURL}  ${wsSocketTimeout}
-    suite Teardown    close webUI
+    #suite Setup       open webUI  ${wsOobdURL}  ${wsSocketTimeout}
+    #suite Teardown    close webUI
 
 Using tags
 ----------

@@ -493,6 +493,15 @@ function userPrompt(oldvalue,id)
 	return msgBox("prompt","Prompt Test", "Please enter 123", "default value")
 end
 
+--------------- crash tests -------------------------
+
+
+
+function callCrash(oldvalue,id)
+	callNotExistingFunction() -- this function does not exist
+	return "Still Alive after callCrash"
+end
+
 
 
 ---------------------- Main Menu --------------------------------------

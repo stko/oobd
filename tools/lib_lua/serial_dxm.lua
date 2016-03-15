@@ -71,6 +71,39 @@ function setSendID_OOBD(addr)
 	end
 end
 
+-- enable Tester present - only needed for OOBD 
+function enableTesterPresent_OOBD(addr, interval, mask)
+	if interval ~= nil then
+		if hardwareID==2 then
+--			getCmdAnswerArray({ xx, "$"..addr}) -- value unknown
+		elseif hardwareID==3 or hardwareID==4 then
+			getCmdAnswerArray({ 6 , 8 , interval})
+		end
+	end
+	
+	if mask ~= nil then
+		if hardwareID==2 then
+--			getCmdAnswerArray({ xx, "$"..addr}) -- value unknown
+		elseif hardwareID==3 or hardwareID==4 then
+			getCmdAnswerArray({ 6 , 10 , mask})
+		end
+	end
+	
+	if hardwareID==2 then
+--		getCmdAnswerArray({ xx, "$"..addr}) -- value unknown
+	elseif hardwareID==3 or hardwareID==4 then
+		getCmdAnswerArray({ 6 , 6 , "$"..addr})
+	end
+end
+
+function disableTesterPresent_OOBD(addr)
+	if hardwareID==2 then
+--		getCmdAnswerArray({ xx, "$"..addr}) -- value unknown
+	elseif hardwareID==3 or hardwareID==4 then
+		getCmdAnswerArray({ 6 , 7 , "$"..addr})
+	end
+end
+
 -- set CAN-ID filter - only needed for OOBD 
 function setCANFilter_OOBD(id, addr, mask)
 	DEBUGPRINT("nexulm", 1, "lua_utils.lua - setCANFilter_OOBD,%02d: %s", "00", "enter function setCANFilter_OOBD")
@@ -343,17 +376,17 @@ function interface_version(oldvalue,id)
 	local err
 	if hardwareID == 2 then
 		echoWrite("p 0 0\r")
-		answ=serReadLn(2000, true)
+		answ=serReadLn(1000, true)
 		return answ
 	elseif hardwareID == 3 or hardwareID == 4 then
 		return getCmdAnswerLine({ 0 , 0, 0 } , "not available" )
 	elseif hardwareID == 1 then -- DXM1 support
 		echoWrite("at!01\r")
-		answ=serReadLn(2000, true)
+		answ=serReadLn(1000, true)
 		return answ
 	else -- ELM327 specific
 		echoWrite("AT I\r")
-		answ=serReadLn(2000, true)
+		answ=serReadLn(1000, true)
 		return answ
 	end
 end
@@ -540,6 +573,8 @@ function identifyOOBDInterface(connectURL)
 	  setTimeout = setTimeout_OOBD
 	  setSendID = setSendID_OOBD
 	  setCANFilter = setCANFilter_OOBD
+	  enableTesterPresent = enableTesterPresent_OOBD
+	  disableTesterPresent = disableTesterPresent_OOBD
 
 	  --[[ Original DXM1, with old OOBD firmware <= Revision 346 ]]--
 	  hardwareID=2
@@ -579,8 +614,8 @@ function identifyOOBDInterface(connectURL)
 			hardware_model=getStringPart(answ, 1)
 		end
 		echoWrite("atz\r")
---		echoWrite("0100\r") -- DXM/ELMxxx detected and perform automatic diagnostic protocol detection
---		serWait(">",3000) -- wait 3 secs for an automatic protocol detection process
+		echoWrite("0100\r") -- DXM/ELMxxx detected and perform automatic diagnostic protocol detection
+		serWait(">",3000) -- wait 3 secs for an automatic protocol detection process
 	end
 	DEBUGPRINT("stko", 1, "serial_dxm.lua - identifyOOBDInterface,%02d: %s %s %s %s %s %s %s %s", "02", "Hardware found: ", hardwareID, ", Revision: ", firmware_revision, ", Model: ", hardware_model, ", Variant: ", hardware_variant)
 end
