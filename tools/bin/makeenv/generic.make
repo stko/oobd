@@ -1,14 +1,10 @@
 UDSLIB=../lib_protocol
 LUALIB=$(OOBDROOT)/tools/lib_lua/
-LUASVNFILE=$(OOBDROOT)/tools/lib_lua/luaSVNRevs.inc
-SVNREVLUASCRIPT=$(shell $(OOBDROOT)/tools/lib_lua/echoLuaRev.sh SVNREVLUASCRIPT)
-SVNREVLUALIB=$(shell (cd $(OOBDROOT)/tools/lib_lua/ ; ./echoLuaRev.sh SVNREVLUALIB) )
 
 LUAS=$(shell $(OOBDROOT)/tools/bin/filelist.sh lua)
-
 SPECS=$(shell $(OOBDROOT)/tools/bin/filelist.sh mdx)
-
 SOURCES=$(shell $(OOBDROOT)/tools/bin/filelist.sh luasource)
+
 LBCFILES=$(shell $(OOBDROOT)/tools/bin/filelist.sh lbc)
 KCDFILES=$(shell $(OOBDROOT)/tools/bin/filelist.sh kcd)
 OODBFILES=$(shell $(OOBDROOT)/tools/bin/filelist.sh dbcsv)
@@ -41,35 +37,31 @@ OBJECTS=$(SOURCES:.luasource=.lbc)
 
 SPECSOURCES=$(SPECS:.mdx=.luasource) 
 %.luasource: %.mdx
-	echo mdx
 	$(ODXT) $(MDXTFLAGS) $< $(@F) 
+	echo $(shell $(OOBDROOT)/tools/lib_lua/echoLuaRev.sh $< SVNREVLUASCRIPT) > $(*F).luaSVNrev
+	echo $(shell (cd $(OOBDROOT)/tools/lib_lua/ ; ./echoLuaRev.sh ./ SVNREVLUALIB) ) >> $(*F).luaSVNrev
+	cat $(@F) >> $(*F).luaSVNrev
+	mv $(*F).luaSVNrev $(@F)	
 	$(ODXT) $(MDXTHTMLFLAGS) $<  $(*F).html
 
 LUASOURCES=$(ALLSOURCES:.lua=.luasource) 
 %.luasource: %.lua 
-	cp -p $< $(@F) 
-	echo $(shell $(OOBDROOT)/tools/lib_lua/echoLuaRev.sh SVNREVLUASCRIPT) > $(*F).luaSVNrev
-	echo $(shell (cd $(OOBDROOT)/tools/lib_lua/ ; ./echoLuaRev.sh SVNREVLUALIB) ) >> $(*F).luaSVNrev
-	cat $(@F) >> $(*F).luaSVNrev
-	mv $(*F).luaSVNrev $(@F)
-	
+	echo $(shell $(OOBDROOT)/tools/lib_lua/echoLuaRev.sh $< SVNREVLUASCRIPT) > $(@F)
+	echo $(shell (cd $(OOBDROOT)/tools/lib_lua/ ; ./echoLuaRev.sh ./ SVNREVLUALIB) ) >> $(@F)
+	cat $< >> $(@F) 
+
 KCDSOURCES=$(KCDFILES:.kcd=.luasource) 
 %.luasource: %.kcd 
-	xmlstarlet $(KCDFLAGS) $< > $(@F) 
+	echo $(shell $(OOBDROOT)/tools/lib_lua/echoLuaRev.sh $< SVNREVLUASCRIPT) > $(@F)
+	echo $(shell (cd $(OOBDROOT)/tools/lib_lua/ ; ./echoLuaRev.sh ./ SVNREVLUALIB) ) >> $(@F)
+	xmlstarlet $(KCDFLAGS) $< >> $(@F) 
 	xmlstarlet $(KCDHTMLFLAGS) $<  > $(*F).html
-
-revision:
-	echo "$(SVNREVLUALIB)" > $(LUASVNFILE)
-	echo "$(SVNREVLUASCRIPT)" >> $(LUASVNFILE)
 
 OODBSOURCES=$(OODBFILES:.dbcsv=.oodb) 
 %.oodb: %.dbcsv 
 	php $(OOBDROOT)/tools/oodbcreate/oodbCreateCLI.php  $< > $(@F) 
-
-
-
-
-source: revision specs $(CUSTOMSOURCE) luas kcds oodbs
+	
+source: specs $(CUSTOMSOURCE) luas kcds oodbs
 luas: $(LUASOURCES) 
 specs: $(SPECSOURCES) $(MDXTFLAGS) $(CUSTOMSPECSOURCES)
 kcds: $(KCDSOURCES) 
@@ -135,4 +127,4 @@ epa:
 clean: genericclean $(CUSTOMCLEAN)
 
 genericclean:
-	rm -f *.lbc *.luasource *.lbc.pgp lua.tmp m4.tmp gn.txt tmp
+	rm -f *.html *.lbc *.luasource *.lbc.pgp lua.tmp m4.tmp gn.txt tmp
