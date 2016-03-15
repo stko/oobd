@@ -70,10 +70,33 @@ if (typeof Oobd == "undefined") {
 					connectType : "",
 					pgpid : "",
 					theme : "",
-					connectID : ""
+					connectID : {}
 				}
 			}
 		},
+		loadUserPrefs: function (connectTypeSelect, pgpidInput, themeSelect, connectIDInput){
+			Oobd.loadSession();
+			if (Oobd.session.connectType!=""){
+				connectTypeSelect.value=Oobd.session.connectType;
+			}
+			if (Oobd.session.pgpid!=""){
+				pgpidInput.value=Oobd.session.pgpid;
+			}
+			if (Oobd.session.theme!=""){
+				themeSelect.value=Oobd.session.theme;
+			}
+			if (typeof Oobd.session.connectID[Oobd.session.connectType] != "undefined" && Oobd.session.connectID[Oobd.session.connectType]!=""){
+				connectIDInput.value=Oobd.session.connectID[Oobd.session.connectType];
+			}
+		},
+		saveUserPrefs: function (connectTypeSelect, pgpidInput, themeSelect, connectIDInput){
+			Oobd.session.connectType=connectTypeSelect.value;
+			Oobd.session.pgpid=pgpidInput.value;
+			Oobd.session.theme=themeSelect.value;
+			Oobd.session.connectID[Oobd.session.connectType]=connectIDInput.value;
+			localStorage.setItem('session', JSON.stringify(Oobd.session));
+		},
+
 		init: function(uri) {
 			// preparing utility funktion parse xmlDoc
 			if (window.DOMParser) {

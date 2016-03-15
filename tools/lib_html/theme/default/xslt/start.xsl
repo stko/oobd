@@ -43,7 +43,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<meta name="msapplication-tap-highlight" content="no" />
 	<link rel="stylesheet" type="text/css" href="/theme/default/css/style.css" />
 
-	<!-- <script type="text/javascript" src="/libs/oobd/1/oobd.js"></script> -->
+	<script type="text/javascript" src="/libs/oobd/1/oobd.js"></script>
 	<style>
 		:invalid {
 			border: 2px solid #ff0000;
@@ -145,7 +145,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 				</xsl:choose>
 			</xsl:for-each>
 		</select>
-		<button type="submit" id="submitbuton">Set</button>
+		<button type="submit" id="submitbuton" onclick="setPrefs()">Set</button>
 	</form>
 	</div>
 	<!-- Slider from http://kenwheeler.github.io/slick/ -->
@@ -204,7 +204,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			</xsl:choose>
 			<xsl:choose>
 				<xsl:when test="icon !=''">
-					<tr><td>icon</td><td><xsl:value-of select="icon"/><img src="{filename}/{icon}"/></td></tr>
+					<tr><td>icon</td><td><img src="{filename}/{icon}"/></td></tr>
 				</xsl:when>
 			</xsl:choose>
 			<xsl:choose>
@@ -245,6 +245,11 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			adaptiveHeight: true
 		});
 	});
+	Oobd.loadUserPrefs(document.getElementById('connectType'),document.getElementById('pgppw'),document.getElementById('theme'),document.getElementById('rcid'));
+	function setPrefs(){
+		Oobd.saveUserPrefs(document.getElementById('connectType'),document.getElementById('pgppw'),document.getElementById('theme'),document.getElementById('rcid'));
+		return true;
+	}
 	</script>
 	</body>
 	</html>
