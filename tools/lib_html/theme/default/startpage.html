@@ -235,8 +235,10 @@
 						var target = document.elementFromPoint(e.clientX, e.clientY);
 						if (target && target.id == "dropzone") {
 							console.log("add dashboard item");
+							document.getElementById("datatab").appendChild(document.getElementById("dashboard"));
 							Oobd.addToDash(ui.$player[0].getAttribute('oobd:constructor'));
 							constructVisualizer(gridster[1], JSON.parse(ui.$player[0].getAttribute('oobd:constructor')));
+							document.getElementById("dashtab").appendChild(document.getElementById("dashboard"));
 						}
 					}
 				}
@@ -288,6 +290,7 @@
 				constructVisualizer(gridster[0], obj);
 			}
 			Oobd.fillDashboard = function fillDash() {
+					document.getElementById("datatab").appendChild(document.getElementById("dashboard"));
 					gridster[1].remove_all_widgets();
 					var res = Oobd.getDashContructors();
 					for (var i = 0; i < res.length; i++) {

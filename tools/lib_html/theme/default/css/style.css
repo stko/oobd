@@ -41,6 +41,28 @@ div.oobd-name, div.oobd-value, div.oobd-unit  {
 	border: 0px 0px 0px 0px;
 }
 
+.oobd-script-table {
+	margin: auto;
+	background-color: darkslategray;
+	width: 90%;
+	height: 90%;
+	border: 10px;
+	padding: 10px;
+
+}
+
+.oobd-script-icon {
+	margin: auto;
+	width: 64px;
+	height: 64px;
+}
+
+.oobd-script-filename {
+	font-size: 1.2em;
+	text-align: center;
+}
+
+
 @font-face {
   font-family: "Lcd";
   src: url("/libs/fonts/LEDBDREV.TTF") format("truetype");

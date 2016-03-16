@@ -152,10 +152,18 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	
 	<div class="slider oobdslider">
 	<xsl:for-each select="catalog/script">
-		<div><table>
+		<div><table class="oobd-script-table">
+			<xsl:choose>
+				
+				<xsl:when test="icon !=''">
+					<tr><td colspan="2"><a href="{fileid}"><img class="oobd-script-icon" src="{filename}/{icon}"/></a></td></tr>
+				</xsl:when>
+				<xsl:otherwise>
+					<tr><td colspan="2"><a href="{fileid}"><img class="oobd-script-icon" src="/theme/default/images/oobd_button.svg"/></a></td></tr>
+				</xsl:otherwise>
+			</xsl:choose>
 			<tr>
-				<td>filename</td>
-				<td><a href="{fileid}"><xsl:value-of select="filename"/></a></td>
+				<td  colspan="2" class="oobd-script-filename"><xsl:value-of select="filename"/></td>
 			</tr>
 			<xsl:choose>
 				<xsl:when test="title !=''">
@@ -174,7 +182,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			</xsl:choose>
 			<xsl:choose>
 				<xsl:when test="description !=''">
-					<tr><td>description</td><td><xsl:value-of select="description"/></td></tr>
+					<tr><td><span class="ui-icon ui-icon-lightbulb"/></td><td><xsl:value-of select="description"/></td></tr>
 				</xsl:when>
 			</xsl:choose>
 			<xsl:choose>
@@ -189,22 +197,17 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			</xsl:choose>
 			<xsl:choose>
 				<xsl:when test="author !=''">
-					<tr><td>author</td><td><xsl:value-of select="author"/></td></tr>
+					<tr><td><span class="ui-icon ui-icon-person"/></td><td><xsl:value-of select="author"/></td></tr>
 				</xsl:when>
 			</xsl:choose>
 			<xsl:choose>
 				<xsl:when test="security !=''">
-					<tr><td>security</td><td><xsl:value-of select="security"/></td></tr>
+					<tr><td><span class="ui-icon ui-icon-key"/></td><td><xsl:value-of select="security"/></td></tr>
 				</xsl:when>
 			</xsl:choose>
 			<xsl:choose>
 				<xsl:when test="date !=''">
-					<tr><td>date</td><td><xsl:value-of select="date"/></td></tr>
-				</xsl:when>
-			</xsl:choose>
-			<xsl:choose>
-				<xsl:when test="icon !=''">
-					<tr><td>icon</td><td><img src="{filename}/{icon}"/></td></tr>
+					<tr><td><span class="ui-icon ui-icon-calendar"/></td><td><xsl:value-of select="date"/></td></tr>
 				</xsl:when>
 			</xsl:choose>
 			<xsl:choose>
@@ -214,12 +217,12 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			</xsl:choose>
 			<xsl:choose>
 				<xsl:when test="url !=''">
-					<tr><td>url</td><td><xsl:value-of select="url"/></td></tr>
+					<tr><td><span class="ui-icon ui-icon-home"/></td><td><a href="http://{url}"><xsl:value-of select="url"/></a></td></tr>
 				</xsl:when>
 			</xsl:choose>
 			<xsl:choose>
 				<xsl:when test="email !=''">
-					<tr><td>email</td><td><xsl:value-of select="email"/></td></tr>
+					<tr><td><span class="ui-icon ui-icon-mail-closed"/></td><td><a href="mailto://{email}"><xsl:value-of select="url"/></a><xsl:value-of select="email"/></td></tr>
 				</xsl:when>
 			</xsl:choose>
 			<xsl:choose>
