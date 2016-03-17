@@ -156,20 +156,24 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			<xsl:choose>
 				
 				<xsl:when test="icon !=''">
-					<tr><td colspan="2"><a href="{fileid}"><img class="oobd-script-icon" src="{filename}/{icon}"/></a></td></tr>
+					<tr class="oobd-script-icon-tr"><td colspan="2"><a href="{fileid}"><img class="oobd-script-icon" src="{filename}/{icon}"/></a></td></tr>
 				</xsl:when>
 				<xsl:otherwise>
-					<tr><td colspan="2"><a href="{fileid}"><img class="oobd-script-icon" src="/theme/default/images/oobd_button.svg"/></a></td></tr>
+					<tr class="oobd-script-icon-tr"><td colspan="2"><a href="{fileid}"><img class="oobd-script-icon" src="/theme/default/images/oobd_button.svg"/></a></td></tr>
 				</xsl:otherwise>
 			</xsl:choose>
-			<tr>
-				<td  colspan="2" class="oobd-script-filename"><xsl:value-of select="filename"/></td>
-			</tr>
+			<tr class="oobd-script-filename-tr">
+			<td  colspan="2" class="oobd-script-filename">
 			<xsl:choose>
-				<xsl:when test="title !=''">
-					<tr><td>title</td><td><xsl:value-of select="title"/></td></tr>
+			<xsl:when test="title !=''">
+					<xsl:value-of select="title"/>
 				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="filename"/>
+				</xsl:otherwise>
 			</xsl:choose>
+			</td>
+			</tr>
 			<xsl:choose>
 				<xsl:when test="name !=''">
 					<tr><td>name</td><td><xsl:value-of select="name"/></td></tr>
@@ -187,12 +191,12 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			</xsl:choose>
 			<xsl:choose>
 				<xsl:when test="version !=''">
-					<tr><td>version</td><td><xsl:value-of select="version"/></td></tr>
+					<tr><td><span class="ui-icon ui-icon-tag"/></td><td><xsl:value-of select="version"/></td></tr>
 				</xsl:when>
 			</xsl:choose>
 			<xsl:choose>
 				<xsl:when test="copyright !=''">
-					<tr><td>copyright</td><td><xsl:value-of select="copyright"/></td></tr>
+					<tr><td>&#169;</td><td><xsl:value-of select="copyright"/></td></tr>
 				</xsl:when>
 			</xsl:choose>
 			<xsl:choose>
@@ -211,25 +215,27 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 				</xsl:when>
 			</xsl:choose>
 			<xsl:choose>
-				<xsl:when test="screenshot !=''">
-					<tr><td>screenshot</td><td><xsl:value-of select="screenshot"/></td></tr>
-				</xsl:when>
-			</xsl:choose>
-			<xsl:choose>
 				<xsl:when test="url !=''">
 					<tr><td><span class="ui-icon ui-icon-home"/></td><td><a href="http://{url}"><xsl:value-of select="url"/></a></td></tr>
 				</xsl:when>
 			</xsl:choose>
 			<xsl:choose>
 				<xsl:when test="email !=''">
-					<tr><td><span class="ui-icon ui-icon-mail-closed"/></td><td><a href="mailto://{email}"><xsl:value-of select="url"/></a><xsl:value-of select="email"/></td></tr>
+					<tr><td><span class="ui-icon ui-icon-mail-closed"/></td><td><a href="mailto://{email}"><xsl:value-of select="email"/></a></td></tr>
 				</xsl:when>
 			</xsl:choose>
 			<xsl:choose>
 				<xsl:when test="phone !=''">
-					<tr><td>phone</td><td><xsl:value-of select="phone"/></td></tr>
+					<tr><td><span class="ui-icon ui-icon-volume-on"/></td><td><xsl:value-of select="phone"/></td></tr>
 				</xsl:when>
 			</xsl:choose>
+			<tr class="oobd-script-screenshot-tr"><td colspan="2">
+			<xsl:choose>
+				<xsl:when test="screenshot !=''">
+					<img class="oobd-script-screenshot" src="{filename}/{screenshot}"/>
+				</xsl:when>
+			</xsl:choose>
+			</td></tr>
 		</table></div>
 	</xsl:for-each>
 	</div>

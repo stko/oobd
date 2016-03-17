@@ -65,6 +65,67 @@
 	</style>
 	<script>
 		$(function() {
+		});
+	</script>
+</head>
+
+<body>
+
+	<img src="/libs/images/oobd_logo_tron.png" width="100">
+
+	<button onclick="Oobd.update()" id="button">Refresh</button><input type='checkbox' onclick='Oobd.timer(this.checked);' id="check"><label for="check">Timer</label>
+
+	<span id="headline"></span>
+
+	<div id="tabs">
+		<ul>
+			<li><a href="#datatab">Data</a></li>
+			<li><a href="#outputtab">Output and Buffer</a></li>
+			<li><a href="#dashtab">Dashboard</a></li>
+		</ul>
+		<div id="datatab">
+
+			<div id="dropzone" class="dropzone" width="100%">Dashboard<br/>(drop items here for quick access,<br/> your selection will be saved in the browser)
+			</div>
+			<div id="values" class="gridster">
+				<div></div>
+			</div>
+
+			<div id="dashboard" class="gridster">
+				<div></div>
+			</div>
+		</div>
+		<div id="dashtab">
+			<div id="trashbin" class="dropzone">Trashbin<br/>(drop your dashboard items here to remove them)
+			</div>
+		</div>
+		<div id="outputtab">
+			<div id="toolbar" class="ui-widget-header ui-corner-all">
+				<button id="outputclear" onclick='$("#textoutput").val("");'>Clear</button>
+				<input type="checkbox" id="outputlog" checked><label for="outputlog">Log</label>
+				<button id="outputsave" onclick="return saveOutput('output.txt');">Save</button>
+			</div>
+			<textarea id="textoutput"></textarea>
+			<p />
+			<table id="files">
+			</table>
+		</div>
+		<div id="dialog-modal" style="display: none;"></div>
+		<div id="input-modal" style="display:none;">
+			<div id="input-text"></div>
+			<!-- <form> -->
+			<input name="input-input" type="text" value="First name" class="text" />
+			<!-- </form> -->
+		</div>
+	</div>
+	<script>
+		var gridster = [];
+		$(function() { //DOM Ready
+			// your page initialization code here
+			// the DOM will be available here
+			//define here what to do if a text comes in to be shown
+
+		
 			$("#tabs").tabs();
 			$("#accordion").accordion();
 			$("#button").button({
@@ -136,65 +197,7 @@
 					$(this).removeClass("ui-state-hover");
 				}
 			);
-		});
-	</script>
-</head>
 
-<body>
-
-	<img src="/libs/images/oobd_logo_tron.png" width="100">
-
-	<button onclick="Oobd.update()" id="button">Refresh</button><input type='checkbox' onclick='Oobd.timer(this.checked);' id="check"><label for="check">Timer</label>
-
-	<span id="headline"></span>
-
-	<div id="tabs">
-		<ul>
-			<li><a href="#datatab">Data</a></li>
-			<li><a href="#outputtab">Output and Buffer</a></li>
-			<li><a href="#dashtab">Dashboard</a></li>
-		</ul>
-		<div id="datatab">
-
-			<div id="dropzone" class="dropzone" width="100%">Dashboard<br/>(drop items here for quick access,<br/> your selection will be saved in the browser)
-			</div>
-			<div id="values" class="gridster">
-				<div></div>
-			</div>
-
-			<div id="dashboard" class="gridster">
-				<div></div>
-			</div>
-		</div>
-		<div id="dashtab">
-			<div id="trashbin" class="dropzone">Trashbin<br/>(drop your dashboard items here to remove them)
-			</div>
-		</div>
-		<div id="outputtab">
-			<div id="toolbar" class="ui-widget-header ui-corner-all">
-				<button id="outputclear" onclick='$("#textoutput").value="";'>Clear</button>
-				<input type="checkbox" id="outputlog" checked><label for="outputlog">Log</label>
-				<button id="outputsave" onclick="return saveOutput('output.txt');">Save</button>
-			</div>
-			<textarea id="textoutput"></textarea>
-			<p />
-			<table id="files">
-			</table>
-		</div>
-		<div id="dialog-modal" style="display: none;"></div>
-		<div id="input-modal" style="display:none;">
-			<div id="input-text"></div>
-			<!-- <form> -->
-			<input name="input-input" type="text" value="First name" class="text" />
-			<!-- </form> -->
-		</div>
-	</div>
-	<script>
-		var gridster = [];
-		$(function() { //DOM Ready
-			// your page initialization code here
-			// the DOM will be available here
-			//define here what to do if a text comes in to be shown
 			Oobd.writeString = function addText(text, cmd) {
 				switch (cmd) {
 					case "clear":
@@ -356,7 +359,7 @@
 			};
 			Oobd.start();
 		});
-
+		
 		function createUpdateflag(parentDiv, obj, updateFlag, iconID, toolTip) {
 			var checkbox = document.createElement('input');
 			checkbox.type = "checkbox";
@@ -568,23 +571,27 @@
 		Oobd.fileChange = function fileChange(id, url, change) {
 			console.log("callback on File change: " + change + " for id " + id + " with URL " + url);
 			var table = document.getElementById("files");
-			// Create an empty <tr> element and add it to the last position of the table:
-			var row = table.insertRow(-1);
-			row.setAttribute("id", "oobd-file-" + id);
-			// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
-			var cell1 = row.insertCell(0);
-			var cell2 = row.insertCell(1);
 			if (url != "") {
-				var a = document.createElement('a');
-				a.download = id;
-				a.href = url;
-				a.textContent = id;
-				cell1.appendChild(a);
-			} else {
-				cell1.innerHTML = decodeURIComponent(escape(id));
+				// Create an empty <tr> element and add it to the last position of the table:
+				var row = table.insertRow(-1);
+				row.setAttribute("id", "oobd-file-" + id);
+				// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+				var cell1 = row.insertCell(0);
+				var cell2 = row.insertCell(1);
+				if (url != "") {
+					var a = document.createElement('a');
+					a.download = id;
+					a.href = url;
+					a.textContent = id;
+					cell1.appendChild(a);
+				} else {
+					cell1.innerHTML = decodeURIComponent(escape(id));
+				}
+				// Add some text to the new cells:
+				cell2.innerHTML = decodeURIComponent(escape(change));
+			}else{
+				$( "#oobd-file-" + id ).remove();
 			}
-			// Add some text to the new cells:
-			cell2.innerHTML = decodeURIComponent(escape(change));
 		};
 
 		function saveOutput(fileName) {

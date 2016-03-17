@@ -51,6 +51,26 @@ div.oobd-name, div.oobd-value, div.oobd-unit  {
 
 }
 
+.oobd-script-icon-tr {
+	margin: auto;
+	height: 64px;
+}
+.oobd-script-filename-tr {
+	margin: auto;
+	height: 64px;
+}
+
+.oobd-script-screenshot-tr {
+	margin: auto;
+	height: 200px;
+}
+
+.oobd-script-screenshot {
+	margin: auto;
+	max-width:100%;
+	height:auto;
+}
+
 .oobd-script-icon {
 	margin: auto;
 	width: 64px;

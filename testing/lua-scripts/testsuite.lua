@@ -526,7 +526,7 @@ function CloseScript(oldvalue,id)
 end
 
 function Main(oldvalue,id)
-	openPage("OOBD-ME Main")
+	openPage("OOBD Testsuite")
 	addElement("Sensor Data >", "createCMD01Menu",">>>",0x1, "")
 	addElement("Greetings", "greet","",0x0, "")
 	addElement("clear output", "clearOutput","",0x0, "")
