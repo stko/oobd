@@ -385,13 +385,35 @@ function saveBuffer1(oldvalue,id)
 	serDisplayWrite("foo","clear")
 	serDisplayWrite(oldvalue.."_clear","save")
 	serDisplayWrite("buffer2","setbuffer")
+	serDisplayWrite("foo","clear")
 	serDisplayWrite("one line\n")
 	serDisplayWrite(oldvalue.."_append","save")
 	serDisplayWrite("second line\n")
 	serDisplayWrite(oldvalue.."_append","append")
+	serDisplayWrite("foo","close")
 	serDisplayWrite("display","setbuffer")
 	serDisplayWrite("buffer1 cleared and saved as"..oldvalue.."_clear")
 	serDisplayWrite("buffer2 created, wrote, saved, wrote and append as"..oldvalue.."_append")
+	return oldvalue
+end
+
+--- sends a buffer sequence 
+
+function bufferSequence(oldvalue,id)
+	serDisplayWrite("foo","clearall") -- clears all buffers
+	serDisplayWrite("buffer3","setbuffer") 
+	serDisplayWrite("write in buffer3-1")
+	serDisplayWrite("buffer4","setbuffer")
+	serDisplayWrite("foo","clear")
+	serDisplayWrite("write in buffer4-1")
+	serDisplayWrite("buffer3","setbuffer")
+	serDisplayWrite("write in buffer3-2")
+	serDisplayWrite("buffer4","setbuffer")
+	serDisplayWrite("write in buffer4-2")
+	serDisplayWrite("buffer3","setbuffer")
+	serDisplayWrite("foo","clear")
+	serDisplayWrite("buffer4","setbuffer")
+	serDisplayWrite("foo","close")
 	return oldvalue
 end
 
@@ -536,6 +558,7 @@ function Main(oldvalue,id)
 	addElement("User alert", "userAlert","",0x0, "")
 	addElement("User confirm", "userConfirm","",0x0, "")
 	addElement("User prompt", "userPrompt","",0x0, "")
+	addElement("buffer sequence", "bufferSequence","",0x0, "")
 	pageDone()
 	return oldvalue
 end

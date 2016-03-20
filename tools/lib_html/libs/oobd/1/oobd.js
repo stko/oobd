@@ -28,7 +28,7 @@ if (typeof Oobd == "undefined") {
 		onInitFs: null,
 		onInitFserrorHandler: null,
 		bufferName: "display",
-		fsBufferArray: new Array(),
+		fsBufferArray: new Object(),
 		fsBufferCounter: 0,
 		isTouchDevice : 'ontouchstart' in document.documentElement,
 		uniqueID: 0,
@@ -187,6 +187,7 @@ if (typeof Oobd == "undefined") {
 			if (typeof msg.data != "undefined" && msg.data.length > 0){
 				data=decodeURIComponent(escape(atob(msg.data)));
 			}
+			console.log("File handler called with modifier >"+modifier+"< and data >"+data+"<");
 			switch (modifier){
 				case "setbuffer":
 					Oobd.bufferName=data.toLowerCase();
@@ -221,11 +222,12 @@ if (typeof Oobd == "undefined") {
 					if (Oobd.bufferName != "display" ){ // a normal writestring
 							if(typeof Oobd.fileSystem != "undefined"){
 								//do we have the actual buffer already?
+								var thisBufferName=Oobd.bufferName;
 								var actBufferIndex=Oobd.fsBufferArray[Oobd.bufferName];
 								if (typeof actBufferIndex != "undefined"){
+									console.log("try to close file "+thisBufferName );
 									Oobd.fileSystem.root.getFile(actBufferIndex, {create: false}, function(fileEntry) {
-										console.log('Try to download'+fileEntry.toURL());
-										Oobd._announceFileChange(Oobd.bufferName,fileEntry.toURL(),"close");
+										Oobd._announceFileChange(thisBufferName,fileEntry.toURL(),"close");
 
 									}, Oobd.onInitFserrorHandler);
 								}
@@ -245,12 +247,12 @@ if (typeof Oobd == "undefined") {
 								var thisBufferName=Oobd.bufferName;
 								var actBufferIndex=Oobd.fsBufferArray[thisBufferName];
 								if (typeof actBufferIndex != "undefined"){
-									Oobd.fileSystem.root.getFile(actBufferIndex, {create: false}, function(fileEntry) {
+									Oobd.fileSystem.root.getFile(actBufferIndex, {create: true}, function(fileEntry) {
 										console.log('Try delete buffer '+ thisBufferName + " with index "+fileEntry.name);
 										fileEntry.remove(function() {
-											console.log('File removed.');
+											console.log('File removed:'+Oobd.bufferName + "/"+thisBufferName);
 											delete Oobd.fsBufferArray[thisBufferName];
-											Oobd._announceFileChange(Oobd.bufferName,"","clear");
+											Oobd._announceFileChange(thisBufferName,"","clear");
 										}, Oobd.onInitFserrorHandler);
 
 									}, Oobd.onInitFserrorHandler);
@@ -270,14 +272,16 @@ if (typeof Oobd == "undefined") {
 							console.log("WRITESTRING modifier "+modifier);
 							if(typeof Oobd.fileSystem != "undefined"){
 								//do we have the actual buffer already?
-								var actBufferIndex=Oobd.fsBufferArray[Oobd.bufferName];
+								var thisBufferName=Oobd.bufferName;
+								var actBufferIndex=Oobd.fsBufferArray[thisBufferName];
 								var isNewfile=false;
 								if (typeof actBufferIndex == "undefined"){
 									actBufferIndex= Oobd.fsBufferCounter++;
-									Oobd.fsBufferArray[Oobd.bufferName]=actBufferIndex;
-									console.log('new Buffer "'+Oobd.bufferName+'" created with index:'+actBufferIndex);
+									Oobd.fsBufferArray[thisBufferName]=actBufferIndex;
+									console.log('new Buffer "'+thisBufferName+'" created with index:'+actBufferIndex);
 									isNewfile=true;
 								}
+								console.log("try to write to a file with bufferindex "+ actBufferIndex);
 								Oobd.fileSystem.root.getFile(actBufferIndex, {create: true}, function(fileEntry) {
 
 									// Create a FileWriter object for our FileEntry (log.txt).
@@ -290,12 +294,12 @@ if (typeof Oobd == "undefined") {
 										};
 
 										fileWriter.onerror = function(e) {
-											console.log('Write failed: ' + e.toString());
+											console.log('Write failed on bufferindex '+actBufferIndex+': ' + e.toString());
 										};
 										console.log("FileWriter.length=",fileWriter.length);
 										if (isNewfile){ // new file
 											isNewfile=false;
-											Oobd._announceFileChange(Oobd.bufferName,fileEntry.toURL(),"create");
+											Oobd._announceFileChange(thisBufferName,fileEntry.toURL(),"create");
 										}
 										fileWriter.seek(fileWriter.length); // Start write position at EOF.
 										// Create a new Blob and write it to log.txt.

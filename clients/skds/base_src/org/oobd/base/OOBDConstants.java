@@ -141,5 +141,8 @@ public interface OOBDConstants {
     public final static int DP_ACTUAL_CONNECT_ID = 14;
     public final static int DP_ACTUAL_UIHANDLER = 15;
     public final static int DP_RUNNING_SCRIPT_NAME=16;
-    public final static int DP_ARRAY_SIZE = 17;
+    public final static int DP_HTTP_HOST = 17;
+    public final static int DP_HTTP_PORT = 18;
+    public final static int DP_WSOCKET_PORT = 19;
+    public final static int DP_ARRAY_SIZE = 20;
 }

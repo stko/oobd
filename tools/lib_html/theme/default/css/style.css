@@ -51,6 +51,10 @@ div.oobd-name, div.oobd-value, div.oobd-unit  {
 
 }
 
+.headline {
+	margin: auto;	
+	font-size: 2em;
+}
 .oobd-script-icon-tr {
 	margin: auto;
 	height: 64px;

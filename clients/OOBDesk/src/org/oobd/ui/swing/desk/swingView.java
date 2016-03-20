@@ -914,15 +914,21 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }//GEN-LAST:event_backButtonLabelMouseClicked
 
     private void startButtonLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startButtonLabelMouseClicked
-        Archive ActiveArchive = (Archive) scriptSelectComboBox.getSelectedItem();
-        if (ActiveArchive == null) {
-            return;
+        if (UIHANDLER_WS_NAME.equalsIgnoreCase((String) core.readDataPool(DP_ACTUAL_UIHANDLER, appProbs.get(OOBDConstants.PropName_UIHander, "")))) {
+
+            //startButtonLabel.setIcon(resourceMap.getIcon("startButtonLabel.icon"));
+            core.getSystemIF().openBrowser();
+        } else {
+            Archive ActiveArchive = (Archive) scriptSelectComboBox.getSelectedItem();
+            if (ActiveArchive == null) {
+                return;
+            }
+            appProbs.put(OOBDConstants.PropName_ScriptName, ActiveArchive.toString());
+            CardLayout cl = (CardLayout) (mainPanel.getLayout());
+            cl.show(mainPanel, DIAGNOSEPANEL);
+            core.writeDataPool(DP_ACTIVE_ARCHIVE, ActiveArchive);
+            core.startScriptArchive(ActiveArchive);
         }
-        appProbs.put(OOBDConstants.PropName_ScriptName, ActiveArchive.toString());
-        CardLayout cl = (CardLayout) (mainPanel.getLayout());
-        cl.show(mainPanel, DIAGNOSEPANEL);
-        core.writeDataPool(DP_ACTIVE_ARCHIVE, ActiveArchive);
-        core.startScriptArchive(ActiveArchive);
     }//GEN-LAST:event_startButtonLabelMouseClicked
 
     private void settingsComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_settingsComponentShown
@@ -1389,8 +1395,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         this.core = core;
         appProbs = this.core.getSystemIF().loadPreferences(FT_PROPS,
                 OOBDConstants.AppPrefsFileName);
-                connectTypeName = appProbs.get(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
-                transferPreferences2System(connectTypeName);
+        connectTypeName = appProbs.get(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
+        transferPreferences2System(connectTypeName);
         String script = appProbs.get(OOBDConstants.PropName_ScriptName, null);
         int i = -1;
         String actualScriptDir = appProbs.get(OOBDConstants.PropName_ScriptDir, null);
@@ -1858,7 +1864,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    
     public void transferPreferences2System(String localConnectTypeName) {
 
         if (localConnectTypeName != null && !localConnectTypeName.equalsIgnoreCase("")) {
@@ -1867,12 +1872,16 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             core.writeDataPool(DP_ACTUAL_PROXY_PORT, appProbs.getInt(localConnectTypeName + "_" + OOBDConstants.PropName_ProxyPort, 0));
 
         }
-        core.writeDataPool(DP_ACTUAL_UIHANDLER,appProbs.get(OOBDConstants.PropName_UIHander, ""));
+        core.writeDataPool(DP_ACTUAL_UIHANDLER, appProbs.get(OOBDConstants.PropName_UIHander, ""));
         String actualScriptDir = appProbs.get(OOBDConstants.PropName_ScriptDir, null);
         core.writeDataPool(DP_SCRIPTDIR, actualScriptDir);
         core.writeDataPool(DP_WWW_LIB_DIR, appProbs.get(OOBDConstants.PropName_LibraryDir, null));
         ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
         core.writeDataPool(DP_LIST_OF_SCRIPTS, files);
+        core.writeDataPool(DP_HTTP_HOST, core.getSystemIF().getSystemIP());
+        core.writeDataPool(DP_HTTP_PORT, 8080);
+        core.writeDataPool(DP_WSOCKET_PORT, 8443);
+
     }
 
 }

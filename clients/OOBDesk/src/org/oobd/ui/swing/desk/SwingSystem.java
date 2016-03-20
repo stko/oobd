@@ -4,6 +4,7 @@
  */
 package org.oobd.ui.swing.desk;
 
+import java.awt.Desktop;
 import java.net.URISyntaxException;
 import java.util.prefs.Preferences;
 import java.util.logging.Level;
@@ -20,10 +21,15 @@ import org.oobd.crypt.AES.EncodeDecodeAES;
 //import java.io.FileInputStream;
 import java.io.*;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.net.Proxy;
+import java.net.SocketException;
 import java.net.URI;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import javax.swing.JFileChooser;
 import org.json.JSONException;
@@ -64,7 +70,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                 try {
                     jmdns = JmDNS.create();
                     values.put("host-name", "OOBD-" + jmdns.getHostName());
-            // ServiceInfo service_info =  ServiceInfo.create("_http._tcp.local.", "foo._http._tcp.local.", 1234, 0, 0, "path=index.html")
+                    // ServiceInfo service_info =  ServiceInfo.create("_http._tcp.local.", "foo._http._tcp.local.", 1234, 0, 0, "path=index.html")
                     //  ServiceInfo service_info = ServiceInfo.create("_http._tcp.", "OOBDesk", 8080, "path=/")
                     // ServiceInfo service_info =   ServiceInfo.create("_http._tcp.", "OOBDesk", 8080, 0,0,values)
                     String service_type = "_http._tcp.";
@@ -79,6 +85,60 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             }
         }).start();
 
+    }
+
+    @Override
+    public String getOobdURL() {
+        InetAddress ip;
+        String hostname;
+        ip = getSystemIP();
+        hostname = ip.getHostName();
+        System.out.println("Your current Hostname : " + hostname);
+        return "http://" + hostname + ":" + ((Integer) Core.getSingleInstance().readDataPool(DP_HTTP_PORT, 8080)).toString();
+    }
+
+
+    public void openBrowser(){
+        if(Desktop.isDesktopSupported())
+{
+            try {
+                Desktop.getDesktop().browse(new URI(getOobdURL()));
+            } catch (IOException ex) {
+            } catch (URISyntaxException ex) {
+             }
+}
+    }
+
+
+    
+    @Override
+    public InetAddress getSystemIP() {
+        InetAddress ip;
+        try {
+            Enumeration e = NetworkInterface.getNetworkInterfaces();
+            while (e.hasMoreElements()) {
+                NetworkInterface n = (NetworkInterface) e.nextElement();
+                Enumeration ee = n.getInetAddresses();
+                while (ee.hasMoreElements()) {
+                    ip = (InetAddress) ee.nextElement();
+                    System.out.println(ip.getHostAddress());
+                    if (ip.isSiteLocalAddress()) {
+                        System.out.println("Your current local side IP address : " + ip);
+                        return ip;
+                    }
+                }
+            }
+            ip = InetAddress.getLocalHost();
+            System.out.println("Your current IP address : " + ip);
+            return ip;
+
+        } catch (UnknownHostException ex) {
+
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SocketException ex) {
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override

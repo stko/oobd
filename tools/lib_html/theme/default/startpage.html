@@ -71,7 +71,7 @@
 
 <body>
 
-	<img src="/libs/images/oobd_logo_tron.png" width="100">
+	<a target="_blank" href="http://oobd.org"><img src="/libs/images/oobd_logo_tron.png" width="100"></a>
 
 	<button onclick="Oobd.update()" id="button">Refresh</button><input type='checkbox' onclick='Oobd.timer(this.checked);' id="check"><label for="check">Timer</label>
 
@@ -555,8 +555,10 @@
 							value: parseFloat(decodeURIComponent(escape(atob(obj.value)))),
 							min: obj.opts.min,
 							max: obj.opts.max,
-							title: decodeURIComponent(escape(atob(obj.tooltip))),
-							label: decodeURIComponent(escape(obj.unit))
+							//relativeGaugeSize: true,
+
+							//title: decodeURIComponent(escape(atob(obj.tooltip))),
+							label: obj.opts.unit
 						});
 						tbl.oodbupdate = function(input) {
 							g1.refresh(parseFloat(input.value));
@@ -571,26 +573,35 @@
 		Oobd.fileChange = function fileChange(id, url, change) {
 			console.log("callback on File change: " + change + " for id " + id + " with URL " + url);
 			var table = document.getElementById("files");
-			if (url != "") {
-				// Create an empty <tr> element and add it to the last position of the table:
-				var row = table.insertRow(-1);
-				row.setAttribute("id", "oobd-file-" + id);
-				// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
-				var cell1 = row.insertCell(0);
-				var cell2 = row.insertCell(1);
-				if (url != "") {
-					var a = document.createElement('a');
-					a.download = id;
-					a.href = url;
-					a.textContent = id;
-					cell1.appendChild(a);
-				} else {
-					cell1.innerHTML = decodeURIComponent(escape(id));
+			var fileID="oobd-file-" + id;
+			var existingEntry=document.getElementById(fileID);
+			if (change=="clear"){
+				if (existingEntry){
+					existingEntry.parentNode.removeChild(existingEntry);
 				}
-				// Add some text to the new cells:
-				cell2.innerHTML = decodeURIComponent(escape(change));
 			}else{
-				$( "#oobd-file-" + id ).remove();
+				var cell2;
+				if (!existingEntry){
+					// Create an empty <tr> element and add it to the last position of the table:
+					var row = table.insertRow(-1);
+					row.setAttribute("id", fileID);
+					// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+					var cell1 = row.insertCell(0);
+					cell2 = row.insertCell(1);
+					cell2.setAttribute("id",fileID+"-c");
+					if (url != "") {
+						var a = document.createElement('a');
+						a.download = id;
+						a.href = url;
+						a.textContent = id;
+						cell1.appendChild(a);
+					} else {
+						cell1.innerHTML = decodeURIComponent(escape(id));
+					}
+				}else{
+					cell2=document.getElementById(fileID+"-c");
+				}
+				cell2.innerHTML = decodeURIComponent(escape(change));
 			}
 		};
 

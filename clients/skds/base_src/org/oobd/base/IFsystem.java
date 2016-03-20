@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import java.util.MissingResourceException;
 import java.io.InputStream;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.prefs.Preferences;
 import org.oobd.base.scriptengine.OobdScriptengine;
 import org.oobd.base.support.Onion;
@@ -33,6 +34,23 @@ public interface IFsystem {
      * @return complete Path for the wanted filename
      */
     public String generateUIFilePath(int pathID, String filename);
+
+    /**
+     * \brief reports the URL OOBD runs on
+     * @return the URL of the OOBD build in webserver
+     */
+    public String getOobdURL();
+
+    /**
+     * \brief reports the ip address OOBD runs on
+     * @return the ip address of the device OOBD runs on
+     */
+    public InetAddress getSystemIP();
+
+    /**
+     * \brief opens the system web browser
+      */
+    public void openBrowser();
 
     /**
      * \brief loads a Property file as the IO & Exeption handling for loading

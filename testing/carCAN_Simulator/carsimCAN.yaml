@@ -2,6 +2,30 @@
 - d: [0x07, 0x7F, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77]
   e: 0
   t: 5
+
+
+#### The OBDII standard commands:
+
+"pid_0100": # actual only four bits are set to make the list of pids to support not too long, but feel free to exend :-)
+- d: [0x06, 0x41, 0xFF, 0xF0, 0x00, 0x00, 0x00]
+  e: 0
+  t: 5
+
+"pid_0104": # 0x4,"Calculated engine load value"
+- d: [0x04, 0x41, 0x04, 0x08, 0x00]
+  e: 0
+  t: 5
+
+
+
+ #                                createCall(availPIDs, 0x5,"Engine coolant temperature", "getNumPIDs")
+ #                               createCall(availPIDs, 0x6,"Short term fuel % trim—Bank 1", "getNumPIDs")
+ #                               createCall(availPIDs, 0x7,"Long term fuel % trim—Bank 1", "getNumPIDs")
+
+
+
+
+
 "pid_111111":
 - d: [0x03, 0x11, 0x22, 0x33]
   e: 0

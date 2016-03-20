@@ -25,8 +25,7 @@ function vin(oldvalue,id)
 			end
 			return res
 		elseif udsBuffer[1]== 0x7F then
-			nrcCode= nrcCodes[udsBuffer[3]]			
-			return "NRC: "..string.format("0x%x",udsBuffer[3]).." = "..nrcCode
+			return "NRC: "..string.format("0x%x",udsBuffer[3])
 		else
 			return "Error"
 		end
@@ -97,46 +96,46 @@ id0x1F = { byte = 1 , size = 2 , mult = 1 , offset = 0, unit = "seconds"} ,
 id0x21 = { byte = 1 , size = 2 , mult = 1 , offset = 0, unit = "km"} ,
 id0x22 = { byte = 1 , size = 2 , mult = 0.078125 , offset = 0, unit = "kPa"} ,
 id0x23 = { byte = 1 , size = 2 , mult = 10 , offset = 0, unit = "kPa (gauge)"} ,
-id0x24 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "N/A"} ,
+id0x24 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "-"} ,
 id0x124 = { byte = 2 , size = 2 , mult = 0.000122070313 , offset = 0, unit = "V"} ,
-id0x25 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "N/A"} ,
+id0x25 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "-"} ,
 id0x125 = { byte = 2 , size = 2 , mult = 0.000122070313 , offset = 0, unit = "V"} ,
-id0x26 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "N/A"} ,
+id0x26 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "-"} ,
 id0x126 = { byte = 2 , size = 2 , mult = 0.000122070313 , offset = 0, unit = "V"} ,
-id0x27 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "N/A"} ,
+id0x27 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "-"} ,
 id0x127 = { byte = 2 , size = 2 , mult = 0.000122070313 , offset = 0, unit = "V"} ,
-id0x28 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "N/A"} ,
+id0x28 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "-"} ,
 id0x128 = { byte = 2 , size = 2 , mult = 0.000122070313 , offset = 0, unit = "V"} ,
 -------------- 3 section -----------------------------------------------
-id0x29 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "N/A"} ,
+id0x29 = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "-"} ,
 id0x129 = { byte = 1 , size = 2 , mult = 0.000122070313 , offset = 0, unit = "V"} ,
-id0x2A = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "N/A"} ,
+id0x2A = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "-"} ,
 id0x12A = { byte = 1 , size = 2 , mult = 0.000122070313 , offset = 0, unit = "V"} ,
-id0x2B = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "N/A"} ,
+id0x2B = { byte = 1 , size = 2 , mult = 0.000030517578 , offset = 0, unit = "-"} ,
 id0x12B = { byte = 1 , size = 2 , mult = 0.000122070313 , offset = 0, unit = "V"} ,
 id0x2C = { byte = 1 , size = 1 , mult = 0.3921568627 , offset = 0, unit = "%"} ,
 id0x2D = { byte = 1 , size = 1 , mult = 0.78125 , offset = -100, unit = "%"} ,
 id0x2E = { byte = 1 , size = 1 , mult = 0.3921568627 , offset = 0, unit = "%"} ,
 id0x2F = { byte = 1 , size = 1 , mult = 0.3921568627 , offset = 0, unit = "%"} ,
-id0x30 = { byte = 1 , size = 1 , mult = 1 , offset = 0, unit = "N/A"} ,
+id0x30 = { byte = 1 , size = 1 , mult = 1 , offset = 0, unit = "-"} ,
 id0x31 = { byte = 1 , size = 2 , mult = 0 , offset = 0, unit = "km"} ,
 id0x32 = { byte = 1 , size = 2 , mult = 0.25 , offset = -8.192, unit = "Pa"} ,
 id0x33 = { byte = 1 , size = 1 , mult = 1 , offset = 0, unit = "kPa (Absolute)"} ,
-id0x34 = { byte = 1 , size = 2 , mult = 0.000030517578, offset = 0, unit = "N/A"} ,
+id0x34 = { byte = 1 , size = 2 , mult = 0.000030517578, offset = 0, unit = "-"} ,
 id0x134 = { byte = 1 , size = 2 , mult = 0.00390625, offset = -128, unit = "mA"} ,
-id0x35 = { byte = 1 , size = 2 , mult = 0.000030517578, offset = 0, unit = "N/A"} ,
+id0x35 = { byte = 1 , size = 2 , mult = 0.000030517578, offset = 0, unit = "-"} ,
 id0x135 = { byte = 1 , size = 2 , mult = 0.00390625, offset = -128, unit = "mA"} ,
-id0x36 = { byte = 1 , size = 2 , mult = 0.000030517578, offset = 0, unit = "N/A"} ,
+id0x36 = { byte = 1 , size = 2 , mult = 0.000030517578, offset = 0, unit = "-"} ,
 id0x136 = { byte = 1 , size = 2 , mult = 0.00390625, offset = -128, unit = "mA"} ,
-id0x37 = { byte = 1 , size = 2 , mult = 0.000030517578, offset = 0, unit = "N/A"} ,
+id0x37 = { byte = 1 , size = 2 , mult = 0.000030517578, offset = 0, unit = "-"} ,
 id0x137 = { byte = 1 , size = 2 , mult = 0.00390625, offset = -128, unit = "mA"} ,
-id0x38 = { byte = 1 , size = 2 , mult = 0.000030517578, offset = 0, unit = "N/A"} ,
+id0x38 = { byte = 1 , size = 2 , mult = 0.000030517578, offset = 0, unit = "-"} ,
 id0x138 = { byte = 1 , size = 2 , mult = 0.00390625, offset = -128, unit = "mA"} ,
-id0x39 = { byte = 1 , size = 2 , mult = 0.000030517578, offset = 0, unit = "N/A"} ,
+id0x39 = { byte = 1 , size = 2 , mult = 0.000030517578, offset = 0, unit = "-"} ,
 id0x139 = { byte = 1 , size = 2 , mult = 0.00390625, offset = -128, unit = "mA"} ,
-id0x3A = { byte = 1 , size = 2 , mult = 0.000030517578, offset = 0, unit = "N/A"} ,
+id0x3A = { byte = 1 , size = 2 , mult = 0.000030517578, offset = 0, unit = "-"} ,
 id0x13A = { byte = 1 , size = 2 , mult = 0.00390625, offset = -128, unit = "mA"} ,
-id0x3B = { byte = 1 , size = 2 , mult = 0.000030517578, offset = 0, unit = "N/A"} ,
+id0x3B = { byte = 1 , size = 2 , mult = 0.000030517578, offset = 0, unit = "-"} ,
 id0x13B = { byte = 1 , size = 2 , mult = 0.00390625, offset = -128, unit = "mA"} ,
 id0x3C = { byte = 1 , size = 2 , mult = 0.1 , offset = -40, unit = "°C"} ,
 id0x3D = { byte = 1 , size = 2 , mult = 0.1 , offset = -40, unit = "°C"} ,
@@ -144,7 +143,7 @@ id0x3E = { byte = 1 , size = 2 , mult = 0.1 , offset = -40, unit = "°C"} ,
 id0x3F = { byte = 1 , size = 2 , mult = 0.1 , offset = -40, unit = "°C"} ,
 id0x42 = { byte = 1 , size = 2 , mult = 0.001 , offset = 0, unit = "V"} ,
 id0x43 = { byte = 1 , size = 2 , mult = 0.392156862745 , offset = 0, unit = "%"} ,
-id0x44 = { byte = 1 , size = 2 , mult = 0 , offset = 0, unit = "N/A"} ,
+id0x44 = { byte = 1 , size = 2 , mult = 0 , offset = 0, unit = "-"} ,
 	id0xFF = "dummy"
 
   }
@@ -171,8 +170,7 @@ function getNumPIDs(oldvalue,id)
 			res= paramList ~= null and CalcNumPid( paramList.byte , paramList.size , paramList.mult , paramList.offset, paramList.unit)  or "index error"
 			return res
 		elseif udsBuffer[1]== 0x7F then
-			nrcCode= nrcCodes[udsBuffer[3]]			
-			return "NRC: "..string.format("0x%x",udsBuffer[3]).." = "..nrcCode
+			return "NRC: "..string.format("0x%x",udsBuffer[3])
 		else
 			return "Error"
 		end
@@ -184,6 +182,8 @@ end
 
 function hasBit(value, bitNr) -- bitNr starts with 0
 	bitValue=2 ^ bitNr
+    print("bitValue",bitValue,"value",value,"bitNr",bitNr)
+	
 	return value % (bitValue + bitValue) >= bitValue -- found in the internet: nice trick to do bitoperations in Lua, which does not have such functions by default
 end
 
@@ -195,10 +195,19 @@ function createCall(availPIDs, id, title, func)
   	
 	byteNr=(smallId - (smallId % 8))/8
     bitNr = 7- (smallId - byteNr *8)
+    print("byteNr",byteNr,"smallID",smallId,"bitNr",bitNr)
     if hasBit(availPIDs[byteNr], bitNr) then
-		idstring=string.format("%X",id)
+		idstring=string.format("id0x%X",id)
 		print("Id-String=",idstring,id)
-		addElement(title, func,"-",0x6, "0x"..string.format("%X",id))
+		paramList=PID01CMDs[idstring]
+		if (paramList~=null) then
+			extValues=  { type="Gauge", min=paramList.offset , max = paramList.mult * ( 2 ^ ( 8 * paramList.size ) ) - paramList.offset , unit = paramList.unit} 
+			print("Id-String=",idstring)
+			addElement(title, func,(paramList.mult * ( 2 ^ ( 8 * paramList.size ) ) - paramList.offset)/2 .."",0x6, "0x"..string.format("%X",id),extValues)
+		else
+			print("NO extended menu with index ",idstring)
+			addElement(title, func,"-",0x6, "0x"..string.format("%X",id))
+		end
 	end
 end
 
@@ -257,8 +266,7 @@ function createCMD01Menu(oldvalue,id)
 				return "No avail. PIDs found"
 			end
 		elseif udsBuffer[1]== 0x7F then
-			nrcCode= nrcCodes[udsBuffer[3]]			
-			return "NRC: "..string.format("0x%x",udsBuffer[3]).." = "..nrcCode
+			return "NRC: "..string.format("0x%x",udsBuffer[3])
 		else
 			return "Error"
 		end
@@ -303,8 +311,7 @@ function createCMD02Menu(oldvalue,id)
 				return "No avail. PIDs found"
 			end
 		elseif udsBuffer[1]== 0x7F then
-			nrcCode= nrcCodes[udsBuffer[3]]			
-			return "NRC: "..string.format("0x%x",udsBuffer[3]).." = "..nrcCode
+			return "NRC: "..string.format("0x%x",udsBuffer[3])
 		else
 			return "Error"
 		end
@@ -369,8 +376,7 @@ function createCMD03Menu(oldvalue,id)
 				return "No avail. PIDs found"
 			end
 		elseif udsBuffer[1]== 0x7F then
-			nrcCode= nrcCodes[udsBuffer[3]]			
-			return "NRC: "..string.format("0x%x",udsBuffer[3]).." = "..nrcCode
+			return "NRC: "..string.format("0x%x",udsBuffer[3])
 		else
 			return "Error"
 		end
@@ -413,8 +419,7 @@ function showdtcs(oldvalue,id)
 				return tostring(nrOfDTC).." DTC(s)"
 			end
 		elseif udsBuffer[1]== 0x7F then
-			nrcCode= nrcCodes[udsBuffer[3]]			
-			return "NRC: "..string.format("0x%x",udsBuffer[3]).." = "..nrcCode
+			return "NRC: "..string.format("0x%x",udsBuffer[3])
 		else
 			return "Error"
 		end
@@ -446,7 +451,7 @@ function CloseScript(oldvalue,id)
 end
 
 function Main(oldvalue,id)
-	openPage("OOBD-ME Main")
+	openPage("OOBD Vehicle Main Screen")
 	addElement("Sensor Data >", "createCMD01Menu",">>>",0x1, "")
     addElement("Snapshot Data >", "createCMD02Menu",">>>",0x1, "")
     addElement("Dynamic Menu3 >", "createCMD03Menu",">>>",0x1, "")

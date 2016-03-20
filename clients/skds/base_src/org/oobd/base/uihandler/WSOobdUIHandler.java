@@ -43,10 +43,13 @@ import java.io.File;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.util.Hashtable;
 import static org.oobd.base.OOBDConstants.DP_RUNNING_SCRIPTENGINE;
 import static org.oobd.base.OOBDConstants.DP_SCRIPTDIR;
 import static org.oobd.base.OOBDConstants.DP_ACTIVE_ARCHIVE;
+import static org.oobd.base.OOBDConstants.DP_HTTP_HOST;
+import static org.oobd.base.OOBDConstants.DP_HTTP_PORT;
 import org.oobd.base.archive.Archive;
 import org.oobd.base.archive.Factory;
 import org.oobd.base.port.OOBDPort;
@@ -93,9 +96,8 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
         System.err.println("Start WEB SERVER");
 
         WebSocketImpl.DEBUG = false;
-        int port = 8887; // 843 flash policy port
         try {
-            wsServer = new ChatServer(8443);
+            wsServer = new ChatServer( UISystem.getSystemIP(),(int)Core.getSingleInstance().readDataPool(DP_WSOCKET_PORT, 8443));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -453,7 +455,11 @@ class ChatServer extends WebSocketServer {
     public ChatServer(InetSocketAddress address) {
         super(address);
     }
-
+  public ChatServer(InetAddress address, int port) {
+           //super(new InetSocketAddress(port));
+     super(new InetSocketAddress(address,port));
+    }
+    
     @Override
     public void onOpen(WebSocket conn, ClientHandshake handshake) {
         System.out.println(conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!");
@@ -648,11 +654,15 @@ class OOBDHttpServer extends NanoHTTPD {
     };
 
     public OOBDHttpServer() throws IOException {
-        super(8080);
+        //super(8080);
         //       uploader = new NanoFileUpload(new DiskFileItemFactory());
 
+        
+         super( ((InetAddress)Core.getSingleInstance().readDataPool(DP_HTTP_HOST,null)).getHostAddress(), (int)Core.getSingleInstance().readDataPool(DP_HTTP_PORT, 8080));
+        
+        
         start();
-        System.out.println("\nRunning! Point your browers to http://localhost:8080/ \n");
+        System.out.println("\nRunning! Point your browsers to "+ Core.getSingleInstance().getSystemIF().getOobdURL()+" \n");
     }
 
     public static void main(String[] args) {
