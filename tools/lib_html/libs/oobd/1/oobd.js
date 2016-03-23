@@ -415,6 +415,11 @@ if (typeof Oobd == "undefined") {
 							var owner = obj.to.name;
 							for (i = 0; i < Oobd.visualizers.length; ++i) { // search for the real id of a function owner
 								if (Oobd.visualizers[i].command == owner) {
+									if (Oobd.visualizers[i].object.oobd.value != obj.value){
+										if (Oobd.getUpdateFlag(Oobd.visualizers[i],Oobd.FLAG_LOG)){
+											Oobd.writeString(new Date().toLocaleTimeString()+"\t"+Oobd.visualizers[i].tooltip + "\t"+Oobd.visualizers[i].object.oobd.value + "\t"+obj.value+"\n","");
+										}
+									}
 									Oobd.visualizers[i].object.oobd.value = obj.value;
 									Oobd.visualizers[i].object.oodbupdate(obj);
 								}
@@ -600,6 +605,7 @@ if (typeof Oobd == "undefined") {
 				thisElement["type"] = obj.getAttribute("oobd:type");
 				thisElement["command"] = obj.getAttribute("oobd:fc");
 				thisElement["updevents"] = obj.getAttribute("oobd:updevents");
+				thisElement["tooltip"] = obj.getAttribute("oobd:tooltip");
 				var params = obj.getAttribute("oobd:fc").match(/(\w+):(.+)/)
 				if (params != null && params.length > 2) {
 					thisElement["optid"] = params[2];

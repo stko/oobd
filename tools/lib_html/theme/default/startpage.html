@@ -372,13 +372,16 @@
 			label.appendChild(document.createTextNode(toolTip));
 			parentDiv.appendChild(checkbox);
 			parentDiv.appendChild(label);
+			if ((obj.getAttribute("oobd:updevents") & updateFlag) != 0){
+				checkbox.setAttribute("checked","checked");
+			}
+			//$(checkbox).prop("checked", (obj.getAttribute("oobd:updevents") & updateFlag) != 0);
 			$(checkbox).button({
 				icons: {
 					primary: iconID
 				},
 				text: false
 			});
-			checkbox.checked = (obj.getAttribute("oobd:updevents") & updateFlag) != 0;
 			$(checkbox).click(function() {
 				Oobd.setUpdateFlag(obj, updateFlag, checkbox.checked);
 			});
@@ -395,6 +398,7 @@
 				</tr>';
 			tbl.classList.add("OOBD");
 			tbl.setAttribute("oobd:fc", obj.name);
+			tbl.setAttribute("oobd:tooltip", atob(obj.tooltip));
 			console.log(obj.value);
 			console.log(atob(obj.value));
 			console.log(escape(atob(obj.value)));
@@ -402,7 +406,7 @@
 			tbl.setAttribute("oobd:value", decodeURIComponent(escape(atob(obj.value))));
 			tbl.setAttribute("oobd:constructor", JSON.stringify(obj));
 			if (typeof obj.updevents != "undefined") {
-				tbl.setAttribute("oobd:updevents", obj.updevents);
+				tbl.setAttribute("oobd:updevents", parseInt(obj.updevents));
 			} else {
 				tbl.setAttribute("oobd:updevents", 0);
 			}
@@ -411,9 +415,19 @@
 			var cell2 = tbl.getElementsByClassName("oobd-value")[0];
 			var cell3 = tbl.getElementsByClassName("oobd-unit")[0];
 			var icondiv = tbl.getElementsByClassName("oobd-icons")[0];
-			createUpdateflag(icondiv, tbl, Oobd.FLAG_UPDATE, "ui-icon-refresh", 'Refresh Flag');
-			createUpdateflag(icondiv, tbl, Oobd.FLAG_TIMER, "ui-icon-clock", 'Timer Flag');
-			createUpdateflag(icondiv, tbl, Oobd.FLAG_LOG, "ui-icon-pencil", 'Log changes');
+			if ((tbl.getAttribute("oobd:updevents") & (Oobd.FLAG_SUBMENU | Oobd.FLAG_BACK)) != 0){
+				if ((tbl.getAttribute("oobd:updevents") &  Oobd.FLAG_SUBMENU) != 0){
+					createUpdateflag(icondiv, tbl, Oobd.FLAG_SUBMENU, "ui-icon-circle-triangle-e", 'Submenu');
+				} else {
+					if ((tbl.getAttribute("oobd:updevents") &  Oobd.FLAG_BACK) != 0){
+						createUpdateflag(icondiv, tbl, Oobd.FLAG_BACK, "ui-icon-circle-triangle-w", 'Back');
+					}
+				}
+			}else{
+				createUpdateflag(icondiv, tbl, Oobd.FLAG_UPDATE, "ui-icon-refresh", 'Refresh Flag');
+				createUpdateflag(icondiv, tbl, Oobd.FLAG_TIMER, "ui-icon-clock", 'Timer Flag');
+				createUpdateflag(icondiv, tbl, Oobd.FLAG_LOG, "ui-icon-pencil", 'Log changes');
+			}
 			// Add some text to the new cells:
 			cell1.innerHTML = decodeURIComponent(escape(atob(obj.tooltip)));
 			//let see, if the visualizer is a graphic element
