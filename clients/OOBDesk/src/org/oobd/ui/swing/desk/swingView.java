@@ -914,7 +914,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }//GEN-LAST:event_backButtonLabelMouseClicked
 
     private void startButtonLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startButtonLabelMouseClicked
-        if (UIHANDLER_WS_NAME.equalsIgnoreCase((String) core.readDataPool(DP_ACTUAL_UIHANDLER, appProbs.get(OOBDConstants.PropName_UIHander, "")))) {
+        if (UIHANDLER_WS_NAME.equalsIgnoreCase((String) core.readDataPool(DP_ACTUAL_UIHANDLER, appProbs.get(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME)))) {
 
             //startButtonLabel.setIcon(resourceMap.getIcon("startButtonLabel.icon"));
             core.getSystemIF().openBrowser();
@@ -943,7 +943,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         core.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
         connectDeviceName = appProbs.get(connectTypeName + "_" + OOBDConstants.PropName_SerialPort, "");
         pgpEnabled.setSelected("true".equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_PGPEnabled, "")));
-        httpEnabled.setSelected(UIHANDLER_WS_NAME.equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_UIHander, "")));
+        httpEnabled.setSelected(UIHANDLER_WS_NAME.equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME)));
         jTextFieldRemoteServer.setText(appProbs.get(connectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, OOBDConstants.PropName_KadaverServerDefault));
         jTextFieldProxyHost.setText(appProbs.get(connectTypeName + "_" + OOBDConstants.PropName_ProxyHost, ""));
         jSpinnerProxyPort.setValue(appProbs.getInt(connectTypeName + "_" + OOBDConstants.PropName_ProxyPort, 0));
@@ -1453,7 +1453,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     public void announceUIHandler(String id, String visibleName) {
         Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: UIHandler-ID: {0} visibleName:{1}", new Object[]{id, visibleName
         });
-        if (appProbs.get(OOBDConstants.PropName_UIHander, UIHANDLER_LOCAL_NAME).equalsIgnoreCase(visibleName)) {
+        if (appProbs.get(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME).equalsIgnoreCase(visibleName)) {
             Onion onion = new Onion();
             String seID = core.createUIHandler(id, onion);
 
@@ -1872,7 +1872,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             core.writeDataPool(DP_ACTUAL_PROXY_PORT, appProbs.getInt(localConnectTypeName + "_" + OOBDConstants.PropName_ProxyPort, 0));
 
         }
-        core.writeDataPool(DP_ACTUAL_UIHANDLER, appProbs.get(OOBDConstants.PropName_UIHander, ""));
+        core.writeDataPool(DP_ACTUAL_UIHANDLER, appProbs.get(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME));
         String actualScriptDir = appProbs.get(OOBDConstants.PropName_ScriptDir, null);
         core.writeDataPool(DP_SCRIPTDIR, actualScriptDir);
         core.writeDataPool(DP_WWW_LIB_DIR, appProbs.get(OOBDConstants.PropName_LibraryDir, null));
