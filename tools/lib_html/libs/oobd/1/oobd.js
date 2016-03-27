@@ -20,6 +20,8 @@ if (typeof Oobd == "undefined") {
 		session: null,
 		connection: "",
 		scriptID: "",
+		updateNormalMarker: false,
+		updateTimerMarker: false,
 		timerFlag: -1,
 		timerObject: null,
 		visualizers: new Array(),
@@ -55,7 +57,6 @@ if (typeof Oobd == "undefined") {
 				flagValue = flagValue ^ flagID;
 			}
 			viz.updevents=flagValue;
-			console.log(obj, flagValue);
 		},
 		getUpdateFlag: function(viz,flagID){
 			return  (viz.updevents & flagID) != 0;
@@ -239,7 +240,7 @@ if (typeof Oobd == "undefined") {
 						if (typeof Oobd.writeString != "undefined"){
 							console.log("try to WRITESTRING");
 							console.log(msg);
-							Oobd.writeString(data,"clear");
+							Oobd.writeString(data,"cLlear");
 						}
 					}else{ // delete
 							if(typeof Oobd.fileSystem != "undefined"){
@@ -351,40 +352,60 @@ if (typeof Oobd == "undefined") {
 			}
 		},
 		update: function() {
-			for (i = 0; i < Oobd.visualizers.length; ++i) {
-				console.log("check for normal update:"+i);
-				if (Oobd.getUpdateFlag(Oobd.visualizers[i],Oobd.FLAG_UPDATE)){
-					console.log("update:" + Oobd.visualizers[i].command);
-					Oobd.sendUpdateReq(Oobd.visualizers[i].command, Oobd.visualizers[i].optid, Oobd.visualizers[i].value, 1);
-				}
+			this.updateNormalMarker=true;
+			this.timerFlag = 0;
+			//if the timer not ticks already for timer updates
+			if (this.timerObject == null){
+				this._timerTick();
 			}
 		},
 		_timerTick: function() {
 			if (Oobd.timerFlag > -1) {
 				var waitForNext=100; // in case we find nothing to update, we'll wait short before try the next
-				if (Oobd.timerObject != null) window.clearTimeout(Oobd.timerObject);
+				if (Oobd.timerObject != null){
+					window.clearTimeout(Oobd.timerObject);
+					Oobd.timerObject=null;
+				}
 				if (Oobd.timerFlag < Oobd.visualizers.length) {
-					console.log("check for timer update:"+Oobd.timerFlag);
-					if (Oobd.getUpdateFlag(Oobd.visualizers[Oobd.timerFlag],Oobd.FLAG_TIMER)){
-						waitForNext=1000; // we found something to update, so'll have to wait longer (for an potential answer)
-						console.log("timer update:" + Oobd.visualizers[Oobd.timerFlag].command);
-						Oobd.sendUpdateReq(Oobd.visualizers[Oobd.timerFlag].command, Oobd.visualizers[Oobd.timerFlag].optid, Oobd.visualizers[Oobd.timerFlag].value, 2);
+					console.log("check for update:"+Oobd.timerFlag);
+					if (Oobd.updateNormalMarker){
+						if (Oobd.getUpdateFlag(Oobd.visualizers[Oobd.timerFlag],Oobd.FLAG_UPDATE)){
+							waitForNext=1000; // we found something to update, so'll have to wait longer (for an potential answer)
+							console.log("update- update:" + Oobd.visualizers[Oobd.timerFlag].command);
+							Oobd.sendUpdateReq(Oobd.visualizers[Oobd.timerFlag].command, Oobd.visualizers[Oobd.timerFlag].optid, Oobd.visualizers[Oobd.timerFlag].value, 2);
+						}
+					}else{
+						if (Oobd.getUpdateFlag(Oobd.visualizers[Oobd.timerFlag],Oobd.FLAG_TIMER)){
+							waitForNext=1000; // we found something to update, so'll have to wait longer (for an potential answer)
+							console.log("timer update:" + Oobd.visualizers[Oobd.timerFlag].command);
+							Oobd.sendUpdateReq(Oobd.visualizers[Oobd.timerFlag].command, Oobd.visualizers[Oobd.timerFlag].optid, Oobd.visualizers[Oobd.timerFlag].value, 2);
+						}
 					}
 					Oobd.timerFlag++;
 				}
 				if (Oobd.timerFlag == Oobd.visualizers.length) {
-					Oobd.timerFlag = 0;
+					Oobd.timerFlag = Oobd.updateTimerMarker ? 0 : -1;
+					Oobd.updateNormalMarker=false;
 				}
+			}
+			if (Oobd.timerFlag > -1) {
 				Oobd.timerObject = window.setTimeout(Oobd._timerTick, waitForNext);
 			}
 		},
 		timer: function(on) {
 			if (on) {
+				this.updateTimerMarker=true;
 				this.timerFlag = 0;
-				this._timerTick();
+				if (this.timerObject == null){
+					this._timerTick();
+				}
 			} else {
-				window.clearTimeout(this.timerObject);;
-				this.timerFlag = -1;
+				if (this.timerObject != null && !this.updateNormalMarker){
+					window.clearTimeout(this.timerObject);
+					this.timerObject=null;
+					this.timerFlag = -1;
+				}
+				this.updateTimerMarker=false;
 			}
 		},
 		clearVisualiers: function() {

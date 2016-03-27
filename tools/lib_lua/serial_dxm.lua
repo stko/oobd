@@ -25,29 +25,6 @@ lastSwitchedBus=""
 
 
 
----------------------- Greetings --------------------------------------
-
-function greet(oldvalue,id)
-	serDisplayWrite("Thanks to")
-	serDisplayWrite("")
-	serDisplayWrite("Mike Luxen")
-	serDisplayWrite("Joseph Urhahne")
-	serDisplayWrite("Wolfgang Sauer")
-	serDisplayWrite("Peter Mayer")
-	serDisplayWrite("Axel Bullwinkel")
-	serDisplayWrite("Uli Schmoll")
-	serDisplayWrite("Wolfgang Sommer")
-	serDisplayWrite("Günter Römer")
-	serDisplayWrite("Ekkehard Pofahl")
-	serDisplayWrite("Dennis Kurzweil")
-	serDisplayWrite("Martin F.")
-	serDisplayWrite("")
-	serDisplayWrite("and to all the others,")
-	serDisplayWrite("who made this possible")
-	return oldvalue
-end
-
-
 
 function automaticBusSwitch()
 	return hardwareID==4

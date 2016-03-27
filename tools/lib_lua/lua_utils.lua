@@ -77,6 +77,29 @@ end
 
 --]]
 
+---------------------- Greetings --------------------------------------
+
+function greet(oldvalue,id)
+	serDisplayWrite("Thanks to")
+	serDisplayWrite("")
+	serDisplayWrite("Mike Luxen")
+	serDisplayWrite("Joseph Urhahne")
+	serDisplayWrite("Wolfgang Sauer")
+	serDisplayWrite("Peter Mayer")
+	serDisplayWrite("Axel Bullwinkel")
+	serDisplayWrite("Uli Schmoll")
+	serDisplayWrite("Wolfgang Sommer")
+	serDisplayWrite("Günter Römer")
+	serDisplayWrite("Ekkehard Pofahl")
+	serDisplayWrite("Dennis Kurzweil")
+	serDisplayWrite("Martin F.")
+	serDisplayWrite("")
+	serDisplayWrite("and to all the others,")
+	serDisplayWrite("who made this possible")
+	return "see output window"
+end
+
+
 -------------------- CRC32 ---
 --Copyright (c) 2007-2008 Neil Richardson (nrich@iinet.net.au)
 --

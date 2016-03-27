@@ -57,6 +57,7 @@
 	<link rel="stylesheet" type="text/css" href="/theme/default/css/style.css" />
 
 	<meta charset="utf-8">
+	<script type="text/javascript" src="/libs/spin/1/spin.js"></script>
 	<script type="text/javascript" src="/libs/oobd/1/oobd.js"></script>
 	<style>
 		:invalid {
@@ -76,7 +77,7 @@
 	<button onclick="Oobd.update()" id="button">Refresh</button><input type='checkbox' onclick='Oobd.timer(this.checked);' id="check"><label for="check">Timer</label>
 
 	<span id="headline"></span>
-
+	<div id="spin"></div>
 	<div id="tabs">
 		<ul>
 			<li><a href="#datatab">Data</a></li>
@@ -120,6 +121,28 @@
 	</div>
 	<script>
 		var gridster = [];
+		var spinner = new Spinner({
+			lines: 12             // The number of lines to draw
+			, length: 7             // The length of each line
+			, width: 5              // The line thickness
+			, radius: 10            // The radius of the inner circle
+			, scale: 1.0            // Scales overall size of the spinner
+			, corners: 1            // Roundness (0..1)
+			, color: '#FF0'         // #rgb or #rrggbb
+			, opacity: 1/4          // Opacity of the lines
+			, rotate: 0             // Rotation offset
+			, direction: 1          // 1: clockwise, -1: counterclockwise
+			, speed: 1              // Rounds per second
+			, trail: 100            // Afterglow percentage
+			, fps: 20               // Frames per second when using setTimeout()
+			, zIndex: 2e9           // Use a high z-index by default
+			, className: 'spinner'  // CSS class to assign to the element
+			, top: '50%'            // center vertically
+			, left: '50%'           // center horizontally
+			, shadow: false         // Whether to render a shadow
+			, hwaccel: false        // Whether to use hardware acceleration (might be buggy)
+			, position: 'absolute'  // Element positioning
+		});
 		$(function() { //DOM Ready
 			// your page initialization code here
 			// the DOM will be available here
@@ -237,7 +260,6 @@
 						//var target = document.elementFromPoint(ui.position.left, ui.position.top);
 						var target = document.elementFromPoint(e.clientX, e.clientY);
 						if (target && target.id == "dropzone") {
-							console.log("add dashboard item");
 							document.getElementById("datatab").appendChild(document.getElementById("dashboard"));
 							Oobd.addToDash(ui.$player[0].getAttribute('oobd:constructor'));
 							constructVisualizer(gridster[1], JSON.parse(ui.$player[0].getAttribute('oobd:constructor')));
@@ -270,7 +292,6 @@
 						$("#trashbin").removeClass("highlight");
 						var target = document.elementFromPoint(e.clientX, e.clientY);
 						if (target && target.id == "trashbin") {
-							console.log("remove dashboard item");
 							Oobd.removeFromDash(ui.$player[0].getAttribute('oobd:constructor'));
 							gridster[1].remove_widget(ui.$player[0]);
 						}
@@ -281,11 +302,16 @@
 			Oobd.openPage = function openPage(text) {
 				window.document.title = text;
 				$("#headline").text(text);
+				spinner.spin(document.getElementById('spin'));
 				gridster[0].remove_all_widgets();
 				Oobd.clearVisualiers();
 				if (Oobd.fillDashboard) {
 					Oobd.fillDashboard();
 				}
+			}
+			// page load finished
+			Oobd.pageDone = function pageDone(text) {
+				spinner.stop();
 			}
 			// add a new visual element to the page
 			Oobd.visualize = function visualize(obj) {
@@ -399,10 +425,6 @@
 			tbl.classList.add("OOBD");
 			tbl.setAttribute("oobd:fc", obj.name);
 			tbl.setAttribute("oobd:tooltip", atob(obj.tooltip));
-			console.log(obj.value);
-			console.log(atob(obj.value));
-			console.log(escape(atob(obj.value)));
-			console.log(decodeURIComponent(escape(atob(obj.value))));
 			tbl.setAttribute("oobd:value", decodeURIComponent(escape(atob(obj.value))));
 			tbl.setAttribute("oobd:constructor", JSON.stringify(obj));
 			if (typeof obj.updevents != "undefined") {
@@ -458,7 +480,6 @@
 						};
 						feld.onchange = function() {
 							if (feld.checkValidity()) {
-								console.log("update text input");
 								Oobd.sendUpdateReq(tbl.oobd.command, tbl.oobd.optid, feld.value, 0);
 							}
 						};
@@ -478,7 +499,6 @@
 							feld.checked = "true" == input.value.toLowerCase();
 						};
 						feld.onchange = function() {
-							console.log("update checkbox");
 							var flag = feld.checked ? "True" : "False";
 							Oobd.sendUpdateReq(tbl.oobd.command, tbl.oobd.optid, flag, 0);
 						};
@@ -497,7 +517,6 @@
 							feld.value = parseFloat(input.value);
 						};
 						feld.onchange = function() {
-							console.log("update range");
 							var flag = feld.value.toString();
 							Oobd.sendUpdateReq(tbl.oobd.command, tbl.oobd.optid, flag, 0);
 						};
@@ -526,7 +545,6 @@
 							feld.selectedIndex = parseInt(input.value) - 1;
 						};
 						feld.onchange = function() {
-							console.log("update combobox");
 							var flag = (feld.selectedIndex + 1).toString();
 							Oobd.sendUpdateReq(tbl.oobd.command, tbl.oobd.optid, flag, 0);
 						};
@@ -547,7 +565,6 @@
 												};
 												/* A meter is readonly, so no onchange 
 												feld.onchange=function(){
-													console.log("update checkbox");
 													var flag= feld.checked ? "True" : "False";
 													Oobd.sendUpdateReq(tbl.oobd.command, tbl.oobd.optid, flag, 0);
 												};
