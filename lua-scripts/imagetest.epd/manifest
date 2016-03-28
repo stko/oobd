@@ -1,3 +1,12 @@
 {
-  "startpage": "index.html"
+  "startpage": "index.html",
+  "title": "OOBD oobd.js Demo",
+  "description": "This demo shows, how the oobd.js library supports active web pages with minimal effort.<br>Best viewed with the <a href='http://www.oobd.org/doku.php?id=de:doc:webui_simulator'>WebUI Simulator</a>",
+  "version": "1.0",
+  "copyright": "GPLV2",
+  "security": "public",
+  "author" : "The OOBD Team",
+  "url": "oobd.org",
+  "email": "info@oobd.org",
+  "screenshot" : "screenshot.png"  
 }

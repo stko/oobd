@@ -72,6 +72,7 @@
 
 <body>
 
+	<button id="indexbutton" onclick="window.location = '/';">All Scripts</button>
 	<a target="_blank" href="http://oobd.org"><img src="/libs/images/oobd_logo_tron.png" width="100"></a>
 
 	<button onclick="Oobd.update()" id="button">Refresh</button><input type='checkbox' onclick='Oobd.timer(this.checked);' id="check"><label for="check">Timer</label>
@@ -151,6 +152,11 @@
 		
 			$("#tabs").tabs();
 			$("#accordion").accordion();
+			$("#indexbutton").button({
+				icons: {
+					primary: "ui-icon-home"
+				}
+			});
 			$("#button").button({
 				icons: {
 					primary: "ui-icon-refresh"

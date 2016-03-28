@@ -108,9 +108,20 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<link rel="stylesheet" type="text/css" href="/libs/slick/1.5.9/slick-theme.css"/>
 	</head>
 	<body>
-		<h2><img src="/libs/images/oobd_logo_tron.png" width="100"/>
+	<h2>
+	<a target="_blank" href="http://oobd.org"><img src="/libs/images/oobd_logo_tron.png" width="100"/></a>
 	<!-- <h2><xsl:value-of select="catalog/title"/></h2> -->
-	OOBD - Open Onboard Diagnostics</h2>
+	<!--xsl:for-each select="catalog" -->
+		<xsl:choose>
+			<xsl:when test="catalog/title !=''">
+				<xsl:value-of select="catalog/title"/>
+			</xsl:when>
+			<xsl:otherwise>
+				OOBD - Open Onboard Diagnostics
+			</xsl:otherwise>
+		</xsl:choose>
+	<!-- /xsl:for-each-->
+	</h2>
 	<div id="toolbar" class="ui-widget-header ui-corner-all">
 	<form action="#" method="post" id="form_2">
 
@@ -186,7 +197,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 			</xsl:choose>
 			<xsl:choose>
 				<xsl:when test="description !=''">
-					<tr><td><span class="ui-icon ui-icon-lightbulb"/></td><td><xsl:value-of select="description"/></td></tr>
+					<tr><td><span class="ui-icon ui-icon-lightbulb"/></td><td> <xsl:value-of select="description" disable-output-escaping="yes" />  </td></tr>
 				</xsl:when>
 			</xsl:choose>
 			<xsl:choose>

@@ -1,3 +1,12 @@
 {
-  "startpage": "index.html"
+  "startpage": "index.html",
+  "title": "OOBD Augemented Reality Demo",
+  "description": "This demo shows, how the AR Libray <a href='https://github.com/buildar/awe.js'>AWE</a> together with <a href='http://threejs.org/'>three.js</a> projects a OOBD vehicle value   into a circuit diagramm. At least it should, but the awe library does not support the needed new Textgeometry of three.ja.<b>  So it's just a proof of concept..",
+  "version": "1.0",
+  "copyright": "GPLV2",
+  "security": "public",
+  "author" : "The OOBD Team",
+  "url": "oobd.org",
+  "email": "info@oobd.org",
+  "screenshot" : "screenshot.png"  
 }

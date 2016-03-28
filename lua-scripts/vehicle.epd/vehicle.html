@@ -95,6 +95,7 @@
 						topdiv.append(newhead);
 						newhead.after(newdiv);
 						oobdElement.setAttribute("oobd:fc","dtcStatusXML:"+ modules[m].id);
+						oobdElement.setAttribute("oobd:updevents",Oobd.FLAG_UPDATE);
 						oobdElement.oodbupdate = function(input) {
 							var xml = Oobd.parseXml(input.value);
 							resultDocument = self.xsltProcessor.transformToFragment(xml, document);
