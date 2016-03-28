@@ -3,6 +3,9 @@ manifest
 README_vehicle.js.txt
 themes
 vehicle.html
-vehicle.js
 vehicle.lbc
 vehicle.lua
+vehicle.mf
+vehicle2.mf
+screenshot.png
+content.xml

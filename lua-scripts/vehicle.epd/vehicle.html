@@ -68,7 +68,7 @@
 					Oobd.clearVisualiers();
 					createModules(option);
 				});
-			Oobd.createXsltTransformer('./dtc.xsl', function(prozessor) {
+			Oobd.createXsltTransformer('dtc.xsl', function(prozessor) {
 				self.xsltProcessor = prozessor;
 			});
 			Oobd.start();
