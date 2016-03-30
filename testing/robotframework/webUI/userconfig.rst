@@ -47,7 +47,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 
     *** Test Cases ***
     Starting the script testsuite.lbc via HTTP
-	Create Http Context  localhost:8080
+	Create Http Context   ${httpOobd}
 	Set Request Body	rcid=123
 	POST	/
 	:FOR    ${ELEMENT}    IN    /dGVzdHN1aXRlLmxiYw==?theme=default 
@@ -56,7 +56,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	\	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
 	\	answer should match    {"type":"WSCONNECT"}
 	\	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
-	\	answer should match    {"type":"PAGE" , "name":"OOBD-ME Main"}
+	\	answer should match    {"type":"PAGE" , "name":"OOBD Testsuite"}
 	\	answer should match    {"type":"VISUALIZE" ,"name":"createCMD01Menu:"}
 	\	answer should match    {"type":"VISUALIZE" ,"name":"greet:"}
 	\	answer should match    {"type":"VISUALIZE" ,"name":"clearOutput:"}
@@ -66,6 +66,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	\	answer should match    {"type":"VISUALIZE" ,"name":"userAlert:"}
 	\	answer should match    {"type":"VISUALIZE" ,"name":"userConfirm:"}
 	\	answer should match    {"type":"VISUALIZE" ,"name":"userPrompt:"}
+	\	answer should match    {"type":"VISUALIZE" ,"name":"bufferSequence:"}
 	\	answer should match    {"type":"PAGEDONE" ,"name":"Canvastest_1"}
 	\	send webUI command  {"name":"testdb:","optid":"1","actValue":"","updType":3}
 	\	answer should match    {"type":"VALUE" ,"value":"#Index 5"}
@@ -79,21 +80,21 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	\	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
 	\	answer should match    {"type":"WSCONNECT"}
 	\	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
-	\	answer should match    {"type":"PAGE" , "name":"OOBD-ME Main"}
+	\	answer should match    {"type":"PAGE" , "name":"OOBD Testsuite"}
 	\	answer should match    {"type":"VISUALIZE" ,"name":"helloworld:"}
 	\	answer should match    {"type":"PAGEDONE" ,"name":"Canvastest_1"}
 	\	send webUI command  {"name":"testdb:","optid":"2","actValue":"","updType":3}
 	\	answer should match    {"type":"VALUE" ,"value":"#005 not found"}
 	\	close webUI
     Testing non existing theme settings with script testsuite.lbc via HTTP
-	Create Http Context  localhost:8080
+	Create Http Context   ${httpOobd}
 	Next Request Should Have Status Code  404
 	Get  /dGVzdHN1aXRlLmxiYw==?theme=foo
     Testing default theme script testsuite.lbc via HTTP
-	Create Http Context  localhost:8080
+	Create Http Context   ${httpOobd}
 	Get  /dGVzdHN1aXRlLmxiYw==?theme=default
     Testing passthrough access on epaZip.epa for manifest
-	Create Http Context  localhost:8080
+	Create Http Context   ${httpOobd}
 	Get  /epaZip.epa/manifest
 	${body}=  Get Response Body	
 	Should Start With  ${body}  {\n${SPACE}${SPACE}"script": "helloworld.lbc"\n}

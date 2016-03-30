@@ -48,7 +48,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
     *** Test Cases ***
     Starting the script testsuite.lbc via HTTP as RemoteConnect with ConnectID 1234
 	Pause Execution      Make sure the kadaver simulator is running
-	Create Http Context  localhost:8080
+	Create Http Context   ${httpOobd}
 	Set Request Body  connectType=Kadaver&rcid=1234
 	POST  /
 	Get  /dGVzdHN1aXRlLmxiYw==
@@ -56,7 +56,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
     Test for initial connect message
 	answer should match    {"type":"WSCONNECT"}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
- 	answer should match    {"type":"PAGE" , "name":"OOBD-ME Main"}
+ 	answer should match    {"type":"PAGE" , "name":"OOBD Testsuite"}
 	answer should match    {"type":"VISUALIZE" ,"name":"createCMD01Menu:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"greet:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"clearOutput:"}
@@ -66,6 +66,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	answer should match    {"type":"VISUALIZE" ,"name":"userAlert:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"userConfirm:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"userPrompt:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"bufferSequence:"}
 	answer should match    {"type":"PAGEDONE" ,"name":"Canvastest_1"}
     Test for Dongle Version with Dongle connected
         send webUI command  {"name":"interface_version:","optid":"","actValue":"","updType":3}

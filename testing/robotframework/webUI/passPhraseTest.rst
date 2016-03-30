@@ -48,7 +48,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
     *** Test Cases ***
     Starting the pgp encrypted script b232_my12-PDM.lbc.pgp via HTTP
 	${pgppw} =	Get Value From User	Input your PGP passphrase
-	Create Http Context  localhost:8080
+	Create Http Context   ${httpOobd}
 	Set Request Body  pgppw=${pgppw}
 	POST  /
 	Get  /YjIzMl9teTEyLVBETS5sYmMucGdw

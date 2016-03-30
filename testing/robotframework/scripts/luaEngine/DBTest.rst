@@ -47,13 +47,13 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 
     *** Test Cases ***
     Starting the script testsuite.lbc via HTTP
-	Create Http Context  localhost:8080
+	Create Http Context   ${httpOobd}
 	Get  /dGVzdHN1aXRlLmxiYw==
 	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
     Test for initial connect message
 	answer should match    {"type":"WSCONNECT"}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
- 	answer should match    {"type":"PAGE" , "name":"OOBD-ME Main"}
+ 	answer should match    {"type":"PAGE" , "name":"OOBD Testsuite"}
 	answer should match    {"type":"VISUALIZE" ,"name":"createCMD01Menu:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"greet:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"clearOutput:"}
@@ -63,6 +63,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	answer should match    {"type":"VISUALIZE" ,"name":"userAlert:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"userConfirm:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"userPrompt:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"bufferSequence:"}
 	answer should match    {"type":"PAGEDONE" ,"name":"Canvastest_1"}
     Test reading existing value out of existing db
         send webUI command  {"name":"testdb:","optid":"1","actValue":"","updType":3}
@@ -91,7 +92,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
    Test read read not existing row from second column
         send webUI command  {"name":"testdb:","optid":"9","actValue":"","updType":3}
 	answer should match    {"type":"VALUE" ,"value":"#005 not found"}
-   Test ead not existing row from non existing column
+   Test read not existing row from non existing column
         send webUI command  {"name":"testdb:","optid":"10","actValue":"","updType":3}
 	answer should match    {"type":"VALUE" ,"value":"#005 not found"}
 	close webUI

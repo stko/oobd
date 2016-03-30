@@ -47,7 +47,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 
     *** Test Cases ***
     Starting the script Y3Jhc2gubGJj via HTTP
-	Create Http Context  localhost:8080
+	Create Http Context   ${httpOobd}
 	Get  /Y3Jhc2gubGJj
  	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
    Test for initial connect message
@@ -55,13 +55,13 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
 	answer should match    {"type":"DIALOG_INFO"}
     Starting the script testsuite.lbc via HTTP
-	Create Http Context  localhost:8080
+	Create Http Context   ${httpOobd}
 	Get  /dGVzdHN1aXRlLmxiYw==
 	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
     Test for second connect message
 	answer should match    {"type":"WSCONNECT"}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
-	answer should match    {"type":"PAGE" , "name":"OOBD-ME Main"}
+	answer should match    {"type":"PAGE" , "name":"OOBD Testsuite"}
 	answer should match    {"type":"VISUALIZE" ,"name":"createCMD01Menu:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"greet:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"clearOutput:"}
@@ -71,6 +71,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	answer should match    {"type":"VISUALIZE" ,"name":"userAlert:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"userConfirm:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"userPrompt:"}
+	answer should match    {"type":"VISUALIZE" ,"name":"bufferSequence:"}
 	answer should match    {"type":"PAGEDONE" ,"name":"Canvastest_1"}
     call a function which contains a non existing function
         send webUI command  {"name":"callCrash:","optid":"1","actValue":"","updType":3}

@@ -1,7 +1,7 @@
 .. default-role:: code
 
 =====================================
-  OOBD Lua UDS ASCII testing
+  OOBD Core Test ing
 =====================================
 
 Robot Framework is Copyright © Nokia Solutions and Networks. Licensed under the
@@ -46,8 +46,11 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 .. code:: robotframework
 
     *** Test Cases ***
-    Starting the script testsuite.lbc via HTTP
-	Create Http Context  ${httpOobd}
+    Starting the script testsuite.lbc via HTTP as Telnet with ConnectID localhost:8081
+	Pause Execution      Make sure the socat telnet connection is running
+	Create Http Context   ${httpOobd}
+	Set Request Body  connectType=Telnet&rcid=localhost:8081
+	POST  /
 	Get  /dGVzdHN1aXRlLmxiYw==
 	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
     Test for initial connect message
@@ -65,57 +68,34 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	answer should match    {"type":"VISUALIZE" ,"name":"userPrompt:"}
 	answer should match    {"type":"VISUALIZE" ,"name":"bufferSequence:"}
 	answer should match    {"type":"PAGEDONE" ,"name":"Canvastest_1"}
-    Requesting ASCII-DID by table
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F050","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEF","type":"VALUE"}
-    Requesting ASCII-DID by table with binary data
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F040","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#..-<KZix........","type":"VALUE"}
-    Requesting ASCII-DID by table with General Response Error
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F051","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#NRC: 0x51","type":"VALUE"}
-    Requesting ASCII-DID by table with Timeout
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F052","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No data received","type":"VALUE"}
-    Requesting ASCII-DID by table with no Answer
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F053","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No data received","type":"VALUE"}
-    Requesting ASCII-DID by table with sequence error
-	send webUI command  {"name":"readAscDiD:","optid":"TestData_0_F054","actValue":"","updType":3}
-	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No data received","type":"VALUE"}
-	close webUI
-    Starting the script testsuite.lbc via HTTP for the second time
-	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
-	Create Http Context   ${httpOobd}
-	Get  /dGVzdHN1aXRlLmxiYw==
-	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
-    Test for second connect message
-	answer should match    {"type":"WSCONNECT"}
-	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
- 	answer should match    {"type":"PAGE" , "name":"OOBD Testsuite"}
-	answer should match    {"type":"VISUALIZE" ,"name":"createCMD01Menu:"}
-	answer should match    {"type":"VISUALIZE" ,"name":"greet:"}
-	answer should match    {"type":"VISUALIZE" ,"name":"clearOutput:"}
-	answer should match    {"type":"VISUALIZE" ,"name":"saveOutputAs:"}
-	answer should match    {"type":"VISUALIZE" ,"name":"saveOutput:"}
-	answer should match    {"type":"VISUALIZE" ,"name":"saveBuffer1:"}
-	answer should match    {"type":"VISUALIZE" ,"name":"userAlert:"}
-	answer should match    {"type":"VISUALIZE" ,"name":"userConfirm:"}
-	answer should match    {"type":"VISUALIZE" ,"name":"userPrompt:"}
-	answer should match    {"type":"VISUALIZE" ,"name":"bufferSequence:"}
-	answer should match    {"type":"PAGEDONE" ,"name":"Canvastest_1"}
-    Test calling udsServiceRequest with some DiDdata
-        send webUI command  {"name":"testDidData:","optid":"","actValue":"","updType":3}
-	answer should match    {"type":"VALUE" ,"value":"#62AABBDDCC"}
-	close webUI
+    Test for Dongle Version with Dongle connected
+        send webUI command  {"name":"interface_version:","optid":"","actValue":"","updType":3}
+	answer should match    {"type":"VALUE" ,"value":"%#OOBD"}
+    Test for Dongle Serial Nr with Dongle connected
+        send webUI command  {"name":"interface_serial:","optid":"","actValue":"","updType":3}
+	answer should match    {"type":"VALUE" ,"value":"#000"}
+    Test for Dongle Voltage with Dongle connected
+        send webUI command  {"name":"interface_voltage:","optid":"","actValue":"","updType":3}
+	answer should match    {"type":"VALUE" ,"value":"%#[0-9.]+ Volt"}
+    Test for Dongle Bus with Dongle connected
+        send webUI command  {"name":"interface_bus:","optid":"","actValue":"","updType":3}
+	answer should match    {"type":"VALUE" ,"value":"#CAN Bus"}
+    Test for Dongle Device ID with Dongle connected
+        send webUI command  {"name":"interface_deviceID:","optid":"","actValue":"","updType":3}
+	answer should match    {"type":"VALUE" ,"value":"%#OOBD-"}
+    Reset to default connection type
+	Set Request Body  connectType=Bluetooth
+	Next Request May Not Succeed
+	POST  /dGVzdHN1aXRlLmxiYw==
 
 
 .. code:: robotframework
 
     *** Settings ***
     Library           OperatingSystem
-    Library           ../../lib/webUIClient.py
-    Variables         ../../local_settings.py
+    Library           Dialogs
+    Library           ../lib/webUIClient.py
+    Variables         ../local_settings.py
     Library           HttpLibrary.HTTP
 
 for HTTP testing we choose the testing library from https://github.com/peritus/robotframework-httplibrary/
@@ -168,8 +148,8 @@ starts and that every test also clears it afterwards:
 .. code:: robotframework
 
    *** Settings ***
-   # suite Setup       open webUI  ${wsOobdURL}  ${wsSocketTimeout}
-   # suite Teardown    close webUI
+    #suite Setup       open webUI  ${wsOobdURL}  ${wsSocketTimeout}
+    #suite Teardown    close webUI
 
 Using tags
 ----------
