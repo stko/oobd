@@ -97,20 +97,16 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         return "http://" + hostname + ":" + ((Integer) Core.getSingleInstance().readDataPool(DP_HTTP_PORT, 8080)).toString();
     }
 
-
-    public void openBrowser(){
-        if(Desktop.isDesktopSupported())
-{
+    public void openBrowser() {
+        if (Desktop.isDesktopSupported()) {
             try {
                 Desktop.getDesktop().browse(new URI(getOobdURL()));
             } catch (IOException ex) {
             } catch (URISyntaxException ex) {
-             }
-}
+            }
+        }
     }
 
-
-    
     @Override
     public InetAddress getSystemIP() {
         InetAddress ip;
@@ -318,12 +314,23 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     @Override
     public Preferences loadPreferences(int pathID, String filename) {
         Preferences myPrefs = null;
+        Preferences prefsRoot;
 
         try {
-            Preferences prefsRoot;
             prefsRoot = Preferences.userRoot();
             prefsRoot.sync();
             myPrefs = prefsRoot.node("com.oobd.preference." + filename);
+            if (myPrefs.keys().length == 0) { //no settings found? Then try to read system prefs
+                Preferences sysPrefsRoot;
+                Preferences mySysPrefs = null;
+                sysPrefsRoot = Preferences.systemRoot();
+                sysPrefsRoot.sync();
+                mySysPrefs = sysPrefsRoot.node("com.oobd.preference." + filename);
+                String sysKeys[]=mySysPrefs.keys();
+                for (int i=0; i<sysKeys.length;i++){ //copy system settings, if any exist
+                    myPrefs.put(sysKeys[i], mySysPrefs.get(sysKeys[i],""));
+                }
+            }
             return myPrefs;
 
         } catch (Exception e) {

@@ -31,6 +31,8 @@ function .onInit
 	StrCpy $menutype  "OOBDesk"
 	SetShellVarContext all
 	WriteRegStr HKLM "SOFTWARE\OOBD\OOBDesk" "InstDir" $INSTDIR
+	WriteRegStr HKLM "Software\JavaSoft\Prefs\com.oobd.preference.app.props" "/Script/Dir" "$DOCUMENTS\OOBD-Scripts"
+	WriteRegStr HKLM "Software\JavaSoft\Prefs\com.oobd.preference.app.props" "/Library/Dir" "$DOCUMENTS\OOBD-Library"
 	Goto Done
 	 
 	Continue:
