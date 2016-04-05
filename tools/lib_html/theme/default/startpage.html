@@ -236,7 +236,9 @@
 						saveOutput(text);
 						break;
 					default:
-						document.getElementById("textoutput").value += text;
+						if(document.getElementById("outputlog").checked == true){
+							document.getElementById("textoutput").value += text;
+						}
 						break;
 				}
 			}
