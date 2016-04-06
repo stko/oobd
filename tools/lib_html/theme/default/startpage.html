@@ -552,12 +552,12 @@
 						tbl.oodbupdate = function(input) {
 							feld.selectedIndex = parseInt(input.value) - 1;
 						};
-						feld.onchange = function() {
-							var flag = (feld.selectedIndex + 1).toString();
-							Oobd.sendUpdateReq(tbl.oobd.command, tbl.oobd.optid, flag, 0);
-						};
 						cell2.appendChild(feld);
-						$(feld).selectmenu();
+						$(feld).selectmenu({
+							select: function( event, ui ) {
+								var flag = (ui.item.index + 1).toString();
+								Oobd.sendUpdateReq(tbl.oobd.command, tbl.oobd.optid, flag, 0);}
+						});
 						break;
 					case "Gauge":
 						/*
