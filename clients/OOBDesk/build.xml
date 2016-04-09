@@ -21,9 +21,15 @@
         <arg value="--dirty"/>
         <arg value="--always"/>
      </exec>
+    <exec outputproperty="gitr.tag" executable="git">
+        <arg value="describe"/>
+        <arg value="--abbrev=0"/>
+     </exec>
     <exec outputproperty="gitr.date" executable="date">
+        <arg value="-I"/>
      </exec>
     <propertyfile file="${src.dir}/org/oobd/ui/swing/desk/resources/swing.properties">
+        <entry key="Application.tag" value="${gitr.tag}" type="string" operation="="/>
         <entry key="Application.revision" value="${gitr.version} (${gitr.date})" type="string" operation="="/>
     </propertyfile>
     <echo>Revision found from Git: ${gitr.version} (${gitr.date})</echo>
