@@ -80,7 +80,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	\	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
 	\	answer should match    {"type":"WSCONNECT"}
 	\	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
-	\	answer should match    {"type":"PAGE" , "name":"OOBD Testsuite"}
+	\	answer should match    {"type":"PAGE" , "name":"OOBD-ME Main"}
 	\	answer should match    {"type":"VISUALIZE" ,"name":"helloworld:"}
 	\	answer should match    {"type":"PAGEDONE" ,"name":"Canvastest_1"}
 	\	send webUI command  {"name":"testdb:","optid":"2","actValue":"","updType":3}

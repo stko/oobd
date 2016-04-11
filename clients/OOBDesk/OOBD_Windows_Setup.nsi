@@ -93,7 +93,7 @@ CreateShortCut "$SMPROGRAMS\OOBD\$menutype\Uninstall OOBDesk.lnk" "$INSTDIR\unin
 # create the sample files
 SetOutPath "$DOCUMENTS\OOBD-Scripts"
 File "../../lua-scripts/*.epa"
-File /oname=stdlib.lbc "../OOBD-ME/res/stdlib.lbc"
+#File /oname=stdlib.lbc "../OOBD-ME/res/stdlib.lbc"
 
 # create the html library
 SetOutPath "$DOCUMENTS\OOBD-Library"
