@@ -286,14 +286,14 @@ function readNumDiD(oldvalue,id)
 		local res=""
 		local bytepos = math.floor(content.Bpos/8)+4
 		if (content.dtype == "UNSIGNED") then
-			res=  CalcNumDiD( bytepos, mathfloor(content.Blen/8), content.mult, content.offset, content.unit) 
+			res=  CalcNumDiD( bytepos, math.floor(content.Blen/8), content.mult, content.offset, content.unit) 
 			
 		elseif (content.dtype == "BYTE") then
 			local value = ""
-			if (mathfloor(content.Blen/8) <= 8) then -- if byte length greater than 8 we'll interpret the datastream as raw values
-				res= CalcNumDiD( bytepos, mathfloor(content.Blen/8), content.mult, content.offset, content.unit)  
+			if (math.floor(content.Blen/8) <= 8) then -- if byte length greater than 8 we'll interpret the datastream as raw values
+				res= CalcNumDiD( bytepos, math.floor(content.Blen/8), content.mult, content.offset, content.unit)  
 			else
-				for i = 0, mathfloor(content.Blen/8) -1, 1 do -- get raw value
+				for i = 0, math.floor(content.Blen/8) -1, 1 do -- get raw value
 					value = value..string.format("%02x", udsBuffer[bytepos + i])
 				end
 				-- due to possible long response the raw response content is on output window 
@@ -304,11 +304,11 @@ function readNumDiD(oldvalue,id)
 			end
 			
 		elseif (content.dtype == "SIGNED") then
-			res=  sCalcNumDiD( bytepos , mathfloor(content.Blen/8) , content.mult , content.offset, content.unit) 
+			res=  sCalcNumDiD( bytepos , math.floor(content.Blen/8) , content.mult , content.offset, content.unit) 
 			
 		-- string.format for decimal transformation
 		elseif (content.dtype == "BCD") then
-			res=  CalcNumDiD( bytepos , mathfloor(content.Blen/8) , content.mult , content.offset, content.unit) 
+			res=  CalcNumDiD( bytepos , math.floor(content.Blen/8) , content.mult , content.offset, content.unit) 
 			
 		-- string.format for HEX transformation
 		elseif (content.dtype == "ENUM") then
@@ -357,18 +357,18 @@ function calculatePacketedDiD(content, udsBuffer, bytepos)
 		res= data ~= nil and CalcNumDiD_any( content.Blen, bitPos, bytepos, content.mult, content.offset, endianess)  or "index error"
 		res=string.format("%g ",res)..content.unit
 	elseif (content.dtype == "BYTE") then
-		res= data ~= nil and CalcNumDiD( bytepos, mathfloor(content.Blen/8), content.mult, content.offset, "")  or "index error"
+		res= data ~= nil and CalcNumDiD( bytepos, math.floor(content.Blen/8), content.mult, content.offset, "")  or "index error"
 		res=string.format("%g ",res)..content.unit
 	elseif (content.dtype == "SIGNED") then
-		res= data ~= nil and sCalcNumDiD( content.Blen, bitPos, bytepos , mathfloor(content.Blen/8) , content.mult , content.offset, "", endianess)  or "index error"
+		res= data ~= nil and sCalcNumDiD( content.Blen, bitPos, bytepos , math.floor(content.Blen/8) , content.mult , content.offset, "", endianess)  or "index error"
 		res=string.format("%g ",res)..content.unit
 	elseif (content.dtype == "BCD") then
-		res= data ~= nil and CalcNumDiD( bytepos , mathfloor(content.Blen/8) , content.mult , content.offset, "")  or "index error"
+		res= data ~= nil and CalcNumDiD( bytepos , math.floor(content.Blen/8) , content.mult , content.offset, "")  or "index error"
 		-- string.format for HEX transformation
 		res=string.format("%x ",res)..content.unit
 	elseif (content.dtype == "ASCII") then
 		local cnt = 0
-		while cnt<mathfloor(content.Blen/8) do
+		while cnt<math.floor(content.Blen/8) do
 			if udsBuffer[bytepos]>20 then  -- verify valid ASCII character from Space (0x20 till 0x7F)
 				res=res..string.char(udsBuffer[bytepos])
 			end
@@ -382,10 +382,10 @@ function calculatePacketedDiD(content, udsBuffer, bytepos)
 			res=content.lt
 		end					
 	elseif (content.dtype == "FLOAT") then
-		if mathfloor(content.Blen/8) == 4 then
+		if math.floor(content.Blen/8) == 4 then
 			for i = 3, 0, -1 do res = res..string.char(udsBuffer[bytepos+i]) end 
 			res=string.format("%f",str2float(res, "single"))
-		elseif mathfloor(content.Blen/8) == 8 then
+		elseif math.floor(content.Blen/8) == 8 then
 			for i = 7, 0, -1 do res = res..string.char(udsBuffer[bytepos+i]) end 
 			res=string.format("%f",str2float(res, "double"))
 		end
