@@ -276,7 +276,6 @@ function setBus(bus)
 			end
 		elseif hardwareID == 3 or hardwareID == 4 then 
 			if bus == "500b11" then
-				port = 1
 				getCmdAnswerArray({ 8 , 3 , 3 })
 			elseif bus == "250b11" then
 				getCmdAnswerArray({ 8 , 3 , 2 })
