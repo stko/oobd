@@ -1,6 +1,103 @@
 -- m4_define(`DEBUGPRINT', `m4_ifdef(`DEBUG', if "DBGUSER" ==$1 and DBGLEVEL >=$2 then  print(string.format(m4_shift(m4_shift( $@ ))) ) end)')
 
 
+---[[
+openPage = openPageCall
+addElement = addElementCall
+pageDone = pageDoneCall
+openChannel = openChannelCall
+dbLookup = dbLookupCall
+--]]
+---[[
+serFlush = serFlushCall
+serWrite = serWriteCall
+serWait = serWaitCall
+serReadLn = serReadLnCall
+serDisplayWrite = serDisplayWriteCall
+openXCVehicleData =openXCVehicleDataCall
+ioInput = ioInputCall
+ioRead = ioReadCall
+ioWrite = ioWriteCall
+msgBox = msgBoxCall
+--]]
+
+--[[
+readcount= 1
+input = {}
+input[1]="OOBD D2 212 Lux-Wolf Ostern"
+input[2]="Searching"
+input[3]="41 00 FF FF FF FF"
+input[4]=">"
+input[5]="41 14 FF FF FF FF"
+input[6]=">"
+
+
+function serReadLn()
+	res= input[readcount]
+	DEBUGPRINT("stko", 1, "serial_dxm.lua - serReadLn,%02d: %s %d, %d", "00", "read from input: ", res, readcount)
+	readcount=readcount +1
+	if readcount >#input then
+		readcount = 1
+	end
+	return res
+end
+
+function serWait()
+	return 0
+end
+
+function serWrite(data)
+	DEBUGPRINT("stko", 1, "serial_dxm.lua - serWrite,%02d: %s %d", "00", "Serwrite: ", data)
+end
+
+function serFlush()
+end
+
+--]]
+
+
+--[[
+function openPage(title)
+	DEBUGPRINT("stko", 1, "serial_dxm.lua - openPage,%02d: %s %s", "00", "Start Menu generation: ", title)
+end
+
+function addElement(title, func , intial,flags , id)
+	DEBUGPRINT("stko", 1, "serial_dxm.lua - addElement,%02d: %s", "00", "<---")
+	DEBUGPRINT("stko", 1, "serial_dxm.lua - addElement,%02d: %s %s", "01", "title: ", title)
+	DEBUGPRINT("stko", 1, "serial_dxm.lua - addElement,%02d: %s %s", "02", "function: ", func)
+	DEBUGPRINT("stko", 1, "serial_dxm.lua - addElement,%02d: %s %s", "03", "id: ", id)
+	DEBUGPRINT("stko", 1, "serial_dxm.lua - addElement,%02d: %s", "00", "--->")
+end
+
+function pageDone()
+	DEBUGPRINT("stko", 1, "serial_dxm.lua - pageDone,%02d: %s", "00", "Show Menu")
+end
+
+
+
+--]]
+
+---------------------- Greetings --------------------------------------
+
+function greet(oldvalue,id)
+	serDisplayWrite("Thanks to")
+	serDisplayWrite("")
+	serDisplayWrite("Mike Luxen")
+	serDisplayWrite("Joseph Urhahne")
+	serDisplayWrite("Wolfgang Sauer")
+	serDisplayWrite("Peter Mayer")
+	serDisplayWrite("Axel Bullwinkel")
+	serDisplayWrite("Uli Schmoll")
+	serDisplayWrite("Wolfgang Sommer")
+	serDisplayWrite("Günter Römer")
+	serDisplayWrite("Ekkehard Pofahl")
+	serDisplayWrite("Dennis Kurzweil")
+	serDisplayWrite("Martin F.")
+	serDisplayWrite("")
+	serDisplayWrite("and to all the others,")
+	serDisplayWrite("who made this possible")
+	return "see output window"
+end
 
 
 -------------------- CRC32 ---
@@ -269,6 +366,75 @@ function getSubTable(id, level,wholeTable)
 end
 
 
+-- returns substring nr. "index" of of a string of space separated substring
+
+function getStringPart(text, index)
+	DEBUGPRINT("nexulm", 1, "serial_dxm.lua - getStringPart,%02d: %s", "00", "enter function getStringPart")
+	if text==nil then
+		return ""
+	end
+	local start, finish = string.find(text," ")
+	local loop = 0
+	local first = ""
+	while loop < index and text ~="" do
+		loop = loop + 1
+		start, finish = string.find(text," ")
+		if start ~=  nil then
+			first=string.sub(text,1,finish-1)
+			text=string.sub(text,finish+1)
+			if first=="" then
+				loop = loop -1 -- jump over additional blanks
+			end
+		else
+			first = text
+			text=""
+		end
+	end
+	return first
+end
+
+-- formats "num" to a float string with "idp" number of digits
+
+function round(num, idp)
+  return tonumber(string.format("%." .. (idp or 0) .. "f", num))
+end
+
+-- translate DTC bytes into their offical notation
+-- as descripted on http://en.wikipedia.org/wiki/OBD-II_PIDs (30.4.11)
+
+function translateDTC(highByte, lowByte)
+	DEBUGPRINT("nexulm", 1, "lua_utils.lua - translateDTC,%02d: %s", "00", "enter function translateDTC")
+	local hNibble= (highByte -(highByte % 16)) / 16 -- tricky to do an integer devide with luas float numbers..
+	local lNibble =highByte % 16
+	local start = "??"
+	if hNibble ==  0 then start = "P0" 
+	elseif hNibble ==  1 then start = "P1" 
+	elseif hNibble ==  2 then start = "P2" 
+	elseif hNibble ==  3 then start = "P3" 
+	elseif hNibble ==  4 then start = "C0" 
+	elseif hNibble ==  5 then start = "C1" 
+	elseif hNibble ==  6 then start = "C2" 
+	elseif hNibble ==  7 then start = "C3" 
+	elseif hNibble ==  8 then start = "B0" 
+	elseif hNibble ==  9 then start = "B1" 
+	elseif hNibble == 10 then start = "B2" 
+	elseif hNibble == 11 then start = "B3" 
+	elseif hNibble == 12 then start = "U0" 
+	elseif hNibble == 13 then start = "U1" 
+	elseif hNibble == 14 then start = "U2" 
+	elseif hNibble == 15 then start = "U3"
+	end
+	return start..string.format("%X",lNibble)..string.format("%02X",lowByte)
+end
+
+function notyet(oldvalue,id)
+	return "not implemented yet"
+end
+
+function nothing(oldvalue,id)
+	return oldvalue
+end
+
 --[[
 debug helper to print tables
 
@@ -317,7 +483,11 @@ setLocale(oldvalue,id): Sets global LOCALE variable to "id". If not set, LOCALE 
 --]]
 function setLocale(oldvalue,id)
 	LOCALE=id
-	return "language set to "..id
+	if LOCALE ~= nil then
+		return "language set to "..id
+	else
+		return "no default Language"
+	end
 end 
 
 
@@ -365,25 +535,18 @@ return string.format(getLocalePrintf("nrc",string.format("0x%x",udsBuffer[3]), "
 
 function getLocalePrintf( category, textID, default)
 	DEBUGPRINT("nexulm", 1, "lua_utils.lua - getLocalePrintf,%02d: %s", "00", "enter function getLocalePrintf")
-		local newArray
-		local index
+	local newArray
 	if dbLookup ~= nil then -- db functionality implemented?
 		if LOCALE==nil then -- default language not set ?
 			LOCALE="en_en" -- then set it to english
 		end
 		newArray= dbLookup(category.."_"..LOCALE..".oodb",textID) -- look up for the given category db and for the given LOCALE
 		if newArray ~= nil and newArray.len > 0 then -- if something was found
-			index=tostring(newArray.header["Template"])
-			return newArray.data["1"][index]
+			return getDBEntry(newArray, "Template","1",default)
 		else -- not found: either the LOCALE DB does not exist or the entry was not found
 			if LOCALE ~="en_en" then -- if the LOCALE is already english, then there's no need to search again
-				newArray= dbLookup(category.."_en_en.oodb",textID) --another trial, this time in english
-				if newArray ~= nil and newArray.len > 0 then
-					index=tostring(newArray.header["Template"])
-					return newArray.data["1"][index]
-				else --not found
-					return default -- just return the default
-				end
+				newArray= dbLookup(category.."_".."en_en"..".oodb",textID) -- look up for the given category db and for the given LOCALE
+				return getDBEntry(newArray, "Template","1",default)
 			else --english was already tried
 				return default -- just return the default
 			end
@@ -397,7 +560,7 @@ end
 function selectModuleID(oldvalue,id)
 	DEBUGPRINT("nexulm", 1, "lua_utils.lua - selectModuleID,%02d: %s", "00", "enter function selectModuleID")
 	local index = tonumber(oldvalue)
-	local ModuleID
+--	local ModuleID -- if local ModuleID is set the combo box selected value won't be reused
 	if index == 0 or index == 1 or index == 2 then
 		if hardwareID == 0 or hardwareID == 1 then	-- if ELM327/DXM1 is selected so default is set autoprobing diag protocol on
      		setBus("autoprobing")					-- set automatic protocol detection
@@ -446,3 +609,59 @@ function selectModuleID(oldvalue,id)
 
 	return oldvalue 
 end
+
+
+
+-- helper function to read out of a dbtable, which is an result of precesing dbLookup, by taking care about the different error cases
+function getDBEntry(db, header, nr, default)
+		if db ~= nil and db.len > 0 then
+			local index = db.header[header]
+			if index==nil then
+				return default
+			end
+			index=tostring(index)
+			index = getArrayData(db.data, {nr, index})
+			if index==nil then
+				return default
+			end
+			return index
+		else --not found
+			return default -- just return the default
+		end
+
+end
+
+--[[
+    getArrayData returns the value out of a multidimensional array like result = array[a][b][c], but in opposite to such a direct access
+    it returns a clear nil, but it does not throw any java exceptions in case the addressing is invalid.
+
+	so its been called as getArrayData(array, {a,b,c})
+--]]
+
+function getArrayData(myArray, indexer)
+	for i = 1 , #indexer do
+		print ("search for index"..indexer[i])
+		if myArray[indexer[i]]==nil then
+			return nil
+		else
+			myArray=myArray[indexer[i]]
+		end
+	end
+	return myArray
+	
+end
+
+ 
+--[[
+    array2str returns the string represenation of the given byte array
+--]]
+
+function array2str(byteArray)
+	ans="";
+	for i = 1 , #byteArray do
+		ans = ans .. string.format("%02X",byteArray[i])
+	end
+	return ans
+	
+end
+
