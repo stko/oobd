@@ -665,3 +665,82 @@ function array2str(byteArray)
 	
 end
 
+
+
+-- translates XML tag arguments into array. (unused) part of primitiveXML2Table()
+function xmlTagParseArgs(s)
+	local arg = {}
+	string.gsub(s, "([%-%w]+)=([\"'])(.-)%2", function (w, _, a)
+			arg[w] = a
+		end)
+	return arg
+end
+
+--[[
+translates primitive XML constructs into lua table. 
+Caution: it supports only the basic XML format stile like <parent><child>value1</child><child>value2</child></parent> ,
+but no arguments, and no other fancy XLM feature at all
+
+returns lua table like
+{parent = { { child = { {"value1"} , {"value2"} } } }
+
+in case of an error, it returns {}
+
+--]]
+function primitiveXML2Table(s)
+	local stack = {} ---------- stack for the elements
+	local name = {} ------ Stack for the tag name
+	local top = {}
+	table.insert(stack, top)
+	local ni, c, label, xarg, empty
+	local i, j = 1, 1
+	while true do
+		ni, j, c, label, xarg, empty = string.find(s, "<(%/?)([%w_:]+)(.-)(%/?)>", i)
+		if not ni then break end
+		local text = string.sub(s, i, ni - 1) -- what stands bevore the actual found tag?
+		if not string.find(text, "^%s*$") then -- some text?
+			table.insert(top, text) -- store it
+		end
+		if empty == "/" then -- empty element tag
+			-- table.insert(top, {label=label, xarg=parseargs(xarg), empty=1}) -- empty? Don't save that
+		elseif c == "" then -- start tag
+			--if xarg=="" then                  arguments do not work somehow, so commented out
+				top = {}
+			--else
+			--	top = { xarg=xmlTagParseArgs(xarg)}
+			--end
+			table.insert(stack, top) -- new level: push new table on stack
+			table.insert(name, label) -- push actual element name on name stack for later assignment, when coming back from stack
+		else -- end tag
+			local toclose = table.remove(stack) -- pull result from stack
+			top = stack[#stack]
+			local lastName = table.remove(name) -- pull this level name from stack again
+			if #stack < 1 then
+				return {} -- error("nothing to close with " .. label)
+			end
+			-- the original source had some error handling, but we dont...
+			--[[ if toclose.label ~= label then
+				error("trying to close "..toclose.label.." with "..label)
+			      end
+			--]]
+			-- adding the childtable to the actual table by using the actual name as identifier
+			if top[lastName] == nil then -- is there already a table to add to?
+				top[lastName] = {} -- if not, create ome
+			end
+			table.insert(top[lastName], toclose)
+		end
+		i = j + 1
+	end
+	--[[  some text left? We don't care
+	  local text = string.sub(s, i)
+	  if not string.find(text, "^%s*$") then
+	    table.insert(stack[#stack], text)
+	  end
+	  --]]
+	if #stack > 1 then
+		return {} -- error("unclosed " .. stack[#stack].label)
+	end
+	return stack[1]
+end
+
+
