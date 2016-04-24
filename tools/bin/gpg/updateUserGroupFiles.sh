@@ -1,7 +1,8 @@
 #!/bin/bash 
+DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 # $1 grouplist- keyfile , $2 old groupfile , $3 new groupfile 
 # first check, if the group file signature is valid
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo keyring $1
 echo signature $3
 gpg --status-fd 1 --no-default-keyring --keyring $1 --verify $3.sig | grep "GOODSIG"

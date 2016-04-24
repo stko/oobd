@@ -1,4 +1,6 @@
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+#!/bin/bash 
+DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
 # as cygwin pipes dont work, we have to use temporary files instead
 php $DIR/makegroups.php $1 $2 $3 $4 
 
