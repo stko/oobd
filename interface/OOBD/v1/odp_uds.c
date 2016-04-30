@@ -868,9 +868,14 @@ void obp_uds(void *pvParameters)
 	    case MSG_INIT:
 		DEBUGPRINT("Reset Protocol\n", 'a');
 		if (protocolBuffer != NULL) {
-		    protocolBuffer->len = 0;
-		}
 //<<<< oobdtemple protocol MSG_INIT <<<<
+		    if (1)	//in other protocols this is depending..
+//>>>> oobdtemple protocol MSG_INIT_2 >>>>    
+		    {
+			protocolBuffer->len = 0;
+		    }
+		}
+//<<<< oobdtemple protocol MSG_INIT_2 <<<<
 //>>>> oobdtemple protocol MSG_PROTOCOL_STOP >>>>    
 		break;
 	    case MSG_PROTOCOL_STOP:

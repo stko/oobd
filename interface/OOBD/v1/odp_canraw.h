@@ -63,6 +63,7 @@ inline int sendMoreFrames();
 
 #define PARAM_CANRAW_FRAME_DELAY 	    ( 1 )
 #define PARAM_CANRAW_SENDID  		    ( 2 )
+#define PARAM_CANRAW_FRAME_REPEAT	    ( 3 )
 /*! 
 
 
@@ -73,6 +74,7 @@ inline int sendMoreFrames();
 struct CanRawConfig {
     UBaseType_t recvID,		//!< receiver ID
      separationTime,		//!< delay between two frames
+     frameRepeat,		//!< nr of repeating loop when sending frame sequence
      showBusTransfer;		//!< dump received frames?
 };
 
