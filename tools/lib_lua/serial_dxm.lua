@@ -22,7 +22,7 @@ hardwareID =0
 firmware_revision=""
 hardware_model=""
 lastSwitchedBus=""
-
+dongleAlive=0
 
 
 
@@ -103,7 +103,8 @@ end
 function echoWrite(text)
 	serFlush()
 	serWrite(text)
-	serWait(text,500)
+	dongleAlive= serWait(text,500)
+	return dongleAlive
 end
 
 -- the global receiving routine. Trys to read single- or multiframe answers from the dxm and stores it in udsbuffer, setting the received length in udslen
@@ -495,7 +496,9 @@ function getCmdAnswerArray(param)
 	for i, p in ipairs(param) do
 		cmd=cmd..p.." "
 	end
-	echoWrite(cmd.."\r")
+	if echoWrite(cmd.."\r")<1 then
+		return -1, {}
+	end
 	return readAnswerArray()
 end
 
