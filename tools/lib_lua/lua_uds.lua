@@ -51,7 +51,9 @@ udsServiceRequest() returns up to TWO (2!) values. The first one is a string, th
 
 function udsServiceRequest( service, did, didData, bufferTime, handler)
 	DEBUGPRINT("nexulm", 1, "lua_uds.lua - udsServiceRequest,%02d: %s", "00", "enter function udsServiceRequest")
-	echoWrite(service..did..array2str(didData).."\r") 
+	if echoWrite(service..did..array2str(didData).."\r")<1 then
+		return "Lost Connection",-1
+	end
 	udsLen=receive()
 	if udsLen>0 then
 		if udsBuffer[1]== tonumber(service,16)+udsService_Response then

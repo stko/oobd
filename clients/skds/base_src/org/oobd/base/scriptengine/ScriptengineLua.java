@@ -247,7 +247,7 @@ public class ScriptengineLua extends OobdScriptengine {
                         Level.INFO,
                         "Lua calls serWait with string data:>" + getString(0)
                         + "<");
-                int result = 0;
+                double result = 0;
                 if (getString(0) != null) { // send only if string contains
                     // anything to wait for
                     // BaseLib.luaAssert(nArguments >0, "not enough args");
@@ -287,7 +287,7 @@ public class ScriptengineLua extends OobdScriptengine {
                                 Level.SEVERE, null, ex);
                     }
                 }
-                callFrame.push(new Integer(result));
+               callFrame.push(result);
                 finishRPC(callFrame, nArguments);
                 return 1;
             }

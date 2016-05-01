@@ -84,19 +84,19 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	Pause Execution      Disable dongle communication to generate fault condition
     Test for Dongle Version without Dongle connected
         send webUI command  {"name":"interface_version:","optid":"","actValue":"","updType":3}
-	answer should match    {"type":"VALUE" ,"value":"#not available"}
+	answer should match    {"type":"VALUE" ,"value":"#Lost Connection"}
     Test for Dongle Serial Nr without Dongle connected
         send webUI command  {"name":"interface_serial:","optid":"","actValue":"","updType":3}
-	answer should match    {"type":"VALUE" ,"value":"#not available"}
+	answer should match    {"type":"VALUE" ,"value":"#Lost Connection"}
     Test for Dongle Voltage without Dongle connected
         send webUI command  {"name":"interface_voltage:","optid":"","actValue":"","updType":3}
-	answer should match    {"type":"VALUE" ,"value":"#not available"}
+	answer should match    {"type":"VALUE" ,"value":"#Lost Connection"}
     Test for Dongle Bus without Dongle connected
         send webUI command  {"name":"interface_bus:","optid":"","actValue":"","updType":3}
-	answer should match    {"type":"VALUE" ,"value":"#not available"}
+	answer should match    {"type":"VALUE" ,"value":"#Lost Connection"}
     Test for Dongle Device ID without Dongle connected
         send webUI command  {"name":"interface_deviceID:","optid":"","actValue":"","updType":3}
-	answer should match    {"type":"VALUE" ,"value":"#not available"}
+	answer should match    {"type":"VALUE" ,"value":"#Lost Connection"}
     Re-Establish Dongle communication
 	Pause Execution      Enable dongle communication again for futher testing
 	close webUI
