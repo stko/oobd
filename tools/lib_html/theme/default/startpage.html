@@ -75,13 +75,13 @@
 	<button id="indexbutton" onclick="window.location = '/';">All Scripts</button>
 	<a target="_blank" href="http://oobd.org"><img src="/libs/images/oobd_logo_tron.png" width="100"></a>
 
-	<button onclick="Oobd.update()" id="button">Refresh</button><input type='checkbox' onclick='Oobd.timer(this.checked);' id="check"><label for="check">Timer</label>
+	<button onclick="Oobd.update()" id="button">Update</button><input type='checkbox' onclick='Oobd.timer(this.checked);' id="check"><label for="check">Timer</label>
 
 	<span id="headline"></span>
 	<div id="spin"></div>
 	<div id="tabs">
 		<ul>
-			<li><a href="#datatab">Data</a></li>
+			<li><a href="#datatab">Diagnose</a></li>
 			<li><a href="#outputtab">Output and Buffer</a></li>
 			<li><a href="#dashtab">Dashboard</a></li>
 		</ul>
@@ -454,7 +454,7 @@
 					}
 				}
 			}else{
-				createUpdateflag(icondiv, tbl, Oobd.FLAG_UPDATE, "ui-icon-refresh", 'Refresh Flag');
+				createUpdateflag(icondiv, tbl, Oobd.FLAG_UPDATE, "ui-icon-refresh", 'Update Flag');
 				createUpdateflag(icondiv, tbl, Oobd.FLAG_TIMER, "ui-icon-clock", 'Timer Flag');
 				createUpdateflag(icondiv, tbl, Oobd.FLAG_LOG, "ui-icon-pencil", 'Log changes');
 			}

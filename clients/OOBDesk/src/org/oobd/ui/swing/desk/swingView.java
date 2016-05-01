@@ -992,26 +992,37 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         libraryDir.setText(appProbs.get(OOBDConstants.PropName_LibraryDir, ""));
         scriptDir.setText(appProbs.get(OOBDConstants.PropName_ScriptDir, ""));
         int pgp = checkKeyFiles();
-        String pgpStatusText;
-        if ((pgp & 0x01) > 0) {
-            pgpStatusText = "New Group Key File is waiting for import";
-        } else if ((pgp & 0x02) > 0) {
-            pgpStatusText = "New User Key File is waiting for import";
+        String pgpStatusText = "No PGP keys available";
 
-        } else if ((pgp & 0x04) > 0) {
-            pgpStatusText = "Missing Group Key File !!";
-
-        } else if ((pgp & 0x08) > 0) {
-            pgpStatusText = "Missing User Key File !!";
-        } else {
+        if (pgp == 0) { // all ok
             pgpStatusText = "All Keys in place";
         }
+        if ((pgp & 0x04) > 0) { //no group key
+            pgpStatusText = "Missing Group Key File !!";
+        }
+        if ((pgp & 0x01) > 0) {//new group key
+            pgpStatusText = "New Group Key File is waiting for import";
+        }
+        if ((pgp & 0x08) > 0) { //no user key
+            pgpStatusText = "Missing User Key File !!";
+        }
+        if ((pgp & 0x02) > 0) {//new user key
+            pgpStatusText = "New User Key File is waiting for import";
+        }
+        if ((pgp == (0x04 + 0x04))) {//no keys
+            pgpStatusText = "No PGP keys available";
+        }
+
         pgpStatus.setText("PGP Key Status: " + pgpStatusText);
         if (pgp != 0) {
             appProbs.putBoolean(OOBDConstants.PropName_PGPEnabled, false);
             pgpEnabled.setSelected(false);
             pgpEnabled.setEnabled(false);
-            pgpImportKeys.setText("Import PGP keys now");
+            if ((pgp & (0x02 + 0x01)) > 0) { // any new keys there
+                pgpImportKeys.setText("Import PGP keys now");
+            } else {
+                pgpImportKeys.setText("No PGP Keys available");
+            }
         } else {
             pgpEnabled.setEnabled(true);
             pgpImportKeys.setText("DELETE PGP keys now");
