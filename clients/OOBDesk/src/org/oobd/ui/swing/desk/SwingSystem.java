@@ -75,8 +75,9 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                     // ServiceInfo service_info =   ServiceInfo.create("_http._tcp.", "OOBDesk", 8080, 0,0,values)
                     String service_type = "_http._tcp.";
                     //       String service_name = "http://www.mycompany.com/xyz.html";
-                    String service_name = "xyz";
-                    int service_port = 80;
+                    //String service_name = "OOBD-" + jmdns.getHostName();
+                    String service_name = Core.getSingleInstance().getSystemIF().getOobdURL();
+                    int service_port = (int)core.readDataPool(OOBDConstants.DP_HTTP_PORT, 8080);
                     ServiceInfo service_info = ServiceInfo.create(service_type, service_name, service_port, "");
                     jmdns.registerService(service_info);
                 } catch (IOException ex) {
