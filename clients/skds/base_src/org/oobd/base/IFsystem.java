@@ -37,19 +37,28 @@ public interface IFsystem {
 
     /**
      * \brief reports the URL OOBD runs on
+     *
      * @return the URL of the OOBD build in webserver
      */
     public String getOobdURL();
 
     /**
      * \brief reports the ip address OOBD runs on
-     * @return the ip address of the device OOBD runs on
+     *
+     * @return the local side ip address of the device OOBD runs on
      */
     public InetAddress getSystemIP();
 
     /**
+     * \brief reports the MAC address OOBD runs on
+     *
+     * @return the MAC address of local side ip address OOBD runs on
+     */
+    public String getMACAddress();
+
+    /**
      * \brief opens the system web browser
-      */
+     */
     public void openBrowser();
 
     /**
@@ -106,7 +115,6 @@ public interface IFsystem {
      * @return the application pass phrase
      */
     public char[] getAppPassPhrase();
-
 
     /**
      * \brief returns the (secret) user pass phrase for data decoding

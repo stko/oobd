@@ -57,6 +57,8 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     String webLibraryDir = "";
     Preferences appProbs;
     JmDNS jmdns;
+    String oobdMacAddress = "-";
+    InetAddress oobdIPAddress=null;
 
     @Override
     public void registerOobdCore(Core thisCore) {
@@ -76,8 +78,9 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                     String service_type = "_http._tcp.";
                     //       String service_name = "http://www.mycompany.com/xyz.html";
                     //String service_name = "OOBD-" + jmdns.getHostName();
-                    String service_name = Core.getSingleInstance().getSystemIF().getOobdURL();
-                    int service_port = (int)core.readDataPool(OOBDConstants.DP_HTTP_PORT, 8080);
+                    //String service_name = Core.getSingleInstance().getSystemIF().getOobdURL();
+                    String service_name = "OOBD DaaS (" + getMACAddress() + ")";
+                    int service_port = (int) core.readDataPool(OOBDConstants.DP_HTTP_PORT, 8080);
                     ServiceInfo service_info = ServiceInfo.create(service_type, service_name, service_port, "");
                     jmdns.registerService(service_info);
                 } catch (IOException ex) {
@@ -109,30 +112,53 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     }
 
     @Override
+    public String getMACAddress() {
+        if (oobdMacAddress.equals("-")) {//not initialized? Then do it first
+            getSystemIP();
+        }
+        return oobdMacAddress;
+    }
+
+    @Override
     public InetAddress getSystemIP() {
-        InetAddress ip;
+        if (oobdIPAddress!=null){
+            return oobdIPAddress;
+        }
         try {
             Enumeration e = NetworkInterface.getNetworkInterfaces();
             while (e.hasMoreElements()) {
                 NetworkInterface n = (NetworkInterface) e.nextElement();
                 Enumeration ee = n.getInetAddresses();
                 while (ee.hasMoreElements()) {
-                    ip = (InetAddress) ee.nextElement();
-                    System.out.println(ip.getHostAddress());
-                    if (ip.isSiteLocalAddress()) {
-                        System.out.println("Your current local side IP address : " + ip);
-                        return ip;
+                    oobdIPAddress = (InetAddress) ee.nextElement();
+                    System.out.println(oobdIPAddress.getHostAddress());
+                    if (oobdIPAddress.isSiteLocalAddress()) {
+                        System.out.println("Your current local side IP address : " + oobdIPAddress);
+                        byte[] myMac = n.getHardwareAddress();
+                        oobdMacAddress = "";
+                        for (int i = 0; i < myMac.length; i++) {
+                            if (!oobdMacAddress.equals("")) {
+                                oobdMacAddress += ":";
+                            }
+                            oobdMacAddress += String.format("%1$02X", myMac[i]);
+                        }
+                        System.out.println("Your current MAC address : " + oobdMacAddress);
+                        return oobdIPAddress;
                     }
                 }
             }
-            ip = InetAddress.getLocalHost();
-            System.out.println("Your current IP address : " + ip);
-            return ip;
+            oobdIPAddress = InetAddress.getLocalHost();
+            System.out.println("Your current IP address : " + oobdIPAddress);
+            return oobdIPAddress;
 
         } catch (UnknownHostException ex) {
+            oobdMacAddress = "-";
+            oobdIPAddress = null;
 
             Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SocketException ex) {
+            oobdMacAddress = "-";
+            oobdIPAddress = null;
             Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
@@ -327,9 +353,9 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                 sysPrefsRoot = Preferences.systemRoot();
                 sysPrefsRoot.sync();
                 mySysPrefs = sysPrefsRoot.node("com.oobd.preference." + filename);
-                String sysKeys[]=mySysPrefs.keys();
-                for (int i=0; i<sysKeys.length;i++){ //copy system settings, if any exist
-                    myPrefs.put(sysKeys[i], mySysPrefs.get(sysKeys[i],""));
+                String sysKeys[] = mySysPrefs.keys();
+                for (int i = 0; i < sysKeys.length; i++) { //copy system settings, if any exist
+                    myPrefs.put(sysKeys[i], mySysPrefs.get(sysKeys[i], ""));
                 }
             }
             return myPrefs;
