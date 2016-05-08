@@ -235,7 +235,7 @@ function createDB($inFp, $outFp){
     if($headerLine==null){
       $headerLine=$line; // store the headerLine which contains the colum names at the beginning
     }else{
-      list($index,$content)=split("\t",$line,2); //split each line into key and value
+      list($index,$content)=explode("\t",$line,2); //split each line into key and value
        if ($lastIndex == $index){ // line belongs to previous key
 	$actLine->addContent($content); //add content to previous key
       }else{
