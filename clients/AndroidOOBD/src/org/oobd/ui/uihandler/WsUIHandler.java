@@ -34,7 +34,7 @@ public class WsUIHandler extends WSOobdUIHandler {
     }
 
     public static String publicName() {
-        return "ws";
+        return UIHANDLER_WS_NAME;
     }
 
   

@@ -1,5 +1,6 @@
 package org.oobd.ui.android.application;
 
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.prefs.Preferences;
@@ -8,16 +9,18 @@ import java.lang.reflect.Method;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.net.Proxy;
+import java.net.SocketException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 
 import org.oobd.base.Core;
 import org.oobd.base.OOBDConstants;
 import org.oobd.base.IFsystem;
 import org.oobd.base.IFui;
 import org.oobd.base.archive.*;
-
 import org.oobd.base.port.ComPort_Kadaver;
 import org.oobd.base.port.ComPort_Telnet;
 import org.oobd.base.port.OOBDPort;
@@ -34,10 +37,12 @@ import android.app.AlertDialog;
 import android.app.Application;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
+import android.net.Uri;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -61,10 +66,99 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 	private OOBDPort myComPort;
 	private String userPassPhrase = "";
 
+	
+    String webRootDir = "";
+    String webLibraryDir = "";
+    Preferences appProbs;
+    String oobdMacAddress = "-";
+    InetAddress oobdIPAddress=null;
+	
+	
+	
+	
 	public static OOBDApp getInstance() {
 		return mInstance;
 	}
 
+	@Override
+    public String getOobdURL() {
+        InetAddress ip;
+        String hostname;
+        ip = getSystemIP();
+        hostname = ip.getHostName();
+        System.out.println("Your current Hostname : " + hostname);
+        return "http://" + hostname + ":" + ((Integer) Core.getSingleInstance().readDataPool(DP_HTTP_PORT, 8080)).toString();
+    }
+
+    public void openBrowser() {
+
+               
+                try {
+                    Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getOobdURL()));
+                    startActivity(myIntent);
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(this, "No application can handle this request."
+                        + " Please install a webbrowser",  Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+                
+                
+                }
+
+    @Override
+    public String getMACAddress() {
+        if (oobdMacAddress.equals("-")) {//not initialized? Then do it first
+            getSystemIP();
+        }
+        return oobdMacAddress;
+    }
+
+    @Override
+    public InetAddress getSystemIP() {
+        if (oobdIPAddress!=null){
+            return oobdIPAddress;
+        }
+        try {
+            Enumeration e = NetworkInterface.getNetworkInterfaces();
+            while (e.hasMoreElements()) {
+                NetworkInterface n = (NetworkInterface) e.nextElement();
+                Enumeration ee = n.getInetAddresses();
+                while (ee.hasMoreElements()) {
+                    oobdIPAddress = (InetAddress) ee.nextElement();
+                    System.out.println(oobdIPAddress.getHostAddress());
+                    if (oobdIPAddress.isSiteLocalAddress()) {
+                        System.out.println("Your current local side IP address : " + oobdIPAddress);
+                        byte[] myMac = n.getHardwareAddress();
+                        oobdMacAddress = "";
+                        for (int i = 0; i < myMac.length; i++) {
+                            if (!oobdMacAddress.equals("")) {
+                                oobdMacAddress += ":";
+                            }
+                            oobdMacAddress += String.format("%1$02X", myMac[i]);
+                        }
+                        System.out.println("Your current MAC address : " + oobdMacAddress);
+                        return oobdIPAddress;
+                    }
+                }
+            }
+            oobdIPAddress = InetAddress.getLocalHost();
+            System.out.println("Your current IP address : " + oobdIPAddress);
+            return oobdIPAddress;
+
+        } catch (UnknownHostException ex) {
+            oobdMacAddress = "-";
+            oobdIPAddress = null;
+            Log.v(this.getClass().getSimpleName(), ex.getMessage());
+        } catch (SocketException ex) {
+            oobdMacAddress = "-";
+            oobdIPAddress = null;
+            Log.v(this.getClass().getSimpleName(), ex.getMessage());
+        }
+        return null;
+    }
+
+	
+	
 	public String generateUIFilePath(int pathID, String fileName) {
 		switch (pathID) {
 
@@ -165,22 +259,6 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 		// + thisCore.toString());
 	}
 
-	public CharSequence[] getAvailableLuaScript() {
-
-		FilenameFilter filter = new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return name.toLowerCase().endsWith(".lbc")
-						|| name.toLowerCase().endsWith(".lbc.pgp");
-			}
-		};
-		File dir = new File(generateUIFilePath(OOBDConstants.FT_SCRIPT, ""));
-		String[] children = dir.list(filter);
-		if (children == null) {
-			return new String[0];
-		} else {
-			return children;
-		}
-	}
 
 	public void registerOobdCore(Core core) {
 		this.core = core;
@@ -336,11 +414,8 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 
 	public String doFileSelector(String path, final String extension,
 			String message, Boolean save) {
-		File oldDir = null;
-		String oldDirName = path;
-		if (oldDirName != null) {
-			oldDir = new File(oldDirName);
-		}
+		Log.w(this.getClass().getSimpleName(),
+				"Procedure doFileSelector called, but senseless in android! ");
 
 		return null;
 	}
@@ -354,7 +429,7 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 			prefsRoot = Preferences.userNodeForPackage(this.getClass());
 			// prefsRoot.sync();
 			myPrefs = prefsRoot.node("com.oobd.preference." + filename);
-			if (myPrefs.keys().length == 0
+/*			if (myPrefs.keys().length == 0
 					&& OOBDConstants.CorePrefsFileName
 							.equalsIgnoreCase(filename)) { // no entries yet
 				// generate system specific settings
@@ -370,6 +445,7 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 						"org.oobd.ui.uihandler.UIHandler");
 				myPrefs.flush();
 			}
+*/
 			return myPrefs;
 		} catch (Exception e) {
 			Log.v(this.getClass().getSimpleName(),
