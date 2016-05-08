@@ -13,7 +13,7 @@ CFLAGS=
 all: olp.exe
 
 olp.exe: olp/olp.cs
-	gmcs $(CFLAGS) olp/olp.cs
+	mcs $(CFLAGS) olp/olp.cs
 
 clean:
 	rm *.exe
