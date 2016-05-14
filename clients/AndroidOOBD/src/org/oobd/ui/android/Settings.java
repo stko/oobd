@@ -3,6 +3,7 @@ package org.oobd.ui.android;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,6 +21,8 @@ import android.widget.TextView;
 
 import org.oobd.base.Core;
 import org.oobd.base.OOBDConstants;
+import org.oobd.base.archive.Archive;
+import org.oobd.base.archive.Factory;
 import org.oobd.base.port.OOBDPort;
 import org.oobd.base.port.PortInfo;
 import org.oobd.ui.android.application.OOBDApp;
@@ -46,7 +49,7 @@ import java.util.logging.Logger;
  *         configure the app (Bluetooth OBD connection, Lua script file
  *         selection and simulation mode.
  */
-public class Settings extends Activity {
+public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 
 	public static final String KEY_LIST_SELECT_PAIRED_OBD2_DEVICE = "PREF_OOBD_BT_DEVICE";
 
@@ -64,7 +67,7 @@ public class Settings extends Activity {
 	private TextView wsProxyHostEditText;
 	private TextView wsProxyPortEditText;
 	private Hashtable<String, Class> supplyHardwareConnects;
-
+	private String oldConnectTypeName = null;
 	public static Settings mySettingsActivity;
 
 	// protected void onCreate(Bundle savedInstanceState,OOBDPort comPort) {
@@ -76,37 +79,52 @@ public class Settings extends Activity {
 		connectTypeSpinner = (Spinner) findViewById(R.id.connectionTypeSpinner);
 		connectTypeSpinner
 				.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
 					public void onItemSelected(AdapterView<?> parent,
 							View view, int pos, long id) {
 						connectTypeName = (String) parent
 								.getItemAtPosition(pos);
 						if (connectTypeName != null
 								&& !connectTypeName.equalsIgnoreCase("")) {
-							preferences
-									.edit()
-									.putString(
-											OOBDConstants.PropName_ConnectType,
-											connectTypeName).commit();
-							
-							
-							core.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
-					          if (oldConnectTypeName != null) {
-					                appProbs.put(OOBDConstants.PropName_ConnectType, connectTypeName);
-					                // !! The value of the connection device is not stored here, as this already controlled in the comportComboBox change() event
-					                appProbs.put(oldConnectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, jTextFieldRemoteServer.getText());
-					                appProbs.put(oldConnectTypeName + "_" + OOBDConstants.PropName_ProxyHost, jTextFieldProxyHost.getText());
-					                try {
-					                    jSpinnerProxyPort.commitEdit();
-					                } catch (ParseException ex) {
-					                    Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
-					                }
-					                appProbs.putInt(oldConnectTypeName + "_" + OOBDConstants.PropName_ProxyPort, ((Integer) jSpinnerProxyPort.getValue()));
-					            }
+							Editor prefs = preferences.edit();
+							prefs.putString(OOBDConstants.PropName_ConnectType,
+									connectTypeName);
 
-					          
-					          
-					          
-					          updateUI();
+							Core.getSingleInstance().writeDataPool(
+									OOBDConstants.DP_ACTUAL_CONNECTION_TYPE,
+									connectTypeName);
+							if (oldConnectTypeName != null) {
+
+								prefs.putString(
+										OOBDConstants.PropName_ConnectType,
+										connectTypeName);
+								// !! The value of the connection device is not
+								// stored here, as this already controlled in
+								// the comportComboBox change() event
+								prefs.putString(
+										oldConnectTypeName
+												+ "_"
+												+ OOBDConstants.PropName_ConnectServerURL,
+										((EditText) findViewById(R.id.wsURLeditText))
+												.getText().toString());
+								prefs.putString(
+										oldConnectTypeName
+												+ "_"
+												+ OOBDConstants.PropName_ProxyHost,
+										((EditText) findViewById(R.id.wsProxyHostEditText))
+												.getText().toString());
+
+								String portString = ((EditText) findViewById(R.id.wsProxyPortEditText))
+										.getText().toString();
+								if (portString.length() > 0) {
+									int portInt = Integer.parseInt(portString);
+									prefs.putInt(oldConnectTypeName + "_"
+											+ OOBDConstants.PropName_ProxyPort,
+											portInt);
+								}
+							}
+							prefs.commit();
+							updateUI();
 						}
 					}
 
@@ -116,7 +134,7 @@ public class Settings extends Activity {
 								.putString(OOBDConstants.PropName_ConnectType,
 										"").commit();
 					}
-				});		
+				});
 		List<String> list = new ArrayList<String>();
 		supplyHardwareConnects = OOBDApp.getInstance().getCore()
 				.getConnectorList();
@@ -139,50 +157,36 @@ public class Settings extends Activity {
 				.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 					public void onItemSelected(AdapterView<?> parent,
 							View view, int pos, long id) {
-						connectDeviceName = ((PortInfo) parent
-								.getItemAtPosition(pos)).getDevice();
+						Object item = parent.getItemAtPosition(pos);
+
+						if (item instanceof PortInfo) {
+							connectDeviceName = ((PortInfo) item).getDevice();
+						} else {
+							connectDeviceName = item.toString();
+							connectDeviceName = connectDeviceName.replaceAll(
+									"\\(.*\\)", "").trim();
+							/*
+							 * Do we really have to program our own combobox to
+							 * input own devices?
+							 * http://stackoverflow.com/questions
+							 * /3024656/how-can-i-show-a-combobox-in-android
+							 * cb.getEditor().setItem(connectDeviceName);
+							 */
+						}
 						if (connectDeviceName != null
 								&& !connectDeviceName.equalsIgnoreCase("")) {
-
-							
-							
-							
-					          if (item instanceof PortInfo) {
-					                connectDeviceName = ((PortInfo) item).getDevice();
-					            } else {
-					                connectDeviceName = item.toString();
-					                connectDeviceName = connectDeviceName.replaceAll("\\(.*\\)", "").trim();
-					                cb.getEditor().setItem(connectDeviceName);
-					            }
-					            if (connectDeviceName != null && !connectDeviceName.equalsIgnoreCase("")) {
-					                appProbs.put(connectTypeName + "_" + OOBDConstants.PropName_SerialPort, connectDeviceName);
-					                core.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECT_ID, connectDeviceName);
-					            }
-					 						
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
-							
 							preferences
 									.edit()
-									.putString(connectTypeName + "_DEVICE",
+									.putString(
+											connectTypeName
+													+ "_"
+													+ OOBDConstants.PropName_SerialPort,
 											connectDeviceName).commit();
+							Core.getSingleInstance().writeDataPool(
+									OOBDConstants.DP_ACTUAL_CONNECT_ID,
+									connectDeviceName);
 						}
+
 					}
 
 					public void onNothingSelected(AdapterView<?> parent) {
@@ -205,11 +209,18 @@ public class Settings extends Activity {
 
 			public void onCheckedChanged(CompoundButton parent,
 					boolean isChecked) {
-				if (isChecked){
-				preferences.edit().putString(OOBDConstants.PropName_UIHander, OOBDConstants.UIHANDLER_WS_NAME).commit();
-				}else{
-					preferences.edit().putString(OOBDConstants.PropName_UIHander, OOBDConstants.UIHANDLER_LOCAL_NAME).commit();
-					
+				if (isChecked) {
+					preferences
+							.edit()
+							.putString(OOBDConstants.PropName_UIHander,
+									OOBDConstants.UIHANDLER_WS_NAME).commit();
+				} else {
+					preferences
+							.edit()
+							.putString(OOBDConstants.PropName_UIHander,
+									OOBDConstants.UIHANDLER_LOCAL_NAME)
+							.commit();
+
 				}
 
 			}
@@ -256,9 +267,14 @@ public class Settings extends Activity {
 			public void afterTextChanged(Editable s) {
 				preferences
 						.edit()
-						.putString(connectTypeName + "_"+ OOBDConstants.PropName_ConnectServerURL,
+						.putString(
+								connectTypeName
+										+ "_"
+										+ OOBDConstants.PropName_ConnectServerURL,
 								urlEditText.getText().toString()).commit();
-				core.writeDataPool(OOBDConstants.DP_ACTUAL_REMOTECONNECT_SERVER, urlEditText.getText().toString());
+				Core.getSingleInstance().writeDataPool(
+						OOBDConstants.DP_ACTUAL_REMOTECONNECT_SERVER,
+						urlEditText.getText().toString());
 			}
 
 			public void beforeTextChanged(CharSequence s, int start, int count,
@@ -275,7 +291,9 @@ public class Settings extends Activity {
 			public void afterTextChanged(Editable s) {
 				preferences
 						.edit()
-						.putString(connectTypeName + "_" + OOBDConstants.PropName_ProxyHost,
+						.putString(
+								connectTypeName + "_"
+										+ OOBDConstants.PropName_ProxyHost,
 								wsProxyHostEditText.getText().toString())
 						.commit();
 			}
@@ -296,10 +314,11 @@ public class Settings extends Activity {
 				if (content.length() > 0) {
 					preferences
 							.edit()
-							.putInt(connectTypeName + "_" + OOBDConstants.PropName_ProxyPort,
+							.putInt(connectTypeName + "_"
+									+ OOBDConstants.PropName_ProxyPort,
 									Integer.parseInt(wsProxyPortEditText
 											.getText().toString())).commit();
-					
+
 				}
 			}
 
@@ -311,11 +330,13 @@ public class Settings extends Activity {
 					int count) {
 			}
 		});
-        String actualScriptDir = appProbs.get(OOBDConstants.PropName_ScriptDir, null);
-        core.writeDataPool(DP_SCRIPTDIR, actualScriptDir);
-        core.writeDataPool(DP_WWW_LIB_DIR, appProbs.get(OOBDConstants.PropName_LibraryDir, null));
-        ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
-        core.writeDataPool(DP_LIST_OF_SCRIPTS, files);
+		String actualScriptDir = preferences.getString(
+				OOBDConstants.PropName_ScriptDir, null);
+		Core.getSingleInstance().writeDataPool(DP_SCRIPTDIR, actualScriptDir);
+		Core.getSingleInstance().writeDataPool(DP_WWW_LIB_DIR,
+				preferences.getString(OOBDConstants.PropName_LibraryDir, null));
+		ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
+		Core.getSingleInstance().writeDataPool(DP_LIST_OF_SCRIPTS, files);
 		updateUI();
 
 	}
@@ -333,13 +354,17 @@ public class Settings extends Activity {
 			connectDeviceName = preferences.getString(connectTypeName
 					+ "_DEVICE", "");
 			pgpEnabled.setChecked(preferences.getBoolean("PGPENABLED", false));
-			httpEnabled.setChecked(preferences.getString(OOBDConstants.PropName_UIHander, "UIHandler").equalsIgnoreCase("ws"));
+			httpEnabled.setChecked(preferences.getString(
+					OOBDConstants.PropName_UIHander, "UIHandler")
+					.equalsIgnoreCase("ws"));
 		}
-		urlEditText.setText(preferences.getString(
-				connectTypeName + "_"+OOBDConstants.PropName_ConnectServerURL,
+		urlEditText.setText(preferences.getString(connectTypeName + "_"
+				+ OOBDConstants.PropName_ConnectServerURL,
 				OOBDConstants.PropName_KadaverServerDefault));
-		wsProxyHostEditText.setText(preferences.getString(connectTypeName + "_"+ "PROXYHOST", ""));
-		wsProxyPortEditText.setText(preferences.getString(connectTypeName + "_"+ "PROXYPORT", ""));
+		wsProxyHostEditText.setText(preferences.getString(connectTypeName + "_"
+				+ "PROXYHOST", ""));
+		wsProxyPortEditText.setText(preferences.getString(connectTypeName + "_"
+				+ "PROXYPORT", ""));
 		Class<OOBDPort> value = supplyHardwareConnects.get(connectTypeName);
 		try { // tricky: try to call a static method of an interface, where a
 				// interface don't have static values by definition..
@@ -359,81 +384,100 @@ public class Settings extends Activity {
 
 		}
 
-		
-        int portListIndex = -1;
-
-        PortInfo[] portCopyPlusOne = new PortInfo[portList.length + 1]; // needed maybe later, in case the port is not part of the port list, which was delivered by the port-getPorts() function
-        for (int i = 0; i < portList.length; i++) {
-            portCopyPlusOne[i + 1] = portList[i];
-            if (portList[i].getDevice().equals(connectDeviceName)) {
-                portListIndex = i;
-            }
-        }
-        if (portListIndex == -1) { // now we use the List, which has space on item[0] to add the port which was not found in the device list
-            portCopyPlusOne[0] = new PortInfo(connectDeviceName, connectDeviceName);
-            comportComboBox.setModel(new javax.swing.DefaultComboBoxModel(portCopyPlusOne));
-            comportComboBox.setSelectedIndex(0);
-        } else {
-            comportComboBox.setModel(new javax.swing.DefaultComboBoxModel(portList));
-            comportComboBox.setSelectedIndex(portListIndex);
-        }
-		
-		
 		for (int i = 0; i < connectTypeSpinner.getAdapter().getCount(); i++) {
-			if (connectTypeName.equals(connectTypeSpinner.getAdapter().getItem(i))) {
+			if (connectTypeName.equals(connectTypeSpinner.getAdapter().getItem(
+					i))) {
 				connectTypeSpinner.setSelection(i);
 				break;
 			}
 		}
-		ArrayAdapter<PortInfo> adapter = new ArrayAdapter<PortInfo>(this,
-				android.R.layout.simple_spinner_item, portList);
-		mDeviceSpinner.setAdapter(adapter);
-		for (int i = 0; i < adapter.getCount(); i++) {
-			if (connectDeviceName.equals(adapter.getItem(i).getDevice())) {
-				mDeviceSpinner.setSelection(i);
-				break;
+
+		int portListIndex = -1;
+
+		PortInfo[] portCopyPlusOne = new PortInfo[portList.length + 1]; // needed
+																		// maybe
+																		// later,
+																		// in
+																		// case
+																		// the
+																		// port
+																		// is
+																		// not
+																		// part
+																		// of
+																		// the
+																		// port
+																		// list,
+																		// which
+																		// was
+																		// delivered
+																		// by
+																		// the
+																		// port-getPorts()
+																		// function
+		for (int i = 0; i < portList.length; i++) {
+			portCopyPlusOne[i + 1] = portList[i];
+			if (portList[i].getDevice().equals(connectDeviceName)) {
+				portListIndex = i;
 			}
 		}
-		
-		
-        int pgp = checkKeyFiles();
-        String pgpStatusText = "No PGP keys available";
+		if (portListIndex == -1) { // now we use the List, which has space on
+									// item[0] to add the port which was not
+									// found in the device list
+			portCopyPlusOne[0] = new PortInfo(connectDeviceName,
+					connectDeviceName);
 
-        if (pgp == 0) { // all ok
-            pgpStatusText = "All Keys in place";
-        }
-        if ((pgp & 0x04) > 0) { //no group key
-            pgpStatusText = "Missing Group Key File !!";
-        }
-        if ((pgp & 0x01) > 0) {//new group key
-            pgpStatusText = "New Group Key File is waiting for import";
-        }
-        if ((pgp & 0x08) > 0) { //no user key
-            pgpStatusText = "Missing User Key File !!";
-        }
-        if ((pgp & 0x02) > 0) {//new user key
-            pgpStatusText = "New User Key File is waiting for import";
-        }
-        if ((pgp == (0x04 + 0x04))) {//no keys
-            pgpStatusText = "No PGP keys available";
-        }
+			ArrayAdapter<PortInfo> adapter = new ArrayAdapter<PortInfo>(this,
+					android.R.layout.simple_spinner_item, portCopyPlusOne);
+			mDeviceSpinner.setAdapter(adapter);
+			mDeviceSpinner.setSelection(0);
+		} else {
 
-        pgpStatus.setText("PGP Key Status: " + pgpStatusText);
-        if (pgp != 0) {
-			preferences.edit().putBoolean(OOBDConstants.PropName_PGPEnabled, false).commit();
-            pgpEnabled.setSelected(false);
-            pgpEnabled.setEnabled(false);
-            if ((pgp & (0x02 + 0x01)) > 0) { // any new keys there
-                pgpImportKeys.setText("Import PGP keys now");
-            } else {
-                pgpImportKeys.setText("No PGP Keys available");
-            }
-        } else {
-            pgpEnabled.setEnabled(true);
-            pgpImportKeys.setText("DELETE PGP keys now");
-        }
+			ArrayAdapter<PortInfo> adapter = new ArrayAdapter<PortInfo>(this,
+					android.R.layout.simple_spinner_item, portList);
+			mDeviceSpinner.setAdapter(adapter);
+			mDeviceSpinner.setSelection(portListIndex);
+		}
+
+		int pgp = checkKeyFiles();
+		String pgpStatusText = "No PGP keys available";
+
+		if (pgp == 0) { // all ok
+			pgpStatusText = "All Keys in place";
+		}
+		if ((pgp & 0x04) > 0) { // no group key
+			pgpStatusText = "Missing Group Key File !!";
+		}
+		if ((pgp & 0x01) > 0) {// new group key
+			pgpStatusText = "New Group Key File is waiting for import";
+		}
+		if ((pgp & 0x08) > 0) { // no user key
+			pgpStatusText = "Missing User Key File !!";
+		}
+		if ((pgp & 0x02) > 0) {// new user key
+			pgpStatusText = "New User Key File is waiting for import";
+		}
+		if ((pgp == (0x04 + 0x04))) {// no keys
+			pgpStatusText = "No PGP keys available";
+		}
+
+		pgpStatus.setText("PGP Key Status: " + pgpStatusText);
+		if (pgp != 0) {
+			preferences.edit()
+					.putBoolean(OOBDConstants.PropName_PGPEnabled, false)
+					.commit();
+			pgpEnabled.setSelected(false);
+			pgpEnabled.setEnabled(false);
+			if ((pgp & (0x02 + 0x01)) > 0) { // any new keys there
+				pgpImportKeys.setText("Import PGP keys now");
+			} else {
+				pgpImportKeys.setText("No PGP Keys available");
+			}
+		} else {
+			pgpEnabled.setEnabled(true);
+			pgpImportKeys.setText("DELETE PGP keys now");
+		}
 	}
-
 
 	private int checkKeyFiles() {
 		Boolean userKeyExist;

@@ -288,7 +288,7 @@ public class Diagnose extends ListActivity {
 							return true; // stop further handling of the
 											// back-button
 						}else{
-							core.stopScriptEngine();
+							Core.getSingleInstance().stopScriptEngine();
 						}
 					}
 				}
