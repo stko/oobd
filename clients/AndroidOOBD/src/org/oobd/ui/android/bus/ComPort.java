@@ -226,6 +226,13 @@ public class ComPort implements OOBDPort {
 			}
 		}
 	}
+	
+
+    public static String getUrlFormat() {
+        return "serial://{connectid}";
+    }
+
+
 
 	public static PortInfo[] getPorts() {
 		System.out.println("Starting Bluetooth Detection and Device Pairing");

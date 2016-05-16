@@ -41,6 +41,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -359,7 +360,7 @@ public class MainActivity extends FragmentActivity implements
 				.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 					public void onItemSelected(AdapterView<?> parent,
 							View view, int pos, long id) {
-						scriptName = (String) parent.getItemAtPosition(pos);
+						scriptName =  parent.getItemAtPosition(pos).toString();
 					}
 
 					public void onNothingSelected(AdapterView<?> parent) {
@@ -372,7 +373,8 @@ public class MainActivity extends FragmentActivity implements
 				OOBDConstants.PropName_ConnectTypeBT);
 		transferPreferences2System(connectTypeName);
 		String actualScriptDir = preferences.getString(
-				OOBDConstants.PropName_ScriptDir, null);
+				OOBDConstants.PropName_ScriptDir, Environment.getExternalStorageDirectory().getPath()
+				+ "/OOBD/" );
 		ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
 
 		ArrayAdapter<String[]> adapter = new ArrayAdapter(this,
@@ -810,13 +812,15 @@ public class MainActivity extends FragmentActivity implements
 		core.writeDataPool(DP_ACTUAL_UIHANDLER, preferences.getString(
 				OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME));
 		String actualScriptDir = preferences.getString(
-				OOBDConstants.PropName_ScriptDir, null);
+				OOBDConstants.PropName_ScriptDir, Environment.getExternalStorageDirectory().getPath()
+				+ "/OOBD/" );
 		core.writeDataPool(DP_SCRIPTDIR, actualScriptDir);
 		core.writeDataPool(DP_WWW_LIB_DIR,
-				preferences.getString(OOBDConstants.PropName_LibraryDir, null));
+				preferences.getString(OOBDConstants.PropName_LibraryDir, actualScriptDir+"webUI"));
 		ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
 		core.writeDataPool(DP_LIST_OF_SCRIPTS, files);
 		core.writeDataPool(DP_HTTP_HOST, core.getSystemIF().getSystemIP());
+		System.out.println("Inet Address set to "+core.getSystemIF().getSystemIP().toString() );
 		core.writeDataPool(DP_HTTP_PORT, 8080);
 		core.writeDataPool(DP_WSOCKET_PORT, 8443);
 

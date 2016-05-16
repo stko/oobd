@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -331,7 +332,8 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 			}
 		});
 		String actualScriptDir = preferences.getString(
-				OOBDConstants.PropName_ScriptDir, null);
+				OOBDConstants.PropName_ScriptDir, Environment.getExternalStorageDirectory().getPath()
+				+ "/OOBD/" );
 		Core.getSingleInstance().writeDataPool(DP_SCRIPTDIR, actualScriptDir);
 		Core.getSingleInstance().writeDataPool(DP_WWW_LIB_DIR,
 				preferences.getString(OOBDConstants.PropName_LibraryDir, null));

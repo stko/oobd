@@ -44,8 +44,10 @@ public class WsUIHandler extends WSOobdUIHandler {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+	@Override
 	public void run() {
-        throw new UnsupportedOperationException("Not supported yet.");
+		// TODO Auto-generated method stub
 		
 	}
+
 }
