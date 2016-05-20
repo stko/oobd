@@ -1,23 +1,23 @@
 UDSLIB=../lib_protocol
-LUALIB=../../tools/lib_lua/
-LUASVNFILE=../../tools/lib_lua/luaSVNRevs.inc
-SVNREVLUASCRIPT=$(shell ../../tools/lib_lua/echoLuaRev.sh SVNREVLUASCRIPT)
-SVNREVLUALIB=$(shell (cd ../../tools/lib_lua/ ; ./echoLuaRev.sh SVNREVLUALIB) )
+LUALIB=$(OOBDROOT)/tools/lib_lua/
+LUASVNFILE=$(OOBDROOT)/tools/lib_lua/luaSVNRevs.inc
+SVNREVLUASCRIPT=$(shell $(OOBDROOT)/tools/lib_lua/echoLuaRev.sh SVNREVLUASCRIPT)
+SVNREVLUALIB=$(shell (cd $(OOBDROOT)/tools/lib_lua/ ; ./echoLuaRev.sh SVNREVLUALIB) )
 
-LUAS=$(shell ../../tools/bin/filelist.sh lua)
+LUAS=$(shell $(OOBDROOT)/tools/bin/filelist.sh lua)
 
-SPECS=$(shell ../../tools/bin/filelist.sh mdx)
+SPECS=$(shell $(OOBDROOT)/tools/bin/filelist.sh mdx)
 
-SOURCES=$(shell ../../tools/bin/filelist.sh luasource)
-LBCFILES=$(shell ../../tools/bin/filelist.sh lbc)
-KCDFILES=$(shell ../../tools/bin/filelist.sh kcd)
+SOURCES=$(shell $(OOBDROOT)/tools/bin/filelist.sh luasource)
+LBCFILES=$(shell $(OOBDROOT)/tools/bin/filelist.sh lbc)
+KCDFILES=$(shell $(OOBDROOT)/tools/bin/filelist.sh kcd)
 
 CFLAGS=
-MDXTFLAGS=../../tools/xmltools/mdx2opendiagx.xslt ../../tools/xmltools/opendiagx2oobd.xslt
-MDXTHTMLFLAGS=../../tools/xmltools/mdx2opendiagx.xslt ../../tools/xmltools/opendiagx2html.xslt
+MDXTFLAGS=$(OOBDROOT)/tools/xmltools/mdx2opendiagx.xslt $(OOBDROOT)/tools/xmltools/opendiagx2oobd.xslt
+MDXTHTMLFLAGS=$(OOBDROOT)/tools/xmltools/mdx2opendiagx.xslt $(OOBDROOT)/tools/xmltools/opendiagx2html.xslt
 
-KCDFLAGS=tr --omit-decl  ../../tools/xmltools/kcd2rtd.xslt
-KCDHTMLFLAGS=tr --omit-decl  ../../tools/xmltools/kcd2html.xslt
+KCDFLAGS=tr --omit-decl  $(OOBDROOT)/tools/xmltools/kcd2rtd.xslt
+KCDHTMLFLAGS=tr --omit-decl  $(OOBDROOT)/tools/xmltools/kcd2html.xslt
 
 # adding external references file to complile
 # do we want to compile lua files from other directories into here? Then list them in "lua_reference" as LUA_REFS=
@@ -106,4 +106,4 @@ endif
 clean: genericclean $(CUSTOMCLEAN)
 
 genericclean:
-	rm -f *.lbc *.luasource *.html *.lbc.pgp lua.tmp m4.tmp gn.txt tmp
+	rm -f *.lbc *.luasource *.lbc.pgp lua.tmp m4.tmp gn.txt tmp

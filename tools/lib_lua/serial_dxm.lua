@@ -1,3 +1,4 @@
+dofile("luaSVNRevs.inc")
 dofile("luaSVNRevs.inc")
 -- include the basic connectivity
 
@@ -89,7 +90,8 @@ setSendID = nil
 -- 0 ELM 
 -- 1 DXM standard
 -- 2 OOBD DXM 
--- 3 OOBD DXM w. bus swichter
+-- 3 OOBD DXM w. CAN bus switcher (OOBD Cup v5)
+-- 4 OOBD CAN Invader
 
 hardwareID =0
 firmware_revision=""
@@ -232,12 +234,17 @@ end
 
 -- the global receiving routine. Trys to read single- or multiframe answers from the dxm and stores it in udsbuffer, setting the received length in udslen
 
-function receive_DXM()
+function receive_DXM(timeOut)
 	DEBUGPRINT("nexulm", 1, "lua_utils.lua - receive_DXM,%02d: %s", "00", "enter function receive_DXM")
 	udsLen=0
+	if timeOut == nil then
+		timeOut = 1000
+	end
+	
 	answ=""
 	DEBUGPRINT("stko", 1, "lua_utils.lua - receive_DXM,%02d: %s", "01", "Receive via DXM...")
-	answ=serReadLn(1000, true)
+	answ=serReadLn(timeOut, true)
+
 	if answ == "" then
 		return 0
 	else
@@ -410,11 +417,14 @@ function setBus(bus)
   end
 end
 
-function receive_OOBD()
+function receive_OOBD(timeOut)
 	DEBUGPRINT("nexulm", 1, "serial_dxm.lua - receive_OOBD,%02d: %s", "00", "enter function receive_OOBD")
 	udsLen=0
+	if timeOut == nil then
+		timeOut = 2000
+	end
 	answ=""
-	answ=serReadLn(2000, true)
+	answ=serReadLn(timeOut, true)
 	if answ == "" then
 	  return -1
 	else
@@ -430,7 +440,7 @@ function receive_OOBD()
 		      udsLen = udsLen + 1
 		      udsBuffer[udsLen]=tonumber(byteStr,16)
 	      end
-	      answ=serReadLn(2000, true)
+	      answ=serReadLn(timeOut, true)
 	    else
 	      if firstChar == ":" then -- error message
 			doLoop= false
@@ -474,13 +484,12 @@ end
 function interface_serial(oldvalue,id)
   local answ=""
   if hardwareID == 2 then
-     echoWrite("p 0 1\r")
-     answ=serReadLn(2000, true)
-    return answ
+	echoWrite("p 0 1\r")
+	answ=serReadLn(2000, true)	return answ
   elseif hardwareID == 3 or hardwareID == 4 then
-    echoWrite("p 0 0 1\r") -- get BT-MAC address of OOBD-Cup v5 and OOBD CAN Invader
+	echoWrite("p 0 0 1\r") -- get BT-MAC address of OOBD-Cup v5 and OOBD CAN Invader
     err, answ = readAnswerArray()
-    return answ[1]
+	if answ[1] == nil then		answ[1] = "NO DATA"	end    return answ[1]
   elseif hardwareID == 1 then -- DXM1
 	echoWrite("at!00\r")
     answ=serReadLn(2000, true)
@@ -664,6 +673,14 @@ end
 
 function getSVNLuaLib(oldvalue,id)
     return ""..SVNREVLUALIB
+end
+
+function setResponsePendingTimeOut(timeOut)
+	DEBUGPRINT("nexulm", 1, "serial_dxm.lua - setResponsePendingTimeOut,%02d: %s", "00", "enter function setResponsePendingTimeOut")
+	
+	if hardwareID == 3 or hardwareID == 4 then	-- set ResponsePendingTimeOut for OOBD Cup v5 or OOBD CAN Invader
+		echoWrite("p 6 2 "..timeOut.."\r")
+	end
 end
 
 ---------------------- System Info Menu --------------------------------------
