@@ -41,7 +41,7 @@
 									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV8.x.x/Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/inc&quot;"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def.939664628" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="SVNREV='&quot;$(shell LC_ALL=C svnversion -cn ../ | sed -e &quot;s/.*://&quot; -e &quot;s/\([0-9]*\).*/\1/&quot; | grep &quot;[0-9]&quot; )&quot;'"/>
+									<listOptionValue builtIn="false" value="SVNREV='&quot;$(shell LC_ALL=C git rev-list HEAD --count ../ | sed -e &quot;s/.*://&quot; -e &quot;s/\([0-9]*\).*/\1/&quot; | grep &quot;[0-9]&quot; )&quot;'"/>
 									<listOptionValue builtIn="false" value="BUILDDATE='&quot;$(shell date --rfc-822)&quot;' "/>
 									<listOptionValue builtIn="false" value="OOBDDESIGN='(const char *)(&quot;D2&quot;)'"/>
 									<listOptionValue builtIn="false" value="GCC_ARMCM3"/>
@@ -2850,13 +2850,13 @@
 								<option id="org.eclipse.cdt.cross.arm.gnu.assembler.option.warnings.pedantic.1523735817" name="Pedantic (-pedantic)" superClass="org.eclipse.cdt.cross.arm.gnu.assembler.option.warnings.pedantic" value="true" valueType="boolean"/>
 								<inputType id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input.1500268963" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.assembler.base.input"/>
 							</tool>
-							<tool id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release.1876267419" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release">
+							<tool command="arm-none-eabi-gcc" id="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release.1876267419" name="ARM Sourcery Linux GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.sourcery.linux.elf.c.compiler.release">
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level.121964486" name="Optimization level" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.optimization.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.optimization.level.size" valueType="enumerated"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.warnings.pedantic.700573347" name="Pedantic (-pedantic)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.warnings.pedantic" value="true" valueType="boolean"/>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def.475440251" name="Defined symbols (-D)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="GCC_ARMCM3"/>
 									<listOptionValue builtIn="false" value="BUILDDATE='&quot;$(shell date --rfc-822)&quot;' "/>
-									<listOptionValue builtIn="false" value="SVNREV='&quot;$(shell LC_ALL=C svnversion -cn ../ | sed -e &quot;s/.*://&quot; -e &quot;s/\([0-9]*\).*/\1/&quot; | grep &quot;[0-9]&quot; )&quot;'"/>
+									<listOptionValue builtIn="false" value="SVNREV='&quot;$(shell LC_ALL=C git rev-list HEAD --count ../ | sed -e &quot;s/.*://&quot; -e &quot;s/\([0-9]*\).*/\1/&quot; | grep &quot;[0-9]&quot; )&quot;'"/>
 									<listOptionValue builtIn="false" value="OOBD_PLATFORM_STM32"/>
 								</option>
 								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths.793840771" name="Include paths (-I)" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.include.paths" valueType="includePath">
