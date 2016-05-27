@@ -314,8 +314,11 @@ void obp_canraw(void *pvParameters)
 	actProtConfigPtr = protocolConfig;
 	protocolConfig->recvID = 0x7DF;
 	protocolConfig->separationTime = 0;
+	protocolConfig->frameRepeat = 0;
 	protocolConfig->showBusTransfer = 0;
     }
+    int firstShot = 0;
+
 //>>>> oobdtemple protocol mainloop_start  >>>>    
     for (; keeprunning;) {
 
@@ -416,6 +419,12 @@ void obp_canraw(void *pvParameters)
 			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
+		    case PARAM_CANRAW_FRAME_REPEAT:
+			protocolConfig->frameRepeat =
+			    args->args[ARG_VALUE_1];
+			createCommandResultMsg(FBID_PROTOCOL_SPEC,
+					       ERR_CODE_NO_ERR, 0, NULL);
+			break;
 		    default:
 			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_OS_UNKNOWN_COMMAND,
@@ -439,10 +448,16 @@ void obp_canraw(void *pvParameters)
 //<<<< oobdtemple protocol MSG_OTHERS <<<<
 //>>>> oobdtemple protocol MSG_INIT >>>>    
 	    case MSG_INIT:
+		DEBUGPRINT("Reset Protocol\n", 'a');
 		if (protocolBuffer != NULL) {
-		    protocolBuffer->len = 0;
-		}
 //<<<< oobdtemple protocol MSG_INIT <<<<
+		    if (protocolConfig->frameRepeat == 0)
+//>>>> oobdtemple protocol MSG_INIT_2 >>>>    
+		    {
+			protocolBuffer->len = 0;
+		    }
+		}
+//<<<< oobdtemple protocol MSG_INIT_2 <<<<
 //>>>> oobdtemple protocol MSG_PROTOCOL_STOP >>>>    
 		break;
 	    case MSG_PROTOCOL_STOP:
@@ -456,6 +471,7 @@ void obp_canraw(void *pvParameters)
 		if (protocolBuffer->len > 0) {
 		    actBufferPos = 0;
 		    for (; sendMoreFrames(protocolBuffer, &actBufferPos, &protocolConfig->showBusTransfer, &stateMachine_state, &timeout, printdata_CAN, actBus_send););	// fire all in one shot.
+		    firstShot = 1;
 //>>>> oobdtemple protocol MSG_SEND_BUFFER_2 >>>>    
 		} else {	/* no data to send? */
 		    createCommandResultMsg
@@ -476,19 +492,31 @@ void obp_canraw(void *pvParameters)
 		if (timeout > 0) {	/* we just waiting for the next frame to send */
 		    if (timeout == 1) {	/* time's gone... */
 			for (; sendMoreFrames(protocolBuffer, &actBufferPos, &protocolConfig->showBusTransfer, &stateMachine_state, &timeout, printdata_CAN, actBus_send););	// fire all in one shot.
-			if (timeout < 2) {	//
-			    protocolBuffer->len = 0;
-			    createCommandResultMsg
-				(FBID_PROTOCOL_GENERIC,
-				 ERR_CODE_NO_ERR, 0, NULL);
-			    stateMachine_state = SM_CANRAW_STANDBY;
-			    if (pdPASS !=
-				sendMsg(MSG_SERIAL_RELEASE, inputQueue,
-					NULL)) {
-				printser_string("INPQUE_FULL");
-				DEBUGPRINT
-				    ("FATAL ERROR: input queue is full!\n",
-				     'a');
+			if (timeout < 2) {	// timeout == 1 after send means end of sequence reached
+			    if (protocolConfig->frameRepeat > 0) {	//some more sequence to send?
+				if (protocolConfig->frameRepeat < 0xFFFF) {	//if no endless sending set, then
+				    protocolConfig->frameRepeat--;
+				}
+				actBufferPos = 0;	// let's start again
+				timeout = 2;	// this will trigger the next send after the next system tick
+			    } else {	// clear send buffer
+				protocolBuffer->len = 0;
+				stateMachine_state = SM_CANRAW_STANDBY;
+			    }
+			    if (firstShot) {	// this is need to send the command response just once, but not after each repeat loop
+				firstShot = 0;
+				createCommandResultMsg
+				    (FBID_PROTOCOL_GENERIC,
+				     ERR_CODE_NO_ERR, 0, NULL);
+				stateMachine_state = SM_CANRAW_STANDBY;
+				if (pdPASS !=
+				    sendMsg(MSG_SERIAL_RELEASE, inputQueue,
+					    NULL)) {
+				    printser_string("INPQUE_FULL");
+				    DEBUGPRINT
+					("FATAL ERROR: input queue is full!\n",
+					 'a');
+				}
 			    }
 			}
 		    }
@@ -555,7 +583,7 @@ int sendMoreFrames(ODPBuffer *
 	}
 	actBus_send(&actDataPacket);
 	*stateMachine_state_ptr = SM_CANRAW_SEND;
-	if ((*actBufferPos_ptr) + MINIMALBYTESTOSEND < protocolBuffer->len) {	//some more to send?
+	if ((*actBufferPos_ptr) < protocolBuffer->len) {	//some more to send?
 	    *timeout_ptr = protocolBuffer->data[*actBufferPos_ptr];
 	    (*actBufferPos_ptr)++;
 	    if (*timeout_ptr == 0) {	//send immediadly

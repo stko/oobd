@@ -88,6 +88,8 @@ export GROUPPUBKEYS=../oobd_groups.pub
 #
 # create NSIS Installer for each User identified by the "update" command 
 #
+# INSTALLEREXE : (path and) file name of the NSIS installer (makensis under Linux)
+#
 # INSTALLERSOURCEDIR : path, where the directories are in which corosponts to the group names
 #
 # INSTALLERTARGETDIR : path, where created installers should be placed in
@@ -96,12 +98,17 @@ export GROUPPUBKEYS=../oobd_groups.pub
 #
 # INSTALLERLICENCE : The licence text for the installer
 #
+# GETFULLPATHCMD : shell command to get the full path name of a file in the right
+# environment format for the nsis installer, which expects windows path format,
+# so it's 'cygpath -aw ' in cygwin (windows), 'readlink -f ' in bash (Unix)
 # to use, uncommend the lines below
 #
 ##########################################################################
+#export INSTALLEREXE=""
 #export INSTALLERSOURCEDIR=""
 #export INSTALLERTARGETDIR=""
 #export INSTALLERTEMPLATE=""
 #export INSTALLERLICENCE=""
+#export GETFULLPATHCMD="cygpath -aw"
 
 

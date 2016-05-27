@@ -1,81 +1,7 @@
-dofile("luaSVNRevs.inc")
 -- include the basic connectivity
 
 --- use the following lines for debugging in lua editor
----[[
-openPage = openPageCall
-addElement = addElementCall
-pageDone = pageDoneCall
-openChannel = openChannelCall
-dbLookup = dbLookupCall
---]]
----[[
-serFlush = serFlushCall
-serWrite = serWriteCall
-serWait = serWaitCall
-serReadLn = serReadLnCall
-serDisplayWrite = serDisplayWriteCall
-openXCVehicleData =openXCVehicleDataCall
-ioInput = ioInputCall
-ioRead = ioReadCall
-ioWrite = ioWriteCall
---]]
 
---[[
-readcount= 1
-input = {}
-input[1]="OOBD D2 212 Lux-Wolf Ostern"
-input[2]="Searching"
-input[3]="41 00 FF FF FF FF"
-input[4]=">"
-input[5]="41 14 FF FF FF FF"
-input[6]=">"
-
-
-function serReadLn()
-	res= input[readcount]
-	DEBUGPRINT("stko", 1, "serial_dxm.lua - serReadLn,%02d: %s %d, %d", "00", "read from input: ", res, readcount)
-	readcount=readcount +1
-	if readcount >#input then
-		readcount = 1
-	end
-	return res
-end
-
-function serWait()
-	return 0
-end
-
-function serWrite(data)
-	DEBUGPRINT("stko", 1, "serial_dxm.lua - serWrite,%02d: %s %d", "00", "Serwrite: ", data)
-end
-
-function serFlush()
-end
-
---]]
-
-
---[[
-function openPage(title)
-	DEBUGPRINT("stko", 1, "serial_dxm.lua - openPage,%02d: %s %s", "00", "Start Menu generation: ", title)
-end
-
-function addElement(title, func , intial,flags , id)
-	DEBUGPRINT("stko", 1, "serial_dxm.lua - addElement,%02d: %s", "00", "<---")
-	DEBUGPRINT("stko", 1, "serial_dxm.lua - addElement,%02d: %s %s", "01", "title: ", title)
-	DEBUGPRINT("stko", 1, "serial_dxm.lua - addElement,%02d: %s %s", "02", "function: ", func)
-	DEBUGPRINT("stko", 1, "serial_dxm.lua - addElement,%02d: %s %s", "03", "id: ", id)
-	DEBUGPRINT("stko", 1, "serial_dxm.lua - addElement,%02d: %s", "00", "--->")
-end
-
-function pageDone()
-	DEBUGPRINT("stko", 1, "serial_dxm.lua - pageDone,%02d: %s", "00", "Show Menu")
-end
-
-
-
---]]
 
 -- define the receive buffer
 
@@ -89,7 +15,8 @@ setSendID = nil
 -- 0 ELM 
 -- 1 DXM standard
 -- 2 OOBD DXM 
--- 3 OOBD DXM w. bus swichter
+-- 3 OOBD DXM w. CAN bus switcher (OOBD Cup v5)
+-- 4 OOBD CAN Invader
 
 hardwareID =0
 firmware_revision=""
@@ -98,90 +25,6 @@ lastSwitchedBus=""
 
 
 
----------------------- Greetings --------------------------------------
-
-function greet(oldvalue,id)
-	serDisplayWrite("Thanks to")
-	serDisplayWrite("")
-	serDisplayWrite("Mike Luxen")
-	serDisplayWrite("Joseph Urhahne")
-	serDisplayWrite("Wolfgang Sauer")
-	serDisplayWrite("Peter Mayer")
-	serDisplayWrite("Axel Bullwinkel")
-	serDisplayWrite("Uli Schmoll")
-	serDisplayWrite("Wolfgang Sommer")
-	serDisplayWrite("Günter Römer")
-	serDisplayWrite("Ekkehard Pofahl")
-	serDisplayWrite("Dennis Kurzweil")
-	serDisplayWrite("Martin F.")
-	serDisplayWrite("")
-	serDisplayWrite("and to all the others,")
-	serDisplayWrite("who made this possible")
-	return oldvalue
-end
-
-
-function getStringPart(text, index)
-	DEBUGPRINT("nexulm", 1, "serial_dxm.lua - getStringPart,%02d: %s", "00", "enter function getStringPart")
-	start, finish = string.find(text," ")
-	loop = 0
-	first = ""
-	while loop < index and text ~="" do
-		loop = loop + 1
-		start, finish = string.find(text," ")
-		if start ~=  nil then
-			first=string.sub(text,1,finish-1)
-			text=string.sub(text,finish+1)
-			if first=="" then
-				loop = loop -1 -- jump over additional blanks
-			end
-		else
-			first = text
-			text=""
-		end
-	end
-	return first
-end
-
-function round(num, idp)
-  return tonumber(string.format("%." .. (idp or 0) .. "f", num))
-end
-
--- translate DTC bytes into their offical notation
--- as descripted on http://en.wikipedia.org/wiki/OBD-II_PIDs (30.4.11)
-
-function translateDTC(highByte, lowByte)
-	DEBUGPRINT("nexulm", 1, "lua_utils.lua - translateDTC,%02d: %s", "00", "enter function translateDTC")
-	hNibble= (highByte -(highByte % 16)) / 16 -- tricky to do an integer devide with luas float numbers..
-	lNibble =highByte % 16
-	start = "??"
-	if hNibble ==  0 then start = "P0" 
-	elseif hNibble ==  1 then start = "P1" 
-	elseif hNibble ==  2 then start = "P2" 
-	elseif hNibble ==  3 then start = "P3" 
-	elseif hNibble ==  4 then start = "C0" 
-	elseif hNibble ==  5 then start = "C1" 
-	elseif hNibble ==  6 then start = "C2" 
-	elseif hNibble ==  7 then start = "C3" 
-	elseif hNibble ==  8 then start = "B0" 
-	elseif hNibble ==  9 then start = "B1" 
-	elseif hNibble == 10 then start = "B2" 
-	elseif hNibble == 11 then start = "B3" 
-	elseif hNibble == 12 then start = "U0" 
-	elseif hNibble == 13 then start = "U1" 
-	elseif hNibble == 14 then start = "U2" 
-	elseif hNibble == 15 then start = "U3"
-	end
-	return start..string.format("%X",lNibble)..string.format("%02X",lowByte)
-end
-
-function notyet(oldvalue,id)
-	return "not implemented yet"
-end
-
-function nothing(oldvalue,id)
-	return oldvalue
-end
 
 function automaticBusSwitch()
 	return hardwareID==4
@@ -189,33 +32,66 @@ end
 
 -- set response timeout in 10ms units - only needed for OOBD 
 function setTimeout_OOBD(timeout)
-  if hardwareID==2 then
-    echoWrite("p 7 "..timeout.."\r")
-  elseif hardwareID==3 or hardwareID==4 then
-    echoWrite("p 6 1 "..timeout.."\r")
-  end
+	if hardwareID==2 then
+		getCmdAnswerArray({ 7,timeout})
+	elseif hardwareID==3 or hardwareID==4 then
+		getCmdAnswerArray({ 6 , 1 ,timeout})
+	end
 end
 
 -- set sender address - only needed for OOBD 
 function setSendID_OOBD(addr)
-  if hardwareID==2 then
-    echoWrite("p 16 $"..addr.."\r")
-  elseif hardwareID==3 or hardwareID==4 then
-    echoWrite("p 6 9 $"..addr.."\r")
-  end
+	if hardwareID==2 then
+		getCmdAnswerArray({ 16, "$"..addr})
+	elseif hardwareID==3 or hardwareID==4 then
+		getCmdAnswerArray({ 6 , 9 , "$"..addr})
+	end
+end
+
+-- enable Tester present - only needed for OOBD 
+function enableTesterPresent_OOBD(addr, interval, mask)
+	if interval ~= nil then
+		if hardwareID==2 then
+--			getCmdAnswerArray({ xx, "$"..addr}) -- value unknown
+		elseif hardwareID==3 or hardwareID==4 then
+			getCmdAnswerArray({ 6 , 8 , interval})
+		end
+	end
+	
+	if mask ~= nil then
+		if hardwareID==2 then
+--			getCmdAnswerArray({ xx, "$"..addr}) -- value unknown
+		elseif hardwareID==3 or hardwareID==4 then
+			getCmdAnswerArray({ 6 , 10 , mask})
+		end
+	end
+	
+	if hardwareID==2 then
+--		getCmdAnswerArray({ xx, "$"..addr}) -- value unknown
+	elseif hardwareID==3 or hardwareID==4 then
+		getCmdAnswerArray({ 6 , 6 , "$"..addr})
+	end
+end
+
+function disableTesterPresent_OOBD(addr)
+	if hardwareID==2 then
+--		getCmdAnswerArray({ xx, "$"..addr}) -- value unknown
+	elseif hardwareID==3 or hardwareID==4 then
+		getCmdAnswerArray({ 6 , 7 , "$"..addr})
+	end
 end
 
 -- set CAN-ID filter - only needed for OOBD 
 function setCANFilter_OOBD(id, addr, mask)
 	DEBUGPRINT("nexulm", 1, "lua_utils.lua - setCANFilter_OOBD,%02d: %s", "00", "enter function setCANFilter_OOBD")
 	if hardwareID==3 or hardwareID==4 then
-		echoWrite ("p 8 14\r") -- reset CAN filter
+		 getCmdAnswerArray({ 8 , 14 }) -- reset CAN filter
 		if tonumber(addr,16) <= 0x7FF  then
-			echoWrite("p 8 10 "..id.." $0"..addr.."\r") -- use CAN-Filter No <id>, 11bit-CAN-ID <addr>
-			echoWrite("p 8 11 "..id.." $0"..mask.."\r") -- use CAN-Filter No <id>, 11bit-CAN-IDMask <mask>
+			getCmdAnswerArray({ 8 , 10 , id , "$0"..addr}) -- use CAN-Filter No <id>, 11bit-CAN-ID <addr>
+			getCmdAnswerArray({ 8 , 11 , id , "$0"..mask}) -- use CAN-Filter No <id>, 11bit-CAN-IDMask <mask>
 		else
-			echoWrite("p 8 12 "..id.." $0"..addr.."\r") -- use CAN-Filter No <id>, 29bit-CAN-ID <addr>	
-			echoWrite("p 8 13 "..id.." $0"..mask.."\r") -- use CAN-Filter No <id>, 29bit-CAN-IDMask <mask>
+			getCmdAnswerArray({ 8 , 12 , id , "$0"..addr}) -- use CAN-Filter No <id>, 29bit-CAN-ID <addr>	
+			getCmdAnswerArray({ 8 , 13 , id , "$0"..mask}) -- use CAN-Filter No <id>, 29bit-CAN-IDMask <mask>
 		end
 	end
 end
@@ -232,24 +108,28 @@ end
 
 -- the global receiving routine. Trys to read single- or multiframe answers from the dxm and stores it in udsbuffer, setting the received length in udslen
 
-function receive_DXM()
+function receive_DXM(timeOut)
+	udsBuffer = {}
 	DEBUGPRINT("nexulm", 1, "lua_utils.lua - receive_DXM,%02d: %s", "00", "enter function receive_DXM")
 	udsLen=0
-	answ=""
+	local timeOut =getPrefs("timeOut" , 1000)
+	
+	local answ=""
 	DEBUGPRINT("stko", 1, "lua_utils.lua - receive_DXM,%02d: %s", "01", "Receive via DXM...")
-	answ=serReadLn(1000, true)
+	answ=serReadLn(timeOut, true)
+
 	if answ == "" then
 		return 0
 	else
-		doLoop = true
-		byteCount= udsLen+1 -- auf Abbruchbedingung setzen
+		local doLoop = true
+		local byteCount= udsLen+1 -- auf Abbruchbedingung setzen
 		while doLoop and  answ ~="" do
-			nChar = string.byte(answ)
+			local nChar = string.byte(answ)
 			if (nChar >=48 and nChar <=57) or (nChar >=65 and nChar <=70) or (nChar >=97 and nChar <=102) then  -- an 1. Stelle steht eine Zahl-> positive Antwort
 				if string.sub(answ,2,2) == ":" then
 					answ = string.sub(answ,4) -- wegschneiden des Zaehlers am Anfang
 					while byteCount <=udsLen  and answ ~="" do
-						byteStr= string.sub(answ,1,2)
+						local byteStr= string.sub(answ,1,2)
 						answ = string.sub(answ,4)
 						udsBuffer[byteCount]=tonumber(byteStr,16)
 						byteCount = byteCount + 1
@@ -289,9 +169,9 @@ end
 function setModuleID(id)
 	DEBUGPRINT("nexulm", 1, "lua_utils.lua - setModuleID,%02d: %s", "00", "enter function setModuleID")
 	if hardwareID == 2 then
-		echoWrite("p 11 $"..id.."\r")
+		getCmdAnswerArray({ 11 , "$"..id })
 	elseif hardwareID==3 or hardwareID==4 then
-		echoWrite("p 6 5 $"..id.."\r")
+		getCmdAnswerArray({ 6 , 5 , "$"..id })
 	elseif hardwareID==1 then -- DXM 1
 		echoWrite("atci "..id.."\r")
 	else -- ELM327
@@ -301,280 +181,337 @@ end
 
 function activateBus()
 	if hardwareID == 2 then
-		echoWrite("p 5 3\r")
+		getCmdAnswerArray({ 5 , 3 })
 	elseif hardwareID==3 or hardwareID==4 then
-		echoWrite("p 8 2 3\r")
+		getCmdAnswerArray({ 8 , 2 , 3 })
   end
 end
 
 function deactivateBus()
 	if hardwareID == 2 then
-		echoWrite("p 5 0\r")
+		getCmdAnswerArray({ 5 , 0 })
 	elseif hardwareID==3 or hardwareID==4 then
-		echoWrite("p 8 2 0\r")
+		getCmdAnswerArray({ 8 , 2 , 0 })
   end
 end
 
+
+--[[ setbus (bus)
+set the CAN bus speed, frame size and port by a string
+the format is as : (IMS-CAN | HS-CAN | CAN |MS-CAN | (speed  size)) [px]
+
+where speed can be 500 , 250 or 125
+size can be b11 or b29
+
+px can be p1 or p2
+
+per default only 125 is port 2, all other presets are port 1
+
+
+if needed by the application, the settings calculated out of the strings can be
+"manually" overwritten by the content of a global bustopology table
+
+
+--]]
+
 function setBus(bus)
-  DEBUGPRINT("nexulm", 1, "serial_dxm.lua - setBus,%02d: %s", "00", "enter function setBus")
-  if lastSwitchedBus ~= bus then
-	-- first we need to translate the bus into speed and  port
+	DEBUGPRINT("nexulm", 1, "serial_dxm.lua - setBus,%02d: %s", "00", "enter function setBus")
+	local port =1 
+	-- at first we separate the trailing port number, if given 
+	local params=Split(bus,"p")
+	bus=params[1]
+	-- then we translate the legacy names bus into speed and  port
 	if bus == "IMS-CAN" or bus == "HS-CAN" or bus == "CAN" then
 		bus = "500b11"
 	elseif bus == "MS-CAN" then
 		bus = "125b11"
 	end
+	if bus=="125b11" then
+		port=2
+	end
+	-- another port given instead of the default setting? Then overwrite it
+	if params[2]~=nil then
+		port=tonumber(params[2])
+	end
 	-- now comes another tricky part: Do we have a bus topology lookup table available?
 	if bustopology ~= nil and shortName ~= nil and bustopology[shortName] ~= nil then
 		bus=bustopology[shortName].speed
 		port=bustopology[shortName].port
-		DEBUGPRINT("nexulm", 1, "serial_dxm.lua - setBus,%02d: %s, bus=%s, port=%d", "01", "bustoplogy", bus, port)
 	end
+	if lastSwitchedBus ~= bus..port then
+		DEBUGPRINT("nexulm", 1, "serial_dxm.lua - setBus bus=>%s<, port=>%d<, hardwareID=%d", bus, port, hardwareID)
+		
+		if hardwareID == 0 then -- ELM327 
+			if bus == "500b11" then
+				echoWrite("at sp 6\r")
+			elseif bus == "500b29" then
+				echoWrite("at sp 7\r")
+			elseif bus == "250b11" then
+				echoWrite("at sp 8\r")
+			elseif bus == "250b29" then
+				echoWrite("at sp 9\r")
+			elseif bus == "autoprobing" then
+				echoWrite("0100\r") 	-- first send something to let the DXM1 and ELM327 search for an available bus
+				serWait(">",3000) 		-- wait 3 secs for an automatic protocol detection process
+			end
+		elseif hardwareID == 1 then -- DXM1
+			if bus == "500b11" then
+				echoWrite("atp 6\r")
+			elseif bus == "500b29" then
+				echoWrite("atp 7\r")
+			elseif bus == "250b11" then
+				echoWrite("atp 8\r")
+			elseif bus == "250b29" then
+				echoWrite("atp 9\r")
+			elseif bus == "autoprobing" then
+				echoWrite("0100\r") 	-- first send something to let the DXM1 and ELM327 search for an available bus
+				serWait(">",3000) 		-- wait 3 secs for an automatic protocol detection process
+			end
+		elseif hardwareID == 2 then  	-- Original DXM without relay
+			if bus == "500b11" then
+				getCmdAnswerArray({ 6 , 3 })
+			end
+			if bus == "125b11" then
+				getCmdAnswerArray({ 6 , 1 })
+			end
+		elseif hardwareID == 3 or hardwareID == 4 then 
+			if bus == "500b11" then
+				getCmdAnswerArray({ 8 , 3 , 3 })
+			elseif bus == "250b11" then
+				getCmdAnswerArray({ 8 , 3 , 2 })
+			elseif bus == "125b11" then
+				getCmdAnswerArray({ 8 , 3 , 1 })
+			elseif bus == "500b29" then
+				getCmdAnswerArray({ 8 , 3 , 7 })
+			elseif bus == "250b29" then
+				getCmdAnswerArray({ 8 , 3 , 6 })
+			end
+		end
 
-	if hardwareID == 0 then -- ELM327 
-		if bus == "500b11" then
-			echoWrite("at sp 6\r")
-		elseif bus == "500b29" then
-			echoWrite("at sp 7\r")
-		elseif bus == "250b11" then
-			echoWrite("at sp 8\r")
-		elseif bus == "250b29" then
-			echoWrite("at sp 9\r")
-		elseif bus == "autoprobing" then
-			echoWrite("0100\r") 	-- first send something to let the DXM1 and ELM327 search for an available bus
-			serWait(">",3000) 		-- wait 3 secs for an automatic protocol detection process
+		if port == 1 then
+			getCmdAnswerArray({ 8 , 4 , 0 })
+		elseif port == 2 then
+			getCmdAnswerArray({ 8 , 4 , 1 })
 		end
-	elseif hardwareID == 1 then -- DXM1
-		if bus == "500b11" then
-			echoWrite("atp 6\r")
-		elseif bus == "500b29" then
-			echoWrite("atp 7\r")
-		elseif bus == "250b11" then
-			echoWrite("atp 8\r")
-		elseif bus == "250b29" then
-			echoWrite("atp 9\r")
-		elseif bus == "autoprobing" then
-			echoWrite("0100\r") 	-- first send something to let the DXM1 and ELM327 search for an available bus
-			serWait(">",3000) 		-- wait 3 secs for an automatic protocol detection process
+		serWait(".|:",2000) -- wait 2 secs for an response	
+		if port == nil then
+			DEBUGPRINT("nexulm", 1, "serial_dxm.lua - setBus,%02d: %s=%d, port=%s, bus=%s", "02", "hardwareID ", hardwareID, "unavailable", bus)
+		else
+			DEBUGPRINT("nexulm", 1, "serial_dxm.lua - setBus,%02d: %s=%d, port=%d, bus=%s", "02", "hardwareID ", hardwareID, port, bus)
 		end
-    elseif hardwareID == 2 then  	-- Original DXM without relay
-		if bus == "500b11" then
-			echoWrite("p 6 3\r")
-		end
-		if bus == "125b11" then
-			echoWrite("p 6 1\r")
-		end
-    elseif hardwareID == 3 then  	-- Original DXM without relay
-		if bus == "500b11" then
-			echoWrite("p 8 3 3\r")
-		elseif bus == "125b11" then
-			echoWrite("p 8 3 1\r")
-		elseif bus == "250b11" then
-			echoWrite("p 8 3 2\r")
-		elseif bus == "500b29" then
-			echoWrite("p 8 3 7\r")
-		elseif bus == "250b29" then
-			echoWrite("p 8 3 6\r")
-		end
-    elseif hardwareID == 4 then 
-		if bus == "500b11" then
-			port = 1
-			echoWrite("p 8 3 3\r")
-		elseif bus == "250b11" then
-			port = 1
-			echoWrite("p 8 3 2\r")
-		elseif bus == "125b11" then
-			port = 2
-			echoWrite("p 8 3 1\r")
-		elseif bus == "500b29" then
-			port = 1
-			echoWrite("p 8 3 7\r")
-		elseif bus == "250b29" then
-			port = 1
-			echoWrite("p 8 3 6\r")
-		end
-    end
-
-	if port == 1 then
-		echoWrite("p 8 4 0\r")
-	elseif port == 2 then
-		echoWrite("p 8 4 1\r")
-    end
-   	serWait(".|:",2000) -- wait 2 secs for an response	
-	if port == nil then
-		DEBUGPRINT("nexulm", 1, "serial_dxm.lua - setBus,%02d: %s=%d, port=%s, bus=%s", "02", "hardwareID ", hardwareID, "unavailable", bus)
-	else
-		DEBUGPRINT("nexulm", 1, "serial_dxm.lua - setBus,%02d: %s=%d, port=%d, bus=%s", "02", "hardwareID ", hardwareID, port, bus)
+		lastSwitchedBus = bus..port
 	end
-	lastSwitchedBus = bus
-  end
 end
 
-function receive_OOBD()
+function receive_OOBD(timeOut)
+	udsBuffer = {}
 	DEBUGPRINT("nexulm", 1, "serial_dxm.lua - receive_OOBD,%02d: %s", "00", "enter function receive_OOBD")
-	udsLen=0
-	answ=""
-	answ=serReadLn(2000, true)
-	if answ == "" then
-	  return -1
-	else
-	  doLoop = true
-	  while doLoop and  answ ~="" do
-	    firstChar=string.sub(answ,1,1)
-	    nChar = string.byte(answ)
-		DEBUGPRINT("stko", 1, "serial_dxm.lua - receive_OOBD,%02d: %s %d %s %d", "01", "firstchar ", firstChar, " charcode ", nChar)
-	    if (nChar >=48 and nChar <=57) or (nChar >=65 and nChar <=70) or (nChar >=97 and nChar <=102) then  -- an 1. Stelle steht eine Zahl-> positive Antwort
-	      while  answ ~="" do
-		      byteStr= string.sub(answ,1,2)
-		      answ = string.sub(answ,3)
-		      udsLen = udsLen + 1
-		      udsBuffer[udsLen]=tonumber(byteStr,16)
-	      end
-	      answ=serReadLn(2000, true)
-	    else
-	      if firstChar == ":" then -- error message
-			doLoop= false
-			answ=getStringPart(answ,3)
-			udsLen=tonumber(answ) * -1 -- return error code as negative value
-	      else
-			if firstChar == "." or firstChar == ">" then -- end of data or prompt
-			doLoop = false
-			else -- unknown data
-				udsLen=-2
-				doLoop = false
+		udsLen=0
+		local timeOut =getPrefs("timeOut" , 2000)
+		local answ=""
+		answ=serReadLn(timeOut, true)
+		if answ == "" then
+			return -1
+		else
+			local doLoop = true
+			while doLoop and  answ ~="" do
+				local firstChar=string.sub(answ,1,1)
+				if firstChar ~= "#" then --if it's not just an #listen message
+					local nChar = string.byte(answ)
+					DEBUGPRINT("stko", 1, "serial_dxm.lua - receive_OOBD,%02d: %s %d %s %d", "01", "firstchar ", firstChar, " charcode ", nChar)
+					if (nChar >=48 and nChar <=57) or (nChar >=65 and nChar <=70) or (nChar >=97 and nChar <=102) then  -- an 1. Stelle steht eine Zahl-> positive Antwort
+						while  answ ~="" do
+							local byteStr= string.sub(answ,1,2)
+							answ = string.sub(answ,3)
+							udsLen = udsLen + 1
+							udsBuffer[udsLen]=tonumber(byteStr,16)
+						end
+						answ=serReadLn(timeOut, true)
+					else
+						if firstChar == ":" then -- error message
+							doLoop= false
+							answ=getStringPart(answ,3)
+							udsLen=tonumber(answ) * -1 -- return error code as negative value
+						else
+							if firstChar == "." or firstChar == ">" then -- end of data or prompt
+								doLoop = false
+							else -- unknown data
+								udsLen=-2
+								doLoop = false
+							end
+						end
+					end
+				end
 			end
-	      end
-	    end
-	  end
-	end
+		end
 	return  udsLen
 end
 
 function interface_version(oldvalue,id)
 	local answ=""
+	local err
 	if hardwareID == 2 then
 		echoWrite("p 0 0\r")
-		answ=serReadLn(2000, true)
-	return answ
+		answ=serReadLn(1000, true)
+		return answ
 	elseif hardwareID == 3 or hardwareID == 4 then
-		echoWrite("p 0 0 0\r")
-		err, answ = readAnswerArray()
-		return answ[1]
+		return getCmdAnswerLine({ 0 , 0, 0 } , "not available" )
 	elseif hardwareID == 1 then -- DXM1 support
 		echoWrite("at!01\r")
-		answ=serReadLn(2000, true)
+		answ=serReadLn(1000, true)
 		return answ
 	else -- ELM327 specific
 		echoWrite("AT I\r")
-		answ=serReadLn(2000, true)
+		answ=serReadLn(1000, true)
 		return answ
 	end
 end
 
 function interface_serial(oldvalue,id)
-  local answ=""
-  if hardwareID == 2 then
-     echoWrite("p 0 1\r")
-     answ=serReadLn(2000, true)
-    return answ
-  elseif hardwareID == 3 or hardwareID == 4 then
-    echoWrite("p 0 0 1\r") -- get BT-MAC address of OOBD-Cup v5 and OOBD CAN Invader
-    err, answ = readAnswerArray()
-    return answ[1]
-  elseif hardwareID == 1 then -- DXM1
-	echoWrite("at!00\r")
-    answ=serReadLn(2000, true)
-	return answ
-  else -- ELM327 specific
-	echoWrite("at @2\r")
-    answ=serReadLn(2000, true)
-    return answ
-  end
+	local answ=""
+	local err
+	if hardwareID == 2 then
+		echoWrite("p 0 1\r")
+		answ=serReadLn(2000, true)
+			if answ ~= nil then
+			return answ
+		else
+			return "not available"
+		end
+	elseif hardwareID == 3 or hardwareID == 4 then
+		return getCmdAnswerLine({ 0 , 0 , 1 }, "not available" )-- get BT-MAC address of OOBD-Cup v5 and OOBD CAN Invader
+	elseif hardwareID == 1 then -- DXM1
+		echoWrite("at!00\r")
+		answ=serReadLn(2000, true)
+		if answ ~= nil then
+			return answ
+		else
+			return "not available"
+		end
+	else -- ELM327 specific
+		echoWrite("at @2\r")
+		answ=serReadLn(2000, true)
+		if answ ~= nil then
+			return answ
+		else
+			return "not available"
+		end
+	end
 end
 
 function interface_voltage(oldvalue,id)
-  local answ=""
-  if hardwareID == 2 then
-    echoWrite("p 0 6\r")
-    answ=serReadLn(2000, true)
-    answ=round(getStringPart(answ, 1)/1000, 2)
-    answ=answ.." Volt"
-    return answ
-  elseif hardwareID == 3 or hardwareID == 4 then
-    echoWrite("p 0 0 2\r")
-    err, answ = readAnswerArray()
-    if err <0 then
-      return answ[1]
-    else
-      answ=round(getStringPart(answ[1], 1)/1000, 2)
-      answ=answ.." Volt"
-      return answ
-    end
-  elseif hardwareID == 1 then   -- DXM1
-    echoWrite("at!10\r")
-    answ=serReadLn(2000, true)
-	return answ
-  else
-	echoWrite("AT RV\r") -- ELM327 specific
-    answ=serReadLn(2000, true)
-	return answ
-  end
+	local answ=""
+	local err
+	if hardwareID == 2 then
+		echoWrite("p 0 6\r")
+		answ=serReadLn(2000, true)
+		answ=round(getStringPart(answ, 1)/1000, 2)
+		answ=answ.." Volt"
+		return answ
+	elseif hardwareID == 3 or hardwareID == 4 then
+		err, answ = getCmdAnswerArray({ 0 , 0 , 2 })
+		print ("error: ", err)
+		if err <1 then
+			return "not available"
+		else
+			answ=round(getStringPart(answ[1], 1)/1000, 2)
+			answ=answ.." Volt"
+			return answ
+		end
+	elseif hardwareID == 1 then   -- DXM1
+		echoWrite("at!10\r")
+		answ=serReadLn(2000, true)
+		return answ
+	else
+		echoWrite("AT RV\r") -- ELM327 specific
+		answ=serReadLn(2000, true)
+		return answ
+	end
 end
 
 function interface_bus(oldvalue,id)
-  local answ=""
-  if hardwareID == 2 then
-    echoWrite("p 0 6\r")
-    answ=serReadLn(2000, true)
-    return answ
-  elseif hardwareID == 3 or hardwareID == 4 then
-    echoWrite("p 9 0 0\r")
-    err, answ = readAnswerArray()
-    return answ[1]
-  else 
-    echoWrite("atdp\r") -- show current used protocol
-    answ=serReadLn(2000, true)
-    return answ
-  end
+	local answ=""
+	local err
+	if hardwareID == 2 then
+		echoWrite("p 0 6\r")
+		answ=serReadLn(2000, true)
+		return answ
+	elseif hardwareID == 3 or hardwareID == 4 then
+		return getCmdAnswerLine({ 9 , 0 , 0}, "not available" )
+	else 
+		echoWrite("atdp\r") -- show current used protocol
+		answ=serReadLn(2000, true)
+		return answ
+	end
 end
 
 function interface_deviceID(oldvalue,id)
-  local answ=""
-  if hardwareID == 2 then  -- in case of using Original DXM1 Hardware with firmwar <= SVN 346
-     echoWrite("p 0 8\r")
-     answ=serReadLn(2000, true)
-    return answ
-  elseif hardwareID == 3 or hardwareID == 4 then -- in case of using OOBD Cup v5 and OOBD CAN Invader
-    echoWrite("p 0 0 8\r") -- get device String i.e. OOBD-CIV xxxxxx of OOBDCup v5 and OOBD CAN Invader
-    err, answ = readAnswerArray()
-    return answ[1]
-  elseif hardwareID == 1 then
-    echoWrite("AT!00\r")  -- in case of original DXM1 Hard-/Software use serialnumber
-    answ=serReadLn(2000, true)
-    return answ
-  else -- ELM327
-    echoWrite("AT @2\r")  -- Read out ELM327 Device ID
-    answ=serReadLn(2000, true)
-	return answ
-  end
+	local answ=""
+	local err
+	if hardwareID == 2 then  -- in case of using Original DXM1 Hardware with firmwar <= SVN 346
+		echoWrite("p 0 8\r")
+		answ=serReadLn(2000, true)
+		return answ
+	elseif hardwareID == 3 or hardwareID == 4 then -- in case of using OOBD Cup v5 and OOBD CAN Invader
+		return getCmdAnswerLine({ 0 , 0 , 8}, "not available" ) -- get device String i.e. OOBD-CIV xxxxxx of OOBDCup v5 and OOBD CAN Invader
+	elseif hardwareID == 1 then
+		echoWrite("AT!00\r")  -- in case of original DXM1 Hard-/Software use serialnumber
+		answ=serReadLn(2000, true)
+		return answ
+	else -- ELM327
+		echoWrite("AT @2\r")  -- Read out ELM327 Device ID
+		answ=serReadLn(2000, true)
+		return answ
+	end
 end
 
+-- reads from the OOBD port line by line, until either timeout, valid EOF or error is reached
+-- return either negative error code, or nr.of received lines + received lines array
 function readAnswerArray()
-  local res={}
-  local answ=""
-  answ=serReadLn(2000, true)
-  while  answ ~="" and answ ~="." do
-    firstChar=string.sub(answ,1,1)
-    table.insert(res,answ)
-    if firstChar == ":" then -- error message
-      res={}
-      table.insert(res,answ)
-      answ=getStringPart(answ,3)
-      return tonumber(answ) * -1 , res -- return error code as negative value
-    end
-    answ=serReadLn(2000, true)
-  end
-  return #res , res -- return nr of lines and answer array
+	local res={}
+	local answ=""
+	answ=serReadLn(getPrefs("timeOut" , 2000), true)
+	while  answ ~="" and answ ~="." do
+		firstChar=string.sub(answ,1,1)
+		if firstChar ~= "#" then -- uninteresting listen msg.
+			table.insert(res,answ)
+		end
+		if firstChar == ":" then -- error message
+			res={}
+			table.insert(res,answ)
+			answ=getStringPart(answ,3)
+			return tonumber(answ) * -1 , res -- return error code as negative value
+		end
+		answ=serReadLn(2000, true)
+	end
+	return #res , res -- return nr of lines and answer array
+end
+
+
+-- translates the parameter string array into a send string and returns the straight answer from readAnswerArray
+-- thanks to lua number and string variables in "param" can be mixed
+function getCmdAnswerArray(param)
+	local cmd="p "
+	for i, p in ipairs(param) do
+		cmd=cmd..p.." "
+	end
+	echoWrite(cmd.."\r")
+	return readAnswerArray()
+end
+
+-- returns TRUE if cmd was proceed without error
+function getCmdSuccess(param)
+	return getCmdAnswerArray(param)>-1 -- is it an error?
+end
+
+--return the first received line if cmd was proceed successfully, otherways the given error msg
+function getCmdAnswerLine(param, errorMsg)
+	errCode, res=getCmdAnswerArray(param)
+	if errCode>0 then
+		return res[1]
+	else
+		return errorMsg
+	end
 end
 
 function identifyOOBDInterface(connectURL)
@@ -587,13 +524,12 @@ function identifyOOBDInterface(connectURL)
 	-- clean input queue
 	echoWrite("\r\r\r")
 	-- Abfrage auf OOBD -interface
-	sameAnswerCounter=0
-	repeatCounter=10 --maximal 10 trials in total
-	oldAnsw="nonsens"
+	local sameAnswerCounter=0
+	local repeatCounter=10 --maximal 10 trials in total
+	local oldAnsw="nonsens"
 	while  sameAnswerCounter<2 and repeatCounter>0 do -- 3 same ansers are needed 
 		repeatCounter=repeatCounter-1
-		echoWrite("p 0 0 \r")
-		answ=serReadLn(2000, false)
+		answ=getCmdAnswerLine({0,0})
 		if answ==oldAnsw then
 			sameAnswerCounter=sameAnswerCounter+1
 		else
@@ -603,7 +539,7 @@ function identifyOOBDInterface(connectURL)
 		DEBUGPRINT("stko", 1, "serial_dxm.lua - identifyOOBDInterface,%02d: %s %s", "01", "Busantwort: ", answ)
 	end
 	-- Antwort auseinanderfiedeln und Prüfen
-	idString= getStringPart(answ, 1)
+	local idString= getStringPart(answ, 1)
 	DEBUGPRINT("stko", 1, "serial_dxm.lua - identifyOOBDInterface,%02d: %s %s", "01", "teilstring: ", idString)
 	if idString=="OOBD" then
 	  firmware_revision=getStringPart(answ, 3)
@@ -613,6 +549,8 @@ function identifyOOBDInterface(connectURL)
 	  setTimeout = setTimeout_OOBD
 	  setSendID = setSendID_OOBD
 	  setCANFilter = setCANFilter_OOBD
+	  enableTesterPresent = enableTesterPresent_OOBD
+	  disableTesterPresent = disableTesterPresent_OOBD
 
 	  --[[ Original DXM1, with old OOBD firmware <= Revision 346 ]]--
 	  hardwareID=2
@@ -620,18 +558,18 @@ function identifyOOBDInterface(connectURL)
 	    if hardware_variant=="POSIX" or hardware_variant=="dxm" then
 		  --[[ Original DXM1, with new firmware paramater set > Revision 346 ]]--
 		  hardwareID=3
-		  echoWrite("p 1 1 1 0\r") -- activate Diagnostic protocol and initialize OOBD-Dongle
+		  getCmdAnswerArray({1 , 1 , 1 , 0 }) -- activate Diagnostic protocol and initialize OOBD-Dongle
 		elseif hardware_variant=="POSIX" or hardware_variant=="Lux-Wolf" then
 			--[[ OOBD-Cup v5, new firmware paramater set ]]--
 			hardwareID=4
-			err, res = readAnswerArray()
+			local err, res = readAnswerArray()
 			if err ~=0 then
 				DEBUGPRINT("stko", 4, "serial_dxm.lua - identifyOOBDInterface,%02d: %s %s %x", "02", "Set protocol error: ", err, res[1])
 			end
-			echoWrite("p 1 1 1 0\r") -- activate Diagnostic protocol and initialize OOBD-Dongle			
+			getCmdAnswerArray( { 1 , 1 , 1 , 0 }) -- activate Diagnostic protocol and initialize OOBD-Dongle			
 		else
 			-- to support older OOBD firmware, set the Module-ID to functional address
-			echoWrite("p 11 $7DF\r")
+			getCmdAnswerArray({ 11 , "$7DF" })
 	    end
 	  end
 	else
@@ -652,8 +590,8 @@ function identifyOOBDInterface(connectURL)
 			hardware_model=getStringPart(answ, 1)
 		end
 		echoWrite("atz\r")
---		echoWrite("0100\r") -- DXM/ELMxxx detected and perform automatic diagnostic protocol detection
---		serWait(">",3000) -- wait 3 secs for an automatic protocol detection process
+		echoWrite("0100\r") -- DXM/ELMxxx detected and perform automatic diagnostic protocol detection
+		serWait(">",3000) -- wait 3 secs for an automatic protocol detection process
 	end
 	DEBUGPRINT("stko", 1, "serial_dxm.lua - identifyOOBDInterface,%02d: %s %s %s %s %s %s %s %s", "02", "Hardware found: ", hardwareID, ", Revision: ", firmware_revision, ", Model: ", hardware_model, ", Variant: ", hardware_variant)
 end
@@ -664,6 +602,14 @@ end
 
 function getSVNLuaLib(oldvalue,id)
     return ""..SVNREVLUALIB
+end
+
+function setResponsePendingTimeOut(timeOut)
+	DEBUGPRINT("nexulm", 1, "serial_dxm.lua - setResponsePendingTimeOut,%02d: %s", "00", "enter function setResponsePendingTimeOut")
+	
+	if hardwareID == 3 or hardwareID == 4 then	-- set ResponsePendingTimeOut for OOBD Cup v5 or OOBD CAN Invader
+		getCmdAnswerArray({ 6 , 2 , timeOut })
+	end
 end
 
 ---------------------- System Info Menu --------------------------------------

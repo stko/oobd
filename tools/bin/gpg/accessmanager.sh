@@ -1,6 +1,7 @@
 #!/bin/bash 
-. settings.inc
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
+. "$DIR/settings.inc"
 SCRIPTNAME=$( basename ${BASH_SOURCE[0]})
 
 # if no command line arg given
