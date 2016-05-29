@@ -15929,8 +15929,8 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <part name="L6" library="rcl" deviceset="L-US" device="L0805_5MIL_DWS" value="FB0805/600R/2A"/>
 <part name="GND28" library="supply1" deviceset="GND" device="" value=""/>
 <part name="WAKE-UP" library="SparkFun" deviceset="JUMPER-2" device="SMD-NO" value="Open"/>
-<part name="HS-CAN" library="SparkFun" deviceset="JUMPER-2" device="SMD-NO" value="OPEN"/>
-<part name="MS-CAN" library="SparkFun" deviceset="JUMPER-2" device="SMD-NO" value="OPEN"/>
+<part name="HS-CAN" library="SparkFun" deviceset="JUMPER-2" device="PTH" value="OPEN"/>
+<part name="MS-CAN" library="SparkFun" deviceset="JUMPER-2" device="PTH" value="OPEN"/>
 </parts>
 <sheets>
 <sheet>
@@ -16010,8 +16010,14 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <instance part="OBD2-CONNECTOR" gate="A" x="66.04" y="167.64"/>
 <instance part="GND6" gate="1" x="15.24" y="162.56"/>
 <instance part="P+2" gate="1" x="15.24" y="190.5"/>
-<instance part="HS-CAN" gate="A" x="147.447" y="199.39" rot="R270"/>
-<instance part="MS-CAN" gate="A" x="149.098" y="105.156" rot="R270"/>
+<instance part="HS-CAN" gate="A" x="147.447" y="199.009" smashed="yes" rot="R270">
+<attribute name="NAME" x="147.447" y="202.819" size="1.778" layer="95"/>
+<attribute name="VALUE" x="147.447" y="193.294" size="1.778" layer="96"/>
+</instance>
+<instance part="MS-CAN" gate="A" x="149.098" y="105.156" smashed="yes" rot="R270">
+<attribute name="NAME" x="149.098" y="108.966" size="1.778" layer="95"/>
+<attribute name="VALUE" x="149.098" y="99.441" size="1.778" layer="96"/>
+</instance>
 </instances>
 <busses>
 <bus name="B$2">
@@ -16204,9 +16210,9 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="144.907" y1="215.9" x2="99.06" y2="215.9" width="0.1524" layer="91"/>
 <wire x1="71.12" y1="167.64" x2="99.06" y2="167.64" width="0.1524" layer="91"/>
 <wire x1="99.06" y1="167.64" x2="99.06" y2="215.9" width="0.1524" layer="91"/>
-<wire x1="144.907" y1="215.9" x2="144.907" y2="199.39" width="0.1524" layer="91"/>
-<junction x="144.907" y="215.9"/>
+<wire x1="144.907" y1="215.9" x2="144.907" y2="199.009" width="0.1524" layer="91"/>
 <pinref part="HS-CAN" gate="A" pin="1"/>
+<junction x="144.907" y="215.9"/>
 </segment>
 </net>
 <net name="+12V" class="0">
@@ -16224,7 +16230,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="R6" gate="G$1" pin="1"/>
 <wire x1="139.7" y1="193.04" x2="139.7" y2="187.706" width="0.1524" layer="91"/>
 <wire x1="139.7" y1="187.706" x2="144.907" y2="187.706" width="0.1524" layer="91"/>
-<wire x1="144.907" y1="187.706" x2="144.907" y2="196.85" width="0.1524" layer="91"/>
+<wire x1="144.907" y1="187.706" x2="144.907" y2="196.469" width="0.1524" layer="91"/>
 <pinref part="HS-CAN" gate="A" pin="2"/>
 </segment>
 </net>
