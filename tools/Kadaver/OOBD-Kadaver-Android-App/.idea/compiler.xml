@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <excludeFromCompile>
-      <file url="file://$PROJECT_DIR$/../OBDAndroid/app/src/main/java/org/oobd/base/Core_Java.java" />
-      <file url="file://$PROJECT_DIR$/../OBDAndroid/app/src/main/java/org/oobd/base/port/ComPort_Unix.java" />
-      <file url="file://$PROJECT_DIR$/../OBDAndroid/app/src/main/java/org/oobd/base/port/ComPort_Win.java" />
-      <file url="file://$PROJECT_DIR$/../OBDAndroid/app/src/main/java/org/oobd/base/uihandler/WSOobdUIHandler.java" />
-      <file url="file://$PROJECT_DIR$/../OBDAndroid/app/src/main/java/org/oobd/base/visualizer/VisualizerJava.java" />
-      <directory url="file://$PROJECT_DIR$/../OBDAndroid/app/src/main/java/org/oobd/crypt/AES/test" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/../OBDAndroid/app/src/main/java/org/oobd/ui/swing/support" includeSubdirectories="true" />
-    </excludeFromCompile>
     <resourceExtensions />
     <wildcardResourcePatterns>
       <entry name="!?*.java" />

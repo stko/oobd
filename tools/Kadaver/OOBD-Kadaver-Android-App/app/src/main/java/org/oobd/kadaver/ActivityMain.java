@@ -1399,7 +1399,7 @@ public class ActivityMain extends ActionBarActivity implements Constants{
 	                    }
 	                }
 //	                String host = "oobd.luxen.de";
-	                port = 9001;
+//	                port = 9001;
 //	                s.connect(new InetSocketAddress(host, port), 10000);
 //	                
 //	                setSocket(factory.createSocket(s, host, port, true));
