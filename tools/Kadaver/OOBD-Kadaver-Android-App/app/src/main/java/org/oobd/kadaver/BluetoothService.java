@@ -89,6 +89,12 @@ public class BluetoothService {
         mHandler = handler;
     }
 
+    public BluetoothService() {
+        mAdapter = BluetoothAdapter.getDefaultAdapter();
+        mState = STATE_NONE;
+        mHandler = null;
+    }
+
     /**
      * Set the current state of the chat connection
      * @param state  An integer defining the current connection state
