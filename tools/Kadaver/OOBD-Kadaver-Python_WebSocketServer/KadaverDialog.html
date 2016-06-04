@@ -1,17 +1,21 @@
 <!DOCTYPE html>
-
+<html>
+<head>
 <meta charset="utf-8" />
 
-<title>WebSocket Test</title>
+<title>OOBD Kadaver Web Terminal</title>
 
 <script language="javascript" type="text/javascript">
 
 
   function init()
   {
-	document.myform.url.value = "ws://oobd.luxen.de:9000/"
-	document.myform.inputtext.value = "Hello World!"
+	document.myform.url.value = "wss://oobd.luxen.de/websockssl"
+	document.myform.inputtext.value = "p 0 0 0"
+	document.myform.connectButton.disabled = true;
 	document.myform.disconnectButton.disabled = true;
+	document.myform.echoButton.disabled = true;
+ 	document.myform.inputtext.disabled = true;
   }
 
   function doConnect()
@@ -25,27 +29,44 @@
 
   function onOpen(evt)
   {
-    writeToScreen("connected\n");
+	if (document.myform.slaveFlag.checked){
+		doSend(JSON.stringify({reply: "", channel: btoa(document.myform.keytext.value)})  );
+	}else{
+		doSend(JSON.stringify({msg: "", channel: btoa(document.myform.keytext.value)})  );
+	}
+	writeToScreen("connected\n");
+	document.myform.url.disabled = true;
+	document.myform.keytext.disabled = true;
 	document.myform.connectButton.disabled = true;
 	document.myform.disconnectButton.disabled = false;
+	document.myform.echoButton.disabled = false;
+ 	document.myform.inputtext.disabled = false;
+ 	
   }
 
   function onClose(evt)
   {
     writeToScreen("disconnected\n");
+	document.myform.url.disabled = false;
+	document.myform.keytext.disabled = false;
 	document.myform.connectButton.disabled = false;
 	document.myform.disconnectButton.disabled = true;
-  }
+	document.myform.echoButton.disabled = true;
+ 	document.myform.inputtext.disabled = true;
+   }
 
   function onMessage(evt)
   {
-    console.log("received: "+evt.data);
+   writeToScreen(evt.data+"\n");
 
 
 	try {
 		obj = JSON.parse(evt.data);
 		if (obj.reply){
 			writeToScreen(atob(obj.reply));
+		}
+		if (obj.msg){
+			writeToScreen(atob(obj.msg));
 		}
 	}
 	catch(err){
@@ -59,14 +80,18 @@
 
 	websocket.close();
 
+	document.myform.url.disabled = false;
+	document.myform.keytext.disabled = false;
 	document.myform.connectButton.disabled = false;
 	document.myform.disconnectButton.disabled = true;
+	document.myform.echoButton.disabled = true;
+ 	document.myform.inputtext.disabled = true;
 
   }
 
   function doSend(message)
   {
-    writeToScreen("sent: " + message + '\n'); 
+    writeToScreen( message + '\n'); 
     websocket.send(message);
   }
 
@@ -87,6 +112,16 @@
 			var msg=JSON.stringify({msg: btoa(document.myform.inputtext.value+"\r"), channel: btoa(document.myform.keytext.value)}); 
 		}
 		doSend(msg  );
+		writeToScreen(document.myform.inputtext.value+"\n");
+   }
+
+  function doEcho() {
+		if (document.myform.slaveFlag.checked){
+			var msg=JSON.stringify({echo: "", reply: "", channel: btoa(document.myform.keytext.value)}); 
+		}else{
+			var msg=JSON.stringify({echo: "", msg: "", channel: btoa(document.myform.keytext.value)}); 
+		}
+		doSend(msg  );
    }
 
   function clearText() {
@@ -100,9 +135,39 @@
 
 </script>
 
+</head>
+<body>
+<h2>OOBD Kadaver Web Terminal</h2>
+
+Want to talk to a RemoteConnect OOBD dongle? Just connect to the TemoteConnect server and type your commands in here:<br>
+
+
 <div id="output"></div>
 
 <form name="myform">
+<h3>Settings:</h3>
+
+<p> Kadaver Server URL: 
+<!--
+<textarea name="url" cols="50"></textarea>
+-->
+<input name="url" type="text" size="30" maxlength="30"></p>
+
+<p>
+Connection key: <input name="keytext" type="text" size="30" maxlength="30" onkeyup="document.myform.connectButton.disabled=this.value.length==0"></p>
+<p>
+Act as Dongle- Side: <input type="checkbox" id="slaveFlag">
+<!--
+<input type="button" name=sendButton value="Send" onClick="sendText();">
+-->
+<input type="button" name=connectButton value="Connect" onClick="doConnect();">
+<input type="button" name=clearButton value="Clear" onClick="clearText();">
+<input type="button" name=echoButton value="Try Server Echo" onClick="doEcho();">
+<input type="button" name=disconnectButton value="Disconnect" onClick="doDisconnect();">
+</p>
+<hr>
+
+<h2>Terminal</h2>
 <p>
 <textarea name="outputtext" rows="20" cols="50"></textarea>
 </p>
@@ -110,26 +175,10 @@
 <!--
 <textarea name="inputtext" cols="50"></textarea>
 -->
-Firmware command: <input name="inputtext" type="text" size="30" maxlength="30">
+Firmware command: <input name="inputtext" type="text" size="30" maxlength="30" onkeyup="if (event.keyCode == 13) { sendText(); document.myform.inputtext.value=''; return false; }">
 </p>
-<p> OOBD Broker URL: 
-<!--
-<textarea name="url" cols="50"></textarea>
--->
-<input name="url" type="text" size="30" maxlength="30"></p>
-<p>
-Connection key: <input name="keytext" type="text" size="30" maxlength="30"></p>
-<p>
-Act as Dongle- Side: <input type="checkbox" id="slaveFlag"></p>
-
-<p>
-<input type="button" name=sendButton value="Send" onClick="sendText();">
-<input type="button" name=clearButton value="Clear" onClick="clearText();">
-<input type="button" name=disconnectButton value="Disconnect" onClick="doDisconnect();">
-<input type="button" name=connectButton value="Connect" onClick="doConnect();">
-</p>
-
 
 </form>
+</body>
 </html> 
 

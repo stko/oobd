@@ -1,0 +1,115 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+* proguard-project.txt
+
+Replaced Libraries with Dependencies:
+-------------------------------------
+The importer recognized the following library projects as third party
+libraries and replaced them with Gradle dependencies instead. This has
+the advantage that more explicit version information is known, and the
+libraries can be updated automatically. However, it is possible that
+the source files in your project were of an older version than the
+dependency we picked, which could render the project not compileable.
+You can disable the library replacement in the import wizard and try
+again:
+
+appcompat-v7 => [com.android.support:appcompat-v7:20.0.0]
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+* .\ => app\src\main\java\
+* .classpath => app\src\main\resources\.classpath
+* .project => app\src\main\resources\.project
+* AndroidManifest.xml => app\src\main\resources\AndroidManifest.xml
+* bin\Kadaver.apk => app\src\main\resources\bin\Kadaver.apk
+* lint.xml => app\src\main\resources\lint.xml
+* proguard-project.txt => app\src\main\resources\proguard-project.txt
+* project.properties => app\src\main\resources\project.properties
+* res\ => app\src\main\res\
+* res\drawable-hdpi\arrow_left.png => app\src\main\resources\res\drawable-hdpi\arrow_left.png
+* res\drawable-hdpi\arrow_right.png => app\src\main\resources\res\drawable-hdpi\arrow_right.png
+* res\drawable-hdpi\background.png => app\src\main\resources\res\drawable-hdpi\background.png
+* res\drawable-hdpi\car_green.png => app\src\main\resources\res\drawable-hdpi\car_green.png
+* res\drawable-hdpi\car_red.png => app\src\main\resources\res\drawable-hdpi\car_red.png
+* res\drawable-hdpi\car_yellow.png => app\src\main\resources\res\drawable-hdpi\car_yellow.png
+* res\drawable-hdpi\ic_launcher.png => app\src\main\resources\res\drawable-hdpi\ic_launcher.png
+* res\drawable-hdpi\icon.png => app\src\main\resources\res\drawable-hdpi\icon.png
+* res\drawable-hdpi\icon_oobdflash.png => app\src\main\resources\res\drawable-hdpi\icon_oobdflash.png
+* res\drawable-hdpi\kadaver_actionbar.png => app\src\main\resources\res\drawable-hdpi\kadaver_actionbar.png
+* res\drawable-hdpi\laptop_green.png => app\src\main\resources\res\drawable-hdpi\laptop_green.png
+* res\drawable-hdpi\laptop_red.png => app\src\main\resources\res\drawable-hdpi\laptop_red.png
+* res\drawable-hdpi\laptop_yellow.png => app\src\main\resources\res\drawable-hdpi\laptop_yellow.png
+* res\drawable-hdpi\light0.png => app\src\main\resources\res\drawable-hdpi\light0.png
+* res\drawable-hdpi\light1.png => app\src\main\resources\res\drawable-hdpi\light1.png
+* res\drawable-hdpi\oobdflash.png => app\src\main\resources\res\drawable-hdpi\oobdflash.png
+* res\drawable-hdpi\radio_not_selected.png => app\src\main\resources\res\drawable-hdpi\radio_not_selected.png
+* res\drawable-hdpi\radio_not_selected_pressed.png => app\src\main\resources\res\drawable-hdpi\radio_not_selected_pressed.png
+* res\drawable-hdpi\radio_selected.png => app\src\main\resources\res\drawable-hdpi\radio_selected.png
+* res\drawable-hdpi\radio_selected_pressed.png => app\src\main\resources\res\drawable-hdpi\radio_selected_pressed.png
+* res\drawable-hdpi\smartphone.png => app\src\main\resources\res\drawable-hdpi\smartphone.png
+* res\drawable-hdpi\smartphone_flash_green.png => app\src\main\resources\res\drawable-hdpi\smartphone_flash_green.png
+* res\drawable-hdpi\smartphone_flash_red.png => app\src\main\resources\res\drawable-hdpi\smartphone_flash_red.png
+* res\drawable-hdpi\smartphone_flash_yellow.png => app\src\main\resources\res\drawable-hdpi\smartphone_flash_yellow.png
+* res\drawable-hdpi\smartphone_green.png => app\src\main\resources\res\drawable-hdpi\smartphone_green.png
+* res\drawable-hdpi\smartphone_red.png => app\src\main\resources\res\drawable-hdpi\smartphone_red.png
+* res\drawable-hdpi\smartphone_yellow.png => app\src\main\resources\res\drawable-hdpi\smartphone_yellow.png
+* res\drawable-hdpi\tile.png => app\src\main\resources\res\drawable-hdpi\tile.png
+* res\drawable-hdpi\world_green.png => app\src\main\resources\res\drawable-hdpi\world_green.png
+* res\drawable-hdpi\world_red.png => app\src\main\resources\res\drawable-hdpi\world_red.png
+* res\drawable-hdpi\world_yellow.png => app\src\main\resources\res\drawable-hdpi\world_yellow.png
+* res\drawable-ldpi\icon.png => app\src\main\resources\res\drawable-ldpi\icon.png
+* res\drawable-mdpi\ic_launcher.png => app\src\main\resources\res\drawable-mdpi\ic_launcher.png
+* res\drawable-mdpi\icon.png => app\src\main\resources\res\drawable-mdpi\icon.png
+* res\drawable-xhdpi\ic_launcher.png => app\src\main\resources\res\drawable-xhdpi\ic_launcher.png
+* res\drawable-xhdpi\icon.png => app\src\main\resources\res\drawable-xhdpi\icon.png
+* res\drawable-xxhdpi\background_kadaver.png => app\src\main\resources\res\drawable-xxhdpi\background_kadaver.png
+* res\drawable-xxhdpi\background_oobdflash.png => app\src\main\resources\res\drawable-xxhdpi\background_oobdflash.png
+* res\drawable-xxhdpi\flashbutton_0.png => app\src\main\resources\res\drawable-xxhdpi\flashbutton_0.png
+* res\drawable-xxhdpi\flashbutton_1.png => app\src\main\resources\res\drawable-xxhdpi\flashbutton_1.png
+* res\drawable-xxhdpi\ic_launcher.png => app\src\main\resources\res\drawable-xxhdpi\ic_launcher.png
+* res\drawable-xxhdpi\icon.png => app\src\main\resources\res\drawable-xxhdpi\icon.png
+* res\drawable\drop_shadow.xml => app\src\main\resources\res\drawable\drop_shadow.xml
+* res\drawable\drop_shadow_up.xml => app\src\main\resources\res\drawable\drop_shadow_up.xml
+* res\drawable\flashbutton.xml => app\src\main\resources\res\drawable\flashbutton.xml
+* res\drawable\radiobutton.xml => app\src\main\resources\res\drawable\radiobutton.xml
+* res\drawable\rounded_rect.xml => app\src\main\resources\res\drawable\rounded_rect.xml
+* res\layout\activity_main.xml => app\src\main\resources\res\layout\activity_main.xml
+* res\layout\device_name.xml => app\src\main\resources\res\layout\device_name.xml
+* res\layout\flash.xml => app\src\main\resources\res\layout\flash.xml
+* res\layout\settings.xml => app\src\main\resources\res\layout\settings.xml
+* res\menu\activity_main.xml => app\src\main\resources\res\menu\activity_main.xml
+* res\values-v11\styles.xml => app\src\main\resources\res\values-v11\styles.xml
+* res\values-v14\styles.xml => app\src\main\resources\res\values-v14\styles.xml
+* res\values-w820dp\dimens.xml => app\src\main\resources\res\values-w820dp\dimens.xml
+* res\values\colors.xml => app\src\main\resources\res\values\colors.xml
+* res\values\dimens.xml => app\src\main\resources\res\values\dimens.xml
+* res\values\strings.xml => app\src\main\resources\res\values\strings.xml
+* res\values\styles.xml => app\src\main\resources\res\values\styles.xml
+* src\ => app\src\main\java\
+* src\org\oobd\kadaver\keystore.bks => app\src\main\resources\src\org\oobd\kadaver\keystore.bks
+* src\org\oobd\kadaver\servercertCA.der => app\src\main\resources\src\org\oobd\kadaver\servercertCA.der
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)

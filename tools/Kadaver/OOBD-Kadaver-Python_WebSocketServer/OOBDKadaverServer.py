@@ -8,6 +8,9 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Adapted as OOBD server by Steffen Koehler for the OOBD TEam 2015
+
 '''
 
 import signal, sys, ssl, logging
@@ -64,6 +67,14 @@ class SimpleChat(WebSocket):
 					client.sendMessage(str(self.data))
 			except Exception as n:
 				print "Send Exception: " ,n
+		try:
+			thisMsg['echo'] # checks if variable exists
+			print "echo msg on channel "+decodestring(thisMsg['channel'])+"\n"
+			thisMsg['echo'] ="server"
+			self.sendMessage(dumps(thisMsg))
+		except Exception as n:
+			pass
+			
 	except Exception as n:
 		print "Exception: " , n
 
