@@ -1,3 +1,3 @@
 #!/bin/sh
-~/bin/proguard4.10/bin/proguard.sh @proguard.cfg
+~/bin/proguard5.2.1/bin/proguard.sh @proguard.cfg
 
