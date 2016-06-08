@@ -8,34 +8,34 @@
 </settings>
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
-<layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
-<layer number="2" name="Route2" color="12" fill="1" visible="no" active="no"/>
-<layer number="3" name="Route3" color="5" fill="1" visible="no" active="no"/>
-<layer number="4" name="Route4" color="1" fill="4" visible="no" active="no"/>
-<layer number="5" name="Route5" color="4" fill="4" visible="no" active="no"/>
-<layer number="6" name="Route6" color="1" fill="8" visible="no" active="no"/>
-<layer number="7" name="Route7" color="4" fill="8" visible="no" active="no"/>
-<layer number="8" name="Route8" color="1" fill="2" visible="no" active="no"/>
-<layer number="9" name="Route9" color="4" fill="2" visible="no" active="no"/>
-<layer number="10" name="Route10" color="1" fill="7" visible="no" active="no"/>
-<layer number="11" name="Route11" color="4" fill="7" visible="no" active="no"/>
-<layer number="12" name="Route12" color="1" fill="5" visible="no" active="no"/>
-<layer number="13" name="Route13" color="4" fill="5" visible="no" active="no"/>
-<layer number="14" name="Route14" color="2" fill="1" visible="no" active="no"/>
-<layer number="15" name="Route15" color="12" fill="1" visible="no" active="no"/>
-<layer number="16" name="Bottom" color="3" fill="1" visible="no" active="no"/>
-<layer number="17" name="Pads" color="2" fill="1" visible="no" active="no"/>
-<layer number="18" name="Vias" color="2" fill="1" visible="no" active="no"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="no"/>
-<layer number="20" name="Dimension" color="7" fill="1" visible="no" active="no"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="no"/>
-<layer number="22" name="bPlace" color="6" fill="1" visible="no" active="no"/>
-<layer number="23" name="tOrigins" color="7" fill="1" visible="no" active="no"/>
-<layer number="24" name="bOrigins" color="6" fill="1" visible="no" active="no"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="no" active="no"/>
-<layer number="26" name="bNames" color="6" fill="1" visible="no" active="no"/>
-<layer number="27" name="tValues" color="5" fill="1" visible="no" active="no"/>
-<layer number="28" name="bValues" color="5" fill="1" visible="no" active="no"/>
+<layer number="1" name="Top" color="4" fill="1" visible="yes" active="no"/>
+<layer number="2" name="Route2" color="12" fill="1" visible="yes" active="no"/>
+<layer number="3" name="Route3" color="5" fill="1" visible="yes" active="no"/>
+<layer number="4" name="Route4" color="1" fill="4" visible="yes" active="no"/>
+<layer number="5" name="Route5" color="4" fill="4" visible="yes" active="no"/>
+<layer number="6" name="Route6" color="1" fill="8" visible="yes" active="no"/>
+<layer number="7" name="Route7" color="4" fill="8" visible="yes" active="no"/>
+<layer number="8" name="Route8" color="1" fill="2" visible="yes" active="no"/>
+<layer number="9" name="Route9" color="4" fill="2" visible="yes" active="no"/>
+<layer number="10" name="Route10" color="1" fill="7" visible="yes" active="no"/>
+<layer number="11" name="Route11" color="4" fill="7" visible="yes" active="no"/>
+<layer number="12" name="Route12" color="1" fill="5" visible="yes" active="no"/>
+<layer number="13" name="Route13" color="4" fill="5" visible="yes" active="no"/>
+<layer number="14" name="Route14" color="2" fill="1" visible="yes" active="no"/>
+<layer number="15" name="Route15" color="12" fill="1" visible="yes" active="no"/>
+<layer number="16" name="Bottom" color="3" fill="1" visible="yes" active="no"/>
+<layer number="17" name="Pads" color="2" fill="1" visible="yes" active="no"/>
+<layer number="18" name="Vias" color="2" fill="1" visible="yes" active="no"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="no"/>
+<layer number="20" name="Dimension" color="7" fill="1" visible="yes" active="no"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="no"/>
+<layer number="22" name="bPlace" color="6" fill="1" visible="yes" active="no"/>
+<layer number="23" name="tOrigins" color="7" fill="1" visible="yes" active="no"/>
+<layer number="24" name="bOrigins" color="6" fill="1" visible="yes" active="no"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="no"/>
+<layer number="26" name="bNames" color="6" fill="1" visible="yes" active="no"/>
+<layer number="27" name="tValues" color="5" fill="1" visible="yes" active="no"/>
+<layer number="28" name="bValues" color="5" fill="1" visible="yes" active="no"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="no"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="no"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="no"/>
@@ -44,8 +44,8 @@
 <layer number="34" name="bFinish" color="6" fill="6" visible="no" active="no"/>
 <layer number="35" name="tGlue" color="7" fill="4" visible="no" active="no"/>
 <layer number="36" name="bGlue" color="7" fill="5" visible="no" active="no"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="no" active="no"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="no" active="no"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="no"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="no"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="no" active="no"/>
 <layer number="40" name="bKeepout" color="3" fill="11" visible="no" active="no"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="no" active="no"/>
@@ -53,19 +53,19 @@
 <layer number="43" name="vRestrict" color="2" fill="10" visible="no" active="no"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="no"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="no"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="no" active="no"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="no" active="no"/>
-<layer number="48" name="Document" color="5" fill="1" visible="no" active="no"/>
-<layer number="49" name="Reference" color="7" fill="1" visible="no" active="no"/>
-<layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
-<layer number="51" name="tDocu" color="7" fill="1" visible="no" active="no"/>
-<layer number="52" name="bDocu" color="7" fill="1" visible="no" active="no"/>
-<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="no" active="no"/>
-<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="no" active="no"/>
-<layer number="56" name="wert" color="7" fill="1" visible="no" active="no"/>
-<layer number="57" name="tCAD" color="7" fill="1" visible="no" active="no"/>
-<layer number="59" name="tCarbon" color="7" fill="1" visible="no" active="no"/>
-<layer number="60" name="bCarbon" color="7" fill="1" visible="no" active="no"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="no"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="no"/>
+<layer number="48" name="Document" color="5" fill="1" visible="yes" active="no"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="no"/>
+<layer number="50" name="dxf" color="7" fill="1" visible="yes" active="no"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="no"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="no"/>
+<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="yes" active="no"/>
+<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="yes" active="no"/>
+<layer number="56" name="wert" color="7" fill="1" visible="yes" active="no"/>
+<layer number="57" name="tCAD" color="7" fill="1" visible="yes" active="no"/>
+<layer number="59" name="tCarbon" color="7" fill="1" visible="yes" active="no"/>
+<layer number="60" name="bCarbon" color="7" fill="1" visible="yes" active="no"/>
 <layer number="90" name="Modules" color="5" fill="1" visible="no" active="yes"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
@@ -6859,13 +6859,6 @@ chip</description>
 <text x="-1.905" y="3.175" size="1.778" layer="96">&gt;VALUE</text>
 <pin name="VCC" x="0" y="-2.54" visible="off" length="short" direction="sup" rot="R90"/>
 </symbol>
-<symbol name="DGND">
-<wire x1="-1.27" y1="0" x2="1.27" y2="0" width="0.254" layer="94"/>
-<wire x1="1.27" y1="0" x2="0" y2="-1.27" width="0.254" layer="94"/>
-<wire x1="0" y1="-1.27" x2="-1.27" y2="0" width="0.254" layer="94"/>
-<text x="-2.667" y="-3.175" size="1.778" layer="96">&gt;VALUE</text>
-<pin name="DGND" x="0" y="2.54" visible="off" length="short" direction="sup" rot="R270"/>
-</symbol>
 <symbol name="V&lt;--">
 <wire x1="-15.24" y1="0" x2="-13.97" y2="-1.27" width="0.1524" layer="94"/>
 <wire x1="-13.97" y1="-1.27" x2="0" y2="-1.27" width="0.1524" layer="94"/>
@@ -6880,19 +6873,6 @@ chip</description>
 <description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
 <gates>
 <gate name="G$1" symbol="VCC" x="0" y="0"/>
-</gates>
-<devices>
-<device name="">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="DGND" prefix="SUPPLY">
-<description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
-<gates>
-<gate name="G$1" symbol="DGND" x="0" y="0"/>
 </gates>
 <devices>
 <device name="">
@@ -17163,87 +17143,87 @@ type RDH, grid 15 mm</description>
 <part name="GND1" library="supply1" deviceset="GND" device="" value=""/>
 <part name="U$1" library="frames" deviceset="A3L-LOC" device="" value="Sheet1/5"/>
 <part name="GND129" library="supply1" deviceset="GND" device="" value=""/>
-<part name="L3" library="rcl" deviceset="L-US" device="0204/5" value="FB0805/600R/200mA(201209-601)"/>
-<part name="C6" library="rcl" deviceset="C-EU" device="025-024X044" value="100nF"/>
+<part name="L3" library="rcl" deviceset="L-US" device="L0603" value="FB0805/600R/200mA(201209-601)"/>
+<part name="C6" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="GND56" library="supply1" deviceset="GND" device="" value=""/>
 <part name="P+18" library="supply1" deviceset="+5V" device=""/>
 <part name="U1" library="OLIMEX_IC" deviceset="SY6280" device=""/>
 <part name="GND60" library="supply1" deviceset="GND" device="" value=""/>
-<part name="R3" library="rcl" deviceset="R-EU_" device="0204/2V" value="13k/1%"/>
+<part name="R3" library="rcl" deviceset="R-EU_" device="R0603" value="13k/1%"/>
 <part name="GND66" library="supply1" deviceset="GND" device="" value=""/>
-<part name="R4" library="rcl" deviceset="R-EU_" device="0204/2V" value="10k"/>
+<part name="R4" library="rcl" deviceset="R-EU_" device="R0603" value="10k"/>
 <part name="GND67" library="supply1" deviceset="GND" device="" value=""/>
-<part name="L1" library="rcl" deviceset="L-US" device="0204/5" value="FB0805/600R/2A"/>
+<part name="L1" library="rcl" deviceset="L-US" device="L0603" value="FB0805/600R/2A"/>
 <part name="USB_OTG" library="OLIMEX_CONNECTORS" deviceset="MINI_USB9" device="" value="USB-OTG"/>
-<part name="R1" library="rcl" deviceset="R-EU_" device="0204/2V" value="2.2k/1%"/>
-<part name="C4" library="rcl" deviceset="C-EU" device="025-024X044" value="100nF"/>
+<part name="R1" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
+<part name="C4" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="GND61" library="supply1" deviceset="GND" device="" value=""/>
 <part name="GND84" library="supply1" deviceset="GND" device="" value=""/>
 <part name="GND96" library="supply1" deviceset="GND" device="" value=""/>
 <part name="U6" library="arm" deviceset="MCP2551" device="" value="SN65HVD230(SO8)"/>
-<part name="R41" library="rcl" deviceset="R-EU_" device="0204/2V" value="10k"/>
+<part name="R41" library="rcl" deviceset="R-EU_" device="R0603" value="10k"/>
 <part name="V52" library="supply2" deviceset="VCC" device="" value="3.3V"/>
 <part name="C47" library="rcl" deviceset="C-EU" device="2" value="100nF"/>
 <part name="GND98" library="supply1" deviceset="GND" device="" value=""/>
-<part name="R42" library="rcl" deviceset="R-EU_" device="0204/2V" value="120R"/>
-<part name="R40" library="rcl" deviceset="R-EU_" device="0204/2V" value="NA"/>
-<part name="R2" library="rcl" deviceset="R-EU_" device="0204/2V" value="NA"/>
+<part name="R42" library="rcl" deviceset="R-EU_" device="R0603" value="120R"/>
+<part name="R40" library="rcl" deviceset="R-EU_" device="R0603" value="NA"/>
+<part name="R2" library="rcl" deviceset="R-EU_" device="R0603" value="NA"/>
 <part name="GND8" library="supply1" deviceset="GND" device="" value=""/>
-<part name="R55" library="rcl" deviceset="R-EU_" device="0204/2V" value="NA"/>
-<part name="C48" library="rcl" deviceset="C-EU" device="025-024X044" value="100nF"/>
+<part name="R55" library="rcl" deviceset="R-EU_" device="R0603" value="NA"/>
+<part name="C48" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="GND53" library="supply1" deviceset="GND" device="" value=""/>
-<part name="R47" library="rcl" deviceset="R-EU_" device="0204/2V" value="2.2k/1%"/>
+<part name="R47" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
 <part name="LED3" library="DOUBLE-SIDE" deviceset="LED" device="LED_0603" value="LED/Yellow/0603"/>
-<part name="R48" library="rcl" deviceset="R-EU_" device="0204/2V" value="2.2k/1%"/>
+<part name="R48" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
 <part name="GND87" library="supply1" deviceset="GND" device="" value=""/>
 <part name="V17" library="supply2" deviceset="VCC" device="" value="3.3V"/>
-<part name="R54" library="rcl" deviceset="R-EU_" device="0204/2V" value="49.9R/1%"/>
+<part name="R54" library="rcl" deviceset="R-EU_" device="R0603" value="49.9R/1%"/>
 <part name="LED2" library="DOUBLE-SIDE" deviceset="LED" device="LED_0603" value="LED/Red/0603"/>
-<part name="R49" library="rcl" deviceset="R-EU_" device="0204/2V" value="2.2k/1%"/>
+<part name="R49" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
 <part name="GND9" library="supply1" deviceset="GND" device="" value=""/>
 <part name="U10" library="OLIMEX_IC" deviceset="MP1482" device="" value="MP1482DS"/>
-<part name="C52" library="rcl" deviceset="C-EU" device="025-024X044" value="100nF"/>
+<part name="C52" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="GND12" library="supply1" deviceset="GND" device="" value=""/>
 <part name="GND14" library="supply1" deviceset="GND" device="" value=""/>
-<part name="R69" library="rcl" deviceset="R-EU_" device="0204/2V" value="10k"/>
-<part name="C49" library="rcl" deviceset="C-EU" device="025-024X044" value="10nF"/>
-<part name="C50" library="rcl" deviceset="C-EU" device="025-024X044" value="3.3nF"/>
-<part name="R84" library="rcl" deviceset="R-EU_" device="0204/2V" value="2.2k/1%"/>
+<part name="R69" library="rcl" deviceset="R-EU_" device="R0603" value="10k"/>
+<part name="C49" library="rcl" deviceset="C-EU" device="C0603" value="10nF"/>
+<part name="C50" library="rcl" deviceset="C-EU" device="C0603" value="3.3nF"/>
+<part name="R84" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
 <part name="GND17" library="supply1" deviceset="GND" device="" value=""/>
 <part name="L11" library="OLIMEX_DISCRET" deviceset="L" device="LQH88PN100M38" value="10uH/3.15A/20%"/>
-<part name="C53" library="rcl" deviceset="C-EU" device="025-024X044" value="22uF/6.3V"/>
+<part name="C53" library="rcl" deviceset="C-EU" device="C0603" value="22uF/6.3V"/>
 <part name="GND15" library="supply1" deviceset="GND" device="" value=""/>
-<part name="R85" library="rcl" deviceset="R-EU_" device="0204/2V" value="1.05k/1%"/>
+<part name="R85" library="rcl" deviceset="R-EU_" device="R0603" value="1.05k/1%"/>
 <part name="GND18" library="supply1" deviceset="GND" device="" value=""/>
-<part name="R70" library="rcl" deviceset="R-EU_" device="0204/2V" value="4.99k/1%"/>
+<part name="R70" library="rcl" deviceset="R-EU_" device="R0603" value="4.99k/1%"/>
 <part name="P+5" library="supply1" deviceset="+5V" device=""/>
 <part name="5V_E" library="jumper" deviceset="SJ" device="" value="Close"/>
 <part name="GND19" library="supply1" deviceset="GND" device="" value=""/>
 <part name="GND21" library="supply1" deviceset="GND" device="" value=""/>
 <part name="C51" library="SparkFun-Capacitors" deviceset="47UF-50V-20%(ELECT)" device="" value="470uF/25V/LOWESR/105C"/>
-<part name="C54" library="rcl" deviceset="C-EU" device="025-024X044" value="22uF/6.3V"/>
+<part name="C54" library="rcl" deviceset="C-EU" device="C0603" value="22uF/6.3V"/>
 <part name="GND23" library="supply1" deviceset="GND" device="" value=""/>
 <part name="PWR_LED" library="DOUBLE-SIDE" deviceset="LED" device="0603DWS" value="LED/Red/0603"/>
-<part name="R86" library="rcl" deviceset="R-EU_" device="0204/2V" value="2.2k/1%"/>
+<part name="R86" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
 <part name="GND35" library="supply1" deviceset="GND" device="" value=""/>
 <part name="D4" library="OLIMEX_DISCRET" deviceset="SMBJ16A" device=""/>
-<part name="C55" library="rcl" deviceset="C-EU" device="025-024X044" value="22uF/6.3V"/>
-<part name="C56" library="rcl" deviceset="C-EU" device="025-024X044" value="22uF/6.3V"/>
+<part name="C55" library="rcl" deviceset="C-EU" device="C0603" value="22uF/6.3V"/>
+<part name="C56" library="rcl" deviceset="C-EU" device="C0603" value="22uF/6.3V"/>
 <part name="GND24" library="supply1" deviceset="GND" device="" value=""/>
 <part name="GND26" library="supply1" deviceset="GND" device="" value=""/>
 <part name="AM3352-SOM-EVB-PLATFORM" library="OOBDtiger-Connector" deviceset="OOBD-TIGER-AM3352-SOM" device="---4XGPH127SMT-02X20(PA-V16X-2X20-LF)" value="4XGPH127SMT-02X20(PA-V16X-2X20-LF)"/>
-<part name="C64" library="rcl" deviceset="C-EU" device="025-024X044" value="22uF/6.3V"/>
+<part name="C64" library="rcl" deviceset="C-EU" device="C0603" value="22uF/6.3V"/>
 <part name="GND41" library="supply1" deviceset="GND" device="" value=""/>
-<part name="C63" library="rcl" deviceset="C-EU" device="025-024X044" value="22uF/6.3V"/>
+<part name="C63" library="rcl" deviceset="C-EU" device="C0603" value="22uF/6.3V"/>
 <part name="GND44" library="supply1" deviceset="GND" device="" value=""/>
 <part name="GND3" library="supply1" deviceset="GND" device="" value=""/>
 <part name="GND4" library="supply1" deviceset="GND" device="" value=""/>
 <part name="U2" library="arm" deviceset="MCP2551" device="" value="SN65HVD230(SO8)"/>
-<part name="R5" library="rcl" deviceset="R-EU_" device="0204/2V" value="10k"/>
+<part name="R5" library="rcl" deviceset="R-EU_" device="R0603" value="10k"/>
 <part name="V2" library="supply2" deviceset="VCC" device="" value="3.3V"/>
 <part name="C1" library="rcl" deviceset="C-EU" device="2" value="100nF"/>
 <part name="GND5" library="supply1" deviceset="GND" device="" value=""/>
-<part name="R6" library="rcl" deviceset="R-EU_" device="0204/2V" value="120R"/>
+<part name="R6" library="rcl" deviceset="R-EU_" device="R0603" value="120R"/>
 <part name="R7" library="rcl" deviceset="R-EU_" device="R0603" value="NA"/>
 <part name="OBD2-CONNECTOR" library="pinhead" deviceset="PINHD-2X5" device="/90"/>
 <part name="R8" library="resistor" deviceset="R-EU_" device="R0603" value="10K">
@@ -17252,26 +17232,25 @@ type RDH, grid 15 mm</description>
 <part name="R9" library="resistor" deviceset="R-EU_" device="R0603" value="10K">
 <attribute name="MANEX" value="110-0002014 "/>
 </part>
-<part name="C5" library="SparkFun-Passives" deviceset="CAP" device="0402-CAP" value="47pF">
+<part name="C5" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="47pF">
 <attribute name="MANEX" value="123-0001115 "/>
 </part>
-<part name="C7" library="SparkFun-Passives" deviceset="CAP" device="0402-CAP" value="47pF">
+<part name="C7" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="47pF">
 <attribute name="MANEX" value="123-0001115 "/>
 </part>
 <part name="R10" library="resistor" deviceset="R-EU_" device="R0603" value="0"/>
 <part name="R11" library="resistor" deviceset="R-EU_" device="R0603" value="0"/>
 <part name="AGND1" library="supply1" deviceset="AGND" device=""/>
-<part name="SUPPLY2" library="supply2" deviceset="DGND" device=""/>
-<part name="C16" library="SparkFun-Passives" deviceset="CAP" device="0402-CAP" value="22µf">
+<part name="C16" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="22µf">
 <attribute name="MANEX" value="123-0001032"/>
 </part>
-<part name="C17" library="SparkFun-Passives" deviceset="CAP" device="0402-CAP" value="0.1µf">
+<part name="C17" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="0.1µf">
 <attribute name="MANEX" value="123-0001032"/>
 </part>
-<part name="C18" library="SparkFun-Passives" deviceset="CAP" device="0402-CAP" value="0,01µF">
+<part name="C18" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="0,01µF">
 <attribute name="MANEX" value="123-0001115 "/>
 </part>
-<part name="C19" library="SparkFun-Passives" deviceset="CAP" device="0402-CAP" value="0,01µF">
+<part name="C19" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="0,01µF">
 <attribute name="MANEX" value="123-0001115 "/>
 </part>
 <part name="TLV320AIC3107" library="TLV320AIC3107" deviceset="TLV320AIC3107" device=""/>
@@ -18050,7 +18029,6 @@ type RDH, grid 15 mm</description>
 <instance part="R10" gate="G$1" x="45.72" y="182.88"/>
 <instance part="R11" gate="G$1" x="139.7" y="177.8"/>
 <instance part="AGND1" gate="VR1" x="66.04" y="213.36" rot="R270"/>
-<instance part="SUPPLY2" gate="G$1" x="170.18" y="134.62"/>
 <instance part="C16" gate="G$1" x="116.84" y="198.12" rot="R90">
 <attribute name="MANEX" x="116.84" y="198.12" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
