@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.6.0">
+<eagle version="6.4">
 <drawing>
 <settings>
 <setting alwaysvectorfont="yes"/>
@@ -2932,9 +2932,6 @@ design rules under a new name.</description>
 <autorouter>
 <pass name="Default">
 <param name="RoutingGrid" value="50mil"/>
-<param name="AutoGrid" value="1"/>
-<param name="Efforts" value="0"/>
-<param name="TopRouterVariant" value="1"/>
 <param name="tpViaShape" value="round"/>
 <param name="PrefDir.1" value="|"/>
 <param name="PrefDir.2" value="0"/>
@@ -3302,7 +3299,7 @@ design rules under a new name.</description>
 </element>
 <element name="IC4" library="DS3231_industrialberry" package="SOIC-16W" value="DS3231" x="16.129" y="16.002" rot="R270"/>
 <element name="BAT2" library="SparkFun" package="BATTCON_12MM_PTH" value="" x="21.844" y="31.623"/>
-<element name="USB_HOST2" library="OLIMEX_CONNECTORS" package="USB_PN87520_DEV_PTH" value="USB_A_VERTICAL" x="2.159" y="16.129" rot="R270"/>
+<element name="USB_HOST" library="OLIMEX_CONNECTORS" package="USB_PN87520_DEV_PTH" value="USB_A_VERTICAL" x="2.159" y="16.129" rot="R270"/>
 <element name="L5" library="rcl" package="L0805_5MIL_DWS" value="FB0805/600R/2A" x="25.4" y="12.319" smashed="yes">
 <attribute name="NAME" x="27.305" y="11.811" size="1.27" layer="25" ratio="20"/>
 <attribute name="VALUE" x="23.495" y="9.779" size="1.27" layer="27" ratio="20"/>
@@ -3327,6 +3324,13 @@ design rules under a new name.</description>
 <element name="HS-CAN" library="SparkFun" package="SJ_2S-NO" value="OPEN" x="1.651" y="2.794"/>
 <element name="MS-CAN" library="SparkFun" package="SJ_2S-NO" value="OPEN" x="1.778" y="6.731" rot="R180"/>
 <element name="R20" library="rcl" package="R0603" value="10k" x="14.351" y="27.686" rot="R90"/>
+<element name="C2" library="rcl" package="C0603" value="100nF" x="1.016" y="-2.794"/>
+<element name="U3" library="OLIMEX_IC" package="SOT23-5" value="SY6280" x="-5.461" y="-3.937"/>
+<element name="R19" library="rcl" package="R0603" value="6k8k/1%" x="-6.985" y="-14.859"/>
+<element name="R21" library="rcl" package="R0603" value="10k" x="1.397" y="-14.859"/>
+<element name="R22" library="rcl" package="R0603" value="2.2k/1%" x="-6.985" y="-10.033"/>
+<element name="R23" library="rcl" package="R0603" value="NA" x="-6.985" y="-19.685"/>
+<element name="R24" library="rcl" package="R0603" value="10k/1%" x="-6.985" y="-24.511"/>
 </elements>
 <signals>
 <signal name="GND" class="1">
@@ -3377,7 +3381,7 @@ design rules under a new name.</description>
 <contactref element="IC4" pad="10"/>
 <contactref element="IC4" pad="9"/>
 <contactref element="C3" pad="2"/>
-<contactref element="USB_HOST2" pad="4"/>
+<contactref element="USB_HOST" pad="4"/>
 <contactref element="C8" pad="2"/>
 <contactref element="C10" pad="2"/>
 <contactref element="L6" pad="1"/>
@@ -3585,6 +3589,17 @@ design rules under a new name.</description>
 <via x="29.845" y="20.955" extent="1-16" drill="0.3"/>
 <via x="27.6225" y="20.955" extent="1-16" drill="0.3"/>
 <via x="33.9725" y="20.955" extent="1-16" drill="0.3"/>
+<contactref element="U3" pad="2"/>
+<contactref element="C2" pad="2"/>
+<contactref element="U3" pad="2"/>
+<contactref element="R19" pad="1"/>
+<contactref element="R21" pad="1"/>
+<contactref element="R24" pad="1"/>
+<wire x1="-7.835" y1="-14.859" x2="-7.835" y2="-24.511" width="0" layer="19" extent="1-1"/>
+<wire x1="0.547" y1="-14.859" x2="-7.835" y2="-14.859" width="0" layer="19" extent="1-1"/>
+<wire x1="-4.1609" y1="-3.937" x2="-7.835" y2="-14.859" width="0" layer="19" extent="1-1"/>
+<wire x1="1.866" y1="-2.794" x2="-4.1609" y2="-3.937" width="0" layer="19" extent="1-1"/>
+<wire x1="3.81" y1="2.159" x2="1.866" y2="-2.794" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="VCC" class="1">
 <contactref element="U6" pad="3"/>
@@ -3685,6 +3700,10 @@ design rules under a new name.</description>
 <via x="59.055" y="8.255" extent="1-16" drill="0.3"/>
 <via x="32.7025" y="8.255" extent="1-16" drill="0.3"/>
 <via x="32.7025" y="25.0825" extent="1-16" drill="0.3"/>
+<contactref element="C2" pad="1"/>
+<contactref element="U3" pad="5"/>
+<wire x1="0.166" y1="-2.794" x2="27.94" y2="6.223" width="0" layer="19" extent="1-1"/>
+<wire x1="-6.7611" y1="-4.887" x2="0.166" y2="-2.794" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="USB0_DP">
 <contactref element="USB_OTG" pad="D+"/>
@@ -3748,7 +3767,7 @@ design rules under a new name.</description>
 <via x="14.2875" y="18.415" extent="1-16" drill="0.3"/>
 <via x="9.2075" y="31.115" extent="1-16" drill="0.3"/>
 </signal>
-<signal name="USB0-DRV">
+<signal name="USB0_DRV">
 <contactref element="U1" pad="4"/>
 <contactref element="R4" pad="2"/>
 <contactref element="R2" pad="1"/>
@@ -3796,7 +3815,7 @@ design rules under a new name.</description>
 <via x="36.83" y="24.765" extent="1-16" drill="0.3"/>
 <via x="30.7975" y="25.7175" extent="1-16" drill="0.3"/>
 </signal>
-<signal name="USB0-VBUS">
+<signal name="USB0_VBUS">
 <contactref element="R1" pad="1"/>
 <contactref element="AM3352-SOM-EVB-PLATFORM" pad="3-11"/>
 <wire x1="26.035" y1="22.86" x2="26.9875" y2="23.8125" width="0.127" layer="1"/>
@@ -3846,7 +3865,7 @@ design rules under a new name.</description>
 <via x="20.32" y="3.81" extent="1-16" drill="0.3"/>
 <via x="43.815" y="3.4925" extent="1-16" drill="0.3"/>
 </signal>
-<signal name="USB0-ID">
+<signal name="USB0_ID">
 <contactref element="USB_OTG" pad="ID"/>
 <contactref element="AM3352-SOM-EVB-PLATFORM" pad="3-12"/>
 <wire x1="53.975" y1="2.8575" x2="53.34" y2="2.2225" width="0.127" layer="1"/>
@@ -4014,24 +4033,40 @@ design rules under a new name.</description>
 </signal>
 <signal name="USB1_ID">
 <contactref element="AM3352-SOM-EVB-PLATFORM" pad="3-6"/>
+<contactref element="R24" pad="2"/>
+<wire x1="-6.135" y1="-24.511" x2="57.15" y2="2.159" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="PMIC_POWER_EN">
 <contactref element="AM3352-SOM-EVB-PLATFORM" pad="3-18"/>
 </signal>
 <signal name="USB1_DP">
 <contactref element="AM3352-SOM-EVB-PLATFORM" pad="3-7"/>
+<contactref element="USB_HOST" pad="3"/>
+<wire x1="4.869" y1="17.129" x2="55.88" y2="6.223" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="USB1_DM">
 <contactref element="AM3352-SOM-EVB-PLATFORM" pad="3-9"/>
+<contactref element="USB_HOST" pad="2"/>
+<wire x1="4.869" y1="15.129" x2="54.61" y2="6.223" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="USB1_VBUS">
 <contactref element="AM3352-SOM-EVB-PLATFORM" pad="3-5"/>
+<contactref element="R22" pad="1"/>
+<wire x1="-7.835" y1="-10.033" x2="57.15" y2="6.223" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="USB1_DRV">
 <contactref element="AM3352-SOM-EVB-PLATFORM" pad="3-10"/>
+<contactref element="U3" pad="4"/>
+<contactref element="R21" pad="2"/>
+<contactref element="R23" pad="1"/>
+<wire x1="2.247" y1="-14.859" x2="54.61" y2="2.159" width="0" layer="19" extent="1-1"/>
+<wire x1="-7.835" y1="-19.685" x2="2.247" y2="-14.859" width="0" layer="19" extent="1-1"/>
+<wire x1="-6.7611" y1="-2.987" x2="2.247" y2="-14.859" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="USB1_CE">
 <contactref element="AM3352-SOM-EVB-PLATFORM" pad="3-8"/>
+<contactref element="R23" pad="2"/>
+<wire x1="-6.135" y1="-19.685" x2="55.88" y2="2.159" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="USB0_CE">
 <contactref element="R2" pad="2"/>
@@ -4907,7 +4942,7 @@ design rules under a new name.</description>
 <via x="22.5425" y="17.4625" extent="1-16" drill="0.3"/>
 </signal>
 <signal name="N$28">
-<contactref element="USB_HOST2" pad="1"/>
+<contactref element="USB_HOST" pad="1"/>
 <contactref element="L5" pad="2"/>
 <contactref element="C3" pad="1"/>
 <wire x1="25.0825" y1="19.05" x2="24.4475" y2="18.415" width="0.127" layer="1"/>
@@ -4928,34 +4963,9 @@ design rules under a new name.</description>
 <via x="23.1775" y="16.8275" extent="1-16" drill="0.3"/>
 <via x="27.6225" y="14.605" extent="1-16" drill="0.3"/>
 </signal>
-<signal name="USB1_DP1">
-<contactref element="USB_HOST2" pad="3"/>
-</signal>
-<signal name="USB1_DM1">
-<contactref element="USB_HOST2" pad="2"/>
-</signal>
-<signal name="USB1_VBUS1">
-<contactref element="L5" pad="1"/>
-<contactref element="C8" pad="1"/>
-<contactref element="C10" pad="1"/>
-<wire x1="23.495" y1="17.78" x2="24.257" y2="17.018" width="0.127" layer="1"/>
-<wire x1="23.495" y1="19.05" x2="23.495" y2="17.78" width="0.127" layer="1"/>
-<wire x1="24.257" y1="19.812" x2="23.495" y2="19.05" width="0.127" layer="1"/>
-<wire x1="25.0825" y1="13.0175" x2="24.384" y2="12.319" width="0.127" layer="1"/>
-<wire x1="25.0825" y1="13.335" x2="25.0825" y2="13.0175" width="0.127" layer="1"/>
-<wire x1="25.4" y1="13.6525" x2="25.0825" y2="13.335" width="0.127" layer="1"/>
-<wire x1="25.4" y1="15.5575" x2="25.4" y2="13.6525" width="0.127" layer="1"/>
-<wire x1="25.0825" y1="15.875" x2="25.4" y2="15.5575" width="0.127" layer="16"/>
-<wire x1="23.8125" y1="15.875" x2="25.0825" y2="15.875" width="0.127" layer="16"/>
-<wire x1="24.13" y1="16.1925" x2="23.8125" y2="15.875" width="0.127" layer="1"/>
-<wire x1="24.13" y1="16.8275" x2="24.13" y2="16.1925" width="0.127" layer="1"/>
-<wire x1="24.13" y1="16.8275" x2="24.257" y2="17.018" width="0.127" layer="1"/>
-<via x="25.4" y="15.5575" extent="1-16" drill="0.3"/>
-<via x="23.8125" y="15.875" extent="1-16" drill="0.3"/>
-</signal>
 <signal name="N$29">
-<contactref element="USB_HOST2" pad="P$1"/>
-<contactref element="USB_HOST2" pad="P$2"/>
+<contactref element="USB_HOST" pad="P$1"/>
+<contactref element="USB_HOST" pad="P$2"/>
 <contactref element="L6" pad="2"/>
 <wire x1="25.7175" y1="13.6525" x2="26.416" y2="14.351" width="0.127" layer="1"/>
 <wire x1="25.7175" y1="13.335" x2="25.7175" y2="13.6525" width="0.127" layer="1"/>
@@ -5120,6 +5130,22 @@ design rules under a new name.</description>
 <contactref element="R42" pad="1"/>
 <contactref element="MS-CAN" pad="2"/>
 <wire x1="1.328" y1="6.731" x2="40.894" y2="16.344" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="N$3">
+<contactref element="U3" pad="3"/>
+<contactref element="R19" pad="2"/>
+<wire x1="-4.1609" y1="-2.987" x2="-6.135" y2="-14.859" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="N$13">
+<contactref element="R22" pad="2"/>
+<contactref element="U3" pad="1"/>
+<contactref element="L5" pad="1"/>
+<contactref element="C8" pad="1"/>
+<contactref element="C10" pad="1"/>
+<wire x1="24.257" y1="17.018" x2="24.257" y2="19.812" width="0" layer="19" extent="1-1"/>
+<wire x1="24.384" y1="12.319" x2="24.257" y2="17.018" width="0" layer="19" extent="1-1"/>
+<wire x1="-4.1609" y1="-4.887" x2="24.384" y2="12.319" width="0" layer="19" extent="1-1"/>
+<wire x1="-6.135" y1="-10.033" x2="-4.1609" y2="-4.887" width="0" layer="19" extent="1-1"/>
 </signal>
 </signals>
 </board>
