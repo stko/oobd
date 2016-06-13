@@ -10213,6 +10213,138 @@ with different sets of drill holes or mounting pads</description>
 </deviceset>
 </devicesets>
 </library>
+<library name="pimoroni">
+<description>&lt;h3&gt;Pimoroni Eagle Bits&lt;/h3&gt;
+Custom Eagle parts that we've created where needed. Please feel free to use, extend, and share!
+&lt;br&gt;&lt;br&gt;
+Find us at http://pimoroni.com
+&lt;br&gt;&lt;br&gt;
+&lt;b&gt;Licensing:&lt;/b&gt; CC v3.0 Share-Alike You are welcome to use this library for commercial purposes.</description>
+<packages>
+<package name="TSSOP28">
+<wire x1="-2.6162" y1="-4.5604" x2="2.5962" y2="-4.5604" width="0.127" layer="51"/>
+<wire x1="2.5962" y1="-4.5604" x2="2.6062" y2="5.2208" width="0.127" layer="51"/>
+<wire x1="2.6062" y1="5.2208" x2="-2.6162" y2="5.2308" width="0.127" layer="51"/>
+<wire x1="-2.6162" y1="5.2308" x2="-2.6162" y2="-4.5604" width="0.127" layer="51"/>
+<wire x1="-2.6112" y1="5.2208" x2="2.6112" y2="5.2208" width="0.127" layer="21"/>
+<wire x1="2.6112" y1="5.2208" x2="2.6062" y2="-4.5504" width="0.127" layer="21"/>
+<wire x1="2.6062" y1="-4.5504" x2="-2.6162" y2="-4.5604" width="0.127" layer="21"/>
+<wire x1="-2.6162" y1="-4.5604" x2="-2.6112" y2="5.2208" width="0.127" layer="21"/>
+<circle x="-1.7" y="4.7208" radius="0.1414" width="0.05" layer="21"/>
+<smd name="14" x="-3.429" y="-3.9624" dx="1.2" dy="0.38" layer="1"/>
+<smd name="13" x="-3.429" y="-3.302" dx="1.2" dy="0.38" layer="1"/>
+<smd name="12" x="-3.429" y="-2.6416" dx="1.2" dy="0.38" layer="1"/>
+<smd name="11" x="-3.429" y="-1.9812" dx="1.2" dy="0.38" layer="1"/>
+<smd name="10" x="-3.429" y="-1.3208" dx="1.2" dy="0.38" layer="1"/>
+<smd name="9" x="-3.429" y="-0.6604" dx="1.2" dy="0.38" layer="1"/>
+<smd name="8" x="-3.435" y="0" dx="1.2" dy="0.38" layer="1"/>
+<smd name="7" x="-3.429" y="0.6604" dx="1.2" dy="0.38" layer="1"/>
+<smd name="6" x="-3.429" y="1.3208" dx="1.2" dy="0.38" layer="1"/>
+<smd name="5" x="-3.429" y="1.9812" dx="1.2" dy="0.38" layer="1"/>
+<smd name="4" x="-3.429" y="2.6416" dx="1.2" dy="0.38" layer="1"/>
+<smd name="3" x="-3.429" y="3.302" dx="1.2" dy="0.38" layer="1"/>
+<smd name="2" x="-3.429" y="3.9624" dx="1.2" dy="0.38" layer="1"/>
+<smd name="1" x="-3.429" y="4.6228" dx="1.2" dy="0.38" layer="1"/>
+<smd name="28" x="3.429" y="4.6228" dx="1.2" dy="0.38" layer="1"/>
+<smd name="27" x="3.429" y="3.9624" dx="1.2" dy="0.38" layer="1"/>
+<smd name="26" x="3.429" y="3.302" dx="1.2" dy="0.38" layer="1"/>
+<smd name="25" x="3.429" y="2.6416" dx="1.2" dy="0.38" layer="1"/>
+<smd name="24" x="3.429" y="1.9812" dx="1.2" dy="0.38" layer="1"/>
+<smd name="23" x="3.429" y="1.3208" dx="1.2" dy="0.38" layer="1"/>
+<smd name="22" x="3.429" y="0.6604" dx="1.2" dy="0.38" layer="1"/>
+<smd name="21" x="3.435" y="0" dx="1.2" dy="0.38" layer="1"/>
+<smd name="20" x="3.429" y="-0.6604" dx="1.2" dy="0.38" layer="1"/>
+<smd name="19" x="3.429" y="-1.3208" dx="1.2" dy="0.38" layer="1"/>
+<smd name="18" x="3.429" y="-1.9812" dx="1.2" dy="0.38" layer="1"/>
+<smd name="17" x="3.429" y="-2.6416" dx="1.2" dy="0.38" layer="1"/>
+<smd name="16" x="3.429" y="-3.302" dx="1.2" dy="0.38" layer="1"/>
+<smd name="15" x="3.429" y="-3.9624" dx="1.2" dy="0.38" layer="1"/>
+<text x="-2.1" y="5.4208" size="0.254" layer="25">&gt;Name</text>
+<text x="-2.1" y="-5.0096" size="0.254" layer="27">&gt;Value</text>
+</package>
+</packages>
+<symbols>
+<symbol name="GL850G-31">
+<wire x1="-15.24" y1="-20.32" x2="15.24" y2="-20.32" width="0.254" layer="94"/>
+<wire x1="15.24" y1="-20.32" x2="15.24" y2="17.78" width="0.254" layer="94"/>
+<wire x1="15.24" y1="17.78" x2="-15.24" y2="17.78" width="0.254" layer="94"/>
+<wire x1="-15.24" y1="17.78" x2="-15.24" y2="-20.32" width="0.254" layer="94"/>
+<text x="-14.732" y="18.288" size="1.524" layer="95">GL850G-31</text>
+<pin name="AVDD" x="-20.32" y="15.24" visible="pin" length="middle"/>
+<pin name="DM2" x="-20.32" y="12.7" visible="pin" length="middle"/>
+<pin name="DP2" x="-20.32" y="10.16" visible="pin" length="middle"/>
+<pin name="RREF" x="-20.32" y="7.62" visible="pin" length="middle"/>
+<pin name="AVDD2" x="-20.32" y="5.08" visible="pin" length="middle"/>
+<pin name="X1" x="-20.32" y="2.54" visible="pin" length="middle"/>
+<pin name="X2" x="-20.32" y="0" visible="pin" length="middle"/>
+<pin name="DM3" x="-20.32" y="-2.54" visible="pin" length="middle"/>
+<pin name="DP3" x="-20.32" y="-5.08" visible="pin" length="middle"/>
+<pin name="AVDD3" x="-20.32" y="-7.62" visible="pin" length="middle"/>
+<pin name="OVCUR2#/SMD" x="20.32" y="-7.62" visible="pin" length="middle" rot="R180"/>
+<pin name="PWREN2#" x="20.32" y="-5.08" visible="pin" length="middle" rot="R180"/>
+<pin name="OVCUR1#/SMC" x="20.32" y="-2.54" visible="pin" length="middle" rot="R180"/>
+<pin name="PWREN1#/SDA" x="20.32" y="0" visible="pin" length="middle" rot="R180"/>
+<pin name="V5" x="20.32" y="2.54" visible="pin" length="middle" rot="R180"/>
+<pin name="V33" x="20.32" y="5.08" visible="pin" length="middle" rot="R180"/>
+<pin name="DM0" x="20.32" y="7.62" visible="pin" length="middle" rot="R180"/>
+<pin name="DP0" x="20.32" y="10.16" visible="pin" length="middle" rot="R180"/>
+<pin name="DM1" x="20.32" y="12.7" visible="pin" length="middle" rot="R180"/>
+<pin name="DP1" x="20.32" y="15.24" visible="pin" length="middle" rot="R180"/>
+<pin name="DM4" x="-20.32" y="-10.16" visible="pin" length="middle"/>
+<pin name="DP4" x="-20.32" y="-12.7" visible="pin" length="middle"/>
+<pin name="RESET#" x="-20.32" y="-15.24" visible="pin" length="middle"/>
+<pin name="TEST/SCL" x="-20.32" y="-17.78" visible="pin" length="middle"/>
+<pin name="GND" x="20.32" y="-17.78" visible="pin" length="middle" rot="R180"/>
+<pin name="DVDD" x="20.32" y="-15.24" visible="pin" length="middle" rot="R180"/>
+<pin name="PSELF" x="20.32" y="-12.7" visible="pin" length="middle" rot="R180"/>
+<pin name="PGANG" x="20.32" y="-10.16" visible="pin" length="middle" rot="R180"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="GL850G-31">
+<gates>
+<gate name="G$1" symbol="GL850G-31" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="TSSOP28">
+<connects>
+<connect gate="G$1" pin="AVDD" pad="1"/>
+<connect gate="G$1" pin="AVDD2" pad="5"/>
+<connect gate="G$1" pin="AVDD3" pad="10"/>
+<connect gate="G$1" pin="DM0" pad="25"/>
+<connect gate="G$1" pin="DM1" pad="27"/>
+<connect gate="G$1" pin="DM2" pad="2"/>
+<connect gate="G$1" pin="DM3" pad="8"/>
+<connect gate="G$1" pin="DM4" pad="11"/>
+<connect gate="G$1" pin="DP0" pad="26"/>
+<connect gate="G$1" pin="DP1" pad="28"/>
+<connect gate="G$1" pin="DP2" pad="3"/>
+<connect gate="G$1" pin="DP3" pad="9"/>
+<connect gate="G$1" pin="DP4" pad="12"/>
+<connect gate="G$1" pin="DVDD" pad="16"/>
+<connect gate="G$1" pin="GND" pad="15"/>
+<connect gate="G$1" pin="OVCUR1#/SMC" pad="21"/>
+<connect gate="G$1" pin="OVCUR2#/SMD" pad="19"/>
+<connect gate="G$1" pin="PGANG" pad="18"/>
+<connect gate="G$1" pin="PSELF" pad="17"/>
+<connect gate="G$1" pin="PWREN1#/SDA" pad="22"/>
+<connect gate="G$1" pin="PWREN2#" pad="20"/>
+<connect gate="G$1" pin="RESET#" pad="13"/>
+<connect gate="G$1" pin="RREF" pad="4"/>
+<connect gate="G$1" pin="TEST/SCL" pad="14"/>
+<connect gate="G$1" pin="V33" pad="24"/>
+<connect gate="G$1" pin="V5" pad="23"/>
+<connect gate="G$1" pin="X1" pad="6"/>
+<connect gate="G$1" pin="X2" pad="7"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -10370,6 +10502,8 @@ with different sets of drill holes or mounting pads</description>
 <part name="SUPPLY33" library="supply2" deviceset="V--&gt;" device="" value="MCO_1"/>
 <part name="X1" library="raspberrypi_bastelstube_v13" deviceset="RASPI_BOARD_B+" device="_H"/>
 <part name="FRAME3" library="frames" deviceset="A3L-LOC" device=""/>
+<part name="FRAME4" library="frames" deviceset="A3L-LOC" device=""/>
+<part name="U$14" library="pimoroni" deviceset="GL850G-31" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -11729,7 +11863,22 @@ with different sets of drill holes or mounting pads</description>
 </plain>
 <instances>
 <instance part="FRAME3" gate="G$1" x="0" y="0"/>
-<instance part="X1" gate="G$1" x="132.08" y="137.16"/>
+<instance part="U$14" gate="G$1" x="180.34" y="144.78"/>
+</instances>
+<busses>
+</busses>
+<nets>
+</nets>
+</sheet>
+<sheet>
+<plain>
+<text x="344.17" y="20.32" size="2.54" layer="94">Author: M. Luxen</text>
+<text x="289.56" y="20.32" size="2.54" layer="94">Title:</text>
+<text x="289.56" y="16.51" size="2.54" layer="94">Raspi 1/2/3 Interface</text>
+</plain>
+<instances>
+<instance part="FRAME4" gate="G$1" x="0" y="0"/>
+<instance part="X1" gate="G$1" x="147.32" y="121.92"/>
 </instances>
 <busses>
 </busses>
