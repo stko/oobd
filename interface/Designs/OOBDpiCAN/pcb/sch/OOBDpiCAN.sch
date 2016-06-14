@@ -535,63 +535,6 @@ DIN A3, landscape with location and doc. field</description>
 </deviceset>
 </devicesets>
 </library>
-<library name="supply2">
-<description>&lt;b&gt;Supply Symbols&lt;/b&gt;&lt;p&gt;
-GND, VCC, 0V, +5V, -5V, etc.&lt;p&gt;
-Please keep in mind, that these devices are necessary for the
-automatic wiring of the supply signals.&lt;p&gt;
-The pin name defined in the symbol is identical to the net which is to be wired automatically.&lt;p&gt;
-In this library the device names are the same as the pin names of the symbols, therefore the correct signal names appear next to the supply symbols in the schematic.&lt;p&gt;
-&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
-<packages>
-</packages>
-<symbols>
-<symbol name="V--&gt;">
-<wire x1="15.24" y1="0" x2="13.97" y2="1.27" width="0.1524" layer="94"/>
-<wire x1="13.97" y1="1.27" x2="0" y2="1.27" width="0.1524" layer="94"/>
-<wire x1="0" y1="1.27" x2="0" y2="-1.27" width="0.1524" layer="94"/>
-<wire x1="0" y1="-1.27" x2="13.97" y2="-1.27" width="0.1524" layer="94"/>
-<wire x1="15.24" y1="0" x2="13.97" y2="-1.27" width="0.1524" layer="94"/>
-<text x="1.27" y="-0.762" size="1.778" layer="96">&gt;VALUE</text>
-</symbol>
-<symbol name="V&lt;--">
-<wire x1="-15.24" y1="0" x2="-13.97" y2="-1.27" width="0.1524" layer="94"/>
-<wire x1="-13.97" y1="-1.27" x2="0" y2="-1.27" width="0.1524" layer="94"/>
-<wire x1="0" y1="-1.27" x2="0" y2="1.27" width="0.1524" layer="94"/>
-<wire x1="0" y1="1.27" x2="-13.97" y2="1.27" width="0.1524" layer="94"/>
-<wire x1="-15.24" y1="0" x2="-13.97" y2="1.27" width="0.1524" layer="94"/>
-<text x="-13.335" y="-0.762" size="1.778" layer="96">&gt;VALUE</text>
-</symbol>
-</symbols>
-<devicesets>
-<deviceset name="V--&gt;" prefix="SUPPLY">
-<description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
-<gates>
-<gate name="G$1" symbol="V--&gt;" x="0" y="0"/>
-</gates>
-<devices>
-<device name="">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-<deviceset name="V&lt;--" prefix="SUPPLY">
-<description>&lt;b&gt;SUPPLY SYMBOL&lt;/b&gt;</description>
-<gates>
-<gate name="G$1" symbol="V&lt;--" x="0" y="0"/>
-</gates>
-<devices>
-<device name="">
-<technologies>
-<technology name=""/>
-</technologies>
-</device>
-</devices>
-</deviceset>
-</devicesets>
-</library>
 <library name="can">
 <description>CAN Components</description>
 <packages>
@@ -24214,13 +24157,8 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="U$5" library="micro-stm_v3" deviceset="STM32F042C*T" device=""/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
 <part name="+3V1" library="supply1" deviceset="+3V3" device=""/>
-<part name="SUPPLY1" library="supply2" deviceset="V--&gt;" device="" value="NRST"/>
 <part name="GND2" library="supply1" deviceset="GND" device=""/>
 <part name="JP4" library="jumper" deviceset="JP1Q" device=""/>
-<part name="SUPPLY5" library="supply2" deviceset="V&lt;--" device="" value="USB2_DM"/>
-<part name="SUPPLY6" library="supply2" deviceset="V&lt;--" device="" value="USB2_DP"/>
-<part name="SUPPLY7" library="supply2" deviceset="V&lt;--" device="" value="SWDIO"/>
-<part name="SUPPLY8" library="supply2" deviceset="V&lt;--" device="" value="SWCLK"/>
 <part name="R10" library="resistor" deviceset="R-EU_" device="R0603" value="510R"/>
 <part name="+3V2" library="supply1" deviceset="+3V3" device=""/>
 <part name="C27" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
@@ -24229,7 +24167,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="C21" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C19" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
-<part name="SUPPLY2" library="supply2" deviceset="V--&gt;" device="" value="MCO_2"/>
 <part name="LED7" library="led" deviceset="LED" device="CHIPLED_0805" value="green"/>
 <part name="LED3" library="led" deviceset="LED" device="CHIPLED_0805" value="yellow"/>
 <part name="R12" library="resistor" deviceset="R-EU_" device="R0603" value="120R"/>
@@ -24238,13 +24175,8 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="U$6" library="micro-stm_v3" deviceset="STM32F042C*T" device=""/>
 <part name="GND8" library="supply1" deviceset="GND" device=""/>
 <part name="+3V3" library="supply1" deviceset="+3V3" device=""/>
-<part name="SUPPLY3" library="supply2" deviceset="V--&gt;" device="" value="NRST"/>
 <part name="GND9" library="supply1" deviceset="GND" device=""/>
 <part name="JP5" library="jumper" deviceset="JP1Q" device=""/>
-<part name="SUPPLY4" library="supply2" deviceset="V&lt;--" device="" value="USB3_DM"/>
-<part name="SUPPLY9" library="supply2" deviceset="V&lt;--" device="" value="USB3_DP"/>
-<part name="SUPPLY10" library="supply2" deviceset="V&lt;--" device="" value="SWDIO"/>
-<part name="SUPPLY11" library="supply2" deviceset="V&lt;--" device="" value="SWCLK"/>
 <part name="R11" library="resistor" deviceset="R-EU_" device="R0603" value="510R"/>
 <part name="+3V4" library="supply1" deviceset="+3V3" device=""/>
 <part name="C29" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
@@ -24258,22 +24190,16 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="R14" library="resistor" deviceset="R-EU_" device="R0603" value="120R"/>
 <part name="R15" library="resistor" deviceset="R-EU_" device="R0603" value="120R"/>
 <part name="GND14" library="supply1" deviceset="GND" device=""/>
-<part name="SUPPLY13" library="supply2" deviceset="V--&gt;" device="" value="MCO_2"/>
 <part name="FRAME2" library="frames" deviceset="A3L-LOC" device=""/>
 <part name="U$2" library="micro-stm_v3" deviceset="STM32F042C*T" device=""/>
 <part name="GND16" library="supply1" deviceset="GND" device=""/>
 <part name="+3V6" library="supply1" deviceset="+3V3" device=""/>
-<part name="SUPPLY17" library="supply2" deviceset="V--&gt;" device="" value="NRST"/>
 <part name="Q2" library="crystal" deviceset="CRYSTAL" device="SM49" value="16MHz"/>
 <part name="C30" library="resistor" deviceset="C-EU" device="C0603" value="18pF"/>
 <part name="C31" library="resistor" deviceset="C-EU" device="C0603" value="18pF"/>
 <part name="GND17" library="supply1" deviceset="GND" device=""/>
 <part name="JP1" library="jumper" deviceset="JP1Q" device=""/>
-<part name="SUPPLY18" library="supply2" deviceset="V&lt;--" device="" value="USB0_DM"/>
-<part name="SUPPLY19" library="supply2" deviceset="V&lt;--" device="" value="USB0_DP"/>
 <part name="U$8" library="jumper" deviceset="JP5E" device=""/>
-<part name="SUPPLY20" library="supply2" deviceset="V&lt;--" device="" value="SWDIO"/>
-<part name="SUPPLY21" library="supply2" deviceset="V&lt;--" device="" value="SWCLK"/>
 <part name="R3" library="resistor" deviceset="R-EU_" device="R0603" value="510R"/>
 <part name="+3V7" library="supply1" deviceset="+3V3" device=""/>
 <part name="C16" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
@@ -24282,7 +24208,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="C10" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C7" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="GND20" library="supply1" deviceset="GND" device=""/>
-<part name="SUPPLY22" library="supply2" deviceset="V--&gt;" device="" value="MCO_0"/>
 <part name="LED5" library="led" deviceset="LED" device="CHIPLED_0805" value="green"/>
 <part name="LED1" library="led" deviceset="LED" device="CHIPLED_0805" value="yellow"/>
 <part name="R5" library="resistor" deviceset="R-EU_" device="R0603" value="120R"/>
@@ -24291,7 +24216,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="U$4" library="micro-stm_v3" deviceset="STM32F042C*T" device=""/>
 <part name="GND23" library="supply1" deviceset="GND" device=""/>
 <part name="+3V8" library="supply1" deviceset="+3V3" device=""/>
-<part name="SUPPLY23" library="supply2" deviceset="V--&gt;" device="" value="NRST"/>
 <part name="U$1" library="can" deviceset="MCP2551" device="SO8"/>
 <part name="GND24" library="supply1" deviceset="GND" device=""/>
 <part name="R9" library="resistor" deviceset="R-EU_" device="R0603" value="60R"/>
@@ -24301,10 +24225,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="GND25" library="supply1" deviceset="GND" device=""/>
 <part name="GND26" library="supply1" deviceset="GND" device=""/>
 <part name="JP3" library="jumper" deviceset="JP1Q" device=""/>
-<part name="SUPPLY24" library="supply2" deviceset="V&lt;--" device="" value="USB1_DM"/>
-<part name="SUPPLY25" library="supply2" deviceset="V&lt;--" device="" value="USB1_DP"/>
-<part name="SUPPLY26" library="supply2" deviceset="V&lt;--" device="" value="SWDIO"/>
-<part name="SUPPLY27" library="supply2" deviceset="V&lt;--" device="" value="SWCLK"/>
 <part name="R4" library="resistor" deviceset="R-EU_" device="R0603" value="510R"/>
 <part name="+3V9" library="supply1" deviceset="+3V3" device=""/>
 <part name="C17" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
@@ -24313,7 +24233,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="C11" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C8" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="GND27" library="supply1" deviceset="GND" device=""/>
-<part name="SUPPLY28" library="supply2" deviceset="V--&gt;" device="" value="MCO_1"/>
 <part name="U$7" library="SparkFun-Connectors" deviceset="M03" device=""/>
 <part name="GND28" library="supply1" deviceset="GND" device=""/>
 <part name="LED6" library="led" deviceset="LED" device="CHIPLED_0805" value="green"/>
@@ -24321,24 +24240,11 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="R7" library="resistor" deviceset="R-EU_" device="R0603" value="120R"/>
 <part name="R8" library="resistor" deviceset="R-EU_" device="R0603" value="120R"/>
 <part name="GND29" library="supply1" deviceset="GND" device=""/>
-<part name="SUPPLY29" library="supply2" deviceset="V--&gt;" device="" value="MCO_0"/>
 <part name="+3V10" library="supply1" deviceset="+3V3" device=""/>
 <part name="GND30" library="supply1" deviceset="GND" device=""/>
-<part name="SUPPLY30" library="supply2" deviceset="V&lt;--" device="" value="SWCLK"/>
-<part name="SUPPLY31" library="supply2" deviceset="V&lt;--" device="" value="SWDIO"/>
-<part name="SUPPLY32" library="supply2" deviceset="V&lt;--" device="" value="NRST"/>
-<part name="SUPPLY33" library="supply2" deviceset="V--&gt;" device="" value="MCO_1"/>
 <part name="FRAME3" library="frames" deviceset="A3L-LOC" device=""/>
 <part name="U$3" library="pimoroni" deviceset="GL850G-31" device=""/>
 <part name="CN1" library="adafruit" deviceset="USB" device="MOLEX"/>
-<part name="SUPPLY12" library="supply2" deviceset="V&lt;--" device="" value="USB1_DM"/>
-<part name="SUPPLY14" library="supply2" deviceset="V&lt;--" device="" value="USB1_DP"/>
-<part name="SUPPLY15" library="supply2" deviceset="V&lt;--" device="" value="USB2_DM"/>
-<part name="SUPPLY16" library="supply2" deviceset="V&lt;--" device="" value="USB2_DP"/>
-<part name="SUPPLY34" library="supply2" deviceset="V&lt;--" device="" value="USB3_DM"/>
-<part name="SUPPLY35" library="supply2" deviceset="V&lt;--" device="" value="USB3_DP"/>
-<part name="SUPPLY36" library="supply2" deviceset="V--&gt;" device="" value="UDB0_DP"/>
-<part name="SUPPLY37" library="supply2" deviceset="V--&gt;" device="" value="USB0_DM"/>
 <part name="GND15" library="supply1" deviceset="GND" device=""/>
 <part name="Q1" library="crystal" deviceset="CRYSTAL" device="SM49" value="12MHz"/>
 <part name="C2" library="resistor" deviceset="C-EU" device="C0603" value="33pF"/>
@@ -24434,13 +24340,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="SJ2" library="SparkFun" deviceset="SOLDERJUMPER" device="TRACE"/>
 <part name="RPI1" library="Connector_B+" deviceset="RASPBERRY_HAT" device="HAT"/>
 <part name="JP10" library="SparkFun" deviceset="JUMPER-2" device="SMD-NO"/>
-<part name="SUPPLY38" library="supply2" deviceset="V&lt;--" device="" value="SCL"/>
-<part name="SUPPLY39" library="supply2" deviceset="V&lt;--" device=""/>
-<part name="SUPPLY40" library="supply2" deviceset="V--&gt;" device="" value="SDA"/>
-<part name="SUPPLY41" library="supply2" deviceset="V--&gt;" device=""/>
-<part name="SUPPLY42" library="supply2" deviceset="V--&gt;" device="" value="GPIO17"/>
-<part name="SUPPLY43" library="supply2" deviceset="V&lt;--" device="" value="ID_SD"/>
-<part name="SUPPLY44" library="supply2" deviceset="V--&gt;" device="" value="ID_SC"/>
 <part name="P+17" library="supply1" deviceset="+5V" device=""/>
 <part name="P+18" library="supply1" deviceset="+5V" device=""/>
 <part name="P+19" library="supply1" deviceset="+5V" device=""/>
@@ -24503,7 +24402,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="U$2" gate="G$1" x="147.32" y="208.28"/>
 <instance part="GND16" gate="1" x="101.6" y="241.3"/>
 <instance part="+3V6" gate="G$1" x="91.44" y="236.22"/>
-<instance part="SUPPLY17" gate="G$1" x="63.5" y="205.74"/>
 <instance part="Q2" gate="G$1" x="99.06" y="185.42" smashed="yes">
 <attribute name="NAME" x="95.25" y="187.706" size="1.778" layer="95"/>
 <attribute name="VALUE" x="95.25" y="181.61" size="1.778" layer="96"/>
@@ -24512,11 +24410,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="C31" gate="G$1" x="104.14" y="177.8"/>
 <instance part="GND17" gate="1" x="93.98" y="165.1"/>
 <instance part="JP1" gate="A" x="71.12" y="195.58" rot="MR90"/>
-<instance part="SUPPLY18" gate="G$1" x="215.9" y="200.66"/>
-<instance part="SUPPLY19" gate="G$1" x="215.9" y="198.12"/>
 <instance part="U$8" gate="G$1" x="68.58" y="144.78" rot="R270"/>
-<instance part="SUPPLY20" gate="G$1" x="215.9" y="195.58"/>
-<instance part="SUPPLY21" gate="G$1" x="215.9" y="193.04"/>
 <instance part="R3" gate="G$1" x="83.82" y="177.8" rot="R90"/>
 <instance part="+3V7" gate="G$1" x="55.88" y="203.2"/>
 <instance part="C16" gate="G$1" x="78.74" y="223.52"/>
@@ -24525,7 +24419,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="C10" gate="G$1" x="63.5" y="223.52"/>
 <instance part="C7" gate="G$1" x="58.42" y="223.52"/>
 <instance part="GND20" gate="1" x="68.58" y="210.82"/>
-<instance part="SUPPLY22" gate="G$1" x="200.66" y="208.28"/>
 <instance part="LED5" gate="G$1" x="134.62" y="147.32" smashed="yes" rot="R90">
 <attribute name="NAME" x="139.192" y="150.876" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="139.192" y="142.875" size="1.778" layer="96" rot="R180"/>
@@ -24540,7 +24433,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="U$4" gate="G$1" x="147.32" y="78.74"/>
 <instance part="GND23" gate="1" x="101.6" y="111.76"/>
 <instance part="+3V8" gate="G$1" x="91.44" y="106.68"/>
-<instance part="SUPPLY23" gate="G$1" x="63.5" y="76.2"/>
 <instance part="U$1" gate="G$1" x="266.7" y="58.42"/>
 <instance part="GND24" gate="1" x="83.82" y="35.56"/>
 <instance part="R9" gate="G$1" x="317.5" y="71.12"/>
@@ -24551,10 +24443,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="GND25" gate="1" x="261.62" y="10.16"/>
 <instance part="GND26" gate="1" x="248.92" y="30.48"/>
 <instance part="JP3" gate="A" x="299.72" y="71.12" rot="R90"/>
-<instance part="SUPPLY24" gate="G$1" x="215.9" y="71.12"/>
-<instance part="SUPPLY25" gate="G$1" x="215.9" y="68.58"/>
-<instance part="SUPPLY26" gate="G$1" x="215.9" y="66.04"/>
-<instance part="SUPPLY27" gate="G$1" x="215.9" y="63.5"/>
 <instance part="R4" gate="G$1" x="83.82" y="48.26" rot="R90"/>
 <instance part="+3V9" gate="G$1" x="55.88" y="73.66"/>
 <instance part="C17" gate="G$1" x="78.74" y="93.98"/>
@@ -24563,7 +24451,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="C11" gate="G$1" x="63.5" y="93.98"/>
 <instance part="C8" gate="G$1" x="58.42" y="93.98"/>
 <instance part="GND27" gate="1" x="68.58" y="81.28"/>
-<instance part="SUPPLY28" gate="G$1" x="200.66" y="78.74"/>
 <instance part="U$7" gate="G$1" x="365.76" y="55.88" rot="R180"/>
 <instance part="GND28" gate="1" x="340.36" y="30.48"/>
 <instance part="LED6" gate="G$1" x="134.62" y="17.78" smashed="yes" rot="R90">
@@ -24577,12 +24464,8 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="R7" gate="G$1" x="149.86" y="30.48" rot="R180"/>
 <instance part="R8" gate="G$1" x="149.86" y="17.78" rot="R180"/>
 <instance part="GND29" gate="1" x="160.02" y="10.16"/>
-<instance part="SUPPLY29" gate="G$1" x="63.5" y="71.12"/>
 <instance part="+3V10" gate="G$1" x="55.88" y="154.94"/>
 <instance part="GND30" gate="1" x="55.88" y="124.46"/>
-<instance part="SUPPLY30" gate="G$1" x="38.1" y="142.24"/>
-<instance part="SUPPLY31" gate="G$1" x="38.1" y="137.16"/>
-<instance part="SUPPLY32" gate="G$1" x="38.1" y="134.62"/>
 <instance part="R20" gate="G$1" x="317.5" y="63.5"/>
 <instance part="C37" gate="G$1" x="335.28" y="71.12" rot="R90"/>
 <instance part="D1" gate="G$1" x="307.34" y="43.18" smashed="yes" rot="R90">
@@ -25158,12 +25041,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <pinref part="P+8" gate="1" pin="+5V"/>
 </segment>
 </net>
-<net name="NRST2" class="0">
-<segment>
-<pinref part="U$2" gate="G$1" pin="NRST"/>
-<wire x1="111.76" y1="205.74" x2="78.74" y2="205.74" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="N$10" class="0">
 <segment>
 <pinref part="C31" gate="G$1" pin="1"/>
@@ -25193,12 +25070,14 @@ with Integrated Isolated DC-to-DC Converter</description>
 <segment>
 <pinref part="U$2" gate="G$1" pin="PA11"/>
 <wire x1="180.34" y1="200.66" x2="200.66" y2="200.66" width="0.1524" layer="91"/>
+<label x="200.66" y="200.66" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="USB0_DP" class="0">
 <segment>
 <pinref part="U$2" gate="G$1" pin="PA12"/>
 <wire x1="180.34" y1="198.12" x2="200.66" y2="198.12" width="0.1524" layer="91"/>
+<label x="200.66" y="198.12" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="N$22" class="0">
@@ -25235,10 +25114,17 @@ with Integrated Isolated DC-to-DC Converter</description>
 <segment>
 <pinref part="U$4" gate="G$1" pin="NRST"/>
 <wire x1="111.76" y1="76.2" x2="78.74" y2="76.2" width="0.1524" layer="91"/>
+<label x="78.74" y="76.2" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
 <pinref part="U$8" gate="G$1" pin="5"/>
 <wire x1="66.04" y1="134.62" x2="38.1" y2="134.62" width="0.1524" layer="91"/>
+<label x="38.1" y="134.62" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
+<segment>
+<pinref part="U$2" gate="G$1" pin="NRST"/>
+<wire x1="111.76" y1="205.74" x2="78.74" y2="205.74" width="0.1524" layer="91"/>
+<label x="78.74" y="205.74" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="MCO_1" class="0">
@@ -25246,6 +25132,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <pinref part="U$4" gate="G$1" pin="PF0-OSC_IN"/>
 <wire x1="111.76" y1="71.12" x2="93.98" y2="71.12" width="0.1524" layer="91"/>
 <wire x1="93.98" y1="71.12" x2="78.74" y2="71.12" width="0.1524" layer="91"/>
+<label x="78.74" y="71.12" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="N$28" class="0">
@@ -25259,12 +25146,14 @@ with Integrated Isolated DC-to-DC Converter</description>
 <segment>
 <pinref part="U$4" gate="G$1" pin="PA11"/>
 <wire x1="180.34" y1="71.12" x2="200.66" y2="71.12" width="0.1524" layer="91"/>
+<label x="200.66" y="71.12" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="USB1_DP" class="0">
 <segment>
 <pinref part="U$4" gate="G$1" pin="PA12"/>
 <wire x1="180.34" y1="68.58" x2="200.66" y2="68.58" width="0.1524" layer="91"/>
+<label x="200.66" y="68.58" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="N$29" class="0">
@@ -25301,40 +25190,48 @@ with Integrated Isolated DC-to-DC Converter</description>
 <segment>
 <pinref part="U$4" gate="G$1" pin="PA8"/>
 <wire x1="180.34" y1="78.74" x2="200.66" y2="78.74" width="0.1524" layer="91"/>
+<label x="200.66" y="78.74" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="SWDIO" class="0">
 <segment>
 <pinref part="U$2" gate="G$1" pin="PA13"/>
 <wire x1="180.34" y1="195.58" x2="200.66" y2="195.58" width="0.1524" layer="91"/>
+<label x="200.66" y="195.58" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
 <pinref part="U$4" gate="G$1" pin="PA13"/>
 <wire x1="180.34" y1="66.04" x2="200.66" y2="66.04" width="0.1524" layer="91"/>
+<label x="200.66" y="66.04" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
 <pinref part="U$8" gate="G$1" pin="4"/>
 <wire x1="66.04" y1="137.16" x2="38.1" y2="137.16" width="0.1524" layer="91"/>
+<label x="38.1" y="137.16" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="SWCLK" class="0">
 <segment>
 <pinref part="U$2" gate="G$1" pin="PA14"/>
 <wire x1="200.66" y1="193.04" x2="180.34" y2="193.04" width="0.1524" layer="91"/>
+<label x="200.66" y="193.04" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
 <pinref part="U$4" gate="G$1" pin="PA14"/>
 <wire x1="200.66" y1="63.5" x2="180.34" y2="63.5" width="0.1524" layer="91"/>
+<label x="200.66" y="63.5" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
 <pinref part="U$8" gate="G$1" pin="2"/>
 <wire x1="66.04" y1="142.24" x2="38.1" y2="142.24" width="0.1524" layer="91"/>
+<label x="38.1" y="142.24" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="MCO_0" class="0">
 <segment>
 <pinref part="U$2" gate="G$1" pin="PA8"/>
 <wire x1="180.34" y1="208.28" x2="200.66" y2="208.28" width="0.1524" layer="91"/>
+<label x="200.66" y="208.28" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="CAN1-L" class="0">
@@ -25697,13 +25594,8 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="U$5" gate="G$1" x="147.32" y="208.28"/>
 <instance part="GND1" gate="1" x="101.6" y="241.3"/>
 <instance part="+3V1" gate="G$1" x="91.44" y="236.22"/>
-<instance part="SUPPLY1" gate="G$1" x="63.5" y="205.74"/>
 <instance part="GND2" gate="1" x="83.82" y="165.1"/>
 <instance part="JP4" gate="A" x="71.12" y="195.58" rot="MR90"/>
-<instance part="SUPPLY5" gate="G$1" x="215.9" y="200.66"/>
-<instance part="SUPPLY6" gate="G$1" x="215.9" y="198.12"/>
-<instance part="SUPPLY7" gate="G$1" x="215.9" y="195.58"/>
-<instance part="SUPPLY8" gate="G$1" x="215.9" y="193.04"/>
 <instance part="R10" gate="G$1" x="83.82" y="177.8" rot="R90"/>
 <instance part="+3V2" gate="G$1" x="55.88" y="203.2"/>
 <instance part="C27" gate="G$1" x="78.74" y="223.52"/>
@@ -25712,7 +25604,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="C21" gate="G$1" x="63.5" y="223.52"/>
 <instance part="C19" gate="G$1" x="58.42" y="223.52"/>
 <instance part="GND5" gate="1" x="68.58" y="210.82"/>
-<instance part="SUPPLY2" gate="G$1" x="200.66" y="208.28"/>
 <instance part="LED7" gate="G$1" x="134.62" y="147.32" smashed="yes" rot="R90">
 <attribute name="NAME" x="139.192" y="150.876" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="139.192" y="142.875" size="1.778" layer="96" rot="R180"/>
@@ -25727,13 +25618,8 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="U$6" gate="G$1" x="147.32" y="78.74"/>
 <instance part="GND8" gate="1" x="101.6" y="111.76"/>
 <instance part="+3V3" gate="G$1" x="91.44" y="106.68"/>
-<instance part="SUPPLY3" gate="G$1" x="63.5" y="76.2"/>
 <instance part="GND9" gate="1" x="83.82" y="35.56"/>
 <instance part="JP5" gate="A" x="71.12" y="66.04" rot="MR90"/>
-<instance part="SUPPLY4" gate="G$1" x="215.9" y="71.12"/>
-<instance part="SUPPLY9" gate="G$1" x="215.9" y="68.58"/>
-<instance part="SUPPLY10" gate="G$1" x="215.9" y="66.04"/>
-<instance part="SUPPLY11" gate="G$1" x="215.9" y="63.5"/>
 <instance part="R11" gate="G$1" x="83.82" y="48.26" rot="R90"/>
 <instance part="+3V4" gate="G$1" x="55.88" y="73.66"/>
 <instance part="C29" gate="G$1" x="78.74" y="93.98"/>
@@ -25753,8 +25639,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="R14" gate="G$1" x="149.86" y="30.48" rot="R180"/>
 <instance part="R15" gate="G$1" x="149.86" y="17.78" rot="R180"/>
 <instance part="GND14" gate="1" x="160.02" y="10.16"/>
-<instance part="SUPPLY13" gate="G$1" x="63.5" y="71.12"/>
-<instance part="SUPPLY33" gate="G$1" x="63.5" y="200.66"/>
 <instance part="U$11" gate="G$1" x="266.7" y="187.96"/>
 <instance part="R24" gate="G$1" x="317.5" y="210.82"/>
 <instance part="U$11" gate="G$2" x="261.62" y="154.94"/>
@@ -26062,6 +25946,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <segment>
 <pinref part="U$5" gate="G$1" pin="NRST"/>
 <wire x1="111.76" y1="205.74" x2="78.74" y2="205.74" width="0.1524" layer="91"/>
+<label x="78.74" y="205.74" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="BOOT0" class="0">
@@ -26090,12 +25975,14 @@ with Integrated Isolated DC-to-DC Converter</description>
 <segment>
 <pinref part="U$5" gate="G$1" pin="PA13"/>
 <wire x1="180.34" y1="195.58" x2="200.66" y2="195.58" width="0.1524" layer="91"/>
+<label x="200.66" y="195.58" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="SWCLK" class="0">
 <segment>
 <pinref part="U$5" gate="G$1" pin="PA14"/>
 <wire x1="200.66" y1="193.04" x2="180.34" y2="193.04" width="0.1524" layer="91"/>
+<label x="200.66" y="193.04" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="N$4" class="0">
@@ -26132,30 +26019,35 @@ with Integrated Isolated DC-to-DC Converter</description>
 <segment>
 <pinref part="U$6" gate="G$1" pin="NRST"/>
 <wire x1="111.76" y1="76.2" x2="78.74" y2="76.2" width="0.1524" layer="91"/>
+<label x="78.74" y="76.2" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="USB3_DM" class="0">
 <segment>
 <pinref part="U$6" gate="G$1" pin="PA11"/>
 <wire x1="180.34" y1="71.12" x2="200.66" y2="71.12" width="0.1524" layer="91"/>
+<label x="200.66" y="71.12" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="USB3_DP" class="0">
 <segment>
 <pinref part="U$6" gate="G$1" pin="PA12"/>
 <wire x1="180.34" y1="68.58" x2="200.66" y2="68.58" width="0.1524" layer="91"/>
+<label x="200.66" y="68.58" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="SWDIO1" class="0">
 <segment>
 <pinref part="U$6" gate="G$1" pin="PA13"/>
 <wire x1="180.34" y1="66.04" x2="200.66" y2="66.04" width="0.1524" layer="91"/>
+<label x="200.66" y="66.04" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="SWCLK1" class="0">
 <segment>
 <pinref part="U$6" gate="G$1" pin="PA14"/>
 <wire x1="200.66" y1="63.5" x2="180.34" y2="63.5" width="0.1524" layer="91"/>
+<label x="200.66" y="63.5" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="N$15" class="0">
@@ -26192,29 +26084,34 @@ with Integrated Isolated DC-to-DC Converter</description>
 <segment>
 <pinref part="U$5" gate="G$1" pin="PF0-OSC_IN"/>
 <wire x1="111.76" y1="200.66" x2="78.74" y2="200.66" width="0.1524" layer="91"/>
+<label x="78.74" y="200.66" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="MCO_2" class="0">
 <segment>
 <pinref part="U$5" gate="G$1" pin="PA8"/>
 <wire x1="180.34" y1="208.28" x2="200.66" y2="208.28" width="0.1524" layer="91"/>
+<label x="200.66" y="208.28" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
 <pinref part="U$6" gate="G$1" pin="PF0-OSC_IN"/>
 <wire x1="111.76" y1="71.12" x2="93.98" y2="71.12" width="0.1524" layer="91"/>
 <wire x1="93.98" y1="71.12" x2="78.74" y2="71.12" width="0.1524" layer="91"/>
+<label x="78.74" y="71.12" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="USB2_DM" class="0">
 <segment>
 <pinref part="U$5" gate="G$1" pin="PA11"/>
 <wire x1="180.34" y1="200.66" x2="200.66" y2="200.66" width="0.1524" layer="91"/>
+<label x="200.66" y="200.66" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="USB2_DP" class="0">
 <segment>
 <pinref part="U$5" gate="G$1" pin="PA12"/>
 <wire x1="180.34" y1="198.12" x2="200.66" y2="198.12" width="0.1524" layer="91"/>
+<label x="200.66" y="198.12" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="N$56" class="0">
@@ -26407,14 +26304,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="FRAME3" gate="G$1" x="0" y="0"/>
 <instance part="U$3" gate="G$1" x="175.26" y="220.98"/>
 <instance part="CN1" gate="G$1" x="330.2" y="228.6" rot="MR0"/>
-<instance part="SUPPLY12" gate="G$1" x="129.54" y="233.68"/>
-<instance part="SUPPLY14" gate="G$1" x="129.54" y="231.14"/>
-<instance part="SUPPLY15" gate="G$1" x="129.54" y="218.44"/>
-<instance part="SUPPLY16" gate="G$1" x="129.54" y="215.9"/>
-<instance part="SUPPLY34" gate="G$1" x="129.54" y="210.82"/>
-<instance part="SUPPLY35" gate="G$1" x="129.54" y="208.28"/>
-<instance part="SUPPLY36" gate="G$1" x="220.98" y="236.22"/>
-<instance part="SUPPLY37" gate="G$1" x="220.98" y="233.68"/>
 <instance part="GND15" gate="1" x="203.2" y="187.96"/>
 <instance part="Q1" gate="G$1" x="60.96" y="210.82" smashed="yes">
 <attribute name="NAME" x="57.15" y="213.106" size="1.778" layer="95"/>
@@ -26494,13 +26383,13 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="P+16" gate="1" x="60.96" y="96.52"/>
 <instance part="GND46" gate="1" x="111.76" y="30.48"/>
 <instance part="+3V5" gate="G$1" x="73.66" y="96.52"/>
-<instance part="GND47" gate="1" x="304.8" y="124.46"/>
+<instance part="GND47" gate="1" x="269.24" y="124.46"/>
 <instance part="GND48" gate="1" x="200.66" y="124.46"/>
 <instance part="C53" gate="G$1" x="200.66" y="134.62" rot="R180"/>
 <instance part="IC5" gate="G$1" x="231.14" y="139.7"/>
 <instance part="GND49" gate="1" x="251.46" y="124.46"/>
 <instance part="GND50" gate="1" x="210.82" y="124.46"/>
-<instance part="BAT2" gate="G$1" x="304.8" y="137.16" rot="R270"/>
+<instance part="BAT2" gate="G$1" x="269.24" y="137.16" rot="R270"/>
 <instance part="+3V11" gate="G$1" x="200.66" y="162.56"/>
 <instance part="+3V12" gate="G$1" x="215.9" y="162.56"/>
 <instance part="R27" gate="G$1" x="208.28" y="152.4" rot="R90"/>
@@ -26519,13 +26408,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="SJ2" gate="1" x="68.58" y="139.7" rot="R180"/>
 <instance part="RPI1" gate="G$1" x="68.58" y="50.8"/>
 <instance part="JP10" gate="A" x="167.64" y="142.24" rot="R90"/>
-<instance part="SUPPLY38" gate="G$1" x="40.64" y="25.4"/>
-<instance part="SUPPLY39" gate="G$1" x="193.04" y="142.24"/>
-<instance part="SUPPLY40" gate="G$1" x="25.4" y="22.86"/>
-<instance part="SUPPLY41" gate="G$1" x="259.08" y="147.32"/>
-<instance part="SUPPLY42" gate="G$1" x="25.4" y="73.66"/>
-<instance part="SUPPLY43" gate="G$1" x="111.76" y="22.86"/>
-<instance part="SUPPLY44" gate="G$1" x="96.52" y="25.4"/>
 <instance part="P+17" gate="1" x="55.88" y="162.56"/>
 <instance part="P+18" gate="1" x="78.74" y="162.56"/>
 <instance part="P+19" gate="1" x="104.14" y="162.56"/>
@@ -26537,36 +26419,42 @@ with Integrated Isolated DC-to-DC Converter</description>
 <segment>
 <pinref part="U$3" gate="G$1" pin="DM2"/>
 <wire x1="129.54" y1="233.68" x2="154.94" y2="233.68" width="0.1524" layer="91"/>
+<label x="129.54" y="233.68" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="USB1_DP" class="0">
 <segment>
 <pinref part="U$3" gate="G$1" pin="DP2"/>
 <wire x1="154.94" y1="231.14" x2="129.54" y2="231.14" width="0.1524" layer="91"/>
+<label x="129.54" y="231.14" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="USB2_DM" class="0">
 <segment>
 <pinref part="U$3" gate="G$1" pin="DM3"/>
 <wire x1="129.54" y1="218.44" x2="154.94" y2="218.44" width="0.1524" layer="91"/>
+<label x="129.54" y="218.44" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="USB2_DP" class="0">
 <segment>
 <pinref part="U$3" gate="G$1" pin="DP3"/>
 <wire x1="154.94" y1="215.9" x2="129.54" y2="215.9" width="0.1524" layer="91"/>
+<label x="129.54" y="215.9" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="USB3_DM" class="0">
 <segment>
 <pinref part="U$3" gate="G$1" pin="DM4"/>
 <wire x1="129.54" y1="210.82" x2="154.94" y2="210.82" width="0.1524" layer="91"/>
+<label x="129.54" y="210.82" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="USB3_DP" class="0">
 <segment>
 <pinref part="U$3" gate="G$1" pin="DP4"/>
 <wire x1="154.94" y1="208.28" x2="129.54" y2="208.28" width="0.1524" layer="91"/>
+<label x="129.54" y="208.28" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="N$38" class="0">
@@ -26581,12 +26469,14 @@ with Integrated Isolated DC-to-DC Converter</description>
 <segment>
 <pinref part="U$3" gate="G$1" pin="DP1"/>
 <wire x1="195.58" y1="236.22" x2="220.98" y2="236.22" width="0.1524" layer="91"/>
+<label x="220.98" y="236.22" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="USB0_DM" class="0">
 <segment>
 <pinref part="U$3" gate="G$1" pin="DM1"/>
 <wire x1="195.58" y1="233.68" x2="220.98" y2="233.68" width="0.1524" layer="91"/>
+<label x="220.98" y="233.68" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="GND" class="0">
@@ -26671,7 +26561,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <segment>
 <pinref part="GND47" gate="1" pin="GND"/>
 <pinref part="BAT2" gate="G$1" pin="-"/>
-<wire x1="304.8" y1="132.08" x2="304.8" y2="127" width="0.1524" layer="91"/>
+<wire x1="269.24" y1="132.08" x2="269.24" y2="127" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <wire x1="200.66" y1="127" x2="200.66" y2="132.08" width="0.1524" layer="91"/>
@@ -27029,13 +26919,10 @@ with Integrated Isolated DC-to-DC Converter</description>
 </net>
 <net name="VBAT" class="0">
 <segment>
-<wire x1="259.08" y1="144.78" x2="243.84" y2="144.78" width="0.1524" layer="91"/>
-<label x="246.38" y="144.78" size="1.778" layer="95"/>
 <pinref part="IC5" gate="G$1" pin="VBAT"/>
-<wire x1="259.08" y1="144.78" x2="304.8" y2="144.78" width="0.1524" layer="91"/>
 <pinref part="BAT2" gate="G$1" pin="+"/>
-<label x="307.34" y="142.24" size="1.778" layer="95"/>
-<wire x1="304.8" y1="144.78" x2="304.8" y2="142.24" width="0.1524" layer="91"/>
+<wire x1="243.84" y1="144.78" x2="269.24" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="269.24" y1="144.78" x2="269.24" y2="142.24" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$5" class="0">
@@ -27054,28 +26941,31 @@ with Integrated Isolated DC-to-DC Converter</description>
 <segment>
 <wire x1="53.34" y1="22.86" x2="40.64" y2="22.86" width="0.1524" layer="91"/>
 <pinref part="RPI1" gate="G$1" pin="SDA"/>
+<label x="40.64" y="22.86" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<wire x1="259.08" y1="147.32" x2="243.84" y2="147.32" width="0.1524" layer="91"/>
-<label x="246.38" y="147.32" size="1.778" layer="95"/>
+<wire x1="269.24" y1="147.32" x2="243.84" y2="147.32" width="0.1524" layer="91"/>
 <pinref part="IC5" gate="G$1" pin="SDA"/>
+<label x="269.24" y="147.32" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="SCL" class="0">
 <segment>
 <wire x1="53.34" y1="25.4" x2="40.64" y2="25.4" width="0.1524" layer="91"/>
 <pinref part="RPI1" gate="G$1" pin="SCL"/>
+<label x="40.64" y="25.4" size="1.27" layer="95" rot="R180" xref="yes"/>
 </segment>
 <segment>
-<wire x1="259.08" y1="149.86" x2="243.84" y2="149.86" width="0.1524" layer="91"/>
-<label x="246.38" y="149.86" size="1.778" layer="95"/>
+<wire x1="269.24" y1="149.86" x2="243.84" y2="149.86" width="0.1524" layer="91"/>
 <pinref part="IC5" gate="G$1" pin="SCL"/>
+<label x="269.24" y="149.86" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="ID_SC" class="0">
 <segment>
 <wire x1="83.82" y1="25.4" x2="96.52" y2="25.4" width="0.1524" layer="91"/>
 <pinref part="RPI1" gate="G$1" pin="ID_SC"/>
+<label x="96.52" y="25.4" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
 <pinref part="IC6" gate="G$1" pin="SCL"/>
@@ -27089,6 +26979,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <segment>
 <wire x1="83.82" y1="22.86" x2="96.52" y2="22.86" width="0.1524" layer="91"/>
 <pinref part="RPI1" gate="G$1" pin="ID_SD"/>
+<label x="96.52" y="22.86" size="1.27" layer="95" xref="yes"/>
 </segment>
 <segment>
 <wire x1="119.38" y1="134.62" x2="119.38" y2="139.7" width="0.1524" layer="91"/>
@@ -27112,12 +27003,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <pinref part="RPI1" gate="G$1" pin="RXD"/>
 </segment>
 </net>
-<net name="N$55" class="0">
-<segment>
-<wire x1="177.8" y1="142.24" x2="170.18" y2="142.24" width="0.1524" layer="91"/>
-<pinref part="JP10" gate="A" pin="1"/>
-</segment>
-</net>
 <net name="INT-" class="0">
 <segment>
 <wire x1="170.18" y1="144.78" x2="175.26" y2="144.78" width="0.1524" layer="91"/>
@@ -27134,6 +27019,12 @@ with Integrated Isolated DC-to-DC Converter</description>
 <segment>
 <pinref part="RPI1" gate="G$1" pin="GPIO17"/>
 <wire x1="53.34" y1="73.66" x2="40.64" y2="73.66" width="0.1524" layer="91"/>
+<label x="40.64" y="73.66" size="1.27" layer="95" rot="R180" xref="yes"/>
+</segment>
+<segment>
+<wire x1="177.8" y1="142.24" x2="170.18" y2="142.24" width="0.1524" layer="91"/>
+<pinref part="JP10" gate="A" pin="1"/>
+<label x="177.8" y="142.24" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 </nets>

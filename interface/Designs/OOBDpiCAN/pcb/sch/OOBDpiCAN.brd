@@ -4157,9 +4157,6 @@ design rules under a new name.</description>
 <wire x1="33.655" y1="24.5792" x2="10.11" y2="54.77" width="0" layer="19" extent="1-16"/>
 <wire x1="-17.145" y1="59.1566" x2="7.57" y2="54.77" width="0" layer="19" extent="1-16"/>
 </signal>
-<signal name="NRST2">
-<contactref element="U$2" pad="7"/>
-</signal>
 <signal name="N$10">
 <contactref element="C31" pad="1"/>
 <contactref element="Q2" pad="2"/>
@@ -4208,6 +4205,8 @@ design rules under a new name.</description>
 <contactref element="U$4" pad="7"/>
 <contactref element="U$8" pad="5"/>
 <contactref element="U$5" pad="7"/>
+<contactref element="U$2" pad="7"/>
+<wire x1="38.35" y1="26.23" x2="48.51" y2="26.23" width="0" layer="19" extent="1-1"/>
 <wire x1="28.19" y1="26.23" x2="38.35" y2="26.23" width="0" layer="19" extent="1-1"/>
 <wire x1="-71.12" y1="12.7" x2="28.19" y2="26.23" width="0" layer="19" extent="1-1"/>
 </signal>
@@ -4631,9 +4630,6 @@ design rules under a new name.</description>
 <contactref element="RPI1" pad="10"/>
 <wire x1="17.73" y1="54.77" x2="20.32" y2="71.12" width="0" layer="19" extent="16-16"/>
 </signal>
-<signal name="N$55">
-<contactref element="JP10" pad="1"/>
-</signal>
 <signal name="INT-">
 <contactref element="JP10" pad="2"/>
 <contactref element="R27" pad="1"/>
@@ -4643,6 +4639,8 @@ design rules under a new name.</description>
 </signal>
 <signal name="GPIO17">
 <contactref element="RPI1" pad="11"/>
+<contactref element="JP10" pad="1"/>
+<wire x1="5.9" y1="59.69" x2="20.27" y2="49.37" width="0" layer="19" extent="1-16"/>
 </signal>
 <signal name="CAN0_TXD">
 <contactref element="IC7" pad="5"/>
