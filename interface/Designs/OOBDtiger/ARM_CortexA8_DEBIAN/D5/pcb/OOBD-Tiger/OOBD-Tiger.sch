@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="6.4">
+<eagle version="7.6.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="12" fill="1" visible="no" active="no"/>
@@ -17120,6 +17120,157 @@ type RDH, grid 15 mm</description>
 </deviceset>
 </devicesets>
 </library>
+<library name="ADM3053">
+<packages>
+<package name="SO20W">
+<description>&lt;b&gt;Wide Small Outline package&lt;/b&gt; 300 mil</description>
+<wire x1="6.1214" y1="3.7338" x2="-6.1214" y2="3.7338" width="0.1524" layer="51"/>
+<wire x1="6.1214" y1="-3.7338" x2="6.5024" y2="-3.3528" width="0.1524" layer="21" curve="90"/>
+<wire x1="-6.5024" y1="3.3528" x2="-6.1214" y2="3.7338" width="0.1524" layer="21" curve="-90"/>
+<wire x1="6.1214" y1="3.7338" x2="6.5024" y2="3.3528" width="0.1524" layer="21" curve="-90"/>
+<wire x1="-6.5024" y1="-3.3528" x2="-6.1214" y2="-3.7338" width="0.1524" layer="21" curve="90"/>
+<wire x1="-6.1214" y1="-3.7338" x2="6.1214" y2="-3.7338" width="0.1524" layer="51"/>
+<wire x1="6.5024" y1="-3.3528" x2="6.5024" y2="3.3528" width="0.1524" layer="21"/>
+<wire x1="-6.5024" y1="3.3528" x2="-6.5024" y2="1.27" width="0.1524" layer="21"/>
+<wire x1="-6.5024" y1="1.27" x2="-6.5024" y2="-1.27" width="0.1524" layer="21"/>
+<wire x1="-6.5024" y1="-1.27" x2="-6.5024" y2="-3.3528" width="0.1524" layer="21"/>
+<wire x1="-6.477" y1="-3.3782" x2="6.477" y2="-3.3782" width="0.0508" layer="21"/>
+<wire x1="-6.5024" y1="1.27" x2="-6.5024" y2="-1.27" width="0.1524" layer="21" curve="-180"/>
+<smd name="1" x="-5.715" y="-5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="2" x="-4.445" y="-5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="3" x="-3.175" y="-5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="4" x="-1.905" y="-5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="5" x="-0.635" y="-5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="6" x="0.635" y="-5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="7" x="1.905" y="-5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="8" x="3.175" y="-5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="9" x="4.445" y="-5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="10" x="5.715" y="-5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="11" x="5.715" y="5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="12" x="4.445" y="5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="13" x="3.175" y="5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="14" x="1.905" y="5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="15" x="0.635" y="5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="16" x="-0.635" y="5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="17" x="-1.905" y="5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="18" x="-3.175" y="5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="19" x="-4.445" y="5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<smd name="20" x="-5.715" y="5.5292" dx="0.6604" dy="3.032" layer="1"/>
+<text x="-3.81" y="-1.778" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
+<text x="-6.858" y="-3.175" size="1.27" layer="25" ratio="10" rot="R90">&gt;NAME</text>
+<rectangle x1="-5.969" y1="-3.8608" x2="-5.461" y2="-3.7338" layer="51"/>
+<rectangle x1="-5.969" y1="-5.834" x2="-5.461" y2="-4.3608" layer="51"/>
+<rectangle x1="-4.699" y1="-3.8608" x2="-4.191" y2="-3.7338" layer="51"/>
+<rectangle x1="-4.699" y1="-5.834" x2="-4.191" y2="-4.3608" layer="51"/>
+<rectangle x1="-3.429" y1="-3.8608" x2="-2.921" y2="-3.7338" layer="51"/>
+<rectangle x1="-3.429" y1="-5.834" x2="-2.921" y2="-4.3608" layer="51"/>
+<rectangle x1="-2.159" y1="-3.8608" x2="-1.651" y2="-3.7338" layer="51"/>
+<rectangle x1="-2.159" y1="-5.834" x2="-1.651" y2="-4.3608" layer="51"/>
+<rectangle x1="-0.889" y1="-5.834" x2="-0.381" y2="-4.3608" layer="51"/>
+<rectangle x1="-0.889" y1="-3.8608" x2="-0.381" y2="-3.7338" layer="51"/>
+<rectangle x1="0.381" y1="-3.8608" x2="0.889" y2="-3.7338" layer="51"/>
+<rectangle x1="0.381" y1="-5.834" x2="0.889" y2="-4.3608" layer="51"/>
+<rectangle x1="1.651" y1="-3.8608" x2="2.159" y2="-3.7338" layer="51"/>
+<rectangle x1="1.651" y1="-5.834" x2="2.159" y2="-4.3608" layer="51"/>
+<rectangle x1="2.921" y1="-3.8608" x2="3.429" y2="-3.7338" layer="51"/>
+<rectangle x1="2.921" y1="-5.834" x2="3.429" y2="-4.3608" layer="51"/>
+<rectangle x1="-5.969" y1="4.3608" x2="-5.461" y2="5.834" layer="51"/>
+<rectangle x1="-5.969" y1="3.7338" x2="-5.461" y2="3.8608" layer="51"/>
+<rectangle x1="-4.699" y1="3.7338" x2="-4.191" y2="3.8608" layer="51"/>
+<rectangle x1="-4.699" y1="4.3608" x2="-4.191" y2="5.834" layer="51"/>
+<rectangle x1="-3.429" y1="3.7338" x2="-2.921" y2="3.8608" layer="51"/>
+<rectangle x1="-3.429" y1="4.3608" x2="-2.921" y2="5.834" layer="51"/>
+<rectangle x1="-2.159" y1="3.7338" x2="-1.651" y2="3.8608" layer="51"/>
+<rectangle x1="-2.159" y1="4.3608" x2="-1.651" y2="5.834" layer="51"/>
+<rectangle x1="-0.889" y1="3.7338" x2="-0.381" y2="3.8608" layer="51"/>
+<rectangle x1="-0.889" y1="4.3608" x2="-0.381" y2="5.834" layer="51"/>
+<rectangle x1="0.381" y1="3.7338" x2="0.889" y2="3.8608" layer="51"/>
+<rectangle x1="0.381" y1="4.3608" x2="0.889" y2="5.834" layer="51"/>
+<rectangle x1="1.651" y1="3.7338" x2="2.159" y2="3.8608" layer="51"/>
+<rectangle x1="1.651" y1="4.3608" x2="2.159" y2="5.834" layer="51"/>
+<rectangle x1="2.921" y1="3.7338" x2="3.429" y2="3.8608" layer="51"/>
+<rectangle x1="2.921" y1="4.3608" x2="3.429" y2="5.834" layer="51"/>
+<rectangle x1="4.191" y1="3.7338" x2="4.699" y2="3.8608" layer="51"/>
+<rectangle x1="5.461" y1="3.7338" x2="5.969" y2="3.8608" layer="51"/>
+<rectangle x1="4.191" y1="4.3608" x2="4.699" y2="5.834" layer="51"/>
+<rectangle x1="5.461" y1="4.3608" x2="5.969" y2="5.834" layer="51"/>
+<rectangle x1="4.191" y1="-3.8608" x2="4.699" y2="-3.7338" layer="51"/>
+<rectangle x1="5.461" y1="-3.8608" x2="5.969" y2="-3.7338" layer="51"/>
+<rectangle x1="4.191" y1="-5.834" x2="4.699" y2="-4.3608" layer="51"/>
+<rectangle x1="5.461" y1="-5.834" x2="5.969" y2="-4.3608" layer="51"/>
+</package>
+</packages>
+<symbols>
+<symbol name="ADM3053">
+<wire x1="-12.7" y1="17.78" x2="10.16" y2="17.78" width="0.254" layer="94"/>
+<wire x1="10.16" y1="-17.78" x2="-12.7" y2="-17.78" width="0.254" layer="94"/>
+<wire x1="-12.7" y1="-17.78" x2="-12.7" y2="17.78" width="0.254" layer="94"/>
+<wire x1="10.16" y1="17.78" x2="10.16" y2="-17.78" width="0.254" layer="94"/>
+<text x="-12.7" y="19.05" size="1.778" layer="95">&gt;NAME</text>
+<text x="-12.7" y="-20.32" size="1.778" layer="96">&gt;VALUE</text>
+<pin name="R_S" x="12.7" y="0" length="short" direction="pas" rot="R180"/>
+<pin name="GND2@0" x="12.7" y="-7.62" length="short" direction="pwr" rot="R180"/>
+<pin name="NC" x="-15.24" y="0" length="short" direction="nc"/>
+<pin name="GND1@0" x="-15.24" y="-5.08" length="short" direction="pwr"/>
+<pin name="GND2@3" x="12.7" y="-15.24" length="short" direction="pwr" rot="R180"/>
+<pin name="CAN_H" x="12.7" y="15.24" length="short" rot="R180"/>
+<pin name="CAN_L" x="12.7" y="12.7" length="short" rot="R180"/>
+<pin name="V_ISOIN" x="12.7" y="7.62" length="short" direction="in" rot="R180"/>
+<pin name="TXD" x="-15.24" y="7.62" length="short" direction="in"/>
+<pin name="VCC" x="-15.24" y="15.24" length="short" direction="pwr"/>
+<pin name="V_IO" x="-15.24" y="10.16" length="short" direction="pwr"/>
+<pin name="RXD" x="-15.24" y="5.08" length="short" direction="out"/>
+<pin name="GND1@1" x="-15.24" y="-7.62" length="short" direction="pwr"/>
+<pin name="GND1@2" x="-15.24" y="-10.16" length="short" direction="pwr"/>
+<pin name="GND1@3" x="-15.24" y="-12.7" length="short" direction="pwr"/>
+<pin name="GND1@4" x="-15.24" y="-15.24" length="short" direction="pwr"/>
+<pin name="GND2@1" x="12.7" y="-10.16" length="short" direction="pwr" rot="R180"/>
+<pin name="GND2@2" x="12.7" y="-12.7" length="short" direction="pwr" rot="R180"/>
+<pin name="V_REF" x="12.7" y="-2.54" length="short" direction="out" rot="R180"/>
+<pin name="V_ISOOUT" x="12.7" y="5.08" length="short" direction="out" rot="R180"/>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="ADM3053" prefix="IC">
+<description>&lt;b&gt;Signal and Power Isolated CAN Transceiver&lt;/b&gt;&lt;p&gt;
+
+Analog Devices - Signal and Power Isolated CAN Transceiver
+with Integrated Isolated DC-to-DC Converter</description>
+<gates>
+<gate name="G$1" symbol="ADM3053" x="0" y="0"/>
+</gates>
+<devices>
+<device name="M" package="SO20W">
+<connects>
+<connect gate="G$1" pin="CAN_H" pad="17"/>
+<connect gate="G$1" pin="CAN_L" pad="15"/>
+<connect gate="G$1" pin="GND1@0" pad="1"/>
+<connect gate="G$1" pin="GND1@1" pad="3"/>
+<connect gate="G$1" pin="GND1@2" pad="7"/>
+<connect gate="G$1" pin="GND1@3" pad="9"/>
+<connect gate="G$1" pin="GND1@4" pad="10"/>
+<connect gate="G$1" pin="GND2@0" pad="11"/>
+<connect gate="G$1" pin="GND2@1" pad="13"/>
+<connect gate="G$1" pin="GND2@2" pad="16"/>
+<connect gate="G$1" pin="GND2@3" pad="20"/>
+<connect gate="G$1" pin="NC" pad="2"/>
+<connect gate="G$1" pin="RXD" pad="4"/>
+<connect gate="G$1" pin="R_S" pad="18"/>
+<connect gate="G$1" pin="TXD" pad="5"/>
+<connect gate="G$1" pin="VCC" pad="8"/>
+<connect gate="G$1" pin="V_IO" pad="6"/>
+<connect gate="G$1" pin="V_ISOIN" pad="19"/>
+<connect gate="G$1" pin="V_ISOOUT" pad="12"/>
+<connect gate="G$1" pin="V_REF" pad="14"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -17322,6 +17473,20 @@ type RDH, grid 15 mm</description>
 <part name="R24" library="rcl" deviceset="R-EU_" device="R0603" value="10k/1%"/>
 <part name="GND32" library="supply1" deviceset="GND" device="" value=""/>
 <part name="SUPPLY8" library="supply2" deviceset="V&lt;--" device="" value="S4_A2/4"/>
+<part name="SUPPLY10" library="supply2" deviceset="V&lt;--" device="" value="S4_C4"/>
+<part name="SUPPLY11" library="supply2" deviceset="V&lt;--" device="" value="S4_C2"/>
+<part name="IC1" library="ADM3053" deviceset="ADM3053" device="M"/>
+<part name="IC2" library="ADM3053" deviceset="ADM3053" device="M"/>
+<part name="HS-CAN_L-DISABLE" library="SparkFun" deviceset="JUMPER-2" device="SMD-NO" value="CLOSED"/>
+<part name="HS-CAN_H-DISABLE" library="SparkFun" deviceset="JUMPER-2" device="SMD-NO" value="CLOSED"/>
+<part name="MS-CAN_L-DISABLE" library="SparkFun" deviceset="JUMPER-2" device="SMD-NO" value="CLOSED"/>
+<part name="MS-CAN_H-DISABLE" library="SparkFun" deviceset="JUMPER-2" device="SMD-NO" value="CLOSED"/>
+<part name="SUPPLY9" library="supply2" deviceset="V&lt;--" device="" value="S2_C4"/>
+<part name="HS-CAN_H-ENABLE" library="SparkFun" deviceset="JUMPER-2" device="SMD-NO" value="OPEN (use jumper)"/>
+<part name="SUPPLY13" library="supply2" deviceset="V&lt;--" device="" value="S2_C2"/>
+<part name="HS-CAN_L-ENABLE" library="SparkFun" deviceset="JUMPER-2" device="SMD-NO" value="OPEN (use jumper)"/>
+<part name="MS-CAN_L-ENABLE" library="SparkFun" deviceset="JUMPER-2" device="SMD-NO" value="OPEN (use jumper)"/>
+<part name="MS-CAN_H-ENABLE" library="SparkFun" deviceset="JUMPER-2" device="SMD-NO" value="OPEN (use jumper)"/>
 </parts>
 <sheets>
 <sheet>
@@ -17341,6 +17506,11 @@ type RDH, grid 15 mm</description>
 <text x="290.83" y="20.32" size="1.778" layer="94">Project: OOBD-Tiger</text>
 <text x="290.83" y="13.97" size="1.778" layer="94">Title: CAN-Interfaces</text>
 <text x="7.62" y="175.26" size="1.778" layer="94">OBD2-Power supply</text>
+<wire x1="248.92" y1="78.74" x2="248.92" y2="12.7" width="0.4064" layer="94" style="longdash"/>
+<wire x1="248.92" y1="12.7" x2="21.59" y2="12.7" width="0.4064" layer="94" style="longdash"/>
+<wire x1="21.59" y1="12.7" x2="21.59" y2="78.74" width="0.4064" layer="94" style="longdash"/>
+<wire x1="21.59" y1="78.74" x2="248.92" y2="78.74" width="0.4064" layer="94" style="longdash"/>
+<text x="99.06" y="69.85" size="5.08" layer="94">Overvoltprotection</text>
 </plain>
 <instances>
 <instance part="U$1" gate="G$1" x="0" y="0"/>
@@ -17407,6 +17577,41 @@ type RDH, grid 15 mm</description>
 <instance part="SUPPLY2" gate="G$1" x="246.38" y="220.98"/>
 <instance part="SUPPLY5" gate="G$1" x="246.38" y="127"/>
 <instance part="SUPPLY6" gate="G$1" x="246.38" y="119.38"/>
+<instance part="SUPPLY10" gate="G$1" x="243.84" y="35.56"/>
+<instance part="SUPPLY11" gate="G$1" x="243.84" y="38.1"/>
+<instance part="IC1" gate="G$1" x="106.68" y="43.18" rot="R180"/>
+<instance part="IC2" gate="G$1" x="193.04" y="43.18" rot="R180"/>
+<instance part="HS-CAN_L-DISABLE" gate="A" x="109.22" y="220.98" smashed="yes">
+<attribute name="NAME" x="121.92" y="227.33" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="106.68" y="221.615" size="1.778" layer="96" rot="R180"/>
+</instance>
+<instance part="HS-CAN_H-DISABLE" gate="A" x="99.06" y="200.66" smashed="yes" rot="R270">
+<attribute name="NAME" x="105.41" y="185.42" size="1.778" layer="95" rot="R90"/>
+<attribute name="VALUE" x="83.82" y="197.485" size="1.778" layer="96"/>
+</instance>
+<instance part="MS-CAN_L-DISABLE" gate="A" x="96.52" y="160.02" rot="R270"/>
+<instance part="MS-CAN_H-DISABLE" gate="A" x="101.6" y="127" smashed="yes">
+<attribute name="NAME" x="121.92" y="135.89" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="104.14" y="120.015" size="1.778" layer="96" rot="R180"/>
+</instance>
+<instance part="SUPPLY9" gate="G$1" x="154.94" y="35.56"/>
+<instance part="HS-CAN_H-ENABLE" gate="A" x="50.8" y="48.26" smashed="yes" rot="R90">
+<attribute name="NAME" x="25.4" y="54.61" size="1.778" layer="95"/>
+<attribute name="VALUE" x="25.4" y="45.085" size="1.778" layer="96"/>
+</instance>
+<instance part="SUPPLY13" gate="G$1" x="154.94" y="38.1"/>
+<instance part="HS-CAN_L-ENABLE" gate="A" x="81.28" y="63.5" smashed="yes" rot="R90">
+<attribute name="NAME" x="55.88" y="69.85" size="1.778" layer="95"/>
+<attribute name="VALUE" x="55.88" y="60.325" size="1.778" layer="96"/>
+</instance>
+<instance part="MS-CAN_L-ENABLE" gate="A" x="88.9" y="109.22" smashed="yes" rot="R270">
+<attribute name="NAME" x="114.3" y="102.87" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="114.3" y="112.395" size="1.778" layer="96" rot="R180"/>
+</instance>
+<instance part="MS-CAN_H-ENABLE" gate="A" x="43.18" y="104.14" smashed="yes" rot="R90">
+<attribute name="NAME" x="17.78" y="110.49" size="1.778" layer="95"/>
+<attribute name="VALUE" x="17.78" y="100.965" size="1.778" layer="96"/>
+</instance>
 </instances>
 <busses>
 </busses>
@@ -17477,12 +17682,20 @@ type RDH, grid 15 mm</description>
 <pinref part="U2" gate="G$1" pin="RXD"/>
 <label x="215.9" y="213.36" size="1.778" layer="95"/>
 </segment>
+<segment>
+<wire x1="139.7" y1="38.1" x2="121.92" y2="38.1" width="0.1524" layer="91"/>
+<label x="127" y="38.1" size="1.778" layer="95"/>
+</segment>
 </net>
 <net name="DCAN1_TX" class="0">
 <segment>
 <wire x1="175.26" y1="220.98" x2="231.14" y2="220.98" width="0.1524" layer="91"/>
 <pinref part="U2" gate="G$1" pin="TXD"/>
 <label x="215.9" y="220.98" size="1.778" layer="95"/>
+</segment>
+<segment>
+<wire x1="121.92" y1="35.56" x2="139.7" y2="35.56" width="0.1524" layer="91"/>
+<label x="127" y="33.02" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="HS-CAN_RS" class="0">
@@ -17498,12 +17711,20 @@ type RDH, grid 15 mm</description>
 <pinref part="U6" gate="G$1" pin="RXD"/>
 <label x="215.9" y="119.38" size="1.778" layer="95"/>
 </segment>
+<segment>
+<wire x1="228.6" y1="38.1" x2="208.28" y2="38.1" width="0.1524" layer="91"/>
+<label x="213.36" y="40.64" size="1.778" layer="95"/>
+</segment>
 </net>
 <net name="DCAN0_TX" class="0">
 <segment>
 <wire x1="175.26" y1="127" x2="231.14" y2="127" width="0.1524" layer="91"/>
 <pinref part="U6" gate="G$1" pin="TXD"/>
 <label x="215.9" y="127" size="1.778" layer="95"/>
+</segment>
+<segment>
+<wire x1="208.28" y1="35.56" x2="228.6" y2="35.56" width="0.1524" layer="91"/>
+<label x="213.36" y="33.02" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="N$80" class="0">
@@ -17521,15 +17742,12 @@ type RDH, grid 15 mm</description>
 </net>
 <net name="CANH" class="0">
 <segment>
-<wire x1="139.7" y1="119.38" x2="139.7" y2="124.46" width="0.1524" layer="91"/>
-<wire x1="152.4" y1="124.46" x2="139.7" y2="124.46" width="0.1524" layer="91"/>
-<junction x="139.7" y="124.46"/>
-<pinref part="R42" gate="G$1" pin="2"/>
-<pinref part="U6" gate="G$1" pin="CANH"/>
-<wire x1="48.26" y1="124.46" x2="139.7" y2="124.46" width="0.1524" layer="91"/>
-<pinref part="OBD2-CONNECTOR" gate="A" pin="1"/>
-<wire x1="63.5" y1="172.72" x2="48.26" y2="172.72" width="0.1524" layer="91"/>
-<wire x1="48.26" y1="172.72" x2="48.26" y2="124.46" width="0.1524" layer="91"/>
+<wire x1="45.72" y1="104.14" x2="45.72" y2="20.32" width="0.1524" layer="91"/>
+<wire x1="45.72" y1="20.32" x2="175.26" y2="20.32" width="0.1524" layer="91"/>
+<wire x1="175.26" y1="20.32" x2="175.26" y2="27.94" width="0.1524" layer="91"/>
+<pinref part="IC2" gate="G$1" pin="CAN_H"/>
+<wire x1="175.26" y1="27.94" x2="180.34" y2="27.94" width="0.1524" layer="91"/>
+<pinref part="MS-CAN_H-ENABLE" gate="A" pin="1"/>
 </segment>
 </net>
 <net name="CANL" class="0">
@@ -17537,12 +17755,11 @@ type RDH, grid 15 mm</description>
 <pinref part="U6" gate="G$1" pin="CANL"/>
 <wire x1="152.4" y1="121.92" x2="147.32" y2="121.92" width="0.1524" layer="91"/>
 <wire x1="147.32" y1="121.92" x2="93.98" y2="121.92" width="0.1524" layer="91"/>
-<wire x1="93.98" y1="121.92" x2="93.98" y2="172.72" width="0.1524" layer="91"/>
-<pinref part="OBD2-CONNECTOR" gate="A" pin="2"/>
-<wire x1="93.98" y1="172.72" x2="71.12" y2="172.72" width="0.1524" layer="91"/>
+<wire x1="93.98" y1="121.92" x2="93.98" y2="157.48" width="0.1524" layer="91"/>
 <wire x1="147.32" y1="106.68" x2="147.32" y2="121.92" width="0.1524" layer="91"/>
 <junction x="147.32" y="121.92"/>
 <pinref part="MS-CAN" gate="A" pin="1"/>
+<pinref part="MS-CAN_L-DISABLE" gate="A" pin="2"/>
 </segment>
 </net>
 <net name="N$5" class="0">
@@ -17560,29 +17777,26 @@ type RDH, grid 15 mm</description>
 </net>
 <net name="CANH1" class="0">
 <segment>
-<wire x1="139.7" y1="210.82" x2="139.7" y2="218.44" width="0.1524" layer="91"/>
-<wire x1="152.4" y1="218.44" x2="139.7" y2="218.44" width="0.1524" layer="91"/>
-<pinref part="R6" gate="G$1" pin="2"/>
-<pinref part="U2" gate="G$1" pin="CANH"/>
-<wire x1="139.7" y1="218.44" x2="96.52" y2="218.44" width="0.1524" layer="91"/>
-<junction x="139.7" y="218.44"/>
-<wire x1="96.52" y1="218.44" x2="53.34" y2="218.44" width="0.1524" layer="91"/>
+<wire x1="109.22" y1="218.44" x2="53.34" y2="218.44" width="0.1524" layer="91"/>
 <wire x1="53.34" y1="218.44" x2="53.34" y2="165.1" width="0.1524" layer="91"/>
 <pinref part="OBD2-CONNECTOR" gate="A" pin="7"/>
+<pinref part="HS-CAN_L-DISABLE" gate="A" pin="1"/>
+<junction x="53.34" y="165.1"/>
 <wire x1="53.34" y1="165.1" x2="63.5" y2="165.1" width="0.1524" layer="91"/>
+<wire x1="53.34" y1="165.1" x2="53.34" y2="50.8" width="0.1524" layer="91"/>
+<pinref part="HS-CAN_H-ENABLE" gate="A" pin="2"/>
 </segment>
 </net>
 <net name="CANL1" class="0">
 <segment>
 <pinref part="U2" gate="G$1" pin="CANL"/>
 <wire x1="152.4" y1="215.9" x2="144.78" y2="215.9" width="0.1524" layer="91"/>
-<pinref part="OBD2-CONNECTOR" gate="A" pin="6"/>
-<wire x1="144.78" y1="215.9" x2="99.06" y2="215.9" width="0.1524" layer="91"/>
-<wire x1="71.12" y1="167.64" x2="99.06" y2="167.64" width="0.1524" layer="91"/>
-<wire x1="99.06" y1="167.64" x2="99.06" y2="215.9" width="0.1524" layer="91"/>
+<wire x1="144.78" y1="215.9" x2="96.52" y2="215.9" width="0.1524" layer="91"/>
+<wire x1="96.52" y1="200.66" x2="96.52" y2="215.9" width="0.1524" layer="91"/>
 <wire x1="144.78" y1="215.9" x2="144.78" y2="200.66" width="0.1524" layer="91"/>
 <junction x="144.78" y="215.9"/>
 <pinref part="HS-CAN" gate="A" pin="1"/>
+<pinref part="HS-CAN_H-DISABLE" gate="A" pin="1"/>
 </segment>
 </net>
 <net name="+12V" class="0">
@@ -17616,6 +17830,90 @@ type RDH, grid 15 mm</description>
 <wire x1="139.7" y1="109.22" x2="139.7" y2="104.14" width="0.1524" layer="91"/>
 <pinref part="MS-CAN" gate="A" pin="2"/>
 <wire x1="147.32" y1="104.14" x2="139.7" y2="104.14" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$30" class="0">
+<segment>
+<pinref part="R6" gate="G$1" pin="2"/>
+<wire x1="139.7" y1="210.82" x2="139.7" y2="218.44" width="0.1524" layer="91"/>
+<pinref part="U2" gate="G$1" pin="CANH"/>
+<wire x1="152.4" y1="218.44" x2="139.7" y2="218.44" width="0.1524" layer="91"/>
+<junction x="139.7" y="218.44"/>
+<wire x1="139.7" y1="218.44" x2="111.76" y2="218.44" width="0.1524" layer="91"/>
+<pinref part="HS-CAN_L-DISABLE" gate="A" pin="2"/>
+</segment>
+</net>
+<net name="N$31" class="0">
+<segment>
+<pinref part="HS-CAN_H-DISABLE" gate="A" pin="2"/>
+<pinref part="OBD2-CONNECTOR" gate="A" pin="6"/>
+<wire x1="83.82" y1="167.64" x2="96.52" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="96.52" y1="167.64" x2="96.52" y2="198.12" width="0.1524" layer="91"/>
+<wire x1="71.12" y1="167.64" x2="83.82" y2="167.64" width="0.1524" layer="91"/>
+<wire x1="83.82" y1="167.64" x2="83.82" y2="66.04" width="0.1524" layer="91"/>
+<junction x="83.82" y="167.64"/>
+<pinref part="HS-CAN_L-ENABLE" gate="A" pin="2"/>
+</segment>
+</net>
+<net name="N$32" class="0">
+<segment>
+<wire x1="86.36" y1="106.68" x2="86.36" y2="17.78" width="0.1524" layer="91"/>
+<wire x1="86.36" y1="17.78" x2="167.64" y2="17.78" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="17.78" x2="167.64" y2="30.48" width="0.1524" layer="91"/>
+<pinref part="IC2" gate="G$1" pin="CAN_L"/>
+<wire x1="167.64" y1="30.48" x2="180.34" y2="30.48" width="0.1524" layer="91"/>
+<pinref part="MS-CAN_L-ENABLE" gate="A" pin="2"/>
+</segment>
+</net>
+<net name="N$33" class="0">
+<segment>
+<pinref part="U6" gate="G$1" pin="CANH"/>
+<wire x1="152.4" y1="124.46" x2="139.7" y2="124.46" width="0.1524" layer="91"/>
+<junction x="139.7" y="124.46"/>
+<pinref part="MS-CAN_H-DISABLE" gate="A" pin="2"/>
+<wire x1="104.14" y1="124.46" x2="139.7" y2="124.46" width="0.1524" layer="91"/>
+<wire x1="139.7" y1="119.38" x2="139.7" y2="124.46" width="0.1524" layer="91"/>
+<pinref part="R42" gate="G$1" pin="2"/>
+</segment>
+</net>
+<net name="N$34" class="0">
+<segment>
+<pinref part="IC1" gate="G$1" pin="CAN_H"/>
+<pinref part="HS-CAN_H-ENABLE" gate="A" pin="1"/>
+<wire x1="53.34" y1="48.26" x2="53.34" y2="27.94" width="0.1524" layer="91"/>
+<wire x1="53.34" y1="27.94" x2="93.98" y2="27.94" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$35" class="0">
+<segment>
+<pinref part="IC1" gate="G$1" pin="CAN_L"/>
+<pinref part="HS-CAN_L-ENABLE" gate="A" pin="1"/>
+<wire x1="83.82" y1="63.5" x2="83.82" y2="30.48" width="0.1524" layer="91"/>
+<wire x1="83.82" y1="30.48" x2="93.98" y2="30.48" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$36" class="0">
+<segment>
+<pinref part="MS-CAN_L-ENABLE" gate="A" pin="1"/>
+<pinref part="OBD2-CONNECTOR" gate="A" pin="2"/>
+<wire x1="86.36" y1="172.72" x2="71.12" y2="172.72" width="0.1524" layer="91"/>
+<wire x1="86.36" y1="172.72" x2="86.36" y2="109.22" width="0.1524" layer="91"/>
+<junction x="86.36" y="172.72"/>
+<wire x1="93.98" y1="172.72" x2="86.36" y2="172.72" width="0.1524" layer="91"/>
+<pinref part="MS-CAN_L-DISABLE" gate="A" pin="1"/>
+<wire x1="93.98" y1="160.02" x2="93.98" y2="172.72" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$37" class="0">
+<segment>
+<pinref part="MS-CAN_H-DISABLE" gate="A" pin="1"/>
+<wire x1="45.72" y1="124.46" x2="101.6" y2="124.46" width="0.1524" layer="91"/>
+<pinref part="OBD2-CONNECTOR" gate="A" pin="1"/>
+<wire x1="63.5" y1="172.72" x2="45.72" y2="172.72" width="0.1524" layer="91"/>
+<wire x1="45.72" y1="172.72" x2="45.72" y2="124.46" width="0.1524" layer="91"/>
+<junction x="45.72" y="124.46"/>
+<wire x1="45.72" y1="124.46" x2="45.72" y2="106.68" width="0.1524" layer="91"/>
+<pinref part="MS-CAN_H-ENABLE" gate="A" pin="2"/>
 </segment>
 </net>
 </nets>
