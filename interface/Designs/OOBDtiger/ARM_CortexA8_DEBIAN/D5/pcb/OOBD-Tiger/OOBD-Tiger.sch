@@ -16880,7 +16880,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="U6" library="arm" deviceset="MCP2551" device="" value="SN65HVD230(SO8)"/>
 <part name="R41" library="rcl" deviceset="R-EU_" device="R0603" value="10k"/>
 <part name="V52" library="supply2" deviceset="VCC" device="" value="3.3V"/>
-<part name="C47" library="rcl" deviceset="C-EU" device="075-032X103" value="100nF"/>
+<part name="C47" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
 <part name="GND98" library="supply1" deviceset="GND" device="" value=""/>
 <part name="R42" library="rcl" deviceset="R-EU_" device="R0603" value="120R"/>
 <part name="R40" library="rcl" deviceset="R-EU_" device="R0603" value="NA"/>
@@ -16938,7 +16938,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="U2" library="arm" deviceset="MCP2551" device="" value="SN65HVD230(SO8)"/>
 <part name="R5" library="rcl" deviceset="R-EU_" device="R0603" value="10k"/>
 <part name="V2" library="supply2" deviceset="VCC" device="" value="3.3V"/>
-<part name="C1" library="rcl" deviceset="C-EU" device="075-032X103" value="100nF"/>
+<part name="C1" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
 <part name="GND5" library="supply1" deviceset="GND" device="" value=""/>
 <part name="R6" library="rcl" deviceset="R-EU_" device="R0603" value="120R"/>
 <part name="R7" library="rcl" deviceset="R-EU_" device="R0603" value="NA"/>
