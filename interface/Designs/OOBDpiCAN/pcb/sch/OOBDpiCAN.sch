@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -24342,7 +24342,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="P+18" library="supply1" deviceset="+5V" device=""/>
 <part name="P+19" library="supply1" deviceset="+5V" device=""/>
 <part name="IC5" library="ADM3053" deviceset="ADM3053" device="M"/>
-<part name="C17" library="rcl" deviceset="C-EU" device="C0603K" value="10n"/>
+<part name="C17" library="rcl" deviceset="C-EU" device="C0805K" value="10u"/>
 <part name="C19" library="rcl" deviceset="C-EU" device="C0603K" value="100n"/>
 <part name="GND52" library="supply1" deviceset="GND" device=""/>
 <part name="GND54" library="supply1" deviceset="GND" device=""/>
@@ -24351,7 +24351,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="GND55" library="supply1" deviceset="GND" device=""/>
 <part name="+3V14" library="supply1" deviceset="+3V3" device=""/>
 <part name="GND56" library="supply1" deviceset="GNDA" device=""/>
-<part name="R11" library="rcl" deviceset="R-EU_" device="R0603" value="8.2k"/>
+<part name="R11" library="rcl" deviceset="R-EU_" device="R0603" value="8k2"/>
 <part name="GND57" library="supply1" deviceset="GNDA" device=""/>
 <part name="GND58" library="supply1" deviceset="GNDA" device=""/>
 <part name="C33" library="rcl" deviceset="C-EU" device="C0805K" value="100n"/>
@@ -24361,7 +24361,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="GND59" library="supply1" deviceset="GNDA" device=""/>
 <part name="P+2" library="supply1" deviceset="+5V" device=""/>
 <part name="IC6" library="ADM3053" deviceset="ADM3053" device="M"/>
-<part name="C18" library="rcl" deviceset="C-EU" device="C0603K" value="10n"/>
+<part name="C18" library="rcl" deviceset="C-EU" device="C0805K" value="10u"/>
 <part name="C20" library="rcl" deviceset="C-EU" device="C0603K" value="100n"/>
 <part name="GND10" library="supply1" deviceset="GND" device=""/>
 <part name="GND11" library="supply1" deviceset="GND" device=""/>
@@ -24370,7 +24370,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="GND38" library="supply1" deviceset="GND" device=""/>
 <part name="+3V15" library="supply1" deviceset="+3V3" device=""/>
 <part name="GND39" library="supply1" deviceset="GNDA" device=""/>
-<part name="R12" library="rcl" deviceset="R-EU_" device="R0603" value="8.2k"/>
+<part name="R12" library="rcl" deviceset="R-EU_" device="R0603" value="8k2"/>
 <part name="GND40" library="supply1" deviceset="GNDA" device=""/>
 <part name="GND41" library="supply1" deviceset="GNDA" device=""/>
 <part name="C34" library="rcl" deviceset="C-EU" device="C0805K" value="100n"/>
