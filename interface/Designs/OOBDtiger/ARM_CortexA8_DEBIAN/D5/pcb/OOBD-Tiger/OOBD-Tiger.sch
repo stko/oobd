@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="mil" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="12" fill="1" visible="no" active="no"/>
@@ -6522,6 +6522,46 @@ Source: AVX .. aphvc.pdf</description>
 <rectangle x1="-1.4732" y1="0.2032" x2="-1.3462" y2="0.3302" layer="51"/>
 <rectangle x1="-1.1176" y1="0.5842" x2="-0.9906" y2="0.7112" layer="51"/>
 </package>
+<package name="JP3Q">
+<description>&lt;b&gt;JUMPER&lt;/b&gt;</description>
+<wire x1="-3.81" y1="-2.159" x2="-3.81" y2="2.159" width="0.1524" layer="21"/>
+<wire x1="-1.651" y1="2.54" x2="-1.27" y2="2.159" width="0.1524" layer="21"/>
+<wire x1="-1.27" y1="2.159" x2="-0.889" y2="2.54" width="0.1524" layer="21"/>
+<wire x1="-0.889" y1="2.54" x2="0.889" y2="2.54" width="0.1524" layer="21"/>
+<wire x1="1.27" y1="2.159" x2="0.889" y2="2.54" width="0.1524" layer="21"/>
+<wire x1="1.27" y1="2.159" x2="1.651" y2="2.54" width="0.1524" layer="21"/>
+<wire x1="1.651" y1="2.54" x2="3.429" y2="2.54" width="0.1524" layer="21"/>
+<wire x1="3.81" y1="2.159" x2="3.429" y2="2.54" width="0.1524" layer="21"/>
+<wire x1="3.81" y1="2.159" x2="3.81" y2="-2.159" width="0.1524" layer="21"/>
+<wire x1="3.429" y1="-2.54" x2="3.81" y2="-2.159" width="0.1524" layer="21"/>
+<wire x1="3.429" y1="-2.54" x2="1.651" y2="-2.54" width="0.1524" layer="21"/>
+<wire x1="1.27" y1="-2.159" x2="1.651" y2="-2.54" width="0.1524" layer="21"/>
+<wire x1="1.27" y1="-2.159" x2="0.889" y2="-2.54" width="0.1524" layer="21"/>
+<wire x1="0.889" y1="-2.54" x2="-0.889" y2="-2.54" width="0.1524" layer="21"/>
+<wire x1="-1.27" y1="-2.159" x2="-0.889" y2="-2.54" width="0.1524" layer="21"/>
+<wire x1="-1.27" y1="-2.159" x2="-1.651" y2="-2.54" width="0.1524" layer="21"/>
+<wire x1="-3.81" y1="2.159" x2="-3.429" y2="2.54" width="0.1524" layer="21"/>
+<wire x1="-3.429" y1="2.54" x2="-1.651" y2="2.54" width="0.1524" layer="21"/>
+<wire x1="-3.81" y1="-2.159" x2="-3.429" y2="-2.54" width="0.1524" layer="21"/>
+<wire x1="-3.429" y1="-2.54" x2="-1.651" y2="-2.54" width="0.1524" layer="21"/>
+<pad name="1" x="-2.54" y="-1.27" drill="0.9144" shape="octagon"/>
+<pad name="2" x="-2.54" y="1.27" drill="0.9144" shape="octagon"/>
+<pad name="3" x="0" y="-1.27" drill="0.9144" shape="octagon"/>
+<pad name="4" x="0" y="1.27" drill="0.9144" shape="octagon"/>
+<pad name="5" x="2.54" y="-1.27" drill="0.9144" shape="octagon"/>
+<pad name="6" x="2.54" y="1.27" drill="0.9144" shape="octagon"/>
+<text x="-3.048" y="-4.191" size="1.27" layer="21" ratio="10">1</text>
+<text x="-0.508" y="-4.191" size="1.27" layer="21" ratio="10">2</text>
+<text x="2.032" y="-4.191" size="1.27" layer="21" ratio="10">3</text>
+<text x="-3.429" y="2.921" size="1.27" layer="25" ratio="10">&gt;NAME</text>
+<text x="-3.429" y="-5.842" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
+<rectangle x1="-2.8448" y1="0.9652" x2="-2.2352" y2="1.5748" layer="51"/>
+<rectangle x1="-0.3048" y1="0.9652" x2="0.3048" y2="1.5748" layer="51"/>
+<rectangle x1="2.2352" y1="0.9652" x2="2.8448" y2="1.5748" layer="51"/>
+<rectangle x1="-2.8448" y1="-1.5748" x2="-2.2352" y2="-0.9652" layer="51"/>
+<rectangle x1="-0.3048" y1="-1.5748" x2="0.3048" y2="-0.9652" layer="51"/>
+<rectangle x1="2.2352" y1="-1.5748" x2="2.8448" y2="-0.9652" layer="51"/>
+</package>
 </packages>
 <symbols>
 <symbol name="SJ">
@@ -6533,6 +6573,32 @@ Source: AVX .. aphvc.pdf</description>
 <text x="-2.54" y="-3.81" size="1.778" layer="96">&gt;VALUE</text>
 <pin name="2" x="5.08" y="0" visible="pad" length="short" direction="pas" swaplevel="1" rot="R180"/>
 <pin name="1" x="-5.08" y="0" visible="pad" length="short" direction="pas" swaplevel="1"/>
+</symbol>
+<symbol name="J3">
+<wire x1="-2.54" y1="2.54" x2="-2.54" y2="3.81" width="0.4064" layer="94"/>
+<wire x1="-2.54" y1="3.81" x2="-2.54" y2="5.08" width="0.1524" layer="94"/>
+<wire x1="-2.54" y1="-2.54" x2="-2.54" y2="-3.81" width="0.4064" layer="94"/>
+<wire x1="-2.54" y1="-3.81" x2="-2.54" y2="-5.08" width="0.1524" layer="94"/>
+<wire x1="0" y1="2.54" x2="0" y2="3.81" width="0.4064" layer="94"/>
+<wire x1="0" y1="3.81" x2="0" y2="5.08" width="0.1524" layer="94"/>
+<wire x1="0" y1="-2.54" x2="0" y2="-3.81" width="0.4064" layer="94"/>
+<wire x1="0" y1="-3.81" x2="0" y2="-5.08" width="0.1524" layer="94"/>
+<wire x1="2.54" y1="2.54" x2="2.54" y2="3.81" width="0.4064" layer="94"/>
+<wire x1="2.54" y1="3.81" x2="2.54" y2="5.08" width="0.1524" layer="94"/>
+<wire x1="2.54" y1="-2.54" x2="2.54" y2="-3.81" width="0.4064" layer="94"/>
+<wire x1="2.54" y1="-3.81" x2="2.54" y2="-5.08" width="0.1524" layer="94"/>
+<wire x1="-4.445" y1="5.08" x2="4.445" y2="5.08" width="0.4064" layer="94"/>
+<wire x1="4.445" y1="5.08" x2="4.445" y2="-5.08" width="0.4064" layer="94"/>
+<wire x1="4.445" y1="-5.08" x2="-4.445" y2="-5.08" width="0.4064" layer="94"/>
+<wire x1="-4.445" y1="-5.08" x2="-4.445" y2="5.08" width="0.4064" layer="94"/>
+<text x="-5.08" y="-5.08" size="1.778" layer="95" rot="R90">&gt;NAME</text>
+<text x="6.985" y="-5.08" size="1.778" layer="96" rot="R90">&gt;VALUE</text>
+<pin name="1" x="-2.54" y="-7.62" visible="pad" length="short" direction="pas" rot="R90"/>
+<pin name="2" x="-2.54" y="7.62" visible="pad" length="short" direction="pas" rot="R270"/>
+<pin name="3" x="0" y="-7.62" visible="pad" length="short" direction="pas" rot="R90"/>
+<pin name="4" x="0" y="7.62" visible="pad" length="short" direction="pas" rot="R270"/>
+<pin name="5" x="2.54" y="-7.62" visible="pad" length="short" direction="pas" rot="R90"/>
+<pin name="6" x="2.54" y="7.62" visible="pad" length="short" direction="pas" rot="R270"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -6555,6 +6621,27 @@ Source: AVX .. aphvc.pdf</description>
 <connects>
 <connect gate="1" pin="1" pad="1"/>
 <connect gate="1" pin="2" pad="2"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="JP3Q" prefix="JP" uservalue="yes">
+<description>&lt;b&gt;JUMPER&lt;/b&gt;</description>
+<gates>
+<gate name="B" symbol="J3" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="JP3Q">
+<connects>
+<connect gate="B" pin="1" pad="1"/>
+<connect gate="B" pin="2" pad="2"/>
+<connect gate="B" pin="3" pad="3"/>
+<connect gate="B" pin="4" pad="4"/>
+<connect gate="B" pin="5" pad="5"/>
+<connect gate="B" pin="6" pad="6"/>
 </connects>
 <technologies>
 <technology name=""/>
@@ -19379,6 +19466,9 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="D1" library="Industrialberry" deviceset="PESD1CAN" device=""/>
 <part name="GND54" library="supply1" deviceset="GND" device="" value=""/>
 <part name="GND55" library="supply1" deviceset="GND" device="" value=""/>
+<part name="JP1" library="jumper" deviceset="JP3Q" device=""/>
+<part name="GND57" library="supply1" deviceset="GND" device="" value=""/>
+<part name="P+9" library="supply1" deviceset="+5V" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -20305,22 +20395,28 @@ with Integrated Isolated DC-to-DC Converter</description>
 <sheet>
 <plain>
 <wire x1="10.16" y1="187.96" x2="10.16" y2="251.46" width="0.4064" layer="94" style="longdash"/>
-<wire x1="241.3" y1="251.46" x2="10.16" y2="251.46" width="0.4064" layer="94" style="longdash"/>
-<wire x1="241.3" y1="187.96" x2="241.3" y2="251.46" width="0.4064" layer="94" style="longdash"/>
-<wire x1="241.3" y1="187.96" x2="10.16" y2="187.96" width="0.4064" layer="94" style="longdash"/>
-<text x="104.14" y="241.935" size="5.08" layer="94">USB0-OTG</text>
+<wire x1="256.54" y1="251.46" x2="10.16" y2="251.46" width="0.4064" layer="94" style="longdash"/>
+<wire x1="256.54" y1="187.96" x2="256.54" y2="251.46" width="0.4064" layer="94" style="longdash"/>
+<wire x1="256.54" y1="187.96" x2="10.16" y2="187.96" width="0.4064" layer="94" style="longdash"/>
+<text x="68.58" y="241.935" size="5.08" layer="94">USB0-OTG</text>
 <text x="130.175" y="214.63" size="1.778" layer="214">Iset = 6800/Rs</text>
 <text x="130.175" y="210.82" size="1.778" layer="214">Iset = 523mA</text>
 <text x="112.395" y="212.725" size="1.778" layer="214" rot="MR0">Rs</text>
 <text x="290.83" y="20.32" size="1.778" layer="94">Project: OOBD-Tiger</text>
 <text x="290.83" y="13.97" size="1.778" layer="94">Title: USB-Interfaces (OTG / HOST)</text>
-<wire x1="10.16" y1="66.548" x2="241.808" y2="66.548" width="0.4064" layer="94" style="longdash"/>
-<wire x1="10.16" y1="162.052" x2="241.808" y2="162.052" width="0.4064" layer="94" style="longdash"/>
+<wire x1="10.16" y1="66.548" x2="257.048" y2="66.548" width="0.4064" layer="94" style="longdash"/>
+<wire x1="10.16" y1="162.052" x2="257.048" y2="162.052" width="0.4064" layer="94" style="longdash"/>
 <wire x1="10.16" y1="66.548" x2="10.16" y2="162.052" width="0.4064" layer="94" style="longdash"/>
-<wire x1="241.808" y1="66.548" x2="241.808" y2="162.052" width="0.4064" layer="94" style="longdash"/>
+<wire x1="257.048" y1="66.548" x2="257.048" y2="162.052" width="0.4064" layer="94" style="longdash"/>
 <text x="68.58" y="152.4" size="5.08" layer="94">USB1-HOST</text>
 <text x="119.38" y="220.98" size="1.778" layer="91">523mA</text>
 <text x="116.84" y="134.62" size="1.778" layer="91">1000mA</text>
+<wire x1="241.3" y1="15.748" x2="241.808" y2="15.748" width="0.4064" layer="94" style="longdash"/>
+<wire x1="10.16" y1="58.42" x2="256.54" y2="58.42" width="0.4064" layer="94" style="longdash"/>
+<wire x1="256.54" y1="58.42" x2="256.54" y2="7.62" width="0.4064" layer="94" style="longdash"/>
+<wire x1="256.54" y1="7.62" x2="10.16" y2="7.62" width="0.4064" layer="94" style="longdash"/>
+<wire x1="10.16" y1="7.62" x2="10.16" y2="58.42" width="0.4064" layer="94" style="longdash"/>
+<text x="68.58" y="50.8" size="5.08" layer="94">OOBDpiCAN connector</text>
 </plain>
 <instances>
 <instance part="FRAME1" gate="G$1" x="0" y="0"/>
@@ -20357,8 +20453,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <attribute name="VALUE" x="71.755" y="232.41" size="1.4224" layer="96"/>
 </instance>
 <instance part="USB_OTG" gate="G1" x="24.13" y="224.79" smashed="yes" rot="MR0">
-<attribute name="NAME" x="24.13" y="233.68" size="1.778" layer="95"/>
-<attribute name="VALUE" x="24.13" y="216.535" size="1.778" layer="96" rot="MR180"/>
+<attribute name="VALUE" x="21.59" y="216.535" size="1.778" layer="96" rot="MR180"/>
 </instance>
 <instance part="R1" gate="G$1" x="200.66" y="236.22" smashed="yes" rot="MR0">
 <attribute name="NAME" x="197.485" y="236.601" size="1.778" layer="95" rot="MR0"/>
@@ -20454,6 +20549,11 @@ with Integrated Isolated DC-to-DC Converter</description>
 </instance>
 <instance part="GND32" gate="1" x="190.5" y="73.66" rot="MR0"/>
 <instance part="SUPPLY8" gate="G$1" x="276.86" y="167.64"/>
+<instance part="JP1" gate="B" x="124.46" y="35.56" rot="R270"/>
+<instance part="GND57" gate="1" x="111.76" y="25.4" rot="MR0"/>
+<instance part="P+9" gate="1" x="111.76" y="45.72" smashed="yes" rot="MR0">
+<attribute name="VALUE" x="114.3" y="46.355" size="1.778" layer="96" rot="MR0"/>
+</instance>
 </instances>
 <busses>
 <bus name="USB-HOST:USB1_DM,USB1_DP,USB1_ID,USB1_VBUS,USB1_DRV,USB1_CE">
@@ -20572,6 +20672,12 @@ with Integrated Isolated DC-to-DC Converter</description>
 <pinref part="GND29" gate="1" pin="GND"/>
 <wire x1="139.7" y1="132.08" x2="139.7" y2="119.38" width="0.1524" layer="91"/>
 </segment>
+<segment>
+<pinref part="JP1" gate="B" pin="5"/>
+<pinref part="GND57" gate="1" pin="GND"/>
+<wire x1="116.84" y1="33.02" x2="111.76" y2="33.02" width="0.1524" layer="91"/>
+<wire x1="111.76" y1="33.02" x2="111.76" y2="27.94" width="0.1524" layer="91"/>
+</segment>
 </net>
 <net name="+5V" class="0">
 <segment>
@@ -20591,6 +20697,12 @@ with Integrated Isolated DC-to-DC Converter</description>
 <pinref part="C2" gate="G$1" pin="1"/>
 <pinref part="P+1" gate="1" pin="+5V"/>
 <pinref part="U3" gate="G$1" pin="IN"/>
+</segment>
+<segment>
+<pinref part="JP1" gate="B" pin="1"/>
+<pinref part="P+9" gate="1" pin="+5V"/>
+<wire x1="116.84" y1="38.1" x2="111.76" y2="38.1" width="0.1524" layer="91"/>
+<wire x1="111.76" y1="38.1" x2="111.76" y2="43.18" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="USB0_DP" class="0">
@@ -20815,6 +20927,11 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="231.14" y1="111.76" x2="233.68" y2="114.3" width="0.1524" layer="91"/>
 <label x="215.9" y="111.76" size="1.778" layer="95"/>
 </segment>
+<segment>
+<pinref part="JP1" gate="B" pin="2"/>
+<wire x1="132.08" y1="38.1" x2="231.14" y2="38.1" width="0.1524" layer="91"/>
+<label x="231.14" y="38.1" size="1.778" layer="95" xref="yes"/>
+</segment>
 </net>
 <net name="USB1_DP" class="0">
 <segment>
@@ -20824,6 +20941,11 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="60.96" y1="109.22" x2="231.14" y2="109.22" width="0.1524" layer="91"/>
 <wire x1="231.14" y1="109.22" x2="233.68" y2="111.76" width="0.1524" layer="91"/>
 <label x="215.9" y="109.22" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="JP1" gate="B" pin="4"/>
+<wire x1="132.08" y1="35.56" x2="231.14" y2="35.56" width="0.1524" layer="91"/>
+<label x="231.14" y="35.56" size="1.778" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="USB1_ID" class="0">
@@ -22061,13 +22183,38 @@ with Integrated Isolated DC-to-DC Converter</description>
 </sheet>
 </sheets>
 <errors>
+<approved hash="102,1,218.44,154.94,VCC,3V3,,,,"/>
+<approved hash="102,1,218.44,228.6,VCC,3V3,,,,"/>
+<approved hash="102,1,254,44.45,VCC,3V3,,,,"/>
+<approved hash="102,1,146.05,45.72,VCC,3V3,,,,"/>
+<approved hash="102,4,48.26,213.36,VCC,3V3,,,,"/>
+<approved hash="102,4,48.26,147.32,VCC,3V3,,,,"/>
+<approved hash="102,5,20.32,226.06,VCC,3V3,,,,"/>
+<approved hash="104,2,152.4,228.6,U1,IN,+5V,,,"/>
+<approved hash="104,2,29.21,228.6,USB_OTG,VBUS,+5V_OTG_PWR,,,"/>
+<approved hash="104,1,193.04,142.24,U6,VDD,3V3,,,"/>
+<approved hash="104,1,193.04,144.78,U6,VSS,GND,,,"/>
+<approved hash="104,1,193.04,215.9,U2,VDD,3V3,,,"/>
+<approved hash="104,1,193.04,218.44,U2,VSS,GND,,,"/>
+<approved hash="104,5,124.46,38.1,BAT2,-,GND,,,"/>
+<approved hash="104,5,124.46,48.26,BAT2,+,VBAT,,,"/>
+<approved hash="104,2,152.4,142.24,U3,IN,+5V,,,"/>
+<approved hash="104,1,102.87,68.58,IC1,GND2,GNDA,,,"/>
 <approved hash="104,1,130.81,66.04,IC1,GND1,GND,,,"/>
+<approved hash="104,1,102.87,76.2,IC1,GND2,GNDA,,,"/>
+<approved hash="104,1,130.81,45.72,IC1,VCC,3V3,,,"/>
+<approved hash="104,1,130.81,50.8,IC1,V_IO,+5V,,,"/>
 <approved hash="104,1,130.81,68.58,IC1,GND1,GND,,,"/>
 <approved hash="104,1,130.81,71.12,IC1,GND1,GND,,,"/>
+<approved hash="104,1,130.81,73.66,IC1,GND1,GND,,,"/>
 <approved hash="104,1,130.81,76.2,IC1,GND1,GND,,,"/>
+<approved hash="104,1,102.87,71.12,IC1,GND2,GNDA,,,"/>
+<approved hash="104,1,102.87,73.66,IC1,GND2,GNDA,,,"/>
 <approved hash="104,1,210.82,67.31,IC2,GND2,GNDA,,,"/>
 <approved hash="104,1,238.76,64.77,IC2,GND1,GND,,,"/>
 <approved hash="104,1,210.82,74.93,IC2,GND2,GNDA,,,"/>
+<approved hash="104,1,238.76,44.45,IC2,VCC,3V3,,,"/>
+<approved hash="104,1,238.76,49.53,IC2,V_IO,+5V,,,"/>
 <approved hash="104,1,238.76,67.31,IC2,GND1,GND,,,"/>
 <approved hash="104,1,238.76,69.85,IC2,GND1,GND,,,"/>
 <approved hash="104,1,238.76,72.39,IC2,GND1,GND,,,"/>
