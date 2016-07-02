@@ -7,8 +7,10 @@ package org.oobd.base.archive;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,7 +70,7 @@ public class FileHandlerEpa implements Archive {
 
     void readManifest(String manifestName) {
         try {
-            String manifestString = new String(org.apache.commons.io.IOUtils.toByteArray(getInputStream(manifestName)));
+            String manifestString = new String(org.apache.commons.io.IOUtils.toByteArray(new InputStreamReader (getInputStream(manifestName)), "UTF-8"));
             manifest = new Onion(manifestString);
 
         } catch (NullPointerException | IOException | JSONException ex) {

@@ -32,9 +32,12 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -1071,7 +1074,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         String oldDirName = appProbs.get(OOBDConstants.PropName_OutputFile, null);
-        oldDirName = saveBufferAsFileRequest(oldDirName, jTextAreaOutput.getText().toCharArray(), false);
+        oldDirName = saveBufferAsFileRequest(oldDirName, jTextAreaOutput.getText(), false);
         if (oldDirName != null) {
             appProbs.put(OOBDConstants.PropName_OutputFile, oldDirName);
             core.getSystemIF().savePreferences(FT_PROPS,
@@ -1323,7 +1326,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private final Icon[] busyIcons = new Icon[15];
     private int busyIconIndex = 0;
     private JDialog aboutBox;
-    private Hashtable<String, ArrayList<Character>> outputBuffers = new Hashtable<String, ArrayList<Character>>();
+    private Hashtable<String, String> outputBuffers = new Hashtable<String, String>();
     private String actualBufferName = OB_DEFAULT_NAME; // name of the actual writestring output, default is "display" for screen output
 
     /* as char[] and Arraylist<Character> are not compatible, we need to handle dislpay output and normal
@@ -1341,14 +1344,14 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     public void sm(String msg, String modifier) {
 
-        char[] actBuffer;
+        String actBuffer;
         if (!"".equalsIgnoreCase(modifier)) {
             if (modifier.equalsIgnoreCase(OB_CMD_SETBUFFER)) {
                 actualBufferName = msg.toLowerCase().trim();
                 if (!actualBufferName.equals(OB_DEFAULT_NAME)) {
                     if (!outputBuffers.containsKey(actualBufferName)) {
-                        outputBuffers.put(actualBufferName, new ArrayList<Character>());
-                        actBuffer = new char[0];
+                        outputBuffers.put(actualBufferName, "");
+                        actBuffer = "";
                     }
                 }
             }
@@ -1356,23 +1359,23 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                 if (actualBufferName.equals(OB_DEFAULT_NAME)) { // do the special handling of the UI textbox here
                     jTextAreaOutput.setText("");
                 } else {
-                    outputBuffers.put(actualBufferName, new ArrayList<Character>());
-                    actBuffer = new char[0];
+                    outputBuffers.put(actualBufferName, "");
+                    actBuffer = "";
                 }
             } else if (modifier.equalsIgnoreCase(OB_CMD_CLEARALL)) {
                 jTextAreaOutput.setText("");
-                outputBuffers = new Hashtable<String, ArrayList<Character>>();
-                actBuffer = new char[0];
+                outputBuffers = new Hashtable<String, String>();
+                actBuffer = "";
             } else {
                 // here we need the buffer content, so we need to do the time consuming conversion here
                 if (actualBufferName.equals(OB_DEFAULT_NAME)) {
-                    actBuffer = jTextAreaOutput.getText().toCharArray();
+                    actBuffer = jTextAreaOutput.getText();
                 } else {
                     if (outputBuffers.containsKey(actualBufferName)) {
-                        actBuffer = arrayListToCharArray(outputBuffers.get(actualBufferName));
+                        actBuffer = outputBuffers.get(actualBufferName);
                     } else {
-                        outputBuffers.put(actualBufferName, new ArrayList<Character>());
-                        actBuffer = new char[0];
+                        outputBuffers.put(actualBufferName, "");
+                        actBuffer = "";
                     }
                 }
                 if (modifier.equalsIgnoreCase(OB_CMD_SAVEAS)) {
@@ -1394,10 +1397,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                     jTextAreaOutput.append(msg + "\n");
                 }
             } else {
-                ArrayList<Character> actBufferArrayList = outputBuffers.get(actualBufferName);
-                for (char c : msg.toCharArray()) {
-                    actBufferArrayList.add(c);
-                }
+                String actBufferArrayList = outputBuffers.get(actualBufferName) + msg;
+                outputBuffers.put(actualBufferName, actBufferArrayList);
             }
         }
     }
@@ -1773,9 +1774,10 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     }
 
-    boolean saveBufferToFile(String fileName, char[] content, boolean append) {
+    boolean saveBufferToFile(String fileName, String content, boolean append) {
         try {
-            FileWriter os = new FileWriter(fileName, append);
+            Writer os = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(fileName, append), "UTF-8"));
             os.write(content);
             os.close();
             return true;
@@ -1785,7 +1787,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
     }
 
-    private String saveBufferAsFileRequest(String FileName, char[] content, boolean append) {
+    private String saveBufferAsFileRequest(String FileName, String content, boolean append) {
         String oldDirName = appProbs.get(OOBDConstants.PropName_OutputFile, null);
         JFileChooser chooser = new JFileChooser(oldDirName);
         File oldDir = null;
