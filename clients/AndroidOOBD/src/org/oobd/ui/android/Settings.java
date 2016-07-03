@@ -358,7 +358,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 			pgpEnabled.setChecked(preferences.getBoolean("PGPENABLED", false));
 			httpEnabled.setChecked(preferences.getString(
 					OOBDConstants.PropName_UIHander, "UIHandler")
-					.equalsIgnoreCase("ws"));
+					.equalsIgnoreCase(OOBDConstants.UIHANDLER_WS_NAME));
 		}
 		urlEditText.setText(preferences.getString(connectTypeName + "_"
 				+ OOBDConstants.PropName_ConnectServerURL,
