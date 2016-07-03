@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="6.4">
+<eagle version="7.6.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="12" fill="1" visible="no" active="no"/>
@@ -19319,7 +19319,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="C1" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
 <part name="GND5" library="supply1" deviceset="GND" device="" value=""/>
 <part name="R7" library="rcl" deviceset="R-EU_" device="R0603" value="NA"/>
-<part name="OBD2-CONNECTOR" library="pinhead" deviceset="PINHD-2X5" device="/90"/>
+<part name="OOBD2-CONNECTOR" library="pinhead" deviceset="PINHD-2X5" device="/90" value="In-Car Diagnostic"/>
 <part name="R8" library="resistor" deviceset="R-EU_" device="R0603" value="10K">
 <attribute name="MANEX" value="110-0002014 "/>
 </part>
@@ -19347,7 +19347,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="C19" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="0,01µF">
 <attribute name="MANEX" value="123-0001115 "/>
 </part>
-<part name="TLV320AIC3107" library="TLV320AIC3107" deviceset="TLV320AIC3107" device=""/>
+<part name="TLV320AIC3107" library="TLV320AIC3107" deviceset="TLV320AIC3107" device="" value="Audio-Amplifier"/>
 <part name="R12" library="resistor" deviceset="R-EU_" device="R0603" value="0"/>
 <part name="R13" library="resistor" deviceset="R-EU_" device="R0603" value="0"/>
 <part name="R14" library="resistor" deviceset="R-EU_" device="R0603" value="0"/>
@@ -19371,7 +19371,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="IC4" library="DS3231_industrialberry" deviceset="DS3231" device="SOIC-16W" value="DS3231"/>
 <part name="GND11" library="supply1" deviceset="GND" device=""/>
 <part name="GND16" library="supply1" deviceset="GND" device=""/>
-<part name="BAT2" library="SparkFun" deviceset="BATTERY" device="12PTH"/>
+<part name="BAT2" library="SparkFun" deviceset="BATTERY" device="12PTH" value="3,6V"/>
 <part name="USB_HOST" library="OLIMEX_CONNECTORS" deviceset="USB_SHIELD" device="1" value="USB_A_VERTICAL"/>
 <part name="L5" library="rcl" deviceset="L-US" device="L0805_5MIL_DWS" value="FB0805/600R/2A"/>
 <part name="C3" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
@@ -19459,14 +19459,14 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="D2" library="Industrialberry" deviceset="PESD1CAN" device=""/>
 <part name="GND51" library="supply1" deviceset="GND" device="" value=""/>
 <part name="GND52" library="supply1" deviceset="GND" device="" value=""/>
-<part name="HS-CAN1" library="SparkFun" deviceset="JUMPER-2" device="SMD-NO" value="OPEN"/>
+<part name="MS-CAN" library="SparkFun" deviceset="JUMPER-2" device="SMD-NO" value="OPEN"/>
 <part name="R6" library="resistor" deviceset="R-EU_" device="R0603" value="60R"/>
 <part name="R33" library="resistor" deviceset="R-EU_" device="R0603" value="60R"/>
 <part name="C34" library="resistor" deviceset="C-EU" device="C0603" value="NA(10nF)"/>
 <part name="D1" library="Industrialberry" deviceset="PESD1CAN" device=""/>
 <part name="GND54" library="supply1" deviceset="GND" device="" value=""/>
 <part name="GND55" library="supply1" deviceset="GND" device="" value=""/>
-<part name="JP1" library="jumper" deviceset="JP3Q" device=""/>
+<part name="OOBDPICAN" library="jumper" deviceset="JP3Q" device="" value="Bridge to PICAN"/>
 <part name="GND57" library="supply1" deviceset="GND" device="" value=""/>
 <part name="P+9" library="supply1" deviceset="+5V" device=""/>
 </parts>
@@ -19539,7 +19539,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <attribute name="NAME" x="142.875" y="231.3686" size="1.778" layer="95"/>
 <attribute name="VALUE" x="136.779" y="231.394" size="1.778" layer="96" rot="MR0"/>
 </instance>
-<instance part="OBD2-CONNECTOR" gate="A" x="66.04" y="167.64"/>
+<instance part="OOBD2-CONNECTOR" gate="A" x="66.04" y="167.64"/>
 <instance part="GND6" gate="1" x="15.24" y="162.56"/>
 <instance part="P+2" gate="1" x="15.24" y="190.5"/>
 <instance part="HS-CAN" gate="A" x="142.24" y="190.5" rot="R270"/>
@@ -19679,7 +19679,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 </instance>
 <instance part="GND51" gate="1" x="144.78" y="198.12"/>
 <instance part="GND52" gate="1" x="195.58" y="182.88"/>
-<instance part="HS-CAN1" gate="A" x="142.24" y="116.84" rot="R270"/>
+<instance part="MS-CAN" gate="A" x="142.24" y="116.84" rot="R270"/>
 <instance part="R6" gate="G$1" x="139.7" y="137.16"/>
 <instance part="R33" gate="G$1" x="132.08" y="121.92" rot="R270"/>
 <instance part="C34" gate="G$1" x="137.16" y="129.54" smashed="yes" rot="R90">
@@ -19730,7 +19730,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <pinref part="GND5" gate="1" pin="GND"/>
 </segment>
 <segment>
-<pinref part="OBD2-CONNECTOR" gate="A" pin="3"/>
+<pinref part="OOBD2-CONNECTOR" gate="A" pin="3"/>
 <wire x1="63.5" y1="170.18" x2="15.24" y2="170.18" width="0.1524" layer="91"/>
 <pinref part="GND6" gate="1" pin="GND"/>
 <wire x1="15.24" y1="170.18" x2="15.24" y2="165.1" width="0.1524" layer="91"/>
@@ -19988,7 +19988,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <pinref part="U6" gate="G$1" pin="CANL"/>
 <wire x1="170.18" y1="142.24" x2="147.32" y2="142.24" width="0.1524" layer="91"/>
 <wire x1="147.32" y1="142.24" x2="127" y2="142.24" width="0.1524" layer="91"/>
-<pinref part="OBD2-CONNECTOR" gate="A" pin="2"/>
+<pinref part="OOBD2-CONNECTOR" gate="A" pin="2"/>
 <wire x1="127" y1="142.24" x2="99.06" y2="142.24" width="0.1524" layer="91"/>
 <wire x1="99.06" y1="142.24" x2="93.98" y2="142.24" width="0.1524" layer="91"/>
 <wire x1="86.36" y1="172.72" x2="71.12" y2="172.72" width="0.1524" layer="91"/>
@@ -20004,7 +20004,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="132.08" y1="109.22" x2="127" y2="109.22" width="0.1524" layer="91"/>
 <wire x1="127" y1="109.22" x2="127" y2="116.84" width="0.1524" layer="91"/>
 <wire x1="127" y1="116.84" x2="127" y2="142.24" width="0.1524" layer="91"/>
-<pinref part="HS-CAN1" gate="A" pin="2"/>
+<pinref part="MS-CAN" gate="A" pin="2"/>
 <wire x1="139.7" y1="114.3" x2="132.08" y2="114.3" width="0.1524" layer="91"/>
 <wire x1="132.08" y1="114.3" x2="132.08" y2="109.22" width="0.1524" layer="91"/>
 <junction x="132.08" y="109.22"/>
@@ -20031,7 +20031,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="209.55" y1="20.32" x2="209.55" y2="44.45" width="0.1524" layer="91"/>
 <pinref part="IC2" gate="G$1" pin="CAN_H"/>
 <wire x1="209.55" y1="44.45" x2="210.82" y2="44.45" width="0.1524" layer="91"/>
-<pinref part="OBD2-CONNECTOR" gate="A" pin="1"/>
+<pinref part="OOBD2-CONNECTOR" gate="A" pin="1"/>
 <wire x1="63.5" y1="172.72" x2="45.72" y2="172.72" width="0.1524" layer="91"/>
 <wire x1="45.72" y1="172.72" x2="45.72" y2="144.78" width="0.1524" layer="91"/>
 <junction x="45.72" y="144.78"/>
@@ -20056,7 +20056,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="144.78" y1="215.9" x2="127" y2="215.9" width="0.1524" layer="91"/>
 <wire x1="127" y1="215.9" x2="96.52" y2="215.9" width="0.1524" layer="91"/>
 <wire x1="96.52" y1="200.66" x2="96.52" y2="215.9" width="0.1524" layer="91"/>
-<pinref part="OBD2-CONNECTOR" gate="A" pin="6"/>
+<pinref part="OOBD2-CONNECTOR" gate="A" pin="6"/>
 <wire x1="96.52" y1="167.64" x2="96.52" y2="198.12" width="0.1524" layer="91"/>
 <wire x1="71.12" y1="167.64" x2="96.52" y2="167.64" width="0.1524" layer="91"/>
 <wire x1="96.52" y1="167.64" x2="96.52" y2="81.28" width="0.1524" layer="91"/>
@@ -20081,7 +20081,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 </net>
 <net name="+12V" class="0">
 <segment>
-<pinref part="OBD2-CONNECTOR" gate="A" pin="10"/>
+<pinref part="OOBD2-CONNECTOR" gate="A" pin="10"/>
 <wire x1="71.12" y1="162.56" x2="88.9" y2="162.56" width="0.1524" layer="91"/>
 <wire x1="88.9" y1="162.56" x2="88.9" y2="182.88" width="0.1524" layer="91"/>
 <wire x1="88.9" y1="182.88" x2="15.24" y2="182.88" width="0.1524" layer="91"/>
@@ -20147,7 +20147,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <segment>
 <wire x1="109.22" y1="218.44" x2="48.26" y2="218.44" width="0.1524" layer="91"/>
 <wire x1="48.26" y1="218.44" x2="48.26" y2="165.1" width="0.1524" layer="91"/>
-<pinref part="OBD2-CONNECTOR" gate="A" pin="7"/>
+<pinref part="OOBD2-CONNECTOR" gate="A" pin="7"/>
 <junction x="48.26" y="165.1"/>
 <wire x1="48.26" y1="165.1" x2="63.5" y2="165.1" width="0.1524" layer="91"/>
 <wire x1="48.26" y1="165.1" x2="48.26" y2="54.61" width="0.1524" layer="91"/>
@@ -20386,7 +20386,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <net name="N$32" class="0">
 <segment>
 <pinref part="R33" gate="G$1" pin="2"/>
-<pinref part="HS-CAN1" gate="A" pin="1"/>
+<pinref part="MS-CAN" gate="A" pin="1"/>
 <wire x1="132.08" y1="116.84" x2="139.7" y2="116.84" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -20549,7 +20549,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 </instance>
 <instance part="GND32" gate="1" x="190.5" y="73.66" rot="MR0"/>
 <instance part="SUPPLY8" gate="G$1" x="276.86" y="167.64"/>
-<instance part="JP1" gate="B" x="124.46" y="35.56" rot="R270"/>
+<instance part="OOBDPICAN" gate="B" x="124.46" y="35.56" rot="R270"/>
 <instance part="GND57" gate="1" x="111.76" y="25.4" rot="MR0"/>
 <instance part="P+9" gate="1" x="111.76" y="45.72" smashed="yes" rot="MR0">
 <attribute name="VALUE" x="114.3" y="46.355" size="1.778" layer="96" rot="MR0"/>
@@ -20673,7 +20673,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="139.7" y1="132.08" x2="139.7" y2="119.38" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="JP1" gate="B" pin="5"/>
+<pinref part="OOBDPICAN" gate="B" pin="5"/>
 <pinref part="GND57" gate="1" pin="GND"/>
 <wire x1="116.84" y1="33.02" x2="111.76" y2="33.02" width="0.1524" layer="91"/>
 <wire x1="111.76" y1="33.02" x2="111.76" y2="27.94" width="0.1524" layer="91"/>
@@ -20699,7 +20699,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <pinref part="U3" gate="G$1" pin="IN"/>
 </segment>
 <segment>
-<pinref part="JP1" gate="B" pin="1"/>
+<pinref part="OOBDPICAN" gate="B" pin="1"/>
 <pinref part="P+9" gate="1" pin="+5V"/>
 <wire x1="116.84" y1="38.1" x2="111.76" y2="38.1" width="0.1524" layer="91"/>
 <wire x1="111.76" y1="38.1" x2="111.76" y2="43.18" width="0.1524" layer="91"/>
@@ -20928,7 +20928,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <label x="215.9" y="111.76" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="JP1" gate="B" pin="2"/>
+<pinref part="OOBDPICAN" gate="B" pin="2"/>
 <wire x1="132.08" y1="38.1" x2="231.14" y2="38.1" width="0.1524" layer="91"/>
 <label x="231.14" y="38.1" size="1.778" layer="95" xref="yes"/>
 </segment>
@@ -20943,7 +20943,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <label x="215.9" y="109.22" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="JP1" gate="B" pin="4"/>
+<pinref part="OOBDPICAN" gate="B" pin="4"/>
 <wire x1="132.08" y1="35.56" x2="231.14" y2="35.56" width="0.1524" layer="91"/>
 <label x="231.14" y="35.56" size="1.778" layer="95" xref="yes"/>
 </segment>
@@ -21560,13 +21560,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <pinref part="AM3352-SOM-EVB-PLATFORM" gate="G$1" pin="USB0_CE"/>
 </segment>
 </net>
-<net name="PMIC_POWER_EN" class="0">
-<segment>
-<wire x1="190.5" y1="195.58" x2="152.4" y2="195.58" width="0.1524" layer="91"/>
-<label x="165.1" y="195.834" size="1.778" layer="95" ratio="15"/>
-<pinref part="AM3352-SOM-EVB-PLATFORM" gate="G$1" pin="PMIC_POWER_EN"/>
-</segment>
-</net>
 <net name="MS-CAN_RS" class="0">
 <segment>
 <pinref part="AM3352-SOM-EVB-PLATFORM" gate="G$1" pin="P3_7/EMU0"/>
@@ -21621,6 +21614,14 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="152.4" y1="121.92" x2="215.9" y2="121.92" width="0.1524" layer="91"/>
 <wire x1="215.9" y1="121.92" x2="218.44" y2="124.46" width="0.1524" layer="91"/>
 <label x="165.1" y="121.92" size="1.778" layer="95"/>
+</segment>
+</net>
+<net name="P3_20/LED2" class="0">
+<segment>
+<wire x1="86.36" y1="121.92" x2="63.5" y2="121.92" width="0.1524" layer="91"/>
+<label x="63.5" y="121.92" size="1.778" layer="95"/>
+<pinref part="AM3352-SOM-EVB-PLATFORM" gate="G$1" pin="P3_20/LED2"/>
+<junction x="86.36" y="121.92"/>
 </segment>
 </net>
 </nets>
@@ -21950,7 +21951,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <segment>
 <wire x1="180.34" y1="220.98" x2="180.34" y2="226.06" width="0.1524" layer="91"/>
 <wire x1="180.34" y1="226.06" x2="157.48" y2="226.06" width="0.1524" layer="91"/>
-<label x="157.48" y="225.171" size="1.778" layer="95" ratio="15"/>
+<label x="157.48" y="227.711" size="1.778" layer="95" ratio="15"/>
 <pinref part="R49" gate="G$1" pin="1"/>
 </segment>
 </net>
@@ -21965,7 +21966,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <net name="EXT_WAKEUP" class="0">
 <segment>
 <wire x1="83.82" y1="205.74" x2="96.52" y2="205.74" width="0.1524" layer="91"/>
-<label x="87.63" y="205.105" size="1.778" layer="95" ratio="15"/>
+<label x="85.09" y="205.105" size="1.778" layer="95" ratio="15"/>
 <pinref part="R54" gate="G$1" pin="1"/>
 </segment>
 </net>
