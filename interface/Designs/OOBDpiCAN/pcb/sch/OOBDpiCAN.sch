@@ -24161,7 +24161,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="JP5" library="jumper" deviceset="JP1Q" device=""/>
 <part name="R17" library="resistor" deviceset="R-EU_" device="R0603" value="510R"/>
 <part name="+3V2" library="supply1" deviceset="+3V3" device=""/>
-<part name="C43" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C41" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C39" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C37" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
@@ -24179,7 +24178,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="JP6" library="jumper" deviceset="JP1Q" device=""/>
 <part name="R18" library="resistor" deviceset="R-EU_" device="R0603" value="510R"/>
 <part name="+3V4" library="supply1" deviceset="+3V3" device=""/>
-<part name="C44" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C42" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C40" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C38" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
@@ -24202,7 +24200,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="U$1" library="jumper" deviceset="JP5E" device=""/>
 <part name="R1" library="resistor" deviceset="R-EU_" device="R0603" value="510R"/>
 <part name="+3V7" library="supply1" deviceset="+3V3" device=""/>
-<part name="C9" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C7" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C5" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C3" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
@@ -24227,7 +24224,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="JP4" library="jumper" deviceset="JP1Q" device=""/>
 <part name="R2" library="resistor" deviceset="R-EU_" device="R0603" value="510R"/>
 <part name="+3V9" library="supply1" deviceset="+3V3" device=""/>
-<part name="C10" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C8" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C6" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="C4" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
@@ -24455,7 +24451,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="U$1" gate="G$1" x="60.96" y="137.16" rot="R270"/>
 <instance part="R1" gate="G$1" x="83.82" y="177.8" rot="R90"/>
 <instance part="+3V7" gate="G$1" x="55.88" y="203.2"/>
-<instance part="C9" gate="G$1" x="78.74" y="223.52"/>
 <instance part="C7" gate="G$1" x="73.66" y="223.52"/>
 <instance part="C5" gate="G$1" x="68.58" y="223.52"/>
 <instance part="C3" gate="G$1" x="63.5" y="223.52"/>
@@ -24487,7 +24482,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="JP4" gate="A" x="299.72" y="71.12" rot="R90"/>
 <instance part="R2" gate="G$1" x="83.82" y="48.26" rot="R90"/>
 <instance part="+3V9" gate="G$1" x="55.88" y="73.66"/>
-<instance part="C10" gate="G$1" x="78.74" y="93.98"/>
 <instance part="C8" gate="G$1" x="73.66" y="93.98"/>
 <instance part="C6" gate="G$1" x="68.58" y="93.98"/>
 <instance part="C4" gate="G$1" x="63.5" y="93.98"/>
@@ -24694,9 +24688,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="63.5" y1="215.9" x2="68.58" y2="215.9" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="215.9" x2="68.58" y2="213.36" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="215.9" x2="73.66" y2="215.9" width="0.1524" layer="91"/>
-<pinref part="C9" gate="G$1" pin="2"/>
-<wire x1="73.66" y1="215.9" x2="78.74" y2="215.9" width="0.1524" layer="91"/>
-<wire x1="78.74" y1="215.9" x2="78.74" y2="218.44" width="0.1524" layer="91"/>
 <pinref part="C7" gate="G$1" pin="2"/>
 <wire x1="73.66" y1="218.44" x2="73.66" y2="215.9" width="0.1524" layer="91"/>
 <pinref part="C5" gate="G$1" pin="2"/>
@@ -24705,7 +24696,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="63.5" y1="218.44" x2="63.5" y2="215.9" width="0.1524" layer="91"/>
 <junction x="63.5" y="215.9"/>
 <junction x="68.58" y="215.9"/>
-<junction x="73.66" y="215.9"/>
 </segment>
 <segment>
 <pinref part="GND22" gate="1" pin="GND"/>
@@ -24766,9 +24756,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="63.5" y1="86.36" x2="68.58" y2="86.36" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="86.36" x2="68.58" y2="83.82" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="86.36" x2="73.66" y2="86.36" width="0.1524" layer="91"/>
-<pinref part="C10" gate="G$1" pin="2"/>
-<wire x1="73.66" y1="86.36" x2="78.74" y2="86.36" width="0.1524" layer="91"/>
-<wire x1="78.74" y1="86.36" x2="78.74" y2="88.9" width="0.1524" layer="91"/>
 <pinref part="C8" gate="G$1" pin="2"/>
 <wire x1="73.66" y1="88.9" x2="73.66" y2="86.36" width="0.1524" layer="91"/>
 <pinref part="C6" gate="G$1" pin="2"/>
@@ -24777,7 +24764,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="63.5" y1="88.9" x2="63.5" y2="86.36" width="0.1524" layer="91"/>
 <junction x="63.5" y="86.36"/>
 <junction x="68.58" y="86.36"/>
-<junction x="73.66" y="86.36"/>
 </segment>
 <segment>
 <pinref part="GND29" gate="1" pin="GND"/>
@@ -24935,12 +24921,9 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="68.58" y1="228.6" x2="68.58" y2="226.06" width="0.1524" layer="91"/>
 <pinref part="C7" gate="G$1" pin="1"/>
 <wire x1="73.66" y1="228.6" x2="73.66" y2="226.06" width="0.1524" layer="91"/>
-<pinref part="C9" gate="G$1" pin="1"/>
-<wire x1="78.74" y1="228.6" x2="78.74" y2="226.06" width="0.1524" layer="91"/>
 <junction x="63.5" y="228.6"/>
 <junction x="68.58" y="228.6"/>
 <junction x="73.66" y="228.6"/>
-<junction x="78.74" y="228.6"/>
 </segment>
 <segment>
 <pinref part="JP1" gate="A" pin="1"/>
@@ -24982,12 +24965,9 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="68.58" y1="99.06" x2="68.58" y2="96.52" width="0.1524" layer="91"/>
 <pinref part="C8" gate="G$1" pin="1"/>
 <wire x1="73.66" y1="99.06" x2="73.66" y2="96.52" width="0.1524" layer="91"/>
-<pinref part="C10" gate="G$1" pin="1"/>
-<wire x1="78.74" y1="99.06" x2="78.74" y2="96.52" width="0.1524" layer="91"/>
 <junction x="63.5" y="99.06"/>
 <junction x="68.58" y="99.06"/>
 <junction x="73.66" y="99.06"/>
-<junction x="78.74" y="99.06"/>
 </segment>
 <segment>
 <pinref part="JP2" gate="A" pin="1"/>
@@ -25750,7 +25730,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="JP5" gate="A" x="71.12" y="195.58" rot="MR90"/>
 <instance part="R17" gate="G$1" x="83.82" y="177.8" rot="R90"/>
 <instance part="+3V2" gate="G$1" x="55.88" y="203.2"/>
-<instance part="C43" gate="G$1" x="78.74" y="223.52"/>
 <instance part="C41" gate="G$1" x="73.66" y="223.52"/>
 <instance part="C39" gate="G$1" x="68.58" y="223.52"/>
 <instance part="C37" gate="G$1" x="63.5" y="223.52"/>
@@ -25774,7 +25753,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="JP6" gate="A" x="71.12" y="66.04" rot="MR90"/>
 <instance part="R18" gate="G$1" x="83.82" y="48.26" rot="R90"/>
 <instance part="+3V4" gate="G$1" x="55.88" y="73.66"/>
-<instance part="C44" gate="G$1" x="78.74" y="93.98"/>
 <instance part="C42" gate="G$1" x="73.66" y="93.98"/>
 <instance part="C40" gate="G$1" x="68.58" y="93.98"/>
 <instance part="C38" gate="G$1" x="63.5" y="93.98"/>
@@ -25861,9 +25839,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="63.5" y1="215.9" x2="68.58" y2="215.9" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="215.9" x2="68.58" y2="213.36" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="215.9" x2="73.66" y2="215.9" width="0.1524" layer="91"/>
-<pinref part="C43" gate="G$1" pin="2"/>
-<wire x1="73.66" y1="215.9" x2="78.74" y2="215.9" width="0.1524" layer="91"/>
-<wire x1="78.74" y1="215.9" x2="78.74" y2="218.44" width="0.1524" layer="91"/>
 <pinref part="C41" gate="G$1" pin="2"/>
 <wire x1="73.66" y1="218.44" x2="73.66" y2="215.9" width="0.1524" layer="91"/>
 <pinref part="C39" gate="G$1" pin="2"/>
@@ -25872,7 +25847,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="63.5" y1="218.44" x2="63.5" y2="215.9" width="0.1524" layer="91"/>
 <junction x="63.5" y="215.9"/>
 <junction x="68.58" y="215.9"/>
-<junction x="73.66" y="215.9"/>
 </segment>
 <segment>
 <pinref part="GND7" gate="1" pin="GND"/>
@@ -25917,9 +25891,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="63.5" y1="86.36" x2="68.58" y2="86.36" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="86.36" x2="68.58" y2="83.82" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="86.36" x2="73.66" y2="86.36" width="0.1524" layer="91"/>
-<pinref part="C44" gate="G$1" pin="2"/>
-<wire x1="73.66" y1="86.36" x2="78.74" y2="86.36" width="0.1524" layer="91"/>
-<wire x1="78.74" y1="86.36" x2="78.74" y2="88.9" width="0.1524" layer="91"/>
 <pinref part="C42" gate="G$1" pin="2"/>
 <wire x1="73.66" y1="88.9" x2="73.66" y2="86.36" width="0.1524" layer="91"/>
 <pinref part="C40" gate="G$1" pin="2"/>
@@ -25928,7 +25899,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="63.5" y1="88.9" x2="63.5" y2="86.36" width="0.1524" layer="91"/>
 <junction x="63.5" y="86.36"/>
 <junction x="68.58" y="86.36"/>
-<junction x="73.66" y="86.36"/>
 </segment>
 <segment>
 <pinref part="GND14" gate="1" pin="GND"/>
@@ -26034,12 +26004,9 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="68.58" y1="228.6" x2="68.58" y2="226.06" width="0.1524" layer="91"/>
 <pinref part="C41" gate="G$1" pin="1"/>
 <wire x1="73.66" y1="228.6" x2="73.66" y2="226.06" width="0.1524" layer="91"/>
-<pinref part="C43" gate="G$1" pin="1"/>
-<wire x1="78.74" y1="228.6" x2="78.74" y2="226.06" width="0.1524" layer="91"/>
 <junction x="63.5" y="228.6"/>
 <junction x="68.58" y="228.6"/>
 <junction x="73.66" y="228.6"/>
-<junction x="78.74" y="228.6"/>
 </segment>
 <segment>
 <pinref part="JP5" gate="A" pin="1"/>
@@ -26081,12 +26048,9 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="68.58" y1="99.06" x2="68.58" y2="96.52" width="0.1524" layer="91"/>
 <pinref part="C42" gate="G$1" pin="1"/>
 <wire x1="73.66" y1="99.06" x2="73.66" y2="96.52" width="0.1524" layer="91"/>
-<pinref part="C44" gate="G$1" pin="1"/>
-<wire x1="78.74" y1="99.06" x2="78.74" y2="96.52" width="0.1524" layer="91"/>
 <junction x="63.5" y="99.06"/>
 <junction x="68.58" y="99.06"/>
 <junction x="73.66" y="99.06"/>
-<junction x="78.74" y="99.06"/>
 </segment>
 <segment>
 <pinref part="JP6" gate="A" pin="1"/>
@@ -26130,12 +26094,22 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="180.34" y1="195.58" x2="200.66" y2="195.58" width="0.1524" layer="91"/>
 <label x="200.66" y="195.58" size="1.27" layer="95" xref="yes"/>
 </segment>
+<segment>
+<pinref part="IC8" gate="G$1" pin="PA13"/>
+<wire x1="180.34" y1="66.04" x2="200.66" y2="66.04" width="0.1524" layer="91"/>
+<label x="200.66" y="66.04" size="1.27" layer="95" xref="yes"/>
+</segment>
 </net>
 <net name="SWCLK" class="0">
 <segment>
 <pinref part="IC7" gate="G$1" pin="PA14"/>
 <wire x1="200.66" y1="193.04" x2="180.34" y2="193.04" width="0.1524" layer="91"/>
 <label x="200.66" y="193.04" size="1.27" layer="95" xref="yes"/>
+</segment>
+<segment>
+<pinref part="IC8" gate="G$1" pin="PA14"/>
+<wire x1="200.66" y1="63.5" x2="180.34" y2="63.5" width="0.1524" layer="91"/>
+<label x="200.66" y="63.5" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="N$4" class="0">
@@ -26187,20 +26161,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <pinref part="IC8" gate="G$1" pin="PA12"/>
 <wire x1="180.34" y1="68.58" x2="200.66" y2="68.58" width="0.1524" layer="91"/>
 <label x="200.66" y="68.58" size="1.27" layer="95" xref="yes"/>
-</segment>
-</net>
-<net name="SWDIO1" class="0">
-<segment>
-<pinref part="IC8" gate="G$1" pin="PA13"/>
-<wire x1="180.34" y1="66.04" x2="200.66" y2="66.04" width="0.1524" layer="91"/>
-<label x="200.66" y="66.04" size="1.27" layer="95" xref="yes"/>
-</segment>
-</net>
-<net name="SWCLK1" class="0">
-<segment>
-<pinref part="IC8" gate="G$1" pin="PA14"/>
-<wire x1="200.66" y1="63.5" x2="180.34" y2="63.5" width="0.1524" layer="91"/>
-<label x="200.66" y="63.5" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="N$15" class="0">
@@ -27132,7 +27092,9 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="101.6" y1="137.16" x2="109.22" y2="137.16" width="0.1524" layer="91"/>
 <wire x1="109.22" y1="137.16" x2="109.22" y2="139.7" width="0.1524" layer="91"/>
 <pinref part="R29" gate="G$1" pin="2"/>
-<label x="109.22" y="137.16" size="1.778" layer="95"/>
+<label x="127" y="137.16" size="1.27" layer="95" xref="yes"/>
+<wire x1="109.22" y1="137.16" x2="127" y2="137.16" width="0.1524" layer="91"/>
+<junction x="109.22" y="137.16"/>
 </segment>
 </net>
 <net name="ID_SD" class="0">
@@ -27146,7 +27108,9 @@ with Integrated Isolated DC-to-DC Converter</description>
 <pinref part="IC11" gate="G$1" pin="SDA"/>
 <wire x1="101.6" y1="134.62" x2="119.38" y2="134.62" width="0.1524" layer="91"/>
 <pinref part="R30" gate="G$1" pin="2"/>
-<label x="109.22" y="134.62" size="1.778" layer="95"/>
+<label x="127" y="134.62" size="1.27" layer="95" xref="yes"/>
+<wire x1="119.38" y1="134.62" x2="127" y2="134.62" width="0.1524" layer="91"/>
+<junction x="119.38" y="134.62"/>
 </segment>
 </net>
 <net name="TXD" class="0">
@@ -27190,6 +27154,87 @@ with Integrated Isolated DC-to-DC Converter</description>
 </nets>
 </sheet>
 </sheets>
+<errors>
+<approved hash="104,2,111.76,228.6,IC7,VDD1,+3V3,,,"/>
+<approved hash="104,2,111.76,226.06,IC7,VDD2,+3V3,,,"/>
+<approved hash="104,2,111.76,220.98,IC7,VDDA,+3V3,,,"/>
+<approved hash="104,2,111.76,215.9,IC7,VDDIO2,+3V3,,,"/>
+<approved hash="104,2,111.76,210.82,IC7,VBAT,+3V3,,,"/>
+<approved hash="104,2,127,243.84,IC7,VSS1,GND,,,"/>
+<approved hash="104,2,129.54,243.84,IC7,VSS2,GND,,,"/>
+<approved hash="104,2,132.08,243.84,IC7,VSS3,GND,,,"/>
+<approved hash="104,2,134.62,243.84,IC7,VSSA,GND,,,"/>
+<approved hash="104,2,111.76,99.06,IC8,VDD1,+3V3,,,"/>
+<approved hash="104,2,111.76,96.52,IC8,VDD2,+3V3,,,"/>
+<approved hash="104,2,111.76,91.44,IC8,VDDA,+3V3,,,"/>
+<approved hash="104,2,111.76,86.36,IC8,VDDIO2,+3V3,,,"/>
+<approved hash="104,2,111.76,81.28,IC8,VBAT,+3V3,,,"/>
+<approved hash="104,2,127,114.3,IC8,VSS1,GND,,,"/>
+<approved hash="104,2,129.54,114.3,IC8,VSS2,GND,,,"/>
+<approved hash="104,2,132.08,114.3,IC8,VSS3,GND,,,"/>
+<approved hash="104,2,134.62,114.3,IC8,VSSA,GND,,,"/>
+<approved hash="104,1,111.76,228.6,IC1,VDD1,+3V3,,,"/>
+<approved hash="104,1,111.76,226.06,IC1,VDD2,+3V3,,,"/>
+<approved hash="104,1,111.76,220.98,IC1,VDDA,+3V3,,,"/>
+<approved hash="104,1,111.76,215.9,IC1,VDDIO2,+3V3,,,"/>
+<approved hash="104,1,111.76,210.82,IC1,VBAT,+3V3,,,"/>
+<approved hash="104,1,127,243.84,IC1,VSS1,GND,,,"/>
+<approved hash="104,1,129.54,243.84,IC1,VSS2,GND,,,"/>
+<approved hash="104,1,132.08,243.84,IC1,VSS3,GND,,,"/>
+<approved hash="104,1,134.62,243.84,IC1,VSSA,GND,,,"/>
+<approved hash="104,1,111.76,99.06,IC2,VDD1,+3V3,,,"/>
+<approved hash="104,1,111.76,96.52,IC2,VDD2,+3V3,,,"/>
+<approved hash="104,1,111.76,91.44,IC2,VDDA,+3V3,,,"/>
+<approved hash="104,1,111.76,86.36,IC2,VDDIO2,+3V3,,,"/>
+<approved hash="104,1,111.76,81.28,IC2,VBAT,+3V3,,,"/>
+<approved hash="104,1,127,114.3,IC2,VSS1,GND,,,"/>
+<approved hash="104,1,129.54,114.3,IC2,VSS2,GND,,,"/>
+<approved hash="104,1,132.08,114.3,IC2,VSS3,GND,,,"/>
+<approved hash="104,1,134.62,114.3,IC2,VSSA,GND,,,"/>
+<approved hash="104,1,261.62,33.02,IC4G$2,VCC,+5V,,,"/>
+<approved hash="104,3,320.04,233.68,CN1,VBUS,N$42,,,"/>
+<approved hash="104,3,320.04,223.52,CN1,GND,N$41,,,"/>
+<approved hash="104,1,261.62,162.56,IC3G$2,VCC,+5V,,,"/>
+<approved hash="104,2,261.62,162.56,IC9G$2,VCC,+5V,,,"/>
+<approved hash="104,2,261.62,33.02,IC10G$2,VCC,+5V,,,"/>
+<approved hash="104,3,269.24,132.08,BAT1,-,GND,,,"/>
+<approved hash="104,3,269.24,142.24,BAT1,+,VBAT,,,"/>
+<approved hash="104,3,101.6,142.24,IC11,VCC,+5V,,,"/>
+<approved hash="104,3,60.96,86.36,RPI1,5V0A,+5V,,,"/>
+<approved hash="104,3,73.66,86.36,RPI1,3V3A,+3V3,,,"/>
+<approved hash="104,3,83.82,50.8,RPI1,GND_A,GND,,,"/>
+<approved hash="104,3,63.5,86.36,RPI1,5V0B,+5V,,,"/>
+<approved hash="104,3,76.2,86.36,RPI1,3V3B,+3V3,,,"/>
+<approved hash="104,3,83.82,48.26,RPI1,GND_B,GND,,,"/>
+<approved hash="104,3,83.82,45.72,RPI1,GND_C,GND,,,"/>
+<approved hash="104,3,83.82,43.18,RPI1,GND_D,GND,,,"/>
+<approved hash="104,3,83.82,40.64,RPI1,GND_E,GND,,,"/>
+<approved hash="104,3,83.82,38.1,RPI1,GND_F,GND,,,"/>
+<approved hash="104,3,83.82,35.56,RPI1,GND_G,GND,,,"/>
+<approved hash="104,3,83.82,33.02,RPI1,GND_H,GND,,,"/>
+<approved hash="104,1,307.34,223.52,IC5,GND2,GNDA,,,"/>
+<approved hash="104,1,279.4,226.06,IC5,GND1,GND,,,"/>
+<approved hash="104,1,307.34,215.9,IC5,GND2,GNDA,,,"/>
+<approved hash="104,1,279.4,246.38,IC5,VCC,+5V,,,"/>
+<approved hash="104,1,279.4,241.3,IC5,V_IO,+3V3,,,"/>
+<approved hash="104,1,279.4,223.52,IC5,GND1,GND,,,"/>
+<approved hash="104,1,279.4,220.98,IC5,GND1,GND,,,"/>
+<approved hash="104,1,279.4,218.44,IC5,GND1,GND,,,"/>
+<approved hash="104,1,279.4,215.9,IC5,GND1,GND,,,"/>
+<approved hash="104,1,307.34,220.98,IC5,GND2,GNDA,,,"/>
+<approved hash="104,1,307.34,218.44,IC5,GND2,GNDA,,,"/>
+<approved hash="104,1,307.34,99.06,IC6,GND2,GNDA,,,"/>
+<approved hash="104,1,279.4,101.6,IC6,GND1,GND,,,"/>
+<approved hash="104,1,307.34,91.44,IC6,GND2,GNDA,,,"/>
+<approved hash="104,1,279.4,121.92,IC6,VCC,+5V,,,"/>
+<approved hash="104,1,279.4,116.84,IC6,V_IO,+3V3,,,"/>
+<approved hash="104,1,279.4,99.06,IC6,GND1,GND,,,"/>
+<approved hash="104,1,279.4,96.52,IC6,GND1,GND,,,"/>
+<approved hash="104,1,279.4,93.98,IC6,GND1,GND,,,"/>
+<approved hash="104,1,279.4,91.44,IC6,GND1,GND,,,"/>
+<approved hash="104,1,307.34,96.52,IC6,GND2,GNDA,,,"/>
+<approved hash="104,1,307.34,93.98,IC6,GND2,GNDA,,,"/>
+</errors>
 </schematic>
 </drawing>
 </eagle>
