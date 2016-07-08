@@ -2,26 +2,24 @@ EAGLE AutoRouter Statistics:
 
 Job           : /Users/wolfgangsauer/Documents/OOBD/oobd/interface/Designs/OOBDtiger/ARM_CortexA8_DEBIAN/D5/pcb/OOBD-Tiger/OOBD-Tiger.brd
 
-Start at      : 18:56:11 (03.07.16)
-End at        : 19:01:29 (03.07.16)
-Elapsed time  : 00:05:11
+Start at      : 05:48:36 (06.07.16)
+End at        : 06:00:45 (07.07.16)
+Elapsed time  : 1d 00:12
 
-Signals       :    90   RoutingGrid: 2.5 mil  Layers: 2
-Connections   :   290   predefined:  0 ( 0 Vias )
+Signals       :    89   RoutingGrid: 2.5 mil  Layers: 2
+Connections   :   291   predefined:  0 ( 0 Vias )
 
-Router memory :   4031832
+Router memory :   3567696
 
-Job has been interrupted!
+Passname          : TopRouter     Route Optimize1 Optimize2 Optimize3 Optimize4 Optimize5 Optimize6 Optimize7 Optimize8 Optimize9Optimize10Optimize11Optimize12
 
-Passname          : TopRouter     Route
+Time per pass     :  00:00:42  17:51:44  00:00:30  00:00:30  00:00:30  00:00:30  06:14:01  00:00:41  00:00:31  00:00:29  00:00:29  00:00:29  00:00:29  00:00:28
+Number of Ripups  :         0      2108         0         0         0         0         0         0         0         0         0         0         0         0
+max. Level        :         0         5         0         0         0         0         0         0         0         0         0         0         0         0
+max. Total        :         0        98         0         0         0         0         0         0         0         0         0         0         0         0
 
-Time per pass     :  00:00:29  00:04:42
-Number of Ripups  :         0        63
-max. Level        :         0         2
-max. Total        :         0        83
+Routed            :        76       262       261       263       264       264       264       264       265       265       265       265       265       265
+Vias              :         0       195       171       164       152       150       150       149       148       145       143       143       143       143
+Resolution        :    26.1 %    90.0 %    89.7 %    90.4 %    90.7 %    90.7 %    90.7 %    90.7 %    91.1 %    91.1 %    91.1 %    91.1 %    91.1 %    91.1 %
 
-Routed            :        75       237
-Vias              :         0       120
-Resolution        :    25.9 %    81.7 %
-
-Final             : 80.7% beendet
+Final             : 91.1% beendet

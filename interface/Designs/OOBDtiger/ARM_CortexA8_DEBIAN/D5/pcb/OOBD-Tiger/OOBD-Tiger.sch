@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="6.4">
+<eagle version="7.6.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="yes"/>
@@ -19424,7 +19424,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 </instance>
 <instance part="OOBD2-CONNECTOR" gate="A" x="66.04" y="167.64"/>
 <instance part="GND6" gate="1" x="15.24" y="162.56"/>
-<instance part="P+2" gate="1" x="15.24" y="190.5"/>
+<instance part="P+2" gate="1" x="15.24" y="198.12"/>
 <instance part="HS-CAN" gate="A" x="142.24" y="190.5" rot="R270"/>
 <instance part="IC1" gate="G$1" x="115.57" y="60.96" rot="R180"/>
 <instance part="IC2" gate="G$1" x="223.52" y="59.69" rot="R180"/>
@@ -19969,7 +19969,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="88.9" y1="162.56" x2="88.9" y2="182.88" width="0.1524" layer="91"/>
 <wire x1="88.9" y1="182.88" x2="15.24" y2="182.88" width="0.1524" layer="91"/>
 <pinref part="P+2" gate="1" pin="+12V"/>
-<wire x1="15.24" y1="182.88" x2="15.24" y2="187.96" width="0.1524" layer="91"/>
+<wire x1="15.24" y1="182.88" x2="15.24" y2="195.58" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="MS-CAN_RS" class="0">
