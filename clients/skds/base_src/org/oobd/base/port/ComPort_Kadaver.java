@@ -81,7 +81,7 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
             String KEYMANAGERTYPE = "SunX509";
             if (System.getProperty("java.vm.name").equalsIgnoreCase("Dalvik")) {
                 STORETYPE = "BKS";
-                KEYSTORE = "/org/oobd/base/port/keystore.bks";
+                KEYSTORE = "/org/oobd/base/port/servercert.bks";
                 KEYMANAGERTYPE = "X509";
             }
             try {
