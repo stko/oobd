@@ -66,7 +66,7 @@
         android:id="@+id/wsProxyHostTextView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Remote Connect Proxy Host"
+        android:text="Proxy Host"
         android:textAppearance="?android:attr/textAppearanceMedium"
         tools:ignore="HardcodedText" />
 
@@ -99,6 +99,13 @@
         android:gravity="bottom"
         android:text="@string/select_your_bt_device_" >
     </TextView>
+
+    <EditText
+        android:id="@+id/deviceEditText"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textUri" />
 
     <Spinner
         android:id="@+id/BTDeviceSpinner"

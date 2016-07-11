@@ -372,6 +372,18 @@ public class MainActivity extends FragmentActivity implements
 				OOBDConstants.PropName_ConnectType,
 				OOBDConstants.PropName_ConnectTypeBT);
 		transferPreferences2System(connectTypeName);
+		
+		
+		core.writeDataPool(
+				DP_ACTUAL_CONNECT_ID,
+				preferences.getString(connectTypeName   + "_" + OOBDConstants.PropName_SerialPort, ""));
+
+
+		core.writeDataPool(
+				OOBDConstants.DP_ACTUAL_CONNECTION_TYPE,connectTypeName);
+		
+		
+		
 		String actualScriptDir = preferences.getString(
 				OOBDConstants.PropName_ScriptDir, Environment.getExternalStorageDirectory().getPath()
 				+ "/OOBD/" );
@@ -809,8 +821,21 @@ public class MainActivity extends FragmentActivity implements
 							+ OOBDConstants.PropName_ProxyPort, 0));
 
 		}
+
+		
+		/*
+		core.writeDataPool(
+				DP_ACTUAL_CONNECT_ID,
+				preferences.getString(localConnectTypeName   + "_" + OOBDConstants.PropName_SerialPort, ""));
+
+
+		core.writeDataPool(
+				OOBDConstants.DP_ACTUAL_CONNECTION_TYPE,localConnectTypeName);
+		*/
+		
 		core.writeDataPool(DP_ACTUAL_UIHANDLER, preferences.getString(
 				OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME));
+		
 		String actualScriptDir = preferences.getString(
 				OOBDConstants.PropName_ScriptDir, Environment.getExternalStorageDirectory().getPath()
 				+ "/OOBD/" );

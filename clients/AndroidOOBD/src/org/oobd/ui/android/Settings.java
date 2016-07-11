@@ -67,6 +67,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 	private TextView urlEditText;
 	private TextView wsProxyHostEditText;
 	private TextView wsProxyPortEditText;
+	private TextView deviceEditText;
 	private Hashtable<String, Class> supplyHardwareConnects;
 	private String oldConnectTypeName = null;
 	public static Settings mySettingsActivity;
@@ -117,12 +118,14 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 
 								String portString = ((EditText) findViewById(R.id.wsProxyPortEditText))
 										.getText().toString();
+								int portInt = 0;
 								if (portString.length() > 0) {
-									int portInt = Integer.parseInt(portString);
-									prefs.putInt(oldConnectTypeName + "_"
-											+ OOBDConstants.PropName_ProxyPort,
-											portInt);
+									portInt = Integer.parseInt(portString);
 								}
+								prefs.putInt(oldConnectTypeName + "_"
+										+ OOBDConstants.PropName_ProxyPort,
+										portInt);
+
 							}
 							prefs.commit();
 							updateUI();
@@ -142,7 +145,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 
 		Enumeration<String> e = supplyHardwareConnects.keys();
 
-		// iterate through Hashtable keys Enumeration
+		// iterate through HashTable keys Enumeration
 		while (e.hasMoreElements()) {
 			list.add(e.nextElement());
 		}
@@ -153,49 +156,6 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 		dataAdapter
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		connectTypeSpinner.setAdapter(dataAdapter);
-		mDeviceSpinner = (Spinner) findViewById(R.id.BTDeviceSpinner);
-		mDeviceSpinner
-				.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-					public void onItemSelected(AdapterView<?> parent,
-							View view, int pos, long id) {
-						Object item = parent.getItemAtPosition(pos);
-
-						if (item instanceof PortInfo) {
-							connectDeviceName = ((PortInfo) item).getDevice();
-						} else {
-							connectDeviceName = item.toString();
-							connectDeviceName = connectDeviceName.replaceAll(
-									"\\(.*\\)", "").trim();
-							/*
-							 * Do we really have to program our own combobox to
-							 * input own devices?
-							 * http://stackoverflow.com/questions
-							 * /3024656/how-can-i-show-a-combobox-in-android
-							 * cb.getEditor().setItem(connectDeviceName);
-							 */
-						}
-						if (connectDeviceName != null
-								&& !connectDeviceName.equalsIgnoreCase("")) {
-							preferences
-									.edit()
-									.putString(
-											connectTypeName
-													+ "_"
-													+ OOBDConstants.PropName_SerialPort,
-											connectDeviceName).commit();
-							Core.getSingleInstance().writeDataPool(
-									OOBDConstants.DP_ACTUAL_CONNECT_ID,
-									connectDeviceName);
-						}
-
-					}
-
-					public void onNothingSelected(AdapterView<?> parent) {
-						preferences.edit()
-								.putString(connectTypeName + "_DEVICE", "")
-								.commit();
-					}
-				});
 		pgpEnabled = (CheckBox) findViewById(R.id.PGPCheckBox);
 		pgpEnabled.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
@@ -331,12 +291,96 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 					int count) {
 			}
 		});
+
+		deviceEditText = (EditText) findViewById(R.id.deviceEditText);
+		deviceEditText.addTextChangedListener(new TextWatcher() {
+			public void afterTextChanged(Editable s) {
+				connectDeviceName = deviceEditText.getText().toString();
+				connectDeviceName = connectDeviceName
+						.replaceAll("\\(.*\\)", "").trim();
+				/*
+				 * Do we really have to program our own combobox to input own
+				 * devices? http://stackoverflow.com/questions
+				 * /3024656/how-can-i-show-a-combobox-in-android
+				 * cb.getEditor().setItem(connectDeviceName);
+				 */
+				if (connectDeviceName != null
+						&& !connectDeviceName.equalsIgnoreCase("")) {
+					preferences
+							.edit()
+							.putString(connectTypeName + "_" + OOBDConstants.PropName_SerialPort,
+									connectDeviceName).commit();
+					Core.getSingleInstance().writeDataPool(
+							OOBDConstants.DP_ACTUAL_CONNECT_ID,
+							connectDeviceName);
+				}
+			}
+
+			public void beforeTextChanged(CharSequence s, int start, int count,
+					int after) {
+			}
+
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+			}
+
+		});
+
+		mDeviceSpinner = (Spinner) findViewById(R.id.BTDeviceSpinner);
+		mDeviceSpinner
+				.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+					public void onItemSelected(AdapterView<?> parent,
+							View view, int pos, long id) {
+						Object item = parent.getItemAtPosition(pos);
+
+						if (item instanceof PortInfo) {
+							connectDeviceName = ((PortInfo) item).getDevice();
+						} else {
+							connectDeviceName = item.toString();
+							connectDeviceName = connectDeviceName.replaceAll(
+									"\\(.*\\)", "").trim();
+							/*
+							 * Do we really have to program our own combobox to
+							 * input own devices?
+							 * http://stackoverflow.com/questions
+							 * /3024656/how-can-i-show-a-combobox-in-android
+							 * cb.getEditor().setItem(connectDeviceName);
+							 */
+						}
+						if (connectDeviceName != null
+								&& !connectDeviceName.equalsIgnoreCase("")) {
+							deviceEditText.setText(connectDeviceName);
+
+						}
+
+					}
+
+					public void onNothingSelected(AdapterView<?> parent) {
+						deviceEditText.setText("");
+
+					}
+				});
+
 		String actualScriptDir = preferences.getString(
-				OOBDConstants.PropName_ScriptDir, Environment.getExternalStorageDirectory().getPath()
-				+ "/OOBD/" );
+				OOBDConstants.PropName_ScriptDir, Environment
+						.getExternalStorageDirectory().getPath() + "/OOBD/");
 		Core.getSingleInstance().writeDataPool(DP_SCRIPTDIR, actualScriptDir);
-		Core.getSingleInstance().writeDataPool(DP_WWW_LIB_DIR,
-				preferences.getString(OOBDConstants.PropName_LibraryDir, null));
+		Core.getSingleInstance().writeDataPool(
+				DP_WWW_LIB_DIR,
+				preferences.getString(OOBDConstants.PropName_LibraryDir,
+						actualScriptDir + "webUI"));
+
+		connectTypeName = preferences.getString(
+				OOBDConstants.PropName_ConnectType, connectTypeName);
+
+		Core.getSingleInstance().writeDataPool(
+				OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
+
+		connectDeviceName = preferences.getString(connectTypeName + "_DEVICE",
+				connectDeviceName);
+		Core.getSingleInstance().writeDataPool(DP_ACTUAL_CONNECT_ID,
+				connectDeviceName);
+
 		ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
 		Core.getSingleInstance().writeDataPool(DP_LIST_OF_SCRIPTS, files);
 		updateUI();
@@ -367,6 +411,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 				+ "PROXYHOST", ""));
 		wsProxyPortEditText.setText(preferences.getString(connectTypeName + "_"
 				+ "PROXYPORT", ""));
+		deviceEditText.setText(connectDeviceName);
 		Class<OOBDPort> value = supplyHardwareConnects.get(connectTypeName);
 		try { // tricky: try to call a static method of an interface, where a
 				// interface don't have static values by definition..

@@ -3,10 +3,10 @@
     <string name="app_name">OpenOnBoardDiagnostics</string>
     <string name="app_name_short">OOBD</string>
     <string name="app_svnversion">880</string>
-    <string name="select_your_bt_device_">Select your BT-Device:</string>
-    <string name="pgp_checkbox">enable PGP support</string>
+    <string name="select_your_bt_device_">Connect Identifier:</string>
+    <string name="pgp_checkbox">Enable PGP Support</string>
     <string name="pgpimportKeybutton">Import PGP Keys now</string>
-    <string name="remote_connect">Remote Connect</string>
-    <string name="remote_connect_Proxy_port">Remote Connect Proxy Port (0 to disable)</string>
-    <string name="http_checkbox">HTTP Nuke\'m Mode</string>
+    <string name="remote_connect">Remote Connect Server URL</string>
+    <string name="remote_connect_Proxy_port">Proxy Port (0 if unused)</string>
+    <string name="http_checkbox">Webbrowser Interface</string>
 </resources>
