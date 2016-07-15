@@ -3,6 +3,25 @@
 <html lang="en">
  
 <head>
+	<link rel="apple-touch-icon" sizes="57x57" href="/theme/default/favicon/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="/theme/default/favicon/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/theme/default/favicon/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="/theme/default/favicon/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/theme/default/favicon/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/theme/default/favicon/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/theme/default/favicon/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/theme/default/favicon/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/theme/default/favicon/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="/theme/default/favicon/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/theme/default/favicon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="/theme/default/favicon/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/theme/default/favicon/favicon-16x16.png">
+	<link rel="manifest" href="/theme/default/favicon/manifest.json">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="/theme/default/favicon/ms-icon-144x144.png">
+	<meta name="theme-color" content="#ffffff">
+
+
 	<meta charset="utf-8">
 	<script type="text/javascript" src="/libs/oobd/1/oobd.js"></script>
 	<style>
@@ -16,12 +35,24 @@
 <p>
 This design is as ugly as it can be, because it does not contain any HTML beautyfication, just bare functionality to show how the interface works
 </p>
-
+<hr/>
+These are the two buttons to "Update the List" and "Cycling Refresh"<br/>
 <button onclick="Oobd.update()">Update</button><label><input type='checkbox' onclick='Oobd.timer(this.checked);'>Timer</label>
- 
+<hr/>
+This is the table for the OOBD values:
+
 
 	<table id="field">
 	</table>
+	<hr/>
+	<div id="dropzone" class="dropzone" ondragenter="return handleDragEnter(event)" ondrop="return handledragDropAdd(event)"   ondragover="return handleDragOver(event)">Dashboard<br/>(drop items here for quick access,<br/>
+your selection will be saved in the browser)
+		<table id="dashboard">
+		</table>
+	</div>
+	<hr/>
+	<div id="trashbin" class="dropzone" ondragenter="return handleDragEnter(event)" ondrop="return handledragDropDelete(event)"   ondragover="return handleDragOver(event)">Trashbin<br/>(drop your dashboard items here to remove them)
+	</div>
 	<p>Outputs</p>
 	<p />
 	<textarea id="textoutput"></textarea>
@@ -68,9 +99,31 @@ This design is as ugly as it can be, because it does not contain any HTML beauty
 				var table = document.getElementById("field");
 				// Create an empty <tr> element and add it to the last position of the table:
 				var row = table.insertRow(-1);
+				constructVisualizer(row,obj);
+				}
+			Oobd.fillDashboard = function fillDash() {
+				var table = document.getElementById("dashboard");
+				var res=Oobd.getDashContructors();
+				for (var i = 0; i < res.length; i++) {
+					// Create an empty <tr> element and add it to the last position of the table:
+					var row = table.insertRow(-1);
+					constructVisualizer(row,JSON.parse(res[i]));
+				}
+			}
+			Oobd.start();
+			// load Dashboard objects
+		})();
+		function constructVisualizer(row,obj){
 				row.classList.add("OOBD");
 				row.setAttribute("oobd:fc",obj.name);
 				row.setAttribute("oobd:value",decodeURIComponent(escape(atob(obj.value))));
+				row.setAttribute("draggable","true");
+				row.setAttribute("oobd:constructor",JSON.stringify(obj));
+				row.addEventListener('dragstart', handleDragStart, false);
+				//row.addEventListener('dragenter', handleDragEnter, false);
+				//row.addEventListener('dragover', handleDragOver, false);
+				//row.addEventListener('dragleave', handleDragLeave, false);
+
 				if (typeof obj.updevents != "undefined" ) {
 					row.setAttribute("oobd:updevents",obj.updevents);
 				}else{
@@ -227,10 +280,7 @@ This design is as ugly as it can be, because it does not contain any HTML beauty
 				}
 				// Add some text to the new cells:
 				cell2.innerHTML = decodeURIComponent(escape(change));
-			}
-
-			Oobd.start();
-		})();
+			};		
 		function saveOutput(fileName){
 			var blob = new Blob([document.getElementById("textoutput").value], {
 			type: "text/plain;charset=utf-8"
@@ -246,6 +296,57 @@ This design is as ugly as it can be, because it does not contain any HTML beauty
 			//a.onclick();
 			return false;
 		};
+		function handleDragStart(ev) {
+			ev.dataTransfer.effectAllowed='move';
+			ev.dataTransfer.setData("Text", ev.target.getAttribute('oobd:constructor'));
+			ev.dataTransfer.setDragImage(ev.target,0,0);
+			return true;
+  		}
+		function handleDragOver(e) {
+			return false;
+		}
+		function handleDragEnter(e) {
+			event.preventDefault();
+			return true;
+		}
+
+		function handleDragLeave(e) {
+			this.classList.remove('over');  // this / e.target is previous target element.
+		}
+		function handledragDropAdd(ev) {
+			var src = ev.dataTransfer.getData("Text");
+			var table = document.getElementById("dashboard");
+			while(table.hasChildNodes())
+			{
+				table.removeChild(table.firstChild);
+			}
+
+			var res=Oobd.addToDash(src);
+			for (var i = 0; i < res.length; i++) {
+				// Create an empty <tr> element and add it to the last position of the table:
+				var row = table.insertRow(-1);
+				constructVisualizer(row,JSON.parse(res[i]));
+			}
+			ev.stopPropagation();
+			return false;
+		}
+		function handledragDropDelete(ev) {
+			var src = ev.dataTransfer.getData("Text");
+			var table = document.getElementById("dashboard");
+			while(table.hasChildNodes())
+			{
+				table.removeChild(table.firstChild);
+			}
+
+			var res=Oobd.removeFromDash(src);
+			for (var i = 0; i < res.length; i++) {
+				// Create an empty <tr> element and add it to the last position of the table:
+				var row = table.insertRow(-1);
+				constructVisualizer(row,JSON.parse(res[i]));
+			}
+			ev.stopPropagation();
+			return false;
+		}
 
 	</script>
 </body>
