@@ -341,6 +341,8 @@ function receive_OOBD(timeOut)
 							end
 						end
 					end
+				else
+					answ=serReadLn(timeOut, true);
 				end
 			end
 		end
