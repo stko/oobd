@@ -171,7 +171,7 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 			return fileName;
 		case FT_KEY:
 			return getFilesDir() + "/" + fileName;
-
+		case FT_KEY_IMPORT:
 		default:
 			File myFile = new File(Environment.getExternalStorageDirectory()
 					.getPath() + "/OOBD/" + fileName);
@@ -316,6 +316,7 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 	                    break;
 	                case OOBDConstants.FT_PROPS:
 	                case OOBDConstants.FT_RAW:
+	                case OOBDConstants.FT_KEY_IMPORT:
 	                    resource = new FileInputStream(generateUIFilePath(pathID,
 	                            resourceName));
 	                    Log.v(this.getClass().getSimpleName(),"File " + resourceName
@@ -338,7 +339,7 @@ public class OOBDApp extends Application implements IFsystem, OOBDConstants {
 	                    break;
 
 	                case OOBDConstants.FT_KEY:
-	                    resource = new FileInputStream(System.getProperty("user.home") + "/" + resourceName);
+	                    resource = new FileInputStream(getFilesDir() + "/" + resourceName);
 	                    Log.v(this.getClass().getSimpleName(),"Key File "
 	                            + resourceName + " loaded");
 	                    break;

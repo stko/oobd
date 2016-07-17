@@ -547,7 +547,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 		}
 		try {
 			InputStream keyfile = OOBDApp.getInstance().generateResourceStream(
-					OOBDConstants.FT_SCRIPT,
+					OOBDConstants.FT_KEY_IMPORT,
 					OOBDConstants.PGP_USER_KEYFILE_NAME);
 			newUserKeyExist = keyfile != null;
 			keyfile.close();
@@ -556,7 +556,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 		}
 		try {
 			InputStream keyfile = OOBDApp.getInstance().generateResourceStream(
-					OOBDConstants.FT_SCRIPT,
+					OOBDConstants.FT_KEY_IMPORT,
 					OOBDConstants.PGP_GROUP_KEYFILE_NAME);
 			newGroupKeyExist = keyfile != null;
 			keyfile.close();
@@ -576,14 +576,14 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 		if (importsingleKeyFile(OOBDConstants.PGP_USER_KEYFILE_NAME,
 				OOBDConstants.PGP_USER_KEYFILE_NAME)) {
 			File f = new File(OOBDApp.getInstance().generateUIFilePath(
-					OOBDConstants.FT_SCRIPT,
+					OOBDConstants.FT_KEY_IMPORT,
 					OOBDConstants.PGP_USER_KEYFILE_NAME));
 			f.delete();
 		}
 		if (importsingleKeyFile(OOBDConstants.PGP_GROUP_KEYFILE_NAME,
 				OOBDConstants.PGP_GROUP_KEYFILE_NAME)) {
 			File f = new File(OOBDApp.getInstance().generateUIFilePath(
-					OOBDConstants.FT_SCRIPT,
+					OOBDConstants.FT_KEY_IMPORT,
 					OOBDConstants.PGP_GROUP_KEYFILE_NAME));
 			f.delete();
 		}
@@ -592,7 +592,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 	private boolean importsingleKeyFile(String from, String to) {
 		FileOutputStream fos;
 		InputStream inFile = OOBDApp.getInstance().generateResourceStream(
-				OOBDConstants.FT_SCRIPT, from);
+				OOBDConstants.FT_KEY_IMPORT, from);
 		if (inFile != null) {
 			try {
 				fos = openFileOutput(to, Context.MODE_PRIVATE);
