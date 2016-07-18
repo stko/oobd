@@ -30,6 +30,7 @@ import org.oobd.base.port.PortInfo;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
@@ -383,7 +384,16 @@ public class MainActivity extends FragmentActivity implements
 				OOBDConstants.DP_ACTUAL_CONNECTION_TYPE,connectTypeName);
 		
 		
-		
+		//prepare initial directory structure after installation
+		AssetInstaller myAssetInstaller=new AssetInstaller(this.getAssets(),Environment.getExternalStorageDirectory().getPath()
+				+ "/OOBD",11);
+		if (myAssetInstaller.isInstallNeeded()){
+			ProgressDialog myProgressDialog = ProgressDialog.show(this, "",
+					"Install OOBD Files...", true);
+			myAssetInstaller.copyAll();
+			if (myProgressDialog != null) {
+				myProgressDialog.dismiss();
+			}		}
 		String actualScriptDir = preferences.getString(
 				OOBDConstants.PropName_ScriptDir, Environment.getExternalStorageDirectory().getPath()
 				+ "/OOBD/" );

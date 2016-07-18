@@ -368,7 +368,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 		Core.getSingleInstance().writeDataPool(
 				DP_WWW_LIB_DIR,
 				preferences.getString(OOBDConstants.PropName_LibraryDir,
-						actualScriptDir + "webUI"));
+						actualScriptDir + "lib_html"));
 
 		connectTypeName = preferences.getString(
 				OOBDConstants.PropName_ConnectType, connectTypeName);
