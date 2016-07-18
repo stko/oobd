@@ -48,11 +48,11 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
     *** Test Cases ***
     Starting the script testsuite.lbc via HTTP as Telnet with ConnectID localhost:8081
 	Pause Execution      Make sure the socat telnet connection is running
-	Create Http Context   ${httpOobd}
-	Set Request Body  connectType=Telnet&rcid=localhost:8081
+	Create Http Context   ${OobdHost}:${OobdHttpPort}
+	Set Request Body  connectType=Telnet&rcid=${OobdTelnetHost}:${OobdTelnetPort}
 	POST  /
 	Get  /dGVzdHN1aXRlLmxiYw==
-	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
+	open webUI  ws://${OobdHost}:${OobdWsPort}  ${wsSocketTimeout}
     Test for initial connect message
 	answer should match    {"type":"WSCONNECT"}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}

@@ -47,9 +47,9 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 
     *** Test Cases ***
     Starting the script testsuite.lbc via HTTP
-	Create Http Context  ${httpOobd}
+	Create Http Context  ${OobdHost}:${OobdHttpPort}
 	Get  /dGVzdHN1aXRlLmxiYw==
-	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
+	open webUI  ws://${OobdHost}:${OobdWsPort}  ${wsSocketTimeout}
     Test for initial connect message
 	answer should match    {"type":"WSCONNECT"}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
@@ -85,10 +85,10 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	answer should match    {"to":{"name":"readAscDiD:"},"value":"#No data received","type":"VALUE"}
 	close webUI
     Starting the script testsuite.lbc via HTTP for the second time
-	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
-	Create Http Context   ${httpOobd}
+	open webUI  ws://${OobdHost}:${OobdWsPort}  ${wsSocketTimeout}
+	Create Http Context   ${OobdHost}:${OobdHttpPort}
 	Get  /dGVzdHN1aXRlLmxiYw==
-	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
+	open webUI  ws://${OobdHost}:${OobdWsPort}  ${wsSocketTimeout}
     Test for second connect message
 	answer should match    {"type":"WSCONNECT"}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}

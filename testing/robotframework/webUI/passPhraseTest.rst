@@ -48,12 +48,12 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
     *** Test Cases ***
     Starting the pgp encrypted script b232_my12-PDM.lbc.pgp via HTTP
 	${pgppw} =	Get Value From User	Input your PGP passphrase
-	Create Http Context   ${httpOobd}
+	Create Http Context   ${OobdHost}:${OobdHttpPort}
 	Set Request Body  pgppw=${pgppw}
 	POST  /
 	Get  /YjIzMl9teTEyLVBETS5sYmMucGdw
     Test for initial connect message
-	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
+	open webUI  ws://${OobdHost}:${OobdWsPort}  ${wsSocketTimeout}
 	answer should match    {"type":"WSCONNECT"}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
  	answer should match    {"type":"PAGE" , "name":"Passenger Door Module"}

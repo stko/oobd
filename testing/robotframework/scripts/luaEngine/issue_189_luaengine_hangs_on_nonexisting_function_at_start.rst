@@ -47,17 +47,17 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 
     *** Test Cases ***
     Starting the script Y3Jhc2gubGJj via HTTP
-	Create Http Context   ${httpOobd}
+	Create Http Context   ${OobdHost}:${OobdHttpPort}
 	Get  /Y3Jhc2gubGJj
- 	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
+ 	open webUI  ws://${OobdHost}:${OobdWsPort}  ${wsSocketTimeout}
    Test for initial connect message
 	answer should match    {"type":"WSCONNECT"}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
 	answer should match    {"type":"DIALOG_INFO"}
     Starting the script testsuite.lbc via HTTP
-	Create Http Context   ${httpOobd}
+	Create Http Context   ${OobdHost}:${OobdHttpPort}
 	Get  /dGVzdHN1aXRlLmxiYw==
-	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
+	open webUI  ws://${OobdHost}:${OobdWsPort}  ${wsSocketTimeout}
     Test for second connect message
 	answer should match    {"type":"WSCONNECT"}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}

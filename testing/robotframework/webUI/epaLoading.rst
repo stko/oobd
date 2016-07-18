@@ -47,7 +47,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 
     *** Test Cases ***
     Starting the script testsuite.lbc via HTTP
-	Create Http Context   ${httpOobd}
+	Create Http Context   ${OobdHost}:${OobdHttpPort}
 	Set Request Body  theme=default
 	POST  /
 	:FOR    ${ELEMENT}    IN    /dGVzdHN1aXRlLmxiYw== 
@@ -87,18 +87,18 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	\	answer should match    {"type":"VALUE" ,"value":"#005 not found"}
 	\	close webUI
     Testing non existing theme settings with script testsuite.lbc via HTTP
-	Create Http Context   ${httpOobd}
+	Create Http Context   ${OobdHost}:${OobdHttpPort}
 	Set Request Body  theme=foo
 	POST  /
 	Next Request Should Have Status Code  404
 	Get  /dGVzdHN1aXRlLmxiYw==
     Testing default theme script testsuite.lbc via HTTP
-	Create Http Context   ${httpOobd}
+	Create Http Context   ${OobdHost}:${OobdHttpPort}
 	Set Request Body  theme=default
 	POST  /
 	Get  /dGVzdHN1aXRlLmxiYw==
     Testing passthrough access on epaZip.epa for manifest
-	Create Http Context   ${httpOobd}
+	Create Http Context   ${OobdHost}:${OobdHttpPort}
 	Get  /epaZip.epa/manifest
 	${body}=  Get Response Body	
 	Should Start With  ${body}  {\n${SPACE}${SPACE}"script": "helloworld.lbc"\n}

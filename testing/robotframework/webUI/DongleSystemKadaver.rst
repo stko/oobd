@@ -48,11 +48,11 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
     *** Test Cases ***
     Starting the script testsuite.lbc via HTTP as RemoteConnect with ConnectID 1234
 	Pause Execution      Make sure the kadaver simulator is running
-	Create Http Context   ${httpOobd}
+	Create Http Context   ${OobdHost}:${OobdHttpPort}
 	Set Request Body  connectType=Kadaver&rcid=1234
 	POST  /
 	Get  /dGVzdHN1aXRlLmxiYw==
-	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
+	open webUI  ws://${OobdHost}:${OobdWsPort}  ${wsSocketTimeout}
     Test for initial connect message
 	answer should match    {"type":"WSCONNECT"}
 	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
