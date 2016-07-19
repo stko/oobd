@@ -6,8 +6,6 @@ FIX="\
 ../../tools/lib_html \
 "
 
-echo Fix $FIX
-
 #define your optional files here
 #OPT=../../lua-scripts/*.epa 
 
@@ -25,8 +23,9 @@ if [ -z "$FIX" -a -z "$OPT" ]; then
 fi
 
 rm -r assets/* 
-
-git rev-list HEAD --count > assets/am.rev
+REV=$(git describe --dirty --always)
+echo "git rev:" $REV
+echo $REV > assets/am.rev
 if [ -n "$FIX" ]; then
 	mkdir assets/fix
 	if [ $? -ne 0 ] ; then

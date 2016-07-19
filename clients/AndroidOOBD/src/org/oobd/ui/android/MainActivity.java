@@ -314,7 +314,7 @@ public class MainActivity extends FragmentActivity implements
 	 * and put this canvas // inside the pane which belongs to that particular
 	 * scriptengine // and now, after initialisation of the UI, let the games
 	 * begin... OOBDApp.getInstance() .getCore() .setAssign(seID,
-	 * org.oobd.base.OOBDConstants.CL_PANE, new Object()); // store the related
+	 * org.oobd.base.CL_PANE, new Object()); // store the related
 	 * drawing pane, the // TabPane for that scriptengine // stop the Progress
 	 * Dialog BEFORE the script starts //
 	 * Diagnose.getInstance().stopProgressDialog();
@@ -331,8 +331,8 @@ public class MainActivity extends FragmentActivity implements
 			preferences = getSharedPreferences("OOBD_SETTINGS", MODE_PRIVATE);
 		}
 		if (preferences != null) {
-			if (preferences.getString(OOBDConstants.PropName_UIHander,
-					OOBDConstants.UIHANDLER_LOCAL_NAME).equalsIgnoreCase(
+			if (preferences.getString(PropName_UIHander,
+					UIHANDLER_LOCAL_NAME).equalsIgnoreCase(
 					visibleName)) {
 				Onion onion = new Onion();
 				String seID = OOBDApp.getInstance().getCore()
@@ -361,7 +361,7 @@ public class MainActivity extends FragmentActivity implements
 				.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 					public void onItemSelected(AdapterView<?> parent,
 							View view, int pos, long id) {
-						scriptName =  parent.getItemAtPosition(pos).toString();
+						scriptName = parent.getItemAtPosition(pos).toString();
 					}
 
 					public void onNothingSelected(AdapterView<?> parent) {
@@ -370,33 +370,46 @@ public class MainActivity extends FragmentActivity implements
 				});
 
 		connectTypeName = preferences.getString(
-				OOBDConstants.PropName_ConnectType,
-				OOBDConstants.PropName_ConnectTypeBT);
+				PropName_ConnectType,
+				PropName_ConnectTypeBT);
 		transferPreferences2System(connectTypeName);
-		
-		
+
 		core.writeDataPool(
 				DP_ACTUAL_CONNECT_ID,
-				preferences.getString(connectTypeName   + "_" + OOBDConstants.PropName_SerialPort, ""));
+				preferences.getString(connectTypeName + "_"
+						+ PropName_SerialPort, ""));
 
+		core.writeDataPool(DP_ACTUAL_CONNECTION_TYPE,
+				connectTypeName);
+		final AssetInstaller myAssetInstaller = new AssetInstaller(
+				MainActivity.this.getAssets(), Environment
+						.getExternalStorageDirectory().getPath() + "/OOBD", getResources().getString(R.string.app_gitversion));
+		if (myAssetInstaller.isInstallNeeded()) {
 
-		core.writeDataPool(
-				OOBDConstants.DP_ACTUAL_CONNECTION_TYPE,connectTypeName);
-		
-		
-		//prepare initial directory structure after installation
-		AssetInstaller myAssetInstaller=new AssetInstaller(this.getAssets(),Environment.getExternalStorageDirectory().getPath()
-				+ "/OOBD",11);
-		if (myAssetInstaller.isInstallNeeded()){
-			ProgressDialog myProgressDialog = ProgressDialog.show(this, "",
+			final ProgressDialog ringProgressDialog = ProgressDialog.show(
+					MainActivity.this, "Please wait ...",
 					"Install OOBD Files...", true);
-			myAssetInstaller.copyAll();
-			if (myProgressDialog != null) {
-				myProgressDialog.dismiss();
-			}		}
+			ringProgressDialog.setCancelable(true);
+			Thread installThread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					// prepare initial directory structure after installation
+					myAssetInstaller.copyAll();
+
+					ringProgressDialog.dismiss();
+				}
+			});
+			installThread.start();
+			try {
+				installThread.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		String actualScriptDir = preferences.getString(
-				OOBDConstants.PropName_ScriptDir, Environment.getExternalStorageDirectory().getPath()
-				+ "/OOBD/" );
+				PropName_ScriptDir, Environment
+						.getExternalStorageDirectory().getPath() + "/OOBD/");
 		ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
 
 		ArrayAdapter<String[]> adapter = new ArrayAdapter(this,
@@ -406,7 +419,7 @@ public class MainActivity extends FragmentActivity implements
 		if (preferences != null) {
 			BTDeviceName = preferences.getString("BTDEVICE", "");
 			lastScript = preferences.getString(
-					OOBDConstants.PropName_ScriptName, "");
+					PropName_ScriptName, "");
 			if (!lastScript.equals("")) {
 				for (int i = 0; i < mSourceSpinner.getCount(); i++) {
 					if (lastScript.equals(mSourceSpinner.getItemAtPosition(i)
@@ -477,7 +490,7 @@ public class MainActivity extends FragmentActivity implements
 						// return;
 					}
 					BTDeviceName = preferences.getString(
-							OOBDConstants.PropName_ConnectTypeBT + "_DEVICE",
+							PropName_ConnectTypeBT + "_DEVICE",
 							"");
 					if (BTDeviceName.equalsIgnoreCase("")) {
 						AlertDialog alertDialog = new AlertDialog.Builder(
@@ -501,7 +514,7 @@ public class MainActivity extends FragmentActivity implements
 		});
 		TextView versionView = (TextView) findViewById(R.id.versionView);
 		versionView.setText("Build "
-				+ getResources().getString(R.string.app_svnversion));
+				+ getResources().getString(R.string.app_gitversion));
 		final EditText input = new EditText(this);
 		// if (preferences.getBoolean("PGPENABLED", false)) {
 		if (true) {
@@ -586,7 +599,7 @@ public class MainActivity extends FragmentActivity implements
 		InputStream resource = null;
 		try {
 			resource = OOBDApp.getInstance().generateResourceStream(
-					OOBDConstants.FT_SCRIPT, OOBDConstants.DisclaimerFileName);
+					FT_SCRIPT, DisclaimerFileName);
 		} catch (MissingResourceException ex) {
 
 		}
@@ -630,7 +643,7 @@ public class MainActivity extends FragmentActivity implements
 
 		if (UIHANDLER_WS_NAME.equalsIgnoreCase((String) core.readDataPool(
 				DP_ACTUAL_UIHANDLER, preferences.getString(
-						OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME)))) {
+						PropName_UIHander, UIHANDLER_WS_NAME)))) {
 
 			// startButtonLabel.setIcon(resourceMap.getIcon("startButtonLabel.icon"));
 			core.getSystemIF().openBrowser();
@@ -641,7 +654,7 @@ public class MainActivity extends FragmentActivity implements
 			}
 			preferences
 					.edit()
-					.putString(OOBDConstants.PropName_ScriptName,
+					.putString(PropName_ScriptName,
 							ActiveArchive.getFileName()).commit();
 			core.writeDataPool(DP_ACTIVE_ARCHIVE, ActiveArchive);
 			core.startScriptArchive(ActiveArchive);
@@ -820,42 +833,42 @@ public class MainActivity extends FragmentActivity implements
 			core.writeDataPool(
 					DP_ACTUAL_REMOTECONNECT_SERVER,
 					preferences.getString(localConnectTypeName + "_"
-							+ OOBDConstants.PropName_ConnectServerURL, ""));
+							+ PropName_ConnectServerURL, ""));
 			core.writeDataPool(
 					DP_ACTUAL_PROXY_HOST,
 					preferences.getString(localConnectTypeName + "_"
-							+ OOBDConstants.PropName_ProxyHost, ""));
+							+ PropName_ProxyHost, ""));
 			core.writeDataPool(
 					DP_ACTUAL_PROXY_PORT,
 					preferences.getInt(localConnectTypeName + "_"
-							+ OOBDConstants.PropName_ProxyPort, 0));
+							+ PropName_ProxyPort, 0));
 
 		}
 
-		
 		/*
-		core.writeDataPool(
-				DP_ACTUAL_CONNECT_ID,
-				preferences.getString(localConnectTypeName   + "_" + OOBDConstants.PropName_SerialPort, ""));
+		 * core.writeDataPool( DP_ACTUAL_CONNECT_ID,
+		 * preferences.getString(localConnectTypeName + "_" +
+		 * PropName_SerialPort, ""));
+		 * 
+		 * 
+		 * core.writeDataPool(
+		 * DP_ACTUAL_CONNECTION_TYPE,localConnectTypeName);
+		 */
 
-
-		core.writeDataPool(
-				OOBDConstants.DP_ACTUAL_CONNECTION_TYPE,localConnectTypeName);
-		*/
-		
 		core.writeDataPool(DP_ACTUAL_UIHANDLER, preferences.getString(
-				OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME));
-		
+				PropName_UIHander, UIHANDLER_WS_NAME));
+
 		String actualScriptDir = preferences.getString(
-				OOBDConstants.PropName_ScriptDir, Environment.getExternalStorageDirectory().getPath()
-				+ "/OOBD/" );
+				PropName_ScriptDir, Environment
+						.getExternalStorageDirectory().getPath() + "/OOBD/");
 		core.writeDataPool(DP_SCRIPTDIR, actualScriptDir);
-		core.writeDataPool(DP_WWW_LIB_DIR,
-				preferences.getString(OOBDConstants.PropName_LibraryDir, actualScriptDir+"webUI"));
+		core.writeDataPool(DP_WWW_LIB_DIR, preferences.getString(
+				PropName_LibraryDir, actualScriptDir + PropName_LibraryDirDefault));
 		ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
 		core.writeDataPool(DP_LIST_OF_SCRIPTS, files);
 		core.writeDataPool(DP_HTTP_HOST, core.getSystemIF().getSystemIP());
-		System.out.println("Inet Address set to "+core.getSystemIF().getSystemIP().toString() );
+		System.out.println("Inet Address set to "
+				+ core.getSystemIF().getSystemIP().toString());
 		core.writeDataPool(DP_HTTP_PORT, 8080);
 		core.writeDataPool(DP_WSOCKET_PORT, 8443);
 

@@ -15,11 +15,11 @@ import android.content.res.AssetManager;
 public class AssetInstaller {
 	AssetManager assetManager;
 	String  target;
-	int rev;
+	String rev;
 	BufferedReader inputFileReader;
 
 	public AssetInstaller(AssetManager am,
-			String targetPath, int revision) {
+			String targetPath, String revision) {
 		assetManager = am;
 		target = targetPath;
 		rev = revision;
@@ -41,7 +41,7 @@ public class AssetInstaller {
 			inputFileReader.close();
 			isr.close();
 			fis.close();
-			return (line==null || Integer.parseInt(line.trim()) != rev);
+			return (line==null || line.trim().equalsIgnoreCase(rev) );
 		} catch (IOException e) {
 			return true;
 		}

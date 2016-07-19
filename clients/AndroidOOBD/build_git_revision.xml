@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+To make this work in eclipse, go into Project properties /Builders
+Add an new Ant Builder, select this file as build file and set the working directory accordingly
+On the "target" tab, select the targets included in here as to be executed on a clean build.
+
+Thats's it :-)
+
+-->
+
+<project
+    name="add GIT"
+    basedir="."
+    default="foo-update-gitversion" >
+
+    <description>
+adds GIT Revision to Android project
+    </description>
+
+    <target name="foo-update-gitversion" >
+
+        <exec
+            executable="git"
+            outputproperty="gitr.version" >
+
+            <arg value="describe" />
+
+            <arg value="--dirty" />
+
+            <arg value="--always" />
+        </exec>
+
+        <property
+            name="match.start"
+            value="&lt;string name=&quot;app_gitversion&quot;>" />
+
+        <property
+            name="match.end"
+            value="&lt;/string>" />
+
+        <replaceregexp
+            file="res/values/strings.xml"
+            match="${match.start}.*${match.end}"
+            replace="${match.start}${gitr.version}${match.end}" >
+        </replaceregexp>
+
+        <echo>
+Version found from GIT: ${gitr.version}
+        </echo>
+    </target>
+    <target name="foo-update-gittag" >
+
+        <exec
+            executable="git"
+            outputproperty="gitr.tag" >
+
+            <arg value="describe" />
+
+            <arg value="--abbrev=0" />
+       </exec>
+
+        <property
+            name="match.startt"
+            value="&lt;string name=&quot;app_gittag&quot;>" />
+
+        <property
+            name="match.endt"
+            value="&lt;/string>" />
+
+        <replaceregexp
+            file="res/values/strings.xml"
+            match="${match.startt}.*${match.endt}"
+            replace="${match.startt}${gitr.tag}${match.endt}" >
+        </replaceregexp>
+
+        <echo>Tag found from GIT: ${gitr.tag}</echo>
+    </target>
+    
+</project>

@@ -89,16 +89,16 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 						if (connectTypeName != null
 								&& !connectTypeName.equalsIgnoreCase("")) {
 							Editor prefs = preferences.edit();
-							prefs.putString(OOBDConstants.PropName_ConnectType,
+							prefs.putString(PropName_ConnectType,
 									connectTypeName);
 
 							Core.getSingleInstance().writeDataPool(
-									OOBDConstants.DP_ACTUAL_CONNECTION_TYPE,
+									DP_ACTUAL_CONNECTION_TYPE,
 									connectTypeName);
 							if (oldConnectTypeName != null) {
 
 								prefs.putString(
-										OOBDConstants.PropName_ConnectType,
+										PropName_ConnectType,
 										connectTypeName);
 								// !! The value of the connection device is not
 								// stored here, as this already controlled in
@@ -106,13 +106,13 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 								prefs.putString(
 										oldConnectTypeName
 												+ "_"
-												+ OOBDConstants.PropName_ConnectServerURL,
+												+ PropName_ConnectServerURL,
 										((EditText) findViewById(R.id.wsURLeditText))
 												.getText().toString());
 								prefs.putString(
 										oldConnectTypeName
 												+ "_"
-												+ OOBDConstants.PropName_ProxyHost,
+												+ PropName_ProxyHost,
 										((EditText) findViewById(R.id.wsProxyHostEditText))
 												.getText().toString());
 
@@ -123,7 +123,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 									portInt = Integer.parseInt(portString);
 								}
 								prefs.putInt(oldConnectTypeName + "_"
-										+ OOBDConstants.PropName_ProxyPort,
+										+ PropName_ProxyPort,
 										portInt);
 
 							}
@@ -135,7 +135,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 					public void onNothingSelected(AdapterView<?> parent) {
 						preferences
 								.edit()
-								.putString(OOBDConstants.PropName_ConnectType,
+								.putString(PropName_ConnectType,
 										"").commit();
 					}
 				});
@@ -173,13 +173,13 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 				if (isChecked) {
 					preferences
 							.edit()
-							.putString(OOBDConstants.PropName_UIHander,
-									OOBDConstants.UIHANDLER_WS_NAME).commit();
+							.putString(PropName_UIHander,
+									UIHANDLER_WS_NAME).commit();
 				} else {
 					preferences
 							.edit()
-							.putString(OOBDConstants.PropName_UIHander,
-									OOBDConstants.UIHANDLER_LOCAL_NAME)
+							.putString(PropName_UIHander,
+									UIHANDLER_LOCAL_NAME)
 							.commit();
 
 				}
@@ -231,10 +231,10 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 						.putString(
 								connectTypeName
 										+ "_"
-										+ OOBDConstants.PropName_ConnectServerURL,
+										+ PropName_ConnectServerURL,
 								urlEditText.getText().toString()).commit();
 				Core.getSingleInstance().writeDataPool(
-						OOBDConstants.DP_ACTUAL_REMOTECONNECT_SERVER,
+						DP_ACTUAL_REMOTECONNECT_SERVER,
 						urlEditText.getText().toString());
 			}
 
@@ -254,7 +254,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 						.edit()
 						.putString(
 								connectTypeName + "_"
-										+ OOBDConstants.PropName_ProxyHost,
+										+ PropName_ProxyHost,
 								wsProxyHostEditText.getText().toString())
 						.commit();
 			}
@@ -276,7 +276,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 					preferences
 							.edit()
 							.putInt(connectTypeName + "_"
-									+ OOBDConstants.PropName_ProxyPort,
+									+ PropName_ProxyPort,
 									Integer.parseInt(wsProxyPortEditText
 											.getText().toString())).commit();
 
@@ -308,10 +308,10 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 						&& !connectDeviceName.equalsIgnoreCase("")) {
 					preferences
 							.edit()
-							.putString(connectTypeName + "_" + OOBDConstants.PropName_SerialPort,
+							.putString(connectTypeName + "_" + PropName_SerialPort,
 									connectDeviceName).commit();
 					Core.getSingleInstance().writeDataPool(
-							OOBDConstants.DP_ACTUAL_CONNECT_ID,
+							DP_ACTUAL_CONNECT_ID,
 							connectDeviceName);
 				}
 			}
@@ -362,19 +362,19 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 				});
 
 		String actualScriptDir = preferences.getString(
-				OOBDConstants.PropName_ScriptDir, Environment
+				PropName_ScriptDir, Environment
 						.getExternalStorageDirectory().getPath() + "/OOBD/");
 		Core.getSingleInstance().writeDataPool(DP_SCRIPTDIR, actualScriptDir);
 		Core.getSingleInstance().writeDataPool(
 				DP_WWW_LIB_DIR,
-				preferences.getString(OOBDConstants.PropName_LibraryDir,
-						actualScriptDir + "lib_html"));
+				preferences.getString(PropName_LibraryDir,
+						actualScriptDir + PropName_LibraryDirDefault));
 
 		connectTypeName = preferences.getString(
-				OOBDConstants.PropName_ConnectType, connectTypeName);
+				PropName_ConnectType, connectTypeName);
 
 		Core.getSingleInstance().writeDataPool(
-				OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
+				DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
 
 		connectDeviceName = preferences.getString(connectTypeName + "_DEVICE",
 				connectDeviceName);
@@ -395,18 +395,18 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 	private void updateUI() {
 		if (preferences != null) {
 			connectTypeName = preferences.getString(
-					OOBDConstants.PropName_ConnectType,
-					OOBDConstants.PropName_ConnectTypeBT);
+					PropName_ConnectType,
+					PropName_ConnectTypeBT);
 			connectDeviceName = preferences.getString(connectTypeName
 					+ "_DEVICE", "");
 			pgpEnabled.setChecked(preferences.getBoolean("PGPENABLED", false));
 			httpEnabled.setChecked(preferences.getString(
-					OOBDConstants.PropName_UIHander, "UIHandler")
-					.equalsIgnoreCase(OOBDConstants.UIHANDLER_WS_NAME));
+					PropName_UIHander, "UIHandler")
+					.equalsIgnoreCase(UIHANDLER_WS_NAME));
 		}
 		urlEditText.setText(preferences.getString(connectTypeName + "_"
-				+ OOBDConstants.PropName_ConnectServerURL,
-				OOBDConstants.PropName_KadaverServerDefault));
+				+ PropName_ConnectServerURL,
+				PropName_KadaverServerDefault));
 		wsProxyHostEditText.setText(preferences.getString(connectTypeName + "_"
 				+ "PROXYHOST", ""));
 		wsProxyPortEditText.setText(preferences.getString(connectTypeName + "_"
@@ -511,7 +511,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 		pgpStatus.setText("PGP Key Status: " + pgpStatusText);
 		if (pgp != 0) {
 			preferences.edit()
-					.putBoolean(OOBDConstants.PropName_PGPEnabled, false)
+					.putBoolean(PropName_PGPEnabled, false)
 					.commit();
 			pgpEnabled.setSelected(false);
 			pgpEnabled.setEnabled(false);
@@ -532,14 +532,14 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 		Boolean newUserKeyExist;
 		Boolean newGroupKeyExist;
 		try {
-			FileInputStream keyfile = openFileInput(OOBDConstants.PGP_USER_KEYFILE_NAME);
+			FileInputStream keyfile = openFileInput(PGP_USER_KEYFILE_NAME);
 			userKeyExist = keyfile != null;
 			keyfile.close();
 		} catch (Exception e) {
 			userKeyExist = false;
 		}
 		try {
-			FileInputStream keyfile = openFileInput(OOBDConstants.PGP_GROUP_KEYFILE_NAME);
+			FileInputStream keyfile = openFileInput(PGP_GROUP_KEYFILE_NAME);
 			groupKeyExist = keyfile != null;
 			keyfile.close();
 		} catch (Exception e) {
@@ -547,8 +547,8 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 		}
 		try {
 			InputStream keyfile = OOBDApp.getInstance().generateResourceStream(
-					OOBDConstants.FT_KEY_IMPORT,
-					OOBDConstants.PGP_USER_KEYFILE_NAME);
+					FT_KEY_IMPORT,
+					PGP_USER_KEYFILE_NAME);
 			newUserKeyExist = keyfile != null;
 			keyfile.close();
 		} catch (Exception e) {
@@ -556,8 +556,8 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 		}
 		try {
 			InputStream keyfile = OOBDApp.getInstance().generateResourceStream(
-					OOBDConstants.FT_KEY_IMPORT,
-					OOBDConstants.PGP_GROUP_KEYFILE_NAME);
+					FT_KEY_IMPORT,
+					PGP_GROUP_KEYFILE_NAME);
 			newGroupKeyExist = keyfile != null;
 			keyfile.close();
 		} catch (Exception e) {
@@ -568,23 +568,23 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 	}
 
 	private void deleteKeyFiles() {
-		deleteFile(OOBDConstants.PGP_USER_KEYFILE_NAME);
-		deleteFile(OOBDConstants.PGP_GROUP_KEYFILE_NAME);
+		deleteFile(PGP_USER_KEYFILE_NAME);
+		deleteFile(PGP_GROUP_KEYFILE_NAME);
 	}
 
 	private void importKeyFiles() {
-		if (importsingleKeyFile(OOBDConstants.PGP_USER_KEYFILE_NAME,
-				OOBDConstants.PGP_USER_KEYFILE_NAME)) {
+		if (importsingleKeyFile(PGP_USER_KEYFILE_NAME,
+				PGP_USER_KEYFILE_NAME)) {
 			File f = new File(OOBDApp.getInstance().generateUIFilePath(
-					OOBDConstants.FT_KEY_IMPORT,
-					OOBDConstants.PGP_USER_KEYFILE_NAME));
+					FT_KEY_IMPORT,
+					PGP_USER_KEYFILE_NAME));
 			f.delete();
 		}
-		if (importsingleKeyFile(OOBDConstants.PGP_GROUP_KEYFILE_NAME,
-				OOBDConstants.PGP_GROUP_KEYFILE_NAME)) {
+		if (importsingleKeyFile(PGP_GROUP_KEYFILE_NAME,
+				PGP_GROUP_KEYFILE_NAME)) {
 			File f = new File(OOBDApp.getInstance().generateUIFilePath(
-					OOBDConstants.FT_KEY_IMPORT,
-					OOBDConstants.PGP_GROUP_KEYFILE_NAME));
+					FT_KEY_IMPORT,
+					PGP_GROUP_KEYFILE_NAME));
 			f.delete();
 		}
 	}
@@ -592,7 +592,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 	private boolean importsingleKeyFile(String from, String to) {
 		FileOutputStream fos;
 		InputStream inFile = OOBDApp.getInstance().generateResourceStream(
-				OOBDConstants.FT_KEY_IMPORT, from);
+				FT_KEY_IMPORT, from);
 		if (inFile != null) {
 			try {
 				fos = openFileOutput(to, Context.MODE_PRIVATE);

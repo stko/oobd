@@ -63,6 +63,7 @@ public interface OOBDConstants {
     public final static String PropName_ProxyPort = "ServerProxyPort";
     public final static String PropName_ScriptDir = "ScriptDir";
     public final static String PropName_LibraryDir = "LibraryDir";
+    public final static String PropName_LibraryDirDefault = "lib_html";
     public final static String PropName_ScriptName = "Script";
     public final static String PropName_OutputFile = "OutputDir";
     public final static String PropName_PGPEnabled = "PGPEnabled";

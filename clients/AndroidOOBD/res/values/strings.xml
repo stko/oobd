@@ -3,6 +3,8 @@
     <string name="app_name">OpenOnBoardDiagnostics</string>
     <string name="app_name_short">OOBD</string>
     <string name="app_svnversion">880</string>
+    <string name="app_gitversion">V1.0-15-g057e460-dirty</string>
+    <string name="app_gittag">V1.0</string>
     <string name="select_your_bt_device_">Connect Identifier:</string>
     <string name="pgp_checkbox">Enable PGP Support</string>
     <string name="pgpimportKeybutton">Import PGP Keys now</string>
