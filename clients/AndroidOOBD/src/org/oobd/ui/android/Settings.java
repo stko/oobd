@@ -10,6 +10,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -96,10 +97,6 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 									DP_ACTUAL_CONNECTION_TYPE,
 									connectTypeName);
 							if (oldConnectTypeName != null) {
-
-								prefs.putString(
-										PropName_ConnectType,
-										connectTypeName);
 								// !! The value of the connection device is not
 								// stored here, as this already controlled in
 								// the comportComboBox change() event
@@ -127,6 +124,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 										portInt);
 
 							}
+							oldConnectTypeName=connectTypeName;
 							prefs.commit();
 							updateUI();
 						}
@@ -376,7 +374,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 		Core.getSingleInstance().writeDataPool(
 				DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
 
-		connectDeviceName = preferences.getString(connectTypeName + "_DEVICE",
+		connectDeviceName = preferences.getString(connectTypeName + "_"+PropName_SerialPort,
 				connectDeviceName);
 		Core.getSingleInstance().writeDataPool(DP_ACTUAL_CONNECT_ID,
 				connectDeviceName);
@@ -398,7 +396,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 					PropName_ConnectType,
 					PropName_ConnectTypeBT);
 			connectDeviceName = preferences.getString(connectTypeName
-					+ "_DEVICE", "");
+					+ "_"+PropName_SerialPort, "");
 			pgpEnabled.setChecked(preferences.getBoolean("PGPENABLED", false));
 			httpEnabled.setChecked(preferences.getString(
 					PropName_UIHander, "UIHandler")
@@ -408,9 +406,9 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 				+ PropName_ConnectServerURL,
 				PropName_KadaverServerDefault));
 		wsProxyHostEditText.setText(preferences.getString(connectTypeName + "_"
-				+ "PROXYHOST", ""));
-		wsProxyPortEditText.setText(preferences.getString(connectTypeName + "_"
-				+ "PROXYPORT", ""));
+				+ PropName_ProxyHost, ""));
+		wsProxyPortEditText.setText(Integer.toString(preferences.getInt(connectTypeName + "_"
+				+ PropName_ProxyPort, 0)));
 		deviceEditText.setText(connectDeviceName);
 		Class<OOBDPort> value = supplyHardwareConnects.get(connectTypeName);
 		try { // tricky: try to call a static method of an interface, where a
@@ -524,6 +522,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 			pgpEnabled.setEnabled(true);
 			pgpImportKeys.setText("DELETE PGP keys now");
 		}
+		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
 
 	private int checkKeyFiles() {
