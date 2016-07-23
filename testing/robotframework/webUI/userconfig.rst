@@ -53,7 +53,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	:FOR    ${ELEMENT}    IN    /dGVzdHN1aXRlLmxiYw==?theme=default 
 	\	Log    ${ELEMENT}
 	\	Get  ${ELEMENT}
-	\	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
+	\	open webUI  ws://${OobdHost}:${OobdWsPort}  ${wsSocketTimeout}
 	\	answer should match    {"type":"WSCONNECT"}
 	\	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
 	\	answer should match    {"type":"PAGE" , "name":"OOBD Testsuite"}
@@ -77,7 +77,7 @@ When the pattern starts with #, the string in the answer is seen as base64 coded
 	:FOR    ${ELEMENT}    IN        /ZXBhWmlwLmVwYQ==    /ZXBhRGlyZWN0b3J5LmVwYQ==
 	\	Log    ${ELEMENT}
 	\	Get  ${ELEMENT}
-	\	open webUI  ${wsOobdURL}  ${wsSocketTimeout}
+	\	open webUI  ws://${OobdHost}:${OobdWsPort}  ${wsSocketTimeout}
 	\	answer should match    {"type":"WSCONNECT"}
 	\	answer should match    {"type":"WRITESTRING" ,"data":"%#.*(OBD).*"}
 	\	answer should match    {"type":"PAGE" , "name":"OOBD-ME Main"}

@@ -34,11 +34,16 @@ public class ComPort_Telnet implements OOBDPort, Runnable {
     static PortInfo[] udpAnouncements;
 
     public ComPort_Telnet(String thisURL) {
+    	try{
         String[] parts = thisURL.split("://");
         parts = parts[1].split(":");
         Server = parts[0];
         port = Integer.decode(parts[1]);
         new Thread(this).start();
+    	} catch (Exception ex) {
+    		Logger.getLogger(ComPort_Telnet.class.getName()).log(Level.SEVERE,
+                    "Error: Mailformed Telnet URL! : "+thisURL);
+    	}
     }
 
     public boolean connect(Onion options, OobdBus receiveListener) {
@@ -49,9 +54,9 @@ public class ComPort_Telnet implements OOBDPort, Runnable {
             out = sock.getOutputStream();
             in = sock.getInputStream();
             return true;
-        } catch (IOException ex) {
+        } catch (NullPointerException | IOException ex) {
             Logger.getLogger(ComPort_Telnet.class.getName()).log(Level.SEVERE,
-                    null, ex);
+                    "Error: Cant open telnet port", ex);
             return false;
         }
 

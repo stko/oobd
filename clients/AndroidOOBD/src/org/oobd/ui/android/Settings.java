@@ -522,6 +522,7 @@ public class Settings extends Activity implements org.oobd.base.OOBDConstants {
 			pgpEnabled.setEnabled(true);
 			pgpImportKeys.setText("DELETE PGP keys now");
 		}
+		// taken from http://stackoverflow.com/a/4401945
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
 
