@@ -1,0 +1,213 @@
+body {
+/*	background-color: black;
+*/	color: #F0F0F0;
+
+	background-image: url("/libs/images/px_by_Gre3g.png");
+	font-size: 1em;
+	font-family: arial, verdana, sans-serif;
+}
+
+#headline{
+	font-size: 3em;
+	display: inline;
+}
+
+.highlight {
+	color : red;
+}
+
+textarea{
+	border-radius:5px;
+	-moz-border-radius:5px;
+	height: 40em;
+	width: 100%;
+	background-color: dimgray;
+	font-size: 1.2em;
+	color: #F0F0F0;
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
+}
+
+div.oobd-name, div.oobd-value, div.oobd-unit  {
+	border-radius:5px;
+	-moz-border-radius:5px;
+	border-collapse:separate;
+	background-color: darkslategray;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding: 0px 0px 0px 20px;
+	border: 0px 0px 0px 0px;
+}
+
+.oobd-script-table {
+	margin: auto;
+	background-color: darkslategray;
+	width: 90%;
+	height: 90%;
+	border: 10px;
+	padding: 10px;
+
+}
+
+.headline {
+	margin: auto;	
+	font-size: 2em;
+}
+.oobd-script-icon-tr {
+	margin: auto;
+	height: 64px;
+}
+.oobd-script-filename-tr {
+	margin: auto;
+	height: 64px;
+}
+
+.oobd-script-screenshot-tr {
+	margin: auto;
+	height: 200px;
+}
+
+.oobd-script-screenshot {
+	margin: auto;
+	max-width:100%;
+	height:auto;
+}
+
+.oobd-script-icon {
+	margin: auto;
+	width: 64px;
+	height: 64px;
+}
+
+.oobd-script-filename {
+	font-size: 1.2em;
+	text-align: center;
+}
+
+
+@font-face {
+  font-family: "Lcd";
+  src: url("/libs/fonts/LEDBDREV.TTF") format("truetype");
+}
+
+
+.oobd-name {
+	color: white;
+	font-size: 1.2em;
+	padding: 1px 1px 1px 20px;
+	text-overflow: ellipsis;
+	
+}
+.oobd-value {
+	font-family: "Lcd";
+	color: yellow;
+	font-size: 4em;
+/*
+	padding: 1px 20px 1px 20px;
+*/
+	text-overflow: ellipsis;
+
+	
+}
+
+.oobd-unit {
+	padding: 10px 1px 1px 10px;
+	color: cyan;
+	text-align: right;
+	font-size: 1em;
+}
+
+#dashboard {
+	height: 15 px;
+}
+
+#gaugeValue {
+	background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fafafa), color-stop(100%, #f3f3f3));
+	background-image: -webkit-linear-gradient(#fafafa, #f3f3f3);
+	background-image: -moz-linear-gradient(#fafafa, #f3f3f3);
+	background-image: -o-linear-gradient(#fafafa, #f3f3f3);
+	background-image: -ms-linear-gradient(#fafafa, #f3f3f3);
+	background-image: linear-gradient(#fafafa, #f3f3f3);
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-ms-border-radius: 3px;
+	-o-border-radius: 3px;
+	border-radius: 3px;
+	-webkit-box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 0 50px rgba(0, 0, 0, 0.2);
+	padding: 10px;
+	display: block;
+	
+}
+
+
+
+	body{
+		font: 62.5% "Trebuchet MS", sans-serif;
+		margin: 50px;
+	}
+	
+	.demoHeaders {
+		margin-top: 2em;
+	}
+	#dialog-link {
+		padding: .4em 1em .4em 20px;
+		text-decoration: none;
+		position: relative;
+	}
+	#dialog-link span.ui-icon {
+		margin: 0 5px 0 0;
+		position: absolute;
+		left: .2em;
+		top: 50%;
+		margin-top: -8px;
+	}
+	#icons {
+		margin: 0;
+		padding: 0;
+	}
+	#icons li {
+		margin: 2px;
+		position: relative;
+		padding: 4px 0;
+		cursor: pointer;
+		float: left;
+		list-style: none;
+	}
+	#icons span.ui-icon {
+		float: left;
+		margin: 0 4px;
+	}
+	.fakewindowcontain .ui-widget-overlay {
+		position: absolute;
+	}
+	select {
+		width: 200px;
+	}
+
+/*
+
+	
+
+.ui-tabs-panel {
+	background-image: url("/libs/images/tex2res4.png");
+}
+
+.ui-tabs .ui-tabs-nav
+{
+background: lightblue;
+	background-image: url("/libs/images/tex2res4.png");
+
+}
+
+.ui-tabs .ui-tabs-panel  .ui-widget-content
+{
+background: blue;
+	background-image: url("/libs/images/tex2res4.png");
+
+}
+
+*/

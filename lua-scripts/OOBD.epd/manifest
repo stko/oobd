@@ -1,0 +1,11 @@
+{
+  "title": "OOBD Toolmarket Tester",
+  "script": "OOBD.lbc",
+  "description": "OOBD Demo simulates an off the shelf OBD Tester",
+  "author" : "The OOBD Team",
+  "version": "1.0",
+  "copyright": "GPLV2",
+  "url": "oobd.org",
+  "email": "info@oobd.org",
+  "screenshot" : "screenshot.png"  
+}

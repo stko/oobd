@@ -38,16 +38,30 @@ public interface Archive {
       */
      void unBind();
      
+    /**
+      * \brief in case archive contains some lbcs, this functions load that particular manifest into the global manifest
+      */
+     void relocateManifest(String luaFileName);
+     
+   /**
+      * \brief checks, if a file exists
+      */
+     boolean fileExist(String fileName);
+     
      /**
       * \brief read properties, if the file contains a manifest. 
       * @param property
       * @param defaultValue
       * @return 
       */
-     String getProperty(String property, String defaultValue);
+    public String getProperty(String property, String defaultValue);
     
     @Override
      public String toString();
+ 
+     public String getID();
     
     public String getFilePath();
+
+    public String getFileName();
 }

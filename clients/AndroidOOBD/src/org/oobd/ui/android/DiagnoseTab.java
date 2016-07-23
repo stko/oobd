@@ -90,8 +90,8 @@ public class DiagnoseTab extends TabActivity {
 				.sendMessage(Message.obtain(myRefreshHandler, 2, title));
 	}
 
-	protected void onStop() {
-		super.onStop();
+	protected void onDestroy() {
+		super.onDestroy();
 		OOBDApp.getInstance().closeHardwareHandle();
 	}
 }

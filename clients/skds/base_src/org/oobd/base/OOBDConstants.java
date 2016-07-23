@@ -12,7 +12,7 @@ public interface OOBDConstants {
 
     public static final String CM_VISUALIZE = "VISUALIZE";
     public static final String CM_PAGE = "PAGE";
-    public static final String CM_CHANNEL="CHANNEL";
+    public static final String CM_CHANNEL = "CHANNEL";
     public static final String CM_PAGEDONE = "PAGEDONE";
     public static final String CM_VALUE = "VALUE";
     public static final String CM_UPDATE = "UPDATE";
@@ -22,6 +22,7 @@ public interface OOBDConstants {
     public static final String CM_WRITESTRING = "WRITESTRING";
     public static final String CM_DBLOOKUP = "DBLOOKUP";
     public static final String CM_PARAM = "PARAM";
+    public static final String CM_DIALOG_INFO = "DIALOG_INFO";
     public static final String CM_IOINPUT = "IOINPUT";
     // IDs used for internal core list handling
     public static final String CL_PANE = "pane";
@@ -46,42 +47,55 @@ public interface OOBDConstants {
     public static final String FN_OPTMAX = "opts/max";
     public static final String FN_OPTSTEP = "opts/step";
     public static final String FN_OPTUNIT = "opts/unit";
-     // Types of the different visualizer update requests
+    // Types of the different visualizer update requests
     public static final Integer UR_USER = 0;
     public static final Integer UR_UPDATE = 1;
     public static final Integer UR_TIMER = 2;
     // file names for Disclaimer files:
     public final static String DisclaimerFileName = "disclaim.html";
     // file names for property files:
-    public final static String CorePrefsFileName = "oobdcore.props";
     public final static String AppPrefsFileName = "app.props";
-     //key names for properties
-     public final static String PropName_SerialPort ="SerialPort";
-     public final static String PropName_ConnectServerURL ="ConnectServerURL";
-     public final static String PropName_KadaverServerDefault ="ws://oobd.luxen.de/websock/";
-     public final static String PropName_ProxyHost ="ServerProxyHost";
-     public final static String PropName_ProxyPort ="ServerProxyPort";
-     public final static String PropName_ScriptDir ="ScriptDir";
-     public final static String PropName_ScriptName ="Script";
-     public final static String PropName_OutputDir ="OutputDir";
-     public final static String PropName_PGPEnabled ="PGPEnabled";
-     public final static String PropName_UIHander ="UIHandler";
-     public final static String PropName_ConnectType ="ConnectType";
-     public final static String PropName_ConnectTypeBT ="Bluetooth";
-     public final static String PropName_ConnectTypeRemoteConnect ="Kadaver";
-     public final static String PropName_ConnectTypeTelnet ="Telnet";
-     public final static String PropName_ConnectTypeRemoteDiscovery ="Discovery";
-         public final static String PropName_ConnectDevice ="ConnectDevice";
-     //PGP key file  names
+    //key names for properties
+    public final static String PropName_SerialPort = "SerialPort";
+    public final static String PropName_ConnectServerURL = "ConnectServerURL";
+    public final static String PropName_KadaverServerDefault = "wss://oobd.luxen.de/websockssl/";
+    public final static String PropName_ProxyHost = "ServerProxyHost";
+    public final static String PropName_ProxyPort = "ServerProxyPort";
+    public final static String PropName_ScriptDir = "ScriptDir";
+    public final static String PropName_LibraryDir = "LibraryDir";
+    public final static String PropName_LibraryDirDefault = "lib_html";
+    public final static String PropName_ScriptName = "Script";
+    public final static String PropName_OutputFile = "OutputDir";
+    public final static String PropName_PGPEnabled = "PGPEnabled";
+    public final static String PropName_UIHander = "UIHandler";
+    public final static String PropName_ConnectType = "ConnectType";
+    public final static String PropName_ConnectTypeBT = "Bluetooth";
+    public final static String PropName_ConnectTypeRemoteConnect = "Kadaver";
+    public final static String PropName_ConnectTypeTelnet = "Telnet";
+    public final static String PropName_ConnectTypeRemoteDiscovery = "Discovery";
+    public final static String PropName_ConnectDevice = "ConnectDevice";
+    //PGP key file  names
     public final static String PGP_USER_KEYFILE_NAME = "userkey.sec";
     public final static String PGP_GROUP_KEYFILE_NAME = "groupkey.sec";
+    //UI Handler Identifier
+    public final static String UIHANDLER_LOCAL_NAME = "LocalUIHandler";
+    public final static String UIHANDLER_WS_NAME = "WSUIHandler";
+    // default names for the Output Buffer commands
+    public final static String OB_DEFAULT_NAME = "display";
+    public final static String OB_CMD_SETBUFFER = "setbuffer";
+    public final static String OB_CMD_CLEAR = "clear";
+    public final static String OB_CMD_CLEARALL = "clearall";
+    public final static String OB_CMD_SAVE = "save";
+    public final static String OB_CMD_SAVEAS = "saveas";
+    public final static String OB_CMD_APPEND = "append";
+    public final static String OB_CMD_APPENDAS = "appendas";
     //Mailbox names
-   public final static String CoreMailboxName = "core";
-  public final static String UIHandlerMailboxName = "UIHandler";
-   public final static String BusMailboxName = "BusCom";
+    public final static String CoreMailboxName = "core";
+    public final static String UIHandlerMailboxName = "UIHandler";
+    public final static String BusMailboxName = "BusCom";
     public final static String DBName = "AVLLookup";
     // definitions of the Visual Elements Handling flags (=bitpositions)
-     public final static int VE_MENU = 0;
+    public final static int VE_MENU = 0;
     public final static int VE_UPDATE = 1;
     public final static int VE_TIMER = 2;
     public final static int VE_LOG = 3;
@@ -94,6 +108,8 @@ public interface OOBDConstants {
     public final static int FT_DATABASE = 4;
     public final static int FT_RAW = 5;
     public final static int FT_KEY = 6;
+    public final static int FT_WEBPAGE = 7;
+    public final static int FT_KEY_IMPORT = 8;
     // interval counter, after how many timer ticks the timer button items shall be refreshed
     public final static int LV_UPDATE_INTERVAL = 10;
     // loop time for timer triggered List- Updates in ms
@@ -102,4 +118,33 @@ public interface OOBDConstants {
     public final static int LV_STATUS = 1000;
     // UDP Broadcast defined
     public final static int UDP_PORT = 34807;
+    // identifier for manifest properties
+    public static String MANIFEST_NAME = "manifest";
+    public static String MANIFEST_SCRIPTNAME = "script";
+    public static String MANIFEST_SCRIPTNAME_DEFAULT = "start.lbc";
+    public static String MANIFEST_STARTPAGE = "startpage";
+     //  some HTML constants
+    public static String HTML_DEFAULTPAGEURL = "/theme/default/startpage.html";
+    // Identifiers for the Data Pool. Please always use the symbolic names, as their values can change all the time
+    public final static int DP_WEBUI_ACTUAL_THEME = 0;
+    public final static int DP_WEBUI_WS_READY_SIGNAL = 1;
+    public final static int DP_LAST_CREATED_SCRIPTENGINE = 2;
+    public final static int DP_RUNNING_SCRIPTENGINE = 3;
+    public final static int DP_WWW_LIB_DIR = 4;
+    public final static int DP_ACTIVE_ARCHIVE = 5;
+    public final static int DP_SCRIPTDIR = 6;
+    public final static int DP_LIST_OF_SCRIPTS = 7;
+    public final static int DP_LAST_OPENED_PATH = 8;
+    public final static int DP_ACTUAL_CONNECTION_TYPE = 9;
+    public final static int DP_ACTUAL_REMOTECONNECT_SERVER = 10;
+    public final static int DP_ACTUAL_PROXY_HOST = 11;
+    public final static int DP_ACTUAL_PROXY_PORT = 12;
+    public final static int DP_ACTUAL_DONGLE_PORT_ID = 13;
+    public final static int DP_ACTUAL_CONNECT_ID = 14;
+    public final static int DP_ACTUAL_UIHANDLER = 15;
+    public final static int DP_RUNNING_SCRIPT_NAME=16;
+    public final static int DP_HTTP_HOST = 17;
+    public final static int DP_HTTP_PORT = 18;
+    public final static int DP_WSOCKET_PORT = 19;
+    public final static int DP_ARRAY_SIZE = 20;
 }

@@ -22,7 +22,7 @@ hardwareID =0
 firmware_revision=""
 hardware_model=""
 lastSwitchedBus=""
-
+dongleAlive=0
 
 
 
@@ -103,7 +103,8 @@ end
 function echoWrite(text)
 	serFlush()
 	serWrite(text)
-	serWait(text,500)
+	dongleAlive= serWait(text,500)
+	return dongleAlive
 end
 
 -- the global receiving routine. Trys to read single- or multiframe answers from the dxm and stores it in udsbuffer, setting the received length in udslen
@@ -286,14 +287,13 @@ function setBus(bus)
 			elseif bus == "250b29" then
 				getCmdAnswerArray({ 8 , 3 , 6 })
 			end
+			if port == 1 then
+				getCmdAnswerArray({ 8 , 4 , 0 })
+			elseif port == 2 then
+				getCmdAnswerArray({ 8 , 4 , 1 })
+			end
 		end
 
-		if port == 1 then
-			getCmdAnswerArray({ 8 , 4 , 0 })
-		elseif port == 2 then
-			getCmdAnswerArray({ 8 , 4 , 1 })
-		end
-		serWait(".|:",2000) -- wait 2 secs for an response	
 		if port == nil then
 			DEBUGPRINT("nexulm", 1, "serial_dxm.lua - setBus,%02d: %s=%d, port=%s, bus=%s", "02", "hardwareID ", hardwareID, "unavailable", bus)
 		else
@@ -341,6 +341,8 @@ function receive_OOBD(timeOut)
 							end
 						end
 					end
+				else
+					answ=serReadLn(timeOut, true);
 				end
 			end
 		end
@@ -350,20 +352,12 @@ end
 function interface_version(oldvalue,id)
 	local answ=""
 	local err
-	if hardwareID == 2 then
-		echoWrite("p 0 0\r")
-		answ=serReadLn(1000, true)
-		return answ
-	elseif hardwareID == 3 or hardwareID == 4 then
-		return getCmdAnswerLine({ 0 , 0, 0 } , "not available" )
+	if hardwareID == 2 or hardwareID == 3 or hardwareID == 4 then
+		return getCmdAnswerLine({ 0 , 0, 0 } )
 	elseif hardwareID == 1 then -- DXM1 support
-		echoWrite("at!01\r")
-		answ=serReadLn(1000, true)
-		return answ
+		return echoWrite("at!01\r")>0 and  serReadLn(1000, true) or "Lost Connection"
 	else -- ELM327 specific
-		echoWrite("AT I\r")
-		answ=serReadLn(1000, true)
-		return answ
+		return echoWrite("AT I\r")>0 and  serReadLn(1000, true) or "Lost Connection"
 	end
 end
 
@@ -371,31 +365,13 @@ function interface_serial(oldvalue,id)
 	local answ=""
 	local err
 	if hardwareID == 2 then
-		echoWrite("p 0 1\r")
-		answ=serReadLn(2000, true)
-			if answ ~= nil then
-			return answ
-		else
-			return "not available"
-		end
+		return getCmdAnswerLine({ 0 , 1  } )-- get BT-MAC address of OOBD-Cup v5 and OOBD CAN Invader
 	elseif hardwareID == 3 or hardwareID == 4 then
-		return getCmdAnswerLine({ 0 , 0 , 1 }, "not available" )-- get BT-MAC address of OOBD-Cup v5 and OOBD CAN Invader
+		return getCmdAnswerLine({ 0 , 0 , 1 } )-- get BT-MAC address of OOBD-Cup v5 and OOBD CAN Invader
 	elseif hardwareID == 1 then -- DXM1
-		echoWrite("at!00\r")
-		answ=serReadLn(2000, true)
-		if answ ~= nil then
-			return answ
-		else
-			return "not available"
-		end
+		return echoWrite("at!00\r")>0 and  serReadLn(2000, true) or "Lost Connection"
 	else -- ELM327 specific
-		echoWrite("at @2\r")
-		answ=serReadLn(2000, true)
-		if answ ~= nil then
-			return answ
-		else
-			return "not available"
-		end
+		return echoWrite("at @2\r")>0 and  serReadLn(2000, true) or "Lost Connection"
 	end
 end
 
@@ -403,45 +379,32 @@ function interface_voltage(oldvalue,id)
 	local answ=""
 	local err
 	if hardwareID == 2 then
-		echoWrite("p 0 6\r")
-		answ=serReadLn(2000, true)
-		answ=round(getStringPart(answ, 1)/1000, 2)
-		answ=answ.." Volt"
-		return answ
+		answ, err = getCmdAnswerLine({ 0 , 6 })
+		if err > 0 then
+			return round(getStringPart(answ, 1)/1000, 2).." Volt"
+		end
 	elseif hardwareID == 3 or hardwareID == 4 then
-		err, answ = getCmdAnswerArray({ 0 , 0 , 2 })
-		print ("error: ", err)
-		if err <1 then
-			return "not available"
-		else
-			answ=round(getStringPart(answ[1], 1)/1000, 2)
-			answ=answ.." Volt"
-			return answ
+		answ, err = getCmdAnswerLine({ 0 , 0 , 2 })
+		if err > 0 then
+			return round(getStringPart(answ, 1)/1000, 2).." Volt"
 		end
 	elseif hardwareID == 1 then   -- DXM1
-		echoWrite("at!10\r")
-		answ=serReadLn(2000, true)
-		return answ
+		return echoWrite("at!10\r")>0 and  serReadLn(2000, true) or "Lost Connection"
 	else
-		echoWrite("AT RV\r") -- ELM327 specific
-		answ=serReadLn(2000, true)
-		return answ
+		return echoWrite("AT RV\r")>0 and  serReadLn(2000, true) or "Lost Connection"
 	end
+	return answ
 end
 
 function interface_bus(oldvalue,id)
 	local answ=""
 	local err
 	if hardwareID == 2 then
-		echoWrite("p 0 6\r")
-		answ=serReadLn(2000, true)
-		return answ
+		return getCmdAnswerLine({ 0 , 6 } )
 	elseif hardwareID == 3 or hardwareID == 4 then
-		return getCmdAnswerLine({ 9 , 0 , 0}, "not available" )
+		return getCmdAnswerLine({ 9 , 0 , 0} )
 	else 
-		echoWrite("atdp\r") -- show current used protocol
-		answ=serReadLn(2000, true)
-		return answ
+		return echoWrite("atdp\r")>0 and  serReadLn(2000, true) or "Lost Connection"
 	end
 end
 
@@ -449,19 +412,13 @@ function interface_deviceID(oldvalue,id)
 	local answ=""
 	local err
 	if hardwareID == 2 then  -- in case of using Original DXM1 Hardware with firmwar <= SVN 346
-		echoWrite("p 0 8\r")
-		answ=serReadLn(2000, true)
-		return answ
+		return getCmdAnswerLine({ 0 , 8 } ) -- get device String i.e. OOBD-CIV xxxxxx of OOBDCup v5 and OOBD CAN Invader
 	elseif hardwareID == 3 or hardwareID == 4 then -- in case of using OOBD Cup v5 and OOBD CAN Invader
-		return getCmdAnswerLine({ 0 , 0 , 8}, "not available" ) -- get device String i.e. OOBD-CIV xxxxxx of OOBDCup v5 and OOBD CAN Invader
-	elseif hardwareID == 1 then
-		echoWrite("AT!00\r")  -- in case of original DXM1 Hard-/Software use serialnumber
-		answ=serReadLn(2000, true)
-		return answ
+		return getCmdAnswerLine({ 0 , 0 , 8} ) -- get device String i.e. OOBD-CIV xxxxxx of OOBDCup v5 and OOBD CAN Invader
+	elseif hardwareID == 1 then -- in case of original DXM1 Hard-/Software use serialnumber
+		return echoWrite("AT!00\r")>0 and  serReadLn(2000, true) or "Lost Connection"
 	else -- ELM327
-		echoWrite("AT @2\r")  -- Read out ELM327 Device ID
-		answ=serReadLn(2000, true)
-		return answ
+		return echoWrite("AT @2\r")>0 and  serReadLn(2000, true) or "Lost Connection"
 	end
 end
 
@@ -495,7 +452,9 @@ function getCmdAnswerArray(param)
 	for i, p in ipairs(param) do
 		cmd=cmd..p.." "
 	end
-	echoWrite(cmd.."\r")
+	if echoWrite(cmd.."\r")<1 then
+		return 0, {}
+	end
 	return readAnswerArray()
 end
 
@@ -506,11 +465,15 @@ end
 
 --return the first received line if cmd was proceed successfully, otherways the given error msg
 function getCmdAnswerLine(param, errorMsg)
-	errCode, res=getCmdAnswerArray(param)
-	if errCode>0 then
-		return res[1]
+	local err
+	local res
+	err, res=getCmdAnswerArray(param)
+	if err>0 then
+		return res[1], err
+	elseif err==0 then
+		return "Lost Connection", err
 	else
-		return errorMsg
+		return "Dongle Error "..res[1], err
 	end
 end
 

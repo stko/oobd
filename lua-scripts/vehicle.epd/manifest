@@ -1,0 +1,10 @@
+{
+  "startpage": "content.xml",
+  "title": "OOBD Simple Vehicle DTC Reader",
+  "description": "demonstrates two scripts in one epa container",
+  "author" : "The OOBD Team",
+  "version": "1.0",
+  "copyright": "GPLV2",
+  "url": "oobd.org",
+  "screenshot" : "screenshot.png"
+}

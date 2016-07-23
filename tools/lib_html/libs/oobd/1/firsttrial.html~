@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head><meta charset="utf-8">
+<script type="text/javascript" src="oobd.js"></script>
+<script type="text/javascript">
+/* this function is implementation specific and links the OOBD feedback to the web elements */
+function registerOOBD(id,initialValue){
+	var h= document.getElementById(id);
+	h.oodbupdate= function(input){
+		h.innerHTML = atob(input.value);
+	};
+	Oobd.add(id,initialValue);
+}
+</script>
+</head>
+<body>
+
+System Info:
+
+<table>
+<tr><td>Serial</td>     <td><div id="interface_serial:">Click for Update</div>  </td></tr>
+<tr><td>BIOS</td>       <td><div id="interface_version:">Click for Update</div> </td></tr>
+<tr><td>Power</td>      <td><div id="interface_voltage:">Click for Update</div> </td></tr>
+<tr><td>Which Bus?</td> <td><div id="getSVNLuaLib:">Click for Update</div>      </td></tr>
+</table>
+<script type="text/javascript">
+	Oobd.init('ws://localhost:8443');
+	registerOOBD("interface_serial:","");
+	registerOOBD("interface_version:","");
+	registerOOBD("interface_voltage:","");
+	registerOOBD("getSVNLuaLib:","");
+</script>
+
+</body>
+</html>
+
+

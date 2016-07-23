@@ -106,19 +106,19 @@ UBaseType_t bus_init_can()
 // CAN use the same socket for send and receive
 //iSocketSend = iSocketOpenCAN(NULL, NULL, NULL);
     iSocketSend = iSocketReceive;
-/*
     int mystate;
-    DEBUGPRINT("get CAN State returns %ld\n",
-	       can_get_state(CAN_INTERFACE, &mystate));
+    DEBUGPRINT("get CAN State for %s returns %ld\n", canChannel,
+	       can_get_state(canChannel, &mystate));
     DEBUGPRINT("get CAN State mystate %ld\n", mystate);
+/*
     struct can_ctrlmode cm;
     memset(&cm, 0, sizeof(cm));
     cm.mask = CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_LISTENONLY;
     cm.flags = CAN_CTRLMODE_LOOPBACK;
     DEBUGPRINT("can_set_ctrlmode: %ld\n",
-	       can_set_ctrlmode(CAN_INTERFACE, &cm));
+	       can_set_ctrlmode(canChannel, &cm));
     DEBUGPRINT("can_set_bitrate: %ld\n",
-	       can_set_bitrate(CAN_INTERFACE, 500000));
+	       can_set_bitrate(canChannel, 500000));
 */
     if (iSocketSend != 0) {
 	return pdPASS;
@@ -392,6 +392,8 @@ UBaseType_t bus_param_can_spec(param_data * args)
 
 	    /* CAN filter mask ID reconfig */
 	    if (args->args[ARG_VALUE_1] & 1) {
+		createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
+				       NULL);
 	    } else {
 //      CAN_FilterInit(&CAN_FilterInitStructure);
 		createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,

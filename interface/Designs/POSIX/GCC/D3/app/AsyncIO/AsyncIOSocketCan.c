@@ -31,6 +31,7 @@
 #include "AsyncIO.h"
 #include "AsyncIOSocketCan.h"
 
+#include "od_base.h"
 
 /*---------------------------------------------------------------------------*/
 
@@ -46,7 +47,7 @@ int iSocketOpenCAN(void (*vSocketCallback) (int, void *), void *pvContext,
 	if (0 != iSocket) {
 	    /* Have we been passed a call back function that will deal with received messages? */
 	    struct ifreq ifr;
-	    strcpy(ifr.ifr_name, CAN_INTERFACE);
+	    strcpy(ifr.ifr_name, canChannel);
 	    ioctl(iSocket, SIOCGIFINDEX, &ifr);	/* ifr.ifr_ifindex gets filled 
 						 * with that device's index */
 	    if (pdTRUE ==

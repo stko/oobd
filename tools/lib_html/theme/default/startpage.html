@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+	<link rel="apple-touch-icon" sizes="57x57" href="/theme/default/favicon/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="/theme/default/favicon/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/theme/default/favicon/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="/theme/default/favicon/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/theme/default/favicon/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/theme/default/favicon/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/theme/default/favicon/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/theme/default/favicon/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/theme/default/favicon/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192" href="/theme/default/favicon/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/theme/default/favicon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="/theme/default/favicon/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/theme/default/favicon/favicon-16x16.png">
+	<link rel="manifest" href="/theme/default/favicon/manifest.json">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="/theme/default/favicon/ms-icon-144x144.png">
+	<meta name="theme-color" content="#ffffff">
+	<meta charset="utf-8">
+	<title>OOBD Main Page</title>
+	<!--meta name="viewport" content="width=device-width, initial-scale=1"-->
+	<!--
+	<link rel="stylesheet" href="themes/warnings.min.css" />
+	<link rel="stylesheet" href="themes/jquery.mobile.icons.min.css" />
+	-->
+	<link rel="stylesheet" type="text/css" href="/libs/gridster/0.5.6/jquery.gridster.css">
+	<!--link rel="stylesheet" href="/libs/jquery-ui-themes/1.11.4/jquery-ui.css"-->
+	<link rel="stylesheet" href="/libs/jquery-ui-themes/1.11.4/themes/dark-hive/jquery-ui.css">
+	<link rel="stylesheet" href="/libs/jquery-ui-themes/1.11.4/themes/dark-hive/theme.css">
+
+	<!--
+	<link rel="stylesheet" href="libs/jquery.mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css" />
+	<link rel="stylesheet" href="/libs/jquery.mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+	-->
+	<script src="/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="/libs/jquery-ui/1.11.4/jquery-ui.js"></script>
+	<!--
+	<script src="/libs/jquery.mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+	-->
+
+	<script src="/libs/justgage/raphael-2.1.4.min.js"></script>
+	<script src="/libs/justgage/justgage.js"></script>
+
+	<link rel="stylesheet" href="/libs/jqwidgets/3.8.2/styles/jqx.base.css" type="text/css">
+	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxcore.js"></script>
+	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxchart.js"></script>
+	<script type="text/javascript" src="/libs/jqwidgets/3.8.2/jqxgauge.js"></script>
+
+	<script src="/libs/gridster/0.5.6/jquery.gridster.js" type="text/javascript" charset="utf-8"></script>
+
+	<meta content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+	<meta name="msapplication-tap-highlight" content="no" />
+	<link rel="stylesheet" type="text/css" href="/theme/default/css/style.css" />
+
+	<meta charset="utf-8">
+	<script type="text/javascript" src="/libs/spin/1/spin.js"></script>
+	<script type="text/javascript" src="/libs/oobd/1/oobd.js"></script>
+	<style>
+		:invalid {
+			border: 2px solid #ff0000;
+		}
+	</style>
+	<script>
+		$(function() {
+		});
+	</script>
+</head>
+
+<body>
+
+	<button id="indexbutton" onclick="window.location = '/';">All Scripts</button>
+	<a target="_blank" href="http://oobd.org"><img src="/libs/images/oobd_logo_tron.png" width="100"></a>
+
+	<button onclick="Oobd.update()" id="button">Update</button><input type='checkbox' onclick='Oobd.timer(this.checked);' id="check"><label for="check">Timer</label>
+
+	<span id="headline"></span>
+	<div id="spin"></div>
+	<div id="tabs">
+		<ul>
+			<li><a href="#datatab">Diagnose</a></li>
+			<li><a href="#outputtab">Output and Buffer</a></li>
+			<li><a href="#dashtab">Dashboard</a></li>
+		</ul>
+		<div id="datatab">
+
+			<div id="dropzone" class="dropzone" width="100%">Dashboard<br/>(drop items here for quick access,<br/> your selection will be saved in the browser)
+			</div>
+			<div id="values" class="gridster">
+				<div></div>
+			</div>
+
+			<div id="dashboard" class="gridster">
+				<div></div>
+			</div>
+		</div>
+		<div id="dashtab">
+			<div id="trashbin" class="dropzone">Trashbin<br/>(drop your dashboard items here to remove them)
+			</div>
+		</div>
+		<div id="outputtab">
+			<div id="toolbar" class="ui-widget-header ui-corner-all">
+				<button id="outputclear" onclick='$("#textoutput").val("");'>Clear</button>
+				<input type="checkbox" id="outputlog" checked><label for="outputlog">Log</label>
+				<button id="outputsave" onclick="return saveOutput('output.txt');">Save</button>
+			</div>
+			<textarea id="textoutput"></textarea>
+			<p />
+			<table id="files">
+			</table>
+		</div>
+		<div id="dialog-modal" style="display: none;"></div>
+		<div id="input-modal" style="display:none;">
+			<div id="input-text"></div>
+			<!-- <form> -->
+			<input name="input-input" type="text" value="First name" class="text" />
+			<!-- </form> -->
+		</div>
+	</div>
+	<script>
+		var gridster = [];
+		var spinner = new Spinner({
+			lines: 12             // The number of lines to draw
+			, length: 7             // The length of each line
+			, width: 5              // The line thickness
+			, radius: 10            // The radius of the inner circle
+			, scale: 1.0            // Scales overall size of the spinner
+			, corners: 1            // Roundness (0..1)
+			, color: '#FF0'         // #rgb or #rrggbb
+			, opacity: 1/4          // Opacity of the lines
+			, rotate: 0             // Rotation offset
+			, direction: 1          // 1: clockwise, -1: counterclockwise
+			, speed: 1              // Rounds per second
+			, trail: 100            // Afterglow percentage
+			, fps: 20               // Frames per second when using setTimeout()
+			, zIndex: 2e9           // Use a high z-index by default
+			, className: 'spinner'  // CSS class to assign to the element
+			, top: '50%'            // center vertically
+			, left: '50%'           // center horizontally
+			, shadow: false         // Whether to render a shadow
+			, hwaccel: false        // Whether to use hardware acceleration (might be buggy)
+			, position: 'absolute'  // Element positioning
+		});
+		$(function() { //DOM Ready
+			// your page initialization code here
+			// the DOM will be available here
+			//define here what to do if a text comes in to be shown
+
+		
+			$("#tabs").tabs();
+			$("#accordion").accordion();
+			$("#indexbutton").button({
+				icons: {
+					primary: "ui-icon-home"
+				}
+			});
+			$("#button").button({
+				icons: {
+					primary: "ui-icon-refresh"
+				}
+			});
+			$("#check").button({
+				icons: {
+					primary: "ui-icon-clock"
+				}
+			});
+			$("#outputclear").button({
+				icons: {
+					primary: "ui-icon-trash"
+				}
+			});
+			$("#outputlog").button({
+				icons: {
+					primary: "ui-icon-pencil"
+				}
+			});
+			$("#outputsave").button({
+				icons: {
+					primary: "ui-icon-disk"
+				}
+			});
+			$("#radioset").buttonset();
+			$("#dialog").dialog({
+				autoOpen: false,
+				width: 400,
+				buttons: [{
+					text: "Ok",
+					click: function() {
+						$(this).dialog("close");
+					}
+				}, {
+					text: "Cancel",
+					click: function() {
+						$(this).dialog("close");
+					}
+				}]
+			});
+			// Link to open the dialog
+			$("#dialog-link").click(function(event) {
+				$("#dialog").dialog("open");
+				event.preventDefault();
+			});
+			$("#datepicker").datepicker({
+				inline: true
+			});
+			$("#slider").slider({
+				range: true,
+				values: [17, 67]
+			});
+			$("#progressbar").progressbar({
+				value: 20
+			});
+			$("#spinner").spinner();
+			$("#menu").menu();
+			$("#tooltip").tooltip();
+			$("#selectmenu").selectmenu();
+			// Hover states on the static widgets
+			$("#dialog-link, #icons li").hover(
+				function() {
+					$(this).addClass("ui-state-hover");
+				},
+				function() {
+					$(this).removeClass("ui-state-hover");
+				}
+			);
+
+			Oobd.writeString = function addText(text, cmd) {
+				switch (cmd) {
+					case "clear":
+						document.getElementById("textoutput").value = "";
+						break;
+					case "save":
+						saveOutput(text);
+						break;
+					default:
+						if(document.getElementById("outputlog").checked == true){
+							document.getElementById("textoutput").value += text;
+						}
+						break;
+				}
+			}
+			gridster[0] = $("#values div").gridster({
+				namespace: '#values',
+				widget_margins: [5, 5],
+				widget_base_dimensions: [140, 140],
+				max_cols: 6,
+				helper: 'clone',
+				resize: {
+					enabled: true
+				},
+				draggable: {
+					enabled: true,
+					start: function(e, ui, $widget) {},
+					drag: function(e, ui, $widget) {
+						//var target = document.elementFromPoint(ui.pointer.left, ui.pointer.top);
+						var target = document.elementFromPoint(e.clientX, e.clientY);
+						if (target && target.id == "dropzone") {
+							$(target).addClass("highlight");
+						} else {
+							$("#dropzone").removeClass("highlight");
+						}
+					},
+					stop: function(e, ui, $widget) {
+						$("#dropzone").removeClass("highlight");
+						//var target = document.elementFromPoint(ui.position.left, ui.position.top);
+						var target = document.elementFromPoint(e.clientX, e.clientY);
+						if (target && target.id == "dropzone") {
+							document.getElementById("datatab").appendChild(document.getElementById("dashboard"));
+							Oobd.addToDash(ui.$player[0].getAttribute('oobd:constructor'));
+							constructVisualizer(gridster[1], JSON.parse(ui.$player[0].getAttribute('oobd:constructor')));
+							document.getElementById("dashtab").appendChild(document.getElementById("dashboard"));
+						}
+					}
+				}
+			}).data('gridster');
+			gridster[1] = $("#dashboard div").gridster({
+				namespace: '#dashboard',
+				widget_margins: [5, 5],
+				widget_base_dimensions: [140, 140],
+				max_cols: 6,
+				helper: 'clone',
+				resize: {
+					enabled: true
+				},
+				draggable: {
+					enabled: true,
+					start: function(e, ui, $widget) {},
+					drag: function(e, ui, $widget) {
+						var target = document.elementFromPoint(e.clientX, e.clientY);
+						if (target && target.id == "trashbin") {
+							$(target).addClass("highlight");
+						} else {
+							$("#trashbin").removeClass("highlight");
+						}
+					},
+					stop: function(e, ui, $widget) {
+						$("#trashbin").removeClass("highlight");
+						var target = document.elementFromPoint(e.clientX, e.clientY);
+						if (target && target.id == "trashbin") {
+							Oobd.removeFromDash(ui.$player[0].getAttribute('oobd:constructor'));
+							gridster[1].remove_widget(ui.$player[0]);
+						}
+					}
+				}
+			}).data('gridster');
+			// initialize a new OOBD page to be shown
+			Oobd.openPage = function openPage(text) {
+				window.document.title = text;
+				$("#headline").text(text);
+				spinner.spin(document.getElementById('spin'));
+				gridster[0].remove_all_widgets();
+				Oobd.clearVisualiers();
+				if (Oobd.fillDashboard) {
+					Oobd.fillDashboard();
+				}
+			}
+			// page load finished
+			Oobd.pageDone = function pageDone(text) {
+				spinner.stop();
+			}
+			// add a new visual element to the page
+			Oobd.visualize = function visualize(obj) {
+				//gridster[0].add_widget(constructVisualizer(obj),2,1);
+				constructVisualizer(gridster[0], obj);
+			}
+			Oobd.fillDashboard = function fillDash() {
+					document.getElementById("datatab").appendChild(document.getElementById("dashboard"));
+					gridster[1].remove_all_widgets();
+					var res = Oobd.getDashContructors();
+					for (var i = 0; i < res.length; i++) {
+						constructVisualizer(gridster[1], JSON.parse(res[i]));
+					}
+					document.getElementById("dashtab").appendChild(document.getElementById("dashboard"));
+				}
+				// define own alert dialog
+			Oobd.alert = function(obj) {
+				$("#dialog-modal").html(atob(obj.DIALOG_INFO.tooltip));
+				$("#dialog-modal").dialog({
+					title: atob(obj.DIALOG_INFO.title),
+					width: 600,
+					height: 400,
+					buttons: {
+						"OK": function() {
+							$(this).dialog('close');
+							Oobd.connection.send('{"type":"PARAM","answer":"' + btoa("true") + '"}');
+						}
+					}
+				});
+			};
+			// define own input dialog
+			Oobd.prompt = function(obj) {
+				$("#input-modal").dialog({
+					open: function(event, ui) {
+						var mydiv = $("#input-modal").find('#input-text').html(atob(obj.PARAM.text));
+						$("#input-modal").find('input[name="input-input"]').button();
+						$("#input-modal").find('input[name="input-input"]').val(atob(obj.PARAM.default)); //set the value
+					},
+					close: function(event, ui) {
+						var boxInput = $("#input-modal").find('input[name="input-input"]').val(); //get the value..
+						Oobd.connection.send('{"type":"PARAM","answer":"' + btoa(boxInput) + '"}');
+					},
+					title: atob(obj.PARAM.title),
+					width: 600,
+					height: 400,
+					buttons: {
+						"OK": function() {
+							$(this).dialog('close');
+						}
+					}
+				});
+			};
+			// define own confirm dialog
+			Oobd.confirm = function(obj) {
+				$("#dialog-modal").html(atob(obj.PARAM.text));
+				$("#dialog-modal").dialog({
+					title: atob(obj.PARAM.title),
+					width: 600,
+					height: 400,
+					buttons: {
+						"Yes": function() {
+							$(this).dialog('close');
+							Oobd.connection.send('{"type":"PARAM","answer":"' + btoa("true") + '"}');
+						},
+						"No": function() {
+							$(this).dialog('close');
+							Oobd.connection.send('{"type":"PARAM","answer":"' + btoa("false") + '"}');
+						}
+					}
+				});
+			};
+			Oobd.start();
+		});
+		
+		function createUpdateflag(parentDiv, obj, updateFlag, iconID, toolTip) {
+			var checkbox = document.createElement('input');
+			checkbox.type = "checkbox";
+			checkbox.name = "name";
+			checkbox.value = "value";
+			var id = "id_" + Oobd.getUniqueID();
+			checkbox.id = id;
+			var label = document.createElement('label')
+			label.htmlFor = id;
+			label.appendChild(document.createTextNode(toolTip));
+			parentDiv.appendChild(checkbox);
+			parentDiv.appendChild(label);
+			if ((obj.getAttribute("oobd:updevents") & updateFlag) != 0){
+				checkbox.setAttribute("checked","checked");
+			}
+			//$(checkbox).prop("checked", (obj.getAttribute("oobd:updevents") & updateFlag) != 0);
+			$(checkbox).button({
+				icons: {
+					primary: iconID
+				},
+				text: false
+			});
+			$(checkbox).click(function() {
+				Oobd.setUpdateFlag(obj, updateFlag, checkbox.checked);
+			});
+		}
+
+		function constructVisualizer(grid, obj) {
+			var tbl = document.createElement('div');
+			tbl.display = "table";
+			// to not do this all with DOM commands, we do it at once as innerHTML
+			tbl.innerHTML = '<div class="oobd-name" display="table-row" >blu</div>\
+				<div class="oobd-value" display="table-row"></div>\
+				<div class="oobd-unit" display="table-row"></div>\
+				<div class="oobd-icons" display="table-row"></div>\
+				</tr>';
+			tbl.classList.add("OOBD");
+			tbl.setAttribute("oobd:fc", obj.name);
+			tbl.setAttribute("oobd:tooltip", atob(obj.tooltip));
+			tbl.setAttribute("oobd:value", decodeURIComponent(escape(atob(obj.value))));
+			tbl.setAttribute("oobd:constructor", JSON.stringify(obj));
+			if (typeof obj.updevents != "undefined") {
+				tbl.setAttribute("oobd:updevents", parseInt(obj.updevents));
+			} else {
+				tbl.setAttribute("oobd:updevents", 0);
+			}
+			grid.add_widget(tbl, 2, 1);
+			var cell1 = tbl.getElementsByClassName("oobd-name")[0];
+			var cell2 = tbl.getElementsByClassName("oobd-value")[0];
+			var cell3 = tbl.getElementsByClassName("oobd-unit")[0];
+			var icondiv = tbl.getElementsByClassName("oobd-icons")[0];
+			if ((tbl.getAttribute("oobd:updevents") & (Oobd.FLAG_SUBMENU | Oobd.FLAG_BACK)) != 0){
+				if ((tbl.getAttribute("oobd:updevents") &  Oobd.FLAG_SUBMENU) != 0){
+					createUpdateflag(icondiv, tbl, Oobd.FLAG_SUBMENU, "ui-icon-circle-triangle-e", 'Submenu');
+				} else {
+					if ((tbl.getAttribute("oobd:updevents") &  Oobd.FLAG_BACK) != 0){
+						createUpdateflag(icondiv, tbl, Oobd.FLAG_BACK, "ui-icon-circle-triangle-w", 'Back');
+					}
+				}
+			}else{
+				createUpdateflag(icondiv, tbl, Oobd.FLAG_UPDATE, "ui-icon-refresh", 'Update Flag');
+				createUpdateflag(icondiv, tbl, Oobd.FLAG_TIMER, "ui-icon-clock", 'Timer Flag');
+				createUpdateflag(icondiv, tbl, Oobd.FLAG_LOG, "ui-icon-pencil", 'Log changes');
+			}
+			// Add some text to the new cells:
+			cell1.innerHTML = decodeURIComponent(escape(atob(obj.tooltip)));
+			//let see, if the visualizer is a graphic element
+			if (typeof obj.opts == 'undefined') {
+				//the simple way
+				tbl.setAttribute("oobd:click", "yes");
+				cell2.innerHTML = decodeURIComponent(escape(atob(obj.value)));
+				tbl.oodbupdate = function(input) {
+					cell2.innerHTML = input.value;
+				};
+			} else {
+				switch (obj.opts.type) {
+					case "TextEdit":
+					case "Password":
+						var feld = document.createElement("input");
+						if (obj.opts.type == "Password") {
+							feld.setAttribute("type", "password");
+						} else {
+							feld.setAttribute("type", "text");
+						}
+						feld.setAttribute("size", "30");
+						feld.value = decodeURIComponent(escape(atob(obj.value)));
+						if (typeof obj.opts.regex != 'undefined') {
+							feld.setAttribute("pattern", obj.opts.regex);
+						}
+						tbl.oodbupdate = function(input) {
+							feld.value = input.value;
+						};
+						feld.onchange = function() {
+							if (feld.checkValidity()) {
+								Oobd.sendUpdateReq(tbl.oobd.command, tbl.oobd.optid, feld.value, 0);
+							}
+						};
+						cell2.appendChild(feld);
+						$(feld).button();
+						break;
+					case "CheckBox":
+						var feld = document.createElement("input");
+						var id = Oobd.getUniqueID();
+						feld.id = id;
+						var label = document.createElement("label");
+						label.htmlFor = id;
+						label.appendChild(document.createTextNode(decodeURIComponent(escape(atob(obj.tooltip)))));
+						feld.type = "checkbox";
+						feld.checked = "true" == decodeURIComponent(escape(atob(obj.value))).toLowerCase();
+						tbl.oodbupdate = function(input) {
+							feld.checked = "true" == input.value.toLowerCase();
+						};
+						feld.onchange = function() {
+							var flag = feld.checked ? "True" : "False";
+							Oobd.sendUpdateReq(tbl.oobd.command, tbl.oobd.optid, flag, 0);
+						};
+						cell2.appendChild(feld);
+						cell2.appendChild(label);
+						$(feld).button();
+						break;
+					case "Slider":
+						var feld = document.createElement("input");
+						feld.setAttribute("type", "range");
+						feld.setAttribute("min", obj.opts.min);
+						feld.setAttribute("max", obj.opts.max);
+						feld.setAttribute("step", obj.opts.step);
+						feld.value = parseFloat(decodeURIComponent(escape(atob(obj.value))));
+						tbl.oodbupdate = function(input) {
+							feld.value = parseFloat(input.value);
+						};
+						feld.onchange = function() {
+							var flag = feld.value.toString();
+							Oobd.sendUpdateReq(tbl.oobd.command, tbl.oobd.optid, flag, 0);
+						};
+						cell2.appendChild(feld);
+						$(feld).slider();
+						break;
+					case "Combo":
+						var feld = document.createElement("select");
+						var opt = null;
+						var unsortedList = obj.opts.content;
+						var deptList = new Array(unsortedList.length);
+						for (var prop in unsortedList) {
+							if (unsortedList.hasOwnProperty(prop)) {
+								// or if (Object.prototype.hasOwnProperty.call(obj,prop)) for safety...
+								deptList[parseInt(prop) - 1] = unsortedList[prop];
+							}
+						}
+						for (i = 0; i < deptList.length; i++) {
+							opt = document.createElement('option');
+							opt.value = i + 1;
+							opt.innerHTML = deptList[i];
+							feld.appendChild(opt);
+						}
+						feld.selectedIndex = parseInt(decodeURIComponent(escape(atob(obj.value)))) - 1;
+						tbl.oodbupdate = function(input) {
+							feld.selectedIndex = parseInt(input.value) - 1;
+						};
+						cell2.appendChild(feld);
+						$(feld).selectmenu({
+							select: function( event, ui ) {
+								var flag = (ui.item.index + 1).toString();
+								Oobd.sendUpdateReq(tbl.oobd.command, tbl.oobd.optid, flag, 0);}
+						});
+						break;
+					case "Gauge":
+						/*
+												var feld = document.createElement("meter");
+												feld.setAttribute("min",obj.opts.min); 
+												feld.setAttribute("max",obj.opts.max); 
+												feld.setAttribute("high",obj.opts.high); 
+												feld.setAttribute("low",obj.opts.low); 
+												feld.setAttribute("optimum",obj.opts.optimum); 
+												feld.value = parseFloat(decodeURIComponent(escape(atob(obj.value))));
+												tbl.oodbupdate = function(input) {
+													feld.value = parseFloat(input.value);
+												};
+												/* A meter is readonly, so no onchange 
+												feld.onchange=function(){
+													var flag= feld.checked ? "True" : "False";
+													Oobd.sendUpdateReq(tbl.oobd.command, tbl.oobd.optid, flag, 0);
+												};
+												*/
+						/*						
+												
+												var contentHeight = $("cell2").height();
+						  
+												var feld = document.createElement("div");
+												cell2.appendChild(feld); 
+
+												$(feld).jqxGauge({
+												});
+						*/
+						var myID = Oobd.getUniqueID();
+						cell2.id = myID;
+						var g1 = new JustGage({
+							id: myID,
+							value: parseFloat(decodeURIComponent(escape(atob(obj.value)))),
+							min: obj.opts.min,
+							max: obj.opts.max,
+							//relativeGaugeSize: true,
+
+							//title: decodeURIComponent(escape(atob(obj.tooltip))),
+							label: obj.opts.unit
+						});
+						tbl.oodbupdate = function(input) {
+							g1.refresh(parseFloat(input.value));
+						};
+						break;
+				}
+			}
+			Oobd.addObject(tbl, decodeURIComponent(escape(atob(obj.value))));
+			return tbl
+		}
+		// add file buffer changes to the page
+		Oobd.fileChange = function fileChange(id, url, change) {
+			console.log("callback on File change: " + change + " for id " + id + " with URL " + url);
+			var table = document.getElementById("files");
+			var fileID="oobd-file-" + id;
+			var existingEntry=document.getElementById(fileID);
+			if (change=="clear"){
+				if (existingEntry){
+					existingEntry.parentNode.removeChild(existingEntry);
+				}
+			}else{
+				var cell2;
+				if (!existingEntry){
+					// Create an empty <tr> element and add it to the last position of the table:
+					var row = table.insertRow(-1);
+					row.setAttribute("id", fileID);
+					// Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+					var cell1 = row.insertCell(0);
+					cell2 = row.insertCell(1);
+					cell2.setAttribute("id",fileID+"-c");
+					if (url != "") {
+						var a = document.createElement('a');
+						a.download = id;
+						a.href = url;
+						a.textContent = id;
+						cell1.appendChild(a);
+					} else {
+						cell1.innerHTML = decodeURIComponent(escape(id));
+					}
+				}else{
+					cell2=document.getElementById(fileID+"-c");
+				}
+				cell2.innerHTML = decodeURIComponent(escape(change));
+			}
+		};
+
+		function saveOutput(fileName) {
+			var blob = new Blob([document.getElementById("textoutput").value], {
+				type: "text/plain;charset=utf-8"
+			});
+			var url = URL.createObjectURL(blob);
+			var a = document.createElement('a');
+			a.download = fileName;
+			a.href = url;
+			a.textContent = "Save Output";
+			a.click();
+			//if the click() function dosen't work you can try using onclick() fucntion like this
+			//a.onclick();
+			return false;
+		};
+
+		function handledragDropAdd(ev) {
+			var src = ev.dataTransfer.getData("Text");
+			var res = Oobd.addToDash(src);
+			for (var i = 0; i < res.length; i++) {
+				gridster[1].add_widget(constructVisualizer(JSON.parse(res[i])), 2, 1);
+			}
+			ev.stopPropagation();
+			return false;
+		}
+
+		function handledragDropDelete(ev) {
+			var src = ev.dataTransfer.getData("Text");
+			var res = Oobd.removeFromDash(src);
+			for (var i = 0; i < res.length; i++) {
+				// Create an empty <tr> element and add it to the last position of the table:
+				//var row = table.insertRow(-1);
+				gridster[1].add_widget(constructVisualizer(JSON.parse(res[i])), 2, 1);
+			}
+			ev.stopPropagation();
+			return false;
+		}
+	</script>
+</body>
+
+</html>

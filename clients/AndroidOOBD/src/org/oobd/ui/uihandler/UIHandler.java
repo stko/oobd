@@ -33,7 +33,7 @@ public class UIHandler extends LocalOobdUIHandler {
     }
 
     public static String publicName() {
-        return OOBDConstants.UIHandlerMailboxName;
+        return UIHANDLER_LOCAL_NAME;
     }
 
     

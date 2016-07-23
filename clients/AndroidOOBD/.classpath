@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="org/oobd/ui/android/bus/AndroidBusReader.java|org/oobd/ui/android/bus/BluetoothInitWorker.java|org/oobd/ui/android/bus/BusEchoAndroid.java|org/oobd/ui/android/bus/BusCom.java" kind="src" path="src"/>
-	<classpathentry excluding="org/apache/|org/apache/commons/io/|org/oobd/base/port/ComPort_Unix.java|org/oobd/base/port/ComPort_Win.java|org/oobd/base/port/RXTXcomm.jar|org/oobd/base/port/jna.jar|org/oobd/base/port/librxtxSerial.jnilib|org/oobd/base/port/librxtxSerial.so|org/oobd/base/port/purejavacomm.jar|org/oobd/base/port/rxtxSerial.dll|org/oobd/ui/swing/support/|org/spongycastle/|org/oobd/crypt/AES/test/|org/oobd/crypt/gpg/test/|org/oobd/base/images/|org/oobd/base/uihandler/WSOobdUIHandler.java" kind="src" path="base_src"/>
+	<classpathentry excluding="org/apache/|org/apache/commons/io/|org/oobd/base/images/|org/oobd/base/port/ComPort_Unix.java|org/oobd/base/port/ComPort_Win.java|org/oobd/base/port/RXTXcomm.jar|org/oobd/base/port/jna.jar|org/oobd/base/port/librxtxSerial.jnilib|org/oobd/base/port/librxtxSerial.so|org/oobd/base/port/purejavacomm.jar|org/oobd/base/port/rxtxSerial.dll|org/oobd/crypt/AES/test/|org/oobd/crypt/gpg/test/|org/oobd/ui/swing/support/|org/spongycastle/" kind="src" path="base_src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openxc"/>
+	<classpathentry exported="true" kind="lib" path="/home/steffen/Desktop/workcopies/oobd/clients/skds/externals/NanoHttpd/nanohttpd-2.2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="/home/steffen/Desktop/workcopies/oobd/clients/skds/externals/Java-Websocket/dist/java_websocket.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

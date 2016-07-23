@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Set;
+import java.util.Hashtable;
+import java.util.List;
 
 import org.json.JSONException;
 import org.oobd.base.Base64Coder;
@@ -21,9 +23,14 @@ import org.oobd.base.uihandler.OobdUIHandler;
 import org.oobd.base.visualizer.IFvisualizer;
 import org.oobd.base.visualizer.Visualizer;
 import org.oobd.ui.android.application.OOBDApp;
+import org.oobd.base.archive.Archive;
+import org.oobd.base.archive.Factory;
+import org.oobd.base.port.OOBDPort;
+import org.oobd.base.port.PortInfo;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
@@ -35,6 +42,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -65,7 +73,7 @@ import com.openxc.remote.VehicleService;
  *         launched.
  */
 public class MainActivity extends FragmentActivity implements
-		ModalDialog.NoticeDialogListener, IFui {
+		ModalDialog.NoticeDialogListener, IFui, org.oobd.base.OOBDConstants {
 
 	public Core core;
 	public Map<String, String> scriptEngineMap = new HashMap<String, String>();
@@ -91,14 +99,19 @@ public class MainActivity extends FragmentActivity implements
 	private SharedPreferences preferences;
 	private BluetoothAdapter mBluetoothAdapter;
 
+	private String connectDeviceName;
+	private String connectTypeName;
+	private String oldConnectTypeName = null;
+	private Hashtable<String, Class> supplyHardwareConnects;
+
 	public static MainActivity myMainActivity;
 	VehicleManager service = null;
 	OOBDVehicleDataSource source;
 	ServiceConnection mConnection;
 
-	public void sm(String msg) {
-		// TODO Auto-generated method stub
-		OutputActivity.getInstance().addText(msg + "\n");
+	public void sm(String msg, String modifier) {
+
+		OutputActivity.getInstance().addText(msg + "\n", modifier);
 		// TODO outputtofront crashes
 		// DiagnoseTab.getInstance().outputToFront();
 	}
@@ -157,7 +170,6 @@ public class MainActivity extends FragmentActivity implements
 	public void registerOobdCore(Core core) {
 		this.core = core;
 		Log.v(this.getClass().getSimpleName(), "Core registered in IFui");
-
 	}
 
 	public void announceScriptengine(String id, String visibleName) {
@@ -289,36 +301,46 @@ public class MainActivity extends FragmentActivity implements
 
 	}
 
-	public void startScriptEngine(Onion onion) {
-
-		String seID = OOBDApp.getInstance().getCore()
-				.createScriptEngine(scriptEngineID, onion);
-
-		// JTabbedPane newjTabPane = new JTabbedPane(); //create a inner
-		// JTabbedPane as container for the later coming scriptengine pages
-		// newjTabPane.setName(seID); // set the name of that canvas that it can
-		// be found again later
-		// mainSeTabbedPane.addTab(seID, newjTabPane); // and put this canvas
-		// inside the pane which belongs to that particular scriptengine
-		// and now, after initialisation of the UI, let the games begin...
-		OOBDApp.getInstance()
-				.getCore()
-				.setAssign(seID, org.oobd.base.OOBDConstants.CL_PANE,
-						new Object()); // store the related drawing pane, the
-										// TabPane for that scriptengine
-		// stop the Progress Dialog BEFORE the script starts
-		// Diagnose.getInstance().stopProgressDialog();
-		OOBDApp.getInstance().getCore().startScriptEngine(seID, onion);
-
-	}
+	/*
+	 * public void startScriptEngine(Onion onion) {
+	 * 
+	 * String seID = OOBDApp.getInstance().getCore()
+	 * .createScriptEngine(scriptEngineID, onion);
+	 * 
+	 * // JTabbedPane newjTabPane = new JTabbedPane(); //create a inner //
+	 * JTabbedPane as container for the later coming scriptengine pages //
+	 * newjTabPane.setName(seID); // set the name of that canvas that it can //
+	 * be found again later // mainSeTabbedPane.addTab(seID, newjTabPane); //
+	 * and put this canvas // inside the pane which belongs to that particular
+	 * scriptengine // and now, after initialisation of the UI, let the games
+	 * begin... OOBDApp.getInstance() .getCore() .setAssign(seID,
+	 * org.oobd.base.CL_PANE, new Object()); // store the related
+	 * drawing pane, the // TabPane for that scriptengine // stop the Progress
+	 * Dialog BEFORE the script starts //
+	 * Diagnose.getInstance().stopProgressDialog();
+	 * OOBDApp.getInstance().getCore().startScriptEngine(seID, onion);
+	 * 
+	 * }
+	 */
 
 	public void announceUIHandler(String id, String visibleName) {
-		Onion onion = new Onion();
-		String seID = OOBDApp.getInstance().getCore()
-				.createUIHandler(id, onion);
+		System.out
+				.println("UIHandler id:" + id + " visibleName:" + visibleName);
 
-		OOBDApp.getInstance().getCore().startUIHandler(seID, onion);
+		if (preferences == null) {
+			preferences = getSharedPreferences("OOBD_SETTINGS", MODE_PRIVATE);
+		}
+		if (preferences != null) {
+			if (preferences.getString(PropName_UIHander,
+					UIHANDLER_LOCAL_NAME).equalsIgnoreCase(
+					visibleName)) {
+				Onion onion = new Onion();
+				String seID = OOBDApp.getInstance().getCore()
+						.createUIHandler(id, onion);
 
+				OOBDApp.getInstance().getCore().startUIHandler(seID, onion);
+			}
+		}
 	}
 
 	/** Called when the activity is first created. */
@@ -339,24 +361,69 @@ public class MainActivity extends FragmentActivity implements
 				.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 					public void onItemSelected(AdapterView<?> parent,
 							View view, int pos, long id) {
-						scriptName = (String) parent.getItemAtPosition(pos);
+						scriptName = parent.getItemAtPosition(pos).toString();
 					}
 
 					public void onNothingSelected(AdapterView<?> parent) {
 						scriptName = null;
 					}
 				});
+
+		connectTypeName = preferences.getString(
+				PropName_ConnectType,
+				PropName_ConnectTypeBT);
+		transferPreferences2System(connectTypeName);
+
+		core.writeDataPool(
+				DP_ACTUAL_CONNECT_ID,
+				preferences.getString(connectTypeName + "_"
+						+ PropName_SerialPort, ""));
+
+		core.writeDataPool(DP_ACTUAL_CONNECTION_TYPE,
+				connectTypeName);
+		final AssetInstaller myAssetInstaller = new AssetInstaller(
+				MainActivity.this.getAssets(), Environment
+						.getExternalStorageDirectory().getPath() + "/OOBD", getResources().getString(R.string.app_gitversion));
+		if (myAssetInstaller.isInstallNeeded()) {
+
+			final ProgressDialog ringProgressDialog = ProgressDialog.show(
+					MainActivity.this, "Please wait ...",
+					"Install OOBD Files...", true);
+			ringProgressDialog.setCancelable(true);
+			Thread installThread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					// prepare initial directory structure after installation
+					myAssetInstaller.copyAll();
+
+					ringProgressDialog.dismiss();
+				}
+			});
+			installThread.start();
+			try {
+				installThread.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		String actualScriptDir = preferences.getString(
+				PropName_ScriptDir, Environment
+						.getExternalStorageDirectory().getPath() + "/OOBD/");
+		ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
+
 		ArrayAdapter<String[]> adapter = new ArrayAdapter(this,
-				android.R.layout.simple_spinner_item, OOBDApp.getInstance()
-						.getAvailableLuaScript());
+				android.R.layout.simple_spinner_item, files);
 		mSourceSpinner.setAdapter(adapter);
 		preferences = getSharedPreferences("OOBD_SETTINGS", MODE_PRIVATE);
 		if (preferences != null) {
 			BTDeviceName = preferences.getString("BTDEVICE", "");
-			lastScript = preferences.getString("SCRIPT", "");
+			lastScript = preferences.getString(
+					PropName_ScriptName, "");
 			if (!lastScript.equals("")) {
 				for (int i = 0; i < mSourceSpinner.getCount(); i++) {
-					if (lastScript.equals(mSourceSpinner.getItemAtPosition(i))) {
+					if (lastScript.equals(mSourceSpinner.getItemAtPosition(i)
+							.toString())) {
 						mSourceSpinner.setSelection(i);
 						break;
 					}
@@ -423,7 +490,7 @@ public class MainActivity extends FragmentActivity implements
 						// return;
 					}
 					BTDeviceName = preferences.getString(
-							OOBDConstants.PropName_ConnectTypeBT + "_DEVICE",
+							PropName_ConnectTypeBT + "_DEVICE",
 							"");
 					if (BTDeviceName.equalsIgnoreCase("")) {
 						AlertDialog alertDialog = new AlertDialog.Builder(
@@ -447,7 +514,7 @@ public class MainActivity extends FragmentActivity implements
 		});
 		TextView versionView = (TextView) findViewById(R.id.versionView);
 		versionView.setText("Build "
-				+ getResources().getString(R.string.app_svnversion));
+				+ getResources().getString(R.string.app_gitversion));
 		final EditText input = new EditText(this);
 		// if (preferences.getBoolean("PGPENABLED", false)) {
 		if (true) {
@@ -532,7 +599,7 @@ public class MainActivity extends FragmentActivity implements
 		InputStream resource = null;
 		try {
 			resource = OOBDApp.getInstance().generateResourceStream(
-					OOBDConstants.FT_SCRIPT, OOBDConstants.DisclaimerFileName);
+					FT_SCRIPT, DisclaimerFileName);
 		} catch (MissingResourceException ex) {
 
 		}
@@ -573,109 +640,36 @@ public class MainActivity extends FragmentActivity implements
 	// onclickhandler of the Disclaimer dialog, as Android does not allow modal
 	// dialogs (only god knows why...)
 	void startScript() {
-		if (scriptName == null) {
-			return;
-		}
-		preferences.edit().putString("SCRIPT", scriptName).commit();
 
-		String connectURL = "serial"; // this looks obviously not like an URL
-										// yet, but maybe in a later extension
+		if (UIHANDLER_WS_NAME.equalsIgnoreCase((String) core.readDataPool(
+				DP_ACTUAL_UIHANDLER, preferences.getString(
+						PropName_UIHander, UIHANDLER_WS_NAME)))) {
 
-		// ----------------------------------------------------------
-		String connectTypeName = preferences.getString(
-				OOBDConstants.PropName_ConnectType,
-				OOBDConstants.PropName_ConnectTypeBT);
-		if (connectTypeName.equals(OOBDConstants.PropName_ConnectTypeBT)) {
-			connectURL = "BT://"
-					+ preferences.getString(
-							OOBDConstants.PropName_ConnectTypeBT + "_DEVICE",
-							"");
-		}
-		if (connectTypeName
-				.equals(OOBDConstants.PropName_ConnectTypeRemoteDiscovery)) {
-			connectURL = "telnet://"
-					+ preferences.getString(
-							OOBDConstants.PropName_ConnectTypeRemoteDiscovery
-									+ "_DEVICE", "");
-		}
-		if (connectTypeName.equals(OOBDConstants.PropName_ConnectTypeTelnet)) {
-			connectURL = preferences.getString(
-					OOBDConstants.PropName_ConnectTypeTelnet + "_"
-							+ OOBDConstants.PropName_ConnectServerURL,
-					OOBDConstants.PropName_KadaverServerDefault);
-		}
-
-		if (connectTypeName
-				.equals(OOBDConstants.PropName_ConnectTypeRemoteConnect)) {
-			try {
-				Onion answer = requestParamInput(new Onion(
-						"{"
-								+ "'PARAM' : [{ "
-								+ "'type':'String',"
-								+ "'title':'"
-								+ Base64Coder
-										.encodeString("Enter the Connect Number")
-								+ "',"
-								+ "'default':'"
-								+ Base64Coder.encodeString(connectURLDefault)
-								+ "',"
-								+ "'tooltip':'"
-								+ Base64Coder
-										.encodeString("Please ask the person, who's connecting the dongle to the vehicle for the Connect Number displayed by his software")
-								+ "'" + "}]}"));
-				if (answer == null) {
-					MessageBox("Missing Value",
-							"For Remote Connect you need to enter the Connect Number");
-					return;
-				}
-				connectURL = answer.getOnionBase64String("answer");
-				if (connectURL == null || connectURL.equals("")) {
-					MessageBox("Missing Value",
-							"For Remote Connect you need to enter the Connect Number");
-					return;
-				}
-				connectURLDefault = connectURL;
-
-				String serverURL = preferences.getString(
-						OOBDConstants.PropName_ConnectTypeRemoteConnect + "_"
-								+ OOBDConstants.PropName_ConnectServerURL,
-						OOBDConstants.PropName_KadaverServerDefault);
-				String[] parts = serverURL.split("://");
-				if (parts.length != 2) {
-					MessageBox("Wrong Format",
-							"The Remote Connect URL is not a valid URL");
-					return;
-
-				}
-				connectURL = parts[0] + "://"
-						+ Base64Coder.encodeString(connectURL) + "@" + parts[1];
-
-			} catch (JSONException ex) {
-				Log.e("OOBD", null, ex);
+			// startButtonLabel.setIcon(resourceMap.getIcon("startButtonLabel.icon"));
+			core.getSystemIF().openBrowser();
+		} else {
+			Archive ActiveArchive = (Archive) mSourceSpinner.getSelectedItem();
+			if (ActiveArchive == null) {
 				return;
 			}
-		}
-		connectURL = connectURL;
+			preferences
+					.edit()
+					.putString(PropName_ScriptName,
+							ActiveArchive.getFileName()).commit();
+			core.writeDataPool(DP_ACTIVE_ARCHIVE, ActiveArchive);
+			core.startScriptArchive(ActiveArchive);
 
-		// ----------------------------------------------------------
-		// prepare the "load Script" message
-		Diagnose.showDialog = true;
-		// the following trick avoids a recreation of the Diagnose
-		// TapActivity as long as the previous created one is still
-		// in memory
-		Intent i = new Intent();
-		i.setClass(MainActivity.this, DiagnoseTab.class);
-		i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		startActivity(i);
+			// ----------------------------------------------------------
+			// prepare the "load Script" message
+			Diagnose.showDialog = true;
+			// the following trick avoids a recreation of the Diagnose
+			// TapActivity as long as the previous created one is still
+			// in memory
+			Intent i = new Intent();
+			i.setClass(MainActivity.this, DiagnoseTab.class);
+			i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+			startActivity(i);
 
-		try {
-			Onion cmdOnion = new Onion("{" + "'scriptpath':'" + scriptName
-					+ "'" + ",'connecturl':'"
-					+ Base64Coder.encodeString(connectURL) + "'" + "}");
-			startScriptEngine(cmdOnion);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			Log.e("OOBD", "JSON creation error", e);
 		}
 
 	}
@@ -819,8 +813,8 @@ public class MainActivity extends FragmentActivity implements
 								mHandler.sendMessage(m);
 
 							}
-//						}).show();
-				});
+							// }).show();
+						});
 		try {
 			customAlert.show();
 			// Looper.getMainLooper().loop();
@@ -828,6 +822,55 @@ public class MainActivity extends FragmentActivity implements
 		} catch (RuntimeException e2) {
 		}
 		return dialogResultOnion;
+
+	}
+
+	@Override
+	public void transferPreferences2System(String localConnectTypeName) {
+
+		if (localConnectTypeName != null
+				&& !localConnectTypeName.equalsIgnoreCase("")) {
+			core.writeDataPool(
+					DP_ACTUAL_REMOTECONNECT_SERVER,
+					preferences.getString(localConnectTypeName + "_"
+							+ PropName_ConnectServerURL, ""));
+			core.writeDataPool(
+					DP_ACTUAL_PROXY_HOST,
+					preferences.getString(localConnectTypeName + "_"
+							+ PropName_ProxyHost, ""));
+			core.writeDataPool(
+					DP_ACTUAL_PROXY_PORT,
+					preferences.getInt(localConnectTypeName + "_"
+							+ PropName_ProxyPort, 0));
+
+		}
+
+		/*
+		 * core.writeDataPool( DP_ACTUAL_CONNECT_ID,
+		 * preferences.getString(localConnectTypeName + "_" +
+		 * PropName_SerialPort, ""));
+		 * 
+		 * 
+		 * core.writeDataPool(
+		 * DP_ACTUAL_CONNECTION_TYPE,localConnectTypeName);
+		 */
+
+		core.writeDataPool(DP_ACTUAL_UIHANDLER, preferences.getString(
+				PropName_UIHander, UIHANDLER_WS_NAME));
+
+		String actualScriptDir = preferences.getString(
+				PropName_ScriptDir, Environment
+						.getExternalStorageDirectory().getPath() + "/OOBD/");
+		core.writeDataPool(DP_SCRIPTDIR, actualScriptDir);
+		core.writeDataPool(DP_WWW_LIB_DIR, preferences.getString(
+				PropName_LibraryDir, actualScriptDir + PropName_LibraryDirDefault));
+		ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
+		core.writeDataPool(DP_LIST_OF_SCRIPTS, files);
+		core.writeDataPool(DP_HTTP_HOST, core.getSystemIF().getSystemIP());
+		System.out.println("Inet Address set to "
+				+ core.getSystemIF().getSystemIP().toString());
+		core.writeDataPool(DP_HTTP_PORT, 8080);
+		core.writeDataPool(DP_WSOCKET_PORT, 8443);
 
 	}
 

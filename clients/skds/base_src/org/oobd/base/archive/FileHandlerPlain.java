@@ -11,8 +11,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.oobd.base.Base64Coder;
 
 import org.oobd.base.Core;
+import org.oobd.base.OOBDConstants;
 
 /**
  *
@@ -20,20 +22,21 @@ import org.oobd.base.Core;
  */
 public class FileHandlerPlain implements Archive {
 
+    String myFileDirectory;
     String myFilePath;
     String myFileName;
-	Core core;
+    Core core;
 
-	public FileHandlerPlain(Core c){
-		core=c;
-	}
+    public FileHandlerPlain(Core c) {
+        core = c;
+    }
 
     public InputStream getInputStream(String innerPath) {
         if (myFilePath != null) {
             try {
-                return new FileInputStream(myFilePath);
+                return new FileInputStream(myFileDirectory + "/" + innerPath);
             } catch (FileNotFoundException ex) {
-                Logger.getLogger(FileHandlerPlain.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(FileHandlerPlain.class.getName()).log(Level.INFO, "could not open file {0}", innerPath);
                 return null;
             }
         }
@@ -50,10 +53,12 @@ public class FileHandlerPlain implements Archive {
         }
     }
 
+    @Override
     public boolean bind(String filePath) {
         File file = new File(filePath);
         if (file.exists()) {
-            myFilePath = filePath;
+            myFileDirectory = file.getParent().replace("\\", "/");;
+            myFilePath = file.getAbsolutePath().replace("\\", "/");;
             myFileName = file.getName();
             return true;
         } else {
@@ -61,11 +66,16 @@ public class FileHandlerPlain implements Archive {
         }
     }
 
+    @Override
     public void unBind() {
         myFilePath = null;
     }
 
-    public String getProperty(String property, String defaultValue) {
+     @Override
+   public String getProperty(String property, String defaultValue) {
+        if(OOBDConstants.MANIFEST_SCRIPTNAME.equalsIgnoreCase(property)){
+            return myFileName;
+        }
         return defaultValue;
     }
 
@@ -73,8 +83,38 @@ public class FileHandlerPlain implements Archive {
     public String toString() {
         return myFileName;
     }
+
+    @Override
+    public String getID() {
+        return Base64Coder.encodeString(myFileName);
+    }
     
-    public String getFilePath(){
+    @Override
+    public String getFilePath() {
         return myFilePath;
+    }
+
+    @Override
+    public String getFileName() {
+        return myFileName;
+    }
+
+    @Override
+    public void relocateManifest(String luaFileName) {
+   // do nothing..
+    }
+
+    @Override
+    public boolean fileExist(String fileName) {
+        InputStream in =getInputStream(fileName);
+        if (in==null){
+            return false;
+        }else{
+            try {
+                in.close();
+            } catch (IOException ex) {
+            }
+            return true;
+        }
     }
 }

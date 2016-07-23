@@ -2,10 +2,15 @@ package org.oobd.ui.android;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Hashtable;
+
+import org.oobd.base.OOBDConstants;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -27,12 +32,19 @@ import android.widget.ToggleButton;
 
 //http://code.google.com/p/android-file-dialog/
 
-public class OutputActivity extends Activity {
+public class OutputActivity extends Activity implements
+		org.oobd.base.OOBDConstants {
 	public static Handler myRefreshHandler;
 	private EditText mytext;
 	private ToggleButton myLogActiveButton;
 	public static OutputActivity myOutputActivityInstance = null;
-
+	private Hashtable<String, ArrayList<Character>> outputBuffers = new Hashtable<String, ArrayList<Character>>();
+	private String actualBufferName = OB_DEFAULT_NAME; // name of the actual
+														// writestring output,
+														// default is "display"
+														// for screen output
+	private char[] actBuffer; //acts as temporary buffer for the output content, while we waiting for the result of the file save dialog
+	private boolean actFileAppend; //acts as temporary flag for the file Dialog intent, if the ouput should be appended to the file or not 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -43,14 +55,87 @@ public class OutputActivity extends Activity {
 		myLogActiveButton = (ToggleButton) findViewById(R.id.loggingToggleButton);
 		myRefreshHandler = new Handler() {
 			@Override
-			public void handleMessage(Message msg) {
-
-				if (myLogActiveButton.isChecked()) {
-					mytext.setText(mytext.getText().toString()
-							+ msg.obj.toString());
-
+			public void handleMessage(Message msgObject) {
+				OutputText myOutputText = (OutputText) msgObject.obj;
+				String msg = myOutputText.text;
+				String modifier = myOutputText.modifier;
+				if (!"".equalsIgnoreCase(modifier)) {
+					if (modifier.equalsIgnoreCase(OB_CMD_SETBUFFER)) {
+						actualBufferName = msg.toLowerCase().trim();
+						if (!actualBufferName.equals(OB_DEFAULT_NAME)) {
+							if (!outputBuffers.containsKey(actualBufferName)) {
+								outputBuffers.put(actualBufferName,
+										new ArrayList<Character>());
+								actBuffer = new char[0];
+							}
+						}
+					}
+					if (modifier.equalsIgnoreCase(OB_CMD_CLEAR)) {
+						if (actualBufferName.equals(OB_DEFAULT_NAME)) { // do
+																		// the
+																		// special
+																		// handling
+																		// of
+																		// the
+																		// UI
+																		// textbox
+																		// here
+							mytext.setText("");
+						} else {
+							outputBuffers.put(actualBufferName,
+									new ArrayList<Character>());
+							actBuffer = new char[0];
+						}
+					} else if (modifier.equalsIgnoreCase(OB_CMD_CLEARALL)) {
+						mytext.setText("");
+						outputBuffers = new Hashtable<String, ArrayList<Character>>();
+						actBuffer = new char[0];
+					} else {
+						// here we need the buffer content, so we need to do the
+						// time consuming conversion here
+						if (actualBufferName.equals(OB_DEFAULT_NAME)) {
+							actBuffer = mytext.getText().toString()
+									.toCharArray();
+						} else {
+							if (outputBuffers.containsKey(actualBufferName)) {
+								actBuffer = arrayListToCharArray(outputBuffers
+										.get(actualBufferName));
+							} else {
+								outputBuffers.put(actualBufferName,
+										new ArrayList<Character>());
+								actBuffer = new char[0];
+							}
+						}
+						if (modifier.equalsIgnoreCase(OB_CMD_SAVEAS)) {
+							saveBufferAsFileRequest(msg, false);
+						}
+						if (modifier.equalsIgnoreCase(OB_CMD_SAVE)) {
+							saveBufferToFile(msg, false);
+						}
+						if (modifier.equalsIgnoreCase(OB_CMD_APPENDAS)) {
+							saveBufferAsFileRequest(msg, true);
+						}
+						if (modifier.equalsIgnoreCase(OB_CMD_APPEND)) {
+							saveBufferToFile(msg, true);
+						}
+					}
+				} else {
+					if (actualBufferName.equals(OB_DEFAULT_NAME)) {
+						if (myLogActiveButton.isChecked()) {
+							mytext.setText(mytext.getText().toString() + msg
+									+ "\n");
+						}
+					} else {
+						ArrayList<Character> actBufferArrayList = outputBuffers
+								.get(actualBufferName);
+						for (char c : msg.toCharArray()) {
+							actBufferArrayList.add(c);
+						}
+					}
 				}
+
 			}
+
 		};
 		((ImageButton) findViewById(R.id.clearButton))
 				.setOnClickListener(new View.OnClickListener() {
@@ -59,7 +144,6 @@ public class OutputActivity extends Activity {
 						mytext.setText("");
 					}
 				});
-
 
 		((ImageButton) findViewById(R.id.diskButton))
 				.setOnClickListener(new View.OnClickListener() {
@@ -78,22 +162,23 @@ public class OutputActivity extends Activity {
 									public void onClick(DialogInterface dialog,
 											int item) {
 										if (item == 0) { // save locally
-/*											Intent intent = new Intent(
-													OutputActivity
-															.getInstance()
-															.getBaseContext(),
-													FileDialog.class);
-											intent.putExtra(
-													FileDialog.START_PATH,
-													"/sdcard/OOBD");
-											startActivityForResult(intent, 1);
-*/
-											Intent intent = new Intent("org.openintents.action.PICK_FILE");
-											intent.putExtra(
-													Intent.EXTRA_TITLE,
+											/*
+											 * Intent intent = new Intent(
+											 * OutputActivity .getInstance()
+											 * .getBaseContext(),
+											 * FileDialog.class);
+											 * intent.putExtra(
+											 * FileDialog.START_PATH,
+											 * "/sdcard/OOBD");
+											 * startActivityForResult(intent,
+											 * 1);
+											 */
+											Intent intent = new Intent(
+													"org.openintents.action.PICK_FILE");
+											intent.putExtra(Intent.EXTRA_TITLE,
 													"Save as text");
 											startActivityForResult(intent, 1);
-											} else { // send it somehow
+										} else { // send it somehow
 											Intent intent = new Intent(
 													Intent.ACTION_SEND);
 											intent.putExtra(
@@ -126,22 +211,21 @@ public class OutputActivity extends Activity {
 												File file = new File(
 														extStorageDirectory,
 														fileName);
-												saveOutput(file);
+												actBuffer=mytext.getText().toString().toCharArray(); //.toString().getBytes();
+												saveBufferToFile(file,false);
 
 												if (!file.exists()
 														|| !file.canRead()) {
-													Toast
-															.makeText(
-																	myOutputActivityInstance,
-																	"Attachment Error",
-																	Toast.LENGTH_SHORT)
+													Toast.makeText(
+															myOutputActivityInstance,
+															"Attachment Error",
+															Toast.LENGTH_SHORT)
 															.show();
 													return;
 												}
-												intent
-														.putExtra(
-																Intent.EXTRA_TEXT,
-																Html.fromHtml("<html><body>With best regards from <a href='http://oobd.org'>OOBD</a></body></html>"));
+												intent.putExtra(
+														Intent.EXTRA_TEXT,
+														Html.fromHtml("<html><body>With best regards from <a href='http://oobd.org'>OOBD</a></body></html>"));
 
 												Uri uri = Uri.parse("file://"
 														+ file);
@@ -151,7 +235,8 @@ public class OutputActivity extends Activity {
 
 											}
 											startActivity(Intent.createChooser(
-													intent, "Forward Output Text..."));
+													intent,
+													"Forward Output Text..."));
 										}
 									}
 								});
@@ -159,6 +244,55 @@ public class OutputActivity extends Activity {
 						alert.show();
 					}
 				});
+
+	}
+
+	/*
+	 * as char[] and Arraylist<Character> are not compatible, we need to handle
+	 * Display output and normal buffer handling independent from each other and
+	 * only convert, when really needed.
+	 */
+	char[] arrayListToCharArray(ArrayList<Character> input) {
+		char[] actBuffer = new char[input.size()];
+		int position = 0;
+		for (char i : input) {
+			actBuffer[position] = i;
+			position++;
+		}
+		return actBuffer;
+
+	}
+
+	boolean saveBufferToFile(String fileName,  boolean append) {
+			File file = new File(fileName);
+			return saveBufferToFile(file, append);
+	}
+
+	boolean saveBufferToFile(File fileHandle , boolean append) {
+		try {
+			FileWriter os = new FileWriter(fileHandle, append);
+			os.write(actBuffer);
+			os.close();
+			return true;
+		} catch (IOException ex) {
+			// Unable to create file,
+			// likely because external
+			// storage is
+			// not currently mounted.
+			Log.w("ExternalStorage", "Error writing " + fileHandle.getName(), ex);
+			return false;
+		}
+	}
+
+	private void saveBufferAsFileRequest(String FileName,
+			boolean append) {
+		actFileAppend=append;
+		Intent intent = new Intent(
+				"org.openintents.action.PICK_FILE");
+		intent.putExtra(Intent.EXTRA_TITLE,
+				"Save to file");
+		startActivityForResult(intent, 1);
+
 
 	}
 
@@ -180,17 +314,18 @@ public class OutputActivity extends Activity {
 						myOutputActivityInstance).create();
 				alertDialog.setTitle("File already exist!");
 				alertDialog.setMessage("OK to overwrite?");
-				alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,"OK",
+				alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK",
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
-								saveOutput(file);
+								saveBufferToFile(file,false);
 							}
 						});
-				alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,"Cancel", (DialogInterface.OnClickListener)null);
+				alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+						"Cancel", (DialogInterface.OnClickListener) null);
 				alertDialog.show();
 			} else {
-				saveOutput(file);
+				saveBufferToFile(file,false);
 			}
 
 		} else if (resultCode == Activity.RESULT_CANCELED) {
@@ -199,29 +334,16 @@ public class OutputActivity extends Activity {
 
 	}
 
-	private void saveOutput(File file) {
-		try {
-			OutputStream outStream = new FileOutputStream(file);
-			outStream.write(mytext.getText().toString().getBytes());
-
-			outStream.close();
-		} catch (IOException e) {
-			// Unable to create file,
-			// likely because external
-			// storage is
-			// not currently mounted.
-			Log.w("ExternalStorage", "Error writing " + file, e);
-		}
-
-	}
 
 	public static OutputActivity getInstance() {
 		return myOutputActivityInstance;
 	}
 
-	public void addText(String text) {
-		myRefreshHandler.sendMessage(Message.obtain(myRefreshHandler, 2, text));
+	public void addText(String text, String modifier) {
+		myRefreshHandler.sendMessage(Message.obtain(myRefreshHandler, 2,
+				new OutputText(text, modifier)));
 	}
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// if back- button is pressed
@@ -233,4 +355,14 @@ public class OutputActivity extends Activity {
 		return super.onKeyDown(keyCode, event);
 	}
 
+}
+
+class OutputText {
+	public String text;
+	public String modifier;
+
+	public OutputText(String text, String modifier) {
+		this.text = text;
+		this.modifier = modifier;
+	}
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/theme/default/xslt/start.xsl"?>
+<catalog>
+  <title>Archive with 2 scripts</title>
+<script>
+<fileid>vehicle.lbc</fileid>
+<title>script 1</title>
+</script>
+<script>
+<fileid>vehicle2.lbc</fileid>
+<title>script 2</title>
+</script>
+</catalog>

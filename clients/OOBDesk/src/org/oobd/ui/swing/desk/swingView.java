@@ -20,7 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.FileOutputStream;
 
-import purejavacomm.CommPortIdentifier;
+import jssc.*;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -32,19 +32,23 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 import org.oobd.base.*;
 import org.oobd.base.Core;
 import org.oobd.base.IFui;
 import org.oobd.base.visualizer.*;
 import org.oobd.base.uihandler.OobdUIHandler;
 import org.oobd.base.support.Onion;
-
 
 import java.util.Vector;
 import java.util.prefs.Preferences;
@@ -53,6 +57,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -65,7 +70,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import org.json.JSONArray;
 import org.json.JSONException;
+import static org.oobd.base.OOBDConstants.FT_PROPS;
 import org.oobd.base.archive.*;
+import org.oobd.base.port.OOBDPort;
+import org.oobd.base.port.PortInfo;
 
 /**
  * The application's main frame.
@@ -75,10 +83,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     final static String MAINPANEL = "card2";
     final static String DIAGNOSEPANEL = "card3";
     final static String SETTINGSPANEL = "card4";
-    Core oobdCore;
+    Core core;
     Preferences appProbs;
-    private String scriptEngineID = null;
-    private String scriptEngineVisibleName;
     private Vector<IFvisualizer> pageObjects = null;
     private boolean alreadyRefreshing;
     private final String popupText_update = "Toggle Update Flag";
@@ -91,6 +97,10 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private int defaultGridWidth = 200;
     private String pageTitle;
     String connectURLDefault = "";
+    private String connectDeviceName;
+    private String connectTypeName;
+    private String oldConnectTypeName = null;
+    private Hashtable<String, Class> supplyHardwareConnects;
 
     public swingView(SingleFrameApplication app) {
         super(app);
@@ -148,45 +158,44 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         Pmenu.setBorder(BorderFactory.createTitledBorder("Toggle Flags"));
         Pmenu.setBorderPainted(true);
 
-        popupMenuHandle =
-                new MouseAdapter() {
+        popupMenuHandle = new MouseAdapter() {
 
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                        maybeShowPopup(e);
-                    }
+            @Override
+            public void mousePressed(MouseEvent e) {
+                maybeShowPopup(e);
+            }
 
-                    @Override
-                    public void mouseEntered(MouseEvent e) {
-                        //((JPanel) e.getComponent()).setBackground(Color.white);
-                        ((JPanel) e.getComponent()).setBorder(BorderFactory.createLineBorder(Color.black));
-                    }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                //((JPanel) e.getComponent()).setBackground(Color.white);
+                ((JPanel) e.getComponent()).setBorder(BorderFactory.createLineBorder(Color.black));
+            }
 
-                    @Override
-                    public void mouseExited(MouseEvent e) {
-                        //((JPanel) e.getComponent()).setBackground(Color.lightGray);
-                        ((JPanel) e.getComponent()).setBorder(BorderFactory.createEmptyBorder());
-                    }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                //((JPanel) e.getComponent()).setBackground(Color.lightGray);
+                ((JPanel) e.getComponent()).setBorder(BorderFactory.createEmptyBorder());
+            }
 
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                        maybeShowPopup(e);
-                    }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                maybeShowPopup(e);
+            }
 
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        if (e.getClickCount() == 1) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 1) {
 
-                            ((IFvisualizer) e.getComponent()).getVisualizer().updateRequest(OOBDConstants.UR_USER);
-                        }
-                    }
+                    ((IFvisualizer) e.getComponent()).getVisualizer().updateRequest(OOBDConstants.UR_USER);
+                }
+            }
 
-                    public void maybeShowPopup(MouseEvent e) {
-                        if (e.isPopupTrigger()) {
-                            Pmenu.show(e.getComponent(), e.getX(), e.getY());
-                        }
-                    }
-                };
+            public void maybeShowPopup(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    Pmenu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        };
         timer = new Timer(1000, this);
         timer.setInitialDelay(500);
         timer.start();
@@ -195,7 +204,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         diagnoseTitle.setText("");
         connectSymbol.setText("");
         statusMessageLabel.setText("Selected the Script you want to use and press Start");
-
 
         getFrame().setIconImage(Toolkit.getDefaultToolkit().createImage(swingView.class.getResource("/org/oobd/base/images/obd2_icon.png")));
 
@@ -240,10 +248,10 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         swing.getApplication().show(aboutBox);
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -253,7 +261,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         mainPanel = new javax.swing.JPanel();
         main = new javax.swing.JPanel();
         scriptSelectComboBox = new javax.swing.JComboBox();
-        jLabel3 = new javax.swing.JLabel();
+        startButtonLabel = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         oobdImage = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
@@ -273,6 +281,12 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         jLabel2 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jSpinnerProxyPort = new javax.swing.JSpinner();
+        httpEnabled = new javax.swing.JCheckBox();
+        protocolComboBox = new javax.swing.JComboBox();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        libraryDir = new javax.swing.JTextField();
+        chooseLibsDirectoryButton = new javax.swing.JButton();
         diagnose = new javax.swing.JPanel();
         toolPanelDiagnose = new javax.swing.JPanel();
         diagnoseTitle = new javax.swing.JLabel();
@@ -299,7 +313,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         settingsMenuItem = new javax.swing.JMenuItem();
-        jCheckBoxRemoteConnect = new javax.swing.JCheckBoxMenuItem();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         statusPanel = new javax.swing.JPanel();
@@ -334,17 +347,17 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         scriptSelectComboBox.setName("scriptSelectComboBox"); // NOI18N
         main.add(scriptSelectComboBox, java.awt.BorderLayout.PAGE_END);
 
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setIcon(resourceMap.getIcon("jLabel3.icon")); // NOI18N
-        jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
-        jLabel3.setToolTipText(resourceMap.getString("jLabel3.toolTipText")); // NOI18N
-        jLabel3.setName("jLabel3"); // NOI18N
-        jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
+        startButtonLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        startButtonLabel.setIcon(resourceMap.getIcon("startButtonLabel.icon")); // NOI18N
+        startButtonLabel.setText(resourceMap.getString("startButtonLabel.text")); // NOI18N
+        startButtonLabel.setToolTipText(resourceMap.getString("startButtonLabel.toolTipText")); // NOI18N
+        startButtonLabel.setName("startButtonLabel"); // NOI18N
+        startButtonLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel3MouseClicked(evt);
+                startButtonLabelMouseClicked(evt);
             }
         });
-        main.add(jLabel3, java.awt.BorderLayout.CENTER);
+        main.add(startButtonLabel, java.awt.BorderLayout.CENTER);
 
         jPanel2.setBackground(resourceMap.getColor("jPanel2.background")); // NOI18N
         jPanel2.setName("jPanel2"); // NOI18N
@@ -397,21 +410,31 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                 backButtonLabelMouseClicked(evt);
             }
         });
-        settings.add(backButtonLabel, new java.awt.GridBagConstraints());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        settings.add(backButtonLabel, gridBagConstraints);
 
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(jLabel1, gridBagConstraints);
 
         comportComboBox.setEditable(true);
         comportComboBox.setName("comportComboBox"); // NOI18N
+        comportComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comportComboBoxActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 10;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(comportComboBox, gridBagConstraints);
 
         chooseScriptDirectoryButton.setIcon(resourceMap.getIcon("chooseScriptDirectoryButton.icon")); // NOI18N
@@ -424,22 +447,22 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 4;
         settings.add(chooseScriptDirectoryButton, gridBagConstraints);
 
         jLabel4.setText(resourceMap.getString("jLabel4.text")); // NOI18N
         jLabel4.setName("jLabel4"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(jLabel4, gridBagConstraints);
 
         scriptDir.setText(resourceMap.getString("scriptDir.text")); // NOI18N
         scriptDir.setName("scriptDir"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(scriptDir, gridBagConstraints);
@@ -452,8 +475,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(pgpEnabled, gridBagConstraints);
 
         pgpImportKeys.setText(resourceMap.getString("pgpImportKeys.text")); // NOI18N
@@ -464,63 +488,145 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(pgpImportKeys, gridBagConstraints);
 
         pgpStatus.setText(resourceMap.getString("pgpStatus.text")); // NOI18N
         pgpStatus.setName("pgpStatus"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(pgpStatus, gridBagConstraints);
 
         jLabelRemoteServer.setText(resourceMap.getString("jLabelRemoteServer.text")); // NOI18N
         jLabelRemoteServer.setName("jLabelRemoteServer"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(jLabelRemoteServer, gridBagConstraints);
 
         jTextFieldRemoteServer.setText(resourceMap.getString("jTextFieldRemoteServer.text")); // NOI18N
         jTextFieldRemoteServer.setName("jTextFieldRemoteServer"); // NOI18N
+        jTextFieldRemoteServer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldRemoteServerActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(jTextFieldRemoteServer, gridBagConstraints);
 
         jTextFieldProxyHost.setText(resourceMap.getString("jTextFieldProxyHost.text")); // NOI18N
         jTextFieldProxyHost.setName("jTextFieldProxyHost"); // NOI18N
+        jTextFieldProxyHost.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextFieldProxyHostActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(jTextFieldProxyHost, gridBagConstraints);
 
         jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
         jLabel2.setName("jLabel2"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(jLabel2, gridBagConstraints);
 
         jLabel5.setText(resourceMap.getString("jLabel5.text")); // NOI18N
         jLabel5.setName("jLabel5"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 7;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         settings.add(jLabel5, gridBagConstraints);
 
         jSpinnerProxyPort.setName("jSpinnerProxyPort"); // NOI18N
+        jSpinnerProxyPort.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                jSpinnerProxyPortAncestorAdded(evt);
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 9;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         settings.add(jSpinnerProxyPort, gridBagConstraints);
+
+        httpEnabled.setText(resourceMap.getString("HTTPCheckBox.text")); // NOI18N
+        httpEnabled.setToolTipText(resourceMap.getString("HTTPCheckBox.toolTipText")); // NOI18N
+        httpEnabled.setName("HTTPCheckBox"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        settings.add(httpEnabled, gridBagConstraints);
+
+        protocolComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Discovery", "Kadaver", "Bluetooth", "Telnet" }));
+        protocolComboBox.setSelectedIndex(2);
+        protocolComboBox.setToolTipText(resourceMap.getString("connectionTypeSpinner.toolTipText")); // NOI18N
+        protocolComboBox.setName("connectionTypeSpinner"); // NOI18N
+        protocolComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                protocolComboBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        settings.add(protocolComboBox, gridBagConstraints);
+
+        jLabel6.setText(resourceMap.getString("jLabel6.text")); // NOI18N
+        jLabel6.setName("jLabel6"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        settings.add(jLabel6, gridBagConstraints);
+
+        jLabel7.setText(resourceMap.getString("jLabel7.text")); // NOI18N
+        jLabel7.setName("jLabel7"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        settings.add(jLabel7, gridBagConstraints);
+
+        libraryDir.setText(resourceMap.getString("libraryDir.text")); // NOI18N
+        libraryDir.setName("libraryDir"); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        settings.add(libraryDir, gridBagConstraints);
+
+        chooseLibsDirectoryButton.setIcon(resourceMap.getIcon("chooseLibsDirectoryButton.icon")); // NOI18N
+        chooseLibsDirectoryButton.setText(resourceMap.getString("chooseLibsDirectoryButton.text")); // NOI18N
+        chooseLibsDirectoryButton.setName("chooseLibsDirectoryButton"); // NOI18N
+        chooseLibsDirectoryButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chooseLibsDirectoryButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 5;
+        settings.add(chooseLibsDirectoryButton, gridBagConstraints);
 
         mainPanel.add(settings, "card4");
 
@@ -706,11 +812,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         settingsMenuItem.setName("settingsMenuItem"); // NOI18N
         fileMenu.add(settingsMenuItem);
 
-        jCheckBoxRemoteConnect.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.CTRL_MASK));
-        jCheckBoxRemoteConnect.setText(resourceMap.getString("jCheckBoxRemoteConnect.text")); // NOI18N
-        jCheckBoxRemoteConnect.setName("jCheckBoxRemoteConnect"); // NOI18N
-        fileMenu.add(jCheckBoxRemoteConnect);
-
         aboutMenuItem.setAction(actionMap.get("showAboutBox")); // NOI18N
         aboutMenuItem.setName("aboutMenuItem"); // NOI18N
         fileMenu.add(aboutMenuItem);
@@ -740,7 +841,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             .addGroup(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusMessageLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 333, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 319, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel)
@@ -763,24 +864,45 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         setStatusBar(statusPanel);
     }// </editor-fold>//GEN-END:initComponents
 
+
     private void backButtonLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonLabelMouseClicked
 
-        appProbs.put(OOBDConstants.PropName_ScriptDir, scriptDir.getText());
-        appProbs.put(OOBDConstants.PropName_SerialPort, comportComboBox.getEditor().getItem().toString());
-        appProbs.put(OOBDConstants.PropName_ConnectServerURL, jTextFieldRemoteServer.getText());
-        appProbs.put(OOBDConstants.PropName_ProxyHost, jTextFieldProxyHost.getText());
-        try {
-            jSpinnerProxyPort.commitEdit();
-        } catch (ParseException ex) {
-            Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
+        if (httpEnabled.isSelected()) {
+            appProbs.put(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME);
+        } else {
+            appProbs.put(OOBDConstants.PropName_UIHander, UIHANDLER_LOCAL_NAME);
+
         }
-        appProbs.putInt(OOBDConstants.PropName_ProxyPort, ((Integer)jSpinnerProxyPort.getValue()));
-        oobdCore.getSystemIF().savePreferences(FT_PROPS,
+
+        appProbs.put(OOBDConstants.PropName_ScriptDir, scriptDir.getText());
+
+        connectTypeName = protocolComboBox.getSelectedItem().toString();
+        if (connectTypeName != null && !connectTypeName.equalsIgnoreCase("")) {
+            core.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
+
+// !! The value of the connection device is not stored here, as this already controlled in the comportComboBox change() event
+            appProbs.put(connectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, jTextFieldRemoteServer.getText());
+            core.writeDataPool(DP_ACTUAL_REMOTECONNECT_SERVER, jTextFieldRemoteServer.getText());
+            appProbs.put(connectTypeName + "_" + OOBDConstants.PropName_ProxyHost, jTextFieldProxyHost.getText());
+            try {
+                jSpinnerProxyPort.commitEdit();
+            } catch (ParseException ex) {
+                Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            appProbs.putInt(connectTypeName + "_" + OOBDConstants.PropName_ProxyPort, ((Integer) jSpinnerProxyPort.getValue()));
+
+        }
+
+        core.getSystemIF().savePreferences(FT_PROPS,
                 OOBDConstants.AppPrefsFileName, appProbs);
         String script = appProbs.get(OOBDConstants.PropName_ScriptName, null);
         scriptSelectComboBox.removeAllItems();
         int i = -1;
-        ArrayList<Archive> files = Factory.getDirContent(appProbs.get(OOBDConstants.PropName_ScriptDir, null));
+        String actualScriptDir = appProbs.get(OOBDConstants.PropName_ScriptDir, null);
+        core.writeDataPool(DP_SCRIPTDIR, actualScriptDir);
+        core.writeDataPool(DP_WWW_LIB_DIR, appProbs.get(OOBDConstants.PropName_LibraryDir, null));
+        ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
+        core.writeDataPool(DP_LIST_OF_SCRIPTS, files);
         for (Archive file : files) {
             scriptSelectComboBox.addItem(file);
             if (file.toString().equalsIgnoreCase(script)) {
@@ -794,140 +916,120 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         cl.show(mainPanel, MAINPANEL);
     }//GEN-LAST:event_backButtonLabelMouseClicked
 
-    private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
-        if (scriptSelectComboBox.getSelectedItem() == null) {
-            return;
-        }
-        String connectURL = "serial"; //this looks obviously not like an URL yet, but maybe in a  later extension
-         if (jCheckBoxRemoteConnect.isSelected()) {
-            try {
-                Onion answer = requestParamInput(new Onion("{" + "'param' : [{ " + "'type':'String',"
-                        + "'title':'" + Base64Coder.encodeString("Enter the Connect Number") + "',"
-                        + "'default':'" + Base64Coder.encodeString(connectURLDefault) + "',"
-                        + "'message':'" + Base64Coder.encodeString("Please ask the person, who's connecting the dongle to the vehicle for the Connect Number displayed by his software") + "'"
-                        + "}]}"));
-                if (answer == null) {
-                    JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                connectURL = answer.getOnionBase64String("answer");
-                if (connectURL == null || connectURL.equals("")) {
-                    JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                connectURLDefault = connectURL;
+    private void startButtonLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startButtonLabelMouseClicked
+        if (UIHANDLER_WS_NAME.equalsIgnoreCase((String) core.readDataPool(DP_ACTUAL_UIHANDLER, appProbs.get(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME)))) {
 
-
-                String serverURL = appProbs.get(OOBDConstants.PropName_ConnectServerURL, PropName_KadaverServerDefault);
-                String[] parts = serverURL.split("://");
-                if (parts.length != 2) {
-                    JOptionPane.showMessageDialog(null, "The Remote Connect URL is not a valid URL", "Wrong Format", JOptionPane.WARNING_MESSAGE);
-                    return;
-
-                }
-                connectURL = parts[0] + "://" + Base64Coder.encodeString(connectURL) + "@" + parts[1];
-
-            } catch (JSONException ex) {
-                Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
+            //startButtonLabel.setIcon(resourceMap.getIcon("startButtonLabel.icon"));
+            core.getSystemIF().openBrowser();
+        } else {
+            Archive ActiveArchive = (Archive) scriptSelectComboBox.getSelectedItem();
+            if (ActiveArchive == null) {
                 return;
             }
+            appProbs.put(OOBDConstants.PropName_ScriptName, ActiveArchive.toString());
+            CardLayout cl = (CardLayout) (mainPanel.getLayout());
+            cl.show(mainPanel, DIAGNOSEPANEL);
+            core.writeDataPool(DP_ACTIVE_ARCHIVE, ActiveArchive);
+            core.startScriptArchive(ActiveArchive);
         }
-        String scriptName = scriptSelectComboBox.getSelectedItem().toString();
-        appProbs.put(OOBDConstants.PropName_ScriptName, scriptName);
-        oobdCore.getSystemIF().savePreferences(FT_PROPS,
-                OOBDConstants.AppPrefsFileName, appProbs);
-        CardLayout cl = (CardLayout) (mainPanel.getLayout());
-        cl.show(mainPanel, DIAGNOSEPANEL);
-        try {
-            Onion cmdOnion =
-                    new Onion("{" + "'scriptpath':'" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath().replace("\\", "/") + "'"
-                    + ",'connecturl':'" + Base64Coder.encodeString(connectURL) + "'"
-                    + "}");
-            startScriptEngine(cmdOnion);
-        } catch (JSONException ex) {
-            // TODO Auto-generated catch block
-            Logger.getLogger(swingView.class.getName()).log(Level.WARNING, "JSON creation error with file name:" + ((Archive) scriptSelectComboBox.getSelectedItem()).getFilePath(), ex.getMessage());
-        }
-
-    }//GEN-LAST:event_jLabel3MouseClicked
+    }//GEN-LAST:event_startButtonLabelMouseClicked
 
     private void settingsComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_settingsComponentShown
-        String osname = System.getProperty("os.name", "").toLowerCase();
-        Enumeration pList = null;
-        Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "OS detected: {0}", osname);
-        int portListIndex = -1;
-        String port = appProbs.get(OOBDConstants.PropName_SerialPort, null);
-        try {
-            if (osname.startsWith("windows")) {
-                pList = purejavacomm.CommPortIdentifier.getPortIdentifiers();
-                // Process the list.
-                while (pList.hasMoreElements()) {
-                    purejavacomm.CommPortIdentifier cpi = (purejavacomm.CommPortIdentifier) pList.nextElement();
-                    if (cpi.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-                        comportComboBox.addItem(cpi.getName());
-                        if (cpi.getName().equalsIgnoreCase(port)) {
-                            portListIndex = comportComboBox.getItemCount() - 1;
-                        }
-                    }
-                }
-            } else {
-                pList = gnu.io.CommPortIdentifier.getPortIdentifiers();
-                // Process the list.
-                while (pList.hasMoreElements()) {
-                    gnu.io.CommPortIdentifier cpi = (gnu.io.CommPortIdentifier) pList.nextElement();
-                    if (cpi.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-                        comportComboBox.addItem(cpi.getName());
-                        if (cpi.getName().equalsIgnoreCase(port)) {
-                            portListIndex = comportComboBox.getItemCount() - 1;
-                        }
-                    }
-                }
-            }
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        if (portListIndex > -1) {
-            comportComboBox.setSelectedIndex(portListIndex);
-        } else {
-            comportComboBox.setSelectedItem(port);
-        }
-        scriptDir.setText(appProbs.get(OOBDConstants.PropName_ScriptDir, ""));
-        pgpEnabled.setSelected("true".equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_PGPEnabled, "")));
-        jTextFieldRemoteServer.setText(appProbs.get(OOBDConstants.PropName_ConnectServerURL, OOBDConstants.PropName_KadaverServerDefault));
-        jTextFieldProxyHost.setText(appProbs.get(OOBDConstants.PropName_ProxyHost, null));
-        jSpinnerProxyPort.setValue(appProbs.getInt(OOBDConstants.PropName_ProxyPort, 0));
-        updateUI();
+        updateUI(false);
     }
 
-    private void updateUI() {
-        int pgp = checkKeyFiles();
-        String pgpStatusText = "";
-        if ((pgp & 0x01) > 0) {
-            pgpStatusText = "New Group Key File is waiting for import";
-        } else if ((pgp & 0x02) > 0) {
-            pgpStatusText = "New User Key File is waiting for import";
+    private void updateUI(boolean calledFromEvent) {
 
-        } else if ((pgp & 0x04) > 0) {
-            pgpStatusText = "Missing Group Key File !!";
+        PortInfo[] portList = new PortInfo[0];
+        connectTypeName = appProbs.get(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
+        core.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
+        connectDeviceName = appProbs.get(connectTypeName + "_" + OOBDConstants.PropName_SerialPort, "");
+        pgpEnabled.setSelected("true".equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_PGPEnabled, "")));
+        httpEnabled.setSelected(UIHANDLER_WS_NAME.equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME)));
+        jTextFieldRemoteServer.setText(appProbs.get(connectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, OOBDConstants.PropName_KadaverServerDefault));
+        jTextFieldProxyHost.setText(appProbs.get(connectTypeName + "_" + OOBDConstants.PropName_ProxyHost, ""));
+        jSpinnerProxyPort.setValue(appProbs.getInt(connectTypeName + "_" + OOBDConstants.PropName_ProxyPort, 0));
+        if (!calledFromEvent) { //t
+            for (int i = 0; i < protocolComboBox.getItemCount(); i++) {
+                if (protocolComboBox.getItemAt(i).toString().equals(connectTypeName)) {
+                    protocolComboBox.setSelectedIndex(i);
+                }
+            }
+        }
 
-        } else if ((pgp & 0x08) > 0) {
-            pgpStatusText = "Missing User Key File !!";
+        Class<OOBDPort> value = supplyHardwareConnects.get(connectTypeName);
+        try { // tricky: try to call a static method of an interface, where a
+            // interface don't have static values by definition..
+            // Class[] parameterTypes = new Class[]{};
+            java.lang.reflect.Method method = value.getMethod("getPorts", new Class[]{}); // no parameters
+            Object instance = null;
+            portList = (PortInfo[]) method.invoke(instance, new Object[]{}); // no parameters
+
+        } catch (Exception ex) {
+            Logger.getLogger(Core.class.getName())
+                    .log(Level.WARNING,
+                            "can't call static methods  of "
+                            + value.getName());
+            ex.printStackTrace();
+            return;
+        }
+
+        int portListIndex = -1;
+
+        PortInfo[] portCopyPlusOne = new PortInfo[portList.length + 1]; // needed maybe later, in case the port is not part of the port list, which was delivered by the port-getPorts() function
+        for (int i = 0; i < portList.length; i++) {
+            portCopyPlusOne[i + 1] = portList[i];
+            if (portList[i].getDevice().equals(connectDeviceName)) {
+                portListIndex = i;
+            }
+        }
+        if (portListIndex == -1) { // now we use the List, which has space on item[0] to add the port which was not found in the device list
+            portCopyPlusOne[0] = new PortInfo(connectDeviceName, connectDeviceName);
+            comportComboBox.setModel(new javax.swing.DefaultComboBoxModel(portCopyPlusOne));
+            comportComboBox.setSelectedIndex(0);
         } else {
+            comportComboBox.setModel(new javax.swing.DefaultComboBoxModel(portList));
+            comportComboBox.setSelectedIndex(portListIndex);
+        }
+        libraryDir.setText(appProbs.get(OOBDConstants.PropName_LibraryDir, ""));
+        scriptDir.setText(appProbs.get(OOBDConstants.PropName_ScriptDir, ""));
+        int pgp = checkKeyFiles();
+        String pgpStatusText = "No PGP keys available";
+
+        if (pgp == 0) { // all ok
             pgpStatusText = "All Keys in place";
         }
+        if ((pgp & 0x04) > 0) { //no group key
+            pgpStatusText = "Missing Group Key File !!";
+        }
+        if ((pgp & 0x01) > 0) {//new group key
+            pgpStatusText = "New Group Key File is waiting for import";
+        }
+        if ((pgp & 0x08) > 0) { //no user key
+            pgpStatusText = "Missing User Key File !!";
+        }
+        if ((pgp & 0x02) > 0) {//new user key
+            pgpStatusText = "New User Key File is waiting for import";
+        }
+        if ((pgp == (0x04 + 0x04))) {//no keys
+            pgpStatusText = "No PGP keys available";
+        }
+
         pgpStatus.setText("PGP Key Status: " + pgpStatusText);
         if (pgp != 0) {
             appProbs.putBoolean(OOBDConstants.PropName_PGPEnabled, false);
             pgpEnabled.setSelected(false);
             pgpEnabled.setEnabled(false);
-            pgpImportKeys.setText("Import PGP keys now");
+            if ((pgp & (0x02 + 0x01)) > 0) { // any new keys there
+                pgpImportKeys.setText("Import PGP keys now");
+            } else {
+                pgpImportKeys.setText("No PGP Keys available");
+            }
         } else {
             pgpEnabled.setEnabled(true);
             pgpImportKeys.setText("DELETE PGP keys now");
         }
-
 
 
     }//GEN-LAST:event_settingsComponentShown
@@ -971,42 +1073,12 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }//GEN-LAST:event_mainComponentShown
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        JFileChooser chooser = new JFileChooser();
-        File oldDir = null;
-        String oldDirName = appProbs.get(OOBDConstants.PropName_OutputDir, null);
+        String oldDirName = appProbs.get(OOBDConstants.PropName_OutputFile, null);
+        oldDirName = saveBufferAsFileRequest(oldDirName, jTextAreaOutput.getText(), false);
         if (oldDirName != null) {
-            oldDir = new File(oldDirName);
-        }
-        chooser.setCurrentDirectory(oldDir);
-        chooser.setMultiSelectionEnabled(false);
-        chooser.setFileSelectionMode(JFileChooser.SAVE_DIALOG);
-        chooser.addChoosableFileFilter(new FileFilter() {
-
-            public boolean accept(File f) {
-                if (f.isDirectory()) {
-                    return true;
-                }
-                //return f.getName().toLowerCase().endsWith(".lbc");
-                return true;
-            }
-
-            public String getDescription() {
-                return "All Files";
-            }
-        });
-        if (chooser.showSaveDialog(this.getFrame())
-                == JFileChooser.APPROVE_OPTION) {
-            try {
-                FileWriter os = new FileWriter(chooser.getSelectedFile().toString());
-                os.write(jTextAreaOutput.getText());
-                os.close();
-                appProbs.put(OOBDConstants.PropName_OutputDir, chooser.getCurrentDirectory().toString());
-                oobdCore.getSystemIF().savePreferences(FT_PROPS,
-                        OOBDConstants.AppPrefsFileName, appProbs);
-
-            } catch (IOException ex) {
-                Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            appProbs.put(OOBDConstants.PropName_OutputFile, oldDirName);
+            core.getSystemIF().savePreferences(FT_PROPS,
+                    OOBDConstants.AppPrefsFileName, appProbs);
         }
     }//GEN-LAST:event_saveButtonActionPerformed
 
@@ -1054,18 +1126,101 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private void pgpImportKeysActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pgpImportKeysActionPerformed
         if (checkKeyFiles() != 0) {
             importKeyFiles();
-            updateUI();
+            updateUI(false);
         } else {
             int answer = JOptionPane.showConfirmDialog(settings, "Do you REALLY want to delete your PGP keys??");
             if (answer == JOptionPane.YES_OPTION) {
                 try {
                     deleteKeyFiles();
-                    updateUI();
+                    updateUI(false);
                 } catch (Exception e) {
                 }
             }
         }
     }//GEN-LAST:event_pgpImportKeysActionPerformed
+
+    private void chooseLibsDirectoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseLibsDirectoryButtonActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        File oldDir = null;
+        String oldDirName = appProbs.get(OOBDConstants.PropName_LibraryDir, null);
+        if (oldDirName != null) {
+            oldDir = new File(oldDirName);
+        }
+        chooser.setCurrentDirectory(oldDir);
+        chooser.addChoosableFileFilter(new FileFilter() {
+
+            public boolean accept(File f) {
+                if (f.isDirectory()) {
+                    return true;
+                }
+                return f.getName().toLowerCase().endsWith(".lbc");
+            }
+
+            public String getDescription() {
+                return "OOBD Library Folder";
+            }
+        });
+        chooser.setMultiSelectionEnabled(false);
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        if (chooser.showOpenDialog(this.getFrame())
+                == JFileChooser.APPROVE_OPTION) {
+            appProbs.put(OOBDConstants.PropName_LibraryDir, chooser.getSelectedFile().toString());
+            libraryDir.setText(chooser.getSelectedFile().toString());
+        }
+    }//GEN-LAST:event_chooseLibsDirectoryButtonActionPerformed
+
+    private void protocolComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolComboBoxActionPerformed
+        JComboBox cb = (JComboBox) evt.getSource();
+        connectTypeName = cb.getSelectedItem().toString();
+        if (connectTypeName != null && !connectTypeName.equalsIgnoreCase("")) {
+            core.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
+            if (oldConnectTypeName != null) {
+                appProbs.put(OOBDConstants.PropName_ConnectType, connectTypeName);
+                // !! The value of the connection device is not stored here, as this already controlled in the comportComboBox change() event
+                appProbs.put(oldConnectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, jTextFieldRemoteServer.getText());
+                appProbs.put(oldConnectTypeName + "_" + OOBDConstants.PropName_ProxyHost, jTextFieldProxyHost.getText());
+                try {
+                    jSpinnerProxyPort.commitEdit();
+                } catch (ParseException ex) {
+                    Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                appProbs.putInt(oldConnectTypeName + "_" + OOBDConstants.PropName_ProxyPort, ((Integer) jSpinnerProxyPort.getValue()));
+            }
+            oldConnectTypeName = connectTypeName;
+            updateUI(true);
+        }
+
+    }//GEN-LAST:event_protocolComboBoxActionPerformed
+
+    private void jTextFieldRemoteServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldRemoteServerActionPerformed
+        //
+    }//GEN-LAST:event_jTextFieldRemoteServerActionPerformed
+
+    private void jTextFieldProxyHostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldProxyHostActionPerformed
+        //
+    }//GEN-LAST:event_jTextFieldProxyHostActionPerformed
+
+    private void jSpinnerProxyPortAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_jSpinnerProxyPortAncestorAdded
+        //
+    }//GEN-LAST:event_jSpinnerProxyPortAncestorAdded
+
+    private void comportComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comportComboBoxActionPerformed
+        JComboBox cb = (JComboBox) evt.getSource();
+        Object item = cb.getSelectedItem();
+        if (item != null) {
+            if (item instanceof PortInfo) {
+                connectDeviceName = ((PortInfo) item).getDevice();
+            } else {
+                connectDeviceName = item.toString();
+                connectDeviceName = connectDeviceName.replaceAll("\\(.*\\)", "").trim();
+                cb.getEditor().setItem(connectDeviceName);
+            }
+            if (connectDeviceName != null && !connectDeviceName.equalsIgnoreCase("")) {
+                appProbs.put(connectTypeName + "_" + OOBDConstants.PropName_SerialPort, connectDeviceName);
+                core.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECT_ID, connectDeviceName);
+            }
+        }
+    }//GEN-LAST:event_comportComboBoxActionPerformed
 
     @Action
     public void onClickButton_Back() {
@@ -1080,6 +1235,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         if (back != null) {
             back.getVisualizer().updateRequest(OOBDConstants.UR_USER);
         } else {
+            core.stopScriptEngine();
             CardLayout cl = (CardLayout) (mainPanel.getLayout());
             cl.show(mainPanel, MAINPANEL);
         }
@@ -1109,6 +1265,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JButton backButton;
     private javax.swing.JLabel backButtonLabel;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JButton chooseLibsDirectoryButton;
     private javax.swing.JButton chooseScriptDirectoryButton;
     private javax.swing.JComboBox comportComboBox;
     private javax.swing.JLabel connectSymbol;
@@ -1121,12 +1278,13 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JToolBar diagnoseToolBar;
     private javax.swing.JButton gridBiggerButton;
     private javax.swing.JButton gridSmallerButton;
-    private javax.swing.JCheckBoxMenuItem jCheckBoxRemoteConnect;
+    private javax.swing.JCheckBox httpEnabled;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabelRemoteServer;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -1136,6 +1294,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JTextArea jTextAreaOutput;
     private javax.swing.JTextField jTextFieldProxyHost;
     private javax.swing.JTextField jTextFieldRemoteServer;
+    private javax.swing.JTextField libraryDir;
     private javax.swing.JToggleButton logButton;
     private javax.swing.JPanel main;
     private javax.swing.JPanel mainPanel;
@@ -1148,11 +1307,13 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private javax.swing.JButton pgpImportKeys;
     private javax.swing.JLabel pgpStatus;
     private javax.swing.JProgressBar progressBar;
+    private javax.swing.JComboBox protocolComboBox;
     private javax.swing.JButton saveButton;
     private javax.swing.JTextField scriptDir;
     private javax.swing.JComboBox scriptSelectComboBox;
     private javax.swing.JPanel settings;
     private javax.swing.JMenuItem settingsMenuItem;
+    private javax.swing.JLabel startButtonLabel;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
@@ -1165,20 +1326,93 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private final Icon[] busyIcons = new Icon[15];
     private int busyIconIndex = 0;
     private JDialog aboutBox;
+    private Hashtable<String, String> outputBuffers = new Hashtable<String, String>();
+    private String actualBufferName = OB_DEFAULT_NAME; // name of the actual writestring output, default is "display" for screen output
 
-    public void sm(String msg) {
-        if (logButton.isSelected()) {
-            jTextAreaOutput.append(msg + "\n");
+    /* as char[] and Arraylist<Character> are not compatible, we need to handle dislpay output and normal
+     buffer handling independet from each other and only convert, when really needed.
+     */
+    char[] arrayListToCharArray(ArrayList<Character> input) {
+        char[] actBuffer = new char[input.size()];
+        int position = 0;
+        for (char i : input) {
+            actBuffer[position] = i;
+            position++;
+        }
+        return actBuffer;
+    }
+
+    public void sm(String msg, String modifier) {
+
+        String actBuffer;
+        if (!"".equalsIgnoreCase(modifier)) {
+            if (modifier.equalsIgnoreCase(OB_CMD_SETBUFFER)) {
+                actualBufferName = msg.toLowerCase().trim();
+                if (!actualBufferName.equals(OB_DEFAULT_NAME)) {
+                    if (!outputBuffers.containsKey(actualBufferName)) {
+                        outputBuffers.put(actualBufferName, "");
+                        actBuffer = "";
+                    }
+                }
+            }
+            if (modifier.equalsIgnoreCase(OB_CMD_CLEAR)) {
+                if (actualBufferName.equals(OB_DEFAULT_NAME)) { // do the special handling of the UI textbox here
+                    jTextAreaOutput.setText("");
+                } else {
+                    outputBuffers.put(actualBufferName, "");
+                    actBuffer = "";
+                }
+            } else if (modifier.equalsIgnoreCase(OB_CMD_CLEARALL)) {
+                jTextAreaOutput.setText("");
+                outputBuffers = new Hashtable<String, String>();
+                actBuffer = "";
+            } else {
+                // here we need the buffer content, so we need to do the time consuming conversion here
+                if (actualBufferName.equals(OB_DEFAULT_NAME)) {
+                    actBuffer = jTextAreaOutput.getText();
+                } else {
+                    if (outputBuffers.containsKey(actualBufferName)) {
+                        actBuffer = outputBuffers.get(actualBufferName);
+                    } else {
+                        outputBuffers.put(actualBufferName, "");
+                        actBuffer = "";
+                    }
+                }
+                if (modifier.equalsIgnoreCase(OB_CMD_SAVEAS)) {
+                    saveBufferAsFileRequest(msg, actBuffer, false);
+                }
+                if (modifier.equalsIgnoreCase(OB_CMD_SAVE)) {
+                    saveBufferToFile(msg, actBuffer, false);
+                }
+                if (modifier.equalsIgnoreCase(OB_CMD_APPENDAS)) {
+                    saveBufferAsFileRequest(msg, actBuffer, true);
+                }
+                if (modifier.equalsIgnoreCase(OB_CMD_APPEND)) {
+                    saveBufferToFile(msg, actBuffer, true);
+                }
+            }
+        } else {
+            if (actualBufferName.equals(OB_DEFAULT_NAME)) {
+                if (logButton.isSelected()) {
+                    jTextAreaOutput.append(msg + "\n");
+                }
+            } else {
+                String actBufferArrayList = outputBuffers.get(actualBufferName) + msg;
+                outputBuffers.put(actualBufferName, actBufferArrayList);
+            }
         }
     }
 
     public void registerOobdCore(Core core) {
-        oobdCore = core;
-        appProbs = oobdCore.getSystemIF().loadPreferences(FT_PROPS,
+        this.core = core;
+        appProbs = this.core.getSystemIF().loadPreferences(FT_PROPS,
                 OOBDConstants.AppPrefsFileName);
+        connectTypeName = appProbs.get(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
+        transferPreferences2System(connectTypeName);
         String script = appProbs.get(OOBDConstants.PropName_ScriptName, null);
         int i = -1;
-        ArrayList<Archive> files = Factory.getDirContent(appProbs.get(OOBDConstants.PropName_ScriptDir, null));
+        String actualScriptDir = appProbs.get(OOBDConstants.PropName_ScriptDir, null);
+        ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
         for (Archive file : files) {
             scriptSelectComboBox.addItem(file);
             if (file.toString().equalsIgnoreCase(script)) {
@@ -1188,51 +1422,61 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         if (i > -1) {
             scriptSelectComboBox.setSelectedIndex(i);
         }
-        PWDialog pwDialog = new PWDialog(null);
-        String str = pwDialog.showDialog();
-        // System.err.println("passwort="+str);
-        //       String str = JOptionPane.showInputDialog(null, "Enter your PGP PassPhrase : ",                "OOBD PGP Script Encryption", 1);
-        if (str != null) {
-            try {
-                oobdCore.getSystemIF().setUserPassPhrase(
-                        str);
-                str = "";
-            } catch (Exception e) {
-                // e.printStackTrace();
-                oobdCore.getSystemIF().setUserPassPhrase("");
+        if (!appProbs.getBoolean(OOBDConstants.PropName_PGPEnabled, false)) {
+            this.core.getSystemIF().setUserPassPhrase("");
+
+        } else {
+
+            PWDialog pwDialog = new PWDialog(null);
+            String str = pwDialog.showDialog();
+            // System.err.println("passwort="+str);
+            //       String str = JOptionPane.showInputDialog(null, "Enter your PGP PassPhrase : ",                "OOBD PGP Script Encryption", 1);
+            if (str != null) {
+                try {
+                    this.core.getSystemIF().setUserPassPhrase(
+                            str);
+                    str = "";
+                } catch (Exception e) {
+                    // e.printStackTrace();
+                    this.core.getSystemIF().setUserPassPhrase("");
+                }
             }
         }
+        List<String> list = new ArrayList<>();
+        supplyHardwareConnects = core.getConnectorList();
 
+        Enumeration<String> e = supplyHardwareConnects.keys();
+
+        // iterate through Hashtable keys Enumeration
+        while (e.hasMoreElements()) {
+            list.add(e.nextElement());
+        }
+        protocolComboBox.setModel(new javax.swing.DefaultComboBoxModel(list.toArray())); //al.toArray(new String[al.size()])
+        updateUI(false);
     }
 
     @Override
     public void announceScriptengine(String id, String visibleName) {
         Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: Scriptengine-ID: {0} visibleName:{1}", new Object[]{id, visibleName
-                });
-        // more as one scriptengine is not used in this app
-        //scriptEngineMap.put(id, visibleName);
-        if ("ScriptengineLua".equalsIgnoreCase(id)) {
-            scriptEngineID = id;
-            scriptEngineVisibleName = visibleName;
-        }
+        });
     }
 
     @Override
     public void announceUIHandler(String id, String visibleName) {
         Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: UIHandler-ID: {0} visibleName:{1}", new Object[]{id, visibleName
-                });
-        if (appProbs.get(OOBDConstants.PropName_UIHander, "UIHandler").equalsIgnoreCase(visibleName)) {
+        });
+        if (appProbs.get(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME).equalsIgnoreCase(visibleName)) {
             Onion onion = new Onion();
-            String seID = oobdCore.createUIHandler(id, onion);
+            String seID = core.createUIHandler(id, onion);
 
-            oobdCore.startUIHandler(seID, onion);
+            core.startUIHandler(seID, onion);
         }
 
     }
 
     @Override
     public void updateOobdUI() {
-        OobdUIHandler uiHandler = oobdCore.getUiHandler();
+        OobdUIHandler uiHandler = core.getUiHandler();
         if (uiHandler != null) {
             uiHandler.handleMsg();
         }
@@ -1247,10 +1491,10 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         Visualizer newVisualizer = new Visualizer(myOnion);
         JComponent newJComponent;
         // to be able to delete the created  objects on a a page later when closing the page, we need to log the creation here
-        pageObjects = (Vector<IFvisualizer>) oobdCore.getAssign(newVisualizer.getOwnerEngine(), org.oobd.base.OOBDConstants.CL_OBJECTS);
+        pageObjects = (Vector<IFvisualizer>) core.getAssign(newVisualizer.getOwnerEngine(), org.oobd.base.OOBDConstants.CL_OBJECTS);
         if (pageObjects == null) {
             pageObjects = new Vector<IFvisualizer>();
-            oobdCore.setAssign(newVisualizer.getOwnerEngine(), org.oobd.base.OOBDConstants.CL_OBJECTS, pageObjects);
+            core.setAssign(newVisualizer.getOwnerEngine(), org.oobd.base.OOBDConstants.CL_OBJECTS, pageObjects);
         }
         Class<IFvisualizer> visualizerClass = getVisualizerClass(myOnion);
         Class[] argsClass = new Class[1]; // first we set up an pseudo - args - array for the scriptengine- constructor
@@ -1267,25 +1511,25 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             elementCount++;
             if (((IFvisualizer) newJComponent).isGroup()) {
                 /*               // if the component is not already placed
-                //JScrollPane scrollpane = new JScrollPane(newJComponent);
-                JScrollPane scrollpane = new JScrollPane();
-                scrollpane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-                scrollpane.setViewportView(newJComponent);
-                // scrollpane.setPreferredSize(new Dimension(300, 300));
-                GridBagConstraints c = new GridBagConstraints();
-                JPanel panel = (JPanel) oobdCore.getAssign(
-                newVisualizer.getOwnerEngine(),
-                org.oobd.base.OOBDConstants.CL_PANE + ":page");
-                c.fill = GridBagConstraints.REMAINDER;
+                 //JScrollPane scrollpane = new JScrollPane(newJComponent);
+                 JScrollPane scrollpane = new JScrollPane();
+                 scrollpane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+                 scrollpane.setViewportView(newJComponent);
+                 // scrollpane.setPreferredSize(new Dimension(300, 300));
+                 GridBagConstraints c = new GridBagConstraints();
+                 JPanel panel = (JPanel) core.getAssign(
+                 newVisualizer.getOwnerEngine(),
+                 org.oobd.base.OOBDConstants.CL_PANE + ":page");
+                 c.fill = GridBagConstraints.REMAINDER;
                 
-                c.gridx = 0;
-                c.gridy = 0;
-                c.weightx = 1;
-                c.weighty = 1;
-                //panel.add(newJComponent, c);
-                panel.add(scrollpane, java.awt.BorderLayout.CENTER);//, c);
-                //panel.add(scrollpane, c);
-                panel.validate();
+                 c.gridx = 0;
+                 c.gridy = 0;
+                 c.weightx = 1;
+                 c.weighty = 1;
+                 //panel.add(newJComponent, c);
+                 panel.add(scrollpane, java.awt.BorderLayout.CENTER);//, c);
+                 //panel.add(scrollpane, c);
+                 panel.validate();
                  */            }
             ((IFvisualizer) newJComponent).initValue(newVisualizer, myOnion);
             newJComponent.addMouseListener(popupMenuHandle);
@@ -1359,23 +1603,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         }
     }
 
-    @Override
-    public void startScriptEngine(Onion onion) {
-
-        if (scriptEngineID != null) {
-            String seID = oobdCore.createScriptEngine(scriptEngineID, onion);
-
-            //JTabbedPane newjTabPane = new JTabbedPane(); //create a inner JTabbedPane as container for the later coming scriptengine pages
-            //newjTabPane.setName(seID); // set the name of that canvas that it can be found again later
-            //mainSeTabbedPane.addTab(seID, newjTabPane); // and put this canvas inside the pane which belongs to that particular scriptengine
-            // and now, after initialisation of the UI, let the games begin...
-            oobdCore.setAssign(seID, org.oobd.base.OOBDConstants.CL_PANE, new Object()); //store the related drawing pane, the TabPane for that scriptengine
-            //stop the Progress Dialog BEFORE the script starts
-            //Diagnose.getInstance().stopProgressDialog();
-            oobdCore.startScriptEngine(seID, onion);
-        }
-    }
-
     @Action
     public void onClickButton_Update() {
         int i = 2;
@@ -1424,7 +1651,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         boolean valid = false;
         JSONArray params;
         try {
-            params = msg.getJSONArray("param");
+            params = msg.getJSONArray(CM_PARAM);
             if (params != null) {
                 Onion p0Onion = new Onion(params.get(0).toString());
                 if (p0Onion != null) {
@@ -1465,7 +1692,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         Boolean newUserKeyExist;
         Boolean newGroupKeyExist;
         try {
-            InputStream keyfile = oobdCore.getSystemIF().generateResourceStream(
+            InputStream keyfile = core.getSystemIF().generateResourceStream(
                     OOBDConstants.FT_KEY, OOBDConstants.PGP_USER_KEYFILE_NAME);
             userKeyExist = keyfile != null;
             keyfile.close();
@@ -1473,7 +1700,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             userKeyExist = false;
         }
         try {
-            InputStream keyfile = oobdCore.getSystemIF().generateResourceStream(
+            InputStream keyfile = core.getSystemIF().generateResourceStream(
                     OOBDConstants.FT_KEY, OOBDConstants.PGP_GROUP_KEYFILE_NAME);
             groupKeyExist = keyfile != null;
             keyfile.close();
@@ -1481,18 +1708,18 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             groupKeyExist = false;
         }
         try {
-            InputStream keyfile = oobdCore.getSystemIF().generateResourceStream(
+            InputStream keyfile = core.getSystemIF().generateResourceStream(
                     OOBDConstants.FT_RAW,
-                    appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_USER_KEYFILE_NAME);
+                    appProbs.get(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME);
             newUserKeyExist = keyfile != null;
             keyfile.close();
         } catch (Exception e) {
             newUserKeyExist = false;
         }
         try {
-            InputStream keyfile = oobdCore.getSystemIF().generateResourceStream(
+            InputStream keyfile = core.getSystemIF().generateResourceStream(
                     OOBDConstants.FT_RAW,
-                    appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_GROUP_KEYFILE_NAME);
+                    appProbs.get(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME);
             newGroupKeyExist = keyfile != null;
             keyfile.close();
         } catch (Exception e) {
@@ -1504,36 +1731,36 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     private void deleteKeyFiles() {
 
-        File f = new File(oobdCore.getSystemIF().generateUIFilePath(OOBDConstants.FT_KEY, OOBDConstants.PGP_USER_KEYFILE_NAME));
+        File f = new File(core.getSystemIF().generateUIFilePath(OOBDConstants.FT_KEY, OOBDConstants.PGP_USER_KEYFILE_NAME));
         f.delete();
-        f = new File(oobdCore.getSystemIF().generateUIFilePath(OOBDConstants.FT_KEY, OOBDConstants.PGP_GROUP_KEYFILE_NAME));
+        f = new File(core.getSystemIF().generateUIFilePath(OOBDConstants.FT_KEY, OOBDConstants.PGP_GROUP_KEYFILE_NAME));
         f.delete();
     }
 
     private void importKeyFiles() {
-        if (importsingleKeyFile(appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_USER_KEYFILE_NAME,
+        if (importsingleKeyFile(appProbs.get(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME,
                 OOBDConstants.PGP_USER_KEYFILE_NAME)) {
-            File f = new File(oobdCore.getSystemIF().generateUIFilePath(
+            File f = new File(core.getSystemIF().generateUIFilePath(
                     OOBDConstants.FT_SCRIPT,
-                    appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_USER_KEYFILE_NAME));
+                    appProbs.get(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME));
             f.delete();
         }
-        if (importsingleKeyFile(appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_GROUP_KEYFILE_NAME,
+        if (importsingleKeyFile(appProbs.get(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME,
                 OOBDConstants.PGP_GROUP_KEYFILE_NAME)) {
-            File f = new File(oobdCore.getSystemIF().generateUIFilePath(
+            File f = new File(core.getSystemIF().generateUIFilePath(
                     OOBDConstants.FT_SCRIPT,
-                    appProbs.get(OOBDConstants.PropName_ScriptDir, "") + java.io.File.separator + OOBDConstants.PGP_GROUP_KEYFILE_NAME));
+                    appProbs.get(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME));
             f.delete();
         }
     }
 
     private boolean importsingleKeyFile(String from, String to) {
         FileOutputStream fos;
-        InputStream inFile = oobdCore.getSystemIF().generateResourceStream(
+        InputStream inFile = core.getSystemIF().generateResourceStream(
                 OOBDConstants.FT_RAW, from);
         if (inFile != null) {
             try {
-                fos = new FileOutputStream(oobdCore.getSystemIF().generateUIFilePath(
+                fos = new FileOutputStream(core.getSystemIF().generateUIFilePath(
                         OOBDConstants.FT_KEY, to));
                 org.apache.commons.io.IOUtils.copy(inFile, fos);
                 inFile.close();
@@ -1547,10 +1774,129 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     }
 
+    boolean saveBufferToFile(String fileName, String content, boolean append) {
+        try {
+            Writer os = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(fileName, append), "UTF-8"));
+            os.write(content);
+            os.close();
+            return true;
+        } catch (IOException ex) {
+            Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    private String saveBufferAsFileRequest(String FileName, String content, boolean append) {
+        String oldDirName = appProbs.get(OOBDConstants.PropName_OutputFile, null);
+        JFileChooser chooser = new JFileChooser(oldDirName);
+        File oldDir = null;
+        if (FileName != null) {
+            oldDir = new File(FileName);
+            chooser.setSelectedFile(oldDir);
+        }
+        chooser.setMultiSelectionEnabled(false);
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.resetChoosableFileFilters();
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.addChoosableFileFilter(new FileFilter() {
+
+            public boolean accept(File f) {
+                if (f.isDirectory()) {
+                    return true;
+                }
+                String ext = null;
+                String s = f.getName();
+                int i = s.lastIndexOf('.');
+                if (i > 0 && i < s.length() - 1) {
+                    ext = s.substring(i + 1).toLowerCase();
+                }
+                if (ext != null) {
+                    if (ext.equals("txt")
+                            || ext.equals("csv")) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+                return false;
+            }
+
+            public String getDescription() {
+                return "Text Files";
+            }
+        });
+        chooser.addChoosableFileFilter(new FileFilter() {
+
+            public boolean accept(File f) {
+                if (f.isDirectory()) {
+                    return true;
+                }
+                String ext = null;
+                String s = f.getName();
+                int i = s.lastIndexOf('.');
+                if (i > 0 && i < s.length() - 1) {
+                    ext = s.substring(i + 1).toLowerCase();
+                }
+                if (ext != null) {
+                    if (ext.equals("xml")) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+                return false;
+            }
+
+            public String getDescription() {
+                return "XML Files";
+            }
+        });
+        chooser.addChoosableFileFilter(new FileFilter() {
+
+            public boolean accept(File f) {
+
+                return true;
+            }
+
+            public String getDescription() {
+                return "All Files";
+            }
+        });
+        if (chooser.showSaveDialog(this.getFrame())
+                == JFileChooser.APPROVE_OPTION && saveBufferToFile(chooser.getSelectedFile().toString(), content, append)) {
+            appProbs.put(OOBDConstants.PropName_OutputFile, chooser.getCurrentDirectory().toString());
+            return chooser.getSelectedFile().toString();
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public void openXCVehicleData(Onion onion) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public void transferPreferences2System(String localConnectTypeName) {
+
+        if (localConnectTypeName != null && !localConnectTypeName.equalsIgnoreCase("")) {
+            core.writeDataPool(DP_ACTUAL_REMOTECONNECT_SERVER, appProbs.get(localConnectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, ""));
+            core.writeDataPool(DP_ACTUAL_PROXY_HOST, appProbs.get(localConnectTypeName + "_" + OOBDConstants.PropName_ProxyHost, ""));
+            core.writeDataPool(DP_ACTUAL_PROXY_PORT, appProbs.getInt(localConnectTypeName + "_" + OOBDConstants.PropName_ProxyPort, 0));
+
+        }
+        core.writeDataPool(DP_ACTUAL_UIHANDLER, appProbs.get(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME));
+        String actualScriptDir = appProbs.get(OOBDConstants.PropName_ScriptDir, null);
+        core.writeDataPool(DP_SCRIPTDIR, actualScriptDir);
+        core.writeDataPool(DP_WWW_LIB_DIR, appProbs.get(OOBDConstants.PropName_LibraryDir, null));
+        ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
+        core.writeDataPool(DP_LIST_OF_SCRIPTS, files);
+        core.writeDataPool(DP_HTTP_HOST, core.getSystemIF().getSystemIP());
+        core.writeDataPool(DP_HTTP_PORT, 8080);
+        core.writeDataPool(DP_WSOCKET_PORT, 8443);
+
+    }
+
 }
 
 class PWDialog extends JDialog implements ActionListener {
@@ -1589,7 +1935,6 @@ class PWDialog extends JDialog implements ActionListener {
         c.gridwidth = 2;
         c.gridx = 0;
         c.gridy = 2;
-
 
         myPanel.add(pgpShowPW, c);
         pgpShowPW.addItemListener(new ItemListener() {
@@ -1638,4 +1983,5 @@ class PWDialog extends JDialog implements ActionListener {
             setVisible(false);
         }
     }
+
 }

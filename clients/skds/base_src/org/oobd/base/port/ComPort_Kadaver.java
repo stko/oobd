@@ -77,26 +77,23 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
         if ("wss".equalsIgnoreCase(protocol)) {
             // load up the key store
             String STORETYPE = "JKS";
-            String KEYSTORE = "/org/oobd/base/port/keystore.jks";
-            String STOREPASSWORD = "ausderferne";
-            String KEYPASSWORD = "ausderferne";
+            String KEYSTORE = "/org/oobd/base/port/servercert.jks";
             String KEYMANAGERTYPE = "SunX509";
             if (System.getProperty("java.vm.name").equalsIgnoreCase("Dalvik")) {
                 STORETYPE = "BKS";
-                KEYSTORE = "/org/oobd/base/port/keystore.bks";
+                KEYSTORE = "/org/oobd/base/port/servercert.bks";
                 KEYMANAGERTYPE = "X509";
             }
             try {
                 KeyStore ks = KeyStore.getInstance(STORETYPE);
-                ks.load(this.getClass().getResourceAsStream(KEYSTORE), STOREPASSWORD.toCharArray());
-                KeyManagerFactory kmf = KeyManagerFactory.getInstance(KEYMANAGERTYPE);
-                kmf.init(ks, KEYPASSWORD.toCharArray());
+                //ks.load(this.getClass().getResourceAsStream(KEYSTORE), STOREPASSWORD.toCharArray());
+                ks.load(this.getClass().getResourceAsStream(KEYSTORE), null);
                 TrustManagerFactory tmf = TrustManagerFactory.getInstance(KEYMANAGERTYPE);
                 tmf.init(ks);
 
                 SSLContext sslContext = null;
                 sslContext = SSLContext.getInstance("TLS");
-                sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+                sslContext.init(null, tmf.getTrustManagers(), null);
                 // sslContext.init( null, null, null ); // will use java's default key and trust store which is sufficient unless you deal with self-signed certificates
 
                 SSLSocketFactory factory = sslContext.getSocketFactory();// (SSLSocketFactory) SSLSocketFactory.getDefault();
@@ -120,25 +117,7 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
                 attachShutDownHook();
                 connectBlocking();
                 return true;
-            } catch (IOException ex) {
-                Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
-            } catch (NoSuchAlgorithmException ex) {
-                Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
-            } catch (CertificateException ex) {
-                Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
-            } catch (KeyStoreException ex) {
-                Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
-            } catch (UnrecoverableKeyException ex) {
-                Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
-            } catch (KeyManagementException ex) {
-                Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
-            } catch (InterruptedException ex) {
+            } catch (IOException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException | InterruptedException ex) {
                 Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
                 return false;
             }
@@ -166,6 +145,10 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
         } else {
             return null;
         }
+    }
+
+    public static String getUrlFormat() {
+        return "{protocol}://{connectid}@{urlpath}";
     }
 
     public static PortInfo[] getPorts() {
@@ -200,17 +183,15 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
     }
 
     public synchronized void write(String s) {
-        try {
-            Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.INFO, "Serial output:{0}", s);
-            String onionMsg = new Onion("{'msg':'" + Base64Coder.encodeString(s) + "','channel': '" + channel + "'}").toString();
-            send(onionMsg);
 
-            // outStream.flush();
+        Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.INFO, "Serial output:{0}", s);
+        String onionMsg;
+        try {
+            onionMsg = new Onion("{'msg':'" + Base64Coder.encodeString(s) + "','channel': '" + channel + "'}").toString();
+            System.err.println("Send to cadaver server:"+onionMsg);
+            send(onionMsg);
         } catch (JSONException ex) {
             Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NotYetConnectedException ex) {
-            Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.WARNING,
-                    null, ex);
         }
     }
 
@@ -220,6 +201,13 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
+        System.out.println("Socket was closed!!");
+        System.out.println("reason: " + reason);
+        if (remote) {
+            System.out.println("Remote");
+        } else {
+            System.out.println("local");
+        }
     }
 
     @Override

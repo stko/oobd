@@ -586,10 +586,19 @@ int sendMoreFrames(ODPBuffer *
 	if ((*actBufferPos_ptr) < protocolBuffer->len) {	//some more to send?
 	    *timeout_ptr = protocolBuffer->data[*actBufferPos_ptr];
 	    (*actBufferPos_ptr)++;
-	    if (*timeout_ptr == 0) {	//send immediadly
-		return 1;
+	    if ((*actBufferPos_ptr) < protocolBuffer->len) {	//another telegram still in the queue
+		if (*timeout_ptr == 0) {	//send immediadly
+		    return 1;
+		} else {
+		    return 0;	// break the send loop and wait
+		}
 	    } else {
-		return 0;	// break the send loop and wait
+		if (*timeout_ptr == 0) {	//do not send immediadly to allow the OS to handle incoming messages, delay instead
+		*timeout_ptr = 2;	//restarts the process agaim 
+		    return 0;
+		} else {
+		    return 0;	// break the send loop and wait
+		}
 	    }
 	} else {
 	    *timeout_ptr = 1;	//this will let the MSG_TICK event to do all the cleanup

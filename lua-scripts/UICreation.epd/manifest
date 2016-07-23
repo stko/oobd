@@ -1,0 +1,14 @@
+{
+  "title": "OOBD UI Elements",
+  "script": "UICreation.lbc",
+  "description": "OOBD Demo which shows the features of the standard UI Elements",
+  "version": "1.0",
+  "copyright": "GPLV2",
+  "security": "public",
+  "date": "01.09.2016",
+  "author" : "The OOBD Team",
+  "url": "oobd.org",
+  "email": "info@oobd.org",
+  "phone": "+49-012345678",
+  "screenshot" : "screenshot.png"
+}

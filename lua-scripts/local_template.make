@@ -47,7 +47,8 @@ MDXPOOL=../../mdx_pool/
 # as list of the available directories depents on the individual user access rights, this
 # directory list is part of the local user configuration
 
-DIRS=oobdII-standard
+DIRS=examples \
+obdII-standard
 
 # Do NEVER remove this warning!!!
 warning:

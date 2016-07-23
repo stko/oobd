@@ -28,19 +28,12 @@ do
 	gpg --yes --batch --options ./gpg.conf --no-default-keyring --trust-model always  --keyring ./userkeyring.pub --recipient $user $ADMINREADER --output $user.groupkeys --encrypt $user.groupring
 #	gpg -v --yes --batch --options ./gpg.conf --no-default-keyring --trust-model always  --keyring ./userkeyring.pub --recipient $user --output $user.groupkeys --encrypt ./oobd_groups.sec
 	grep -i "$user" useraccess.txt > $user.groupkeys.lst
-	echo "Debug: Variables:" $NEWUSERACCESS $user $user.groupkeys $INSTALLERTEMPLATE $INSTALLERLICENCE $INSTALLERSOURCEDIR $INSTALLERTARGETDIR $GETFULLPATHCMD
-	if [[ -d "${INSTALLERSOURCEDIR}" ]] ; then
-		if [[ ! -d "${INSTALLERTARGETDIR}" ]] ; then
-			mkdir -p "${INSTALLERTARGETDIR}"
-		fi
-		if [[ ! -d "${INSTALLERTARGETDIR}" ]] ; then
-			echo "Error: can not create installer target" "${INSTALLERTARGETDIR}"
-		else
-			echo "make Installer!"
-			echo  $NEWUSERACCESS $user $user.groupkeys $INSTALLERTEMPLATE $INSTALLERLICENCE $INSTALLERSOURCEDIR $INSTALLERTARGETDIR $GETFULLPATHCMD
-			php $DIR/createNSISfiles.php  "$NEWUSERACCESS" "$user" "$user.groupkeys" "$INSTALLERTEMPLATE" "$INSTALLERLICENCE" "$INSTALLERSOURCEDIR" "$INSTALLERTARGETDIR" "$GETFULLPATHCMD"
-			(cd "$INSTALLERTARGETDIR" && "$INSTALLEREXE" $user.nsi && zip "$user".zip "$user".exe)
-		fi
+	if [[ -d "${INSTALLERSOURCEDIR}" &&  -d "${INSTALLERTARGETDIR}" ]] ; then
+		echo "make Installer!"
+		echo  $NEWUSERACCESS $user $user.groupkeys $INSTALLERTEMPLATE $INSTALLERLICENCE $INSTALLERSOURCEDIR $INSTALLERTARGETDIR $GETFULLPATHCMD
+		php $DIR/createNSISfiles.php  "$NEWUSERACCESS" "$user" "$user.groupkeys" "$INSTALLERTEMPLATE" "$INSTALLERLICENCE" "$INSTALLERSOURCEDIR" "$INSTALLERTARGETDIR" "$GETFULLPATHCMD"
+		(cd "$INSTALLERTARGETDIR" && "$INSTALLEREXE" $user.nsi && zip "$user".zip "$user".exe)
+		
 		
 	fi
 done

@@ -1,0 +1,16 @@
+{
+  "startpage": "oobd_vehicle.html",
+  "script": "main.lbc",
+  "icon": "images/icon-info.png",
+  "title": "OOBD 3D Demo",
+  "description": "Demo which uses three.js to show module status",
+  "version": "1.0",
+  "copyright": "GPLV2",
+  "security": "public",
+  "author" : "Steffen Köhler",
+  "date": "01.09.2016",
+  "url": "oobd.org",
+  "email": "info@oobd.org",
+  "phone": "+49-012345678",
+  "screenshot" : "screenshot.png"
+}

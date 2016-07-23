@@ -32,6 +32,7 @@ import org.oobd.base.visualizer.Visualizer;
 
 /**
  * generic abstract for the implementation of scriptengines
+ *
  * @author steffen
  */
 abstract public class LocalOobdUIHandler extends OobdUIHandler {
@@ -43,13 +44,13 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
         /* the abstract class also needs to have this method, because it's also loaded during dynamic loading, and the empty return string
          ** is the indicator for this abstract class
          */
-        return "";
+        return "LocalOobdUIHandler";
     }
 
     public LocalOobdUIHandler(String myID, Core myCore, IFsystem mySystem, String name) {
         super(myID, myCore, mySystem, name);
         userInterface = myCore.getUiIF();
-
+        Core.getSingleInstance().writeDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, true);
         Logger.getLogger(LocalOobdUIHandler.class.getName()).log(Level.CONFIG, "Local UIHandler  object created: {0}", id);
 
     }
@@ -86,7 +87,11 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
                 return null;
             }
             if (myOnion.isType(CM_WRITESTRING)) {
-                userInterface.sm(Base64Coder.decodeString(myOnion.getOnionString("data")));
+                String modifier = myOnion.getOnionString("modifier"); // an absolutely work around. Here's is why: https://github.com/stko/oobd/issues/164
+                if (modifier == null) {
+                    modifier = "";
+                }
+                userInterface.sm(Base64Coder.decodeString(myOnion.getOnionString("data")), Base64Coder.decodeString(modifier));
                 return null;
             }
             if (myOnion.isType(CM_PARAM)) {
@@ -125,14 +130,12 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
 
     /**
      * \brief add generated visualizers to global list
-     * 
+     *
      * several owners (=scriptengines) do have their own visualizers. This is
      * stored in the visualizers hash
-     * 
-     * @param owner
-     *            who owns the visualizer
-     * @param vis
-     *            the visualizer
+     *
+     * @param owner who owns the visualizer
+     * @param vis the visualizer
      */
     public void addVisualizer(String owner, Visualizer vis) {
         if (visualizers.containsKey(owner)) {
@@ -146,10 +149,9 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
 
     /**
      * \brief Tells Value to all visualizers of a scriptengine
-     * 
-     * @param value
-     *            Onion containing value and scriptengine
-     * 
+     *
+     * @param value Onion containing value and scriptengine
+     *
      */
     public void handleValue(Onion value) {
         String owner = value.getOnionString("owner/name"); // who's the owner of
@@ -176,10 +178,9 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
 
     /**
      * \brief Tells Value to all visualizers of a scriptengine
-     * 
-     * @param value
-     *            Onion containing value and scriptengine
-     * 
+     *
+     * @param value Onion containing value and scriptengine
+     *
      */
     public void openTempFile(Onion value) {
         InputStreamReader myInputStream = null;
@@ -236,10 +237,15 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
                         System.err.println(conn.getResponseMessage());
                     }
                 } else {
-                    myFileName = getCore().getSystemIF().doFileSelector(filePath, fileExtension, fileMessage, false);
+                    if ("direct".equalsIgnoreCase(fileMessage)) {
+                        myFileName = filePath;
+                    } else {
+                        myFileName = getCore().getSystemIF().doFileSelector(filePath, fileExtension, fileMessage, false);
+                    }
                     if (myFileName != null) {
                         try {
-                            myInputStream = new FileReader(myFileName);
+                            myFileName=getCore().getSystemIF().generateUIFilePath(FT_SCRIPT, myFileName);
+                            myInputStream = new FileReader(getCore().getSystemIF().generateUIFilePath(FT_SCRIPT, myFileName));
                         } catch (FileNotFoundException ex) {
                             Logger.getLogger(LocalOobdUIHandler.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -247,9 +253,8 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
                 }
             }
 
-
             if (myInputStream != null) {
-                OobdScriptengine actEngine = getCore().getScriptEngine(owner);
+                OobdScriptengine actEngine = getCore().getScriptEngine();
                 getCore().getSystemIF().createEngineTempInputFile(actEngine);
 
                 actEngine.fillTempInputFile(myInputStream);
@@ -264,13 +269,13 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
 
     /**
      * \brief updates all visualizers
-     * 
+     *
      * to not having several UI refreshes in parallel, update requests are only
      * be collected for each visualizer and only been refreshed when the central
      * core raises this update event.
-     * 
-     * 
-     * 
+     *
+     *
+     *
      */
     public void updateVisualizers() {
         synchronized (visualizers) { // Collection<ArrayList<Visualizer>> c =

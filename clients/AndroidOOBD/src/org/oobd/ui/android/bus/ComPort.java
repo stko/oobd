@@ -76,7 +76,7 @@ public class ComPort implements OOBDPort {
 				return false;
 			}
 		}
-
+		
 		obdDevice = mBluetoothAdapter.getRemoteDevice(BTAddress);
 
 		if (obdDevice != null) { // Get a BluetoothSocket to connect
@@ -92,7 +92,7 @@ public class ComPort implements OOBDPort {
 
 				if (serialPort != null) {
 					try {
-						mBluetoothAdapter.cancelDiscovery();
+						//mBluetoothAdapter.cancelDiscovery();
 						serialPort.connect();
 						Log.d("OOBD:Bluetooth", "Bluetooth connected");
 						inputStream = serialPort.getInputStream();
@@ -113,9 +113,11 @@ public class ComPort implements OOBDPort {
 								// Keep listening to the InputStream until an
 								// exception occurs
 								Log.d("OOBD:Bluetooth", "receiver task runs");
-								while (true) {
+								while (!isInterrupted()) {
 									if (inputStream != null) {
 										try {
+											//first we need to make this call not blocking, otherways we could not end the thread in case of no incoming data..
+											if (inputStream.available()>0){
 											// Read from the InputStream
 											bytes = inputStream.read(buffer);
 											if (bytes > 0) {
@@ -126,18 +128,25 @@ public class ComPort implements OOBDPort {
 												msgReceiver
 														.receiveString(recString);
 											}
+											}else{
+												try {
+													Thread.sleep(10);
+												} catch (InterruptedException e) {
+													break;
+												}
+											}
 										} catch (IOException e) {
-											break;
+
 										}
 									} else {
 										try {
 											Thread.sleep(100);
 										} catch (InterruptedException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
+											break;
 										}
 									}
 								}
+								Log.d("OOBD:Bluetooth", "receiver task interupted");
 							}
 
 						};
@@ -204,6 +213,15 @@ public class ComPort implements OOBDPort {
 
 	
 	public void close() {
+		Log.d("BT Socket", "Try to close socket");
+		if (myThread!=null){
+			myThread.interrupt();
+			try {
+				myThread.join();
+			} catch (InterruptedException e) {
+			}
+			myThread=null;
+		}
 		if (serialPort != null) {
 			try {
 				inputStream.close();
@@ -217,6 +235,14 @@ public class ComPort implements OOBDPort {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			// add delay between closing streams and socket itself
+			// appears as very helpful to avoid reconnection fault because of not properly
+			// closed previous connection
+			// found at http://stackoverflow.com/a/22769260
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+			}
 			try {
 				serialPort.close();
 				serialPort = null;
@@ -225,6 +251,13 @@ public class ComPort implements OOBDPort {
 			}
 		}
 	}
+	
+
+    public static String getUrlFormat() {
+        return "bt://{connectid}";
+    }
+
+
 
 	public static PortInfo[] getPorts() {
 		System.out.println("Starting Bluetooth Detection and Device Pairing");

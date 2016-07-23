@@ -35,8 +35,8 @@ public class AVLLookup extends OobdDB implements OOBDConstants {
     }
 
     public void run() {
-        ArrayList<String> lookupResult = null;
         while (keepRunning == true) {
+        ArrayList<String> lookupResult = null;
             Message msg = getMsg(true);
             Onion on = msg.getContent();
             String command = on.getOnionString("command");
@@ -56,7 +56,7 @@ public class AVLLookup extends OobdDB implements OOBDConstants {
 							dbStore.get(dbFilename));
                     lookupResult = OODBDictionary.doLookUp(myByteInputStream, key);
                 } catch (Exception ex) {
-                    Logger.getLogger(AVLLookup.class.getName()).log(Level.SEVERE, "Can't open db:"+dbFilename, ex);
+                    Logger.getLogger(AVLLookup.class.getName()).log(Level.INFO, "Can't open db:"+dbFilename);
                 }
                 try {
                     Onion result = new Onion();
