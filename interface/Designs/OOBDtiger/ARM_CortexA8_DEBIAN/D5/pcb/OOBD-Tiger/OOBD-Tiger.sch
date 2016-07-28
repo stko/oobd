@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="50" unitdist="mil" unit="mil" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="12" fill="1" visible="no" active="no"/>
@@ -19296,7 +19296,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="C11" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
 <part name="C12" library="rcl" deviceset="C-EU" device="C0805K" value="10µF"/>
 <part name="C13" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
-<part name="C14" library="rcl" deviceset="C-EU" device="C0603" value="10µF"/>
 <part name="C15" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
 <part name="C20" library="rcl" deviceset="C-EU" device="C0805K" value="10µF"/>
 <part name="C21" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
@@ -19352,6 +19351,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <part name="+3V9" library="supply1" deviceset="+3V3" device=""/>
 <part name="+3V10" library="supply1" deviceset="+3V3" device=""/>
 <part name="+3V11" library="supply1" deviceset="+3V3" device=""/>
+<part name="C14" library="rcl" deviceset="C-EU" device="C0805K" value="10µF"/>
 </parts>
 <sheets>
 <sheet>
@@ -19439,10 +19439,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="C13" gate="G$1" x="243.84" y="36.83" smashed="yes">
 <attribute name="NAME" x="244.602" y="37.211" size="1.27" layer="95"/>
 <attribute name="VALUE" x="244.729" y="31.877" size="1.27" layer="96"/>
-</instance>
-<instance part="C14" gate="G$1" x="251.46" y="36.83" smashed="yes">
-<attribute name="NAME" x="252.349" y="37.211" size="1.27" layer="95"/>
-<attribute name="VALUE" x="252.349" y="32.131" size="1.27" layer="96"/>
 </instance>
 <instance part="C15" gate="G$1" x="181.61" y="48.26" smashed="yes">
 <attribute name="NAME" x="180.975" y="45.466" size="1.27" layer="95" rot="R180"/>
@@ -19587,6 +19583,10 @@ with Integrated Isolated DC-to-DC Converter</description>
 <instance part="+3V11" gate="G$1" x="148.59" y="67.31" smashed="yes">
 <attribute name="VALUE" x="151.13" y="69.85" size="1.778" layer="96" rot="R180"/>
 </instance>
+<instance part="C14" gate="G$1" x="251.46" y="36.83" smashed="yes">
+<attribute name="NAME" x="252.349" y="37.211" size="1.27" layer="95"/>
+<attribute name="VALUE" x="252.349" y="32.131" size="1.27" layer="96"/>
+</instance>
 </instances>
 <busses>
 </busses>
@@ -19691,11 +19691,11 @@ with Integrated Isolated DC-to-DC Converter</description>
 <pinref part="C13" gate="G$1" pin="2"/>
 <pinref part="GND47" gate="1" pin="GND"/>
 <wire x1="243.84" y1="31.75" x2="243.84" y2="29.21" width="0.1524" layer="91"/>
-<pinref part="C14" gate="G$1" pin="2"/>
 <wire x1="243.84" y1="29.21" x2="243.84" y2="27.94" width="0.1524" layer="91"/>
 <wire x1="251.46" y1="31.75" x2="251.46" y2="29.21" width="0.1524" layer="91"/>
 <wire x1="243.84" y1="29.21" x2="251.46" y2="29.21" width="0.1524" layer="91"/>
 <junction x="243.84" y="29.21"/>
+<pinref part="C14" gate="G$1" pin="2"/>
 </segment>
 <segment>
 <pinref part="IC2" gate="G$1" pin="GND1@4"/>
@@ -20251,7 +20251,6 @@ with Integrated Isolated DC-to-DC Converter</description>
 </segment>
 <segment>
 <pinref part="IC2" gate="G$1" pin="VCC"/>
-<pinref part="C14" gate="G$1" pin="1"/>
 <wire x1="251.46" y1="44.45" x2="251.46" y2="39.37" width="0.1524" layer="91"/>
 <pinref part="C13" gate="G$1" pin="1"/>
 <wire x1="243.84" y1="39.37" x2="243.84" y2="44.45" width="0.1524" layer="91"/>
@@ -20263,6 +20262,7 @@ with Integrated Isolated DC-to-DC Converter</description>
 <wire x1="254" y1="44.45" x2="256.54" y2="44.45" width="0.1524" layer="91"/>
 <wire x1="256.54" y1="44.45" x2="256.54" y2="64.77" width="0.1524" layer="91"/>
 <pinref part="+3V10" gate="G$1" pin="+3V3"/>
+<pinref part="C14" gate="G$1" pin="1"/>
 </segment>
 </net>
 </nets>
