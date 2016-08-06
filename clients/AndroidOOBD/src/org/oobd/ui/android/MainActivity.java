@@ -490,7 +490,7 @@ public class MainActivity extends FragmentActivity implements
 						// return;
 					}
 					BTDeviceName = preferences.getString(
-							PropName_ConnectTypeBT + "_DEVICE",
+							PropName_ConnectTypeBT + "_"+PropName_SerialPort,
 							"");
 					if (BTDeviceName.equalsIgnoreCase("")) {
 						AlertDialog alertDialog = new AlertDialog.Builder(
