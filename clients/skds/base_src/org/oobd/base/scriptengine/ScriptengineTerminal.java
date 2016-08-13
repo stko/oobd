@@ -73,7 +73,7 @@ public class ScriptengineTerminal extends OobdScriptengine implements OOBDConsta
         while (keepRunning == true) {
             Message msg = getMsg(true);
             Onion on = msg.getContent();
-            String vis = on.getOnionString("vis");
+            String vis = on.getOnionString("vis","");
             Logger.getLogger(ScriptengineTerminal.class.getName()).log(Level.SEVERE,"Msg received:" + msg.getContent().toString());
             try {
 

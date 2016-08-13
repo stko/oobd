@@ -35,6 +35,8 @@ import javax.net.ssl.TrustManagerFactory;
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
 import org.oobd.base.bus.OobdBus;
+import org.oobd.base.support.OnionNoEntryException;
+import org.oobd.base.support.OnionWrongTypeException;
 
 /**
  *
@@ -177,7 +179,7 @@ public class ComPort_Kadaver extends WebSocketClient implements OOBDPort {
         try {
             Onion myOnion = new Onion(message);
             msgReceiver.receiveString(myOnion.getOnionBase64String("reply"));
-        } catch (JSONException ex) {
+        } catch (JSONException | OnionWrongTypeException | OnionNoEntryException ex) {
             Logger.getLogger(ComPort_Kadaver.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

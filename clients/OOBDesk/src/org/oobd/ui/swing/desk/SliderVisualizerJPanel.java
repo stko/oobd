@@ -163,7 +163,7 @@ public class SliderVisualizerJPanel extends VisualizerJPanel implements IFvisual
     // End of variables declaration//GEN-END:variables
 
     public void initValue(Visualizer viz, Onion onion) {
-        functionName.setText(onion.getOnionString("tooltip"));
+        functionName.setText(onion.getOnionString("tooltip",""));
         try {
             valueSlider.setMaximum(safeInt(onion.getOnionObject("opts/max")));
         } catch (OnionNoEntryException ex) {

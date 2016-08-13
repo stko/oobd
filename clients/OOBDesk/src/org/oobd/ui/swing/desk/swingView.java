@@ -74,6 +74,8 @@ import static org.oobd.base.OOBDConstants.FT_PROPS;
 import org.oobd.base.archive.*;
 import org.oobd.base.port.OOBDPort;
 import org.oobd.base.port.PortInfo;
+import org.oobd.base.support.OnionNoEntryException;
+import org.oobd.base.support.OnionWrongTypeException;
 
 /**
  * The application's main frame.
@@ -1654,7 +1656,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             params = msg.getJSONArray(CM_PARAM);
             if (params != null) {
                 Onion p0Onion = new Onion(params.get(0).toString());
-                if (p0Onion != null) {
                     String type = p0Onion.getOnionString("type");
                     String message = Base64Coder.decodeString(p0Onion.getOnionString("message"));
                     String title = Base64Coder.decodeString(p0Onion.getOnionString("title"));
@@ -1675,9 +1676,9 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                         }
                         valid = true;
                     }
-                }
+
             }
-        } catch (JSONException ex) {
+        } catch (JSONException | OnionWrongTypeException | OnionNoEntryException ex) {
             Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (!valid) {

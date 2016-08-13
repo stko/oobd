@@ -177,7 +177,7 @@ public class ComboBoxVisualizerJPanel extends VisualizerJPanel implements IFvisu
 
     @Override
     public void initValue(Visualizer viz, Onion onion) {
-        functionName.setText(onion.getOnionString("tooltip"));
+        functionName.setText(onion.getOnionString("tooltip",""));
         try {
             Onion items = (Onion) onion.getOnionObject("opts/content");
             Vector<String> al = new Vector<String>();

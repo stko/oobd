@@ -974,7 +974,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                         //\todo error message JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
                         return;
                     }
-                    connectID = answer.getOnionBase64String("answer");
+                    connectID = answer.getOnionBase64String("answer",null);
                     if (connectID == null || connectID.equals("")) {
                         //\todo error message JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
                         return;

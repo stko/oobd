@@ -159,7 +159,7 @@ public class TextVisualizerJPanel extends VisualizerJPanel implements IFvisualiz
     // End of variables declaration//GEN-END:variables
 
     public void initValue(Visualizer viz, Onion onion) {
-        functionName.setText(onion.getOnionString("tooltip"));
+        functionName.setText(onion.getOnionString("tooltip",""));
         this.value = viz;
     }
 

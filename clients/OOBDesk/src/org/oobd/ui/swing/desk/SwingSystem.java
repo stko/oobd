@@ -42,6 +42,8 @@ import org.oobd.base.port.ComPort_Kadaver;
 import org.oobd.base.port.ComPort_Telnet;
 import org.oobd.crypt.AES.PassPhraseProvider;
 import javax.jmdns.*;
+import org.oobd.base.support.OnionNoEntryException;
+import org.oobd.base.support.OnionWrongTypeException;
 
 /**
  * This class is the connection between the generic oobd system and the
@@ -294,46 +296,50 @@ public class SwingSystem implements IFsystem, OOBDConstants {
 
     @Override
     public Object supplyHardwareHandle(Onion typ) {
-        appProbs = core.getSystemIF().loadPreferences(FT_PROPS, OOBDConstants.AppPrefsFileName);
-        String actualConnectionType = (String) core.readDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, "");
-        String connectURL = typ.getOnionBase64String("connecturl");
-        String[] parts = connectURL.split("://");
-        if (parts.length != 2 || "".equals(actualConnectionType)) {
-            return null;
-        }
-        String protocol = parts[0];
-        String host = parts[1];
-        String proxyHost = appProbs.get(actualConnectionType + "_" + OOBDConstants.PropName_ProxyHost, "");
-        int proxyPort = appProbs.getInt(actualConnectionType + "_" + OOBDConstants.PropName_ProxyPort, 0);
-        if (protocol.toLowerCase().startsWith("ws")) {
-            try {
-                Proxy thisProxy = Proxy.NO_PROXY;
-                if (!"".equals(proxyHost) && proxyPort != 0) {
-                    thisProxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
-                    System.setProperty("https.proxyHost", proxyHost);
-                    System.setProperty("https.proxyPort", Integer.toString(proxyPort));
-
+        try {
+            appProbs = core.getSystemIF().loadPreferences(FT_PROPS, OOBDConstants.AppPrefsFileName);
+            String actualConnectionType = (String) core.readDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, "");
+            String connectURL = typ.getOnionBase64String("connecturl");
+            String[] parts = connectURL.split("://");
+            if (parts.length != 2 || "".equals(actualConnectionType)) {
+                return null;
+            }
+            String protocol = parts[0];
+            String host = parts[1];
+            String proxyHost = appProbs.get(actualConnectionType + "_" + OOBDConstants.PropName_ProxyHost, "");
+            int proxyPort = appProbs.getInt(actualConnectionType + "_" + OOBDConstants.PropName_ProxyPort, 0);
+            if (protocol.toLowerCase().startsWith("ws")) {
+                try {
+                    Proxy thisProxy = Proxy.NO_PROXY;
+                    if (!"".equals(proxyHost) && proxyPort != 0) {
+                        thisProxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
+                        System.setProperty("https.proxyHost", proxyHost);
+                        System.setProperty("https.proxyPort", Integer.toString(proxyPort));
+                        
+                    }
+                    return new ComPort_Kadaver(new URI(connectURL), thisProxy, proxyHost, proxyPort);
+                    
+                } catch (URISyntaxException ex) {
+                    Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, "could not open Websocket Interface", ex);
+                    return null;
+                    
                 }
-                return new ComPort_Kadaver(new URI(connectURL), thisProxy, proxyHost, proxyPort);
-
-            } catch (URISyntaxException ex) {
-                Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, "could not open Websocket Interface", ex);
-                return null;
-
-            }
-        } else if ("telnet".equalsIgnoreCase(protocol)) {
-            return new ComPort_Telnet(connectURL);
-        } else if ("serial".equalsIgnoreCase(protocol)) {
-            String osname = System.getProperty("os.name", "").toLowerCase();
-            Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "OS detected: " + osname);
-
-            try {
-                return new ComPort_Win();
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            } else if ("telnet".equalsIgnoreCase(protocol)) {
+                return new ComPort_Telnet(connectURL);
+            } else if ("serial".equalsIgnoreCase(protocol)) {
+                String osname = System.getProperty("os.name", "").toLowerCase();
+                Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "OS detected: " + osname);
+                
+                try {
+                    return new ComPort_Win();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    return null;
+                }
+            } else {
                 return null;
             }
-        } else {
+        } catch (OnionWrongTypeException | OnionNoEntryException ex) {
             return null;
         }
     }

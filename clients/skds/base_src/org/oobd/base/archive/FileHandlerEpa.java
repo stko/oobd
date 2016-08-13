@@ -114,7 +114,7 @@ public class FileHandlerEpa implements Archive {
         if (manifest == null) {
             return defaultValue;
         } else {
-            String res = manifest.getOnionString(property);
+            String res = manifest.getOnionString(property,null);
             return res == null ? defaultValue : res;
         }
 

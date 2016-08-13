@@ -52,7 +52,7 @@ public class VisualizerJPanel extends javax.swing.JPanel implements IFvisualizer
     }
 
     public static IFvisualizer getInstance(Onion myOnion) {
-        String thisType = myOnion.getOnionString("opts/type");
+        String thisType = myOnion.getOnionString("opts/type","");
         if ("TextEdit".equalsIgnoreCase(thisType)) {
             return new TextEditVisualizerJPanel();
         } else if ("CheckBox".equalsIgnoreCase(thisType)) {

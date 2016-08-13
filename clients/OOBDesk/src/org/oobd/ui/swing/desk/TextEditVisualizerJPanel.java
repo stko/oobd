@@ -68,7 +68,7 @@ public class TextEditVisualizerJPanel extends VisualizerJPanel implements IFvisu
     }
 
     public void initValue(Visualizer viz, Onion onion) {
-        regex = onion.getOnionString("opts/regex");
+        regex = onion.getOnionString("opts/regex","");
         this.value = viz;
     }
 

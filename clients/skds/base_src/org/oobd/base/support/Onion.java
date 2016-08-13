@@ -147,20 +147,79 @@ public class Onion extends JSONObject {
      * 
      * @param path
      *            /path/to/value
+     * @param defaultValue
+     *            default, if not found
      * @return string
-     * @todo not yet implemented
-     * @throws OnionWrongTypeException
      */
-    public String getOnionString(String path) {
+    public String getOnionString(String path, String defaultValue) {
         try {
             Object result = getOnionObject(path);
             if (!(result instanceof String)) {
-                return null;
+                return defaultValue;
             }
             return (String) result;
         } catch (OnionNoEntryException e) {
-            return null;
+            return defaultValue;
         }
+    }
+
+
+    /**
+     * returns the string value at the given path
+     * 
+     * @param path
+     *            /path/to/value
+     * @return string
+     * @throws OnionWrongTypeException
+     * @throws OnionNoEntryException
+     */
+    public String getOnionString(String path) throws OnionWrongTypeException,OnionNoEntryException {
+
+            Object result = getOnionObject(path);
+            if (!(result instanceof String)) {
+                throw new OnionWrongTypeException();
+            }
+            return (String) result;
+    }
+
+    /**
+     * returns the int value at the given path
+     * 
+     * @param path
+     *            /path/to/value
+     * @param defaultValue
+     *            default, if not found
+     * @return int
+     */
+    public int getOnionInt(String path, int defaultValue) {
+        try {
+            Object result = getOnionObject(path);
+            if (!(result instanceof Integer)) {
+                return defaultValue;
+            }
+            return (int) result;
+        } catch (OnionNoEntryException e) {
+            return defaultValue;
+        }
+    }
+
+
+    /**
+     * returns the int value at the given path
+     * 
+     * @param path
+     *            /path/to/value
+     * @return int
+     * @throws OnionWrongTypeException
+     * @throws OnionNoEntryException
+     */
+    public int getOnionInt(String path) throws OnionWrongTypeException,OnionNoEntryException {
+
+            Object result = getOnionObject(path);
+            if (!(result instanceof String)) {
+                throw new OnionWrongTypeException();
+            }
+            return (int) result;
     }
 
     /**
@@ -192,11 +251,29 @@ public class Onion extends JSONObject {
      * @param path
      *            /path/to/value
      * @return string
-     * @todo not yet implemented
      * @throws OnionWrongTypeException
+     * @throws org.oobd.base.support.OnionNoEntryException
      */
-    public String getOnionBase64String(String path) {
+    public String getOnionBase64String(String path) throws OnionWrongTypeException, OnionNoEntryException {
         String res = getOnionString(path);
+        if (res != null) {
+            return (Base64Coder.decodeString(res));
+        } else {
+            return null;
+        }
+    }
+
+
+    /**
+     * returns and decodes the base64 encoded string value at the given path
+     * 
+     * @param path
+     *            /path/to/value
+     * @param defaultValue return value, if ot found
+     * @return string
+     */
+    public String getOnionBase64String(String path, String defaultValue)  {
+        String res = getOnionString(path, defaultValue);
         if (res != null) {
             return (Base64Coder.decodeString(res));
         } else {
@@ -211,7 +288,6 @@ public class Onion extends JSONObject {
      *            /path/to/value
      * @return string
      * @todo not yet implemented
-     * @throws OnionWrongTypeException
      */
     public Onion getOnion(String path) {
         try {
@@ -221,9 +297,7 @@ public class Onion extends JSONObject {
             }
             return new Onion(result.toString());
 
-        } catch (OnionNoEntryException e) {
-            return null;
-        } catch (JSONException ex) {
+        } catch (OnionNoEntryException | JSONException e) {
             return null;
         }
     }

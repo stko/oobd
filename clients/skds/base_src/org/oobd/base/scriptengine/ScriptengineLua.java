@@ -593,8 +593,8 @@ public class ScriptengineLua extends OobdScriptengine {
 
         String scriptFileName = null;
         if (myStartupParam != null) {
-            scriptFileName = myStartupParam.getOnionString("scriptpath");
-            connectURL = myStartupParam.getOnionString("connecturl");
+            scriptFileName = myStartupParam.getOnionString("scriptpath",null);
+            connectURL = myStartupParam.getOnionString("connecturl","");
         }
         // given filename overrides config settings
         if (scriptFileName == null) {
@@ -629,7 +629,7 @@ public class ScriptengineLua extends OobdScriptengine {
             Message msg = msgPort.getMsg(10);
             if (msg != null) {
                 Onion on = msg.getContent();
-                String vis = on.getOnionString("vis");
+                String vis = on.getOnionString("vis","");
                 Logger.getLogger(ScriptengineLua.class.getName()).log(Level.INFO,
                         "Msg received:" + msg.getContent().toString());
                 try {
@@ -656,8 +656,8 @@ public class ScriptengineLua extends OobdScriptengine {
                                         + callFunction(
                                                 vis,
                                                 new Object[]{
-                                                    Base64Coder.decodeString(on.getOnionString("actValue")),
-                                                    on.getOnionString("optid"),
+                                                    Base64Coder.decodeString(on.getOnionString("actValue","")),
+                                                    on.getOnionString("optid",""),
                                                     (double) on.optInt("updType")})
                                         + "}")));
                     }

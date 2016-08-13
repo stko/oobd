@@ -97,9 +97,9 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
             if (myOnion.isType(CM_PARAM)) {
                 return userInterface.requestParamInput(myOnion);
             }
-        } catch (org.json.JSONException e) {
+        } catch (org.json.JSONException | OnionWrongTypeException | OnionNoEntryException ex) {
             Logger.getLogger(Core.class.getName()).log(Level.SEVERE,
-                    "JSON exception..");
+                    "JSON exception in: " + myOnion);
             return null;
         }
         return null;
@@ -154,12 +154,10 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
      *
      */
     public void handleValue(Onion value) {
-        String owner = value.getOnionString("owner/name"); // who's the owner of
-        // that value?
-        if (owner == null) {
-            Logger.getLogger(Core.class.getName()).log(Level.WARNING,
-                    "onion id does not contain name");
-        } else {
+        try {
+            String owner = value.getOnionString("owner/name"); // who's the owner of
+            // that value?
+
             ArrayList affectedVisualizers = visualizers.get(owner); // which
             // visualizers
             // belong to
@@ -173,6 +171,10 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
                     // that owner
                 }
             }
+
+        } catch (OnionWrongTypeException | OnionNoEntryException ex) {
+            Logger.getLogger(Core.class.getName()).log(Level.WARNING,
+                    "onion id does not contain name");
         }
     }
 
@@ -186,16 +188,16 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
         InputStreamReader myInputStream = null;
         String myFileName = null;
         try {
-            String owner = value.getOnionString("owner/name"); // who's the owner of
+            String owner = value.getOnionString("owner/name",null); // who's the owner of
             // that value?
             if (owner == null) {
                 Logger.getLogger(Core.class.getName()).log(Level.WARNING,
                         "onion id does not contain name");
                 return;
             }
-            String filePath = Base64Coder.decodeString(value.getOnionString("filepath"));
-            String fileExtension = Base64Coder.decodeString(value.getOnionString("extension"));
-            String fileMessage = Base64Coder.decodeString(value.getOnionString("message"));
+            String filePath = Base64Coder.decodeString(value.getOnionString("filepath",""));
+            String fileExtension = Base64Coder.decodeString(value.getOnionString("extension",""));
+            String fileMessage = Base64Coder.decodeString(value.getOnionString("message",""));
             if (fileMessage.equalsIgnoreCase("html")) {
                 myFileName = filePath;
                 URL url = new URL(filePath);
@@ -244,7 +246,7 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
                     }
                     if (myFileName != null) {
                         try {
-                            myFileName=getCore().getSystemIF().generateUIFilePath(FT_SCRIPT, myFileName);
+                            myFileName = getCore().getSystemIF().generateUIFilePath(FT_SCRIPT, myFileName);
                             myInputStream = new FileReader(getCore().getSystemIF().generateUIFilePath(FT_SCRIPT, myFileName));
                         } catch (FileNotFoundException ex) {
                             Logger.getLogger(LocalOobdUIHandler.class.getName()).log(Level.SEVERE, null, ex);

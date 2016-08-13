@@ -162,7 +162,7 @@ public class ProcessBarVisualizerJPanel extends VisualizerJPanel implements IFvi
     // End of variables declaration//GEN-END:variables
 
     public void initValue(Visualizer viz, Onion onion) {
-        functionName.setText(onion.getOnionString("tooltip"));
+        functionName.setText(onion.getOnionString("tooltip",""));
         try {
             valueProgressBar.setMaximum(safeInt(onion.getOnionObject("opts/max")));
         } catch (OnionNoEntryException ex) {

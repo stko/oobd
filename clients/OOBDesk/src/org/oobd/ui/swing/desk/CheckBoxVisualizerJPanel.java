@@ -164,7 +164,7 @@ public class CheckBoxVisualizerJPanel extends VisualizerJPanel implements IFvisu
 
     @Override
      public void initValue(Visualizer viz, Onion onion) {
-        valueCheckBox.setText(onion.getOnionString("tooltip"));
+        valueCheckBox.setText(onion.getOnionString("tooltip",""));
         this.value = viz;
     }
 
