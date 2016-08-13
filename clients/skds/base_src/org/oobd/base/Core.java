@@ -41,7 +41,6 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.prefs.Preferences;
 
 import org.json.JSONException;
 import org.oobd.base.archive.Archive;
@@ -135,6 +134,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     //Preferences props;
     boolean runCore = true;
     final ArrayList dataPoolList = new ArrayList(DP_ARRAY_SIZE);
+    public static Settings settings = null;
 
     /**
      * \brief The Application creates one single instance of the core class
@@ -147,7 +147,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * @param name of the Plugin, just for debugging
      *
      */
-    public Core(IFui myUserInterface, IFsystem mySystemInterface, String name) {
+    public Core(IFui myUserInterface, IFsystem mySystemInterface, String name) throws Settings.IllegalSettingsException {
         super(name);
         System.out.println("Java Runtime Version:" + System.getProperty("java.version"));
         if (thisInstance != null) {
@@ -158,6 +158,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         id = CoreMailboxName;
         userInterface = myUserInterface;
         systemInterface = mySystemInterface;
+        settings= new Settings(systemInterface.loadPreferences(FT_PROPS,OOBDConstants.AppPrefsFileName));
 //        busses = new HashMap<String, OobdBus>();
         busses = new HashMap<>();
         connectors = new HashMap<>();

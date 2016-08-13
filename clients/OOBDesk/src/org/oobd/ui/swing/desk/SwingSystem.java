@@ -60,7 +60,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     Preferences appProbs;
     JmDNS jmdns;
     String oobdMacAddress = "-";
-    InetAddress oobdIPAddress=null;
+    InetAddress oobdIPAddress = null;
 
     @Override
     public void registerOobdCore(Core thisCore) {
@@ -123,7 +123,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
 
     @Override
     public InetAddress getSystemIP() {
-        if (oobdIPAddress!=null){
+        if (oobdIPAddress != null) {
             return oobdIPAddress;
         }
         try {
@@ -315,21 +315,21 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                         thisProxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
                         System.setProperty("https.proxyHost", proxyHost);
                         System.setProperty("https.proxyPort", Integer.toString(proxyPort));
-                        
+
                     }
                     return new ComPort_Kadaver(new URI(connectURL), thisProxy, proxyHost, proxyPort);
-                    
+
                 } catch (URISyntaxException ex) {
                     Logger.getLogger(SwingSystem.class.getName()).log(Level.SEVERE, "could not open Websocket Interface", ex);
                     return null;
-                    
+
                 }
             } else if ("telnet".equalsIgnoreCase(protocol)) {
                 return new ComPort_Telnet(connectURL);
             } else if ("serial".equalsIgnoreCase(protocol)) {
                 String osname = System.getProperty("os.name", "").toLowerCase();
                 Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "OS detected: " + osname);
-                
+
                 try {
                     return new ComPort_Win();
                 } catch (Exception ex) {
@@ -353,19 +353,19 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             prefsRoot = Preferences.userRoot();
             prefsRoot.sync();
             myPrefs = prefsRoot.node("com.oobd.preference." + filename);
+            String sysKeys[];
             if (myPrefs.keys().length == 0) { //no settings found? Then try to read system prefs
                 Preferences sysPrefsRoot;
                 Preferences mySysPrefs = null;
                 sysPrefsRoot = Preferences.systemRoot();
                 sysPrefsRoot.sync();
                 mySysPrefs = sysPrefsRoot.node("com.oobd.preference." + filename);
-                String sysKeys[] = mySysPrefs.keys();
+                sysKeys = mySysPrefs.keys();
                 for (int i = 0; i < sysKeys.length; i++) { //copy system settings, if any exist
                     myPrefs.put(sysKeys[i], mySysPrefs.get(sysKeys[i], ""));
                 }
             }
             return myPrefs;
-
         } catch (Exception e) {
             Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "could not load property id " + filename, e);
         }

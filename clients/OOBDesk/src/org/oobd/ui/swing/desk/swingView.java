@@ -51,7 +51,6 @@ import org.oobd.base.uihandler.OobdUIHandler;
 import org.oobd.base.support.Onion;
 
 import java.util.Vector;
-import java.util.prefs.Preferences;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -86,8 +85,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     final static String DIAGNOSEPANEL = "card3";
     final static String SETTINGSPANEL = "card4";
     Core core;
-    Preferences appProbs;
-    private Vector<IFvisualizer> pageObjects = null;
+     private Vector<IFvisualizer> pageObjects = null;
     private boolean alreadyRefreshing;
     private final String popupText_update = "Toggle Update Flag";
     private final String popupText_timer = "Toggle Timer Flag";
@@ -870,39 +868,38 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private void backButtonLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backButtonLabelMouseClicked
 
         if (httpEnabled.isSelected()) {
-            appProbs.put(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME);
+            Settings.setString(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME);
         } else {
-            appProbs.put(OOBDConstants.PropName_UIHander, UIHANDLER_LOCAL_NAME);
+            Settings.setString(OOBDConstants.PropName_UIHander, UIHANDLER_LOCAL_NAME);
 
         }
 
-        appProbs.put(OOBDConstants.PropName_ScriptDir, scriptDir.getText());
+        Settings.setString(OOBDConstants.PropName_ScriptDir, scriptDir.getText());
 
         connectTypeName = protocolComboBox.getSelectedItem().toString();
         if (connectTypeName != null && !connectTypeName.equalsIgnoreCase("")) {
             core.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
 
 // !! The value of the connection device is not stored here, as this already controlled in the comportComboBox change() event
-            appProbs.put(connectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, jTextFieldRemoteServer.getText());
+            Settings.setString(connectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, jTextFieldRemoteServer.getText());
             core.writeDataPool(DP_ACTUAL_REMOTECONNECT_SERVER, jTextFieldRemoteServer.getText());
-            appProbs.put(connectTypeName + "_" + OOBDConstants.PropName_ProxyHost, jTextFieldProxyHost.getText());
+            Settings.setString(connectTypeName + "_" + OOBDConstants.PropName_ProxyHost, jTextFieldProxyHost.getText());
             try {
                 jSpinnerProxyPort.commitEdit();
             } catch (ParseException ex) {
                 Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
             }
-            appProbs.putInt(connectTypeName + "_" + OOBDConstants.PropName_ProxyPort, ((Integer) jSpinnerProxyPort.getValue()));
+            Settings.setInt(connectTypeName + "_" + OOBDConstants.PropName_ProxyPort, ((Integer) jSpinnerProxyPort.getValue()));
 
         }
 
-        core.getSystemIF().savePreferences(FT_PROPS,
-                OOBDConstants.AppPrefsFileName, appProbs);
-        String script = appProbs.get(OOBDConstants.PropName_ScriptName, null);
+        Settings.savePreferences();
+        String script = Settings.getString(OOBDConstants.PropName_ScriptName, null);
         scriptSelectComboBox.removeAllItems();
         int i = -1;
-        String actualScriptDir = appProbs.get(OOBDConstants.PropName_ScriptDir, null);
+        String actualScriptDir = Settings.getString(OOBDConstants.PropName_ScriptDir, null);
         core.writeDataPool(DP_SCRIPTDIR, actualScriptDir);
-        core.writeDataPool(DP_WWW_LIB_DIR, appProbs.get(OOBDConstants.PropName_LibraryDir, null));
+        core.writeDataPool(DP_WWW_LIB_DIR, Settings.getString(OOBDConstants.PropName_LibraryDir, null));
         ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
         core.writeDataPool(DP_LIST_OF_SCRIPTS, files);
         for (Archive file : files) {
@@ -919,7 +916,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }//GEN-LAST:event_backButtonLabelMouseClicked
 
     private void startButtonLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startButtonLabelMouseClicked
-        if (UIHANDLER_WS_NAME.equalsIgnoreCase((String) core.readDataPool(DP_ACTUAL_UIHANDLER, appProbs.get(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME)))) {
+        if (UIHANDLER_WS_NAME.equalsIgnoreCase((String) core.readDataPool(DP_ACTUAL_UIHANDLER, Settings.getString(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME)))) {
 
             //startButtonLabel.setIcon(resourceMap.getIcon("startButtonLabel.icon"));
             core.getSystemIF().openBrowser();
@@ -928,7 +925,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             if (ActiveArchive == null) {
                 return;
             }
-            appProbs.put(OOBDConstants.PropName_ScriptName, ActiveArchive.toString());
+            Settings.setString(OOBDConstants.PropName_ScriptName, ActiveArchive.toString());
             CardLayout cl = (CardLayout) (mainPanel.getLayout());
             cl.show(mainPanel, DIAGNOSEPANEL);
             core.writeDataPool(DP_ACTIVE_ARCHIVE, ActiveArchive);
@@ -944,14 +941,14 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private void updateUI(boolean calledFromEvent) {
 
         PortInfo[] portList = new PortInfo[0];
-        connectTypeName = appProbs.get(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
+        connectTypeName = Settings.getString(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
         core.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
-        connectDeviceName = appProbs.get(connectTypeName + "_" + OOBDConstants.PropName_SerialPort, "");
-        pgpEnabled.setSelected("true".equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_PGPEnabled, "")));
-        httpEnabled.setSelected(UIHANDLER_WS_NAME.equalsIgnoreCase(appProbs.get(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME)));
-        jTextFieldRemoteServer.setText(appProbs.get(connectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, OOBDConstants.PropName_KadaverServerDefault));
-        jTextFieldProxyHost.setText(appProbs.get(connectTypeName + "_" + OOBDConstants.PropName_ProxyHost, ""));
-        jSpinnerProxyPort.setValue(appProbs.getInt(connectTypeName + "_" + OOBDConstants.PropName_ProxyPort, 0));
+        connectDeviceName = Settings.getString(connectTypeName + "_" + OOBDConstants.PropName_SerialPort, "");
+        pgpEnabled.setSelected("true".equalsIgnoreCase(Settings.getString(OOBDConstants.PropName_PGPEnabled, "")));
+        httpEnabled.setSelected(UIHANDLER_WS_NAME.equalsIgnoreCase(Settings.getString(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME)));
+        jTextFieldRemoteServer.setText(Settings.getString(connectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, OOBDConstants.PropName_KadaverServerDefault));
+        jTextFieldProxyHost.setText(Settings.getString(connectTypeName + "_" + OOBDConstants.PropName_ProxyHost, ""));
+        jSpinnerProxyPort.setValue(Settings.getInt(connectTypeName + "_" + OOBDConstants.PropName_ProxyPort, 0));
         if (!calledFromEvent) { //t
             for (int i = 0; i < protocolComboBox.getItemCount(); i++) {
                 if (protocolComboBox.getItemAt(i).toString().equals(connectTypeName)) {
@@ -994,8 +991,8 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             comportComboBox.setModel(new javax.swing.DefaultComboBoxModel(portList));
             comportComboBox.setSelectedIndex(portListIndex);
         }
-        libraryDir.setText(appProbs.get(OOBDConstants.PropName_LibraryDir, ""));
-        scriptDir.setText(appProbs.get(OOBDConstants.PropName_ScriptDir, ""));
+        libraryDir.setText(Settings.getString(OOBDConstants.PropName_LibraryDir, ""));
+        scriptDir.setText(Settings.getString(OOBDConstants.PropName_ScriptDir, ""));
         int pgp = checkKeyFiles();
         String pgpStatusText = "No PGP keys available";
 
@@ -1020,7 +1017,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
         pgpStatus.setText("PGP Key Status: " + pgpStatusText);
         if (pgp != 0) {
-            appProbs.putBoolean(OOBDConstants.PropName_PGPEnabled, false);
+            Settings.setBoolean(OOBDConstants.PropName_PGPEnabled, false);
             pgpEnabled.setSelected(false);
             pgpEnabled.setEnabled(false);
             if ((pgp & (0x02 + 0x01)) > 0) { // any new keys there
@@ -1039,7 +1036,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private void chooseScriptDirectoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseScriptDirectoryButtonActionPerformed
         JFileChooser chooser = new JFileChooser();
         File oldDir = null;
-        String oldDirName = appProbs.get(OOBDConstants.PropName_ScriptDir, null);
+        String oldDirName = Settings.getString(OOBDConstants.PropName_ScriptDir, null);
         if (oldDirName != null) {
             oldDir = new File(oldDirName);
         }
@@ -1061,7 +1058,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (chooser.showOpenDialog(this.getFrame())
                 == JFileChooser.APPROVE_OPTION) {
-            appProbs.put(OOBDConstants.PropName_ScriptDir, chooser.getSelectedFile().toString());
+            Settings.setString(OOBDConstants.PropName_ScriptDir, chooser.getSelectedFile().toString());
             scriptDir.setText(chooser.getSelectedFile().toString());
         }
     }//GEN-LAST:event_chooseScriptDirectoryButtonActionPerformed
@@ -1075,12 +1072,11 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }//GEN-LAST:event_mainComponentShown
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        String oldDirName = appProbs.get(OOBDConstants.PropName_OutputFile, null);
+        String oldDirName = Settings.getString(OOBDConstants.PropName_OutputFile, null);
         oldDirName = saveBufferAsFileRequest(oldDirName, jTextAreaOutput.getText(), false);
         if (oldDirName != null) {
-            appProbs.put(OOBDConstants.PropName_OutputFile, oldDirName);
-            core.getSystemIF().savePreferences(FT_PROPS,
-                    OOBDConstants.AppPrefsFileName, appProbs);
+            Settings.setString(OOBDConstants.PropName_OutputFile, oldDirName);
+            Settings.savePreferences();
         }
     }//GEN-LAST:event_saveButtonActionPerformed
 
@@ -1121,7 +1117,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }//GEN-LAST:event_gridBiggerButtonActionPerformed
 
     private void pgpEnabledActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pgpEnabledActionPerformed
-        appProbs.putBoolean(OOBDConstants.PropName_PGPEnabled, pgpEnabled.isSelected());
+        Settings.setBoolean(OOBDConstants.PropName_PGPEnabled, pgpEnabled.isSelected());
 
     }//GEN-LAST:event_pgpEnabledActionPerformed
 
@@ -1144,7 +1140,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     private void chooseLibsDirectoryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chooseLibsDirectoryButtonActionPerformed
         JFileChooser chooser = new JFileChooser();
         File oldDir = null;
-        String oldDirName = appProbs.get(OOBDConstants.PropName_LibraryDir, null);
+        String oldDirName = Settings.getString(OOBDConstants.PropName_LibraryDir, null);
         if (oldDirName != null) {
             oldDir = new File(oldDirName);
         }
@@ -1166,7 +1162,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (chooser.showOpenDialog(this.getFrame())
                 == JFileChooser.APPROVE_OPTION) {
-            appProbs.put(OOBDConstants.PropName_LibraryDir, chooser.getSelectedFile().toString());
+            Settings.setString(OOBDConstants.PropName_LibraryDir, chooser.getSelectedFile().toString());
             libraryDir.setText(chooser.getSelectedFile().toString());
         }
     }//GEN-LAST:event_chooseLibsDirectoryButtonActionPerformed
@@ -1177,16 +1173,16 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         if (connectTypeName != null && !connectTypeName.equalsIgnoreCase("")) {
             core.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
             if (oldConnectTypeName != null) {
-                appProbs.put(OOBDConstants.PropName_ConnectType, connectTypeName);
+                Settings.setString(OOBDConstants.PropName_ConnectType, connectTypeName);
                 // !! The value of the connection device is not stored here, as this already controlled in the comportComboBox change() event
-                appProbs.put(oldConnectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, jTextFieldRemoteServer.getText());
-                appProbs.put(oldConnectTypeName + "_" + OOBDConstants.PropName_ProxyHost, jTextFieldProxyHost.getText());
+                Settings.setString(oldConnectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, jTextFieldRemoteServer.getText());
+                Settings.setString(oldConnectTypeName + "_" + OOBDConstants.PropName_ProxyHost, jTextFieldProxyHost.getText());
                 try {
                     jSpinnerProxyPort.commitEdit();
                 } catch (ParseException ex) {
                     Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                appProbs.putInt(oldConnectTypeName + "_" + OOBDConstants.PropName_ProxyPort, ((Integer) jSpinnerProxyPort.getValue()));
+                Settings.setInt(oldConnectTypeName + "_" + OOBDConstants.PropName_ProxyPort, ((Integer) jSpinnerProxyPort.getValue()));
             }
             oldConnectTypeName = connectTypeName;
             updateUI(true);
@@ -1218,7 +1214,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                 cb.getEditor().setItem(connectDeviceName);
             }
             if (connectDeviceName != null && !connectDeviceName.equalsIgnoreCase("")) {
-                appProbs.put(connectTypeName + "_" + OOBDConstants.PropName_SerialPort, connectDeviceName);
+                Settings.setString(connectTypeName + "_" + OOBDConstants.PropName_SerialPort, connectDeviceName);
                 core.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECT_ID, connectDeviceName);
             }
         }
@@ -1407,13 +1403,11 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     public void registerOobdCore(Core core) {
         this.core = core;
-        appProbs = this.core.getSystemIF().loadPreferences(FT_PROPS,
-                OOBDConstants.AppPrefsFileName);
-        connectTypeName = appProbs.get(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
+        connectTypeName = Settings.getString(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
         transferPreferences2System(connectTypeName);
-        String script = appProbs.get(OOBDConstants.PropName_ScriptName, null);
+        String script = Settings.getString(OOBDConstants.PropName_ScriptName, null);
         int i = -1;
-        String actualScriptDir = appProbs.get(OOBDConstants.PropName_ScriptDir, null);
+        String actualScriptDir = Settings.getString(OOBDConstants.PropName_ScriptDir, null);
         ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
         for (Archive file : files) {
             scriptSelectComboBox.addItem(file);
@@ -1424,7 +1418,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         if (i > -1) {
             scriptSelectComboBox.setSelectedIndex(i);
         }
-        if (!appProbs.getBoolean(OOBDConstants.PropName_PGPEnabled, false)) {
+        if (!Settings.getBoolean(OOBDConstants.PropName_PGPEnabled, false)) {
             this.core.getSystemIF().setUserPassPhrase("");
 
         } else {
@@ -1467,7 +1461,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     public void announceUIHandler(String id, String visibleName) {
         Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: UIHandler-ID: {0} visibleName:{1}", new Object[]{id, visibleName
         });
-        if (appProbs.get(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME).equalsIgnoreCase(visibleName)) {
+        if (Settings.getString(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME).equalsIgnoreCase(visibleName)) {
             Onion onion = new Onion();
             String seID = core.createUIHandler(id, onion);
 
@@ -1711,7 +1705,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         try {
             InputStream keyfile = core.getSystemIF().generateResourceStream(
                     OOBDConstants.FT_RAW,
-                    appProbs.get(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME);
+                    Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME);
             newUserKeyExist = keyfile != null;
             keyfile.close();
         } catch (Exception e) {
@@ -1720,7 +1714,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         try {
             InputStream keyfile = core.getSystemIF().generateResourceStream(
                     OOBDConstants.FT_RAW,
-                    appProbs.get(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME);
+                    Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME);
             newGroupKeyExist = keyfile != null;
             keyfile.close();
         } catch (Exception e) {
@@ -1739,18 +1733,18 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }
 
     private void importKeyFiles() {
-        if (importsingleKeyFile(appProbs.get(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME,
+        if (importsingleKeyFile(Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME,
                 OOBDConstants.PGP_USER_KEYFILE_NAME)) {
             File f = new File(core.getSystemIF().generateUIFilePath(
                     OOBDConstants.FT_SCRIPT,
-                    appProbs.get(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME));
+                    Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME));
             f.delete();
         }
-        if (importsingleKeyFile(appProbs.get(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME,
+        if (importsingleKeyFile(Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME,
                 OOBDConstants.PGP_GROUP_KEYFILE_NAME)) {
             File f = new File(core.getSystemIF().generateUIFilePath(
                     OOBDConstants.FT_SCRIPT,
-                    appProbs.get(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME));
+                    Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME));
             f.delete();
         }
     }
@@ -1789,7 +1783,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }
 
     private String saveBufferAsFileRequest(String FileName, String content, boolean append) {
-        String oldDirName = appProbs.get(OOBDConstants.PropName_OutputFile, null);
+        String oldDirName = Settings.getString(OOBDConstants.PropName_OutputFile, null);
         JFileChooser chooser = new JFileChooser(oldDirName);
         File oldDir = null;
         if (FileName != null) {
@@ -1866,7 +1860,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         });
         if (chooser.showSaveDialog(this.getFrame())
                 == JFileChooser.APPROVE_OPTION && saveBufferToFile(chooser.getSelectedFile().toString(), content, append)) {
-            appProbs.put(OOBDConstants.PropName_OutputFile, chooser.getCurrentDirectory().toString());
+            Settings.setString(OOBDConstants.PropName_OutputFile, chooser.getCurrentDirectory().toString());
             return chooser.getSelectedFile().toString();
         } else {
             return null;
@@ -1881,15 +1875,15 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     public void transferPreferences2System(String localConnectTypeName) {
 
         if (localConnectTypeName != null && !localConnectTypeName.equalsIgnoreCase("")) {
-            core.writeDataPool(DP_ACTUAL_REMOTECONNECT_SERVER, appProbs.get(localConnectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, ""));
-            core.writeDataPool(DP_ACTUAL_PROXY_HOST, appProbs.get(localConnectTypeName + "_" + OOBDConstants.PropName_ProxyHost, ""));
-            core.writeDataPool(DP_ACTUAL_PROXY_PORT, appProbs.getInt(localConnectTypeName + "_" + OOBDConstants.PropName_ProxyPort, 0));
+            core.writeDataPool(DP_ACTUAL_REMOTECONNECT_SERVER, Settings.getString(localConnectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, ""));
+            core.writeDataPool(DP_ACTUAL_PROXY_HOST, Settings.getString(localConnectTypeName + "_" + OOBDConstants.PropName_ProxyHost, ""));
+            core.writeDataPool(DP_ACTUAL_PROXY_PORT, Settings.getInt(localConnectTypeName + "_" + OOBDConstants.PropName_ProxyPort, 0));
 
         }
-        core.writeDataPool(DP_ACTUAL_UIHANDLER, appProbs.get(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME));
-        String actualScriptDir = appProbs.get(OOBDConstants.PropName_ScriptDir, null);
+        core.writeDataPool(DP_ACTUAL_UIHANDLER, Settings.getString(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME));
+        String actualScriptDir = Settings.getString(OOBDConstants.PropName_ScriptDir, null);
         core.writeDataPool(DP_SCRIPTDIR, actualScriptDir);
-        core.writeDataPool(DP_WWW_LIB_DIR, appProbs.get(OOBDConstants.PropName_LibraryDir, null));
+        core.writeDataPool(DP_WWW_LIB_DIR, Settings.getString(OOBDConstants.PropName_LibraryDir, null));
         ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
         core.writeDataPool(DP_LIST_OF_SCRIPTS, files);
         core.writeDataPool(DP_HTTP_HOST, core.getSystemIF().getSystemIP());

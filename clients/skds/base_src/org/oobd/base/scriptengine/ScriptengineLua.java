@@ -8,7 +8,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Properties;
 import java.util.Iterator;
-import java.util.prefs.Preferences;
 
 import org.oobd.base.*;
 import org.oobd.base.support.Onion;

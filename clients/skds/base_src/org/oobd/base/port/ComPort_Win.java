@@ -16,7 +16,6 @@ import org.oobd.base.support.Onion;
 import jssc.*;
 import java.io.*;
 import java.util.*;
-import java.util.prefs.Preferences;
 import java.lang.*;
 
 /**
@@ -35,8 +34,6 @@ public class ComPort_Win implements OOBDPort, SerialPortEventListener {
         if (serialPort != null) {
             close();
         }
-        Preferences props = Core.getSingleInstance().getSystemIF().loadPreferences(OOBDConstants.FT_RAW, OOBDConstants.AppPrefsFileName);
-        Boolean portFound = false;
         msgReceiver = receiveListener;
 
         // determine the name of the serial port on several operating systems
@@ -55,7 +52,7 @@ public class ComPort_Win implements OOBDPort, SerialPortEventListener {
             return false;
         }
 
-        defaultPort = props.get(OOBDConstants.PropName_ConnectTypeBT + "_" + OOBDConstants.PropName_SerialPort, "");
+        defaultPort = Settings.getString(OOBDConstants.PropName_ConnectTypeBT + "/" + OOBDConstants.PropName_SerialPort, "");
         serialPort = new SerialPort(defaultPort);
         try {
             serialPort.openPort();//Open serial port

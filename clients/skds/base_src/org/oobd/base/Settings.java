@@ -49,13 +49,20 @@ Try to set JSONObject.NULL instead of null:
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import org.json.JSONException;
+import static org.oobd.base.OOBDConstants.FT_PROPS;
 import org.oobd.base.support.Onion;
+import org.oobd.base.support.OnionNoEntryException;
+import org.oobd.base.support.OnionWrongTypeException;
 
 
 public class Settings {
     
-    Onion prefs;
+    static Onion prefs;
+    static Settings myself;
+    static Preferences pref;
 
     public class IllegalSettingsException extends Exception {
 
@@ -88,9 +95,82 @@ public class Settings {
         } catch (JSONException ex) {
              throw new IllegalSettingsException(ex);
         }
+        myself=this;
     }
     
-    public int getInt(String prefix, String name, int defaultValue){
-        return prefs.getOnionInt(name, defaultValue);
+    public Settings(Preferences thisPrefs) throws IllegalSettingsException {
+        try {
+            prefs=new Onion();
+            String[] sysKeys = thisPrefs.keys();
+            for (int i = 0; i < sysKeys.length; i++) { //copy system settings, if any exist
+                System.out.println(sysKeys[i] + ":" + thisPrefs.get(sysKeys[i], ""));
+                prefs.setValue(sysKeys[i].replaceAll("_", "/"), thisPrefs.get(sysKeys[i], ""));
+            }
+            System.out.println(prefs);
+            myself=this;
+            pref=thisPrefs;
+        } catch (BackingStoreException ex) {
+            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+            throw new IllegalSettingsException(ex);
+        }
+    }
+    
+    public static int getInt( String path, int defaultValue){
+        //temporary tweak to make it work
+        path=path.replaceAll("_", "/");
+        try {
+            return myself.prefs.getOnionInt(path);
+        } catch (ClassCastException|OnionWrongTypeException | OnionNoEntryException ex) {
+            myself.prefs.setValue(path, defaultValue);
+            return defaultValue;
+        }
+    }
+    
+    
+    public static void setInt( String path, int value){
+        //temporary tweak to make it work
+        path=path.replaceAll("_", "/");
+        myself.prefs.setValue(path, value);
+    }
+  
+    public static String getString( String path, String defaultValue){
+        //temporary tweak to make it work
+        path=path.replaceAll("_", "/");
+        try {
+            return myself.prefs.getOnionString(path);
+        } catch (OnionWrongTypeException | OnionNoEntryException ex) {
+            myself.prefs.setValue(path, defaultValue);
+            return defaultValue;
+        }
+    }
+    
+    
+    public static void setString( String path, String value){
+        //temporary tweak to make it work
+        path=path.replaceAll("_", "/");
+        myself.prefs.setValue(path, value);
+    }
+ 
+    public static boolean getBoolean( String path, boolean defaultValue){
+        //temporary tweak to make it work
+        path=path.replaceAll("_", "/");
+        try {
+            return myself.prefs.getOnionBoolean(path);
+        } catch (OnionWrongTypeException | OnionNoEntryException ex) {
+            myself.prefs.setValue(path, defaultValue);
+            return defaultValue;
+        }
+    }
+    
+    
+    public static void setBoolean( String path, boolean value){
+        //temporary tweak to make it work
+        path=path.replaceAll("_", "/");
+        myself.prefs.setValue(path, value);
+    }
+    
+    public static void savePreferences(){
+        Core.getSingleInstance().getSystemIF().savePreferences(FT_PROPS,
+                OOBDConstants.AppPrefsFileName, pref);
     }
 }

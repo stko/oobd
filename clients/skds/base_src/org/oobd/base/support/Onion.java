@@ -223,6 +223,46 @@ public class Onion extends JSONObject {
     }
 
     /**
+     * returns the boolean value at the given path
+     * 
+     * @param path
+     *            /path/to/value
+     * @param defaultValue
+     *            default, if not found
+     * @return boolean
+     */
+    public boolean getOnionBoolean(String path, boolean defaultValue) {
+        try {
+            Object result = getOnionObject(path);
+            if (!(result instanceof Boolean)) {
+                return defaultValue;
+            }
+            return (boolean) result;
+        } catch (OnionNoEntryException e) {
+            return defaultValue;
+        }
+    }
+
+
+    /**
+     * returns the boolean value at the given path
+     * 
+     * @param path
+     *            /path/to/value
+     * @return boolean
+     * @throws OnionWrongTypeException
+     * @throws OnionNoEntryException
+     */
+    public boolean getOnionBoolean(String path) throws OnionWrongTypeException,OnionNoEntryException {
+
+            Object result = getOnionObject(path);
+            if (!(result instanceof Boolean)) {
+                throw new OnionWrongTypeException();
+            }
+            return (boolean) result;
+    }
+
+    /**
      * returns the string value at the given path at index
      * 
      * @param path
@@ -394,6 +434,34 @@ public class Onion extends JSONObject {
      * @return onion which contains generated key:value
      */
     public Onion setValue(String path, int value) {
+        OnionData od = createPath(path);
+        if (od != null) {
+            try {
+                od.onion.put(od.key, value);
+            } catch (JSONException e) {
+                return null;
+            }
+
+            return od.onion;
+        } else {
+            return null;
+        }
+
+    }
+
+
+    /**
+     * set the boolean value at the given path.
+     * 
+     * path consist of an optional directory and the key name, seperated by /,
+     * like path/to/value, where the last value is used as key for the onion
+     * hash.
+     * 
+     * @param path
+     * @param value
+     * @return onion which contains generated key:value
+     */
+    public Onion setValue(String path, boolean value) {
         OnionData od = createPath(path);
         if (od != null) {
             try {
