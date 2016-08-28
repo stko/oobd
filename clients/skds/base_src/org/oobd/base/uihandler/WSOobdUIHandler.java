@@ -808,6 +808,7 @@ class OOBDHttpServer extends NanoHTTPD {
         // or you can access the POST request's parameters
         String postParameter = session.getParms().get("parameter");
         String settingsPassword = "";
+        String settingsJSON= "";
         this.parms = session.getParms();
 
         if (parms.get("theme") != null && !"".equals(parms.get("theme"))) {
@@ -817,6 +818,14 @@ class OOBDHttpServer extends NanoHTTPD {
         if (parms.get("settingspw") != null && !"".equals(parms.get("settingspw"))) {
             settingsPassword =parms.get("settingspw");
             System.out.println("Password received:"+settingsPassword);
+        }
+        if (parms.get("settings") != null && !"".equals(parms.get("settings"))) {
+            settingsJSON =parms.get("settings");
+            try {
+                Settings.transferSettings(settingsJSON);
+            } catch (Settings.IllegalSettingsException ex) {
+                Logger.getLogger(OOBDHttpServer.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         if (parms.get("pgppw") != null && !"".equals(parms.get("pgppw"))) {
             Core.getSingleInstance().getSystemIF()

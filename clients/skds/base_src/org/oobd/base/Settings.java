@@ -86,7 +86,7 @@ public class Settings {
             + "  \"LibraryDir\": {\"type\" : \"string\" , \"description\" : \"HTML Library Directory\"},\n"
             + "}";
 
-    public class IllegalSettingsException extends Exception {
+    public static  class IllegalSettingsException extends Exception {
 
         public IllegalSettingsException() {
             super();
@@ -140,8 +140,11 @@ public class Settings {
         }
     }
 
-    void transferSettings(String input) throws IllegalSettingsException {
+    public static void transferSettings(String input) throws IllegalSettingsException {
 
+        if (input==null || "".equals(input)){
+            return;
+        }
         try {
             Onion inputOnion = new Onion(input);
             JSONObject templateJSON = new JSONObject(prefsTemplateString);
@@ -167,11 +170,11 @@ public class Settings {
                         }
                     }
                 } catch (OnionNoEntryException ex) {
-                    throw new IllegalSettingsException(ex);
+                   // throw new IllegalSettingsException(ex);
                 }
             }
         } catch (JSONException ex) {
-            throw new IllegalSettingsException(ex);
+            //throw new IllegalSettingsException(ex);
         }
     }
 
