@@ -45,7 +45,9 @@ package org.oobd.base;
 
 
  */
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import static java.util.Spliterators.iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,21 +67,21 @@ public class Settings {
     static Preferences pref;
     static SavePreferenceJsonString savePrefsCallback;
     static String prefsTemplateString = "{\n"
-            + "  \"Bluetooth_ServerProxyPort\": {\"type\" : \"int\" , \"description\" : \"(not used)\"},\n"
+            + "  \"Bluetooth_ServerProxyPort\": {\"type\" : \"integer\" , \"description\" : \"(not used)\"},\n"
             + "  \"Bluetooth_SerialPort\": {\"type\" : \"string\" , \"description\" : \"Serial Port\"},\n"
             + "  \"Bluetooth_ConnectServerURL\": {\"type\" : \"string\" , \"description\" : \"\"},\n"
             + "  \"Bluetooth_ServerProxyHost\": {\"type\" : \"string\" , \"description\" : \"\"},\n"
             + "  \"UIHandler\": {\"type\" : \"string\" , \"description\" : \"\"},\n"
             + "  \"ScriptDir\": {\"type\" : \"string\" , \"description\" : \"Script Directory\"},\n"
-            + "  \"Kadaver_ServerProxyPort\": {\"type\" : \"int\" , \"description\" : \"Proxy Port (0 to disable)\"},\n"
+            + "  \"Kadaver_ServerProxyPort\": {\"type\" : \"integer\" , \"description\" : \"Proxy Port (0 to disable)\"},\n"
             + "  \"Kadaver_SerialPort\": {\"type\" : \"string\" , \"description\" : \"Connect ID\"},\n"
             + "  \"Kadaver_ConnectServerURL\": {\"type\" : \"string\" , \"description\" : \"Kadaver Server URL\"},\n"
             + "  \"Kadaver_ServerProxyHost\": {\"type\" : \"string\" , \"description\" : \"Proxy Host\"},\n"
-            + "  \"Telnet_ServerProxyPort\": {\"type\" : \"int\" , \"description\" : \"(not used)\"},\n"
+            + "  \"Telnet_ServerProxyPort\": {\"type\" : \"integer\" , \"description\" : \"(not used)\"},\n"
             + "  \"Telnet_SerialPort\": {\"type\" : \"string\" , \"description\" : \"Server Host\"},\n"
             + "  \"Telnet_ConnectServerURL\": {\"type\" : \"string\" , \"description\" : \"\"},\n"
             + "  \"Telnet_ServerProxyHost\": {\"type\" : \"string\" , \"description\" : \"(not used)\"},\n"
-            + "  \"PGPEnabled\": {\"type\" : \"bool\" , \"description\" : \"(not used)\"},\n"
+            + "  \"PGPEnabled\": {\"type\" : \"boolean\" , \"description\" : \"(not used)\"},\n"
             + "  \"ConnectType\": {\"type\" : \"string\" , \"description\" : \"Connection Type\"},\n"
             + "  \"LibraryDir\": {\"type\" : \"string\" , \"description\" : \"HTML Library Directory\"},\n"
             + "}";
@@ -111,7 +113,7 @@ public class Settings {
     public Settings(SavePreferenceJsonString savePrefs) throws IllegalSettingsException {
         prefs = new Onion();
         myself = this;
-        savePrefsCallback=savePrefs;
+        savePrefsCallback = savePrefs;
     }
 
     public Settings(Preferences thisPrefs) throws IllegalSettingsException {
@@ -132,40 +134,133 @@ public class Settings {
             System.out.println(prefs);
             myself = this;
             pref = thisPrefs;
-        } catch (JSONException|BackingStoreException ex) {
+        } catch (BackingStoreException ex) {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
             throw new IllegalSettingsException(ex);
         }
     }
 
-    void transferSettings(String input) throws JSONException  {
+    void transferSettings(String input) throws IllegalSettingsException {
 
-        Onion inputOnion = new Onion(input);
-        JSONObject templateJSON = new JSONObject(prefsTemplateString);
+        try {
+            Onion inputOnion = new Onion(input);
+            JSONObject templateJSON = new JSONObject(prefsTemplateString);
 
-        for (Iterator<String> iter = templateJSON.keys(); iter.hasNext();) {
-            String templateKey = iter.next();
-            String key = templateKey.replace("_", "/");
-            Object inputData;
-            try {
-                inputData = inputOnion.getOnionObject(key);
+            for (Iterator<String> iter = templateJSON.keys(); iter.hasNext();) {
+                String templateKey = iter.next();
+                String key = templateKey.replace("_", "/");
+                Object inputData;
+                try {
+                    inputData = inputOnion.getOnionObject(key);
+                    JSONObject template = templateJSON.getJSONObject(templateKey);
+                    if (inputData != null) {
+                        switch (template.getString("type")) {
+                            case "integer":
+                                prefs.setValue(key, inputOnion.getOnionInt(key, 0));
+                                break;
+                            case "string":
+                                prefs.setValue(key, inputOnion.getOnionString(key, ""));
+                                break;
+                            case "boolean":
+                                prefs.setValue(key, inputOnion.getOnionBoolean(key, false));
+                                break;
+                        }
+                    }
+                } catch (OnionNoEntryException ex) {
+                    throw new IllegalSettingsException(ex);
+                }
+            }
+        } catch (JSONException ex) {
+            throw new IllegalSettingsException(ex);
+        }
+    }
+
+    static String formatSingleValuScheme(String prevResult, JSONObject template, String prefsPath, String name) {
+        String result = "";
+
+        if (!"".equals(prevResult)) { // this is just to have a leading , and \n at start, if needed
+            result = ",\n";
+        }
+        result += "\"" + name + "\" : {";
+        try {
+            switch (template.getString("type")) {
+                case "integer":
+                    result += "\n\"type\": \"integer\",";
+                    result += "\n\"default\": " + prefs.getOnionInt(prefsPath, 0) + ",";
+                    break;
+                case "string":
+                    result += "\n\"type\": \"string\",";
+                    result += "\n\"default\": \"" + prefs.getOnionString(prefsPath, "") + "\",";
+                    break;
+                case "boolean":
+                    result += "\n\"type\": \"boolean\",";
+                    result += "\n\"default\": \"" + prefs.getOnionBoolean(prefsPath, false) + "\",";
+                    break;
+            }
+            result += "\n\"description\": \"" + template.getString("description") + "\"";
+            result += "}\n";
+        } catch (JSONException ex) {
+            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+
+    public static String getSettingsScheme(String password) {
+        String result = "";
+        Object valueObject;
+        Map<String, Object> buffer = new HashMap<>();
+        try {
+            JSONObject templateJSON = new JSONObject(prefsTemplateString);
+
+            for (Iterator<String> iter = templateJSON.keys(); iter.hasNext();) { //first sort the elements into a temporary nested hashmap to output it then sorted by level
+                String templateKey = iter.next();
+                String[] parts = templateKey.split("_");
+                String key = templateKey.replace("_", "/");
+
                 JSONObject template = templateJSON.getJSONObject(templateKey);
-                if (inputData != null) {
-                    switch (template.getString("type")) {
-                        case "int":
-                            prefs.put(key, (Integer) inputOnion.get(key));
-                            break;
-                        case "string":
-                            prefs.put(key, (String) inputOnion.get(key));
-                            break;
-                        case "boolean":
-                            prefs.put(key, (boolean) inputOnion.get(key));
-                            break;
+                if (parts.length > 1) { // does the key represents a "sub" onion
+                    if (!buffer.containsKey(parts[0])) { // if the key not already exist
+                        buffer.put(parts[0], new HashMap<String, Object>()); // create sub key
+                    }
+                    ((HashMap<String, Object>) buffer.get(parts[0])).put(parts[1], template); // and template as element of the second level 
+                } else {
+                    buffer.put(parts[0], template); // add template in root level
+                }
+            }
+            //printing the top level first
+            result = "\"properties\" : {\n";
+            String innerResult = "";
+            for (String templateKey : buffer.keySet()) {
+                valueObject = buffer.get(templateKey);
+                if (valueObject instanceof JSONObject) {
+                    if (!"ConnectType".equals(templateKey)) {
+                        innerResult += formatSingleValuScheme(innerResult, (JSONObject) valueObject, templateKey, templateKey);
                     }
                 }
-            } catch (JSONException|OnionNoEntryException ex) {
             }
+            result += innerResult + "\n";
+            //printing the different connect
+            for (String templateKey : buffer.keySet()) {
+                valueObject = buffer.get(templateKey);
+                if (valueObject instanceof HashMap) {
+                    result += ",\n\"" + templateKey + "\": {\n"
+                            + "      \"type\": \"object\",\n"
+                            + "      \"title\": \"" + templateKey + "\",\n";
+                    result += "\"properties\" : {\n";
+                    innerResult = "";
+                    for (String subKey : ((HashMap<String, Object>) valueObject).keySet()) {
+                        Object subObject = ((HashMap<String, Object>) valueObject).get(subKey);
+                        innerResult += formatSingleValuScheme(innerResult, (JSONObject) subObject, templateKey + "/" + subKey, subKey);
+                    }
+                    result += innerResult + "}\n}\n";
+                }
+            }
+        } catch (JSONException ex) {
+            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
         }
+        result = "{" + result;
+        result += "\n}\n}";
+        return result;
     }
 
     public static int getInt(String path, int defaultValue) {

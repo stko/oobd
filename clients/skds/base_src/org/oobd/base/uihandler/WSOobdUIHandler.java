@@ -807,11 +807,16 @@ class OOBDHttpServer extends NanoHTTPD {
         String postBody = session.getQueryParameterString();
         // or you can access the POST request's parameters
         String postParameter = session.getParms().get("parameter");
+        String settingsPassword = "";
         this.parms = session.getParms();
 
         if (parms.get("theme") != null && !"".equals(parms.get("theme"))) {
             Core.getSingleInstance().writeDataPool(
                     OOBDConstants.DP_WEBUI_ACTUAL_THEME, parms.get("theme"));
+        }
+        if (parms.get("settingspw") != null && !"".equals(parms.get("settingspw"))) {
+            settingsPassword =parms.get("settingspw");
+            System.out.println("Password received:"+settingsPassword);
         }
         if (parms.get("pgppw") != null && !"".equals(parms.get("pgppw"))) {
             Core.getSingleInstance().getSystemIF()
@@ -909,8 +914,9 @@ class OOBDHttpServer extends NanoHTTPD {
                     catalog);
         } 
         else if ("/settings.json".equals(session.getUri())){
-            return newFixedLengthResponse(Response.Status.OK, "text/xml",
-                    "{\"properties\":{\"make\":{\"type\":\"string\",\"enum\":[\"Tooooyota\",\"BMW\",\"Honda\",\"Ford\",\"Chevy\",\"VW\"]},\"model\":{\"type\":\"string\"},\"year\":{\"type\":\"integer\",\"enum\":[1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014],\"default\":2008}}}");
+//            return newFixedLengthResponse(Response.Status.OK, "text/xml",
+//                   "{\"properties\":{\"make\":{\"type\":\"string\",\"enum\":[\"Tooooyota\",\"BMW\",\"Honda\",\"Ford\",\"Chevy\",\"VW\"]},\"model\":{\"type\":\"string\"},\"year\":{\"type\":\"integer\",\"enum\":[1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014],\"default\":2008}}}");
+            return newFixedLengthResponse(Response.Status.OK, "text/xml",Settings.getSettingsScheme(settingsPassword));
         }else {
             InputStream myFileStream = Core
                     .getSingleInstance()
