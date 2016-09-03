@@ -65,26 +65,29 @@ public class Settings {
     static Onion prefs;
     static Settings myself;
     static Preferences pref;
+    static boolean validAdmin=true;
+    static String lockExt="_lock";
     static SavePreferenceJsonString savePrefsCallback;
     static String prefsTemplateString = "{\n"
-            + "  \"Bluetooth_ServerProxyPort\": {\"type\" : \"integer\" , \"description\" : \"(not used)\"},\n"
-            + "  \"Bluetooth_SerialPort\": {\"type\" : \"string\" , \"description\" : \"Serial Port\"},\n"
-            + "  \"Bluetooth_ConnectServerURL\": {\"type\" : \"string\" , \"description\" : \"\"},\n"
-            + "  \"Bluetooth_ServerProxyHost\": {\"type\" : \"string\" , \"description\" : \"\"},\n"
-            + "  \"UIHandler\": {\"type\" : \"string\" , \"description\" : \"\"},\n"
-            + "  \"ScriptDir\": {\"type\" : \"string\" , \"description\" : \"Script Directory\"},\n"
-            + "  \"Kadaver_ServerProxyPort\": {\"type\" : \"integer\" , \"description\" : \"Proxy Port (0 to disable)\"},\n"
-            + "  \"Kadaver_SerialPort\": {\"type\" : \"string\" , \"description\" : \"Connect ID\"},\n"
-            + "  \"Kadaver_ConnectServerURL\": {\"type\" : \"string\" , \"description\" : \"Kadaver Server URL\"},\n"
-            + "  \"Kadaver_ServerProxyHost\": {\"type\" : \"string\" , \"description\" : \"Proxy Host\"},\n"
-            + "  \"Telnet_ServerProxyPort\": {\"type\" : \"integer\" , \"description\" : \"(not used)\"},\n"
-            + "  \"Telnet_SerialPort\": {\"type\" : \"string\" , \"description\" : \"Server Host\"},\n"
-            + "  \"Telnet_ConnectServerURL\": {\"type\" : \"string\" , \"description\" : \"\"},\n"
-            + "  \"Telnet_ServerProxyHost\": {\"type\" : \"string\" , \"description\" : \"(not used)\"},\n"
-            + "  \"PGPEnabled\": {\"type\" : \"boolean\" , \"description\" : \"(not used)\"},\n"
-            + "  \"ConnectType\": {\"type\" : \"string\" , \"description\" : \"Connection Type\"},\n"
-            + "  \"LibraryDir\": {\"type\" : \"string\" , \"description\" : \"HTML Library Directory\"},\n"
+ //           + "  \"Bluetooth_ServerProxyPort\": {\"type\" : \"integer\" , \"title\": \"\" , \"description\" : \"(not used)\"},\n"
+            + "  \"Bluetooth_SerialPort\": {\"type\" : \"string\" , \"title\": \"Serial Port\" , \"description\" : \"Where the dongle is connected to\"},\n"
+ //           + "  \"Bluetooth_ConnectServerURL\": {\"type\" : \"string\" , \"title\": \"\" , \"description\" : \"(not used)\"},\n"
+ //           + "  \"Bluetooth_ServerProxyHost\": {\"type\" : \"string\" , \"title\": \"\" , \"description\" : \"(not used)\"},\n"
+            + "  \"UIHandler\": {\"type\" : \"string\" , \"title\": \"User Inferface\" , \"description\" : \"Legacy: switch between Web uns native UI\"},\n"
+            + "  \"ScriptDir\": {\"type\" : \"string\" , \"title\": \"Script Directory\" , \"description\" : \"where the scripts are stored\"},\n"
+            + "  \"Kadaver_ServerProxyPort\": {\"type\" : \"integer\" , \"title\": \"Proxy Server Port\" , \"description\" : \"Port of a Proxy Server (0 to disable)\"},\n"
+            + "  \"Kadaver_SerialPort\": {\"type\" : \"string\" , \"title\": \"Connect ID\" , \"description\" : \"The ID of the remote client\"},\n"
+            + "  \"Kadaver_ConnectServerURL\": {\"type\" : \"string\" , \"title\": \"Kadaver Server URL\" , \"description\" : \"The URL of the Kadaver Connect Server\"},\n"
+            + "  \"Kadaver_ServerProxyHost\": {\"type\" : \"string\" , \"title\": \"Proxy Server Host\" , \"description\" : \"Proxy Host, if needed\"},\n"
+//            + "  \"Telnet_ServerProxyPort\": {\"type\" : \"integer\" , \"title\": \"\" , \"description\" : \"(not used)\"},\n"
+            + "  \"Telnet_SerialPort\": {\"type\" : \"string\" , \"title\": \"\" , \"description\" : \"Server Host\"},\n"
+            + "  \"Telnet_ConnectServerURL\": {\"type\" : \"string\" , \"title\": \"Connect URL\" , \"description\" : \"remore Host and port as URL\"},\n"
+//            + "  \"Telnet_ServerProxyHost\": {\"type\" : \"string\" , \"title\": \"\" , \"description\" : \"(not used)\"},\n"
+            + "  \"PGPEnabled\": {\"type\" : \"boolean\" , \"title\": \"Enable PGP\" , \"description\" : \"(not used)\"},\n"
+            + "  \"ConnectType\": {\"type\" : \"string\" , \"title\": \"\" , \"description\" : \"Connection Type\"},\n"
+            + "  \"LibraryDir\": {\"type\" : \"string\" , \"title\": \"HTML Library Directory\" , \"description\" : \"where the HTML library is stored\"},\n"
             + "}";
+    static String lockTemplateString = "{\"type\" : \"boolean\" , \"title\": \"Protect '##'\" , \"description\" : \"only changable by admin, if selected\"}";
 
     public static  class IllegalSettingsException extends Exception {
 
@@ -173,6 +176,7 @@ public class Settings {
                    // throw new IllegalSettingsException(ex);
                 }
             }
+            //savePreferences();
         } catch (JSONException ex) {
             //throw new IllegalSettingsException(ex);
         }
@@ -182,21 +186,21 @@ public class Settings {
         String result = "";
 
         if (!"".equals(prevResult)) { // this is just to have a leading , and \n at start, if needed
-            result = ",\n";
+            //result = ",\n";
         }
         result += "\"" + name + "\" : {";
         try {
             switch (template.getString("type")) {
                 case "integer":
-                    result += "\n\"type\": \"integer\",";
+                    result += "\n\"type\": \"integer\", \"title\": \""+template.getString("title")+"\", ";
                     result += "\n\"default\": " + prefs.getOnionInt(prefsPath, 0) + ",";
                     break;
                 case "string":
-                    result += "\n\"type\": \"string\",";
+                    result += "\n\"type\": \"string\", \"title\": \""+template.getString("title")+"\", ";
                     result += "\n\"default\": \"" + prefs.getOnionString(prefsPath, "") + "\",";
                     break;
                 case "boolean":
-                    result += "\n\"type\": \"boolean\",";
+                    result += "\n\"type\": \"boolean\", \"format\": \"checkbox\", \"title\": \""+template.getString("title")+"\", ";
                     result += "\n\"default\": \"" + prefs.getOnionBoolean(prefsPath, false) + "\",";
                     break;
             }
@@ -207,6 +211,33 @@ public class Settings {
         }
         return result;
     }
+    
+    
+    static String outputSingleValuScheme(String prevResult, JSONObject template, String prefsPath, String name) {
+       String result = "";
+
+        if (!"".equals(prevResult)) { // this is just to have a leading , and \n at start, if needed
+            result = ",\n";
+        }
+        boolean isLocked=true;
+        if (name.endsWith(lockExt)){ //this field represents a lock flag
+            isLocked=prefs.getOnionBoolean(prefsPath+lockExt, isLocked);
+        }
+        if (!validAdmin && isLocked){
+            return result;
+        }
+        try {
+            JSONObject lockTemplate=new JSONObject(lockTemplateString);
+            lockTemplate.put("title",((String)lockTemplate.get("title")).replace("##", (String)template.get("title")));
+            result+=formatSingleValuScheme(result, lockTemplate, prefsPath+lockExt,  name+lockExt);
+        } catch (JSONException ex) {
+            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        result+=",";
+         result+=formatSingleValuScheme(result, template, prefsPath,  name);
+         return result;
+    }
+    
 
     public static String getSettingsScheme(String password) {
         String result = "";
@@ -237,7 +268,7 @@ public class Settings {
                 valueObject = buffer.get(templateKey);
                 if (valueObject instanceof JSONObject) {
                     if (!"ConnectType".equals(templateKey)) {
-                        innerResult += formatSingleValuScheme(innerResult, (JSONObject) valueObject, templateKey, templateKey);
+                        innerResult += outputSingleValuScheme(innerResult, (JSONObject) valueObject, templateKey, templateKey);
                     }
                 }
             }
@@ -253,7 +284,7 @@ public class Settings {
                     innerResult = "";
                     for (String subKey : ((HashMap<String, Object>) valueObject).keySet()) {
                         Object subObject = ((HashMap<String, Object>) valueObject).get(subKey);
-                        innerResult += formatSingleValuScheme(innerResult, (JSONObject) subObject, templateKey + "/" + subKey, subKey);
+                        innerResult += outputSingleValuScheme(innerResult, (JSONObject) subObject, templateKey + "/" + subKey, subKey);
                     }
                     result += innerResult + "}\n}\n";
                 }

@@ -50,7 +50,9 @@ passwd="";
       var editor = new JSONEditor(document.getElementById('editor_holder'),{
              // Enable fetching schemas via ajax
         ajax: true,
- 
+	disable_properties : true,
+	disable_edit_json : true,
+	disable_collapse : true,
         schema: {
           type: "object",
           title: "Settings",
