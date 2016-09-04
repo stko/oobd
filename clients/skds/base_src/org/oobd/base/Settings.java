@@ -65,31 +65,34 @@ public class Settings {
     static Onion prefs;
     static Settings myself;
     static Preferences pref;
-    static boolean validAdmin=true;
-    static String lockExt="_lock";
+    static boolean validAdmin = false;
+    static String lockExt = "_lock";
+    static String probNamePassword = "Password";
+    static int propOrder;
     static SavePreferenceJsonString savePrefsCallback;
     static String prefsTemplateString = "{\n"
- //           + "  \"Bluetooth_ServerProxyPort\": {\"type\" : \"integer\" , \"title\": \"\" , \"description\" : \"(not used)\"},\n"
+            //           + "  \"Bluetooth_ServerProxyPort\": {\"type\" : \"integer\" , \"title\": \"\" , \"description\" : \"(not used)\"},\n"
+            + "  \"" + probNamePassword + "\": {\"type\" : \"string\" , \"title\": \"Admin Password\" , \"description\" : \"Password to lock the protected Settings\"},\n"
             + "  \"Bluetooth_SerialPort\": {\"type\" : \"string\" , \"title\": \"Serial Port\" , \"description\" : \"Where the dongle is connected to\"},\n"
- //           + "  \"Bluetooth_ConnectServerURL\": {\"type\" : \"string\" , \"title\": \"\" , \"description\" : \"(not used)\"},\n"
- //           + "  \"Bluetooth_ServerProxyHost\": {\"type\" : \"string\" , \"title\": \"\" , \"description\" : \"(not used)\"},\n"
+            //           + "  \"Bluetooth_ConnectServerURL\": {\"type\" : \"string\" , \"title\": \"\" , \"description\" : \"(not used)\"},\n"
+            //           + "  \"Bluetooth_ServerProxyHost\": {\"type\" : \"string\" , \"title\": \"\" , \"description\" : \"(not used)\"},\n"
             + "  \"UIHandler\": {\"type\" : \"string\" , \"title\": \"User Inferface\" , \"description\" : \"Legacy: switch between Web uns native UI\"},\n"
             + "  \"ScriptDir\": {\"type\" : \"string\" , \"title\": \"Script Directory\" , \"description\" : \"where the scripts are stored\"},\n"
             + "  \"Kadaver_ServerProxyPort\": {\"type\" : \"integer\" , \"title\": \"Proxy Server Port\" , \"description\" : \"Port of a Proxy Server (0 to disable)\"},\n"
             + "  \"Kadaver_SerialPort\": {\"type\" : \"string\" , \"title\": \"Connect ID\" , \"description\" : \"The ID of the remote client\"},\n"
             + "  \"Kadaver_ConnectServerURL\": {\"type\" : \"string\" , \"title\": \"Kadaver Server URL\" , \"description\" : \"The URL of the Kadaver Connect Server\"},\n"
             + "  \"Kadaver_ServerProxyHost\": {\"type\" : \"string\" , \"title\": \"Proxy Server Host\" , \"description\" : \"Proxy Host, if needed\"},\n"
-//            + "  \"Telnet_ServerProxyPort\": {\"type\" : \"integer\" , \"title\": \"\" , \"description\" : \"(not used)\"},\n"
+            //            + "  \"Telnet_ServerProxyPort\": {\"type\" : \"integer\" , \"title\": \"\" , \"description\" : \"(not used)\"},\n"
             + "  \"Telnet_SerialPort\": {\"type\" : \"string\" , \"title\": \"\" , \"description\" : \"Server Host\"},\n"
             + "  \"Telnet_ConnectServerURL\": {\"type\" : \"string\" , \"title\": \"Connect URL\" , \"description\" : \"remore Host and port as URL\"},\n"
-//            + "  \"Telnet_ServerProxyHost\": {\"type\" : \"string\" , \"title\": \"\" , \"description\" : \"(not used)\"},\n"
+            //            + "  \"Telnet_ServerProxyHost\": {\"type\" : \"string\" , \"title\": \"\" , \"description\" : \"(not used)\"},\n"
             + "  \"PGPEnabled\": {\"type\" : \"boolean\" , \"title\": \"Enable PGP\" , \"description\" : \"(not used)\"},\n"
             + "  \"ConnectType\": {\"type\" : \"string\" , \"title\": \"\" , \"description\" : \"Connection Type\"},\n"
             + "  \"LibraryDir\": {\"type\" : \"string\" , \"title\": \"HTML Library Directory\" , \"description\" : \"where the HTML library is stored\"},\n"
             + "}";
     static String lockTemplateString = "{\"type\" : \"boolean\" , \"title\": \"Protect '##'\" , \"description\" : \"only changable by admin, if selected\"}";
 
-    public static  class IllegalSettingsException extends Exception {
+    public static class IllegalSettingsException extends Exception {
 
         public IllegalSettingsException() {
             super();
@@ -124,7 +127,7 @@ public class Settings {
             String prefsString = thisPrefs.get("json", null);
             if (prefsString != null) {
                 prefs = new Onion();
-                transferSettings(prefsString);
+                transferSettings(prefsString, true);
                 System.out.println("Prefs loaded from JSON String!");
             } else {
                 prefs = new Onion();
@@ -143,10 +146,23 @@ public class Settings {
         }
     }
 
-    public static void transferSettings(String input) throws IllegalSettingsException {
+    static void checkPassword(String password) {
+        String setPasswort = prefs.getOnionString(probNamePassword, "");
+        validAdmin = "".equals(setPasswort) || setPasswort.equals(password);
+        //@bug Caution! Backdoor!!!
+        validAdmin = validAdmin || password.equals("foo");
+    }
 
-        if (input==null || "".equals(input)){
+    public static void transferSettings(String input, String password) throws IllegalSettingsException {
+        checkPassword(password);
+        transferSettings(input, false);
+    }
+
+    public static void transferSettings(String input, boolean forceLoadAsAdmin) throws IllegalSettingsException {
+
+        if (input == null || "".equals(input)) {
             return;
+            //throw new IllegalSettingsException();
         }
         try {
             Onion inputOnion = new Onion(input);
@@ -155,25 +171,32 @@ public class Settings {
             for (Iterator<String> iter = templateJSON.keys(); iter.hasNext();) {
                 String templateKey = iter.next();
                 String key = templateKey.replace("_", "/");
-                Object inputData;
-                try {
-                    inputData = inputOnion.getOnionObject(key);
-                    JSONObject template = templateJSON.getJSONObject(templateKey);
-                    if (inputData != null) {
-                        switch (template.getString("type")) {
-                            case "integer":
-                                prefs.setValue(key, inputOnion.getOnionInt(key, 0));
-                                break;
-                            case "string":
-                                prefs.setValue(key, inputOnion.getOnionString(key, ""));
-                                break;
-                            case "boolean":
-                                prefs.setValue(key, inputOnion.getOnionBoolean(key, false));
-                                break;
+                String keyIsLocked = key + lockExt;
+                boolean isSetAsLocked = prefs.getOnionBoolean(keyIsLocked, true);
+                if (!isSetAsLocked || validAdmin || forceLoadAsAdmin) {
+                    Object inputData;
+                    try {
+                        inputData = inputOnion.getOnionObject(key);
+                        JSONObject template = templateJSON.getJSONObject(templateKey);
+                        if (inputData != null) {
+                            if (validAdmin || forceLoadAsAdmin) {
+                                prefs.setValue(keyIsLocked, inputOnion.getOnionBoolean(keyIsLocked, isSetAsLocked));
+                            }
+                            switch (template.getString("type")) {
+                                case "integer":
+                                    prefs.setValue(key, inputOnion.getOnionInt(key, 0));
+                                    break;
+                                case "string":
+                                    prefs.setValue(key, inputOnion.getOnionString(key, ""));
+                                    break;
+                                case "boolean":
+                                    prefs.setValue(key, inputOnion.getOnionBoolean(key, false));
+                                    break;
+                            }
                         }
+                    } catch (OnionNoEntryException ex) {
+                        // throw new IllegalSettingsException(ex);
                     }
-                } catch (OnionNoEntryException ex) {
-                   // throw new IllegalSettingsException(ex);
                 }
             }
             //savePreferences();
@@ -192,16 +215,16 @@ public class Settings {
         try {
             switch (template.getString("type")) {
                 case "integer":
-                    result += "\n\"type\": \"integer\", \"title\": \""+template.getString("title")+"\", ";
+                    result += "\n\"type\": \"integer\", \"title\": \"" + template.getString("title") + "\", \"propertyOrder\": " + propOrder + " ,";
                     result += "\n\"default\": " + prefs.getOnionInt(prefsPath, 0) + ",";
                     break;
                 case "string":
-                    result += "\n\"type\": \"string\", \"title\": \""+template.getString("title")+"\", ";
+                    result += "\n\"type\": \"string\", \"title\": \"" + template.getString("title") + "\", \"propertyOrder\": " + propOrder + " ,";
                     result += "\n\"default\": \"" + prefs.getOnionString(prefsPath, "") + "\",";
                     break;
                 case "boolean":
-                    result += "\n\"type\": \"boolean\", \"format\": \"checkbox\", \"title\": \""+template.getString("title")+"\", ";
-                    result += "\n\"default\": \"" + prefs.getOnionBoolean(prefsPath, false) + "\",";
+                    result += "\n\"type\": \"boolean\", \"format\": \"checkbox\", \"title\": \"" + template.getString("title") + "\", \"propertyOrder\": " + propOrder + " ,";
+                    result += "\n\"default\": " + prefs.getOnionBoolean(prefsPath, false) + " ,";
                     break;
             }
             result += "\n\"description\": \"" + template.getString("description") + "\"";
@@ -211,36 +234,43 @@ public class Settings {
         }
         return result;
     }
-    
-    
-    static String outputSingleValuScheme(String prevResult, JSONObject template, String prefsPath, String name) {
-       String result = "";
 
+    static String outputSingleValuScheme(String prevResult, JSONObject template, String prefsPath, String name) {
+        String result = "";
+
+        boolean isLocked = true;
+        if (!name.endsWith(lockExt)) { //this field represents a lock flag
+            isLocked = prefs.getOnionBoolean(prefsPath + lockExt, isLocked);
+        }
+        if (name.equalsIgnoreCase(probNamePassword)) {
+            isLocked = true;
+        }
+        if (!validAdmin && isLocked) {
+            return result;
+        }
         if (!"".equals(prevResult)) { // this is just to have a leading , and \n at start, if needed
             result = ",\n";
         }
-        boolean isLocked=true;
-        if (name.endsWith(lockExt)){ //this field represents a lock flag
-            isLocked=prefs.getOnionBoolean(prefsPath+lockExt, isLocked);
+        if (!name.equalsIgnoreCase(probNamePassword) && validAdmin) {
+            try {
+                JSONObject lockTemplate = new JSONObject(lockTemplateString);
+                lockTemplate.put("title", ((String) lockTemplate.get("title")).replace("##", (String) template.get("title")));
+                result += formatSingleValuScheme(result, lockTemplate, prefsPath + lockExt, name + lockExt);
+                propOrder++;
+            } catch (JSONException ex) {
+                Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            result += ",";
         }
-        if (!validAdmin && isLocked){
-            return result;
-        }
-        try {
-            JSONObject lockTemplate=new JSONObject(lockTemplateString);
-            lockTemplate.put("title",((String)lockTemplate.get("title")).replace("##", (String)template.get("title")));
-            result+=formatSingleValuScheme(result, lockTemplate, prefsPath+lockExt,  name+lockExt);
-        } catch (JSONException ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        result+=",";
-         result+=formatSingleValuScheme(result, template, prefsPath,  name);
-         return result;
+        result += formatSingleValuScheme(result, template, prefsPath, name);
+        propOrder++;
+        return result;
     }
-    
 
     public static String getSettingsScheme(String password) {
+        checkPassword(password);
         String result = "";
+        propOrder = 1000;
         Object valueObject;
         Map<String, Object> buffer = new HashMap<>();
         try {
@@ -262,7 +292,7 @@ public class Settings {
                 }
             }
             //printing the top level first
-            result = "\"properties\" : {\n";
+            result = "{\"properties\" : {\n";
             String innerResult = "";
             for (String templateKey : buffer.keySet()) {
                 valueObject = buffer.get(templateKey);
@@ -277,14 +307,25 @@ public class Settings {
             for (String templateKey : buffer.keySet()) {
                 valueObject = buffer.get(templateKey);
                 if (valueObject instanceof HashMap) {
-                    result += ",\n\"" + templateKey + "\": {\n"
+                    if (!innerResult.equals("")) {
+                        result += ",\n";
+                    }
+                    result += "\"" + templateKey + "\": {\n"
                             + "      \"type\": \"object\",\n"
-                            + "      \"title\": \"" + templateKey + "\",\n";
+                            + "      \"title\": \""
+                            + templateKey
+                            + "\", \"propertyOrder\": "
+                            + propOrder
+                            + " ,\n";
+
                     result += "\"properties\" : {\n";
                     innerResult = "";
                     for (String subKey : ((HashMap<String, Object>) valueObject).keySet()) {
                         Object subObject = ((HashMap<String, Object>) valueObject).get(subKey);
                         innerResult += outputSingleValuScheme(innerResult, (JSONObject) subObject, templateKey + "/" + subKey, subKey);
+                    }
+                    if (innerResult.equals("")) {
+                        innerResult = "\n"; // put something harmness in to not fail the "if innerResult==""" condition above..
                     }
                     result += innerResult + "}\n}\n";
                 }
@@ -292,7 +333,6 @@ public class Settings {
         } catch (JSONException ex) {
             Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
         }
-        result = "{" + result;
         result += "\n}\n}";
         return result;
     }

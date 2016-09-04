@@ -198,7 +198,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
         }
         if (myOnion.isType(CM_UPDATE)) {
             try {
-				// core.transferMsg(new Message(this, myOnion.getString("to"),
+                // core.transferMsg(new Message(this, myOnion.getString("to"),
                 // myOnion));
                 // core.transferMsg(new Message(this, ownerEngine, myOnion));
                 myOnion.put("to", ownerEngine);
@@ -214,14 +214,14 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
         }
 
         if (myOnion.isType(CM_PAGE)) {
-			// userInterface.openPage(myOnion.getOnionString("owner"),
+            // userInterface.openPage(myOnion.getOnionString("owner"),
             // myOnion.getOnionString("name"), 1, 1);
             ownerEngine = myOnion.getOnionString("owner", null);
             wsServer.sendToAll(myOnion.toString());
             return null;
         }
         if (myOnion.isType(CM_PAGEDONE)) {
-			// userInterface.openPageCompleted(
+            // userInterface.openPageCompleted(
             // myOnion.getOnionString("owner"),
             // myOnion.getOnionString("name"));
             wsServer.sendToAll(myOnion.toString());
@@ -334,7 +334,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
         InputStreamReader myInputStream = null;
         String myFileName = null;
         try {
-            String owner; 
+            String owner;
             try {
                 owner = value.getOnionString("owner/name"); // who's the
             } catch (OnionWrongTypeException | OnionNoEntryException ex) {
@@ -344,11 +344,11 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
 
             }
             String filePath = Base64Coder.decodeString(value
-                    .getOnionString("filepath",""));
+                    .getOnionString("filepath", ""));
             String fileExtension = Base64Coder.decodeString(value
-                    .getOnionString("extension",""));
+                    .getOnionString("extension", ""));
             String fileMessage = Base64Coder.decodeString(value
-                    .getOnionString("message",""));
+                    .getOnionString("message", ""));
             if (fileMessage.equalsIgnoreCase("html")) {
                 myFileName = filePath;
                 URL url = new URL(filePath);
@@ -445,11 +445,11 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
             // Collections
             // .synchronizedCollection(visualizers.values());
             Collection<ArrayList<Visualizer>> c = visualizers.values();
-			// synchronized (c) {
+            // synchronized (c) {
             // obtain an Iterator for Collection
             Iterator<ArrayList<Visualizer>> itr;
 
-			// iterate through HashMap values iterator
+            // iterate through HashMap values iterator
             // run through the 3 update states: 0: start 1: update data 2:
             // finish
             for (int i = 0; i < 3; i++) {
@@ -554,7 +554,7 @@ class ChatServer extends WebSocketServer {
         System.out.println("WS from Socket: " + message);
         try {
             Onion webvis = new Onion(message);
-            if ("PARAM".equalsIgnoreCase(webvis.getOnionString("type",""))) {
+            if ("PARAM".equalsIgnoreCase(webvis.getOnionString("type", ""))) {
                 if (WSOobdUIHandler.lastOutstandingQuestion != null) {
                     try {
                         WSOobdUIHandler.lastOutstandingQuestion
@@ -587,16 +587,16 @@ class ChatServer extends WebSocketServer {
                                         + OOBDConstants.CM_UPDATE
                                         + "',"
                                         + "'vis':'"
-                                        + webvis.getOnionString("name","")
+                                        + webvis.getOnionString("name", "")
                                         + "',"
                                         + "'to':'"
                                         + WSOobdUIHandler.ownerEngine
                                         + "',"
                                         + "'optid':'"
-                                        + webvis.getOnionString("optid","")
+                                        + webvis.getOnionString("optid", "")
                                         + "',"
                                         + "'actValue':'"
-                                        + webvis.getOnionString("actValue","")
+                                        + webvis.getOnionString("actValue", "")
                                         + "',"
                                         + "'updType':"
                                         + Integer.toString(webvis
@@ -646,7 +646,7 @@ class ChatServer extends WebSocketServer {
     public void onError(WebSocket conn, Exception ex) {
         ex.printStackTrace();
         if (conn != null) {
-			// some errors like port binding failed may not be assignable to a
+            // some errors like port binding failed may not be assignable to a
             // specific websocket
         }
     }
@@ -721,7 +721,7 @@ class OOBDHttpServer extends NanoHTTPD {
      * "application/vnd.apple.mpegurl"); put("ts", " video/mp2t"); } };
      */
     public OOBDHttpServer() throws IOException {
-		// super(8080);
+        // super(8080);
         // uploader = new NanoFileUpload(new DiskFileItemFactory());
         super(((InetAddress) Core.getSingleInstance().readDataPool(
                 DP_HTTP_HOST,
@@ -808,21 +808,22 @@ class OOBDHttpServer extends NanoHTTPD {
         // or you can access the POST request's parameters
         String postParameter = session.getParms().get("parameter");
         String settingsPassword = "";
-        String settingsJSON= "";
+        String settingsJSON = "";
         this.parms = session.getParms();
 
         if (parms.get("theme") != null && !"".equals(parms.get("theme"))) {
             Core.getSingleInstance().writeDataPool(
                     OOBDConstants.DP_WEBUI_ACTUAL_THEME, parms.get("theme"));
         }
-        if (parms.get("settingspw") != null && !"".equals(parms.get("settingspw"))) {
-            settingsPassword =parms.get("settingspw");
-            System.out.println("Password received:"+settingsPassword);
+        if (parms.get("settingspw") != null ) {
+            settingsPassword = parms.get("settingspw");
+            System.out.println("Password received:" + settingsPassword);
         }
         if (parms.get("settings") != null && !"".equals(parms.get("settings"))) {
-            settingsJSON =parms.get("settings");
+            settingsJSON = parms.get("settings");
             try {
-                Settings.transferSettings(settingsJSON);
+                Settings.transferSettings(settingsJSON, settingsPassword);
+                Settings.savePreferences();
             } catch (Settings.IllegalSettingsException ex) {
                 Logger.getLogger(OOBDHttpServer.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -921,12 +922,11 @@ class OOBDHttpServer extends NanoHTTPD {
             catalog += "</catalog>";
             return newFixedLengthResponse(Response.Status.OK, "text/xml",
                     catalog);
-        } 
-        else if ("/settings.json".equals(session.getUri())){
+        } else if ("/settings.json".equals(session.getUri())) {
 //            return newFixedLengthResponse(Response.Status.OK, "text/xml",
 //                   "{\"properties\":{\"make\":{\"type\":\"string\",\"enum\":[\"Tooooyota\",\"BMW\",\"Honda\",\"Ford\",\"Chevy\",\"VW\"]},\"model\":{\"type\":\"string\"},\"year\":{\"type\":\"integer\",\"enum\":[1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014],\"default\":2008}}}");
-            return newFixedLengthResponse(Response.Status.OK, "text/xml",Settings.getSettingsScheme(settingsPassword));
-        }else {
+            return newFixedLengthResponse(Response.Status.OK, "text/xml", Settings.getSettingsScheme(settingsPassword));
+        } else {
             InputStream myFileStream = Core
                     .getSingleInstance()
                     .getSystemIF()

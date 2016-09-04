@@ -7,8 +7,6 @@
     <script src="../../libs/json-editor/0.7.28/jsoneditor.js"></script>
   </head>
   <body>
-    <h1>OOBD Settings</h1>
-    
     <div id='editor_holder'></div>
     <button id='submit'>Submit (console.log)</button>
     
@@ -42,9 +40,9 @@
     
     var passwd = prompt("Please enter your name", "Harry Potter");
     if (passwd != null) {
-    passwd="?settingspw="+escape(passwd);
+    passwdParam="?settingspw="+escape(passwd);
 }else{
-passwd="";
+passwdParam="";
 }
       // Initialize the editor with a JSON schema
       var editor = new JSONEditor(document.getElementById('editor_holder'),{
@@ -55,8 +53,8 @@ passwd="";
 	disable_collapse : true,
         schema: {
           type: "object",
-          title: "Settings",
-	$ref: "/settings.json"+passwd
+          title: "OOBD Settings",
+	$ref: "/settings.json"+passwdParam
         }
       });
       
@@ -64,7 +62,7 @@ passwd="";
       document.getElementById('submit').addEventListener('click',function() {
         // Get the value from the editor
         console.log(editor.getValue());
-        post("#",{settings: JSON.stringify(editor.getValue())});
+        post("#",{settings: JSON.stringify(editor.getValue()),settingspw : passwd });
       });
     </script>
   </body>
