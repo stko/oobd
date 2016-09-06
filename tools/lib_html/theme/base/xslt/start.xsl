@@ -7,6 +7,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<html>
 	<body>
 	<h2><xsl:value-of select="catalog/title"/></h2>
+	<a href="/theme/default/settings.html">Settings</a>
 	<form action="#" method="post" id="form_2">
 		<label id="h2" form="form_2">Your Settings</label><br/>
 		<label for="theme">UI Theme</label>  

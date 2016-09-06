@@ -51,6 +51,11 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	</style>
 	<script>
 		$(function() {
+			$("#prefbutton").button({
+				icons: {
+					primary: "ui-icon-gear"
+				}
+			});
 			$("#tabs").tabs();
 			$("#accordion").accordion();
 			$("#theme").selectmenu();
@@ -124,6 +129,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	</h2>
 	<div id="toolbar" class="ui-widget-header ui-corner-all">
 	<form action="#" method="post" id="form_2">
+		<button id="prefbutton" onclick="window.location = '/theme/default/settings.html';return false;">Settings</button>
 
 		<label for="theme">UI Theme</label>  
 		<select name="theme" id="theme" size="1">

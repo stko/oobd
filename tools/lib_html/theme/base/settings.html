@@ -1,69 +1,74 @@
-
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>OOBD Settings</title>
-    <script src="../../libs/json-editor/0.7.28/jsoneditor.js"></script>
-  </head>
-  <body>
-    <div id='editor_holder'></div>
-    <button id='submit'>Submit (console.log)</button>
-    
-    <script>
-    
-    function post(path, params, method) {
-    method = method || "post"; // Set method to post by default if not specified.
 
-    // The rest of this code assumes you are not using a library.
-    // It can be made less wordy if you use one.
-    var form = document.createElement("form");
-    form.setAttribute("method", method);
-    form.setAttribute("action", path);
+<head>
+	<meta charset="utf-8" />
+	<title>OOBD Settings</title>
+	<script src="../../libs/json-editor/0.7.28/jsoneditor.js"></script>
+</head>
 
-    for(var key in params) {
-        if(params.hasOwnProperty(key)) {
-            var hiddenField = document.createElement("input");
-            hiddenField.setAttribute("type", "hidden");
-            hiddenField.setAttribute("name", key);
-            hiddenField.setAttribute("value", params[key]);
+<body>
+	<a href="/">Main</a>
+	<div id='editor_holder'></div>
+	<button id='submit'>Submit (console.log)</button>
 
-            form.appendChild(hiddenField);
-         }
-    }
+	<script>
+		function post(path, params, method) {
+			method = method || "post"; // Set method to post by default if not specified.
 
-    document.body.appendChild(form);
-    form.submit();
-}
-    
-    
-    
-    var passwd = prompt("Please enter your name", "Harry Potter");
-    if (passwd != null) {
-    passwdParam="?settingspw="+escape(passwd);
-}else{
-passwdParam="";
-}
-      // Initialize the editor with a JSON schema
-      var editor = new JSONEditor(document.getElementById('editor_holder'),{
-             // Enable fetching schemas via ajax
-        ajax: true,
-	disable_properties : true,
-	disable_edit_json : true,
-	disable_collapse : true,
-        schema: {
-          type: "object",
-          title: "OOBD Settings",
-	$ref: "/settings.json"+passwdParam
-        }
-      });
-      
-      // Hook up the submit button to log to the console
-      document.getElementById('submit').addEventListener('click',function() {
-        // Get the value from the editor
-        console.log(editor.getValue());
-        post("#",{settings: JSON.stringify(editor.getValue()),settingspw : passwd });
-      });
-    </script>
-  </body>
+			// The rest of this code assumes you are not using a library.
+			// It can be made less wordy if you use one.
+			var form = document.createElement("form");
+			form.setAttribute("method", method);
+			form.setAttribute("action", path);
+
+			for (var key in params) {
+				if (params.hasOwnProperty(key)) {
+					var hiddenField = document.createElement("input");
+					hiddenField.setAttribute("type", "hidden");
+					hiddenField.setAttribute("name", key);
+					hiddenField.setAttribute("value", params[key]);
+
+					form.appendChild(hiddenField);
+				}
+			}
+
+			document.body.appendChild(form);
+			form.submit();
+		}
+
+
+
+		var passwd = prompt("Please enter your name", "Harry Potter");
+		if (passwd != null) {
+			passwdParam = "?settingspw=" + escape(passwd);
+		} else {
+			passwdParam = "";
+		}
+		// Initialize the editor with a JSON schema
+		var editor = new JSONEditor(document.getElementById('editor_holder'), {
+			// Enable fetching schemas via ajax
+			ajax: true,
+			disable_properties: true,
+			disable_edit_json: true,
+			disable_collapse: true,
+			schema: {
+				type: "object",
+				title: "OOBD Settings",
+				$ref: "/settings.json" + passwdParam
+			}
+		});
+
+		// Hook up the submit button to log to the console
+		document.getElementById('submit').addEventListener('click', function() {
+			// Get the value from the editor
+			console.log(editor.getValue());
+			post("#", {
+				settings: JSON.stringify(editor.getValue()),
+				settingspw: passwd
+			});
+		});
+	</script>
+</body>
+
 </html>
