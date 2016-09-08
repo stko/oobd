@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 
 import org.json.JSONException;
+import org.oobd.base.OOBDConstants;
 import org.oobd.base.archive.Archive;
 import org.oobd.base.archive.Factory;
 import org.oobd.base.support.Onion;
@@ -158,7 +159,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         id = CoreMailboxName;
         userInterface = myUserInterface;
         systemInterface = mySystemInterface;
-        settings= new Settings(systemInterface.loadPreferences(FT_PROPS,OOBDConstants.AppPrefsFileName));
+        settings = new Settings(systemInterface.loadPreferences(FT_PROPS, OOBDConstants.AppPrefsFileName));
 //        busses = new HashMap<String, OobdBus>();
         busses = new HashMap<>();
         connectors = new HashMap<>();
@@ -174,7 +175,12 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             dataPoolList.add(null);
         }
         systemInterface.registerOobdCore(this); // Anounce itself at the Systeminterface
-        userInterface.registerOobdCore(this); // Anounce itself at the Userinterface
+             String  connectTypeName = Settings.getString(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
+         writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
+ 
+        transferPreferences2System(connectTypeName);
+
+       //-- userInterface.registerOobdCore(this); // Anounce itself at the Userinterface
         try {
             BufferedReader br;
             String strLine;
@@ -267,13 +273,22 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                             case "scriptengine":
                                 scriptengines.put(element, value);
                                 if (result.length() != 0) {
-                                    userInterface.announceScriptengine(element, result);
+                                    Logger.getLogger(Core.class.getName()).log(Level.CONFIG, "Interface announcement: Scriptengine-ID: {0} visibleName:{1}", new Object[]{element, result
+                                    });
                                 }
                                 break;
                             case "uihandler":
                                 uiHandlers.put(element, value);
                                 if (result.length() != 0) {
-                                    userInterface.announceUIHandler(element, result);
+                                    Logger.getLogger(Core.class.getName()).log(Level.CONFIG, "Interface announcement: UIHandler-ID: {0} visibleName:{1}", new Object[]{element, result
+                                    });
+                                    if (Settings.getString(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME).equalsIgnoreCase(result)) {
+                                        Onion onion = new Onion();
+                                        String seID = createUIHandler(element, onion);
+
+                                        startUIHandler(seID, onion);
+                                    }
+
                                 }
                                 break;
                         }
@@ -730,7 +745,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public void outputText(String output) {
         try {
-            core.transferMsg(new Message(Core.getSingleInstance(),
+            transferMsg(new Message(Core.getSingleInstance(),
                     UIHandlerMailboxName, new Onion("{" + "'type':'"
                             + CM_WRITESTRING + "'," + "'owner':" + "{'name':'"
                             + Core.getSingleInstance().getId() + "'},"
@@ -860,7 +875,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     public void startScriptEngine(Onion onion) {
         OobdScriptengine o = (OobdScriptengine) readDataPool(OOBDConstants.DP_LAST_CREATED_SCRIPTENGINE, null);
         if (o == null) {
-            o = createScriptEngine("ScriptengineLua", onion);
+            o = core.createScriptEngine("ScriptengineLua", onion);
         } else {
             o.close();// stop the old engine
             o = createScriptEngine("ScriptengineLua", onion);
@@ -872,7 +887,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         }
         Logger.getLogger(Core.class.getName()).log(Level.CONFIG,
                 "Start scriptengine: " + id);
-        while (core.readDataPool(DP_RUNNING_SCRIPTENGINE, null) != null) {
+        while (readDataPool(DP_RUNNING_SCRIPTENGINE, null) != null) {
             try {
                 Thread.sleep(100);
                 System.out.println("core StartScriptEngine: Old Scriptengine not finished yet");
@@ -926,7 +941,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     public void startScriptArchive(Archive ActiveArchive) {
 
         String formatURL;
-        String connectTypeName = (String) core.readDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, OOBDConstants.PropName_ConnectTypeBT);
+        String connectTypeName = (String) readDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, OOBDConstants.PropName_ConnectTypeBT);
 
         Class<OOBDPort> value;
         value = systemInterface.getConnectorList().get(connectTypeName);
@@ -964,30 +979,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
         if (connectTypeName.equalsIgnoreCase("Kadaver")) {
             connectID = Base64Coder.encodeString(connectID); //in Kadaver the remoteId is base64 coded
-            if (!UIHANDLER_WS_NAME.equalsIgnoreCase((String) readDataPool(DP_ACTUAL_UIHANDLER, ""))) { // no webUI, so rquest the number from the user
-                try {
-                    Onion answer = getUiIF().requestParamInput(new Onion("{" + "'" + CM_PARAM + "' : [{ " + "'type':'String',"
-                            + "'title':'" + Base64Coder.encodeString("Enter the Connect Number") + "',"
-                            + "'default':'" + Base64Coder.encodeString((String) readDataPool(OOBDConstants.DP_ACTUAL_CONNECT_ID, "")) + "',"
-                            + "'message':'" + Base64Coder.encodeString("Please ask the person, who's connecting the dongle to the vehicle for the Connect Number displayed by his software") + "'"
-                            + "}]}"));
-                    if (answer == null) {
-                        //\todo error message JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-                    connectID = answer.getOnionBase64String("answer",null);
-                    if (connectID == null || connectID.equals("")) {
-                        //\todo error message JOptionPane.showMessageDialog(null, "For Remote Connect you need to enter the Connect Number", "Missing Value", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-                    writeDataPool(OOBDConstants.DP_ACTUAL_CONNECT_ID, connectID);
-                    connectID = Base64Coder.encodeString(connectID); // in the later URL the connect
-
-                } catch (JSONException ex) {
-                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
-                    return;
-                }
-            }
         }
         connectURL = formatURL;
         connectURL = connectURL.replace("{protocol}", protocol);
@@ -998,7 +989,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             Onion cmdOnion = new Onion("{" + "'scriptpath':'" + ActiveArchive.getFilePath().replace("\\", "/") + "'"
                     + ",'connecturl':'" + Base64Coder.encodeString(connectURL) + "'"
                     + "}");
-            core.writeDataPool(DP_ACTIVE_ARCHIVE, ActiveArchive);
+            writeDataPool(DP_ACTIVE_ARCHIVE, ActiveArchive);
 
             startScriptEngine(cmdOnion);
         } catch (JSONException ex) {
@@ -1006,8 +997,29 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             Logger.getLogger(Core.class.getName()).log(Level.WARNING, "JSON creation error with file name:" + ActiveArchive.getFilePath(), ex.getMessage());
         }
     }
+    public void transferPreferences2System(String localConnectTypeName) {
 
+        if (localConnectTypeName != null && !localConnectTypeName.equalsIgnoreCase("")) {
+            writeDataPool(DP_ACTUAL_REMOTECONNECT_SERVER, Settings.getString(localConnectTypeName + "_" + PropName_ConnectServerURL, ""));
+            writeDataPool(DP_ACTUAL_PROXY_HOST, Settings.getString(localConnectTypeName + "_" + PropName_ProxyHost, ""));
+            writeDataPool(DP_ACTUAL_PROXY_PORT, Settings.getInt(localConnectTypeName + "_" + PropName_ProxyPort, 0));
+
+        }
+        writeDataPool(DP_ACTUAL_UIHANDLER, Settings.getString(PropName_UIHander, UIHANDLER_WS_NAME));
+        String actualScriptDir = Settings.getString(PropName_ScriptDir, null);
+        writeDataPool(DP_SCRIPTDIR, actualScriptDir);
+        writeDataPool(DP_WWW_LIB_DIR, Settings.getString(PropName_LibraryDir, null));
+        ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
+        writeDataPool(DP_LIST_OF_SCRIPTS, files);
+        writeDataPool(DP_HTTP_HOST, getSystemIF().getSystemIP());
+        writeDataPool(DP_HTTP_PORT, 8080);
+        writeDataPool(DP_WSOCKET_PORT, 8443);
+
+    }
 }
+
+
+
 
 /**
  *

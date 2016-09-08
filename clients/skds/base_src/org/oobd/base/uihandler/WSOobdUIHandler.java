@@ -842,8 +842,7 @@ class OOBDHttpServer extends NanoHTTPD {
             Class<OOBDPort> value = Core.getSingleInstance().getConnectorList()
                     .get(connectTypeName);
             if (value != null) {
-                Core.getSingleInstance().getUiIF()
-                        .transferPreferences2System(connectTypeName);
+                Core.getSingleInstance().transferPreferences2System(connectTypeName);
                 Core.getSingleInstance().writeDataPool(
                         OOBDConstants.DP_ACTUAL_CONNECTION_TYPE,
                         connectTypeName);

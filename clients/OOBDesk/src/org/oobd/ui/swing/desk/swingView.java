@@ -916,10 +916,10 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
     }//GEN-LAST:event_backButtonLabelMouseClicked
 
     private void startButtonLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startButtonLabelMouseClicked
-        if (UIHANDLER_WS_NAME.equalsIgnoreCase((String) core.readDataPool(DP_ACTUAL_UIHANDLER, Settings.getString(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME)))) {
+        if (true || UIHANDLER_WS_NAME.equalsIgnoreCase((String) core.readDataPool(DP_ACTUAL_UIHANDLER, Settings.getString(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME)))) {
 
             //startButtonLabel.setIcon(resourceMap.getIcon("startButtonLabel.icon"));
-            core.getSystemIF().openBrowser();
+            Core.getSingleInstance().getSystemIF().openBrowser();
         } else {
             Archive ActiveArchive = (Archive) scriptSelectComboBox.getSelectedItem();
             if (ActiveArchive == null) {
@@ -940,95 +940,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
 
     private void updateUI(boolean calledFromEvent) {
 
-        PortInfo[] portList = new PortInfo[0];
-        connectTypeName = Settings.getString(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
-        core.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
-        connectDeviceName = Settings.getString(connectTypeName + "_" + OOBDConstants.PropName_SerialPort, "");
-        pgpEnabled.setSelected("true".equalsIgnoreCase(Settings.getString(OOBDConstants.PropName_PGPEnabled, "")));
-        httpEnabled.setSelected(UIHANDLER_WS_NAME.equalsIgnoreCase(Settings.getString(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME)));
-        jTextFieldRemoteServer.setText(Settings.getString(connectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, OOBDConstants.PropName_KadaverServerDefault));
-        jTextFieldProxyHost.setText(Settings.getString(connectTypeName + "_" + OOBDConstants.PropName_ProxyHost, ""));
-        jSpinnerProxyPort.setValue(Settings.getInt(connectTypeName + "_" + OOBDConstants.PropName_ProxyPort, 0));
-        if (!calledFromEvent) { //t
-            for (int i = 0; i < protocolComboBox.getItemCount(); i++) {
-                if (protocolComboBox.getItemAt(i).toString().equals(connectTypeName)) {
-                    protocolComboBox.setSelectedIndex(i);
-                }
-            }
-        }
-
-        Class<OOBDPort> value = supplyHardwareConnects.get(connectTypeName);
-        try { // tricky: try to call a static method of an interface, where a
-            // interface don't have static values by definition..
-            // Class[] parameterTypes = new Class[]{};
-            java.lang.reflect.Method method = value.getMethod("getPorts", new Class[]{}); // no parameters
-            Object instance = null;
-            portList = (PortInfo[]) method.invoke(instance, new Object[]{}); // no parameters
-
-        } catch (Exception ex) {
-            Logger.getLogger(Core.class.getName())
-                    .log(Level.WARNING,
-                            "can't call static methods  of "
-                            + value.getName());
-            ex.printStackTrace();
-            return;
-        }
-
-        int portListIndex = -1;
-
-        PortInfo[] portCopyPlusOne = new PortInfo[portList.length + 1]; // needed maybe later, in case the port is not part of the port list, which was delivered by the port-getPorts() function
-        for (int i = 0; i < portList.length; i++) {
-            portCopyPlusOne[i + 1] = portList[i];
-            if (portList[i].getDevice().equals(connectDeviceName)) {
-                portListIndex = i;
-            }
-        }
-        if (portListIndex == -1) { // now we use the List, which has space on item[0] to add the port which was not found in the device list
-            portCopyPlusOne[0] = new PortInfo(connectDeviceName, connectDeviceName);
-            comportComboBox.setModel(new javax.swing.DefaultComboBoxModel(portCopyPlusOne));
-            comportComboBox.setSelectedIndex(0);
-        } else {
-            comportComboBox.setModel(new javax.swing.DefaultComboBoxModel(portList));
-            comportComboBox.setSelectedIndex(portListIndex);
-        }
-        libraryDir.setText(Settings.getString(OOBDConstants.PropName_LibraryDir, ""));
-        scriptDir.setText(Settings.getString(OOBDConstants.PropName_ScriptDir, ""));
-        int pgp = checkKeyFiles();
-        String pgpStatusText = "No PGP keys available";
-
-        if (pgp == 0) { // all ok
-            pgpStatusText = "All Keys in place";
-        }
-        if ((pgp & 0x04) > 0) { //no group key
-            pgpStatusText = "Missing Group Key File !!";
-        }
-        if ((pgp & 0x01) > 0) {//new group key
-            pgpStatusText = "New Group Key File is waiting for import";
-        }
-        if ((pgp & 0x08) > 0) { //no user key
-            pgpStatusText = "Missing User Key File !!";
-        }
-        if ((pgp & 0x02) > 0) {//new user key
-            pgpStatusText = "New User Key File is waiting for import";
-        }
-        if ((pgp == (0x04 + 0x04))) {//no keys
-            pgpStatusText = "No PGP keys available";
-        }
-
-        pgpStatus.setText("PGP Key Status: " + pgpStatusText);
-        if (pgp != 0) {
-            Settings.setBoolean(OOBDConstants.PropName_PGPEnabled, false);
-            pgpEnabled.setSelected(false);
-            pgpEnabled.setEnabled(false);
-            if ((pgp & (0x02 + 0x01)) > 0) { // any new keys there
-                pgpImportKeys.setText("Import PGP keys now");
-            } else {
-                pgpImportKeys.setText("No PGP Keys available");
-            }
-        } else {
-            pgpEnabled.setEnabled(true);
-            pgpImportKeys.setText("DELETE PGP keys now");
-        }
 
 
     }//GEN-LAST:event_settingsComponentShown
@@ -1340,234 +1251,16 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         return actBuffer;
     }
 
-    public void sm(String msg, String modifier) {
 
-        String actBuffer;
-        if (!"".equalsIgnoreCase(modifier)) {
-            if (modifier.equalsIgnoreCase(OB_CMD_SETBUFFER)) {
-                actualBufferName = msg.toLowerCase().trim();
-                if (!actualBufferName.equals(OB_DEFAULT_NAME)) {
-                    if (!outputBuffers.containsKey(actualBufferName)) {
-                        outputBuffers.put(actualBufferName, "");
-                        actBuffer = "";
-                    }
-                }
-            }
-            if (modifier.equalsIgnoreCase(OB_CMD_CLEAR)) {
-                if (actualBufferName.equals(OB_DEFAULT_NAME)) { // do the special handling of the UI textbox here
-                    jTextAreaOutput.setText("");
-                } else {
-                    outputBuffers.put(actualBufferName, "");
-                    actBuffer = "";
-                }
-            } else if (modifier.equalsIgnoreCase(OB_CMD_CLEARALL)) {
-                jTextAreaOutput.setText("");
-                outputBuffers = new Hashtable<String, String>();
-                actBuffer = "";
-            } else {
-                // here we need the buffer content, so we need to do the time consuming conversion here
-                if (actualBufferName.equals(OB_DEFAULT_NAME)) {
-                    actBuffer = jTextAreaOutput.getText();
-                } else {
-                    if (outputBuffers.containsKey(actualBufferName)) {
-                        actBuffer = outputBuffers.get(actualBufferName);
-                    } else {
-                        outputBuffers.put(actualBufferName, "");
-                        actBuffer = "";
-                    }
-                }
-                if (modifier.equalsIgnoreCase(OB_CMD_SAVEAS)) {
-                    saveBufferAsFileRequest(msg, actBuffer, false);
-                }
-                if (modifier.equalsIgnoreCase(OB_CMD_SAVE)) {
-                    saveBufferToFile(msg, actBuffer, false);
-                }
-                if (modifier.equalsIgnoreCase(OB_CMD_APPENDAS)) {
-                    saveBufferAsFileRequest(msg, actBuffer, true);
-                }
-                if (modifier.equalsIgnoreCase(OB_CMD_APPEND)) {
-                    saveBufferToFile(msg, actBuffer, true);
-                }
-            }
-        } else {
-            if (actualBufferName.equals(OB_DEFAULT_NAME)) {
-                if (logButton.isSelected()) {
-                    jTextAreaOutput.append(msg + "\n");
-                }
-            } else {
-                String actBufferArrayList = outputBuffers.get(actualBufferName) + msg;
-                outputBuffers.put(actualBufferName, actBufferArrayList);
-            }
-        }
-    }
 
-    public void registerOobdCore(Core core) {
-        this.core = core;
-        connectTypeName = Settings.getString(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
-        transferPreferences2System(connectTypeName);
-        String script = Settings.getString(OOBDConstants.PropName_ScriptName, null);
-        int i = -1;
-        String actualScriptDir = Settings.getString(OOBDConstants.PropName_ScriptDir, null);
-        ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
-        for (Archive file : files) {
-            scriptSelectComboBox.addItem(file);
-            if (file.toString().equalsIgnoreCase(script)) {
-                i = scriptSelectComboBox.getItemCount() - 1;
-            }
-        }
-        if (i > -1) {
-            scriptSelectComboBox.setSelectedIndex(i);
-        }
-        if (!Settings.getBoolean(OOBDConstants.PropName_PGPEnabled, false)) {
-            this.core.getSystemIF().setUserPassPhrase("");
 
-        } else {
+ 
 
-            PWDialog pwDialog = new PWDialog(null);
-            String str = pwDialog.showDialog();
-            // System.err.println("passwort="+str);
-            //       String str = JOptionPane.showInputDialog(null, "Enter your PGP PassPhrase : ",                "OOBD PGP Script Encryption", 1);
-            if (str != null) {
-                try {
-                    this.core.getSystemIF().setUserPassPhrase(
-                            str);
-                    str = "";
-                } catch (Exception e) {
-                    // e.printStackTrace();
-                    this.core.getSystemIF().setUserPassPhrase("");
-                }
-            }
-        }
-        List<String> list = new ArrayList<>();
-        supplyHardwareConnects = core.getConnectorList();
+   
 
-        Enumeration<String> e = supplyHardwareConnects.keys();
+  
 
-        // iterate through Hashtable keys Enumeration
-        while (e.hasMoreElements()) {
-            list.add(e.nextElement());
-        }
-        protocolComboBox.setModel(new javax.swing.DefaultComboBoxModel(list.toArray())); //al.toArray(new String[al.size()])
-        updateUI(false);
-    }
-
-    @Override
-    public void announceScriptengine(String id, String visibleName) {
-        Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: Scriptengine-ID: {0} visibleName:{1}", new Object[]{id, visibleName
-        });
-    }
-
-    @Override
-    public void announceUIHandler(String id, String visibleName) {
-        Logger.getLogger(swingView.class.getName()).log(Level.CONFIG, "Interface announcement: UIHandler-ID: {0} visibleName:{1}", new Object[]{id, visibleName
-        });
-        if (Settings.getString(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME).equalsIgnoreCase(visibleName)) {
-            Onion onion = new Onion();
-            String seID = core.createUIHandler(id, onion);
-
-            core.startUIHandler(seID, onion);
-        }
-
-    }
-
-    @Override
-    public void updateOobdUI() {
-        OobdUIHandler uiHandler = core.getUiHandler();
-        if (uiHandler != null) {
-            uiHandler.handleMsg();
-        }
-    }
-
-    @Override
-    public Class getVisualizerClass(Onion myOnion) {
-        return VisualizerJPanel.class;
-    }
-
-    public void visualize(Onion myOnion) {
-        Visualizer newVisualizer = new Visualizer(myOnion);
-        JComponent newJComponent;
-        // to be able to delete the created  objects on a a page later when closing the page, we need to log the creation here
-        pageObjects = (Vector<IFvisualizer>) core.getAssign(newVisualizer.getOwnerEngine(), org.oobd.base.OOBDConstants.CL_OBJECTS);
-        if (pageObjects == null) {
-            pageObjects = new Vector<IFvisualizer>();
-            core.setAssign(newVisualizer.getOwnerEngine(), org.oobd.base.OOBDConstants.CL_OBJECTS, pageObjects);
-        }
-        Class<IFvisualizer> visualizerClass = getVisualizerClass(myOnion);
-        Class[] argsClass = new Class[1]; // first we set up an pseudo - args - array for the scriptengine- constructor
-        argsClass[0] = Onion.class; // and fill it with the info, that the argument for the constructor will be an Onion
-        try {
-            Method classMethod = visualizerClass.getMethod("getInstance", argsClass); // and let Java find the correct constructor with one string as parameter
-            Object[] args = {myOnion}; //we will an args-array with our String parameter
-            newJComponent = (JComponent) classMethod.invoke(null, args); // and finally create the object from the scriptengine class with its unique id as parameter
-            newVisualizer.setOwner((IFvisualizer) newJComponent);
-            ((IFvisualizer) newJComponent).setVisualizer(newVisualizer);
-            // add to internal list
-            pageObjects.add((IFvisualizer) newJComponent);
-            setStatusLine("progress", 100 - 100 / elementCount);
-            elementCount++;
-            if (((IFvisualizer) newJComponent).isGroup()) {
-                /*               // if the component is not already placed
-                 //JScrollPane scrollpane = new JScrollPane(newJComponent);
-                 JScrollPane scrollpane = new JScrollPane();
-                 scrollpane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-                 scrollpane.setViewportView(newJComponent);
-                 // scrollpane.setPreferredSize(new Dimension(300, 300));
-                 GridBagConstraints c = new GridBagConstraints();
-                 JPanel panel = (JPanel) core.getAssign(
-                 newVisualizer.getOwnerEngine(),
-                 org.oobd.base.OOBDConstants.CL_PANE + ":page");
-                 c.fill = GridBagConstraints.REMAINDER;
-                
-                 c.gridx = 0;
-                 c.gridy = 0;
-                 c.weightx = 1;
-                 c.weighty = 1;
-                 //panel.add(newJComponent, c);
-                 panel.add(scrollpane, java.awt.BorderLayout.CENTER);//, c);
-                 //panel.add(scrollpane, c);
-                 panel.validate();
-                 */            }
-            ((IFvisualizer) newJComponent).initValue(newVisualizer, myOnion);
-            newJComponent.addMouseListener(popupMenuHandle);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void openPage(String seID, String name, int colcount, int rowcount) {
-        //cleans the page
-        setStatusLine("started", null);
-        setStatusLine("message", "Load Page");
-        pageTitle = name;
-        if (pageObjects != null) {
-            diagnoseButtonPanel.removeAll();
-            for (IFvisualizer vis : pageObjects) {
-                vis.setRemove(seID);
-            }
-            pageObjects.removeAllElements();
-            //diagnoseButtonPanel.validate();
-        }
-        elementCount = 1;
-        setStatusLine("message", "Load Page..");
-
-    }
-
-    public void openPageCompleted(String seID, String Name) {
-
-        if (!SwingUtilities.isEventDispatchThread()) {
-            SwingUtilities.invokeLater(new Runnable() {
-
-                public void run() {
-                    refreshGrid();
-                }
-            });
-        } else {
-            refreshGrid();
-        }
-        setStatusLine("done", null);
-        statusMessageLabel.setText(pageTitle);
-
-    }
+  
 
     void refreshGrid() {
         //build the components out of the previously collected list of vsiualizers
@@ -1635,51 +1328,13 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
                 // Here, we can safely update the GUI
                 // because we'll be called from the
                 // event dispatch thread
-                updateOobdUI();
+                //updateOobdUI();
             }
         });
         timer.restart();
     }
 
-    @Override
-    public Onion requestParamInput(Onion msg) {
-        Onion answer = null;
-        boolean valid = false;
-        JSONArray params;
-        try {
-            params = msg.getJSONArray(CM_PARAM);
-            if (params != null) {
-                Onion p0Onion = new Onion(params.get(0).toString());
-                    String type = p0Onion.getOnionString("type");
-                    String message = Base64Coder.decodeString(p0Onion.getOnionString("message"));
-                    String title = Base64Coder.decodeString(p0Onion.getOnionString("title"));
-                    String defaultValue = p0Onion.getOnionString("default");
-                    if (defaultValue != null) {
-                        defaultValue = Base64Coder.decodeString(defaultValue);
-                    }
-                    if ("alert".equalsIgnoreCase(type)) {
-                        JOptionPane.showMessageDialog(null, message);
-                        valid = true;
-                    }
-                    if ("string".equalsIgnoreCase(type)) {
-                        String answerString = (String) JOptionPane.showInputDialog(null, message,
-                                title,
-                                JOptionPane.PLAIN_MESSAGE, null, null, defaultValue);
-                        if (answerString != null) {
-                            answer = new Onion().setValue("answer", Base64Coder.encodeString(answerString));
-                        }
-                        valid = true;
-                    }
 
-            }
-        } catch (JSONException | OnionWrongTypeException | OnionNoEntryException ex) {
-            Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        if (!valid) {
-            JOptionPane.showMessageDialog(null, "internal error: Invalid cmd parameters");
-        }
-        return answer;
-    }
 
     private int checkKeyFiles() {
         Boolean userKeyExist;
@@ -1872,25 +1527,7 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void transferPreferences2System(String localConnectTypeName) {
 
-        if (localConnectTypeName != null && !localConnectTypeName.equalsIgnoreCase("")) {
-            core.writeDataPool(DP_ACTUAL_REMOTECONNECT_SERVER, Settings.getString(localConnectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, ""));
-            core.writeDataPool(DP_ACTUAL_PROXY_HOST, Settings.getString(localConnectTypeName + "_" + OOBDConstants.PropName_ProxyHost, ""));
-            core.writeDataPool(DP_ACTUAL_PROXY_PORT, Settings.getInt(localConnectTypeName + "_" + OOBDConstants.PropName_ProxyPort, 0));
-
-        }
-        core.writeDataPool(DP_ACTUAL_UIHANDLER, Settings.getString(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME));
-        String actualScriptDir = Settings.getString(OOBDConstants.PropName_ScriptDir, null);
-        core.writeDataPool(DP_SCRIPTDIR, actualScriptDir);
-        core.writeDataPool(DP_WWW_LIB_DIR, Settings.getString(OOBDConstants.PropName_LibraryDir, null));
-        ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
-        core.writeDataPool(DP_LIST_OF_SCRIPTS, files);
-        core.writeDataPool(DP_HTTP_HOST, core.getSystemIF().getSystemIP());
-        core.writeDataPool(DP_HTTP_PORT, 8080);
-        core.writeDataPool(DP_WSOCKET_PORT, 8443);
-
-    }
 
 }
 

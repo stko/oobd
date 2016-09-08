@@ -58,7 +58,7 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
     Onion actionRequest(Onion myOnion) {
         try {
             if (myOnion.isType(CM_VISUALIZE)) {
-                userInterface.visualize(myOnion);
+            //--    userInterface.visualize(myOnion);
                 return null;
             }
             if (myOnion.isType(CM_VALUE)) {
@@ -76,26 +76,26 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
             }
 
             if (myOnion.isType(CM_PAGE)) {
-                userInterface.openPage(myOnion.getOnionString("owner"),
+/*--                userInterface.openPage(myOnion.getOnionString("owner"),
                         myOnion.getOnionString("name"), 1, 1);
-                return null;
+--*/                return null;
             }
             if (myOnion.isType(CM_PAGEDONE)) {
-                userInterface.openPageCompleted(
+               /*-- userInterface.openPageCompleted(
                         myOnion.getOnionString("owner"),
                         myOnion.getOnionString("name"));
-                return null;
+ --*/               return null;
             }
             if (myOnion.isType(CM_WRITESTRING)) {
                 String modifier = myOnion.getOnionString("modifier"); // an absolutely work around. Here's is why: https://github.com/stko/oobd/issues/164
                 if (modifier == null) {
                     modifier = "";
                 }
-                userInterface.sm(Base64Coder.decodeString(myOnion.getOnionString("data")), Base64Coder.decodeString(modifier));
+               // userInterface.sm(Base64Coder.decodeString(myOnion.getOnionString("data")), Base64Coder.decodeString(modifier));
                 return null;
             }
             if (myOnion.isType(CM_PARAM)) {
-                return userInterface.requestParamInput(myOnion);
+                //---return userInterface.requestParamInput(myOnion);
             }
         } catch (org.json.JSONException | OnionWrongTypeException | OnionNoEntryException ex) {
             Logger.getLogger(Core.class.getName()).log(Level.SEVERE,

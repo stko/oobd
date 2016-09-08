@@ -3,9 +3,12 @@
  */
 package org.oobd.ui.swing.desk;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 import org.oobd.base.Core;
+import org.oobd.base.Settings;
 
 /**
  * The main class of the application.
@@ -21,7 +24,11 @@ public class swing extends SingleFrameApplication {
     protected void startup() {
         swingView thisUserInterface = new swingView(this);
         show(thisUserInterface);
-       oobdCore = new Core(thisUserInterface, new SwingSystem(), "Core");
+        try {
+            oobdCore = new Core(thisUserInterface, new SwingSystem(), "Core");
+        } catch (Settings.IllegalSettingsException ex) {
+            Logger.getLogger(swing.class.getName()).log(Level.SEVERE, null, ex);
+        }
      }
 
     /**
