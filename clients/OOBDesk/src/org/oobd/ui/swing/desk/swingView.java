@@ -45,7 +45,6 @@ import java.util.Hashtable;
 import java.util.List;
 import org.oobd.base.*;
 import org.oobd.base.Core;
-import org.oobd.base.IFui;
 import org.oobd.base.visualizer.*;
 import org.oobd.base.uihandler.OobdUIHandler;
 import org.oobd.base.support.Onion;
@@ -79,7 +78,7 @@ import org.oobd.base.support.OnionWrongTypeException;
 /**
  * The application's main frame.
  */
-public class swingView extends org.jdesktop.application.FrameView implements IFui, org.oobd.base.OOBDConstants, ActionListener {
+public class swingView extends org.jdesktop.application.FrameView implements org.oobd.base.OOBDConstants, ActionListener {
 
     final static String MAINPANEL = "card2";
    Core core;
@@ -658,12 +657,6 @@ public class swingView extends org.jdesktop.application.FrameView implements IFu
             return null;
         }
     }
-
-    @Override
-    public void openXCVehicleData(Onion onion) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 
 
 }

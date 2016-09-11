@@ -106,7 +106,6 @@ import org.oobd.base.uihandler.*;
  */
 public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener {
 
-    IFui userInterface;
     IFsystem systemInterface;
     OobdUIHandler uiHandler = null;
     HashMap<String, OobdBus> busses; // /<stores all available busses
@@ -148,7 +147,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * @param name of the Plugin, just for debugging
      *
      */
-    public Core(IFui myUserInterface, IFsystem mySystemInterface, String name) throws Settings.IllegalSettingsException {
+    public Core( IFsystem mySystemInterface, String name) throws Settings.IllegalSettingsException {
         super(name);
         System.out.println("Java Runtime Version:" + System.getProperty("java.version"));
         if (thisInstance != null) {
@@ -157,7 +156,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         }
         thisInstance = this;
         id = CoreMailboxName;
-        userInterface = myUserInterface;
         systemInterface = mySystemInterface;
         settings = new Settings(systemInterface.loadPreferences(FT_PROPS, OOBDConstants.AppPrefsFileName));
 //        busses = new HashMap<String, OobdBus>();
@@ -328,15 +326,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         return systemInterface;
     }
 
-    /**
-     * a help routine which returns the UI Interface of the Core class
-     *
-     * @return UI-Interface
-     */
-    public IFui getUiIF() {
-        return userInterface;
-    }
-
+   
     /**
      * a help routine which returns the UI Handler of the Core class
      *

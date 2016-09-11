@@ -25,6 +25,15 @@ public interface IFsystem {
      * @param core the core instance to register to the Application
      */
     public void registerOobdCore(Core core);
+    
+    
+      /**
+     * \brief sends a JSON data set to the openXC interface \ingroup
+     * visualisation
+     *
+     * @param onion
+     */
+    public void openXCVehicleData(Onion onion);
 
     /**
      * \brief generates UI specific paths for standard files

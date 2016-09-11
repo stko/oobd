@@ -405,6 +405,14 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         }
     }
 
+    
+    @Override
+    public void openXCVehicleData(Onion onion) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+
+    
     @Override
     public void setUserPassPhrase(String upp) {
         try {

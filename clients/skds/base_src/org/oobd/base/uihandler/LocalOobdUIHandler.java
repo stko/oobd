@@ -38,7 +38,6 @@ import org.oobd.base.visualizer.Visualizer;
 abstract public class LocalOobdUIHandler extends OobdUIHandler {
 
     final HashMap<String, ArrayList<Visualizer>> visualizers = new HashMap<String, ArrayList<Visualizer>>();// /<stores all available visalizers
-    IFui userInterface;
 
     public static String publicName() {
         /* the abstract class also needs to have this method, because it's also loaded during dynamic loading, and the empty return string
@@ -49,7 +48,6 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
 
     public LocalOobdUIHandler(String myID, Core myCore, IFsystem mySystem, String name) {
         super(myID, myCore, mySystem, name);
-        userInterface = myCore.getUiIF();
         Core.getSingleInstance().writeDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, true);
         Logger.getLogger(LocalOobdUIHandler.class.getName()).log(Level.CONFIG, "Local UIHandler  object created: {0}", id);
 

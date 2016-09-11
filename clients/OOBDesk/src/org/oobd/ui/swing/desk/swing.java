@@ -25,7 +25,7 @@ public class swing extends SingleFrameApplication {
         swingView thisUserInterface = new swingView(this);
         show(thisUserInterface);
         try {
-            oobdCore = new Core(thisUserInterface, new SwingSystem(), "Core");
+            oobdCore = new Core( new SwingSystem(), "Core");
         } catch (Settings.IllegalSettingsException ex) {
             Logger.getLogger(swing.class.getName()).log(Level.SEVERE, null, ex);
         }

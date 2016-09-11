@@ -73,7 +73,6 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
     // all
     // available
     // visalizers
-    IFui userInterface;
     public static String ownerEngine;
     public static Message lastOutstandingQuestion = null;
     public static MessagePort wsMsgPort;

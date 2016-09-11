@@ -176,7 +176,7 @@ public class ScriptengineLua extends OobdScriptengine {
                 initRPC(callFrame, nArguments);
                 Onion openXCJson = getLuaTable(0);
                 if (openXCJson != null) {
-                    core.getUiIF().openXCVehicleData(openXCJson);
+                    core.getSystemIF().openXCVehicleData(openXCJson);
                 }
                 finishRPC(callFrame, nArguments);
                 return 1;
