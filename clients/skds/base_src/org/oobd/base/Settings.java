@@ -87,7 +87,7 @@ public class Settings {
             + "  \"Telnet_ConnectServerURL\": {\"type\" : \"string\" , \"title\": \"Connect URL\" , \"description\" : \"remore Host and port as URL\"},\n"
             //            + "  \"Telnet_ServerProxyHost\": {\"type\" : \"string\" , \"title\": \"\" , \"description\" : \"(not used)\"},\n"
             + "  \"PGPEnabled\": {\"type\" : \"boolean\" , \"title\": \"Enable PGP\" , \"description\" : \"(not used)\"},\n"
-            + "  \"ConnectType\": {\"type\" : \"string\" , \"title\": \"\" , \"description\" : \"Connection Type\"},\n"
+            + "  \"ConnectType\": {\"type\" : \"string\" , \"title\": \"Connection Type\" , \"description\" : \"How to connect to the dongle\"},\n"
             + "  \"LibraryDir\": {\"type\" : \"string\" , \"title\": \"HTML Library Directory\" , \"description\" : \"where the HTML library is stored\"},\n"
             + "}";
     static String lockTemplateString = "{\"type\" : \"boolean\" , \"title\": \"Protect '##'\" , \"description\" : \"only changable by admin, if selected\"}";
@@ -294,15 +294,63 @@ public class Settings {
             //printing the top level first
             result = "{\"properties\" : {\n";
             String innerResult = "";
+            String actualConnectType = "";
             for (String templateKey : buffer.keySet()) {
                 valueObject = buffer.get(templateKey);
                 if (valueObject instanceof JSONObject) {
                     if (!"ConnectType".equals(templateKey)) {
                         innerResult += outputSingleValuScheme(innerResult, (JSONObject) valueObject, templateKey, templateKey);
+                    } else {
+                        try {
+                            actualConnectType = prefs.getString(templateKey);
+                        } catch (JSONException ex) {
+
+                        }
                     }
                 }
             }
-            result += innerResult + "\n";
+            result += innerResult + "\n,";
+            innerResult = "";
+
+            boolean connectTypeLocked = prefs.getBoolean("ConnectType" + lockExt);
+            JSONObject connectTypeData = (JSONObject) templateJSON.get("ConnectType");
+            if (validAdmin) {
+                try {
+                    JSONObject lockTemplate = new JSONObject(lockTemplateString);
+                    lockTemplate.put("title", ((String) lockTemplate.get("title")).replace("##", (String) connectTypeData.get("title")));
+                    innerResult += formatSingleValuScheme(innerResult, lockTemplate, "ConnectType" + lockExt, "ConnectType" + lockExt);
+                    propOrder++;
+                } catch (JSONException ex) {
+                    Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                //result += ",";
+
+                result += innerResult + "\n,";
+            }
+            if (!connectTypeLocked||validAdmin) {
+                result += "\"ConnectType\": {\n"
+                        + "\"type\": \"string\",\n"
+                        + "\"title\": \"" + connectTypeData.getString("title") + "\",\n"
+                        + "\"description\": \"" + connectTypeData.getString("description") + "\", \"propertyOrder\": " + propOrder + " ,"
+                        + "\"uniqueItems\": true,\n\"enum\": [";
+                innerResult = "";
+                for (String templateKey : buffer.keySet()) {
+                    valueObject = buffer.get(templateKey);
+                    if (valueObject instanceof HashMap) {
+                        // no connecttype set already? Then use the first found type as default dummy
+                        if ("".equals(actualConnectType)) {
+                            actualConnectType = templateKey;
+                        }
+                        if (!innerResult.equals("")) {
+                            innerResult += ",\n";
+                        }
+                        innerResult += "\"" + templateKey + "\"";
+                    }
+                }
+                result += innerResult + "\n],\n\"default\":\"" + actualConnectType + "\"\n}\n";
+                propOrder++;
+
+            }
             //printing the different connect
             for (String templateKey : buffer.keySet()) {
                 valueObject = buffer.get(templateKey);

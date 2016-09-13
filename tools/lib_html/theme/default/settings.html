@@ -138,6 +138,13 @@
 					startEditor();
 					$(this).dialog("close");
 				}
+			},
+			open: function() {
+				$("#dialog-form").keypress(function(e) {
+					if (e.keyCode == $.ui.keyCode.ENTER) {
+						$(this).parent().find("button:eq(0)").trigger("click");
+					}
+				})
 			}
 		}).dialog("open");
 

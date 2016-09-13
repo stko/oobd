@@ -57,7 +57,6 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     private String userPassPhrase = "";
     String webRootDir = "";
     String webLibraryDir = "";
-    Preferences appProbs;
     JmDNS jmdns;
     String oobdMacAddress = "-";
     InetAddress oobdIPAddress = null;
@@ -182,7 +181,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                 if (myFile.exists()) {
                     return myFile.getAbsolutePath();
                 } else {
-                    myFile = new File(appProbs.get(OOBDConstants.PropName_ScriptDir, "") + "/" + fileName);
+                    myFile = new File(Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + fileName);
                     if (myFile.exists()) {
                         return myFile.getAbsolutePath();
                     }
@@ -221,7 +220,6 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         try {
             switch (pathID) {
                 case OOBDConstants.FT_WEBPAGE:
-                    appProbs = core.getSystemIF().loadPreferences(FT_PROPS, OOBDConstants.AppPrefsFileName);
                     webRootDir = (String) core.readDataPool(DP_SCRIPTDIR, "") + "/";
                     webLibraryDir = (String) core.readDataPool(DP_WWW_LIB_DIR, "") + "/";
                     // in case the resource name points to a "executable" scriptengine, the engine get started 
@@ -267,8 +265,6 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                     }
                     break;
                 case OOBDConstants.FT_SCRIPT:
-                    appProbs = core.getSystemIF().loadPreferences(FT_PROPS,
-                            OOBDConstants.AppPrefsFileName);
                     // save actual script directory to buffer it for later as webroot directory
 //           resource = scriptArchive.getInputStream(scriptArchive.getProperty(OOBDConstants.MANIFEST_SCRIPTNAME, OOBDConstants.MANIFEST_SCRIPTNAME_DEFAULT));
                     resource = scriptArchive.getInputStream(scriptArchive.getProperty(OOBDConstants.MANIFEST_SCRIPTNAME, resourceName));
@@ -297,7 +293,6 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     @Override
     public Object supplyHardwareHandle(Onion typ) {
         try {
-            appProbs = core.getSystemIF().loadPreferences(FT_PROPS, OOBDConstants.AppPrefsFileName);
             String actualConnectionType = (String) core.readDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, "");
             String connectURL = typ.getOnionBase64String("connecturl");
             String[] parts = connectURL.split("://");
@@ -306,8 +301,8 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             }
             String protocol = parts[0];
             String host = parts[1];
-            String proxyHost = appProbs.get(actualConnectionType + "_" + OOBDConstants.PropName_ProxyHost, "");
-            int proxyPort = appProbs.getInt(actualConnectionType + "_" + OOBDConstants.PropName_ProxyPort, 0);
+            String proxyHost = Settings.getString(actualConnectionType + "_" + OOBDConstants.PropName_ProxyHost, "");
+            int proxyPort = Settings.getInt(actualConnectionType + "_" + OOBDConstants.PropName_ProxyPort, 0);
             if (protocol.toLowerCase().startsWith("ws")) {
                 try {
                     Proxy thisProxy = Proxy.NO_PROXY;
