@@ -54,7 +54,7 @@ public class ScriptengineLua extends OobdScriptengine {
         Logger.getLogger(ScriptengineLua.class.getName()).log(Level.CONFIG,
                 "Construct ScriptengineLua instance " + id);
         myself = this;
-        core.writeDataPool(DP_LAST_CREATED_SCRIPTENGINE, this);
+        Settings.writeDataPool(DP_LAST_CREATED_SCRIPTENGINE, this);
     }
 
     @Override
@@ -668,7 +668,7 @@ public class ScriptengineLua extends OobdScriptengine {
         }
         // end of objects lifetime
         System.out.println("End of Scriptengine" + this.toString());
-        core.writeDataPool(DP_RUNNING_SCRIPTENGINE, null);
+        Settings.writeDataPool(DP_RUNNING_SCRIPTENGINE, null);
 
     }
 
@@ -703,13 +703,13 @@ public class ScriptengineLua extends OobdScriptengine {
     }
 
     public boolean doScript(String fileName) throws IOException {
-         Archive scriptArchive = (Archive) core.readDataPool(DP_ACTIVE_ARCHIVE, null);
-        core.writeDataPool(DP_RUNNING_SCRIPT_NAME, scriptArchive.getID() + "/" + scriptArchive.getProperty(OOBDConstants.MANIFEST_SCRIPTNAME, fileName));
+         Archive scriptArchive = (Archive) Settings.readDataPool(DP_ACTIVE_ARCHIVE, null);
+        Settings.writeDataPool(DP_RUNNING_SCRIPT_NAME, scriptArchive.getID() + "/" + scriptArchive.getProperty(MANIFEST_SCRIPTNAME, fileName));
         System.out.println("Scriptengine: Waiting for WS to connect " + this.toString());
-        while (keepRunning && (!(Boolean) Core.getSingleInstance().readDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, false) || (core.readDataPool(DP_RUNNING_SCRIPTENGINE, null) != null && core.readDataPool(DP_RUNNING_SCRIPTENGINE, null) != this))) {
+        while (keepRunning && (!(Boolean) Settings.readDataPool(DP_WEBUI_WS_READY_SIGNAL, false) || (Settings.readDataPool(DP_RUNNING_SCRIPTENGINE, null) != null && Settings.readDataPool(DP_RUNNING_SCRIPTENGINE, null) != this))) {
             try {
                 Thread.sleep(100);
-                OobdScriptengine oldEngine = (OobdScriptengine) core.readDataPool(DP_RUNNING_SCRIPTENGINE, null);
+                OobdScriptengine oldEngine = (OobdScriptengine) Settings.readDataPool(DP_RUNNING_SCRIPTENGINE, null);
                 if (oldEngine != null) {
                     System.out.println("doScript: Old Scriptengine not finished yet:" + oldEngine.toString());
                 }
@@ -718,7 +718,7 @@ public class ScriptengineLua extends OobdScriptengine {
         }
         if (keepRunning) {
             System.out.println("Scriptengine: WS connected " + this.toString());
-            core.writeDataPool(DP_RUNNING_SCRIPTENGINE, this);
+            Settings.writeDataPool(DP_RUNNING_SCRIPTENGINE, this);
             InputStream resource = UISystem.generateResourceStream(FT_SCRIPT,
                     fileName);
             if (resource == null) {

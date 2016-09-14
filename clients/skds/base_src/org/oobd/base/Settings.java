@@ -45,6 +45,7 @@ package org.oobd.base;
 
 
  */
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -55,7 +56,11 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import org.json.JSONException;
 import org.json.JSONObject;
+import static org.oobd.base.OOBDConstants.DP_ACTUAL_CONNECTION_TYPE;
+import static org.oobd.base.OOBDConstants.DP_ARRAY_SIZE;
 import static org.oobd.base.OOBDConstants.FT_PROPS;
+import org.oobd.base.archive.Archive;
+import org.oobd.base.archive.Factory;
 import org.oobd.base.support.Onion;
 import org.oobd.base.support.OnionNoEntryException;
 import org.oobd.base.support.OnionWrongTypeException;
@@ -91,6 +96,79 @@ public class Settings {
             + "  \"LibraryDir\": {\"type\" : \"string\" , \"title\": \"HTML Library Directory\" , \"description\" : \"where the HTML library is stored\"},\n"
             + "}";
     static String lockTemplateString = "{\"type\" : \"boolean\" , \"title\": \"Protect '##'\" , \"description\" : \"only changable by admin, if selected\"}";
+    static final ArrayList dataPoolList = new ArrayList(OOBDConstants.DP_ARRAY_SIZE);
+
+    static public void transferPreferences2System(String localConnectTypeName) {
+        if (localConnectTypeName != null && !localConnectTypeName.equalsIgnoreCase("")) {
+            writeDataPool(OOBDConstants.DP_ACTUAL_REMOTECONNECT_SERVER, Settings.getString(localConnectTypeName + "_" + OOBDConstants.PropName_ConnectServerURL, ""));
+            writeDataPool(OOBDConstants.DP_ACTUAL_PROXY_HOST, Settings.getString(localConnectTypeName + "_" + OOBDConstants.PropName_ProxyHost, ""));
+            writeDataPool(OOBDConstants.DP_ACTUAL_PROXY_PORT, Settings.getInt(localConnectTypeName + "_" + OOBDConstants.PropName_ProxyPort, 0));
+            writeDataPool(OOBDConstants.DP_ACTUAL_CONNECT_ID, Settings.getString(localConnectTypeName + "_" + OOBDConstants.PropName_SerialPort, ""));
+        }
+        writeDataPool(OOBDConstants.DP_ACTUAL_UIHANDLER, Settings.getString(OOBDConstants.PropName_UIHander, OOBDConstants.UIHANDLER_WS_NAME));
+        String actualScriptDir = Settings.getString(OOBDConstants.PropName_ScriptDir, null);
+        writeDataPool(OOBDConstants.DP_SCRIPTDIR, actualScriptDir);
+        writeDataPool(OOBDConstants.DP_WWW_LIB_DIR, Settings.getString(OOBDConstants.PropName_LibraryDir, null));
+        ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
+        writeDataPool(OOBDConstants.DP_LIST_OF_SCRIPTS, files);
+        writeDataPool(OOBDConstants.DP_HTTP_HOST, Core.getSingleInstance().getSystemIF().getSystemIP());
+        writeDataPool(OOBDConstants.DP_HTTP_PORT, 8080);
+        writeDataPool(OOBDConstants.DP_WSOCKET_PORT, 8443);
+    }
+
+    /**
+     * @brief gets an object to the global data pool, used for most of the
+     * variables used in OOBD
+     *
+     * @param id a numeric identifier, defined in OOBDConstants in DP_ (Data
+     * Pool) section
+     * @param defaultObject object returned, if object is null
+     * @return Object
+     */
+    public static Object readDataPool(int id, Object defaultObject) {
+        synchronized (dataPoolList) {
+            try {
+                Object data = dataPoolList.get(id);
+                if (data == null) {
+                    return defaultObject;
+                }
+                return data;
+            } catch (IndexOutOfBoundsException ex) {
+                return defaultObject;
+            }
+        }
+    }
+
+    /**
+     * @brief add an object to the global data pool, used for most of the
+     * variables used in OOBD
+     *
+     * @param id a numeric identifier, defined in OOBDConstants in DP_ (Data
+     * Pool) section
+     * @param data object reference to be stored
+     */
+    static public void writeDataPool(int id, Object data) {
+        synchronized (dataPoolList) {
+            if (id >= dataPoolList.size()) {
+                dataPoolList.ensureCapacity(id + 1);
+            }
+            dataPoolList.set(id, data);
+        }
+    }
+
+    /**
+     * @brief removes an object from the global data pool, used for most of the
+     * variables used in OOBD
+     *
+     * @param id a numeric identifier, defined in OOBDConstants in DP_ (Data
+     * Pool) section
+     * @return removed object
+     */
+    static public Object removeDataPool(int id, Object defaultObject, Core core1) {
+        synchronized (dataPoolList) {
+            return dataPoolList.remove(id);
+        }
+    }
 
     public static class IllegalSettingsException extends Exception {
 
@@ -120,9 +198,16 @@ public class Settings {
         prefs = new Onion();
         myself = this;
         savePrefsCallback = savePrefs;
+        for (int i = 0; i < DP_ARRAY_SIZE; i++) {
+            dataPoolList.add(null);
+        }
+
     }
 
     public Settings(Preferences thisPrefs) throws IllegalSettingsException {
+       for (int i = 0; i < DP_ARRAY_SIZE; i++) {
+            dataPoolList.add(null);
+        }
         try {
             String prefsString = thisPrefs.get("json", null);
             if (prefsString != null) {
@@ -203,6 +288,11 @@ public class Settings {
         } catch (JSONException ex) {
             //throw new IllegalSettingsException(ex);
         }
+        String connectTypeName = Settings.getString(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
+        Settings.writeDataPool(DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
+
+        Settings.transferPreferences2System(connectTypeName);
+
     }
 
     static String formatSingleValuScheme(String prevResult, JSONObject template, String prefsPath, String name) {
@@ -327,7 +417,7 @@ public class Settings {
 
                 result += innerResult + "\n,";
             }
-            if (!connectTypeLocked||validAdmin) {
+            if (!connectTypeLocked || validAdmin) {
                 result += "\"ConnectType\": {\n"
                         + "\"type\": \"string\",\n"
                         + "\"title\": \"" + connectTypeData.getString("title") + "\",\n"

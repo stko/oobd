@@ -133,7 +133,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     CoreTick ticker;
     //Preferences props;
     boolean runCore = true;
-    final ArrayList dataPoolList = new ArrayList(DP_ARRAY_SIZE);
     public static Settings settings = null;
 
     /**
@@ -169,14 +168,11 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         databases = new HashMap<>();
         // absolutely scary, but the datapool array list need to be filled once to not
         // crash later when trying to (re)assign a value...
-        for (int i = 0; i < DP_ARRAY_SIZE; i++) {
-            dataPoolList.add(null);
-        }
         systemInterface.registerOobdCore(this); // Anounce itself at the Systeminterface
-             String  connectTypeName = Settings.getString(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
-         writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
- 
-        transferPreferences2System(connectTypeName);
+             String connectTypeName = Settings.getString(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
+        Settings.writeDataPool(DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
+
+        Settings.transferPreferences2System(connectTypeName);
 
        //-- userInterface.registerOobdCore(this); // Anounce itself at the Userinterface
         try {
@@ -342,7 +338,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * @return OobdScriptengine
      */
     public OobdScriptengine getScriptEngine() {
-        return (OobdScriptengine) readDataPool(OOBDConstants.DP_RUNNING_SCRIPTENGINE, null);
+        return (OobdScriptengine) Settings.readDataPool(DP_RUNNING_SCRIPTENGINE, null);
     }
 
     /**
@@ -364,7 +360,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      *
      */
     public void stopScriptEngine() {
-        OobdScriptengine thisEngine = (OobdScriptengine) readDataPool(OOBDConstants.DP_RUNNING_SCRIPTENGINE, null);
+        OobdScriptengine thisEngine = (OobdScriptengine) Settings.readDataPool(DP_RUNNING_SCRIPTENGINE, null);
         if (thisEngine != null) {
             thisEngine.close();
         }
@@ -432,7 +428,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        writeDataPool(OOBDConstants.DP_LAST_CREATED_SCRIPTENGINE, o);
+        Settings.writeDataPool(DP_LAST_CREATED_SCRIPTENGINE, o);
 
         return o;
     }
@@ -583,59 +579,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         return false;
     }
 
-    /**
-     * @brief add an object to the global data pool, used for most of the
-     * variables used in OOBD
-     *
-     * @param id a numeric identifier, defined in OOBDConstants in DP_ (Data
-     * Pool) section
-     * @param data object reference to be stored
-     */
-    public void writeDataPool(int id, Object data) {
-        synchronized (dataPoolList) {
-            if (id >= dataPoolList.size()) {
-                dataPoolList.ensureCapacity(id + 1);
-            }
-            dataPoolList.set(id, data);
-        }
-    }
 
-    /**
-     * @brief gets an object to the global data pool, used for most of the
-     * variables used in OOBD
-     *
-     * @param id a numeric identifier, defined in OOBDConstants in DP_ (Data
-     * Pool) section
-     * @param defaultObject object returned, if object is null
-     * @return Object
-     */
-    public Object readDataPool(int id, Object defaultObject) {
-        synchronized (dataPoolList) {
-            try {
-                Object data = dataPoolList.get(id);
-                if (data == null) {
-                    return defaultObject;
-                }
-                return data;
-            } catch (IndexOutOfBoundsException ex) {
-                return defaultObject;
-            }
-        }
-    }
-
-    /**
-     * @brief removes an object from the global data pool, used for most of the
-     * variables used in OOBD
-     *
-     * @param id a numeric identifier, defined in OOBDConstants in DP_ (Data
-     * Pool) section
-     * @return removed object
-     */
-    public Object removeDataPool(int id, Object defaultObject) {
-        synchronized (dataPoolList) {
-            return dataPoolList.remove(id);
-        }
-    }
 
     /**
      * generic hashtable to store several relational data assignments during
@@ -694,7 +638,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             return true;
         } else {// find receipient
             OobdPlugin receiver = null;
-            OobdScriptengine scriptEngine = (OobdScriptengine) readDataPool(OOBDConstants.DP_RUNNING_SCRIPTENGINE, null);
+            OobdScriptengine scriptEngine = (OobdScriptengine) Settings.readDataPool(DP_RUNNING_SCRIPTENGINE, null);
             if (scriptEngine != null && scriptEngine.getId().equals(msg.rec)) {
                 receiver = scriptEngine;
             }
@@ -863,7 +807,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * @param onion addional param
      */
     public void startScriptEngine(Onion onion) {
-        OobdScriptengine o = (OobdScriptengine) readDataPool(OOBDConstants.DP_LAST_CREATED_SCRIPTENGINE, null);
+        OobdScriptengine o = (OobdScriptengine) Settings.readDataPool(DP_LAST_CREATED_SCRIPTENGINE, null);
         if (o == null) {
             o = core.createScriptEngine("ScriptengineLua", onion);
         } else {
@@ -877,7 +821,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         }
         Logger.getLogger(Core.class.getName()).log(Level.CONFIG,
                 "Start scriptengine: " + id);
-        while (readDataPool(DP_RUNNING_SCRIPTENGINE, null) != null) {
+        while (Settings.readDataPool(DP_RUNNING_SCRIPTENGINE, null) != null) {
             try {
                 Thread.sleep(100);
                 System.out.println("core StartScriptEngine: Old Scriptengine not finished yet");
@@ -894,8 +838,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
     public String startScriptEngineByURL(String resourceName) {
 
-        ArrayList<Archive> files = (ArrayList<Archive>) readDataPool(DP_LIST_OF_SCRIPTS, null);
-        Archive activeArchive = (Archive) readDataPool(DP_ACTIVE_ARCHIVE, null);
+        ArrayList<Archive> files = (ArrayList<Archive>) Settings.readDataPool(DP_LIST_OF_SCRIPTS, null);
+        Archive activeArchive = (Archive) Settings.readDataPool(DP_ACTIVE_ARCHIVE, null);
         String scriptPath = "";
         if (activeArchive != null && resourceName.endsWith(".lbc")) {//lets see if the innerpath points to a lbc ActiveArchive
             if (activeArchive.fileExist(resourceName)) {
@@ -908,7 +852,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             for (Archive file : files) {
                 if (("/" + file.getID()).equalsIgnoreCase(resourceName)) {
                     activeArchive = file;
-                    writeDataPool(DP_ACTIVE_ARCHIVE, file);
+                    Settings.writeDataPool(DP_ACTIVE_ARCHIVE, file);
                     scriptPath = activeArchive.getProperty(OOBDConstants.MANIFEST_SCRIPTNAME, "");
                     if (!scriptPath.equals("") && !activeArchive.fileExist(scriptPath)) {
                         scriptPath = "";
@@ -920,7 +864,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         }
         if (!scriptPath.equals("") && activeArchive != null) { //if only the root ActiveArchive name is given or the innerpath really points to a .lbc ActiveArchive
 
-            writeDataPool(DP_ACTIVE_ARCHIVE, activeArchive);
+            Settings.writeDataPool(DP_ACTIVE_ARCHIVE, activeArchive);
             System.out.println("start scriptengine for " + scriptPath);
             startScriptArchive(activeArchive);
             return activeArchive.getProperty(MANIFEST_STARTPAGE, OOBDConstants.HTML_DEFAULTPAGEURL);
@@ -931,7 +875,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     public void startScriptArchive(Archive ActiveArchive) {
 
         String formatURL;
-        String connectTypeName = (String) readDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, OOBDConstants.PropName_ConnectTypeBT);
+        String connectTypeName = (String) Settings.readDataPool(DP_ACTUAL_CONNECTION_TYPE, PropName_ConnectTypeBT);
 
         Class<OOBDPort> value;
         value = systemInterface.getConnectorList().get(connectTypeName);
@@ -954,9 +898,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         String connectURL;
         String protocol = "";
         String domain = "";
-        String connectID = (String) readDataPool(DP_ACTUAL_CONNECT_ID, "");
+        String connectID = (String) Settings.readDataPool(DP_ACTUAL_CONNECT_ID, "");
         //\todo cancel and error message, if connect id is empty
-        String serverURL = (String) readDataPool(DP_ACTUAL_REMOTECONNECT_SERVER, "");
+        String serverURL = (String) Settings.readDataPool(DP_ACTUAL_REMOTECONNECT_SERVER, "");
         if (!"".equals(serverURL)) {
             String[] parts = serverURL.split("://");
             if (parts.length != 2) {
@@ -979,32 +923,13 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             Onion cmdOnion = new Onion("{" + "'scriptpath':'" + ActiveArchive.getFilePath().replace("\\", "/") + "'"
                     + ",'connecturl':'" + Base64Coder.encodeString(connectURL) + "'"
                     + "}");
-            writeDataPool(DP_ACTIVE_ARCHIVE, ActiveArchive);
+            Settings.writeDataPool(DP_ACTIVE_ARCHIVE, ActiveArchive);
 
             startScriptEngine(cmdOnion);
         } catch (JSONException ex) {
             // TODO Auto-generated catch block
             Logger.getLogger(Core.class.getName()).log(Level.WARNING, "JSON creation error with file name:" + ActiveArchive.getFilePath(), ex.getMessage());
         }
-    }
-    public void transferPreferences2System(String localConnectTypeName) {
-
-        if (localConnectTypeName != null && !localConnectTypeName.equalsIgnoreCase("")) {
-            writeDataPool(DP_ACTUAL_REMOTECONNECT_SERVER, Settings.getString(localConnectTypeName + "_" + PropName_ConnectServerURL, ""));
-            writeDataPool(DP_ACTUAL_PROXY_HOST, Settings.getString(localConnectTypeName + "_" + PropName_ProxyHost, ""));
-            writeDataPool(DP_ACTUAL_PROXY_PORT, Settings.getInt(localConnectTypeName + "_" + PropName_ProxyPort, 0));
-
-        }
-        writeDataPool(DP_ACTUAL_UIHANDLER, Settings.getString(PropName_UIHander, UIHANDLER_WS_NAME));
-        String actualScriptDir = Settings.getString(PropName_ScriptDir, null);
-        writeDataPool(DP_SCRIPTDIR, actualScriptDir);
-        writeDataPool(DP_WWW_LIB_DIR, Settings.getString(PropName_LibraryDir, null));
-        ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
-        writeDataPool(DP_LIST_OF_SCRIPTS, files);
-        writeDataPool(DP_HTTP_HOST, getSystemIF().getSystemIP());
-        writeDataPool(DP_HTTP_PORT, 8080);
-        writeDataPool(DP_WSOCKET_PORT, 8443);
-
     }
 }
 

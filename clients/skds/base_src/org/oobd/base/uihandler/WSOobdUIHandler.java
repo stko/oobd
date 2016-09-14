@@ -45,11 +45,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.Hashtable;
-import static org.oobd.base.OOBDConstants.DP_RUNNING_SCRIPTENGINE;
-import static org.oobd.base.OOBDConstants.DP_SCRIPTDIR;
-import static org.oobd.base.OOBDConstants.DP_ACTIVE_ARCHIVE;
-import static org.oobd.base.OOBDConstants.DP_HTTP_HOST;
-import static org.oobd.base.OOBDConstants.DP_HTTP_PORT;
+
 import org.oobd.base.archive.Archive;
 import org.oobd.base.archive.Factory;
 import org.oobd.base.port.OOBDPort;
@@ -105,8 +101,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
 
         WebSocketImpl.DEBUG = false;
         try {
-            wsServer = new ChatServer(UISystem.getSystemIP(), (int) Core
-                    .getSingleInstance().readDataPool(DP_WSOCKET_PORT, 8443));
+            wsServer = new ChatServer(UISystem.getSystemIP(), (int) Settings.readDataPool(DP_WSOCKET_PORT, 8443));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -512,19 +507,16 @@ class ChatServer extends WebSocketServer {
                 .getHostAddress()
                 + " entered the room!");
         conn.send("{\"type\":\"WSCONNECT\",\"script\":\""
-                + Core.getSingleInstance().readDataPool(
-                        OOBDConstants.DP_RUNNING_SCRIPT_NAME, "") + "\"}");
+                +Settings.readDataPool(OOBDConstants.DP_RUNNING_SCRIPT_NAME, "") + "\"}");
         conn.send("{\"type\":\"WRITESTRING\" ,\"data\":\""
                 + Base64Coder.encodeString("Connected to OOBD") + "\"}");
-        Core.getSingleInstance().writeDataPool(
-                OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, true);
+       Settings.writeDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, true);
     }
 
     @Override
     public void onClose(WebSocket conn, int code, String reason, boolean remote) {
         System.out.println(conn + " has left the room!");
-        Core.getSingleInstance().writeDataPool(
-                OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, false);
+        Settings.writeDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, false);
         if (WSOobdUIHandler.lastOutstandingQuestion != null) {
             try {
                 WSOobdUIHandler.lastOutstandingQuestion
@@ -722,11 +714,11 @@ class OOBDHttpServer extends NanoHTTPD {
     public OOBDHttpServer() throws IOException {
         // super(8080);
         // uploader = new NanoFileUpload(new DiskFileItemFactory());
-        super(((InetAddress) Core.getSingleInstance().readDataPool(
-                DP_HTTP_HOST,
+        super(((InetAddress) Settings.readDataPool(
+                OOBDConstants.DP_HTTP_HOST,
                 Core.getSingleInstance().getSystemIF().getSystemIP()))
-                .getHostAddress(), (int) Core.getSingleInstance().readDataPool(
-                        DP_HTTP_PORT, 8080));
+                .getHostAddress(), (int) Settings.readDataPool(
+                        OOBDConstants.DP_HTTP_PORT, 8080));
 
         this.MIME_TYPES = new HashMap<String, String>() {
 
@@ -811,8 +803,7 @@ class OOBDHttpServer extends NanoHTTPD {
         this.parms = session.getParms();
 
         if (parms.get("theme") != null && !"".equals(parms.get("theme"))) {
-            Core.getSingleInstance().writeDataPool(
-                    OOBDConstants.DP_WEBUI_ACTUAL_THEME, parms.get("theme"));
+            Settings.writeDataPool(OOBDConstants.DP_WEBUI_ACTUAL_THEME, parms.get("theme"));
         }
         if (parms.get("settingspw") != null ) {
             settingsPassword = parms.get("settingspw");
@@ -831,35 +822,39 @@ class OOBDHttpServer extends NanoHTTPD {
             Core.getSingleInstance().getSystemIF()
                     .setUserPassPhrase(parms.get("pgppw"));
         }
-        if (parms.get("rcid") != null && !"".equals(parms.get("rcid"))) {
-            Core.getSingleInstance().writeDataPool(
-                    OOBDConstants.DP_ACTUAL_CONNECT_ID, parms.get("rcid"));
-        }
+        /*----- Important: The "connectiontype" must be evaluated BEFORE the "rcid",
+        because the connectiontype change loads the rcid default value from the settings,
+        while the rcid change overwrites the actual settings.
+        if rcid is evaluated first, then it's directly overwritten again with the system settings
+        when connectiontype is evaluated as next
+        */
         if (parms.get("connectType") != null
                 && !"".equals(parms.get("connectType"))) {
             String connectTypeName = parms.get("connectType");
             Class<OOBDPort> value = Core.getSingleInstance().getConnectorList()
                     .get(connectTypeName);
             if (value != null) {
-                Core.getSingleInstance().transferPreferences2System(connectTypeName);
-                Core.getSingleInstance().writeDataPool(
-                        OOBDConstants.DP_ACTUAL_CONNECTION_TYPE,
+                Settings.transferPreferences2System(connectTypeName);
+                Settings.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE,
                         connectTypeName);
             }
         }
+        if (parms.get("rcid") != null && !"".equals(parms.get("rcid"))) {
+            Settings.writeDataPool(OOBDConstants.DP_ACTUAL_CONNECT_ID, parms.get("rcid"));
+        }
+        //-------------------
         if ("/".equals(session.getUri()) || "/#".equals(session.getUri())) {
             Core.getSingleInstance().stopScriptEngine(); // back to start: stop
             // actual script
             // engine
-            Core.getSingleInstance().writeDataPool(
-                    OOBDConstants.DP_ACTIVE_ARCHIVE, null); // set active
+            Settings.writeDataPool(OOBDConstants.DP_ACTIVE_ARCHIVE, null); // set active
             // Archive to null
             String catalog = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                     + "<?xml-stylesheet type=\"text/xsl\" href=\"/theme/default/xslt/start.xsl\"?>\n"
                     + "<catalog>\n";
             Hashtable<String, Class> connectionTypes = Core.getSingleInstance()
                     .getConnectorList();
-            String actualConnectTypeName = (String) Core.getSingleInstance()
+            String actualConnectTypeName = (String) Settings
                     .readDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, "");
             for (String connectionName : connectionTypes.keySet()) {
                 if (connectionName.equalsIgnoreCase(actualConnectTypeName)) {
@@ -871,10 +866,10 @@ class OOBDHttpServer extends NanoHTTPD {
                 }
             }
             // prepare a list of available themes
-            String actualTheme = (String) Core.getSingleInstance()
+            String actualTheme = (String) Settings
                     .readDataPool(OOBDConstants.DP_WEBUI_ACTUAL_THEME,
                             "default");
-            File themeDirectory = new File((String) Core.getSingleInstance()
+            File themeDirectory = new File((String)Settings
                     .readDataPool(OOBDConstants.DP_WWW_LIB_DIR, "") + "/theme");
             if (themeDirectory.exists()) {
                 File[] files = themeDirectory.listFiles();
@@ -891,9 +886,7 @@ class OOBDHttpServer extends NanoHTTPD {
                     }
                 }
             }
-            ArrayList<Archive> files = Factory.getDirContent((String) Core
-                    .getSingleInstance().readDataPool(
-                            OOBDConstants.DP_SCRIPTDIR, null));
+            ArrayList<Archive> files = Factory.getDirContent((String) Settings.readDataPool(OOBDConstants.DP_SCRIPTDIR, null));
             for (Archive file : files) {
                 catalog += "<script>\n";
                 catalog += "<fileid>" + encodeHTML(file.getID())
@@ -938,7 +931,7 @@ class OOBDHttpServer extends NanoHTTPD {
              * ().readDataPool(OOBDConstants.DP_LAST_OPENED_PATH, mimeType)); }
              */
             if (myFileStream != null) {
-                mimeType = getMimeTypeForFile((String) Core.getSingleInstance()
+                mimeType = getMimeTypeForFile((String) Settings
                         .readDataPool(OOBDConstants.DP_LAST_OPENED_PATH,
                                 mimeType));
                 if (WSOobdUIHandler.wsServer != null

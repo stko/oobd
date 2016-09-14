@@ -81,7 +81,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                     //String service_name = "OOBD-" + jmdns.getHostName();
                     //String service_name = Core.getSingleInstance().getSystemIF().getOobdURL();
                     String service_name = "OOBD DaaS (" + getMACAddress() + ")";
-                    int service_port = (int) core.readDataPool(OOBDConstants.DP_HTTP_PORT, 8080);
+                    int service_port = (int) Settings.readDataPool(DP_HTTP_PORT, 8080);
                     ServiceInfo service_info = ServiceInfo.create(service_type, service_name, service_port, "");
                     jmdns.registerService(service_info);
                 } catch (IOException ex) {
@@ -99,7 +99,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         ip = getSystemIP();
         hostname = ip.getHostName();
         System.out.println("Your current Hostname : " + hostname);
-        return "http://" + hostname + ":" + ((Integer) Core.getSingleInstance().readDataPool(DP_HTTP_PORT, 8080)).toString();
+        return "http://" + hostname + ":" + ((Integer) Settings.readDataPool(DP_HTTP_PORT, 8080)).toString();
     }
 
     public void openBrowser() {
@@ -201,7 +201,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             if (path.toLowerCase().startsWith("/" + mapDir[i].toLowerCase() + "/")) {
                 path = path.substring(mapDir[i].length() + 2);
                 if (mapDir[i].toLowerCase().equalsIgnoreCase("theme") && path.toLowerCase().startsWith("default/")) { //map the theme folder to  the actual theme
-                    path = core.readDataPool(DP_WEBUI_ACTUAL_THEME, "default") + "/" + path.substring("default/".length());
+                    path = Settings.readDataPool(DP_WEBUI_ACTUAL_THEME, "default") + "/" + path.substring("default/".length());
                 }
                 return mapDir[i + 1] + path;
             }
@@ -216,29 +216,29 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         Logger.getLogger(SwingSystem.class.getName()).log(Level.INFO, "Try to load: " + resourceName
                 + " with path ID : " + pathID);
         InputStream resource = null;
-        Archive scriptArchive = (Archive) core.readDataPool(DP_ACTIVE_ARCHIVE, null);
+        Archive scriptArchive = (Archive) Settings.readDataPool(DP_ACTIVE_ARCHIVE, null);
         try {
             switch (pathID) {
                 case OOBDConstants.FT_WEBPAGE:
-                    webRootDir = (String) core.readDataPool(DP_SCRIPTDIR, "") + "/";
-                    webLibraryDir = (String) core.readDataPool(DP_WWW_LIB_DIR, "") + "/";
+                    webRootDir = (String) Settings.readDataPool(DP_SCRIPTDIR, "") + "/";
+                    webLibraryDir = (String) Settings.readDataPool(DP_WWW_LIB_DIR, "") + "/";
                     // in case the resource name points to a "executable" scriptengine, the engine get started 
                     // and the resourcename is corrected to the html start page to be used
                     resourceName = core.startScriptEngineByURL(resourceName);
-                    scriptArchive = (Archive) core.readDataPool(DP_ACTIVE_ARCHIVE, null);
+                    scriptArchive = (Archive) Settings.readDataPool(DP_ACTIVE_ARCHIVE, null);
                     String mapping = mapDirectory(new String[]{"libs", webLibraryDir + "libs/", "theme", webLibraryDir + "theme/"}, resourceName);
                     if (mapping != null) { //its a mapped request
-                        core.writeDataPool(DP_LAST_OPENED_PATH, mapping);
+                        Settings.writeDataPool(DP_LAST_OPENED_PATH, mapping);
                         return new FileInputStream(generateUIFilePath(pathID, mapping));
                     }
                     // let's see, if it's a passthrough request;
                     String[] parts = resourceName.split("/", 3); //remember that resourceName starts with /, so the first split part should be empty
                     if (parts.length > 2) {
-                        ArrayList<Archive> files = (ArrayList<Archive>) core.readDataPool(DP_LIST_OF_SCRIPTS, null);
+                        ArrayList<Archive> files = (ArrayList<Archive>) Settings.readDataPool(DP_LIST_OF_SCRIPTS, null);
                         if (files != null) {
                             for (Archive file : files) {
                                 if (parts[1].equals(file.getFileName())) {
-                                    core.writeDataPool(DP_LAST_OPENED_PATH, parts[2]);
+                                    Settings.writeDataPool(DP_LAST_OPENED_PATH, parts[2]);
                                     return file.getInputStream(parts[2]);
                                 }
                             }
@@ -246,7 +246,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
                     }
 
                     if (scriptArchive != null) { // if everything else fails, try to load the file out of the package
-                        core.writeDataPool(DP_LAST_OPENED_PATH, resourceName);
+                        Settings.writeDataPool(DP_LAST_OPENED_PATH, resourceName);
                         return scriptArchive.getInputStream(resourceName);
                     }
 
@@ -293,7 +293,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     @Override
     public Object supplyHardwareHandle(Onion typ) {
         try {
-            String actualConnectionType = (String) core.readDataPool(OOBDConstants.DP_ACTUAL_CONNECTION_TYPE, "");
+            String actualConnectionType = (String) Settings.readDataPool(DP_ACTUAL_CONNECTION_TYPE, "");
             String connectURL = typ.getOnionBase64String("connecturl");
             String[] parts = connectURL.split("://");
             if (parts.length != 2 || "".equals(actualConnectionType)) {
@@ -400,14 +400,11 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         }
     }
 
-    
     @Override
     public void openXCVehicleData(Onion onion) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-
-    
     @Override
     public void setUserPassPhrase(String upp) {
         try {

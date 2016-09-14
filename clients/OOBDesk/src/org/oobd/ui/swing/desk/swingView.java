@@ -324,7 +324,7 @@ public class swingView extends org.jdesktop.application.FrameView implements org
 
 
     private void startButtonLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startButtonLabelMouseClicked
-        if (true || UIHANDLER_WS_NAME.equalsIgnoreCase((String) core.readDataPool(DP_ACTUAL_UIHANDLER, Settings.getString(OOBDConstants.PropName_UIHander, UIHANDLER_WS_NAME)))) {
+        if (true || UIHANDLER_WS_NAME.equalsIgnoreCase((String) Settings.readDataPool(DP_ACTUAL_UIHANDLER, Settings.getString(PropName_UIHander, UIHANDLER_WS_NAME)))) {
 
             //startButtonLabel.setIcon(resourceMap.getIcon("startButtonLabel.icon"));
             Core.getSingleInstance().getSystemIF().openBrowser();

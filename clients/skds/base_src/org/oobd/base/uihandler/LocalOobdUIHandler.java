@@ -48,7 +48,7 @@ abstract public class LocalOobdUIHandler extends OobdUIHandler {
 
     public LocalOobdUIHandler(String myID, Core myCore, IFsystem mySystem, String name) {
         super(myID, myCore, mySystem, name);
-        Core.getSingleInstance().writeDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, true);
+        Settings.writeDataPool(DP_WEBUI_WS_READY_SIGNAL, true);
         Logger.getLogger(LocalOobdUIHandler.class.getName()).log(Level.CONFIG, "Local UIHandler  object created: {0}", id);
 
     }
