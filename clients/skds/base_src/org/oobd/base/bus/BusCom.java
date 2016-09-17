@@ -44,7 +44,7 @@ public class BusCom extends OobdBus implements OOBDConstants {
 
         reader = new ComReader();
         udpBroadcasts = new Hashtable<String, Long>();
-        DatagramSocket socket = core.getSystemIF().getUDPBroadcastSocket();
+        DatagramSocket socket = core.getUDPBroadcastSocket();
         byte[] buf = new byte[1024];
         DatagramPacket packet = new DatagramPacket(buf, buf.length);
         while (keepRunning == true) {

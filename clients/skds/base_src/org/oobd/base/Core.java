@@ -38,22 +38,40 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.lang.reflect.*;
 import java.io.*;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
+import java.net.Proxy;
+import java.net.SocketException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 
 import org.json.JSONException;
 import org.oobd.base.OOBDConstants;
+import static org.oobd.base.OOBDConstants.UDP_PORT;
 import org.oobd.base.archive.Archive;
 import org.oobd.base.archive.Factory;
 import org.oobd.base.support.Onion;
 import org.oobd.base.bus.OobdBus;
 import org.oobd.base.db.OobdDB;
 import org.oobd.base.connector.OobdConnector;
+import org.oobd.base.port.ComPort_Kadaver;
+import org.oobd.base.port.ComPort_Telnet;
+import org.oobd.base.port.ComPort_Win;
 import org.oobd.base.port.OOBDPort;
 import org.oobd.base.protocol.OobdProtocol;
 import org.oobd.base.scriptengine.OobdScriptengine;
+import org.oobd.base.support.OnionNoEntryException;
+import org.oobd.base.support.OnionWrongTypeException;
 import org.oobd.base.uihandler.*;
+import org.oobd.crypt.AES.EncodeDecodeAES;
+import org.oobd.crypt.AES.PassPhraseProvider;
 
 /**
  * \defgroup init Initialisation during startup
@@ -134,6 +152,11 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     //Preferences props;
     boolean runCore = true;
     public static Settings settings = null;
+    private String userPassPhrase = "";
+    String oobdMacAddress = "-";
+    InetAddress oobdIPAddress = null;
+    String webRootDir = "";
+    String webLibraryDir = "";
 
     /**
      * \brief The Application creates one single instance of the core class
@@ -146,7 +169,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * @param name of the Plugin, just for debugging
      *
      */
-    public Core( IFsystem mySystemInterface, String name) throws Settings.IllegalSettingsException {
+    public Core(IFsystem mySystemInterface, String name) throws Settings.IllegalSettingsException {
         super(name);
         System.out.println("Java Runtime Version:" + System.getProperty("java.version"));
         if (thisInstance != null) {
@@ -169,12 +192,12 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         // absolutely scary, but the datapool array list need to be filled once to not
         // crash later when trying to (re)assign a value...
         systemInterface.registerOobdCore(this); // Anounce itself at the Systeminterface
-             String connectTypeName = Settings.getString(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
+        String connectTypeName = Settings.getString(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
         Settings.writeDataPool(DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
 
         Settings.transferPreferences2System(connectTypeName);
 
-       //-- userInterface.registerOobdCore(this); // Anounce itself at the Userinterface
+        //-- userInterface.registerOobdCore(this); // Anounce itself at the Userinterface
         try {
             BufferedReader br;
             String strLine;
@@ -322,7 +345,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         return systemInterface;
     }
 
-   
     /**
      * a help routine which returns the UI Handler of the Core class
      *
@@ -348,7 +370,52 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * @return a hardware handle of the requested type or nil
      */
     public Object supplyHardwareHandle(Onion typ) {
-        return systemInterface.supplyHardwareHandle(typ);
+
+        try {
+            String actualConnectionType = (String) Settings.readDataPool(DP_ACTUAL_CONNECTION_TYPE, "");
+            String connectURL = typ.getOnionBase64String("connecturl");
+            String[] parts = connectURL.split("://");
+            if (parts.length != 2 || "".equals(actualConnectionType)) {
+                return null;
+            }
+            String protocol = parts[0];
+            String host = parts[1];
+            String proxyHost = Settings.getString(actualConnectionType + "_" + OOBDConstants.PropName_ProxyHost, "");
+            int proxyPort = Settings.getInt(actualConnectionType + "_" + OOBDConstants.PropName_ProxyPort, 0);
+            if (protocol.toLowerCase().startsWith("ws")) {
+                try {
+                    Proxy thisProxy = Proxy.NO_PROXY;
+                    if (!"".equals(proxyHost) && proxyPort != 0) {
+                        thisProxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
+                        System.setProperty("https.proxyHost", proxyHost);
+                        System.setProperty("https.proxyPort", Integer.toString(proxyPort));
+
+                    }
+                    return new ComPort_Kadaver(new URI(connectURL), thisProxy, proxyHost, proxyPort);
+
+                } catch (URISyntaxException ex) {
+                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, "could not open Websocket Interface", ex);
+                    return null;
+
+                }
+            } else if ("telnet".equalsIgnoreCase(protocol)) {
+                return new ComPort_Telnet(connectURL);
+            } else if ("serial".equalsIgnoreCase(protocol)) {
+                String osname = System.getProperty("os.name", "").toLowerCase();
+                Logger.getLogger(Core.class.getName()).log(Level.CONFIG, "OS detected: " + osname);
+
+                try {
+                    return systemInterface.supplyHardwareHandle(typ);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        } catch (OnionWrongTypeException | OnionNoEntryException ex) {
+            return null;
+        }
     }
 
     /**
@@ -364,16 +431,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         if (thisEngine != null) {
             thisEngine.close();
         }
-    }
-
-    /**
-     * supply list of system specific connection hardware classes
-     *
-     * @param typ
-     * @return a hardware handle of the requested type or nil
-     */
-    public Hashtable<String, Class> getConnectorList() {
-        return systemInterface.getConnectorList();
     }
 
     @Override
@@ -578,8 +635,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
 
         return false;
     }
-
-
 
     /**
      * generic hashtable to store several relational data assignments during
@@ -832,10 +887,13 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         Thread t1 = new Thread(o);
         t1.start();
     }
-    /*
-     checks, if the URL points to a lbc ActiveArchive. if yes, starts it and returns the path to the start page read out of the manifest ActiveArchive of that script
-     */
 
+    /**
+     * checks, if the URL points to a lbc ActiveArchive. if yes, starts it and
+     * returns the path to the start page read out of the manifest ActiveArchive
+     * of that script
+     *
+     */
     public String startScriptEngineByURL(String resourceName) {
 
         ArrayList<Archive> files = (ArrayList<Archive>) Settings.readDataPool(DP_LIST_OF_SCRIPTS, null);
@@ -878,7 +936,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         String connectTypeName = (String) Settings.readDataPool(DP_ACTUAL_CONNECTION_TYPE, PropName_ConnectTypeBT);
 
         Class<OOBDPort> value;
-        value = systemInterface.getConnectorList().get(connectTypeName);
+        value = getConnectorList().get(connectTypeName);
         try { // tricky: try to call a static method of an interface, where a
             // interface don't have static values by definition..
 
@@ -931,10 +989,289 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             Logger.getLogger(Core.class.getName()).log(Level.WARNING, "JSON creation error with file name:" + ActiveArchive.getFilePath(), ex.getMessage());
         }
     }
+
+    public DatagramSocket getUDPBroadcastSocket() {
+        try {
+            DatagramSocket socket = null;
+            if (socket == null) {
+                socket = new DatagramSocket(UDP_PORT);
+            }
+            socket.setBroadcast(true);
+            return socket;
+        } catch (Exception e1) {
+            e1.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * \brief supplies Class Array of available Connect classses
+     *
+     * @param typ on
+     * @return a list of connection types classes
+     */
+    public Hashtable<String, Class> getConnectorList() {
+        Hashtable<String, Class> connectClasses = new Hashtable<>();
+        connectClasses.put(OOBDConstants.PropName_ConnectTypeBT, ComPort_Win.class);
+        connectClasses.put(OOBDConstants.PropName_ConnectTypeRemoteConnect,
+                ComPort_Kadaver.class);
+        connectClasses.put(OOBDConstants.PropName_ConnectTypeTelnet,
+                ComPort_Telnet.class);
+
+        return connectClasses;
+    }
+
+    /**
+     * \brief creates a new temporary file
+     *
+     * @param the scriptengine, who's looking for a new data gain
+     */
+    public void createEngineTempInputFile(OobdScriptengine eng) {
+        File f;
+
+        try {
+            //do we have to delete a previous first?
+
+            eng.removeTempInputFile();
+            // creates temporary file
+            f = File.createTempFile("oobd", null, null);
+
+            // deletes file when the virtual machine terminate
+            f.deleteOnExit();
+
+            eng.setTempInputFile(f);
+
+        } catch (Exception e) {
+            // if any error occurs
+            Logger.getLogger(Core.class.getName()).log(Level.WARNING, "could not create temp file! ", e);
+        }
+
+    }
+
+    /**
+     * \brief returns the (secret) application pass phrase for data decoding
+     *
+     * @return the application pass phrase
+     */
+    public char[] getAppPassPhrase() {
+        return PassPhraseProvider.getPassPhrase();
+    }
+
+    /**
+     * \brief returns the (secret) user pass phrase for data decoding
+     *
+     * @return the user pass phrase
+     */
+    public String getUserPassPhrase() {
+        if (userPassPhrase.equals("")) {
+            return "";
+        } else {
+            try {
+                return EncodeDecodeAES.decrypt(new String(
+                        getAppPassPhrase()), userPassPhrase);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "";
+            }
+        }
+    }
+
+    /**
+     * \brief stores the (secret) user pass phrase for later data decoding
+     *
+     * @param the user pass phrase
+     */
+    public void setUserPassPhrase(String upp) {
+        try {
+            userPassPhrase = EncodeDecodeAES.encrypt(new String(
+                    getAppPassPhrase()), upp);
+        } catch (Exception e) {
+            e.printStackTrace();
+            userPassPhrase = "";
+        }
+    }
+
+    /**
+     * \brief reports the URL OOBD runs on
+     *
+     * @return the URL of the OOBD build in webserver
+     */
+    public String getOobdURL() {
+        InetAddress ip;
+        String hostname;
+        ip = getSystemIP();
+        hostname = ip.getHostName();
+        System.out.println("Your current Hostname : " + hostname);
+        return "http://" + hostname + ":" + ((Integer) Settings.readDataPool(DP_HTTP_PORT, 8080)).toString();
+    }
+
+    /**
+     * \brief reports the MAC address OOBD runs on
+     *
+     * @return the MAC address of local side ip address OOBD runs on
+     */
+    public String getMACAddress() {
+        if (oobdMacAddress.equals("-")) {//not initialized? Then do it first
+            getSystemIP();
+        }
+        return oobdMacAddress;
+    }
+
+    /**
+     * \brief reports the ip address OOBD runs on
+     *
+     * @return the local side ip address of the device OOBD runs on
+     */
+    public InetAddress getSystemIP() {
+        if (oobdIPAddress != null) {
+            return oobdIPAddress;
+        }
+        try {
+            Enumeration e = NetworkInterface.getNetworkInterfaces();
+            while (e.hasMoreElements()) {
+                NetworkInterface n = (NetworkInterface) e.nextElement();
+                Enumeration ee = n.getInetAddresses();
+                while (ee.hasMoreElements()) {
+                    oobdIPAddress = (InetAddress) ee.nextElement();
+                    System.out.println(oobdIPAddress.getHostAddress());
+                    if (oobdIPAddress.isSiteLocalAddress()) {
+                        System.out.println("Your current local side IP address : " + oobdIPAddress);
+                        byte[] myMac = n.getHardwareAddress();
+                        oobdMacAddress = "";
+                        for (int i = 0; i < myMac.length; i++) {
+                            if (!oobdMacAddress.equals("")) {
+                                oobdMacAddress += ":";
+                            }
+                            oobdMacAddress += String.format("%1$02X", myMac[i]);
+                        }
+                        System.out.println("Your current MAC address : " + oobdMacAddress);
+                        return oobdIPAddress;
+                    }
+                }
+            }
+            oobdIPAddress = InetAddress.getLocalHost();
+            System.out.println("Your current IP address : " + oobdIPAddress);
+            return oobdIPAddress;
+        } catch (UnknownHostException ex) {
+            oobdMacAddress = "-";
+            oobdIPAddress = null;
+            Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SocketException ex) {
+            oobdMacAddress = "-";
+            oobdIPAddress = null;
+            Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    /*
+     replaces leading directory alias against their physical location
+     */
+    String mapDirectory(String[] mapDir, String path) {
+        int i = 0;
+        while (i < mapDir.length) {
+            if (path.toLowerCase().startsWith("/" + mapDir[i].toLowerCase() + "/")) {
+                path = path.substring(mapDir[i].length() + 2);
+                if (mapDir[i].toLowerCase().equalsIgnoreCase("theme") && path.toLowerCase().startsWith("default/")) { //map the theme folder to  the actual theme
+                    path = Settings.readDataPool(DP_WEBUI_ACTUAL_THEME, "default") + "/" + path.substring("default/".length());
+                }
+                return mapDir[i + 1] + path;
+            }
+            i += 2;
+        }
+        return null;
+    }
+    
+    
+    /**
+     * \brief supplies a resource as Inputstream
+     *
+     * @param pathID Indentifier of what type of file to open, as this drives
+     * where to search for
+     * @param ResourceName Name of the wanted resource
+     * @return InputStream for that resource
+     */
+    public InputStream generateResourceStream(int pathID, String resourceName)
+            throws java.util.MissingResourceException {
+        Logger.getLogger(Core.class.getName()).log(Level.INFO, "Try to load: " + resourceName
+                + " with path ID : " + pathID);
+        InputStream resource = null;
+        Archive scriptArchive = (Archive) Settings.readDataPool(DP_ACTIVE_ARCHIVE, null);
+        try {
+            switch (pathID) {
+                case OOBDConstants.FT_WEBPAGE:
+                    webRootDir = (String) Settings.readDataPool(DP_SCRIPTDIR, "") + "/";
+                    webLibraryDir = (String) Settings.readDataPool(DP_WWW_LIB_DIR, "") + "/";
+                    // in case the resource name points to a "executable" scriptengine, the engine get started 
+                    // and the resourcename is corrected to the html start page to be used
+                    resourceName = core.startScriptEngineByURL(resourceName);
+                    scriptArchive = (Archive) Settings.readDataPool(DP_ACTIVE_ARCHIVE, null);
+                    String mapping = mapDirectory(new String[]{"libs", webLibraryDir + "libs/", "theme", webLibraryDir + "theme/"}, resourceName);
+                    if (mapping != null) { //its a mapped request
+                        Settings.writeDataPool(DP_LAST_OPENED_PATH, mapping);
+                        return new FileInputStream(getSystemIF().getSystemDefaultDirectory(false, mapping));
+                    }
+                    // let's see, if it's a passthrough request;
+                    String[] parts = resourceName.split("/", 3); //remember that resourceName starts with /, so the first split part should be empty
+                    if (parts.length > 2) {
+                        ArrayList<Archive> files = (ArrayList<Archive>) Settings.readDataPool(DP_LIST_OF_SCRIPTS, null);
+                        if (files != null) {
+                            for (Archive file : files) {
+                                if (parts[1].equals(file.getFileName())) {
+                                    Settings.writeDataPool(DP_LAST_OPENED_PATH, parts[2]);
+                                    return file.getInputStream(parts[2]);
+                                }
+                            }
+                        }
+                    }
+
+                    if (scriptArchive != null) { // if everything else fails, try to load the file out of the package
+                        Settings.writeDataPool(DP_LAST_OPENED_PATH, resourceName);
+                        return scriptArchive.getInputStream(resourceName);
+                    }
+
+                    break;
+                case OOBDConstants.FT_PROPS:
+                case OOBDConstants.FT_RAW:
+                case OOBDConstants.FT_KEY_IMPORT:
+                    resource = new FileInputStream(getSystemIF().getSystemDefaultDirectory(false,
+                            resourceName));
+                    Logger.getLogger(Core.class.getName()).log(Level.INFO, "File " + resourceName
+                            + " loaded");
+                    break;
+
+                case OOBDConstants.FT_DATABASE:
+                    if (scriptArchive != null) {
+                        resource = scriptArchive.getInputStream(resourceName);
+                    }
+                    break;
+                case OOBDConstants.FT_SCRIPT:
+                    // save actual script directory to buffer it for later as webroot directory
+//           resource = scriptArchive.getInputStream(scriptArchive.getProperty(OOBDConstants.MANIFEST_SCRIPTNAME, OOBDConstants.MANIFEST_SCRIPTNAME_DEFAULT));
+                    resource = scriptArchive.getInputStream(scriptArchive.getProperty(OOBDConstants.MANIFEST_SCRIPTNAME, resourceName));
+                    Logger.getLogger(Core.class.getName()).log(Level.INFO, "File " + resourceName
+                            + " loaded");
+                    break;
+
+                case OOBDConstants.FT_KEY:
+                    resource = new FileInputStream(getSystemIF().getSystemDefaultDirectory(true, resourceName));
+                    Logger.getLogger(Core.class.getName()).log(Level.INFO, "Key File "
+                            + resourceName + " loaded");
+                    break;
+
+                default:
+                    throw new java.util.MissingResourceException("Resource not known",
+                            "OOBDApp", resourceName);
+
+            }
+
+        } catch (Exception e) {
+            Logger.getLogger(Core.class.getName()).log(Level.INFO, "generateResourceStream: File " + resourceName + " not loaded");
+        }
+        return resource;
+    }
+
 }
-
-
-
 
 /**
  *

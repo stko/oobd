@@ -327,7 +327,7 @@ public class swingView extends org.jdesktop.application.FrameView implements org
         if (true || UIHANDLER_WS_NAME.equalsIgnoreCase((String) Settings.readDataPool(DP_ACTUAL_UIHANDLER, Settings.getString(PropName_UIHander, UIHANDLER_WS_NAME)))) {
 
             //startButtonLabel.setIcon(resourceMap.getIcon("startButtonLabel.icon"));
-            Core.getSingleInstance().getSystemIF().openBrowser();
+            SwingSystem.getSingleInstance().openBrowser();
         } 
     }//GEN-LAST:event_startButtonLabelMouseClicked
 
@@ -478,7 +478,7 @@ public class swingView extends org.jdesktop.application.FrameView implements org
         Boolean newUserKeyExist;
         Boolean newGroupKeyExist;
         try {
-            InputStream keyfile = core.getSystemIF().generateResourceStream(
+            InputStream keyfile = core.generateResourceStream(
                     OOBDConstants.FT_KEY, OOBDConstants.PGP_USER_KEYFILE_NAME);
             userKeyExist = keyfile != null;
             keyfile.close();
@@ -486,7 +486,7 @@ public class swingView extends org.jdesktop.application.FrameView implements org
             userKeyExist = false;
         }
         try {
-            InputStream keyfile = core.getSystemIF().generateResourceStream(
+            InputStream keyfile = core.generateResourceStream(
                     OOBDConstants.FT_KEY, OOBDConstants.PGP_GROUP_KEYFILE_NAME);
             groupKeyExist = keyfile != null;
             keyfile.close();
@@ -494,7 +494,7 @@ public class swingView extends org.jdesktop.application.FrameView implements org
             groupKeyExist = false;
         }
         try {
-            InputStream keyfile = core.getSystemIF().generateResourceStream(
+            InputStream keyfile = core.generateResourceStream(
                     OOBDConstants.FT_RAW,
                     Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME);
             newUserKeyExist = keyfile != null;
@@ -503,7 +503,7 @@ public class swingView extends org.jdesktop.application.FrameView implements org
             newUserKeyExist = false;
         }
         try {
-            InputStream keyfile = core.getSystemIF().generateResourceStream(
+            InputStream keyfile = core.generateResourceStream(
                     OOBDConstants.FT_RAW,
                     Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME);
             newGroupKeyExist = keyfile != null;
@@ -517,24 +517,24 @@ public class swingView extends org.jdesktop.application.FrameView implements org
 
     private void deleteKeyFiles() {
 
-        File f = new File(core.getSystemIF().generateUIFilePath(OOBDConstants.FT_KEY, OOBDConstants.PGP_USER_KEYFILE_NAME));
+        File f = new File(core.getSystemIF().getSystemDefaultDirectory(true, OOBDConstants.PGP_USER_KEYFILE_NAME));
         f.delete();
-        f = new File(core.getSystemIF().generateUIFilePath(OOBDConstants.FT_KEY, OOBDConstants.PGP_GROUP_KEYFILE_NAME));
+        f = new File(core.getSystemIF().getSystemDefaultDirectory(true, OOBDConstants.PGP_GROUP_KEYFILE_NAME));
         f.delete();
     }
 
     private void importKeyFiles() {
         if (importsingleKeyFile(Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME,
                 OOBDConstants.PGP_USER_KEYFILE_NAME)) {
-            File f = new File(core.getSystemIF().generateUIFilePath(
-                    OOBDConstants.FT_SCRIPT,
+            File f = new File(core.getSystemIF().getSystemDefaultDirectory(
+                    false,
                     Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME));
             f.delete();
         }
         if (importsingleKeyFile(Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME,
                 OOBDConstants.PGP_GROUP_KEYFILE_NAME)) {
-            File f = new File(core.getSystemIF().generateUIFilePath(
-                    OOBDConstants.FT_SCRIPT,
+            File f = new File(core.getSystemIF().getSystemDefaultDirectory(
+                    false,
                     Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME));
             f.delete();
         }
@@ -542,12 +542,12 @@ public class swingView extends org.jdesktop.application.FrameView implements org
 
     private boolean importsingleKeyFile(String from, String to) {
         FileOutputStream fos;
-        InputStream inFile = core.getSystemIF().generateResourceStream(
+        InputStream inFile = core.generateResourceStream(
                 OOBDConstants.FT_RAW, from);
         if (inFile != null) {
             try {
-                fos = new FileOutputStream(core.getSystemIF().generateUIFilePath(
-                        OOBDConstants.FT_KEY, to));
+                fos = new FileOutputStream(core.getSystemIF().getSystemDefaultDirectory(
+                        false, to));
                 org.apache.commons.io.IOUtils.copy(inFile, fos);
                 inFile.close();
                 fos.close();

@@ -101,7 +101,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
 
         WebSocketImpl.DEBUG = false;
         try {
-            wsServer = new ChatServer(UISystem.getSystemIP(), (int) Settings.readDataPool(DP_WSOCKET_PORT, 8443));
+            wsServer = new ChatServer(core.getSystemIP(), (int) Settings.readDataPool(DP_WSOCKET_PORT, 8443));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -318,12 +318,6 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
         }
     }
 
-    /**
-     * \brief Tells Value to all visualizers of a scriptengine
-     *
-     * @param value Onion containing value and scriptengine
-     *
-     */
     public void openTempFile(Onion value) {
         InputStreamReader myInputStream = null;
         String myFileName = null;
@@ -398,12 +392,10 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
                     if (myFileName != null) {
                         try {
                             myFileName = getCore().getSystemIF()
-                                    .generateUIFilePath(FT_SCRIPT, myFileName);
-                            myInputStream = new FileReader(getCore()
-                                    .getSystemIF().generateUIFilePath(
-                                            FT_SCRIPT, myFileName));
+                                    .getSystemDefaultDirectory(false, myFileName);
+                            myInputStream = new FileReader(myFileName);
                         } catch (FileNotFoundException ex) {
-                            Logger.getLogger(LocalOobdUIHandler.class.getName())
+                            Logger.getLogger(WSOobdUIHandler.class.getName())
                                     .log(Level.SEVERE, null, ex);
                         }
                     }
@@ -412,7 +404,7 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
 
             if (myInputStream != null) {
                 OobdScriptengine actEngine = getCore().getScriptEngine();
-                getCore().getSystemIF().createEngineTempInputFile(actEngine);
+                getCore().createEngineTempInputFile(actEngine);
 
                 actEngine.fillTempInputFile(myInputStream);
             } else {
@@ -507,10 +499,10 @@ class ChatServer extends WebSocketServer {
                 .getHostAddress()
                 + " entered the room!");
         conn.send("{\"type\":\"WSCONNECT\",\"script\":\""
-                +Settings.readDataPool(OOBDConstants.DP_RUNNING_SCRIPT_NAME, "") + "\"}");
+                + Settings.readDataPool(OOBDConstants.DP_RUNNING_SCRIPT_NAME, "") + "\"}");
         conn.send("{\"type\":\"WRITESTRING\" ,\"data\":\""
                 + Base64Coder.encodeString("Connected to OOBD") + "\"}");
-       Settings.writeDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, true);
+        Settings.writeDataPool(OOBDConstants.DP_WEBUI_WS_READY_SIGNAL, true);
     }
 
     @Override
@@ -716,7 +708,7 @@ class OOBDHttpServer extends NanoHTTPD {
         // uploader = new NanoFileUpload(new DiskFileItemFactory());
         super(((InetAddress) Settings.readDataPool(
                 OOBDConstants.DP_HTTP_HOST,
-                Core.getSingleInstance().getSystemIF().getSystemIP()))
+                Core.getSingleInstance().getSystemIP()))
                 .getHostAddress(), (int) Settings.readDataPool(
                         OOBDConstants.DP_HTTP_PORT, 8080));
 
@@ -758,7 +750,7 @@ class OOBDHttpServer extends NanoHTTPD {
 
         start();
         System.out.println("\nRunning! Point your browsers to "
-                + Core.getSingleInstance().getSystemIF().getOobdURL() + " \n");
+                + Core.getSingleInstance().getOobdURL() + " \n");
     }
 
     public static void main(String[] args) {
@@ -805,7 +797,7 @@ class OOBDHttpServer extends NanoHTTPD {
         if (parms.get("theme") != null && !"".equals(parms.get("theme"))) {
             Settings.writeDataPool(OOBDConstants.DP_WEBUI_ACTUAL_THEME, parms.get("theme"));
         }
-        if (parms.get("settingspw") != null ) {
+        if (parms.get("settingspw") != null) {
             settingsPassword = parms.get("settingspw");
             System.out.println("Password received:" + settingsPassword);
         }
@@ -819,15 +811,14 @@ class OOBDHttpServer extends NanoHTTPD {
             }
         }
         if (parms.get("pgppw") != null && !"".equals(parms.get("pgppw"))) {
-            Core.getSingleInstance().getSystemIF()
-                    .setUserPassPhrase(parms.get("pgppw"));
+            Core.getSingleInstance().setUserPassPhrase(parms.get("pgppw"));
         }
         /*----- Important: The "connectiontype" must be evaluated BEFORE the "rcid",
-        because the connectiontype change loads the rcid default value from the settings,
-        while the rcid change overwrites the actual settings.
-        if rcid is evaluated first, then it's directly overwritten again with the system settings
-        when connectiontype is evaluated as next
-        */
+         because the connectiontype change loads the rcid default value from the settings,
+         while the rcid change overwrites the actual settings.
+         if rcid is evaluated first, then it's directly overwritten again with the system settings
+         when connectiontype is evaluated as next
+         */
         if (parms.get("connectType") != null
                 && !"".equals(parms.get("connectType"))) {
             String connectTypeName = parms.get("connectType");
@@ -869,7 +860,7 @@ class OOBDHttpServer extends NanoHTTPD {
             String actualTheme = (String) Settings
                     .readDataPool(OOBDConstants.DP_WEBUI_ACTUAL_THEME,
                             "default");
-            File themeDirectory = new File((String)Settings
+            File themeDirectory = new File((String) Settings
                     .readDataPool(OOBDConstants.DP_WWW_LIB_DIR, "") + "/theme");
             if (themeDirectory.exists()) {
                 File[] files = themeDirectory.listFiles();
@@ -920,7 +911,6 @@ class OOBDHttpServer extends NanoHTTPD {
         } else {
             InputStream myFileStream = Core
                     .getSingleInstance()
-                    .getSystemIF()
                     .generateResourceStream(OOBDConstants.FT_WEBPAGE,
                             session.getUri());
             String mimeType = getMimeTypeForFile(session.getUri());

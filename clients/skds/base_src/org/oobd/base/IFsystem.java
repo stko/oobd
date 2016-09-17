@@ -38,38 +38,14 @@ public interface IFsystem {
     /**
      * \brief generates UI specific paths for standard files
      *
-     * @param pathID Indentifier of what directory to generate
-     * @param filename the file itself
-     * @return complete Path for the wanted filename
+     * @param private If set, uses system private directory
+     * @return complete  directory path
      */
-    public String generateUIFilePath(int pathID, String filename);
+    public String getSystemDefaultDirectory(boolean privateDir, String fileName);
 
-    /**
-     * \brief reports the URL OOBD runs on
-     *
-     * @return the URL of the OOBD build in webserver
-     */
-    public String getOobdURL();
 
-    /**
-     * \brief reports the ip address OOBD runs on
-     *
-     * @return the local side ip address of the device OOBD runs on
-     */
-    public InetAddress getSystemIP();
-
-    /**
-     * \brief reports the MAC address OOBD runs on
-     *
-     * @return the MAC address of local side ip address OOBD runs on
-     */
-    public String getMACAddress();
-
-    /**
-     * \brief opens the system web browser
-     */
-    public void openBrowser();
-
+  
+    
     /**
      * \brief loads a Property file as the IO & Exeption handling for loading
      * propertys are not trivial, it's put into a helper function
@@ -92,15 +68,6 @@ public interface IFsystem {
      */
     public boolean savePreferences(int pathID, String filename, Preferences prop);
 
-    /**
-     * \brief supplies a resource as Inputstream
-     *
-     * @param pathID Indentifier of what type of file to open, as this drives
-     * where to search for
-     * @param ResourceName Name of the wanted resource
-     * @return InputStream for that resource
-     */
-    public InputStream generateResourceStream(int pathID, String ResourceName) throws MissingResourceException;
 
     /**
      * \brief supplies objects to bind to system specific hardware
@@ -110,41 +77,8 @@ public interface IFsystem {
      */
     public Object supplyHardwareHandle(Onion typ);
 
-    /**
-     * \brief supplies Class Array of available Connect classses
-     *
-     * @param typ on
-     * @return a list of connection types as already created objects
-     */
-    public Hashtable<String, Class> getConnectorList();
+  
 
-    /**
-     * \brief returns the (secret) application pass phrase for data decoding
-     *
-     * @return the application pass phrase
-     */
-    public char[] getAppPassPhrase();
-
-    /**
-     * \brief returns the (secret) user pass phrase for data decoding
-     *
-     * @return the user pass phrase
-     */
-    public String getUserPassPhrase();
-
-    /**
-     * \brief stores the (secret) user pass phrase for later data decoding
-     *
-     * @param the user pass phrase
-     */
-    public void setUserPassPhrase(String upp);
-
-    /**
-     * \brief creates a new temporary file
-     *
-     * @param the scriptengine, who's looking for a new data gain
-     */
-    public void createEngineTempInputFile(OobdScriptengine eng);
 
     /**
      * \brief generates and handles a Fileselector- Dialog
@@ -156,14 +90,5 @@ public interface IFsystem {
      * @return the path of the choosen file or null, if canceled
      */
     public String doFileSelector(String path, String extension, String message, Boolean Save);
-
-    /**
-     * \brief get a UDP socket listening to the WiFi device
-     *
-     * As a multi-interface listening seems not to work on Android, this
-     * function returns the socket bound to the Wifi interface only
-     *
-     * @return UDP listen socket
-     */
-    public DatagramSocket getUDPBroadcastSocket();
 }
+

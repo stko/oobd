@@ -601,7 +601,7 @@ public class ScriptengineLua extends OobdScriptengine {
         }
         try {
             try {
-                scriptDir = (new File(UISystem.generateUIFilePath(FT_SCRIPT,
+                scriptDir = (new File(UISystem.getSystemDefaultDirectory(false,
                         scriptFileName))).getParentFile().getAbsolutePath() + "/";
             } catch (Exception ex) {
                 scriptDir = "";
@@ -719,7 +719,7 @@ public class ScriptengineLua extends OobdScriptengine {
         if (keepRunning) {
             System.out.println("Scriptengine: WS connected " + this.toString());
             Settings.writeDataPool(DP_RUNNING_SCRIPTENGINE, this);
-            InputStream resource = UISystem.generateResourceStream(FT_SCRIPT,
+            InputStream resource = core.generateResourceStream(FT_SCRIPT,
                     fileName);
             if (resource == null) {
                 return false;

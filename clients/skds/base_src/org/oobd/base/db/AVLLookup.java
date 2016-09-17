@@ -50,7 +50,7 @@ public class AVLLookup extends OobdDB implements OOBDConstants {
                 	byte[] myDBBByteArray=dbStore.get(dbFilename);
                 	ByteArrayInputStream myByteInputStream=null;
                 	if (myDBBByteArray==null){
-                		dbStore.put(dbFilename, org.apache.commons.io.IOUtils.toByteArray(Core.UISystem.generateResourceStream(FT_DATABASE, dbFilename)));
+                		dbStore.put(dbFilename, org.apache.commons.io.IOUtils.toByteArray(Core.getSingleInstance().generateResourceStream(FT_DATABASE, dbFilename)));
                 	}
 					myByteInputStream = new ByteArrayInputStream(
 							dbStore.get(dbFilename));

@@ -46,25 +46,22 @@ public class FileHandlerPGP implements Archive {
                 Core.getSingleInstance().userAlert(
                         "Error: Can't read PGP crypted file", "Diagnose");
             }
-            InputStream userKeyFile = core.getSystemIF()
-                    .generateResourceStream(OOBDConstants.FT_KEY,
-                            OOBDConstants.PGP_USER_KEYFILE_NAME);
+            InputStream userKeyFile = core.generateResourceStream(OOBDConstants.FT_KEY,
+                    OOBDConstants.PGP_USER_KEYFILE_NAME);
             if (userKeyFile == null) {
                 Core.getSingleInstance().userAlert(
                         "Error: Can't read PGP user key file", "Diagnose");
                 return null;
             }
-            InputStream groupKeyFile = core.getSystemIF()
-                    .generateResourceStream(OOBDConstants.FT_KEY,
-                            OOBDConstants.PGP_GROUP_KEYFILE_NAME);
+            InputStream groupKeyFile = core.generateResourceStream(OOBDConstants.FT_KEY,
+                    OOBDConstants.PGP_GROUP_KEYFILE_NAME);
             if (groupKeyFile == null) {
                 Core.getSingleInstance().userAlert(
                         "Error: Can't read PGP group key file", "Diagnose");
                 return null;
             }
             return GroupDecoder.decryptGroup(mfp, userKeyFile, groupKeyFile,
-                    core.getSystemIF().getAppPassPhrase(), core.getSystemIF()
-                    .getUserPassPhrase().toCharArray());
+                    core.getAppPassPhrase(), core.getUserPassPhrase().toCharArray());
 
         }
         return null;
@@ -102,7 +99,7 @@ public class FileHandlerPGP implements Archive {
     }
 
     public String getProperty(String property, String defaultValue) {
-        if(OOBDConstants.MANIFEST_SCRIPTNAME.equalsIgnoreCase(property)){
+        if (OOBDConstants.MANIFEST_SCRIPTNAME.equalsIgnoreCase(property)) {
             return myFileName;
         }
         return defaultValue;
@@ -124,18 +121,18 @@ public class FileHandlerPGP implements Archive {
     public String getFileName() {
         return myFileName;
     }
-    
+
     @Override
     public void relocateManifest(String luaFileName) {
-   // do nothing..
+        // do nothing..
     }
 
     @Override
     public boolean fileExist(String fileName) {
-        InputStream in =getInputStream(fileName);
-        if (in==null){
+        InputStream in = getInputStream(fileName);
+        if (in == null) {
             return false;
-        }else{
+        } else {
             try {
                 in.close();
             } catch (IOException ex) {
