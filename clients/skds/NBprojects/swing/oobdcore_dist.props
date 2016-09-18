@@ -1,7 +1,0 @@
-#OOBD Core Preferences
-# Search path for dynamic classes
-EngineClassPath=scriptengine
-ProtocolClassPath=protocol
-BusClassPath=bus
-#BusClassPrefix=skdsswing.bus.
-DatabaseClassPath=db
