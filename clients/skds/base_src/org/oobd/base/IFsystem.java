@@ -1,16 +1,6 @@
 package org.oobd.base;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.MissingResourceException;
-import java.io.InputStream;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.util.prefs.Preferences;
-import org.oobd.base.scriptengine.OobdScriptengine;
 import org.oobd.base.support.Onion;
-import org.oobd.base.port.OOBDPort;
 
 /**
  * \brief Interface for the Application to communicate with the OOBD core
@@ -19,15 +9,8 @@ import org.oobd.base.port.OOBDPort;
  */
 public interface IFsystem {
 
+
     /**
-     * \brief announces the OOBD core to the application \ingroup init
-     *
-     * @param core the core instance to register to the Application
-     */
-    public void registerOobdCore(Core core);
-    
-    
-      /**
      * \brief sends a JSON data set to the openXC interface \ingroup
      * visualisation
      *
@@ -38,36 +21,26 @@ public interface IFsystem {
     /**
      * \brief generates UI specific paths for standard files
      *
-     * @param private If set, uses system private directory
-     * @return complete  directory path
+     * @param privateDir If set, uses system private directory
+     * @param fileName the trailing filename to be addded
+     * @return complete directory path
      */
     public String getSystemDefaultDirectory(boolean privateDir, String fileName);
 
-
-  
-    
     /**
-     * \brief loads a Property file as the IO & Exeption handling for loading
-     * propertys are not trivial, it's put into a helper function
+     * \brief loads the settings from the system specific preference store
      *
-     * @param pathID Indentifier of what type of file to open, as this drives
-     * where to search for
-     * @param filename the wanted proberty file itself
-     * @return an empty (if new) of filled property object
+     * @return last stored settings as JSON String
      */
-    public Preferences loadPreferences(int pathID, String filename);
+    public String loadPreferences();
 
     /**
-     * \brief saves a Property file as the IO & Exeption handling for saving
-     * propertys are not trivial, it's put into a helper function
+     * \brief saves the settings in the system specific preference store
      *
-     * @param pathID Indentifier of what type of file to open, as this drives
-     * where to search for
-     * @param filename the wanted proberty file itself
-     * @param prop the proberty to save
+     * @param json Settings stored as JSON String
+     * @return true, if successfull
      */
-    public boolean savePreferences(int pathID, String filename, Preferences prop);
-
+    public boolean savePreferences(String json);
 
     /**
      * \brief supplies objects to bind to system specific hardware
@@ -77,18 +50,14 @@ public interface IFsystem {
      */
     public Object supplyHardwareHandle(Onion typ);
 
-  
-
-
     /**
      * \brief generates and handles a Fileselector- Dialog
      *
      * @param path : where to start the search
      * @param extension : display filter in the file selector box
      * @param message : title of the box, id supported
-     * @param save: Acts as "Save" Dialog, otherways as "Open"
+     * @param Save: Acts as "Save" Dialog, otherways as "Open"
      * @return the path of the choosen file or null, if canceled
      */
     public String doFileSelector(String path, String extension, String message, Boolean Save);
 }
-

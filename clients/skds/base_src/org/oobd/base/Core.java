@@ -51,6 +51,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import javax.jmdns.*;
 
 import org.json.JSONException;
 import org.oobd.base.OOBDConstants;
@@ -157,6 +158,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     InetAddress oobdIPAddress = null;
     String webRootDir = "";
     String webLibraryDir = "";
+    JmDNS jmdns;
+    JmDNS jmdnsListener;
 
     /**
      * \brief The Application creates one single instance of the core class
@@ -179,7 +182,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         thisInstance = this;
         id = CoreMailboxName;
         systemInterface = mySystemInterface;
-        settings = new Settings(systemInterface.loadPreferences(FT_PROPS, OOBDConstants.AppPrefsFileName));
+        Settings.init(mySystemInterface);
+        Settings.transferSettings(systemInterface.loadPreferences(),true);
 //        busses = new HashMap<String, OobdBus>();
         busses = new HashMap<>();
         connectors = new HashMap<>();
@@ -191,7 +195,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         databases = new HashMap<>();
         // absolutely scary, but the datapool array list need to be filled once to not
         // crash later when trying to (re)assign a value...
-        systemInterface.registerOobdCore(this); // Anounce itself at the Systeminterface
+        startjmDNSDiscovery();
+        jmDNSServiceListen();
         String connectTypeName = Settings.getString(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
         Settings.writeDataPool(DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
 
@@ -367,7 +372,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * supply Objects which binds to system specific hardware
      *
      * @param typ
-     * @return a hardware handle of the requested type or nil
+     * @return a hardware handle of the requested service_type or nil
      */
     public Object supplyHardwareHandle(Onion typ) {
 
@@ -1181,13 +1186,12 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         }
         return null;
     }
-    
-    
+
     /**
      * \brief supplies a resource as Inputstream
      *
-     * @param pathID Indentifier of what type of file to open, as this drives
-     * where to search for
+     * @param pathID Indentifier of what service_type of file to open, as this
+     * drives where to search for
      * @param ResourceName Name of the wanted resource
      * @return InputStream for that resource
      */
@@ -1269,6 +1273,63 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             Logger.getLogger(Core.class.getName()).log(Level.INFO, "generateResourceStream: File " + resourceName + " not loaded");
         }
         return resource;
+    }
+
+    private void startjmDNSDiscovery() {
+        //for usage instructions of jnDNS, see http://home.heeere.com/tech-androidjmdns.html
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    jmdns = JmDNS.create();
+                    // ServiceInfo service_info =  ServiceInfo.create("_http._tcp.local.", "foo._http._tcp.local.", 1234, 0, 0, "path=index.html")
+                    //  ServiceInfo service_info = ServiceInfo.create("_http._tcp.", "OOBDesk", 8080, "path=/")
+                    // ServiceInfo service_info =   ServiceInfo.create("_http._tcp.", "OOBDesk", 8080, 0,0,values)
+                    String service_type = "_http._tcp.";
+                    //       String service_name = "http://www.mycompany.com/xyz.html";
+                    //String service_name = "OOBD-" + jmdns.getHostName();
+                    //String service_name = Core.getSingleInstance().getSystemIF().getOobdURL();
+                    String service_name = "OOBD DaaS (" + getMACAddress() + ")";
+                    int service_port = (int) Settings.readDataPool(DP_HTTP_PORT, 8080);
+                    ServiceInfo service_info = ServiceInfo.create(service_type, service_name, service_port, "Hä?");
+                    jmdns.registerService(service_info);
+                } catch (IOException ex) {
+                    Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }).start();
+
+    }
+
+    private void jmDNSServiceListen() {
+        try {
+            String service_type = "_http._tcp.";
+            ServiceListener listener = null;
+            jmdnsListener = JmDNS.create();
+            jmdnsListener.addServiceListener(service_type, listener = new ServiceListener() {
+                public void serviceResolved(ServiceEvent ev) {
+                    System.out.println("Service resolved: "
+                            + ev.getInfo().getQualifiedName()
+                            + " port:" + ev.getInfo().getPort());
+                }
+
+                public void serviceRemoved(ServiceEvent ev) {
+                    System.out.println("Service removed: " + ev.getName());
+                }
+
+                public void serviceAdded(ServiceEvent event) {
+                    // Required to force serviceResolved to be called again
+                    // (after the first search)
+                    jmdnsListener.requestServiceInfo(event.getType(), event.getName(), 1);
+                }
+            });
+
+           // jmdns.removeServiceListener(service_type, listener);
+            // jmdns.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
 }

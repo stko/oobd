@@ -68,13 +68,12 @@ import org.oobd.base.support.OnionWrongTypeException;
 public class Settings {
 
     static Onion prefs;
-    static Settings myself;
     static Preferences pref;
     static boolean validAdmin = false;
     static String lockExt = "_lock";
     static String probNamePassword = "Password";
     static int propOrder;
-    static SavePreferenceJsonString savePrefsCallback;
+    static IFsystem  savePrefsCallback;
     static String prefsTemplateString = "{\n"
             //           + "  \"Bluetooth_ServerProxyPort\": {\"type\" : \"integer\" , \"title\": \"\" , \"description\" : \"(not used)\"},\n"
             + "  \"" + probNamePassword + "\": {\"type\" : \"string\" , \"title\": \"Admin Password\" , \"description\" : \"Password to lock the protected Settings\"},\n"
@@ -189,47 +188,16 @@ public class Settings {
         }
     }
 
-    public interface SavePreferenceJsonString {
 
-        boolean getprefString(String prefs);
-    }
-
-    public Settings(SavePreferenceJsonString savePrefs) throws IllegalSettingsException {
-        prefs = new Onion();
-        myself = this;
-        savePrefsCallback = savePrefs;
-        for (int i = 0; i < DP_ARRAY_SIZE; i++) {
+    public static void init(IFsystem savePrefs){
+               prefs = new Onion();
+               savePrefsCallback=savePrefs;
+         for (int i = 0; i < DP_ARRAY_SIZE; i++) {
             dataPoolList.add(null);
         }
 
     }
-
-    public Settings(Preferences thisPrefs) throws IllegalSettingsException {
-       for (int i = 0; i < DP_ARRAY_SIZE; i++) {
-            dataPoolList.add(null);
-        }
-        try {
-            String prefsString = thisPrefs.get("json", null);
-            if (prefsString != null) {
-                prefs = new Onion();
-                transferSettings(prefsString, true);
-                System.out.println("Prefs loaded from JSON String!");
-            } else {
-                prefs = new Onion();
-                String[] sysKeys = thisPrefs.keys();
-                for (int i = 0; i < sysKeys.length; i++) { //copy system settings, if any exist
-                    System.out.println(sysKeys[i] + ":" + thisPrefs.get(sysKeys[i], ""));
-                    prefs.setValue(sysKeys[i].replaceAll("_", "/"), thisPrefs.get(sysKeys[i], ""));
-                }
-            }
-            System.out.println(prefs);
-            myself = this;
-            pref = thisPrefs;
-        } catch (BackingStoreException ex) {
-            Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
-            throw new IllegalSettingsException(ex);
-        }
-    }
+    
 
     static void checkPassword(String password) {
         String setPasswort = prefs.getOnionString(probNamePassword, "");
@@ -479,9 +447,9 @@ public class Settings {
         //temporary tweak to make it work
         path = path.replaceAll("_", "/");
         try {
-            return myself.prefs.getOnionInt(path);
+            return prefs.getOnionInt(path);
         } catch (ClassCastException | OnionWrongTypeException | OnionNoEntryException ex) {
-            myself.prefs.setValue(path, defaultValue);
+            prefs.setValue(path, defaultValue);
             return defaultValue;
         }
     }
@@ -489,16 +457,16 @@ public class Settings {
     public static void setInt(String path, int value) {
         //temporary tweak to make it work
         path = path.replaceAll("_", "/");
-        myself.prefs.setValue(path, value);
+        prefs.setValue(path, value);
     }
 
     public static String getString(String path, String defaultValue) {
         //temporary tweak to make it work
         path = path.replaceAll("_", "/");
         try {
-            return myself.prefs.getOnionString(path);
+            return prefs.getOnionString(path);
         } catch (OnionWrongTypeException | OnionNoEntryException ex) {
-            myself.prefs.setValue(path, defaultValue);
+            prefs.setValue(path, defaultValue);
             return defaultValue;
         }
     }
@@ -506,16 +474,16 @@ public class Settings {
     public static void setString(String path, String value) {
         //temporary tweak to make it work
         path = path.replaceAll("_", "/");
-        myself.prefs.setValue(path, value);
+        prefs.setValue(path, value);
     }
 
     public static boolean getBoolean(String path, boolean defaultValue) {
         //temporary tweak to make it work
         path = path.replaceAll("_", "/");
         try {
-            return myself.prefs.getOnionBoolean(path);
+            return prefs.getOnionBoolean(path);
         } catch (OnionWrongTypeException | OnionNoEntryException ex) {
-            myself.prefs.setValue(path, defaultValue);
+            prefs.setValue(path, defaultValue);
             return defaultValue;
         }
     }
@@ -523,13 +491,12 @@ public class Settings {
     public static void setBoolean(String path, boolean value) {
         //temporary tweak to make it work
         path = path.replaceAll("_", "/");
-        myself.prefs.setValue(path, value);
+        prefs.setValue(path, value);
     }
 
     public static void savePreferences() {
-        pref.put("json", prefs.toString());
-        Core.getSingleInstance().getSystemIF().savePreferences(FT_PROPS,
-                OOBDConstants.AppPrefsFileName, pref);
+        savePrefsCallback.savePreferences(prefs.toString());
+
     }
 
 }

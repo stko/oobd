@@ -15,8 +15,6 @@ import org.oobd.base.Settings;
  */
 public class swing extends SingleFrameApplication {
 
-    Core oobdCore;
-
     /**
      * At startup create and show the main frame of the application.
      */
@@ -25,11 +23,11 @@ public class swing extends SingleFrameApplication {
         swingView thisUserInterface = new swingView(this);
         show(thisUserInterface);
         try {
-            oobdCore = new Core( new SwingSystem(), "Core");
+            new Core(new SwingSystem(), "Core");
         } catch (Settings.IllegalSettingsException ex) {
             Logger.getLogger(swing.class.getName()).log(Level.SEVERE, null, ex);
         }
-     }
+    }
 
     /**
      * This method is to initialize the specified window by injecting resources.
@@ -42,6 +40,7 @@ public class swing extends SingleFrameApplication {
 
     /**
      * A convenient static getter for the application instance.
+     *
      * @return the instance of swing
      */
     public static swing getApplication() {

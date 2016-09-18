@@ -4,7 +4,6 @@
 package org.oobd.ui.swing.desk;
 
 import java.awt.CardLayout;
-import java.awt.GridLayout;
 import java.io.IOException;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
@@ -15,65 +14,24 @@ import javax.swing.Timer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.FileOutputStream;
 
-import jssc.*;
-
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Toolkit;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.lang.reflect.Method;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 import org.oobd.base.*;
 import org.oobd.base.Core;
-import org.oobd.base.visualizer.*;
-import org.oobd.base.uihandler.OobdUIHandler;
-import org.oobd.base.support.Onion;
+//import org.oobd.base.visualizer.*;
 
 import java.util.Vector;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileFilter;
-import org.json.JSONArray;
-import org.json.JSONException;
-import static org.oobd.base.OOBDConstants.FT_PROPS;
-import org.oobd.base.archive.*;
-import org.oobd.base.port.OOBDPort;
-import org.oobd.base.port.PortInfo;
-import org.oobd.base.support.OnionNoEntryException;
-import org.oobd.base.support.OnionWrongTypeException;
 
 /**
  * The application's main frame.
@@ -81,14 +39,13 @@ import org.oobd.base.support.OnionWrongTypeException;
 public class swingView extends org.jdesktop.application.FrameView implements org.oobd.base.OOBDConstants, ActionListener {
 
     final static String MAINPANEL = "card2";
-   Core core;
-     private Vector<IFvisualizer> pageObjects = null;
+    Core core;
     private boolean alreadyRefreshing;
-      MouseAdapter popupMenuHandle;
+    MouseAdapter popupMenuHandle;
     private final Timer timer;
     private int processBarMax = 100;
     String connectURLDefault = "";
- 
+
     public swingView(SingleFrameApplication app) {
         super(app);
 
@@ -112,12 +69,11 @@ public class swingView extends org.jdesktop.application.FrameView implements org
         statusAnimationLabel.setIcon(idleIcon);
         progressBar.setVisible(false);
 
- 
         timer = new Timer(1000, this);
         timer.setInitialDelay(500);
         timer.start();
 
-       statusMessageLabel.setText("Selected the Script you want to use and press Start");
+        statusMessageLabel.setText("Selected the Script you want to use and press Start");
 
         getFrame().setIconImage(Toolkit.getDefaultToolkit().createImage(swingView.class.getResource("/org/oobd/base/images/obd2_icon.png")));
 
@@ -328,7 +284,7 @@ public class swingView extends org.jdesktop.application.FrameView implements org
 
             //startButtonLabel.setIcon(resourceMap.getIcon("startButtonLabel.icon"));
             SwingSystem.getSingleInstance().openBrowser();
-        } 
+        }
     }//GEN-LAST:event_startButtonLabelMouseClicked
 
     private void mainComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_mainComponentShown
@@ -336,36 +292,8 @@ public class swingView extends org.jdesktop.application.FrameView implements org
     }//GEN-LAST:event_mainComponentShown
 
     private void mainPanelComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_mainPanelComponentResized
-        if (!SwingUtilities.isEventDispatchThread()) {
-            SwingUtilities.invokeLater(new Runnable() {
 
-                public void run() {
-                    refreshGrid();
-                }
-            });
-        } else {
-            refreshGrid();
-        }
     }//GEN-LAST:event_mainPanelComponentResized
-
-    @Action
-    public void onClickButton_Back() {
-        IFvisualizer back = null;
-        if (pageObjects != null) {
-            for (IFvisualizer vis : pageObjects) {
-                if (back == null && vis.getVisualizer().getUpdateFlag(4)) {
-                    back = vis;
-                }
-            }
-        }
-        if (back != null) {
-            back.getVisualizer().updateRequest(OOBDConstants.UR_USER);
-        } else {
-            core.stopScriptEngine();
-            CardLayout cl = (CardLayout) (mainPanel.getLayout());
-            cl.show(mainPanel, MAINPANEL);
-        }
-    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -403,160 +331,12 @@ public class swingView extends org.jdesktop.application.FrameView implements org
         return actBuffer;
     }
 
-
-
-
- 
-
-   
-
-  
-
-  
-
-    void refreshGrid() {
-        //build the components out of the previously collected list of vsiualizers
-        // it seems that sometimes the resize form event is called during rezize Event... which generates an endless
-        // recursive loop. To avoid this, the variable alreadyRefreshing started should indicate that there's already a refresh ongoing..
-        alreadyRefreshing = false;
-        if (pageObjects != null && !alreadyRefreshing) {
-            alreadyRefreshing = true;
-           for (IFvisualizer vis : pageObjects) {
-                JComponent newJComponent = (JComponent) vis;
-             }
-            alreadyRefreshing = false;
-        }
-    }
-
     @Action
     public void onClickButton_Update() {
-        int i = 2;
-        setStatusLine("started", null);
-        if (pageObjects != null) {
-            for (IFvisualizer vis : pageObjects) {
-                if (vis.getVisualizer().getUpdateFlag(1)) {
-                    vis.getVisualizer().updateRequest(OOBDConstants.UR_UPDATE);
-                    setStatusLine("progress", 100 - 100 / i);
-                    i++;
-                }
-            }
-        }
-        setStatusLine("done", 100 - 100 / i);
-
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if ( pageObjects != null) {
-            synchronized (pageObjects) {
-                for (IFvisualizer vis : pageObjects) {
-                    if (vis.getVisualizer().getUpdateFlag(2)) {
-                        vis.getVisualizer().updateRequest(OOBDConstants.UR_TIMER);
-                    }
-                }
-
-            }
-        }
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                // Here, we can safely update the GUI
-                // because we'll be called from the
-                // event dispatch thread
-                //updateOobdUI();
-            }
-        });
-        timer.restart();
-    }
-
-
-
-    private int checkKeyFiles() {
-        Boolean userKeyExist;
-        Boolean groupKeyExist;
-        Boolean newUserKeyExist;
-        Boolean newGroupKeyExist;
-        try {
-            InputStream keyfile = core.generateResourceStream(
-                    OOBDConstants.FT_KEY, OOBDConstants.PGP_USER_KEYFILE_NAME);
-            userKeyExist = keyfile != null;
-            keyfile.close();
-        } catch (Exception e) {
-            userKeyExist = false;
-        }
-        try {
-            InputStream keyfile = core.generateResourceStream(
-                    OOBDConstants.FT_KEY, OOBDConstants.PGP_GROUP_KEYFILE_NAME);
-            groupKeyExist = keyfile != null;
-            keyfile.close();
-        } catch (Exception e) {
-            groupKeyExist = false;
-        }
-        try {
-            InputStream keyfile = core.generateResourceStream(
-                    OOBDConstants.FT_RAW,
-                    Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME);
-            newUserKeyExist = keyfile != null;
-            keyfile.close();
-        } catch (Exception e) {
-            newUserKeyExist = false;
-        }
-        try {
-            InputStream keyfile = core.generateResourceStream(
-                    OOBDConstants.FT_RAW,
-                    Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME);
-            newGroupKeyExist = keyfile != null;
-            keyfile.close();
-        } catch (Exception e) {
-            newGroupKeyExist = false;
-        }
-        return (userKeyExist ? 0 : 8) + (groupKeyExist ? 0 : 4)
-                + (newUserKeyExist ? 2 : 0) + (newGroupKeyExist ? 1 : 0);
-    }
-
-    private void deleteKeyFiles() {
-
-        File f = new File(core.getSystemIF().getSystemDefaultDirectory(true, OOBDConstants.PGP_USER_KEYFILE_NAME));
-        f.delete();
-        f = new File(core.getSystemIF().getSystemDefaultDirectory(true, OOBDConstants.PGP_GROUP_KEYFILE_NAME));
-        f.delete();
-    }
-
-    private void importKeyFiles() {
-        if (importsingleKeyFile(Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME,
-                OOBDConstants.PGP_USER_KEYFILE_NAME)) {
-            File f = new File(core.getSystemIF().getSystemDefaultDirectory(
-                    false,
-                    Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_USER_KEYFILE_NAME));
-            f.delete();
-        }
-        if (importsingleKeyFile(Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME,
-                OOBDConstants.PGP_GROUP_KEYFILE_NAME)) {
-            File f = new File(core.getSystemIF().getSystemDefaultDirectory(
-                    false,
-                    Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + OOBDConstants.PGP_GROUP_KEYFILE_NAME));
-            f.delete();
-        }
-    }
-
-    private boolean importsingleKeyFile(String from, String to) {
-        FileOutputStream fos;
-        InputStream inFile = core.generateResourceStream(
-                OOBDConstants.FT_RAW, from);
-        if (inFile != null) {
-            try {
-                fos = new FileOutputStream(core.getSystemIF().getSystemDefaultDirectory(
-                        false, to));
-                org.apache.commons.io.IOUtils.copy(inFile, fos);
-                inFile.close();
-                fos.close();
-                return true;
-            } catch (IOException e) {
-                // e.printStackTrace(); no stacktrace needed
-            }
-        }
-        return false;
 
     }
 
@@ -570,179 +350,6 @@ public class swingView extends org.jdesktop.application.FrameView implements org
         } catch (IOException ex) {
             Logger.getLogger(swingView.class.getName()).log(Level.SEVERE, null, ex);
             return false;
-        }
-    }
-
-    private String saveBufferAsFileRequest(String FileName, String content, boolean append) {
-        String oldDirName = Settings.getString(OOBDConstants.PropName_OutputFile, null);
-        JFileChooser chooser = new JFileChooser(oldDirName);
-        File oldDir = null;
-        if (FileName != null) {
-            oldDir = new File(FileName);
-            chooser.setSelectedFile(oldDir);
-        }
-        chooser.setMultiSelectionEnabled(false);
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        chooser.resetChoosableFileFilters();
-        chooser.setAcceptAllFileFilterUsed(false);
-        chooser.addChoosableFileFilter(new FileFilter() {
-
-            public boolean accept(File f) {
-                if (f.isDirectory()) {
-                    return true;
-                }
-                String ext = null;
-                String s = f.getName();
-                int i = s.lastIndexOf('.');
-                if (i > 0 && i < s.length() - 1) {
-                    ext = s.substring(i + 1).toLowerCase();
-                }
-                if (ext != null) {
-                    if (ext.equals("txt")
-                            || ext.equals("csv")) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-                return false;
-            }
-
-            public String getDescription() {
-                return "Text Files";
-            }
-        });
-        chooser.addChoosableFileFilter(new FileFilter() {
-
-            public boolean accept(File f) {
-                if (f.isDirectory()) {
-                    return true;
-                }
-                String ext = null;
-                String s = f.getName();
-                int i = s.lastIndexOf('.');
-                if (i > 0 && i < s.length() - 1) {
-                    ext = s.substring(i + 1).toLowerCase();
-                }
-                if (ext != null) {
-                    if (ext.equals("xml")) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-                return false;
-            }
-
-            public String getDescription() {
-                return "XML Files";
-            }
-        });
-        chooser.addChoosableFileFilter(new FileFilter() {
-
-            public boolean accept(File f) {
-
-                return true;
-            }
-
-            public String getDescription() {
-                return "All Files";
-            }
-        });
-        if (chooser.showSaveDialog(this.getFrame())
-                == JFileChooser.APPROVE_OPTION && saveBufferToFile(chooser.getSelectedFile().toString(), content, append)) {
-            Settings.setString(OOBDConstants.PropName_OutputFile, chooser.getCurrentDirectory().toString());
-            return chooser.getSelectedFile().toString();
-        } else {
-            return null;
-        }
-    }
-
-
-}
-
-class PWDialog extends JDialog implements ActionListener {
-
-    private JPanel myPanel = null;
-    private JButton yesButton = null;
-    private JButton noButton = null;
-    final JPasswordField pgpPassword = new JPasswordField("");
-
-    public PWDialog(JFrame frame) {
-        super(frame, true);
-        myPanel = new JPanel();
-        myPanel.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
-
-        getContentPane().add(myPanel);
-
-        JLabel text = new JLabel("Enter PGP passphrase");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.0;
-        c.gridwidth = 2;
-        c.gridx = 0;
-        c.gridy = 0;
-
-        myPanel.add(text, c);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.0;
-        c.gridwidth = 2;
-        c.gridx = 0;
-        c.gridy = 1;
-
-        myPanel.add(pgpPassword, c);
-        JCheckBox pgpShowPW = new JCheckBox("show Passphrase");
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.0;
-        c.gridwidth = 2;
-        c.gridx = 0;
-        c.gridy = 2;
-
-        myPanel.add(pgpShowPW, c);
-        pgpShowPW.addItemListener(new ItemListener() {
-
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    pgpPassword.setEchoChar((char) 0);
-                } else {
-                    pgpPassword.setEchoChar('*');
-                }
-            }
-        });
-
-        yesButton = new JButton("Ok");
-        yesButton.addActionListener(this);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.0;
-        c.gridwidth = 1;
-        c.gridx = 0;
-        c.gridy = 3;
-
-        myPanel.add(yesButton, c);
-        noButton = new JButton("Not Today");
-        noButton.addActionListener(this);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.weightx = 0.0;
-        c.gridwidth = 1;
-        c.gridx = 1;
-        c.gridy = 3;
-        myPanel.add(noButton, c);
-        pack();
-        setLocationRelativeTo(frame);
-
-    }
-
-    public String showDialog() {
-        setVisible(true);
-        return new String(pgpPassword.getPassword());
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        if (yesButton == e.getSource()) {
-            setVisible(false);
-        } else if (noButton == e.getSource()) {
-            pgpPassword.setText("");
-            setVisible(false);
         }
     }
 
