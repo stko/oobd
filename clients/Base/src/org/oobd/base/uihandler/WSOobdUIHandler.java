@@ -60,7 +60,7 @@ import org.oobd.base.port.OOBDPort;
  * @author steffen
  */
 // taken from https://github.com/TooTallNate/Java-WebSocket
-abstract public class WSOobdUIHandler extends OobdUIHandler {
+ public  class WSOobdUIHandler extends OobdUIHandler {
 
     protected Onion myStartupParam;
     protected static ChatServer wsServer;
@@ -74,13 +74,22 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
     public static MessagePort wsMsgPort;
     OobdUIHandler myself;
 
+      public WSOobdUIHandler(String id, Core myCore, IFsystem mySystem) {
+        super(id, myCore, mySystem, "Swing Desk UI id " + id);
+        Logger.getLogger(WSOobdUIHandler.class.getName()).log(Level.CONFIG,
+                "Construct Swing Desk UI instance " + id);
+        myself = this;
+
+    }
+
+    
     public static String publicName() {
         /*
          * the abstract class also needs to have this method, because
          * it'wsServer also loaded during dynamic loading, and the empty return
          * string* is the indicator for this abstract class
          */
-        return "WebUIHandler";
+        return UIHANDLER_WS_NAME;
     }
 
     public WSOobdUIHandler(String myID, Core myCore, IFsystem mySystem,
@@ -474,6 +483,16 @@ abstract public class WSOobdUIHandler extends OobdUIHandler {
             }
             // }
         }
+    }
+
+    @Override
+    public String getPluginName() {
+        return "uh:ws-swing";
+    }
+
+    @Override
+    public void run() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
