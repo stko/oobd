@@ -105,9 +105,9 @@ public class Settings {
             writeDataPool(OOBDConstants.DP_ACTUAL_CONNECT_ID, Settings.getString(localConnectTypeName + "_" + OOBDConstants.PropName_SerialPort, ""));
         }
         writeDataPool(OOBDConstants.DP_ACTUAL_UIHANDLER, Settings.getString(OOBDConstants.PropName_UIHander, OOBDConstants.UIHANDLER_WS_NAME));
-        String actualScriptDir = Settings.getString(OOBDConstants.PropName_ScriptDir, null);
+        String actualScriptDir = Settings.getString(OOBDConstants.PropName_ScriptDir, ".");
         writeDataPool(OOBDConstants.DP_SCRIPTDIR, actualScriptDir);
-        writeDataPool(OOBDConstants.DP_WWW_LIB_DIR, Settings.getString(OOBDConstants.PropName_LibraryDir, null));
+        writeDataPool(OOBDConstants.DP_WWW_LIB_DIR, Settings.getString(OOBDConstants.PropName_LibraryDir, "."));
         ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
         writeDataPool(OOBDConstants.DP_LIST_OF_SCRIPTS, files);
         writeDataPool(OOBDConstants.DP_HTTP_HOST, Core.getSingleInstance().getSystemIP());

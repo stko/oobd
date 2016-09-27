@@ -54,10 +54,8 @@ import java.util.Hashtable;
 import javax.jmdns.*;
 
 import org.json.JSONException;
-import org.oobd.base.OOBDConstants;
 import static org.oobd.base.OOBDConstants.UDP_PORT;
 import org.oobd.base.archive.Archive;
-import org.oobd.base.archive.Factory;
 import org.oobd.base.support.Onion;
 import org.oobd.base.bus.OobdBus;
 import org.oobd.base.db.OobdDB;
@@ -151,7 +149,6 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     static Core thisInstance = null; // Class variable points to only instance
     CoreTick ticker;
     //Preferences props;
-    boolean runCore = true;
     public static Settings settings = null;
     private String userPassPhrase = "";
     String oobdMacAddress = "-";
@@ -160,16 +157,16 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     String webLibraryDir = "";
     JmDNS jmdns;
     JmDNS jmdnsListener;
+    Thread coreThread = null;
 
     /**
      * \brief The Application creates one single instance of the core class
      * \ingroup init
      *
-     * @param myUserInterface reference to the View - interface, which is used
-     * to handle all visual in- and output
      * @param mySystemInterface reference to the actual application and runtime
      * enviroment, on which OOBD is actual running on
      * @param name of the Plugin, just for debugging
+     * @throws org.oobd.base.Settings.IllegalSettingsException
      *
      */
     public Core(IFsystem mySystemInterface, String name) throws Settings.IllegalSettingsException {
@@ -183,7 +180,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         id = CoreMailboxName;
         systemInterface = mySystemInterface;
         Settings.init(mySystemInterface);
-        Settings.transferSettings(systemInterface.loadPreferences(),true);
+        Settings.transferSettings(systemInterface.loadPreferences(), true);
 //        busses = new HashMap<String, OobdBus>();
         busses = new HashMap<>();
         connectors = new HashMap<>();
@@ -193,10 +190,11 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         activeUIHandlers = new HashMap<>();
         assignments = new HashMap<>();
         databases = new HashMap<>();
+
         // absolutely scary, but the datapool array list need to be filled once to not
         // crash later when trying to (re)assign a value...
         startjmDNSDiscovery();
-        jmDNSServiceListen();
+        //jmDNSServiceListen();
         String connectTypeName = Settings.getString(OOBDConstants.PropName_ConnectType, OOBDConstants.PropName_ConnectTypeBT);
         Settings.writeDataPool(DP_ACTUAL_CONNECTION_TYPE, connectTypeName);
 
@@ -328,7 +326,8 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         ticker = new CoreTick();
         ticker.setCoreTickListener(this);
         new Thread(ticker).start();
-        new Thread(this).start();
+        coreThread = new Thread(this);
+        coreThread.start();
     }// constructor
 
     /**
@@ -339,6 +338,27 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public static Core getSingleInstance() {
         return thisInstance;
+    }
+
+    /**
+     * a static help routine which returns the actual running Thread of the Core
+     * class
+     *
+     * @return Thread
+     */
+    public Thread getThread() {
+        return coreThread;
+    }
+
+     /**
+     * transfers JSON formated preference values into the global settings
+     * @param jsonPref JSON formatted preferences
+     * @param force forces the data to load without checking for valid admin password
+     *
+     * @return Thread
+     */
+    public void  setPrefs(String jsonPrefs, boolean force) throws Settings.IllegalSettingsException {
+        Settings.transferSettings(jsonPrefs, force);
     }
 
     /**
@@ -831,7 +851,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public void run() {
         Message thisMsg;
-        while (runCore == true) {
+        while (keepRunning == true) {
             while ((thisMsg = msgPort.getMsg(100)) != null) { // just waiting
                 // and handling
                 // messages
@@ -852,8 +872,10 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             }
             // transferMsg(new Message(this, "ScriptengineTerminal.1", null));
         }
+        stopScriptEngine();
     }
 
+  
     /**
      * \brief starts a scriptengine
      *
@@ -1278,8 +1300,9 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     private void startjmDNSDiscovery() {
         //for usage instructions of jnDNS, see http://home.heeere.com/tech-androidjmdns.html
         new Thread(new Runnable() {
+             ServiceListener listener = null;
             @Override
-            public void run() {
+           public void run() {
                 try {
                     jmdns = JmDNS.create();
                     // ServiceInfo service_info =  ServiceInfo.create("_http._tcp.local.", "foo._http._tcp.local.", 1234, 0, 0, "path=index.html")
@@ -1291,8 +1314,31 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                     //String service_name = Core.getSingleInstance().getSystemIF().getOobdURL();
                     String service_name = "OOBD DaaS (" + getMACAddress() + ")";
                     int service_port = (int) Settings.readDataPool(DP_HTTP_PORT, 8080);
-                    ServiceInfo service_info = ServiceInfo.create(service_type, service_name, service_port, "Hä?");
+                    ServiceInfo service_info = ServiceInfo.create(service_type, service_name, service_port, "");
                     jmdns.registerService(service_info);
+                    
+                    
+                  jmdns.addServiceListener(service_type, listener = new ServiceListener() {
+                public void serviceResolved(ServiceEvent ev) {
+                    System.out.println("Service resolved: "
+                            + ev.getInfo().getQualifiedName()
+                            + " port:" + ev.getInfo().getPort());
+                }
+
+                public void serviceRemoved(ServiceEvent ev) {
+                    System.out.println("Service removed: " + ev.getName());
+                }
+
+                public void serviceAdded(ServiceEvent event) {
+                    // Required to force serviceResolved to be called again
+                    // (after the first search)
+                    jmdnsListener.requestServiceInfo(event.getType(), event.getName(), 1);
+                }
+            });
+             
+                    
+                    
+                    System.out.println("jmDNSDiscovery started");
                 } catch (IOException ex) {
                     Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -1324,7 +1370,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                 }
             });
 
-           // jmdns.removeServiceListener(service_type, listener);
+            // jmdns.removeServiceListener(service_type, listener);
             // jmdns.close();
         } catch (IOException ex) {
             Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);

@@ -10,34 +10,34 @@ default:
 	@echo "run      : runs the obfusicated version"
 	@echo "runapp   : runs the unmodified version"
 
-BASE=../skds/NBprojects/Base/dist/Base.jar
-APP=dist/OOBDesk.jar
-STORE=store/OOBDesk.jar
-PROGUARD=store/OOBDesk_Rxxx_Branded.jar
-WINSTALL=OOBDesk_Setup.exe
+BASE=../Base/dist/Base.jar
+APP=dist/oobdd.jar
+STORE=store/oobdd.jar
+PROGUARD=store/oobdd_branded.jar
+WINSTALL=oobdd_Setup.exe
 
 clean:
 	@echo "clean it all..."
 	-rm $(APP)
 	-rm $(STORE)
 	-rm $(PROGUARD)
-	ant -f ../skds/NBprojects/Base -Dnb.internal.action.name=clean clean
+	ant -f ../Base -Dnb.internal.action.name=clean clean
 	ant -Dnb.internal.action.name=clean clean
 
 aesbrand:
 	$(eval MYBRAND:=$(BRAND))	
 	@echo "branded brand" $(MYBRAND)
-	(cd ../skds/base_src/org/oobd/crypt/AES/ ; cp PassPhraseProvider.java.$(BRAND) PassPhraseProvider.java)
+	(cd ../Base/src/org/oobd/crypt/AES/ ; cp PassPhraseProvider.java.$(BRAND) PassPhraseProvider.java)
 
 
 aespublic:
 	$(eval MYBRAND:=public)	
 	@echo "public brand" $(MYBRAND)
-	(cd ../skds/base_src/org/oobd/crypt/AES/ ; cp PassPhraseProvider.java.public PassPhraseProvider.java)
+	(cd ../Base/src/org/oobd/crypt/AES/ ; cp PassPhraseProvider.java.public PassPhraseProvider.java)
 
 base: $(BASE)
 $(BASE):
-	ant -f ../skds/NBprojects/Base -Dnb.internal.action.name=build jar 
+	ant -f ../Base -Dnb.internal.action.name=build jar 
 
 app: $(APP)
 $(APP): $(BASE)
@@ -54,7 +54,7 @@ $(PROGUARD): $(STORE)
 
 winstall: revision $(WINSTALL) 
 $(WINSTALL): $(PROGUARD)
-	makensis OOBD_Windows_Setup.nsi && mv $(WINSTALL) OOBDesk_$(REV).exe
+	makensis oobdd_Windows_Setup.nsi && mv $(WINSTALL) OOBDesk_$(REV).exe
 
 runapp: $(APP)
 	java -jar $(APP)
