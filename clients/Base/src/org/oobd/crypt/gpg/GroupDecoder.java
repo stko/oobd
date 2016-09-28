@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchProviderException;
 
-import org.oobd.base.Core;
+import org.oobd.core.Core;
 import org.oobd.crypt.AES.EncodeDecodeAES;
 import org.spongycastle.openpgp.PGPException;
 

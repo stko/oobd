@@ -3,6 +3,7 @@
  */
 package org.oobd.ui.swing.desk;
 
+import org.oobd.core.Settings;
 import java.awt.CardLayout;
 import java.io.IOException;
 import org.jdesktop.application.Action;
@@ -25,8 +26,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import org.oobd.base.*;
-import org.oobd.base.Core;
+import org.oobd.core.Core;
 //import org.oobd.base.visualizer.*;
 
 import java.util.Vector;
@@ -36,7 +36,7 @@ import javax.swing.SwingUtilities;
 /**
  * The application's main frame.
  */
-public class swingView extends org.jdesktop.application.FrameView implements org.oobd.base.OOBDConstants, ActionListener {
+public class swingView extends org.jdesktop.application.FrameView implements org.oobd.core.OOBDConstants, ActionListener {
 
     final static String MAINPANEL = "card2";
     Core core;

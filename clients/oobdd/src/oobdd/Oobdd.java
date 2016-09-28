@@ -9,12 +9,12 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-import org.oobd.base.Core;
-import org.oobd.base.IFsystem;
-import org.oobd.base.OOBDConstants;
-import org.oobd.base.Settings;
-import org.oobd.base.port.ComPort_Win;
-import org.oobd.base.support.Onion;
+import org.oobd.core.Core;
+import org.oobd.core.IFsystem;
+import org.oobd.core.OOBDConstants;
+import org.oobd.core.Settings;
+import org.oobd.core.port.ComPort_Win;
+import org.oobd.core.support.Onion;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -44,15 +44,17 @@ public class Oobdd implements IFsystem, OOBDConstants, Daemon, Runnable, DaemonU
     private boolean softReloadSignalled;
     private static Core core;
     private static OptionSet options;
-    private static OptionParser parser;
+    private static OptionParser parser=null;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        try {
-            loadOptions(args);
-           core = new Core(new Oobdd(), "Core");
+       try {
+        
+            //loadOptions(args);
+ 
+          core = new Core(new Oobdd(), "Core");
             // TODO code application logic here
          } catch (Settings.IllegalSettingsException ex) {
             Logger.getLogger(Oobdd.class.getName()).log(Level.SEVERE, "Illegal preferences", ex);
@@ -141,11 +143,11 @@ public class Oobdd implements IFsystem, OOBDConstants, Daemon, Runnable, DaemonU
      * options
      */
     static boolean loadOptions(String[] args) {
-        parser = new OptionParser();
-        parser.accepts("settings").withRequiredArg();;
+       parser = new OptionParser();
+/*         parser.accepts("settings").withRequiredArg();;
 
         options = parser.parse(args);
-        return true;
+*/        return true;
     }
 
     protected void finalize() {
@@ -161,7 +163,7 @@ public class Oobdd implements IFsystem, OOBDConstants, Daemon, Runnable, DaemonU
         System.err.println("oobdd: instance " + this.hashCode()
                 + " init");
 
-        parser = new OptionParser("fc:q::");
+        parser = new OptionParser();
         parser.accepts("settings");
 
         loadOptions(context.getArguments());

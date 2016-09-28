@@ -9,16 +9,16 @@ import java.net.URISyntaxException;
 import java.util.prefs.Preferences;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.oobd.base.Core;
-import org.oobd.base.OOBDConstants;
-import org.oobd.base.port.ComPort_Win;
+import org.oobd.core.Core;
+import org.oobd.core.OOBDConstants;
+import org.oobd.core.port.ComPort_Win;
 
 //import java.io.FileInputStream;
 import java.io.*;
 import java.net.URI;
-import org.oobd.base.IFsystem;
-import org.oobd.base.Settings;
-import org.oobd.base.support.Onion;
+import org.oobd.core.IFsystem;
+import org.oobd.core.Settings;
+import org.oobd.core.support.Onion;
 
 /**
  * This class is the connection between the generic oobd system and the

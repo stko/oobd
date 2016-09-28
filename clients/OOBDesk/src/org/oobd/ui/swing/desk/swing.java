@@ -7,8 +7,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
-import org.oobd.base.Core;
-import org.oobd.base.Settings;
+import org.oobd.core.Core;
+import org.oobd.core.Settings;
 
 /**
  * The main class of the application.

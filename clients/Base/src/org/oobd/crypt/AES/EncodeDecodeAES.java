@@ -10,7 +10,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.oobd.base.Base64Coder;
+import org.oobd.core.Base64Coder;
 
 public class EncodeDecodeAES {
 

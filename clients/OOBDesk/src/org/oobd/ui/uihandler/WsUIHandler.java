@@ -6,11 +6,11 @@ package org.oobd.ui.uihandler;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.oobd.base.Core;
-import org.oobd.base.IFsystem;
-import org.oobd.base.uihandler.WSOobdUIHandler;
-import org.oobd.base.OOBDConstants;
-import org.oobd.base.visualizer.Visualizer;
+import org.oobd.core.Core;
+import org.oobd.core.IFsystem;
+import org.oobd.core.uihandler.WSOobdUIHandler;
+import org.oobd.core.OOBDConstants;
+import org.oobd.core.visualizer.Visualizer;
 
 /**
  *
