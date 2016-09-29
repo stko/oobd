@@ -98,7 +98,7 @@ public class Oobdd implements IFsystem, OOBDConstants, Daemon, Runnable, DaemonU
     }
 
     @Override
-    public String doFileSelector(String path, final String extension, String message, Boolean save) {
+    public String doFileSelector(String path, final String extension, String message, boolean save) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

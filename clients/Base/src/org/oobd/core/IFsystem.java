@@ -59,5 +59,5 @@ public interface IFsystem {
      * @param Save: Acts as "Save" Dialog, otherways as "Open"
      * @return the path of the choosen file or null, if canceled
      */
-    public String doFileSelector(String path, String extension, String message, Boolean Save);
+    public String doFileSelector(String path, String extension, String message, boolean Save);
 }
