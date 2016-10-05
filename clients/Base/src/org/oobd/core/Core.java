@@ -204,7 +204,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
         try {
             BufferedReader br;
             String strLine;
-            br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/org/oobd/base/classloader.cfg")));
+            br = new BufferedReader(new InputStreamReader(this.getClass().getResourceAsStream("/org/oobd/core/classloader.cfg")));
             while ((strLine = br.readLine()) != null) {
                 if (!"".equals(strLine)) {
                     String[] classConfig = strLine.split(":");

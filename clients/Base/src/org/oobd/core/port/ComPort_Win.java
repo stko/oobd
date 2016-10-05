@@ -37,22 +37,6 @@ public class ComPort_Win implements OOBDPort, SerialPortEventListener {
         }
         msgReceiver = receiveListener;
 
-        // determine the name of the serial port on several operating systems
-        String osname = System.getProperty("os.name", "").toLowerCase();
-        if (osname.startsWith("windows")) {
-            // windows
-            defaultPort = "COM1";
-        } else if (osname.startsWith("linux")) {
-            // linux
-            defaultPort = "/dev/ttyS0";
-        } else if (osname.startsWith("mac")) {
-            // mac
-            defaultPort = "????";
-        } else {
-            Logger.getLogger(ComPort_Win.class.getName()).log(Level.SEVERE, "OS os not supported");
-            return false;
-        }
-
         defaultPort = Settings.getString(OOBDConstants.PropName_ConnectTypeBT + "_" + OOBDConstants.PropName_SerialPort, "");
         serialPort = new SerialPort(defaultPort);
         try {

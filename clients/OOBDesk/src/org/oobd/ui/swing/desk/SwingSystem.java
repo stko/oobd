@@ -91,10 +91,6 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
-    public String doFileSelector(String path, final String extension, String message, Boolean save) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
     @Override
     public String loadPreferences() {
@@ -150,6 +146,11 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             return false;
         }
 
+    }
+
+    @Override
+    public String doFileSelector(String path, String extension, String message, boolean Save) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

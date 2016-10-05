@@ -5,16 +5,19 @@ default:
 	@echo "clean    : guess what.."
 	@echo "base     : compile the core in Base.jar to Base.dll"
 	@echo "exe      : compiles .Net console demo"
-	@echo "run      : runs the .NET exr "
+	@echo "java      : compiles java console demo(for debug comparision only)"
+	@echo "run      : runs the .NET exe "
+	@echo "runjava      : runs the java exe "
 
 BASE=Base.dll
 EXE=oobd.Net.exe
-
+JAVA=OobdNet.class
 
 clean:
 	@echo "clean it all..."
 	-rm $(BASE)
 	-rm $(EXE)
+	-rm $(JAVA)
 
 
 base: $(BASE)
@@ -27,6 +30,13 @@ $(EXE): $(BASE)
 
 run: $(EXE)
 	mono oobd.Net.exe ../oobdd/settings.json
+
+java: $(JAVA)
+$(JAVA): 
+	javac -classpath .:../Base/store/Base.jar OobdNet.java
+
+runjava: $(JAVA)
+	java -classpath .:../Base/store/Base.jar OobdNet ../oobdd/settings.json
 
 
 revision:
