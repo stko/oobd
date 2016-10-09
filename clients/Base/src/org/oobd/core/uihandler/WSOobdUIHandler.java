@@ -53,6 +53,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.Hashtable;
+import org.oobd.OOBD;
 
 import org.oobd.core.archive.Archive;
 import org.oobd.core.archive.Factory;
@@ -833,7 +834,7 @@ class OOBDHttpServer extends NanoHTTPD {
             try {
                 Settings.transferSettings(settingsJSON, settingsPassword);
                 Settings.savePreferences();
-            } catch (Settings.IllegalSettingsException ex) {
+            } catch (OOBD.IllegalSettingsException ex) {
                 Logger.getLogger(OOBDHttpServer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

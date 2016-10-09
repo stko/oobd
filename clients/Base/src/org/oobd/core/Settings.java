@@ -10,41 +10,7 @@ package org.oobd.core;
  * @author steffen
  */
 
-/*
 
- Beispielcode für ein eingelagertes Interface
-
- public class Main {
-
- public interface Visitor{
- int doJob(int a, int b);
- }
-
-
- public static void main(String[] args) {
- Visitor adder = new Visitor(){
- public int doJob(int a, int b) {
- return a + b;
- }
- };
-
- Visitor multiplier = new Visitor(){
- public int doJob(int a, int b) {
- return a*b;
- }
- };
-
- System.out.println(adder.doJob(10, 20));
- System.out.println(multiplier.doJob(10, 20));
-
- }
- }
-
- Setzen eines Nullwertes in JSON:
- Try to set JSONObject.NULL instead of null:
-
-
- */
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,6 +22,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.oobd.OOBD.IllegalSettingsException;
 import static org.oobd.core.OOBDConstants.DP_ACTUAL_CONNECTION_TYPE;
 import static org.oobd.core.OOBDConstants.DP_ARRAY_SIZE;
 import static org.oobd.core.OOBDConstants.FT_PROPS;
@@ -169,24 +136,6 @@ public class Settings {
         }
     }
 
-    public static class IllegalSettingsException extends Exception {
-
-        public IllegalSettingsException() {
-            super();
-        }
-
-        public IllegalSettingsException(String message) {
-            super(message);
-        }
-
-        public IllegalSettingsException(String message, Throwable cause) {
-            super(message, cause);
-        }
-
-        public IllegalSettingsException(Throwable cause) {
-            super(cause);
-        }
-    }
 
 
     public static void init(IFsystem savePrefs){
