@@ -51,6 +51,7 @@ int iSocketReceive = 0;
 QueueHandle_t xCANReceiveQueue = NULL;
 struct sockaddr_can xSendAddress;
 int iSocketSend = 0, iReturn = 0, iSendTaskList = pdTRUE;
+int iCanBusIndex=0;
 
 //callback function for received data
 recv_cbf reportReceivedData = NULL;
@@ -107,19 +108,17 @@ UBaseType_t bus_init_can()
 //iSocketSend = iSocketOpenCAN(NULL, NULL, NULL);
     iSocketSend = iSocketReceive;
     int mystate;
-    DEBUGPRINT("get CAN State for %s returns %ld\n", canChannel,
-	       can_get_state(canChannel, &mystate));
+    DEBUGPRINT("get CAN State for %s returns %ld\n", canChannel[iCanBusIndex],
+	       can_get_state(canChannel[iCanBusIndex], &mystate));
     DEBUGPRINT("get CAN State mystate %ld\n", mystate);
-/*
     struct can_ctrlmode cm;
     memset(&cm, 0, sizeof(cm));
     cm.mask = CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_LISTENONLY;
     cm.flags = CAN_CTRLMODE_LOOPBACK;
     DEBUGPRINT("can_set_ctrlmode: %ld\n",
-	       can_set_ctrlmode(canChannel, &cm));
+	       can_set_ctrlmode(canChannel[iCanBusIndex], &cm));
     DEBUGPRINT("can_set_bitrate: %ld\n",
-	       can_set_bitrate(canChannel, 500000));
-*/
+	       can_set_bitrate(canChannel[iCanBusIndex], 500000));
     if (iSocketSend != 0) {
 	return pdPASS;
     } else {
@@ -129,6 +128,7 @@ UBaseType_t bus_init_can()
 	return pdFAIL;
     }
 }
+
 
 
 

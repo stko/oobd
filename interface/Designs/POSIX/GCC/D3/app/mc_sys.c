@@ -37,6 +37,7 @@
 #include "od_config.h"
 #include "od_base.h"
 #include "mc_sys_generic.h"
+#include "mc_can.h";
 
 // posix specific argument handling
 #include <getopt.h>
@@ -45,7 +46,7 @@
 static int verbose_flag;
 char *serialPort;
 char *tcpPort;
-char *canChannel;
+char *canChannel[MAXCANCHANNEL];
 
 
 extern char *oobd_Error_Text_OS[];
@@ -57,9 +58,11 @@ void mc_init_sys_boot_specific()
 // setting defaults first, to then let them override by otopns, in case they are given
     serialPort = "/tmp/OOBD";
     tcpPort = "1234";
-    canChannel = "oobdcan0";
+    memset(&canChannel[0], 0, sizeof(canChannel));
+    canChannel[0] = "oobdcan0";
 
     int c;
+    int channelCount=0;
 
     static struct option long_options[] = {
 	/* These options set a flag. */
@@ -115,8 +118,10 @@ void mc_init_sys_boot_specific()
 	    break;
 
 	case 'c':
+	    if (channelCount<MAXCANCHANNEL){
 	    printf("option -c: Set Can Channel to `%s'\n", optarg);
-	    canChannel = optarg;
+	    canChannel[channelCount++] = optarg;
+	    }
 	    break;
 
 	case '?':

@@ -46,7 +46,7 @@
 //#include <linux/can.h>
 //#include <linux/can/raw.h>
 #include <string.h>
-
+#define MAXCANCHANNEL 10
 /**
  * call back function which simply delivers the received packet 
  * @param iSocket A socket desicriptor to receive the packet from.
