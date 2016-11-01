@@ -89,6 +89,7 @@ CFLAGS=-I . \
 		-fmessage-length=0 \
 		-pthread \
 		-lrt \
+		-lsocketcan \
 		-Wno-pointer-sign \
 		-MMD \
 		-MP \
@@ -118,9 +119,7 @@ FREERTOS_SOURCE= $(RTOS_SOURCE_DIR)/list.c \
 PORT_INCLUDE_SOURCE= $(PORT_INCLUDE_DIR)/AsyncIO.c \
 		$(PORT_INCLUDE_DIR)/AsyncIOSerial.c \
 		$(PORT_INCLUDE_DIR)/AsyncIOSocketCan.c \
-		$(PORT_INCLUDE_DIR)/PosixMessageQueueIPC.c \
-		libsocketcan.c
-
+		$(PORT_INCLUDE_DIR)/PosixMessageQueueIPC.c
 
 SOURCE+=$(OOBD_COMMON_SOURCE)
 SOURCE+=$(FREERTOS_SOURCE)
@@ -138,7 +137,7 @@ LIBS=
 OBJS = $(addprefix $(OUTDIR)/, $(addsuffix .o, $(ALLSRCBASE)))
 
 # should use --gc-sections but the debugger does not seem to be able to cope with the option.
-LINKER_FLAGS= -pthread -lrt -o"$(PROJECT_NAME).bin" 
+LINKER_FLAGS= -pthread -lrt -lsocketcan -o"$(PROJECT_NAME).bin" 
 
 # Define Messages.
 # English

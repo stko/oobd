@@ -40,7 +40,7 @@
 #include "mc_can.h"
 #include "mc_sys_generic.h"
 #include "mc_sys.h"
-#include "libsocketcan.h"
+#include <libsocketcan.h>
 
 extern char *oobd_Error_Text_OS[];
 extern struct CanConfig *canConfig;
