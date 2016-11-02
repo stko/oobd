@@ -54,7 +54,7 @@ protected  void createAndShowGUI() {
         }
         final PopupMenu popup = new PopupMenu();
         final TrayIcon trayIcon =
-                new TrayIcon(createImage("/org/oobd/core/images/oobd_32.png", "tray icon"));
+                new TrayIcon(createImage("/org/oobd/core/images/obd2_icon.png", "tray icon"));
         final SystemTray tray = SystemTray.getSystemTray();
          
         // Create a popup menu components
