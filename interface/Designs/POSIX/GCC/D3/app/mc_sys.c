@@ -62,7 +62,7 @@ void mc_init_sys_boot_specific()
     canChannel[0] = "oobdcan0";
 
     int c;
-    int channelCount=0;
+    int channelCount = 0;
 
     static struct option long_options[] = {
 	/* These options set a flag. */
@@ -118,9 +118,9 @@ void mc_init_sys_boot_specific()
 	    break;
 
 	case 'c':
-	    if (channelCount<MAXCANCHANNEL){
-	    printf("option -c: Set Can Channel to `%s'\n", optarg);
-	    canChannel[channelCount++] = optarg;
+	    if (channelCount < MAXCANCHANNEL) {
+		printf("option -c: Set Can Channel to `%s'\n", optarg);
+		canChannel[channelCount++] = optarg;
 	    }
 	    break;
 

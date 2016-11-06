@@ -52,5 +52,6 @@
  * @param iSocket A socket desicriptor to receive the packet from.
  */
 void vCANReceiveAndDeliverCallbackOOBD(int iSocket, void *pvContext);
+UBaseType_t bus_change_state_can();
 
 #endif				/* INC_MC_CAN_H */

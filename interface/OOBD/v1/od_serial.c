@@ -164,6 +164,7 @@ char checkValidChar(char a)
 /**! a little help function
   \return pdRTUE if value is odd
 */
+UBaseType_t odd(UBaseType_t value);
 inline UBaseType_t odd(UBaseType_t value)
 {
     return (value & 1) ? pdTRUE : pdFALSE;
@@ -172,6 +173,7 @@ inline UBaseType_t odd(UBaseType_t value)
 /**! a little help function
   \return pdRTUE if value is even
 */
+UBaseType_t even(UBaseType_t value);
 inline UBaseType_t even(UBaseType_t value)
 {
     return (value & 1) ? pdFALSE : pdTRUE;

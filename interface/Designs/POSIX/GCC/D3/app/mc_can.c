@@ -47,24 +47,11 @@ extern struct CanConfig *canConfig;
 
 /* global vars */
 struct sockaddr_can xReceiveAddress;
-int iSocketReceive = 0;
 QueueHandle_t xCANReceiveQueue = NULL;
 struct sockaddr_can xSendAddress;
-int iSocketSend = 0, iReturn = 0, iSendTaskList = pdTRUE;
-int iCanBusIndex=0;
-
+int iSocketCan = 0, iReturn = 0, iCanBusIndex = 0, extended = 0;
 //callback function for received data
 recv_cbf reportReceivedData = NULL;
-
-void CAN1_Configuration(uint8_t CAN_BusConfig, uint8_t CAN_ModeConfig);
-
-//some define copied from STM32 to have simular program layout
-#define CAN_Mode_Normal             ((uint8_t)0x00)	//!< normal mode
-#define CAN_Mode_LoopBack           ((uint8_t)0x01)	//!< loopback mode
-#define CAN_Mode_Silent             ((uint8_t)0x02)	//!< silent mode
-#define CAN_Mode_Silent_LoopBack    ((uint8_t)0x03)	//!< loopback combined with silent mode
-
-
 
 BaseType_t rxCount;
 BaseType_t txCount;
@@ -97,39 +84,107 @@ UBaseType_t bus_init_can()
 
     // Set-up the Receive Queue and open the socket ready to receive. 
     xCANReceiveQueue = xQueueCreate(20, sizeof(struct can_frame));
-    iSocketReceive =
-	iSocketOpenCAN(vCANReceiveAndDeliverCallbackOOBD, xCANReceiveQueue,
-		       &xReceiveAddress);
+    bus_change_state_can(pdFALSE);
+    return pdPASS;
+}
 
-    // Remember to open a whole in your Firewall to be able to receive!!!
+/*-----------------------------------------------------------*/
+
+UBaseType_t bus_change_state_can(UBaseType_t onlyClose)
+{
+
+    if (iSocketCan) {
+	vSocketClose(iSocketCan);
+	iSocketCan = 0;
+    }
+    can_do_stop(canChannel[iCanBusIndex]);
+    if (onlyClose) {		// if onlyClose is set, then close only device and exit
+	return pdPASS;
+    }
 
 
-// CAN use the same socket for send and receive
-//iSocketSend = iSocketOpenCAN(NULL, NULL, NULL);
-    iSocketSend = iSocketReceive;
     int mystate;
-    DEBUGPRINT("get CAN State for %s returns %ld\n", canChannel[iCanBusIndex],
+    DEBUGPRINT("get CAN State for %s returns %ld\n",
+	       canChannel[iCanBusIndex],
 	       can_get_state(canChannel[iCanBusIndex], &mystate));
     DEBUGPRINT("get CAN State mystate %ld\n", mystate);
     struct can_ctrlmode cm;
     memset(&cm, 0, sizeof(cm));
-    cm.mask = CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_LISTENONLY;
-    cm.flags = CAN_CTRLMODE_LOOPBACK;
-    DEBUGPRINT("can_set_ctrlmode: %ld\n",
-	       can_set_ctrlmode(canChannel[iCanBusIndex], &cm));
-    DEBUGPRINT("can_set_bitrate: %ld\n",
-	       can_set_bitrate(canChannel[iCanBusIndex], 500000));
-    if (iSocketSend != 0) {
-	return pdPASS;
-    } else {
+    switch (canConfig->busConfig) {
+    case VALUE_BUS_CONFIG_29bit_125kbit:
+    case VALUE_BUS_CONFIG_29bit_250kbit:
+    case VALUE_BUS_CONFIG_29bit_500kbit:
+    case VALUE_BUS_CONFIG_29bit_1000kbit:
+	extended = 1;
+	break;
+    default:
+	extended = 0;
+    }
+    switch (canConfig->busConfig) {
+    case VALUE_BUS_CONFIG_11bit_125kbit:
+    case VALUE_BUS_CONFIG_29bit_125kbit:
+	can_set_bitrate(canChannel[iCanBusIndex], 125000);
+	break;
+    case VALUE_BUS_CONFIG_11bit_250kbit:
+    case VALUE_BUS_CONFIG_29bit_250kbit:
+	can_set_bitrate(canChannel[iCanBusIndex], 250000);
+	break;
+    case VALUE_BUS_CONFIG_11bit_500kbit:
+    case VALUE_BUS_CONFIG_29bit_500kbit:
+	can_set_bitrate(canChannel[iCanBusIndex], 500000);
+	break;
+    case VALUE_BUS_CONFIG_11bit_1000kbit:
+    case VALUE_BUS_CONFIG_29bit_1000kbit:
+	can_set_bitrate(canChannel[iCanBusIndex], 1000000);
+	break;
+    }
 
-	vSocketClose(iSocketSend);
+/* for reference (defined in libcansocket
+	#define CAN_CTRLMODE_LOOPBACK           0x01    // Loopback mode
+	#define CAN_CTRLMODE_LISTENONLY         0x02    // Listen-only mode
+	#define CAN_CTRLMODE_3_SAMPLES          0x04    // Triple sampling mode
+	#define CAN_CTRLMODE_ONE_SHOT           0x08    // One-Shot mode
+	#define CAN_CTRLMODE_BERR_REPORTING     0x10    // Bus-error reporting
+	#define CAN_CTRLMODE_FD                 0x20    // CAN FD mode
+	#define CAN_CTRLMODE_PRESUME_ACK        0x40    // Ignore missing CAN ACKs
+*/
+
+    switch (canConfig->mode) {
+    case VALUE_BUS_MODE_SILENT:
+	cm.mask = CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_LISTENONLY;
+	cm.flags = CAN_CTRLMODE_LISTENONLY;
+
+	break;
+    case VALUE_BUS_MODE_LOOP_BACK:
+	cm.mask = CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_LISTENONLY;
+	cm.flags = CAN_CTRLMODE_LOOPBACK;
+	break;
+    case VALUE_BUS_MODE_LOOP_BACK_WITH_SILENT:
+	cm.mask = CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_LISTENONLY;
+	cm.flags = CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_LISTENONLY;
+	break;
+    case VALUE_BUS_MODE_NORMAL:
+	cm.mask = CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_LISTENONLY;
+	cm.flags = 0;
+	break;
+    }
+    can_set_ctrlmode(canChannel[iCanBusIndex], &cm);
+
+    iSocketCan =
+	iSocketOpenCAN(canChannel[iCanBusIndex],
+		       vCANReceiveAndDeliverCallbackOOBD, xCANReceiveQueue,
+		       &xReceiveAddress);
+
+
+// CAN use the same socket for send and receive
+    if (iSocketCan == 0) {
 	DEBUGPRINT("CAN Task: Unable to open a socket.\n", 'a');
 	return pdFAIL;
     }
+
+    return pdPASS;
+
 }
-
-
 
 
 
@@ -148,18 +203,15 @@ UBaseType_t bus_send_can(data_packet * data)
        printser_string("\r");
      */
     static struct can_frame frame;
-    if (canConfig->busConfig == VALUE_BUS_CONFIG_29bit_125kbit
-	|| canConfig->busConfig == VALUE_BUS_CONFIG_29bit_250kbit
-	|| canConfig->busConfig == VALUE_BUS_CONFIG_29bit_500kbit
-	|| canConfig->busConfig == VALUE_BUS_CONFIG_29bit_1000kbit) {
-	frame.can_id = 0x8000 & data->recv;	/* Bit 31=1 for Extended CAN identifier 29 bit */
-    } else {
+    frame.can_id = data->recv;
 
-	frame.can_id = data->recv;	/* Standard CAN identifier 11bit */
+    if (extended) {
+	frame.can_id &= CAN_EFF_MASK;
+	frame.can_id |= CAN_EFF_FLAG;
+    } else {
+	frame.can_id &= CAN_SFF_MASK;
     }
 
-
-    frame.can_id = data->recv;
     frame.can_dlc = data->len;
     frame.data[0] = data->data[0];
     frame.data[1] = data->data[1];
@@ -169,7 +221,7 @@ UBaseType_t bus_send_can(data_packet * data)
     frame.data[5] = data->data[5];
     frame.data[6] = data->data[6];
     frame.data[7] = data->data[7];
-    iReturn = iSocketCANSendTo(iSocketSend, &frame, &xSendAddress);
+    iReturn = iSocketCANSendTo(iSocketCan, &frame, &xSendAddress);
     if (sizeof(frame) != iReturn) {
 	DEBUGPRINT("CAN Failed to send whole packet: %d.\n", errno);
     }
@@ -267,8 +319,7 @@ UBaseType_t bus_param_can_spec(param_data * args)
 	txCount = 0;
 	errCount = 0;
 	if (args->args[ARG_VALUE_1] != 0)
-	    CAN1_Configuration(args->args[ARG_VALUE_1], CAN_Mode_Silent);	/* reinitialization of CAN interface */
-	canConfig->busConfig = args->args[ARG_VALUE_1];
+	    canConfig->busConfig = args->args[ARG_VALUE_1];	//store requested bus bitrate and if 11 or 29bit
 	createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	break;
 
@@ -278,31 +329,16 @@ UBaseType_t bus_param_can_spec(param_data * args)
 	errCount = 0;
 	switch (args->args[ARG_VALUE_1]) {
 	case VALUE_BUS_MODE_SILENT:
-	    CAN1_Configuration((uint8_t) canConfig->busConfig, CAN_Mode_Silent);	/* set CAN interface to silent mode */
 	    canConfig->bus = args->args[ARG_VALUE_1];	/* set config.bus to current value of Paramter */
 	    // send event information to the ILM task
 	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_OFF);
 	    createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
 				   NULL);
+	    bus_change_state_can(pdFALSE);
 	    break;
 	case VALUE_BUS_MODE_LOOP_BACK:
-	    CAN1_Configuration((uint8_t) canConfig->busConfig, CAN_Mode_LoopBack);	/* set CAN interface to loop back mode */
-	    canConfig->bus = args->args[ARG_VALUE_1];	/* set config.bus to current value of Paramter */
-	    // send event information to the ILM task
-	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
-	    createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
-				   NULL);
-	    break;
 	case VALUE_BUS_MODE_LOOP_BACK_WITH_SILENT:
-	    CAN1_Configuration((uint8_t) canConfig->busConfig, CAN_Mode_Silent_LoopBack);	/* set CAN interface to loop back combined with silent mode */
-	    canConfig->bus = args->args[ARG_VALUE_1];	/* set config.bus to current value of Paramter */
-	    // send event information to the ILM task
-	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
-	    createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
-				   NULL);
-	    break;
 	case VALUE_BUS_MODE_NORMAL:
-	    CAN1_Configuration((uint8_t) canConfig->busConfig, CAN_Mode_Normal);	/* set CAN interface to normal mode */
 	    canConfig->bus = args->args[ARG_VALUE_1];	/* set config.bus to current value of Paramter */
 	    // send event information to the ILM task
 	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
@@ -315,6 +351,7 @@ UBaseType_t bus_param_can_spec(param_data * args)
 				   ERR_CODE_OS_COMMAND_NOT_SUPPORTED,
 				   args->args[ARG_VALUE_1],
 				   ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
+	    bus_change_state_can(pdFALSE);
 	    break;
 	}
 	break;
@@ -327,9 +364,13 @@ UBaseType_t bus_param_can_spec(param_data * args)
 	case 0:
 	case 1:
 	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_OFF);
-	    CreateEventMsg(MSG_EVENT_BUS_CHANNEL,
-			   args->args[ARG_VALUE_1] == 1 ? 1 : 2);
-	    //! \todo anything to do to switch between the different sockets
+	    CreateEventMsg(MSG_EVENT_BUS_CHANNEL, args->args[ARG_VALUE_1]);
+	    //! if can channel parameter given with that index, change to
+	    if (canChannel[args->args[ARG_VALUE_1]]) {
+		bus_change_state_can(pdTRUE);
+		iCanBusIndex = args->args[ARG_VALUE_1];
+
+	    }
 	    createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
 				   NULL);
 	    break;
@@ -435,8 +476,8 @@ void bus_close_can()
 {
     extern struct CanConfig *canConfig;
     reportReceivedData = NULL;
-    vSocketClose(iSocketSend);
-    vSocketClose(iSocketReceive);
+    vSocketClose(iSocketCan);
+    iSocketCan = 0;
     vPortFree(canConfig);
 }
 
@@ -578,41 +619,4 @@ BaseType_t bus_rec_can()
 {
     /* read Receive Error Counter of CAN hardware */
     return 0;
-}
-
-void CAN1_Configuration(uint8_t CAN_BusConfig, uint8_t CAN_ModeConfig)
-{
-
-    if (CAN_BusConfig == VALUE_BUS_CONFIG_11bit_125kbit || CAN_BusConfig
-	== VALUE_BUS_CONFIG_29bit_125kbit) {
-
-
-    }
-
-    else if (CAN_BusConfig == VALUE_BUS_CONFIG_11bit_250kbit
-	     || CAN_BusConfig == VALUE_BUS_CONFIG_29bit_250kbit) {
-
-
-    }
-
-    else if (CAN_BusConfig == VALUE_BUS_CONFIG_11bit_500kbit
-	     || CAN_BusConfig == VALUE_BUS_CONFIG_29bit_500kbit) {
-
-
-    }
-
-    else if (CAN_BusConfig == VALUE_BUS_CONFIG_11bit_1000kbit
-	     || CAN_BusConfig == VALUE_BUS_CONFIG_29bit_1000kbit) {
-
-
-    }
-
-    else {
-
-	/* default CAN bus speed is set to 500kbaud */
-
-    }
-
-    //   CAN_Init(CAN1, &CAN_InitStructure);
-
 }

@@ -87,6 +87,7 @@ CFLAGS=-I . \
 		-Wall \
 		-c \
 		-fmessage-length=0 \
+		-finline-functions \
 		-pthread \
 		-lrt \
 		-lsocketcan \
