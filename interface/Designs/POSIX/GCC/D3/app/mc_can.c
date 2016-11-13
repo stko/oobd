@@ -174,12 +174,14 @@ UBaseType_t bus_change_state_can(UBaseType_t onlyClose)
     }
     DEBUGPRINT("Try to set ctrl mode bitrate to %ld %ld\n", cm.mask, cm.flags);
     can_set_ctrlmode(canChannel[iCanBusIndex], &cm);
+    can_do_restart(canChannel[iCanBusIndex]);
+    can_do_start(canChannel[iCanBusIndex]);
 
     iSocketCan =
 	iSocketOpenCAN(canChannel[iCanBusIndex],
 		       vCANReceiveAndDeliverCallbackOOBD, xCANReceiveQueue,
 		       &xReceiveAddress);
-
+    DEBUGPRINT("Still running on %s ?!?\n", canChannel[iCanBusIndex]);
 
 // CAN use the same socket for send and receive
     if (iSocketCan == 0) {
@@ -334,7 +336,7 @@ UBaseType_t bus_param_can_spec(param_data * args)
 	errCount = 0;
 	switch (args->args[ARG_VALUE_1]) {
 	case VALUE_BUS_MODE_SILENT:
-	    canConfig->bus = args->args[ARG_VALUE_1];	/* set config.bus to current value of Paramter */
+	    canConfig->mode = args->args[ARG_VALUE_1];	/* set config.mode to current value of Paramter */
 	    // send event information to the ILM task
 	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_OFF);
 	    createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
@@ -344,7 +346,7 @@ UBaseType_t bus_param_can_spec(param_data * args)
 	case VALUE_BUS_MODE_LOOP_BACK:
 	case VALUE_BUS_MODE_LOOP_BACK_WITH_SILENT:
 	case VALUE_BUS_MODE_NORMAL:
-	    canConfig->bus = args->args[ARG_VALUE_1];	/* set config.bus to current value of Paramter */
+	    canConfig->mode = args->args[ARG_VALUE_1];	/* set config.mode to current value of Paramter */
 	    // send event information to the ILM task
 	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_ON);
 	    createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
@@ -365,26 +367,20 @@ UBaseType_t bus_param_can_spec(param_data * args)
 	rxCount = 0;
 	txCount = 0;
 	errCount = 0;
-	switch (args->args[ARG_VALUE_1]) {
-	case 0:
-	case 1:
-	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_OFF);
-	    CreateEventMsg(MSG_EVENT_BUS_CHANNEL, args->args[ARG_VALUE_1]);
 	    //! if can channel parameter given with that index, change to
 	    if (canChannel[args->args[ARG_VALUE_1]]) {
+	        canConfig->bus = args->args[ARG_VALUE_1];	//store requested bus id
 		bus_change_state_can(pdTRUE);
 		iCanBusIndex = args->args[ARG_VALUE_1];
-
-	    }
-	    createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
+                CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_OFF);
+                CreateEventMsg(MSG_EVENT_BUS_CHANNEL, args->args[ARG_VALUE_1]);
+                createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
 				   NULL);
-	    break;
-	default:
+	    }else{
 	    createCommandResultMsg(FBID_BUS_SPEC,
 				   ERR_CODE_OS_COMMAND_NOT_SUPPORTED,
 				   args->args[ARG_VALUE_1],
 				   ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
-	    break;
 	}
 	break;
     case PARAM_BUS_Can11FilterID:	/* 11bit CAN filter ID reconfig */
@@ -497,7 +493,7 @@ void vCANReceiveAndDeliverCallbackOOBD(int iSocket, void *pvContext)
     static struct can_frame frame;
     //struct sockaddr_can xReceiveAddress;
     static data_packet dp;
-
+    printf("OOBD Receive Callback on socket %ld\n",iSocket);
     if (sizeof(struct can_frame) ==
 	iSocketCANReceiveISR(iSocket, &frame, &xReceiveAddress)) {
 	rxCount++;
@@ -520,8 +516,10 @@ void vCANReceiveAndDeliverCallbackOOBD(int iSocket, void *pvContext)
 	    }
 	}
 	dp.data = &frame.data[0];	// data starts here
+    printf("before reporting data data recv %4X len %ld  err %d\n",dp.recv,dp.len,dp.err);
 	if (reportReceivedData)
 	    reportReceivedData(&dp, pdTRUE);
+    printf("after reporting %ld\n",iSocket);
     }
 }
 
