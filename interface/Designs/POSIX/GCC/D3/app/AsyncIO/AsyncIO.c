@@ -49,11 +49,11 @@ long lAsyncIORegisterCallback(int iFileDescriptor,
 	for (pxIterator = &xHead; pxIterator->pxNext != NULL;
 	     pxIterator = pxIterator->pxNext);
 	pxIterator->pxNext =
-	    (xAsyncIOCallback *) pvPortMalloc(1,sizeof(xAsyncIOCallback));
+	    (xAsyncIOCallback *) pvPortMalloc(sizeof(xAsyncIOCallback));
 	pxIterator->pxNext->iFileHandle = iFileDescriptor;
 	pxIterator->pxNext->pvFunction = pvFunction;
 	pxIterator->pxNext->pvContext = pvContext;
-	pxIterator->pxNext->pvNext = NULL;
+	pxIterator->pxNext->pxNext = NULL;
 
 	/* Set the socket as requiring a signal when messages are received. */
 	prvRegisterSignalHandler(iFileDescriptor);
@@ -102,8 +102,8 @@ void prvSignalHandler(int signal, siginfo_t * data, void *pvParam)
 	    if (pxIterator->iFileHandle == iSocket) {
 		(pxIterator->pvFunction) (iSocket, pxIterator->pvContext);
 	    } else {
-	        printf("No socket owner.\n");
-            }
+		printf("No socket owner.\n");
+	    }
 	} else {
 	    /* We don't know which socket cause the signal. Use poll to find the socket. */
 	    for (pxIterator = &xHead; pxIterator != NULL;

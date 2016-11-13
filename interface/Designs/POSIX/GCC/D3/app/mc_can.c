@@ -123,22 +123,22 @@ UBaseType_t bus_change_state_can(UBaseType_t onlyClose)
     switch (canConfig->busConfig) {
     case VALUE_BUS_CONFIG_11bit_125kbit:
     case VALUE_BUS_CONFIG_29bit_125kbit:
-        DEBUGPRINT("Try to set bitrate to 125000\n", mystate);
+	DEBUGPRINT("Try to set bitrate to 125000\n", mystate);
 	can_set_bitrate(canChannel[iCanBusIndex], 125000);
 	break;
     case VALUE_BUS_CONFIG_11bit_250kbit:
     case VALUE_BUS_CONFIG_29bit_250kbit:
-        DEBUGPRINT("Try to set bitrate to 250000\n", mystate);
+	DEBUGPRINT("Try to set bitrate to 250000\n", mystate);
 	can_set_bitrate(canChannel[iCanBusIndex], 250000);
 	break;
     case VALUE_BUS_CONFIG_11bit_500kbit:
     case VALUE_BUS_CONFIG_29bit_500kbit:
-        DEBUGPRINT("Try to set bitrate to 500000\n", mystate);
+	DEBUGPRINT("Try to set bitrate to 500000\n", mystate);
 	can_set_bitrate(canChannel[iCanBusIndex], 500000);
 	break;
     case VALUE_BUS_CONFIG_11bit_1000kbit:
     case VALUE_BUS_CONFIG_29bit_1000kbit:
-        DEBUGPRINT("Try to set bitrate to 1000000\n", mystate);
+	DEBUGPRINT("Try to set bitrate to 1000000\n", mystate);
 	can_set_bitrate(canChannel[iCanBusIndex], 1000000);
 	break;
     }
@@ -172,7 +172,8 @@ UBaseType_t bus_change_state_can(UBaseType_t onlyClose)
 	cm.flags = 0;
 	break;
     }
-    DEBUGPRINT("Try to set ctrl mode bitrate to %ld %ld\n", cm.mask, cm.flags);
+    DEBUGPRINT("Try to set ctrl mode bitrate to %ld %ld\n", cm.mask,
+	       cm.flags);
     can_set_ctrlmode(canChannel[iCanBusIndex], &cm);
     can_do_restart(canChannel[iCanBusIndex]);
     can_do_start(canChannel[iCanBusIndex]);
@@ -367,16 +368,16 @@ UBaseType_t bus_param_can_spec(param_data * args)
 	rxCount = 0;
 	txCount = 0;
 	errCount = 0;
-	    //! if can channel parameter given with that index, change to
-	    if (canChannel[args->args[ARG_VALUE_1]]) {
-	        canConfig->bus = args->args[ARG_VALUE_1];	//store requested bus id
-		bus_change_state_can(pdTRUE);
-		iCanBusIndex = args->args[ARG_VALUE_1];
-                CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_OFF);
-                CreateEventMsg(MSG_EVENT_BUS_CHANNEL, args->args[ARG_VALUE_1]);
-                createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
+	//! if can channel parameter given with that index, change to
+	if (canChannel[args->args[ARG_VALUE_1]]) {
+	    canConfig->bus = args->args[ARG_VALUE_1];	//store requested bus id
+	    bus_change_state_can(pdTRUE);
+	    iCanBusIndex = args->args[ARG_VALUE_1];
+	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_OFF);
+	    CreateEventMsg(MSG_EVENT_BUS_CHANNEL, args->args[ARG_VALUE_1]);
+	    createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
 				   NULL);
-	    }else{
+	} else {
 	    createCommandResultMsg(FBID_BUS_SPEC,
 				   ERR_CODE_OS_COMMAND_NOT_SUPPORTED,
 				   args->args[ARG_VALUE_1],
@@ -493,7 +494,6 @@ void vCANReceiveAndDeliverCallbackOOBD(int iSocket, void *pvContext)
     static struct can_frame frame;
     //struct sockaddr_can xReceiveAddress;
     static data_packet dp;
-    printf("OOBD Receive Callback on socket %ld\n",iSocket);
     if (sizeof(struct can_frame) ==
 	iSocketCANReceiveISR(iSocket, &frame, &xReceiveAddress)) {
 	rxCount++;
@@ -516,10 +516,8 @@ void vCANReceiveAndDeliverCallbackOOBD(int iSocket, void *pvContext)
 	    }
 	}
 	dp.data = &frame.data[0];	// data starts here
-    printf("before reporting data data recv %4X len %ld  err %d\n",dp.recv,dp.len,dp.err);
 	if (reportReceivedData)
 	    reportReceivedData(&dp, pdTRUE);
-    printf("after reporting %ld\n",iSocket);
     }
 }
 
