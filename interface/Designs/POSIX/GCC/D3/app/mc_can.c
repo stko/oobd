@@ -50,6 +50,8 @@ struct sockaddr_can xReceiveAddress;
 QueueHandle_t xCANReceiveQueue = NULL;
 struct sockaddr_can xSendAddress;
 int iSocketCan = 0, iReturn = 0, iCanBusIndex = 0, extended = 0;
+struct can_filter rfilter[MAXCANFILTER];
+
 //callback function for received data
 recv_cbf reportReceivedData = NULL;
 
@@ -67,12 +69,13 @@ UBaseType_t bus_init_can()
     rxCount = 0;
     txCount = 0;
     errCount = 0;
+/*
     stCANBusOffErr = 0;
     stCANBusWarningErr = 0;
     stCANBusPassiveErr = 0;
     ctrCANTec = 0;
     ctrCANRec = 0;
-
+*/
     canConfig = pvPortMalloc(sizeof(struct CanConfig));
     if (canConfig == NULL) {
 	DEBUGPRINT("Fatal error: Not enough heap to allocate CanConfig!\n",
@@ -84,6 +87,8 @@ UBaseType_t bus_init_can()
 
     // Set-up the Receive Queue and open the socket ready to receive. 
     xCANReceiveQueue = xQueueCreate(20, sizeof(struct can_frame));
+    memset(&rfilter,0, sizeof(rfilter));
+
     bus_change_state_can(pdFALSE);
     return pdPASS;
 }
@@ -188,6 +193,8 @@ UBaseType_t bus_change_state_can(UBaseType_t onlyClose)
     if (iSocketCan == 0) {
 	DEBUGPRINT("CAN Task: Unable to open a socket.\n", 'a');
 	return pdFAIL;
+    }else{
+    setsockopt(iSocketCan, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter));
     }
 
     return pdPASS;
@@ -199,6 +206,29 @@ UBaseType_t bus_change_state_can(UBaseType_t onlyClose)
 
 /*-----------------------------------------------------------*/
 
+uint16_t CAN_GetFilterReg16(uint8_t FilterID, uint8_t FilterReg,
+    uint8_t FilterPos)
+                {
+                if (FilterID>=1 && FilterID <=MAXCANFILTER){
+                     return (uint16_t) rfilter[FilterID-1].can_mask;
+                } else{
+                   return 0;
+                }
+                }
+                                               
+/*----------------------------------------------------------------------------*/
+                                               
+uint32_t CAN_GetFilterReg32(uint8_t FilterID, uint8_t FilterReg)
+         {
+                if (FilterID>=1 && FilterID <=MAXCANFILTER){
+                     return (uint32_t) rfilter[FilterID-1].can_mask;
+                } else{
+                   return 0;
+                }
+                }
+                                               
+/*----------------------------------------------------------------------------*/
+                                                                   
 UBaseType_t bus_send_can(data_packet * data)
 {
     DEBUGPRINT("CAN- Send Buffer with len %ld\n", data->len);
@@ -263,57 +293,6 @@ void bus_param_can_spec_Print(UBaseType_t msgType, void *data,
 
 }
 
-/*----------------------------------------------------------------------------*/
-
-uint16_t CAN_GetFilterReg16(uint8_t FilterID, uint8_t FilterReg,
-			    uint8_t FilterPos)
-{
-
-/*    if (FilterPos == 0) {	// IDLow 
-    // Get the LowID of the 32bit Filter register Fx.FR1
-    if (FilterReg == 1)		// FR1
-	return (uint16_t) (CAN1->
-			   sFilterRegister[FilterID].FR1 & 0x0000FFFF) >>
-	    5;
-    else if (FilterReg == 2)	// FR2
-	return (uint16_t) (CAN1->
-			   sFilterRegister[FilterID].FR2 & 0x0000FFFF) >>
-	    5;
-    else
-	return NULL;
-}
-
-else
-if (FilterPos == 1) {		// ID High
-if (FilterReg == 1)		// FR1
-    return (uint16_t) (CAN1->
-		       sFilterRegister[FilterID].FR1 >> 16 & 0x0000FFFF) >>
-	5;
-else if (FilterReg == 2)	// FR2
-    return (uint16_t) (CAN1->
-		       sFilterRegister[FilterID].FR2 >> 16 & 0x0000FFFF) >>
-	5;
-else
-    return NULL;
-} else
-*/
-    return 0;
-}
-
-/*----------------------------------------------------------------------------*/
-
-uint32_t CAN_GetFilterReg32(uint8_t FilterID, uint8_t FilterReg)
-{
-/*
-	if (FilterReg == 1) // FR1
-		return (uint32_t)CAN1->sFilterRegister[FilterID].FR1>>3;
-	else if (FilterReg == 2) // FR2
-		return (uint32_t)CAN1->sFilterRegister[FilterID].FR2>>3;
-	else
-		return NULL;
-*/
-    return 0;
-}
 
 /*-----------------------------------------------------------*/
 UBaseType_t bus_param_can_spec(param_data * args)
@@ -386,10 +365,13 @@ UBaseType_t bus_param_can_spec(param_data * args)
 	break;
     case PARAM_BUS_Can11FilterID:	/* 11bit CAN filter ID reconfig */
 	/* check CAN-ID */
-	if (args->args[ARG_VALUE_2] < 0x7FF) {
-	    /* check if Filter Number is odd */
+	if (args->args[ARG_VALUE_2] <= 0x7FF) {
 	    if ((args->args[ARG_VALUE_1] >= 1)
-		&& (args->args[ARG_VALUE_1] <= 10)) {
+		&& (args->args[ARG_VALUE_1] <= MAXCANFILTER)) {
+                rfilter[args->args[ARG_VALUE_1]-1].can_id   = args->args[ARG_VALUE_2];
+                if (iSocketCan){
+                    setsockopt(iSocketCan, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter));
+                }
 
 	    } else {
 		createCommandResultMsg(FBID_BUS_SPEC,
@@ -398,12 +380,6 @@ UBaseType_t bus_param_can_spec(param_data * args)
 				       ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
 		break;
 	    }
-
-	    if (args->args[ARG_VALUE_1] & 1) {
-	    } else {
-	    }
-
-	    //CAN_FilterInit(&CAN_FilterInitStructure);
 	    createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
 				   NULL);
 	} else {
@@ -415,16 +391,33 @@ UBaseType_t bus_param_can_spec(param_data * args)
 	break;
 
     case PARAM_BUS_Can29FilterID:	/* 29bit CAN filter ID reconfig */
-	//CAN_FilterInit(&CAN_FilterInitStructure);
-	createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
+	    if ((args->args[ARG_VALUE_1] >= 1)
+		&& (args->args[ARG_VALUE_1] <= MAXCANFILTER)) {
+                rfilter[args->args[ARG_VALUE_1]-1].can_id   = args->args[ARG_VALUE_2];
+                if (iSocketCan){
+                    setsockopt(iSocketCan, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter));
+                }
+
+            createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
+				   NULL);
+	    } else {
+		createCommandResultMsg(FBID_BUS_SPEC,
+				       ERR_CODE_OS_COMMAND_NOT_SUPPORTED,
+				       args->args[ARG_VALUE_1],
+				       ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
+	    }
 	break;
 
     case PARAM_BUS_Can11MaskID:	/* 11bit CAN filter mask ID reconfig */
 	/* check CAN-ID */
 	if (args->args[ARG_VALUE_2] <= 0x7FF) {
-	    /* check filter mask number */
 	    if ((args->args[ARG_VALUE_1] >= 1)
-		&& (args->args[ARG_VALUE_1] <= 10)) {
+		&& (args->args[ARG_VALUE_1] <= MAXCANFILTER)) {
+                rfilter[args->args[ARG_VALUE_1]-1].can_mask   = args->args[ARG_VALUE_2];
+                if (iSocketCan){
+                    setsockopt(iSocketCan, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter));
+                }
+
 	    } else {
 		createCommandResultMsg(FBID_BUS_SPEC,
 				       ERR_CODE_OS_COMMAND_NOT_SUPPORTED,
@@ -432,16 +425,8 @@ UBaseType_t bus_param_can_spec(param_data * args)
 				       ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
 		break;
 	    }
-
-	    /* CAN filter mask ID reconfig */
-	    if (args->args[ARG_VALUE_1] & 1) {
-		createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
-				       NULL);
-	    } else {
-//      CAN_FilterInit(&CAN_FilterInitStructure);
-		createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
-				       NULL);
-	    }
+	    createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
+				   NULL);
 	} else {
 	    createCommandResultMsg(FBID_BUS_SPEC,
 				   ERR_CODE_OS_COMMAND_NOT_SUPPORTED,
@@ -451,14 +436,30 @@ UBaseType_t bus_param_can_spec(param_data * args)
 	break;
 
     case PARAM_BUS_Can29MaskID:	/* 29bit CAN filter mask ID reconfig */
-	//    CAN_FilterInit(&CAN_FilterInitStructure);
-	createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
+	/* check CAN-ID */
+	    if ((args->args[ARG_VALUE_1] >= 1)
+		&& (args->args[ARG_VALUE_1] <= MAXCANFILTER)) {
+                rfilter[args->args[ARG_VALUE_1]-1].can_mask   = args->args[ARG_VALUE_2];
+                if (iSocketCan){
+                    setsockopt(iSocketCan, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter));
+                }
+
+	    } else {
+		createCommandResultMsg(FBID_BUS_SPEC,
+				       ERR_CODE_OS_COMMAND_NOT_SUPPORTED,
+				       args->args[ARG_VALUE_1],
+				       ERR_CODE_OS_COMMAND_NOT_SUPPORTED_TEXT);
+		break;
+	    }
+	    createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0,
+				   NULL);
 	break;
 
-    case PARAM_BUS_CanFilterReset:	/* 11bit CAN filter mask ID reconfig */
-	for (i = 0; i < 14; i++) {
-//      CAN_FilterInit(&CAN_FilterInitStructure);
-	}
+    case PARAM_BUS_CanFilterReset:	/*  CAN filter mask ID reconfig */
+      memset(&rfilter,0, sizeof(rfilter));
+                if (iSocketCan){
+                    setsockopt(iSocketCan, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter));
+                }
 	createCommandResultMsg(FBID_BUS_SPEC, ERR_CODE_NO_ERR, 0, NULL);
 	break;
 
