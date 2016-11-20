@@ -36,9 +36,9 @@
 <layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="27" name="tValues" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="28" name="bValues" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
+<layer number="29" name="tStop" color="7" fill="3" visible="yes" active="yes"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="yes"/>
-<layer number="31" name="tCream" color="7" fill="4" visible="no" active="yes"/>
+<layer number="31" name="tCream" color="7" fill="4" visible="yes" active="yes"/>
 <layer number="32" name="bCream" color="7" fill="5" visible="no" active="yes"/>
 <layer number="33" name="tFinish" color="6" fill="3" visible="no" active="yes"/>
 <layer number="34" name="bFinish" color="6" fill="6" visible="no" active="yes"/>
@@ -144,6 +144,8 @@
 <layer number="229" name="229bmp" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="230" name="230bmp" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="231" name="231bmp" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="232" name="Eagle3D_PG2" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="233" name="Eagle3D_PG3" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="248" name="Housing" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="249" name="Edge" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="250" name="Descript" color="7" fill="1" visible="yes" active="yes"/>
@@ -414,8 +416,113 @@ Source: http://focus.ti.com/lit/ds/symlink/tps65020.pdf</description>
 </package>
 </packages>
 <symbols>
+<symbol name="TLV320AIC3107">
+<description>The TLV320AIC3107 is a low power stereo audio codec with stereo headphone amplifier, and mono class-D speaker driver, as well as multiple inputs and outputs programmable in single-ended or fully differential configurations.
+
+Extensive register-based power control is included, enabling stereo 48-kHz DAC playback as low as 15 mW from a 3.3-V analog supply, making it ideal for portable battery-powered audio and telephony applications.</description>
+<wire x1="-12.7" y1="30.48" x2="-12.7" y2="-30.48" width="0.254" layer="94"/>
+<wire x1="-12.7" y1="-30.48" x2="12.7" y2="-30.48" width="0.254" layer="94"/>
+<wire x1="12.7" y1="-30.48" x2="12.7" y2="30.48" width="0.254" layer="94"/>
+<wire x1="12.7" y1="30.48" x2="-12.7" y2="30.48" width="0.254" layer="94"/>
+<pin name="AVDD_ADC" x="17.78" y="-17.78" length="middle" rot="R180"/>
+<pin name="AVDD_DAC" x="-17.78" y="0" length="middle"/>
+<pin name="AVSS_ADC" x="17.78" y="-15.24" length="middle" rot="R180"/>
+<pin name="AVSS_DAC" x="-17.78" y="-25.4" length="middle"/>
+<pin name="BCLK" x="-17.78" y="12.7" length="middle"/>
+<pin name="DIN" x="-17.78" y="10.16" length="middle"/>
+<pin name="DOUT" x="-17.78" y="7.62" length="middle"/>
+<pin name="DRVDD_0" x="-17.78" y="-2.54" length="middle"/>
+<pin name="DRVDD_1" x="17.78" y="25.4" length="middle" rot="R180"/>
+<pin name="DRVSS" x="17.78" y="-20.32" length="middle" rot="R180"/>
+<pin name="DVDD" x="-17.78" y="-10.16" length="middle"/>
+<pin name="DVSS" x="17.78" y="-27.94" length="middle" rot="R180"/>
+<pin name="GPIO1" x="-17.78" y="-15.24" length="middle"/>
+<pin name="HPCOM" x="-17.78" y="-12.7" length="middle"/>
+<pin name="HPLOUT" x="17.78" y="27.94" length="middle" rot="R180"/>
+<pin name="HPROUT" x="17.78" y="20.32" length="middle" rot="R180"/>
+<pin name="IOVDD" x="-17.78" y="-7.62" length="middle"/>
+<pin name="LEFT_LOP" x="17.78" y="10.16" length="middle" rot="R180"/>
+<pin name="LINE1LP" x="17.78" y="-10.16" length="middle" rot="R180"/>
+<pin name="LINE1RP" x="17.78" y="-7.62" length="middle" rot="R180"/>
+<pin name="LINE2LP" x="17.78" y="0" length="middle" rot="R180"/>
+<pin name="LINE2RP/LINE2LM" x="17.78" y="2.54" length="middle" rot="R180"/>
+<pin name="MCLK" x="-17.78" y="17.78" length="middle"/>
+<pin name="MIC3L/LINE1RM" x="17.78" y="-2.54" length="middle" rot="R180"/>
+<pin name="MIC3R/LINE2RM" x="17.78" y="5.08" length="middle" rot="R180"/>
+<pin name="MICBIAS" x="17.78" y="-25.4" length="middle" rot="R180"/>
+<pin name="MICDET/LINE1LM" x="-17.78" y="-5.08" length="middle"/>
+<pin name="RESETN" x="-17.78" y="27.94" length="middle"/>
+<pin name="RIGHT_LOP" x="17.78" y="15.24" length="middle" rot="R180"/>
+<pin name="SCL" x="-17.78" y="22.86" length="middle"/>
+<pin name="SDA" x="-17.78" y="20.32" length="middle"/>
+<pin name="SPOM" x="-17.78" y="-27.94" length="middle"/>
+<pin name="SPOP" x="17.78" y="12.7" length="middle" rot="R180"/>
+<pin name="SPVDD" x="17.78" y="7.62" length="middle" rot="R180"/>
+<pin name="SPVSS" x="17.78" y="-12.7" length="middle" rot="R180"/>
+<pin name="SWINM" x="17.78" y="22.86" length="middle" rot="R180"/>
+<pin name="SWINP" x="-17.78" y="-17.78" length="middle"/>
+<pin name="SWOUTM" x="-17.78" y="-22.86" length="middle"/>
+<pin name="SWOUTP" x="-17.78" y="-20.32" length="middle"/>
+<pin name="WCLK" x="-17.78" y="15.24" length="middle"/>
+<text x="-12.7" y="33.02" size="1.778" layer="95">&gt;NAME</text>
+<text x="-12.7" y="-33.02" size="1.778" layer="95">&gt;VALUE</text>
+</symbol>
 </symbols>
 <devicesets>
+<deviceset name="TLV320AIC3107" uservalue="yes">
+<gates>
+<gate name="G$1" symbol="TLV320AIC3107" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="QFN40-6X6">
+<connects>
+<connect gate="G$1" pin="AVDD_ADC" pad="12"/>
+<connect gate="G$1" pin="AVDD_DAC" pad="21"/>
+<connect gate="G$1" pin="AVSS_ADC" pad="11"/>
+<connect gate="G$1" pin="AVSS_DAC" pad="22"/>
+<connect gate="G$1" pin="BCLK" pad="35"/>
+<connect gate="G$1" pin="DIN" pad="37"/>
+<connect gate="G$1" pin="DOUT" pad="38"/>
+<connect gate="G$1" pin="DRVDD_0" pad="13"/>
+<connect gate="G$1" pin="DRVDD_1" pad="18"/>
+<connect gate="G$1" pin="DRVSS" pad="16"/>
+<connect gate="G$1" pin="DVDD" pad="33"/>
+<connect gate="G$1" pin="DVSS" pad="39"/>
+<connect gate="G$1" pin="GPIO1" pad="32"/>
+<connect gate="G$1" pin="HPCOM" pad="15"/>
+<connect gate="G$1" pin="HPLOUT" pad="14"/>
+<connect gate="G$1" pin="HPROUT" pad="17"/>
+<connect gate="G$1" pin="IOVDD" pad="40"/>
+<connect gate="G$1" pin="LEFT_LOP" pad="19"/>
+<connect gate="G$1" pin="LINE1LP" pad="4"/>
+<connect gate="G$1" pin="LINE1RP" pad="5"/>
+<connect gate="G$1" pin="LINE2LP" pad="7"/>
+<connect gate="G$1" pin="LINE2RP/LINE2LM" pad="8"/>
+<connect gate="G$1" pin="MCLK" pad="34"/>
+<connect gate="G$1" pin="MIC3L/LINE1RM" pad="6"/>
+<connect gate="G$1" pin="MIC3R/LINE2RM" pad="9"/>
+<connect gate="G$1" pin="MICBIAS" pad="10"/>
+<connect gate="G$1" pin="MICDET/LINE1LM" pad="3"/>
+<connect gate="G$1" pin="RESETN" pad="31"/>
+<connect gate="G$1" pin="RIGHT_LOP" pad="20"/>
+<connect gate="G$1" pin="SCL" pad="1"/>
+<connect gate="G$1" pin="SDA" pad="2"/>
+<connect gate="G$1" pin="SPOM" pad="23"/>
+<connect gate="G$1" pin="SPOP" pad="26"/>
+<connect gate="G$1" pin="SPVDD" pad="25"/>
+<connect gate="G$1" pin="SPVSS" pad="24"/>
+<connect gate="G$1" pin="SWINM" pad="27"/>
+<connect gate="G$1" pin="SWINP" pad="30"/>
+<connect gate="G$1" pin="SWOUTM" pad="28"/>
+<connect gate="G$1" pin="SWOUTP" pad="29"/>
+<connect gate="G$1" pin="WCLK" pad="36"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
 </devicesets>
 </library>
 </drawing>
