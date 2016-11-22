@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="100" unitdist="mil" unit="mil" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="mil" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="12" fill="1" visible="no" active="no"/>
@@ -19121,107 +19121,107 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <part name="GND1" library="supply1" deviceset="GND" device="" value=""/>
 <part name="U$1" library="frames" deviceset="A3L-LOC" device="" value="Sheet 1/6"/>
 <part name="GND129" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="L3" library="rcl" deviceset="L-US" device="L0603" value="FB0805/600R/200mA(201209-601)"/>
-<part name="C6" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
+<part name="L1" library="rcl" deviceset="L-US" device="L0603" value="FB0805/600R/200mA(201209-601)"/>
+<part name="C29" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
 <part name="GND56" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="P+18" library="supply1" deviceset="+5V" device=""/>
-<part name="U1" library="OLIMEX_IC" deviceset="SY6280" device=""/>
+<part name="U3" library="OLIMEX_IC" deviceset="SY6280" device=""/>
 <part name="GND60" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="R3" library="rcl" deviceset="R-EU_" device="R0603" value="13k/1%"/>
+<part name="R15" library="rcl" deviceset="R-EU_" device="R0603" value="13k/1%"/>
 <part name="GND66" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="R4" library="rcl" deviceset="R-EU_" device="R0603" value="10k"/>
+<part name="R17" library="rcl" deviceset="R-EU_" device="R0603" value="10k"/>
 <part name="GND67" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="L1" library="rcl" deviceset="L-US" device="L0603" value="FB0805/600R/2A"/>
+<part name="L3" library="rcl" deviceset="L-US" device="L0603" value="FB0805/600R/2A"/>
 <part name="USB_OTG" library="OLIMEX_CONNECTORS" deviceset="MINI_USB9" device="" value="USB-OTG"/>
-<part name="R1" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
-<part name="C4" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
+<part name="R20" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
+<part name="C23" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
 <part name="GND61" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="GND84" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="GND96" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="U6" library="arm" deviceset="MCP2551" device="" value="SN65HVD230(SO8)"/>
-<part name="R41" library="rcl" deviceset="R-EU_" device="R0603" value="10k"/>
-<part name="C47" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
+<part name="U2" library="arm" deviceset="MCP2551" device="" value="SN65HVD230(SO8)"/>
+<part name="R12" library="rcl" deviceset="R-EU_" device="R0603" value="10k"/>
+<part name="C22" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
 <part name="GND98" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="R40" library="rcl" deviceset="R-EU_" device="R0603" value="NI"/>
-<part name="R2" library="rcl" deviceset="R-EU_" device="R0603" value="NI"/>
+<part name="R11" library="rcl" deviceset="R-EU_" device="R0603" value="NI"/>
+<part name="R21" library="rcl" deviceset="R-EU_" device="R0603" value="NI"/>
 <part name="GND8" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="R55" library="rcl" deviceset="R-EU_" device="R0603" value="NI"/>
-<part name="C48" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
+<part name="R31" library="rcl" deviceset="R-EU_" device="R0603" value="NI"/>
+<part name="C49" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="GND53" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="R47" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
-<part name="LED3" library="DOUBLE-SIDE" deviceset="LED" device="LED_0603" value="LED/Yellow/0603"/>
-<part name="R48" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
+<part name="R30" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
+<part name="LED1" library="DOUBLE-SIDE" deviceset="LED" device="LED_0603" value="LED/Yellow/0603"/>
+<part name="R38" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
 <part name="GND87" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="R54" library="rcl" deviceset="R-EU_" device="R0603" value="49.9R/1%"/>
+<part name="R34" library="rcl" deviceset="R-EU_" device="R0603" value="49.9R/1%"/>
 <part name="LED2" library="DOUBLE-SIDE" deviceset="LED" device="LED_0603" value="LED/Red/0603"/>
-<part name="R49" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
+<part name="R40" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
 <part name="GND9" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="U10" library="OLIMEX_IC" deviceset="MP1482" device="" value="MP1482"/>
-<part name="C52" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
+<part name="U5" library="OLIMEX_IC" deviceset="MP1482" device="" value="MP1482"/>
+<part name="C50" library="rcl" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="GND12" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="GND14" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="R69" library="rcl" deviceset="R-EU_" device="R0603" value="10k"/>
-<part name="C49" library="rcl" deviceset="C-EU" device="C0603" value="10nF"/>
-<part name="C50" library="rcl" deviceset="C-EU" device="C0603" value="3.3nF"/>
-<part name="R84" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
+<part name="R32" library="rcl" deviceset="R-EU_" device="R0603" value="10k"/>
+<part name="C51" library="rcl" deviceset="C-EU" device="C0603" value="10nF"/>
+<part name="C52" library="rcl" deviceset="C-EU" device="C0603" value="3.3nF"/>
+<part name="R35" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
 <part name="GND17" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="L11" library="OLIMEX_DISCRET" deviceset="L" device="LQH88PN100M38" value="10uH/3.15A/20%"/>
+<part name="L6" library="OLIMEX_DISCRET" deviceset="L" device="LQH88PN100M38" value="10uH/3.15A/20%"/>
 <part name="C53" library="rcl" deviceset="C-EU" device="C0603" value="22uF/6.3V"/>
 <part name="GND15" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="R85" library="rcl" deviceset="R-EU_" device="R0603" value="1.05k/1%"/>
+<part name="R36" library="rcl" deviceset="R-EU_" device="R0603" value="1.05k/1%"/>
 <part name="GND18" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="R70" library="rcl" deviceset="R-EU_" device="R0603" value="4.99k/1%"/>
+<part name="R37" library="rcl" deviceset="R-EU_" device="R0603" value="4.99k/1%"/>
 <part name="P+5" library="supply1" deviceset="+5V" device=""/>
 <part name="GND19" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="GND21" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="C51" library="SparkFun-Capacitors" deviceset="47UF-50V-20%(ELECT)" device="" value="470uF/25V/LOWESR/105C"/>
+<part name="C48" library="SparkFun-Capacitors" deviceset="47UF-50V-20%(ELECT)" device="" value="470uF/25V/LOWESR/105C"/>
 <part name="C54" library="rcl" deviceset="C-EU" device="C0603" value="22uF/6.3V"/>
 <part name="PWR_LED" library="DOUBLE-SIDE" deviceset="LED" device="0603DWS" value="LED/Red/0603"/>
-<part name="R86" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
+<part name="R39" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
 <part name="GND35" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="D4" library="OLIMEX_DISCRET" deviceset="SMBJ16A" device=""/>
+<part name="D3" library="OLIMEX_DISCRET" deviceset="SMBJ16A" device=""/>
 <part name="C55" library="rcl" deviceset="C-EU" device="C0603" value="22uF/6.3V"/>
 <part name="C56" library="rcl" deviceset="C-EU" device="C0603" value="22uF/6.3V"/>
 <part name="AM3352-SOM-EVB-PLATFORM" library="OOBDtiger-Connector" deviceset="OOBD-TIGER-AM3352-SOM" device="---4XGPH127SMT-02X20(PA-V16X-2X20-LF)" value="4XGPH127SMT-02X20(PA-V16X-2X20-LF)"/>
-<part name="C64" library="rcl" deviceset="C-EU" device="C0603" value="22uF/6.3V"/>
+<part name="C27" library="rcl" deviceset="C-EU" device="C0603" value="22uF/6.3V"/>
 <part name="GND41" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="C63" library="rcl" deviceset="C-EU" device="C0603" value="22uF/6.3V"/>
+<part name="C25" library="rcl" deviceset="C-EU" device="C0603" value="22uF/6.3V"/>
 <part name="GND44" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="GND3" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="GND4" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="U2" library="arm" deviceset="MCP2551" device="" value="SN65HVD230(SO8)"/>
+<part name="U1" library="arm" deviceset="MCP2551" device="" value="SN65HVD230(SO8)"/>
 <part name="R5" library="rcl" deviceset="R-EU_" device="R0603" value="10k"/>
-<part name="C1" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
+<part name="C11" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
 <part name="GND5" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="R7" library="rcl" deviceset="R-EU_" device="R0603" value="NI"/>
+<part name="R4" library="rcl" deviceset="R-EU_" device="R0603" value="NI"/>
 <part name="OOBD2-CONNECTOR" library="pinhead" deviceset="PINHD-2X5" device="/90" value="In-Car Diagnostic"/>
-<part name="R8" library="resistor" deviceset="R-EU_" device="R0603" value="10K">
+<part name="R26" library="resistor" deviceset="R-EU_" device="R0603" value="10K">
 <attribute name="MANEX" value="110-0002014 "/>
 </part>
-<part name="R9" library="resistor" deviceset="R-EU_" device="R0603" value="10K">
+<part name="R27" library="resistor" deviceset="R-EU_" device="R0603" value="10K">
 <attribute name="MANEX" value="110-0002014 "/>
 </part>
-<part name="C5" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="0.1µF">
+<part name="C32" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="0.1µF">
 <attribute name="MANEX" value="123-0001115 "/>
 </part>
-<part name="C7" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="22µF">
+<part name="C39" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="22µF">
 <attribute name="MANEX" value="123-0001115 "/>
 </part>
-<part name="C16" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="0.1µF">
+<part name="C43" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="0.1µF">
 <attribute name="MANEX" value="123-0001032"/>
 </part>
-<part name="C17" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="10µF">
+<part name="C41" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="10µF">
 <attribute name="MANEX" value="123-0001032"/>
 </part>
-<part name="C18" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="NI (0,01µF)">
+<part name="C45" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="NI (0,01µF)">
 <attribute name="MANEX" value="123-0001115 "/>
 </part>
-<part name="C19" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="NI (0,01µF)">
+<part name="C46" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="NI (0,01µF)">
 <attribute name="MANEX" value="123-0001115 "/>
 </part>
-<part name="TLV320AIC3107" library="TLV320AIC3107" deviceset="TLV320AIC3107" device="" value="Audio-Amplifier"/>
-<part name="R13" library="resistor" deviceset="R-EU_" device="R0805" value="0R"/>
-<part name="R14" library="resistor" deviceset="R-EU_" device="R0805" value="0R"/>
+<part name="TLV320AIC1" library="TLV320AIC3107" deviceset="TLV320AIC3107" device="" value="Audio-Amplifier"/>
+<part name="R29" library="resistor" deviceset="R-EU_" device="R0805" value="0R"/>
+<part name="R28" library="resistor" deviceset="R-EU_" device="R0805" value="0R"/>
 <part name="AGND2" library="supply1" deviceset="AGND" device=""/>
 <part name="FRAME1" library="frames" deviceset="A3L-LOC" device="" value="Sheet 3/6"/>
 <part name="FRAME2" library="frames" deviceset="A3L-LOC" device="" value="Sheet 5/6"/>
@@ -19232,75 +19232,75 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <part name="P+4" library="supply1" deviceset="+12V" device=""/>
 <part name="GND7" library="supply1" deviceset="GND" device=""/>
 <part name="GND33" library="supply1" deviceset="GND" device=""/>
-<part name="C9" library="rcl" deviceset="C-EU" device="C0603" value="1uF"/>
-<part name="IC4" library="DS3231_industrialberry" deviceset="DS3231" device="SOIC-16W" value="DS3231"/>
+<part name="C47" library="rcl" deviceset="C-EU" device="C0603" value="1uF"/>
+<part name="IC3" library="DS3231_industrialberry" deviceset="DS3231" device="SOIC-16W" value="DS3231"/>
 <part name="GND11" library="supply1" deviceset="GND" device=""/>
 <part name="GND16" library="supply1" deviceset="GND" device=""/>
-<part name="BAT2" library="SparkFun" deviceset="BATTERY" device="12PTH" value="3,6V"/>
+<part name="BAT1" library="SparkFun" deviceset="BATTERY" device="12PTH" value="3,6V"/>
 <part name="USB_HOST" library="OLIMEX_CONNECTORS" deviceset="USB_SHIELD" device="1" value="USB_A_VERTICAL"/>
-<part name="L5" library="rcl" deviceset="L-US" device="L0603" value="FB0805/600R/2A"/>
-<part name="C3" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
+<part name="L4" library="rcl" deviceset="L-US" device="L0603" value="FB0805/600R/2A"/>
+<part name="C24" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
 <part name="GND10" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="C8" library="rcl" deviceset="C-EU" device="C0603" value="22uF/6.3V"/>
+<part name="C26" library="rcl" deviceset="C-EU" device="C0603" value="22uF/6.3V"/>
 <part name="GND20" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="C10" library="rcl" deviceset="C-EU" device="C0603" value="22uF/6.3V"/>
+<part name="C28" library="rcl" deviceset="C-EU" device="C0603" value="22uF/6.3V"/>
 <part name="GND22" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="GND25" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="L6" library="rcl" deviceset="L-US" device="L0603" value="FB0805/600R/2A"/>
+<part name="L2" library="rcl" deviceset="L-US" device="L0603" value="FB0805/600R/2A"/>
 <part name="GND28" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="WAKE-UP" library="SparkFun" deviceset="JUMPER-2" device="PTH_LOCK" value="Open"/>
 <part name="HS-CAN" library="SparkFun" deviceset="JUMPER-2" device="PTH" value="OPEN"/>
 <part name="+3V1" library="supply1" deviceset="+3V3" device=""/>
 <part name="+3V2" library="supply1" deviceset="+3V3" device=""/>
-<part name="R20" library="rcl" deviceset="R-EU_" device="R0603" value="10k"/>
+<part name="R33" library="rcl" deviceset="R-EU_" device="R0603" value="10k"/>
 <part name="+3V3" library="supply1" deviceset="+3V3" device=""/>
 <part name="+3V4" library="supply1" deviceset="+3V3" device=""/>
 <part name="P+7" library="supply1" deviceset="+5V" device=""/>
 <part name="+3V5" library="supply1" deviceset="+3V3" device=""/>
 <part name="+3V6" library="supply1" deviceset="+3V3" device=""/>
 <part name="GND27" library="supply1" deviceset="GND" device="" value=""/>
-<part name="C2" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
+<part name="C30" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
 <part name="GND13" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="P+1" library="supply1" deviceset="+5V" device=""/>
-<part name="U3" library="OLIMEX_IC" deviceset="SY6280" device=""/>
+<part name="U4" library="OLIMEX_IC" deviceset="SY6280" device=""/>
 <part name="GND29" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="R19" library="rcl" deviceset="R-EU_" device="R0603" value="6k8k/1%"/>
+<part name="R16" library="rcl" deviceset="R-EU_" device="R0603" value="6k8k/1%"/>
 <part name="GND30" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="R21" library="rcl" deviceset="R-EU_" device="R0603" value="10k"/>
+<part name="R18" library="rcl" deviceset="R-EU_" device="R0603" value="10k"/>
 <part name="GND31" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="R22" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
-<part name="R23" library="rcl" deviceset="R-EU_" device="R0603" value="NI"/>
-<part name="R24" library="rcl" deviceset="R-EU_" device="R0603" value="10k/1%"/>
+<part name="R23" library="rcl" deviceset="R-EU_" device="R0603" value="2.2k/1%"/>
+<part name="R24" library="rcl" deviceset="R-EU_" device="R0603" value="NI"/>
+<part name="R19" library="rcl" deviceset="R-EU_" device="R0603" value="10k/1%"/>
 <part name="GND32" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="IC1" library="ADM3053" deviceset="ADM3053" device="M"/>
 <part name="IC2" library="ADM3053" deviceset="ADM3053" device="M"/>
 <part name="GND34" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="GND36" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="C11" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
-<part name="C12" library="rcl" deviceset="C-EU" device="C0805K" value="10µF"/>
-<part name="C13" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
+<part name="C8" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
+<part name="C7" library="rcl" deviceset="C-EU" device="C0805K" value="10µF"/>
+<part name="C18" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
+<part name="C12" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
+<part name="C13" library="rcl" deviceset="C-EU" device="C0805K" value="10µF"/>
 <part name="C15" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
-<part name="C20" library="rcl" deviceset="C-EU" device="C0805K" value="10µF"/>
+<part name="C16" library="rcl" deviceset="C-EU" device="C0805K" value="10nF"/>
+<part name="C1" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
+<part name="C2" library="rcl" deviceset="C-EU" device="C0805K" value="10µF"/>
+<part name="C4" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
+<part name="C5" library="rcl" deviceset="C-EU" device="C0805K" value="10nF"/>
+<part name="C10" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
+<part name="C9" library="rcl" deviceset="C-EU" device="C0805K" value="10nF"/>
 <part name="C21" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
-<part name="C22" library="rcl" deviceset="C-EU" device="C0805K" value="10nF"/>
-<part name="C23" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
-<part name="C24" library="rcl" deviceset="C-EU" device="C0805K" value="10µF"/>
-<part name="C25" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
-<part name="C26" library="rcl" deviceset="C-EU" device="C0805K" value="10nF"/>
-<part name="C27" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
-<part name="C28" library="rcl" deviceset="C-EU" device="C0805K" value="10nF"/>
-<part name="C29" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
-<part name="C30" library="rcl" deviceset="C-EU" device="C0805K" value="10nF"/>
-<part name="R25" library="rcl" deviceset="R-EU_" device="R0603" value="8k2"/>
+<part name="C20" library="rcl" deviceset="C-EU" device="C0805K" value="10nF"/>
+<part name="R8" library="rcl" deviceset="R-EU_" device="R0603" value="8k2"/>
 <part name="GND43" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="GND45" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="R26" library="rcl" deviceset="R-EU_" device="R0603" value="8k2"/>
+<part name="R1" library="rcl" deviceset="R-EU_" device="R0603" value="8k2"/>
 <part name="GND47" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="GND48" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="R27" library="rcl" deviceset="R-EU_" device="0207/10" value="0R"/>
-<part name="R28" library="rcl" deviceset="R-EU_" device="0207/10" value="0R"/>
-<part name="R29" library="rcl" deviceset="R-EU_" device="0207/10" value="0R"/>
-<part name="R30" library="rcl" deviceset="R-EU_" device="0207/10" value="0R"/>
+<part name="R13" library="rcl" deviceset="R-EU_" device="0207/10" value="0R"/>
+<part name="R14" library="rcl" deviceset="R-EU_" device="0207/10" value="0R"/>
+<part name="R6" library="rcl" deviceset="R-EU_" device="0207/10" value="0R"/>
+<part name="R7" library="rcl" deviceset="R-EU_" device="0207/10" value="0R"/>
 <part name="GND39" library="supply1" deviceset="GNDA" device=""/>
 <part name="GND40" library="supply1" deviceset="GNDA" device=""/>
 <part name="GND46" library="supply1" deviceset="GNDA" device=""/>
@@ -19309,19 +19309,19 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <part name="GND38" library="supply1" deviceset="GNDA" device=""/>
 <part name="GND42" library="supply1" deviceset="GNDA" device=""/>
 <part name="GND50" library="supply1" deviceset="GNDA" device=""/>
-<part name="C31" library="rcl" deviceset="C-EU" device="075-032X103" value="NI (AY2221K29Y5SS63L7)"/>
-<part name="C32" library="rcl" deviceset="C-EU" device="075-032X103" value="NA (AY2221K29Y5SS63L7)"/>
+<part name="C6" library="rcl" deviceset="C-EU" device="075-032X103" value="NI (AY2221K29Y5SS63L7)"/>
+<part name="C17" library="rcl" deviceset="C-EU" device="075-032X103" value="NI (AY2221K29Y5SS63L7)"/>
 <part name="P+6" library="supply1" deviceset="+5V" device=""/>
 <part name="P+8" library="supply1" deviceset="+5V" device=""/>
-<part name="R31" library="resistor" deviceset="R-EU_" device="R0603" value="60R"/>
-<part name="R32" library="resistor" deviceset="R-EU_" device="R0603" value="60R"/>
-<part name="C33" library="resistor" deviceset="C-EU" device="C0603" value="NA(10nF)"/>
-<part name="D2" library="Industrialberry" deviceset="PESD1CAN" device=""/>
-<part name="MS-CAN" library="SparkFun" deviceset="JUMPER-2" device="PTH" value="OPEN"/>
-<part name="R6" library="resistor" deviceset="R-EU_" device="R0603" value="60R"/>
-<part name="R33" library="resistor" deviceset="R-EU_" device="R0603" value="60R"/>
-<part name="C34" library="resistor" deviceset="C-EU" device="C0603" value="NA(10nF)"/>
+<part name="R2" library="resistor" deviceset="R-EU_" device="R0603" value="60R"/>
+<part name="R3" library="resistor" deviceset="R-EU_" device="R0603" value="60R"/>
+<part name="C3" library="resistor" deviceset="C-EU" device="C0603" value="NI (10nF)"/>
 <part name="D1" library="Industrialberry" deviceset="PESD1CAN" device=""/>
+<part name="MS-CAN" library="SparkFun" deviceset="JUMPER-2" device="PTH" value="OPEN"/>
+<part name="R9" library="resistor" deviceset="R-EU_" device="R0603" value="60R"/>
+<part name="R10" library="resistor" deviceset="R-EU_" device="R0603" value="60R"/>
+<part name="C14" library="resistor" deviceset="C-EU" device="C0603" value="NI (10nF)"/>
+<part name="D2" library="Industrialberry" deviceset="PESD1CAN" device=""/>
 <part name="OOBDPICAN" library="jumper" deviceset="JP3Q" device="" value="Bridge to OOBDpiCAN"/>
 <part name="GND57" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="P+9" library="supply1" deviceset="+5V" device=""/>
@@ -19334,69 +19334,71 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <part name="+3V9" library="supply1" deviceset="+3V3" device=""/>
 <part name="+3V10" library="supply1" deviceset="+3V3" device=""/>
 <part name="+3V11" library="supply1" deviceset="+3V3" device=""/>
-<part name="C14" library="rcl" deviceset="C-EU" device="C0805K" value="10µF"/>
+<part name="C19" library="rcl" deviceset="C-EU" device="C0805K" value="10µF"/>
 <part name="GND59" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="GND62" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="AGND3" library="supply1" deviceset="AGND" device=""/>
 <part name="AGND4" library="supply1" deviceset="AGND" device=""/>
 <part name="GND63" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="U4" library="SparkFun-PowerIC" deviceset="V_REG_LDO" device="SMD" value="TLV70215"/>
+<part name="U6" library="SparkFun-PowerIC" deviceset="V_REG_LDO" device="SMD" value="TLV70215"/>
 <part name="+3V12" library="supply1" deviceset="+3V3" device=""/>
 <part name="GND64" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="GND65" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="C37" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="NI (47pF)">
+<part name="C58" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="NI (47pF)">
 <attribute name="MANEX" value="123-0001115 "/>
 </part>
 <part name="GND68" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="C35" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="1µf">
+<part name="C57" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="1µf">
 <attribute name="MANEX" value="123-0001032"/>
 </part>
-<part name="C36" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="2.2µf">
+<part name="C59" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="2.2µf">
 <attribute name="MANEX" value="123-0001032"/>
 </part>
 <part name="C38" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="0.1nF">
 <attribute name="MANEX" value="123-0001115 "/>
 </part>
-<part name="C39" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="0.1µF">
+<part name="C34" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="0.1µF">
 <attribute name="MANEX" value="123-0001032"/>
 </part>
-<part name="C40" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="10µF">
+<part name="C33" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="10µF">
 <attribute name="MANEX" value="123-0001032"/>
 </part>
-<part name="C41" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="0.1µF">
+<part name="C44" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="0.1µF">
 <attribute name="MANEX" value="123-0001032"/>
 </part>
 <part name="C42" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="10µF">
 <attribute name="MANEX" value="123-0001032"/>
 </part>
-<part name="C43" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="10µF">
+<part name="C31" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="10µF">
 <attribute name="MANEX" value="123-0001115 "/>
 </part>
-<part name="C44" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="10µF">
+<part name="C37" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="10µF">
 <attribute name="MANEX" value="123-0001115 "/>
 </part>
-<part name="C45" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="0.1µF">
+<part name="C36" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="0.1µF">
 <attribute name="MANEX" value="123-0001115 "/>
 </part>
-<part name="C46" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="10µF">
+<part name="C35" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="10µF">
 <attribute name="MANEX" value="123-0001115 "/>
 </part>
-<part name="C57" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="0.1µF">
+<part name="C40" library="SparkFun-Passives" deviceset="CAP" device="0603-CAP" value="0.1µF">
 <attribute name="MANEX" value="123-0001115 "/>
 </part>
 <part name="FRAME5" library="frames" deviceset="A3L-LOC" device="" value="Sheet 2/6"/>
-<part name="R34" library="rcl" deviceset="R-EU_" device="R0603" value="0R"/>
-<part name="R35" library="rcl" deviceset="R-EU_" device="R0603" value="0R"/>
-<part name="L2" library="rcl" deviceset="L-US" device="L0603" value="FB0805/600R/200mA(201209-601)"/>
+<part name="R22" library="rcl" deviceset="R-EU_" device="R0603" value="0R"/>
+<part name="R25" library="rcl" deviceset="R-EU_" device="R0603" value="0R"/>
+<part name="L5" library="rcl" deviceset="L-US" device="L0603" value="FB0805/600R/200mA(201209-601)"/>
 <part name="+3V13" library="supply1" deviceset="+3V3" device=""/>
 <part name="+3V14" library="supply1" deviceset="+3V3" device=""/>
 <part name="GND23" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="GND24" library="supply1" deviceset="GND" device="" value="GND"/>
-<part name="JP2" library="jumper" deviceset="JP3Q" device="" value="Audio-Out"/>
+<part name="JP1" library="jumper" deviceset="JP3Q" device="" value="Audio-Out"/>
 <part name="+3V15" library="supply1" deviceset="+3V3" device=""/>
 <part name="AGND1" library="supply1" deviceset="AGND" device=""/>
 <part name="GND26" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="AGND5" library="supply1" deviceset="AGND" device=""/>
+<part name="R41" library="rcl" deviceset="R-EU_" device="0207/10" value="0R"/>
+<part name="GND58" library="supply1" deviceset="GND" device="" value="GND"/>
 </parts>
 <sheets>
 <sheet>
@@ -19407,15 +19409,15 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="266.7" y1="177.8" x2="121.92" y2="177.8" width="0.4064" layer="94" style="longdash"/>
 <wire x1="121.92" y1="177.8" x2="121.92" y2="246.38" width="0.4064" layer="94" style="longdash"/>
 <wire x1="121.92" y1="246.38" x2="266.7" y2="246.38" width="0.4064" layer="94" style="longdash"/>
-<text x="124.46" y="238.76" size="5.08" layer="94">HS-CAN Interface</text>
+<text x="124.46" y="238.76" size="5.08" layer="94">HS-CAN Interface (default)</text>
 <text x="290.83" y="20.32" size="1.778" layer="94">Project: OOBD-Tiger</text>
 <text x="290.83" y="13.97" size="1.778" layer="94">Title: HS-CAN Interface</text>
 <wire x1="266.7" y1="111.76" x2="266.7" y2="25.4" width="0.4064" layer="94" style="longdash"/>
 <wire x1="266.7" y1="25.4" x2="121.92" y2="25.4" width="0.4064" layer="94" style="longdash"/>
 <wire x1="121.92" y1="25.4" x2="121.92" y2="111.76" width="0.4064" layer="94" style="longdash"/>
 <wire x1="121.92" y1="111.76" x2="266.7" y2="111.76" width="0.4064" layer="94" style="longdash"/>
-<text x="185.42" y="50.8" size="1.778" layer="94">CAN1</text>
-<text x="208.28" y="224.79" size="1.778" layer="94">CAN1</text>
+<text x="185.42" y="50.8" size="1.778" layer="94">HS-CAN</text>
+<text x="208.28" y="224.79" size="1.778" layer="94">HS-CAN</text>
 <wire x1="121.92" y1="116.84" x2="121.92" y2="172.72" width="0.4064" layer="94" style="longdash"/>
 <wire x1="266.7" y1="116.84" x2="121.92" y2="116.84" width="0.4064" layer="94" style="longdash"/>
 <wire x1="121.92" y1="172.72" x2="266.7" y2="172.72" width="0.4064" layer="94" style="longdash"/>
@@ -19427,7 +19429,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <instance part="U$1" gate="G$1" x="0" y="0"/>
 <instance part="GND3" gate="1" x="238.76" y="182.88"/>
 <instance part="GND4" gate="1" x="175.26" y="223.52"/>
-<instance part="U2" gate="G$1" x="218.44" y="215.9" smashed="yes" rot="MR0">
+<instance part="U1" gate="G$1" x="218.44" y="215.9" smashed="yes" rot="MR0">
 <attribute name="NAME" x="226.06" y="224.536" size="1.778" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="228.854" y="208.026" size="1.778" layer="96" rot="MR0"/>
 </instance>
@@ -19435,61 +19437,61 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <attribute name="NAME" x="184.785" y="228.3714" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="190.881" y="228.346" size="1.778" layer="96" rot="MR180"/>
 </instance>
-<instance part="C1" gate="G$1" x="248.92" y="200.66" smashed="yes">
+<instance part="C11" gate="G$1" x="248.92" y="200.66" smashed="yes">
 <attribute name="NAME" x="249.809" y="201.041" size="1.778" layer="95"/>
 <attribute name="VALUE" x="249.809" y="195.961" size="1.778" layer="96"/>
 </instance>
 <instance part="GND5" gate="1" x="248.92" y="182.88" rot="MR0"/>
-<instance part="R7" gate="G$1" x="187.96" y="233.68" smashed="yes" rot="R180">
+<instance part="R4" gate="G$1" x="187.96" y="233.68" smashed="yes" rot="R180">
 <attribute name="NAME" x="184.785" y="233.4514" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="190.881" y="233.426" size="1.778" layer="96" rot="MR180"/>
 </instance>
 <instance part="HS-CAN" gate="A" x="154.94" y="129.54" rot="R90"/>
 <instance part="IC1" gate="G$1" x="195.58" y="71.12" rot="R180"/>
 <instance part="GND34" gate="1" x="228.6" y="91.44"/>
-<instance part="C11" gate="G$1" x="228.6" y="43.18" smashed="yes">
-<attribute name="NAME" x="229.362" y="43.561" size="1.27" layer="95"/>
-<attribute name="VALUE" x="229.489" y="38.227" size="1.27" layer="96"/>
+<instance part="C8" gate="G$1" x="228.6" y="43.18" smashed="yes">
+<attribute name="NAME" x="228.219" y="36.957" size="1.4224" layer="95" rot="R90"/>
+<attribute name="VALUE" x="227.838" y="43.434" size="1.4224" layer="96" rot="R90"/>
 </instance>
-<instance part="C12" gate="G$1" x="220.98" y="43.18" smashed="yes">
-<attribute name="NAME" x="221.869" y="43.561" size="1.27" layer="95"/>
-<attribute name="VALUE" x="221.869" y="38.481" size="1.27" layer="96"/>
+<instance part="C7" gate="G$1" x="220.98" y="43.18" smashed="yes">
+<attribute name="NAME" x="220.599" y="37.084" size="1.4224" layer="95" rot="R90"/>
+<attribute name="VALUE" x="220.599" y="43.434" size="1.4224" layer="96" rot="R90"/>
 </instance>
-<instance part="C23" gate="G$1" x="149.86" y="43.18" smashed="yes">
-<attribute name="NAME" x="148.209" y="40.64" size="1.27" layer="95" rot="R270"/>
-<attribute name="VALUE" x="148.844" y="43.053" size="1.27" layer="96" rot="R90"/>
+<instance part="C1" gate="G$1" x="149.86" y="43.18" smashed="yes">
+<attribute name="NAME" x="148.209" y="40.64" size="1.4224" layer="95" rot="R270"/>
+<attribute name="VALUE" x="148.844" y="43.688" size="1.4224" layer="96" rot="R90"/>
 </instance>
-<instance part="C24" gate="G$1" x="157.48" y="43.18" smashed="yes">
-<attribute name="NAME" x="156.718" y="37.465" size="1.27" layer="95" rot="R90"/>
-<attribute name="VALUE" x="156.845" y="43.18" size="1.27" layer="96" rot="R90"/>
+<instance part="C2" gate="G$1" x="157.48" y="43.18" smashed="yes">
+<attribute name="NAME" x="156.718" y="36.83" size="1.4224" layer="95" rot="R90"/>
+<attribute name="VALUE" x="156.845" y="43.815" size="1.4224" layer="96" rot="R90"/>
 </instance>
-<instance part="C25" gate="G$1" x="167.64" y="43.18" smashed="yes">
-<attribute name="NAME" x="165.989" y="40.64" size="1.27" layer="95" rot="R270"/>
-<attribute name="VALUE" x="166.624" y="43.053" size="1.27" layer="96" rot="R90"/>
+<instance part="C4" gate="G$1" x="167.64" y="43.18" smashed="yes">
+<attribute name="NAME" x="165.989" y="40.64" size="1.4224" layer="95" rot="R270"/>
+<attribute name="VALUE" x="167.259" y="43.688" size="1.4224" layer="96" rot="R90"/>
 </instance>
-<instance part="C26" gate="G$1" x="175.26" y="43.18" smashed="yes">
-<attribute name="NAME" x="174.498" y="37.465" size="1.27" layer="95" rot="R90"/>
-<attribute name="VALUE" x="174.625" y="43.18" size="1.27" layer="96" rot="R90"/>
+<instance part="C5" gate="G$1" x="175.26" y="43.18" smashed="yes">
+<attribute name="NAME" x="174.498" y="36.83" size="1.4224" layer="95" rot="R90"/>
+<attribute name="VALUE" x="174.625" y="43.815" size="1.4224" layer="96" rot="R90"/>
 </instance>
-<instance part="C27" gate="G$1" x="246.38" y="43.18" smashed="yes">
-<attribute name="NAME" x="247.142" y="43.561" size="1.27" layer="95"/>
-<attribute name="VALUE" x="247.269" y="38.227" size="1.27" layer="96"/>
+<instance part="C10" gate="G$1" x="246.38" y="43.18" smashed="yes">
+<attribute name="NAME" x="245.999" y="36.957" size="1.4224" layer="95" rot="R90"/>
+<attribute name="VALUE" x="246.253" y="43.434" size="1.4224" layer="96" rot="R90"/>
 </instance>
-<instance part="C28" gate="G$1" x="238.76" y="43.18" smashed="yes">
-<attribute name="NAME" x="239.649" y="43.561" size="1.27" layer="95"/>
-<attribute name="VALUE" x="239.649" y="38.481" size="1.27" layer="96"/>
+<instance part="C9" gate="G$1" x="238.76" y="43.18" smashed="yes">
+<attribute name="NAME" x="238.379" y="37.084" size="1.4224" layer="95" rot="R90"/>
+<attribute name="VALUE" x="238.379" y="43.434" size="1.4224" layer="96" rot="R90"/>
 </instance>
 <instance part="GND43" gate="1" x="220.98" y="30.48"/>
 <instance part="GND45" gate="1" x="238.76" y="30.48"/>
-<instance part="R26" gate="G$1" x="139.7" y="40.64" smashed="yes" rot="R90">
-<attribute name="NAME" x="139.4714" y="43.815" size="1.778" layer="95" rot="R90"/>
-<attribute name="VALUE" x="139.446" y="37.719" size="1.778" layer="96" rot="MR270"/>
+<instance part="R1" gate="G$1" x="139.7" y="40.64" smashed="yes" rot="R90">
+<attribute name="NAME" x="138.8364" y="33.655" size="1.4224" layer="95" rot="R90"/>
+<attribute name="VALUE" x="138.811" y="47.879" size="1.4224" layer="96" rot="MR270"/>
 </instance>
-<instance part="R29" gate="G$1" x="187.96" y="218.44" smashed="yes" rot="R180">
+<instance part="R6" gate="G$1" x="187.96" y="218.44" smashed="yes" rot="R180">
 <attribute name="NAME" x="180.34" y="218.6686" size="1.778" layer="95"/>
 <attribute name="VALUE" x="191.77" y="218.6305" size="1.778" layer="96"/>
 </instance>
-<instance part="R30" gate="G$1" x="187.96" y="215.9" smashed="yes">
+<instance part="R7" gate="G$1" x="187.96" y="215.9" smashed="yes">
 <attribute name="NAME" x="180.34" y="216.1286" size="1.778" layer="95"/>
 <attribute name="VALUE" x="191.77" y="216.0905" size="1.778" layer="96"/>
 </instance>
@@ -19505,20 +19507,26 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <instance part="GND49" gate="1" x="165.1" y="91.44" smashed="yes">
 <attribute name="VALUE" x="168.91" y="90.17" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="C31" gate="G$1" x="195.58" y="96.52" smashed="yes" rot="R90">
+<instance part="C6" gate="G$1" x="195.58" y="96.52" smashed="yes" rot="R90">
 <attribute name="NAME" x="196.596" y="96.139" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="219.456" y="101.219" size="1.778" layer="96" rot="R180"/>
 </instance>
 <instance part="P+6" gate="1" x="228.6" y="73.66" smashed="yes" rot="MR0">
 <attribute name="VALUE" x="231.14" y="74.295" size="1.778" layer="96" rot="MR0"/>
 </instance>
-<instance part="R31" gate="G$1" x="162.56" y="152.4" rot="R90"/>
-<instance part="R32" gate="G$1" x="162.56" y="137.16" rot="R270"/>
-<instance part="C33" gate="G$1" x="167.64" y="144.78" smashed="yes" rot="R90">
-<attribute name="NAME" x="175.006" y="144.399" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="182.626" y="146.939" size="1.778" layer="96" rot="R180"/>
+<instance part="R2" gate="G$1" x="162.56" y="152.4" smashed="yes" rot="R90">
+<attribute name="NAME" x="161.0614" y="149.86" size="1.4224" layer="95" rot="R90"/>
+<attribute name="VALUE" x="165.227" y="149.86" size="1.4224" layer="96" rot="R90"/>
 </instance>
-<instance part="D2" gate="G$1" x="210.82" y="144.78" smashed="yes" rot="R90">
+<instance part="R3" gate="G$1" x="162.56" y="137.16" smashed="yes" rot="R270">
+<attribute name="NAME" x="159.6136" y="138.43" size="1.4224" layer="95" rot="R270"/>
+<attribute name="VALUE" x="164.338" y="138.43" size="1.4224" layer="96" rot="R270"/>
+</instance>
+<instance part="C3" gate="G$1" x="167.64" y="144.78" smashed="yes" rot="R90">
+<attribute name="NAME" x="174.371" y="144.399" size="1.4224" layer="95" rot="R180"/>
+<attribute name="VALUE" x="181.356" y="146.939" size="1.4224" layer="96" rot="R180"/>
+</instance>
+<instance part="D1" gate="G$1" x="210.82" y="144.78" smashed="yes" rot="R90">
 <attribute name="NAME" x="210.82" y="152.4" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="220.98" y="138.43" size="1.778" layer="96" rot="R180"/>
 </instance>
@@ -19534,6 +19542,11 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <instance part="+3V11" gate="G$1" x="246.38" y="73.66" smashed="yes">
 <attribute name="VALUE" x="248.92" y="76.2" size="1.778" layer="96" rot="R180"/>
 </instance>
+<instance part="R41" gate="G$1" x="241.3" y="144.78" smashed="yes" rot="R180">
+<attribute name="NAME" x="233.68" y="145.0086" size="1.778" layer="95"/>
+<attribute name="VALUE" x="245.11" y="144.9705" size="1.778" layer="96"/>
+</instance>
+<instance part="GND58" gate="1" x="254" y="137.16" rot="MR0"/>
 </instances>
 <busses>
 </busses>
@@ -19543,7 +19556,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="228.6" y1="218.44" x2="238.76" y2="218.44" width="0.1524" layer="91"/>
 <wire x1="238.76" y1="218.44" x2="238.76" y2="185.42" width="0.1524" layer="91"/>
 <pinref part="GND3" gate="1" pin="GND"/>
-<pinref part="U2" gate="G$1" pin="VSS"/>
+<pinref part="U1" gate="G$1" pin="VSS"/>
 </segment>
 <segment>
 <wire x1="182.88" y1="228.6" x2="175.26" y2="228.6" width="0.1524" layer="91"/>
@@ -19553,7 +19566,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </segment>
 <segment>
 <wire x1="248.92" y1="185.42" x2="248.92" y2="195.58" width="0.1524" layer="91"/>
-<pinref part="C1" gate="G$1" pin="2"/>
+<pinref part="C11" gate="G$1" pin="2"/>
 <pinref part="GND5" gate="1" pin="GND"/>
 </segment>
 <segment>
@@ -19573,7 +19586,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <pinref part="GND34" gate="1" pin="GND"/>
 <wire x1="218.44" y1="96.52" x2="228.6" y2="96.52" width="0.1524" layer="91"/>
 <wire x1="228.6" y1="96.52" x2="228.6" y2="93.98" width="0.1524" layer="91"/>
-<pinref part="C31" gate="G$1" pin="2"/>
+<pinref part="C6" gate="G$1" pin="2"/>
 <wire x1="200.66" y1="96.52" x2="218.44" y2="96.52" width="0.1524" layer="91"/>
 <wire x1="218.44" y1="96.52" x2="218.44" y2="86.36" width="0.1524" layer="91"/>
 <junction x="218.44" y="86.36"/>
@@ -19584,31 +19597,37 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <junction x="218.44" y="96.52"/>
 </segment>
 <segment>
-<pinref part="C12" gate="G$1" pin="2"/>
+<pinref part="C7" gate="G$1" pin="2"/>
 <wire x1="220.98" y1="38.1" x2="220.98" y2="35.56" width="0.1524" layer="91"/>
 <pinref part="GND43" gate="1" pin="GND"/>
-<pinref part="C11" gate="G$1" pin="2"/>
+<pinref part="C8" gate="G$1" pin="2"/>
 <wire x1="220.98" y1="35.56" x2="220.98" y2="33.02" width="0.1524" layer="91"/>
 <wire x1="228.6" y1="38.1" x2="228.6" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="220.98" y1="35.56" x2="228.6" y2="35.56" width="0.1524" layer="91"/>
 <junction x="220.98" y="35.56"/>
 </segment>
 <segment>
-<pinref part="C28" gate="G$1" pin="2"/>
+<pinref part="C9" gate="G$1" pin="2"/>
 <wire x1="238.76" y1="38.1" x2="238.76" y2="35.56" width="0.1524" layer="91"/>
 <pinref part="GND45" gate="1" pin="GND"/>
-<pinref part="C27" gate="G$1" pin="2"/>
+<pinref part="C10" gate="G$1" pin="2"/>
 <wire x1="238.76" y1="35.56" x2="238.76" y2="33.02" width="0.1524" layer="91"/>
 <wire x1="246.38" y1="38.1" x2="246.38" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="238.76" y1="35.56" x2="246.38" y2="35.56" width="0.1524" layer="91"/>
 <junction x="238.76" y="35.56"/>
+</segment>
+<segment>
+<pinref part="R41" gate="G$1" pin="1"/>
+<wire x1="246.38" y1="144.78" x2="254" y2="144.78" width="0.1524" layer="91"/>
+<pinref part="GND58" gate="1" pin="GND"/>
+<wire x1="254" y1="144.78" x2="254" y2="139.7" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="DCAN1_RX" class="0">
 <segment>
 <wire x1="210.82" y1="66.04" x2="299.72" y2="66.04" width="0.1524" layer="91"/>
 <wire x1="351.79" y1="213.36" x2="299.72" y2="213.36" width="0.1524" layer="91"/>
-<pinref part="U2" gate="G$1" pin="RXD"/>
+<pinref part="U1" gate="G$1" pin="RXD"/>
 <label x="351.79" y="213.36" size="1.778" layer="95" xref="yes"/>
 <wire x1="299.72" y1="213.36" x2="228.6" y2="213.36" width="0.1524" layer="91"/>
 <wire x1="299.72" y1="66.04" x2="299.72" y2="213.36" width="0.1524" layer="91"/>
@@ -19620,7 +19639,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <segment>
 <wire x1="210.82" y1="63.5" x2="304.8" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="228.6" y1="220.98" x2="304.8" y2="220.98" width="0.1524" layer="91"/>
-<pinref part="U2" gate="G$1" pin="TXD"/>
+<pinref part="U1" gate="G$1" pin="TXD"/>
 <label x="351.79" y="220.98" size="1.778" layer="95" xref="yes"/>
 <wire x1="304.8" y1="220.98" x2="351.79" y2="220.98" width="0.1524" layer="91"/>
 <wire x1="304.8" y1="63.5" x2="304.8" y2="220.98" width="0.1524" layer="91"/>
@@ -19631,7 +19650,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <net name="HS-CAN_RS" class="0">
 <segment>
 <wire x1="33.02" y1="233.68" x2="182.88" y2="233.68" width="0.1524" layer="91"/>
-<pinref part="R7" gate="G$1" pin="2"/>
+<pinref part="R4" gate="G$1" pin="2"/>
 <label x="33.02" y="233.68" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
@@ -19644,21 +19663,21 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="200.66" y1="233.68" x2="193.04" y2="233.68" width="0.1524" layer="91"/>
 <junction x="200.66" y="228.6"/>
 <pinref part="R5" gate="G$1" pin="1"/>
-<pinref part="U2" gate="G$1" pin="RS"/>
-<pinref part="R7" gate="G$1" pin="1"/>
+<pinref part="U1" gate="G$1" pin="RS"/>
+<pinref part="R4" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="HS-CAN_L" class="0">
 <segment>
 <wire x1="73.66" y1="124.46" x2="33.02" y2="124.46" width="0.1524" layer="91"/>
-<pinref part="D2" gate="G$1" pin="C1"/>
+<pinref part="D1" gate="G$1" pin="C1"/>
 <wire x1="203.2" y1="142.24" x2="198.12" y2="142.24" width="0.1524" layer="91"/>
 <wire x1="198.12" y1="142.24" x2="198.12" y2="124.46" width="0.1524" layer="91"/>
 <wire x1="198.12" y1="124.46" x2="162.56" y2="124.46" width="0.1524" layer="91"/>
 <wire x1="162.56" y1="124.46" x2="73.66" y2="124.46" width="0.1524" layer="91"/>
 <wire x1="162.56" y1="129.54" x2="162.56" y2="124.46" width="0.1524" layer="91"/>
 <junction x="162.56" y="124.46"/>
-<pinref part="R30" gate="G$1" pin="1"/>
+<pinref part="R7" gate="G$1" pin="1"/>
 <wire x1="182.88" y1="215.9" x2="73.66" y2="215.9" width="0.1524" layer="91"/>
 <wire x1="73.66" y1="215.9" x2="73.66" y2="124.46" width="0.1524" layer="91"/>
 <junction x="73.66" y="124.46"/>
@@ -19672,18 +19691,18 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </net>
 <net name="N$31" class="0">
 <segment>
-<pinref part="C25" gate="G$1" pin="1"/>
+<pinref part="C4" gate="G$1" pin="1"/>
 <wire x1="167.64" y1="45.72" x2="167.64" y2="50.8" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="G$1" pin="V_ISOIN"/>
-<pinref part="C26" gate="G$1" pin="1"/>
+<pinref part="C5" gate="G$1" pin="1"/>
 <wire x1="175.26" y1="50.8" x2="175.26" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="175.26" y1="63.5" x2="182.88" y2="63.5" width="0.1524" layer="91"/>
 <wire x1="175.26" y1="45.72" x2="175.26" y2="50.8" width="0.1524" layer="91"/>
-<pinref part="C23" gate="G$1" pin="1"/>
+<pinref part="C1" gate="G$1" pin="1"/>
 <wire x1="149.86" y1="45.72" x2="149.86" y2="50.8" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="G$1" pin="V_ISOOUT"/>
 <wire x1="149.86" y1="50.8" x2="157.48" y2="50.8" width="0.1524" layer="91"/>
-<pinref part="C24" gate="G$1" pin="1"/>
+<pinref part="C2" gate="G$1" pin="1"/>
 <wire x1="175.26" y1="50.8" x2="167.64" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="167.64" y1="50.8" x2="157.48" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="157.48" y1="50.8" x2="157.48" y2="66.04" width="0.1524" layer="91"/>
@@ -19699,14 +19718,14 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <segment>
 <pinref part="IC1" gate="G$1" pin="CAN_H"/>
 <wire x1="68.58" y1="55.88" x2="182.88" y2="55.88" width="0.1524" layer="91"/>
-<pinref part="D2" gate="G$1" pin="C2"/>
+<pinref part="D1" gate="G$1" pin="C2"/>
 <wire x1="198.12" y1="162.56" x2="198.12" y2="147.32" width="0.1524" layer="91"/>
 <wire x1="198.12" y1="147.32" x2="203.2" y2="147.32" width="0.1524" layer="91"/>
-<pinref part="R31" gate="G$1" pin="2"/>
+<pinref part="R2" gate="G$1" pin="2"/>
 <wire x1="162.56" y1="157.48" x2="162.56" y2="162.56" width="0.1524" layer="91"/>
 <wire x1="162.56" y1="162.56" x2="198.12" y2="162.56" width="0.1524" layer="91"/>
 <junction x="162.56" y="162.56"/>
-<pinref part="R29" gate="G$1" pin="2"/>
+<pinref part="R6" gate="G$1" pin="2"/>
 <wire x1="68.58" y1="218.44" x2="182.88" y2="218.44" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="218.44" x2="68.58" y2="162.56" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="162.56" x2="162.56" y2="162.56" width="0.1524" layer="91"/>
@@ -19718,7 +19737,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </net>
 <net name="N$52" class="0">
 <segment>
-<pinref part="R26" gate="G$1" pin="2"/>
+<pinref part="R1" gate="G$1" pin="2"/>
 <pinref part="IC1" gate="G$1" pin="R_S"/>
 <wire x1="139.7" y1="45.72" x2="139.7" y2="71.12" width="0.1524" layer="91"/>
 <wire x1="139.7" y1="71.12" x2="182.88" y2="71.12" width="0.1524" layer="91"/>
@@ -19726,25 +19745,25 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </net>
 <net name="GNDA" class="1">
 <segment>
-<pinref part="R26" gate="G$1" pin="1"/>
+<pinref part="R1" gate="G$1" pin="1"/>
 <wire x1="139.7" y1="33.02" x2="139.7" y2="35.56" width="0.1524" layer="91"/>
 <pinref part="GND39" gate="1" pin="GNDA"/>
 </segment>
 <segment>
-<pinref part="C23" gate="G$1" pin="2"/>
+<pinref part="C1" gate="G$1" pin="2"/>
 <wire x1="149.86" y1="38.1" x2="149.86" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="149.86" y1="35.56" x2="157.48" y2="35.56" width="0.1524" layer="91"/>
-<pinref part="C24" gate="G$1" pin="2"/>
+<pinref part="C2" gate="G$1" pin="2"/>
 <wire x1="157.48" y1="38.1" x2="157.48" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="157.48" y1="35.56" x2="157.48" y2="33.02" width="0.1524" layer="91"/>
 <junction x="157.48" y="35.56"/>
 <pinref part="GND40" gate="1" pin="GNDA"/>
 </segment>
 <segment>
-<pinref part="C25" gate="G$1" pin="2"/>
+<pinref part="C4" gate="G$1" pin="2"/>
 <wire x1="167.64" y1="38.1" x2="167.64" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="167.64" y1="35.56" x2="175.26" y2="35.56" width="0.1524" layer="91"/>
-<pinref part="C26" gate="G$1" pin="2"/>
+<pinref part="C5" gate="G$1" pin="2"/>
 <wire x1="175.26" y1="38.1" x2="175.26" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="175.26" y1="35.56" x2="175.26" y2="33.02" width="0.1524" layer="91"/>
 <junction x="175.26" y="35.56"/>
@@ -19758,7 +19777,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="165.1" y1="96.52" x2="175.26" y2="96.52" width="0.1524" layer="91"/>
 <junction x="175.26" y="86.36"/>
 <wire x1="175.26" y1="86.36" x2="175.26" y2="96.52" width="0.1524" layer="91"/>
-<pinref part="C31" gate="G$1" pin="1"/>
+<pinref part="C6" gate="G$1" pin="1"/>
 <wire x1="175.26" y1="96.52" x2="193.04" y2="96.52" width="0.1524" layer="91"/>
 <wire x1="175.26" y1="86.36" x2="175.26" y2="83.82" width="0.1524" layer="91"/>
 <pinref part="IC1" gate="G$1" pin="GND2@1"/>
@@ -19774,13 +19793,16 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <junction x="175.26" y="83.82"/>
 </segment>
 <segment>
-<pinref part="D2" gate="G$1" pin="CC"/>
+<pinref part="D1" gate="G$1" pin="CC"/>
 <wire x1="228.6" y1="139.7" x2="228.6" y2="144.78" width="0.1524" layer="91"/>
 <wire x1="228.6" y1="144.78" x2="223.52" y2="144.78" width="0.1524" layer="91"/>
 <pinref part="GND52" gate="1" pin="GNDA"/>
+<pinref part="R41" gate="G$1" pin="2"/>
+<wire x1="228.6" y1="144.78" x2="236.22" y2="144.78" width="0.1524" layer="91"/>
+<junction x="228.6" y="144.78"/>
 </segment>
 <segment>
-<pinref part="C33" gate="G$1" pin="2"/>
+<pinref part="C3" gate="G$1" pin="2"/>
 <wire x1="172.72" y1="144.78" x2="182.88" y2="144.78" width="0.1524" layer="91"/>
 <wire x1="182.88" y1="144.78" x2="182.88" y2="139.7" width="0.1524" layer="91"/>
 <pinref part="GND51" gate="1" pin="GNDA"/>
@@ -19788,26 +19810,26 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </net>
 <net name="N$2" class="0">
 <segment>
-<pinref part="R31" gate="G$1" pin="1"/>
+<pinref part="R2" gate="G$1" pin="1"/>
 <wire x1="162.56" y1="147.32" x2="162.56" y2="144.78" width="0.1524" layer="91"/>
-<pinref part="R32" gate="G$1" pin="1"/>
+<pinref part="R3" gate="G$1" pin="1"/>
 <wire x1="162.56" y1="144.78" x2="162.56" y2="142.24" width="0.1524" layer="91"/>
-<pinref part="C33" gate="G$1" pin="1"/>
+<pinref part="C3" gate="G$1" pin="1"/>
 <wire x1="162.56" y1="144.78" x2="165.1" y2="144.78" width="0.1524" layer="91"/>
 <junction x="162.56" y="144.78"/>
 </segment>
 </net>
 <net name="N$41" class="0">
 <segment>
-<pinref part="U2" gate="G$1" pin="CANL"/>
-<pinref part="R30" gate="G$1" pin="2"/>
+<pinref part="U1" gate="G$1" pin="CANL"/>
+<pinref part="R7" gate="G$1" pin="2"/>
 <wire x1="205.74" y1="215.9" x2="193.04" y2="215.9" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$45" class="0">
 <segment>
-<pinref part="R29" gate="G$1" pin="1"/>
-<pinref part="U2" gate="G$1" pin="CANH"/>
+<pinref part="R6" gate="G$1" pin="1"/>
+<pinref part="U1" gate="G$1" pin="CANH"/>
 <wire x1="205.74" y1="218.44" x2="193.04" y2="218.44" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -19817,13 +19839,13 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="248.92" y1="215.9" x2="248.92" y2="203.2" width="0.1524" layer="91"/>
 <wire x1="248.92" y1="215.9" x2="248.92" y2="228.6" width="0.1524" layer="91"/>
 <junction x="248.92" y="215.9"/>
-<pinref part="U2" gate="G$1" pin="VDD"/>
-<pinref part="C1" gate="G$1" pin="1"/>
+<pinref part="U1" gate="G$1" pin="VDD"/>
+<pinref part="C11" gate="G$1" pin="1"/>
 <pinref part="+3V8" gate="G$1" pin="+3V3"/>
 </segment>
 <segment>
-<pinref part="C28" gate="G$1" pin="1"/>
-<pinref part="C27" gate="G$1" pin="1"/>
+<pinref part="C9" gate="G$1" pin="1"/>
+<pinref part="C10" gate="G$1" pin="1"/>
 <wire x1="246.38" y1="45.72" x2="246.38" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="246.38" y1="60.96" x2="238.76" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="238.76" y1="60.96" x2="238.76" y2="45.72" width="0.1524" layer="91"/>
@@ -19837,15 +19859,15 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </net>
 <net name="N$30" class="0">
 <segment>
-<pinref part="R32" gate="G$1" pin="2"/>
+<pinref part="R3" gate="G$1" pin="2"/>
 <pinref part="HS-CAN" gate="A" pin="2"/>
 <wire x1="162.56" y1="132.08" x2="157.48" y2="132.08" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="+5V" class="0">
 <segment>
-<pinref part="C12" gate="G$1" pin="1"/>
-<pinref part="C11" gate="G$1" pin="1"/>
+<pinref part="C7" gate="G$1" pin="1"/>
+<pinref part="C8" gate="G$1" pin="1"/>
 <wire x1="228.6" y1="45.72" x2="228.6" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="228.6" y1="55.88" x2="220.98" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="220.98" y1="55.88" x2="220.98" y2="45.72" width="0.1524" layer="91"/>
@@ -19861,13 +19883,13 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </sheet>
 <sheet>
 <plain>
-<text x="185.42" y="50.8" size="1.778" layer="94">CAN0</text>
+<text x="185.42" y="50.8" size="1.778" layer="94">MS-CAN</text>
 <wire x1="266.7" y1="246.38" x2="266.7" y2="177.8" width="0.4064" layer="94" style="longdash"/>
 <wire x1="266.7" y1="177.8" x2="121.92" y2="177.8" width="0.4064" layer="94" style="longdash"/>
 <wire x1="121.92" y1="177.8" x2="121.92" y2="246.38" width="0.4064" layer="94" style="longdash"/>
 <wire x1="121.92" y1="246.38" x2="266.7" y2="246.38" width="0.4064" layer="94" style="longdash"/>
-<text x="124.46" y="238.76" size="5.08" layer="94">MS-CAN Interface</text>
-<text x="208.28" y="224.79" size="1.778" layer="94">CAN0</text>
+<text x="124.46" y="238.76" size="5.08" layer="94">MS-CAN Interface (default)</text>
+<text x="208.28" y="224.79" size="1.778" layer="94">MS-CAN</text>
 <wire x1="266.7" y1="172.72" x2="121.92" y2="172.72" width="0.4064" layer="94" style="longdash"/>
 <text x="124.46" y="165.1" size="5.08" layer="94">MS-CAN Termination &amp; ESD</text>
 <text x="290.83" y="20.32" size="1.778" layer="94">Project: OOBD-Tiger</text>
@@ -19885,37 +19907,37 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <instance part="FRAME5" gate="G$1" x="0" y="0"/>
 <instance part="IC2" gate="G$1" x="195.58" y="71.12" rot="R180"/>
 <instance part="GND36" gate="1" x="228.6" y="91.44"/>
-<instance part="C13" gate="G$1" x="220.98" y="43.18" smashed="yes">
-<attribute name="NAME" x="221.742" y="43.561" size="1.27" layer="95"/>
-<attribute name="VALUE" x="221.869" y="38.227" size="1.27" layer="96"/>
+<instance part="C18" gate="G$1" x="220.98" y="43.18" smashed="yes">
+<attribute name="NAME" x="220.599" y="36.957" size="1.4224" layer="95" rot="R90"/>
+<attribute name="VALUE" x="220.218" y="44.069" size="1.4224" layer="96" rot="R90"/>
 </instance>
-<instance part="C15" gate="G$1" x="149.86" y="43.18" smashed="yes">
-<attribute name="NAME" x="148.209" y="40.64" size="1.27" layer="95" rot="R270"/>
-<attribute name="VALUE" x="148.844" y="43.053" size="1.27" layer="96" rot="R90"/>
+<instance part="C12" gate="G$1" x="149.86" y="43.18" smashed="yes">
+<attribute name="NAME" x="148.209" y="40.64" size="1.4224" layer="95" rot="R270"/>
+<attribute name="VALUE" x="148.844" y="43.688" size="1.4224" layer="96" rot="R90"/>
 </instance>
-<instance part="C20" gate="G$1" x="157.48" y="43.18" smashed="yes">
-<attribute name="NAME" x="156.718" y="37.465" size="1.27" layer="95" rot="R90"/>
-<attribute name="VALUE" x="156.845" y="43.18" size="1.27" layer="96" rot="R90"/>
+<instance part="C13" gate="G$1" x="157.48" y="43.18" smashed="yes">
+<attribute name="NAME" x="156.718" y="36.83" size="1.4224" layer="95" rot="R90"/>
+<attribute name="VALUE" x="156.845" y="43.815" size="1.4224" layer="96" rot="R90"/>
 </instance>
-<instance part="C21" gate="G$1" x="167.64" y="43.18" smashed="yes">
-<attribute name="NAME" x="165.989" y="41.275" size="1.27" layer="95" rot="R270"/>
-<attribute name="VALUE" x="166.624" y="43.053" size="1.27" layer="96" rot="R90"/>
+<instance part="C15" gate="G$1" x="167.64" y="43.18" smashed="yes">
+<attribute name="NAME" x="165.354" y="40.64" size="1.4224" layer="95" rot="R270"/>
+<attribute name="VALUE" x="166.624" y="43.688" size="1.4224" layer="96" rot="R90"/>
 </instance>
-<instance part="C22" gate="G$1" x="175.26" y="43.18" smashed="yes">
-<attribute name="NAME" x="174.498" y="37.465" size="1.27" layer="95" rot="R90"/>
-<attribute name="VALUE" x="174.625" y="43.18" size="1.27" layer="96" rot="R90"/>
+<instance part="C16" gate="G$1" x="175.26" y="43.18" smashed="yes">
+<attribute name="NAME" x="174.498" y="36.83" size="1.4224" layer="95" rot="R90"/>
+<attribute name="VALUE" x="174.625" y="43.18" size="1.4224" layer="96" rot="R90"/>
 </instance>
-<instance part="C29" gate="G$1" x="246.38" y="43.18" smashed="yes">
-<attribute name="NAME" x="247.142" y="43.561" size="1.27" layer="95"/>
-<attribute name="VALUE" x="247.269" y="38.227" size="1.27" layer="96"/>
+<instance part="C21" gate="G$1" x="246.38" y="43.18" smashed="yes">
+<attribute name="NAME" x="245.364" y="36.957" size="1.4224" layer="95" rot="R90"/>
+<attribute name="VALUE" x="245.618" y="43.434" size="1.4224" layer="96" rot="R90"/>
 </instance>
-<instance part="C30" gate="G$1" x="238.76" y="43.18" smashed="yes">
-<attribute name="NAME" x="239.649" y="43.561" size="1.27" layer="95"/>
-<attribute name="VALUE" x="239.649" y="38.481" size="1.27" layer="96"/>
+<instance part="C20" gate="G$1" x="238.76" y="43.18" smashed="yes">
+<attribute name="NAME" x="237.744" y="36.449" size="1.4224" layer="95" rot="R90"/>
+<attribute name="VALUE" x="237.744" y="43.434" size="1.4224" layer="96" rot="R90"/>
 </instance>
-<instance part="R25" gate="G$1" x="139.7" y="40.64" smashed="yes" rot="R90">
-<attribute name="NAME" x="139.4714" y="43.815" size="1.778" layer="95" rot="R90"/>
-<attribute name="VALUE" x="139.446" y="37.719" size="1.778" layer="96" rot="MR270"/>
+<instance part="R8" gate="G$1" x="139.7" y="40.64" smashed="yes" rot="R90">
+<attribute name="NAME" x="138.8364" y="33.02" size="1.4224" layer="95" rot="R90"/>
+<attribute name="VALUE" x="138.811" y="48.514" size="1.4224" layer="96" rot="MR270"/>
 </instance>
 <instance part="GND47" gate="1" x="220.98" y="30.48"/>
 <instance part="GND48" gate="1" x="238.76" y="30.48"/>
@@ -19931,7 +19953,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <instance part="GND50" gate="1" x="165.1" y="91.44" smashed="yes">
 <attribute name="VALUE" x="167.64" y="90.17" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="C32" gate="G$1" x="195.58" y="96.52" smashed="yes" rot="R90">
+<instance part="C17" gate="G$1" x="195.58" y="96.52" smashed="yes" rot="R90">
 <attribute name="NAME" x="195.326" y="96.139" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="219.456" y="101.219" size="1.778" layer="96" rot="R180"/>
 </instance>
@@ -19941,45 +19963,51 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <instance part="+3V10" gate="G$1" x="246.38" y="73.66" smashed="yes">
 <attribute name="VALUE" x="248.92" y="76.2" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="C14" gate="G$1" x="228.6" y="43.18" smashed="yes">
-<attribute name="NAME" x="229.489" y="43.561" size="1.27" layer="95"/>
-<attribute name="VALUE" x="229.489" y="38.481" size="1.27" layer="96"/>
+<instance part="C19" gate="G$1" x="228.6" y="43.18" smashed="yes">
+<attribute name="NAME" x="228.219" y="37.084" size="1.4224" layer="95" rot="R90"/>
+<attribute name="VALUE" x="227.584" y="44.069" size="1.4224" layer="96" rot="R90"/>
 </instance>
 <instance part="GND84" gate="1" x="238.76" y="182.88"/>
 <instance part="GND96" gate="1" x="175.26" y="223.52"/>
-<instance part="U6" gate="G$1" x="218.44" y="215.9" smashed="yes" rot="MR0">
+<instance part="U2" gate="G$1" x="218.44" y="215.9" smashed="yes" rot="MR0">
 <attribute name="NAME" x="226.06" y="224.536" size="1.778" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="228.854" y="208.026" size="1.778" layer="96" rot="MR0"/>
 </instance>
-<instance part="R41" gate="G$1" x="187.96" y="228.6" smashed="yes" rot="R180">
+<instance part="R12" gate="G$1" x="187.96" y="228.6" smashed="yes" rot="R180">
 <attribute name="NAME" x="184.785" y="228.3714" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="190.881" y="228.346" size="1.778" layer="96" rot="MR180"/>
 </instance>
-<instance part="C47" gate="G$1" x="248.92" y="200.66" smashed="yes">
+<instance part="C22" gate="G$1" x="248.92" y="200.66" smashed="yes">
 <attribute name="NAME" x="249.809" y="201.041" size="1.778" layer="95"/>
 <attribute name="VALUE" x="249.809" y="195.961" size="1.778" layer="96"/>
 </instance>
 <instance part="GND98" gate="1" x="248.92" y="182.88" rot="MR0"/>
-<instance part="R40" gate="G$1" x="187.96" y="233.68" smashed="yes" rot="R180">
+<instance part="R11" gate="G$1" x="187.96" y="233.68" smashed="yes" rot="R180">
 <attribute name="NAME" x="184.785" y="233.4514" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="190.881" y="233.426" size="1.778" layer="96" rot="MR180"/>
 </instance>
-<instance part="R27" gate="G$1" x="187.96" y="218.44" smashed="yes">
+<instance part="R13" gate="G$1" x="187.96" y="218.44" smashed="yes">
 <attribute name="NAME" x="180.34" y="218.6686" size="1.778" layer="95"/>
 <attribute name="VALUE" x="191.77" y="218.6305" size="1.778" layer="96"/>
 </instance>
-<instance part="R28" gate="G$1" x="187.96" y="215.9" smashed="yes">
+<instance part="R14" gate="G$1" x="187.96" y="215.9" smashed="yes">
 <attribute name="NAME" x="180.34" y="216.1286" size="1.778" layer="95"/>
 <attribute name="VALUE" x="191.77" y="216.0905" size="1.778" layer="96"/>
 </instance>
 <instance part="MS-CAN" gate="A" x="154.94" y="129.54" rot="R90"/>
-<instance part="R6" gate="G$1" x="162.56" y="152.4" rot="R90"/>
-<instance part="R33" gate="G$1" x="162.56" y="137.16" rot="R270"/>
-<instance part="C34" gate="G$1" x="167.64" y="144.78" smashed="yes" rot="R90">
-<attribute name="NAME" x="175.006" y="144.399" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="182.626" y="146.939" size="1.778" layer="96" rot="R180"/>
+<instance part="R9" gate="G$1" x="162.56" y="152.4" smashed="yes" rot="R90">
+<attribute name="NAME" x="161.0614" y="149.86" size="1.4224" layer="95" rot="R90"/>
+<attribute name="VALUE" x="165.862" y="149.86" size="1.4224" layer="96" rot="R90"/>
 </instance>
-<instance part="D1" gate="G$1" x="210.82" y="144.78" smashed="yes" rot="R90">
+<instance part="R10" gate="G$1" x="162.56" y="137.16" smashed="yes" rot="R270">
+<attribute name="NAME" x="159.6136" y="139.7" size="1.4224" layer="95" rot="R270"/>
+<attribute name="VALUE" x="164.338" y="139.7" size="1.4224" layer="96" rot="R270"/>
+</instance>
+<instance part="C14" gate="G$1" x="167.64" y="144.78" smashed="yes" rot="R90">
+<attribute name="NAME" x="175.641" y="143.764" size="1.4224" layer="95" rot="R180"/>
+<attribute name="VALUE" x="181.991" y="146.939" size="1.4224" layer="96" rot="R180"/>
+</instance>
+<instance part="D2" gate="G$1" x="210.82" y="144.78" smashed="yes" rot="R90">
 <attribute name="NAME" x="210.82" y="152.4" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="220.98" y="138.43" size="1.778" layer="96" rot="R180"/>
 </instance>
@@ -19998,24 +20026,24 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <nets>
 <net name="GND" class="1">
 <segment>
-<pinref part="C30" gate="G$1" pin="2"/>
+<pinref part="C20" gate="G$1" pin="2"/>
 <wire x1="238.76" y1="38.1" x2="238.76" y2="35.56" width="0.1524" layer="91"/>
 <pinref part="GND48" gate="1" pin="GND"/>
 <junction x="238.76" y="35.56"/>
 <wire x1="238.76" y1="35.56" x2="238.76" y2="33.02" width="0.1524" layer="91"/>
-<pinref part="C29" gate="G$1" pin="2"/>
+<pinref part="C21" gate="G$1" pin="2"/>
 <wire x1="246.38" y1="38.1" x2="246.38" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="246.38" y1="35.56" x2="238.76" y2="35.56" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="C13" gate="G$1" pin="2"/>
+<pinref part="C18" gate="G$1" pin="2"/>
 <pinref part="GND47" gate="1" pin="GND"/>
 <wire x1="220.98" y1="38.1" x2="220.98" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="220.98" y1="35.56" x2="220.98" y2="33.02" width="0.1524" layer="91"/>
 <wire x1="228.6" y1="38.1" x2="228.6" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="220.98" y1="35.56" x2="228.6" y2="35.56" width="0.1524" layer="91"/>
 <junction x="220.98" y="35.56"/>
-<pinref part="C14" gate="G$1" pin="2"/>
+<pinref part="C19" gate="G$1" pin="2"/>
 </segment>
 <segment>
 <pinref part="IC2" gate="G$1" pin="GND1@4"/>
@@ -20032,7 +20060,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <junction x="218.44" y="78.74"/>
 <junction x="218.44" y="81.28"/>
 <junction x="218.44" y="83.82"/>
-<pinref part="C32" gate="G$1" pin="2"/>
+<pinref part="C17" gate="G$1" pin="2"/>
 <wire x1="200.66" y1="96.52" x2="218.44" y2="96.52" width="0.1524" layer="91"/>
 <wire x1="218.44" y1="96.52" x2="218.44" y2="86.36" width="0.1524" layer="91"/>
 <junction x="218.44" y="86.36"/>
@@ -20048,29 +20076,29 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="228.6" y1="218.44" x2="238.76" y2="218.44" width="0.1524" layer="91"/>
 <wire x1="238.76" y1="218.44" x2="238.76" y2="185.42" width="0.1524" layer="91"/>
 <pinref part="GND84" gate="1" pin="GND"/>
-<pinref part="U6" gate="G$1" pin="VSS"/>
+<pinref part="U2" gate="G$1" pin="VSS"/>
 </segment>
 <segment>
 <wire x1="182.88" y1="228.6" x2="175.26" y2="228.6" width="0.1524" layer="91"/>
 <wire x1="175.26" y1="228.6" x2="175.26" y2="226.06" width="0.1524" layer="91"/>
 <pinref part="GND96" gate="1" pin="GND"/>
-<pinref part="R41" gate="G$1" pin="2"/>
+<pinref part="R12" gate="G$1" pin="2"/>
 </segment>
 <segment>
 <wire x1="248.92" y1="185.42" x2="248.92" y2="195.58" width="0.1524" layer="91"/>
-<pinref part="C47" gate="G$1" pin="2"/>
+<pinref part="C22" gate="G$1" pin="2"/>
 <pinref part="GND98" gate="1" pin="GND"/>
 </segment>
 </net>
 <net name="N$50" class="0">
 <segment>
-<pinref part="C15" gate="G$1" pin="1"/>
+<pinref part="C12" gate="G$1" pin="1"/>
 <pinref part="IC2" gate="G$1" pin="V_ISOOUT"/>
 <wire x1="149.86" y1="50.8" x2="149.86" y2="45.72" width="0.1524" layer="91"/>
 <wire x1="182.88" y1="66.04" x2="157.48" y2="66.04" width="0.1524" layer="91"/>
 <wire x1="157.48" y1="66.04" x2="157.48" y2="50.8" width="0.1524" layer="91"/>
-<pinref part="C21" gate="G$1" pin="1"/>
-<pinref part="C22" gate="G$1" pin="1"/>
+<pinref part="C15" gate="G$1" pin="1"/>
+<pinref part="C16" gate="G$1" pin="1"/>
 <pinref part="IC2" gate="G$1" pin="V_ISOIN"/>
 <wire x1="157.48" y1="50.8" x2="149.86" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="182.88" y1="63.5" x2="175.26" y2="63.5" width="0.1524" layer="91"/>
@@ -20080,7 +20108,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="157.48" y1="50.8" x2="167.64" y2="50.8" width="0.1524" layer="91"/>
 <junction x="157.48" y="50.8"/>
 <junction x="175.26" y="50.8"/>
-<pinref part="C20" gate="G$1" pin="1"/>
+<pinref part="C13" gate="G$1" pin="1"/>
 <wire x1="167.64" y1="50.8" x2="175.26" y2="50.8" width="0.1524" layer="91"/>
 <wire x1="157.48" y1="50.8" x2="157.48" y2="45.72" width="0.1524" layer="91"/>
 <junction x="157.48" y="50.8"/>
@@ -20090,39 +20118,39 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <net name="N$33" class="0">
 <segment>
 <pinref part="IC2" gate="G$1" pin="R_S"/>
-<pinref part="R25" gate="G$1" pin="2"/>
+<pinref part="R8" gate="G$1" pin="2"/>
 <wire x1="182.88" y1="71.12" x2="139.7" y2="71.12" width="0.1524" layer="91"/>
 <wire x1="139.7" y1="71.12" x2="139.7" y2="45.72" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="GNDA" class="1">
 <segment>
-<pinref part="R25" gate="G$1" pin="1"/>
+<pinref part="R8" gate="G$1" pin="1"/>
 <wire x1="139.7" y1="35.56" x2="139.7" y2="33.02" width="0.1524" layer="91"/>
 <pinref part="GND37" gate="1" pin="GNDA"/>
 </segment>
 <segment>
-<pinref part="C15" gate="G$1" pin="2"/>
+<pinref part="C12" gate="G$1" pin="2"/>
 <wire x1="149.86" y1="38.1" x2="149.86" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="149.86" y1="35.56" x2="157.48" y2="35.56" width="0.1524" layer="91"/>
-<pinref part="C20" gate="G$1" pin="2"/>
+<pinref part="C13" gate="G$1" pin="2"/>
 <wire x1="157.48" y1="38.1" x2="157.48" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="157.48" y1="33.02" x2="157.48" y2="35.56" width="0.1524" layer="91"/>
 <junction x="157.48" y="35.56"/>
 <pinref part="GND38" gate="1" pin="GNDA"/>
 </segment>
 <segment>
-<pinref part="C21" gate="G$1" pin="2"/>
+<pinref part="C15" gate="G$1" pin="2"/>
 <wire x1="167.64" y1="38.1" x2="167.64" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="167.64" y1="35.56" x2="175.26" y2="35.56" width="0.1524" layer="91"/>
-<pinref part="C22" gate="G$1" pin="2"/>
+<pinref part="C16" gate="G$1" pin="2"/>
 <wire x1="175.26" y1="38.1" x2="175.26" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="175.26" y1="33.02" x2="175.26" y2="35.56" width="0.1524" layer="91"/>
 <junction x="175.26" y="35.56"/>
 <pinref part="GND42" gate="1" pin="GNDA"/>
 </segment>
 <segment>
-<pinref part="C32" gate="G$1" pin="1"/>
+<pinref part="C17" gate="G$1" pin="1"/>
 <wire x1="175.26" y1="96.52" x2="193.04" y2="96.52" width="0.1524" layer="91"/>
 <pinref part="IC2" gate="G$1" pin="GND2@2"/>
 <wire x1="182.88" y1="83.82" x2="175.26" y2="83.82" width="0.1524" layer="91"/>
@@ -20145,13 +20173,13 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <junction x="175.26" y="96.52"/>
 </segment>
 <segment>
-<pinref part="D1" gate="G$1" pin="CC"/>
+<pinref part="D2" gate="G$1" pin="CC"/>
 <wire x1="228.6" y1="139.7" x2="228.6" y2="144.78" width="0.1524" layer="91"/>
 <wire x1="228.6" y1="144.78" x2="223.52" y2="144.78" width="0.1524" layer="91"/>
 <pinref part="GND55" gate="1" pin="GNDA"/>
 </segment>
 <segment>
-<pinref part="C34" gate="G$1" pin="2"/>
+<pinref part="C14" gate="G$1" pin="2"/>
 <wire x1="172.72" y1="144.78" x2="182.88" y2="144.78" width="0.1524" layer="91"/>
 <wire x1="182.88" y1="144.78" x2="182.88" y2="139.7" width="0.1524" layer="91"/>
 <pinref part="GND54" gate="1" pin="GNDA"/>
@@ -20163,13 +20191,13 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="248.92" y1="215.9" x2="248.92" y2="203.2" width="0.1524" layer="91"/>
 <wire x1="248.92" y1="215.9" x2="248.92" y2="228.6" width="0.1524" layer="91"/>
 <junction x="248.92" y="215.9"/>
-<pinref part="U6" gate="G$1" pin="VDD"/>
-<pinref part="C47" gate="G$1" pin="1"/>
+<pinref part="U2" gate="G$1" pin="VDD"/>
+<pinref part="C22" gate="G$1" pin="1"/>
 <pinref part="+3V9" gate="G$1" pin="+3V3"/>
 </segment>
 <segment>
-<pinref part="C30" gate="G$1" pin="1"/>
-<pinref part="C29" gate="G$1" pin="1"/>
+<pinref part="C20" gate="G$1" pin="1"/>
+<pinref part="C21" gate="G$1" pin="1"/>
 <wire x1="246.38" y1="45.72" x2="246.38" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="246.38" y1="60.96" x2="238.76" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="238.76" y1="60.96" x2="238.76" y2="45.72" width="0.1524" layer="91"/>
@@ -20183,7 +20211,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </net>
 <net name="DCAN0_RX" class="0">
 <segment>
-<pinref part="U6" gate="G$1" pin="RXD"/>
+<pinref part="U2" gate="G$1" pin="RXD"/>
 <label x="351.79" y="213.36" size="1.778" layer="95" xref="yes"/>
 <wire x1="351.79" y1="213.36" x2="299.72" y2="213.36" width="0.1524" layer="91"/>
 <pinref part="IC2" gate="G$1" pin="RXD"/>
@@ -20196,7 +20224,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <net name="DCAN0_TX" class="0">
 <segment>
 <wire x1="228.6" y1="220.98" x2="304.8" y2="220.98" width="0.1524" layer="91"/>
-<pinref part="U6" gate="G$1" pin="TXD"/>
+<pinref part="U2" gate="G$1" pin="TXD"/>
 <label x="351.79" y="220.98" size="1.778" layer="95" xref="yes"/>
 <junction x="304.8" y="220.98"/>
 <wire x1="304.8" y1="220.98" x2="351.79" y2="220.98" width="0.1524" layer="91"/>
@@ -20213,14 +20241,14 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="200.66" y1="228.6" x2="200.66" y2="233.68" width="0.1524" layer="91"/>
 <wire x1="200.66" y1="233.68" x2="193.04" y2="233.68" width="0.1524" layer="91"/>
 <junction x="200.66" y="228.6"/>
-<pinref part="R41" gate="G$1" pin="1"/>
-<pinref part="U6" gate="G$1" pin="RS"/>
-<pinref part="R40" gate="G$1" pin="1"/>
+<pinref part="R12" gate="G$1" pin="1"/>
+<pinref part="U2" gate="G$1" pin="RS"/>
+<pinref part="R11" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="MS-CAN_L" class="0">
 <segment>
-<pinref part="D1" gate="G$1" pin="C1"/>
+<pinref part="D2" gate="G$1" pin="C1"/>
 <wire x1="203.2" y1="142.24" x2="198.12" y2="142.24" width="0.1524" layer="91"/>
 <wire x1="198.12" y1="142.24" x2="198.12" y2="124.46" width="0.1524" layer="91"/>
 <wire x1="198.12" y1="124.46" x2="162.56" y2="124.46" width="0.1524" layer="91"/>
@@ -20228,7 +20256,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="73.66" y1="124.46" x2="73.66" y2="215.9" width="0.1524" layer="91"/>
 <wire x1="162.56" y1="129.54" x2="162.56" y2="124.46" width="0.1524" layer="91"/>
 <junction x="162.56" y="124.46"/>
-<pinref part="R28" gate="G$1" pin="1"/>
+<pinref part="R14" gate="G$1" pin="1"/>
 <wire x1="182.88" y1="215.9" x2="73.66" y2="215.9" width="0.1524" layer="91"/>
 <pinref part="MS-CAN" gate="A" pin="1"/>
 <wire x1="162.56" y1="129.54" x2="157.48" y2="129.54" width="0.1524" layer="91"/>
@@ -20242,12 +20270,12 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </net>
 <net name="MS-CAN_H" class="0">
 <segment>
-<pinref part="R27" gate="G$1" pin="1"/>
+<pinref part="R13" gate="G$1" pin="1"/>
 <wire x1="182.88" y1="218.44" x2="68.58" y2="218.44" width="0.1524" layer="91"/>
-<pinref part="D1" gate="G$1" pin="C2"/>
+<pinref part="D2" gate="G$1" pin="C2"/>
 <wire x1="198.12" y1="147.32" x2="203.2" y2="147.32" width="0.1524" layer="91"/>
 <wire x1="198.12" y1="162.56" x2="198.12" y2="147.32" width="0.1524" layer="91"/>
-<pinref part="R6" gate="G$1" pin="2"/>
+<pinref part="R9" gate="G$1" pin="2"/>
 <wire x1="162.56" y1="157.48" x2="162.56" y2="162.56" width="0.1524" layer="91"/>
 <wire x1="162.56" y1="162.56" x2="198.12" y2="162.56" width="0.1524" layer="91"/>
 <wire x1="162.56" y1="162.56" x2="68.58" y2="162.56" width="0.1524" layer="91"/>
@@ -20264,39 +20292,39 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <net name="MS-CAN_RS" class="0">
 <segment>
 <wire x1="33.02" y1="233.68" x2="182.88" y2="233.68" width="0.1524" layer="91"/>
-<pinref part="R40" gate="G$1" pin="2"/>
+<pinref part="R11" gate="G$1" pin="2"/>
 <label x="33.02" y="233.68" size="1.778" layer="95" rot="R180" xref="yes"/>
 </segment>
 </net>
 <net name="N$10" class="0">
 <segment>
-<pinref part="R6" gate="G$1" pin="1"/>
+<pinref part="R9" gate="G$1" pin="1"/>
 <wire x1="162.56" y1="147.32" x2="162.56" y2="144.78" width="0.1524" layer="91"/>
-<pinref part="R33" gate="G$1" pin="1"/>
+<pinref part="R10" gate="G$1" pin="1"/>
 <wire x1="162.56" y1="144.78" x2="162.56" y2="142.24" width="0.1524" layer="91"/>
-<pinref part="C34" gate="G$1" pin="1"/>
+<pinref part="C14" gate="G$1" pin="1"/>
 <wire x1="162.56" y1="144.78" x2="165.1" y2="144.78" width="0.1524" layer="91"/>
 <junction x="162.56" y="144.78"/>
 </segment>
 </net>
 <net name="N$32" class="0">
 <segment>
-<pinref part="R33" gate="G$1" pin="2"/>
+<pinref part="R10" gate="G$1" pin="2"/>
 <pinref part="MS-CAN" gate="A" pin="2"/>
 <wire x1="157.48" y1="132.08" x2="162.56" y2="132.08" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$42" class="0">
 <segment>
-<pinref part="U6" gate="G$1" pin="CANL"/>
-<pinref part="R28" gate="G$1" pin="2"/>
+<pinref part="U2" gate="G$1" pin="CANL"/>
+<pinref part="R14" gate="G$1" pin="2"/>
 <wire x1="205.74" y1="215.9" x2="193.04" y2="215.9" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$40" class="0">
 <segment>
-<pinref part="R27" gate="G$1" pin="2"/>
-<pinref part="U6" gate="G$1" pin="CANH"/>
+<pinref part="R13" gate="G$1" pin="2"/>
+<pinref part="U2" gate="G$1" pin="CANH"/>
 <wire x1="205.74" y1="218.44" x2="193.04" y2="218.44" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -20304,13 +20332,13 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <segment>
 <pinref part="IC2" gate="G$1" pin="VCC"/>
 <wire x1="228.6" y1="55.88" x2="228.6" y2="45.72" width="0.1524" layer="91"/>
-<pinref part="C13" gate="G$1" pin="1"/>
+<pinref part="C18" gate="G$1" pin="1"/>
 <wire x1="220.98" y1="45.72" x2="220.98" y2="55.88" width="0.1524" layer="91"/>
 <wire x1="220.98" y1="55.88" x2="228.6" y2="55.88" width="0.1524" layer="91"/>
 <junction x="220.98" y="55.88"/>
 <wire x1="220.98" y1="55.88" x2="210.82" y2="55.88" width="0.1524" layer="91"/>
 <junction x="228.6" y="55.88"/>
-<pinref part="C14" gate="G$1" pin="1"/>
+<pinref part="C19" gate="G$1" pin="1"/>
 <pinref part="P+8" gate="1" pin="+5V"/>
 <wire x1="228.6" y1="55.88" x2="228.6" y2="71.12" width="0.1524" layer="91"/>
 </segment>
@@ -20345,11 +20373,11 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <instances>
 <instance part="FRAME1" gate="G$1" x="0" y="0"/>
 <instance part="GND129" gate="1" x="50.8" y="203.2" rot="MR0"/>
-<instance part="L3" gate="G$1" x="33.02" y="208.28" smashed="yes" rot="MR90">
+<instance part="L1" gate="G$1" x="33.02" y="208.28" smashed="yes" rot="MR90">
 <attribute name="NAME" x="34.29" y="210.185" size="1.778" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="42.545" y="206.375" size="0.8128" layer="96" rot="MR0"/>
 </instance>
-<instance part="C6" gate="G$1" x="170.18" y="213.36" smashed="yes">
+<instance part="C29" gate="G$1" x="170.18" y="213.36" smashed="yes">
 <attribute name="NAME" x="170.815" y="213.36" size="1.778" layer="95"/>
 <attribute name="VALUE" x="170.815" y="210.82" size="1.778" layer="96" rot="MR180"/>
 </instance>
@@ -20357,49 +20385,49 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <instance part="P+18" gate="1" x="170.18" y="243.84" smashed="yes" rot="MR0">
 <attribute name="VALUE" x="172.72" y="244.475" size="1.778" layer="96" rot="MR0"/>
 </instance>
-<instance part="U1" gate="G$1" x="139.7" y="231.14" smashed="yes" rot="MR0">
+<instance part="U3" gate="G$1" x="139.7" y="231.14" smashed="yes" rot="MR0">
 <attribute name="NAME" x="148.59" y="231.775" size="1.778" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="140.335" y="231.775" size="1.778" layer="95" rot="MR0"/>
 </instance>
 <instance part="GND60" gate="1" x="139.7" y="203.2"/>
-<instance part="R3" gate="G$1" x="114.3" y="213.36" smashed="yes" rot="R90">
+<instance part="R15" gate="G$1" x="114.3" y="213.36" smashed="yes" rot="R90">
 <attribute name="NAME" x="115.57" y="213.995" size="1.778" layer="95"/>
 <attribute name="VALUE" x="115.57" y="211.455" size="1.778" layer="96"/>
 </instance>
 <instance part="GND66" gate="1" x="114.3" y="203.2" rot="MR0"/>
-<instance part="R4" gate="G$1" x="165.1" y="213.36" smashed="yes" rot="MR90">
+<instance part="R17" gate="G$1" x="165.1" y="213.36" smashed="yes" rot="MR90">
 <attribute name="NAME" x="163.195" y="213.995" size="1.778" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="163.195" y="212.725" size="1.778" layer="96" rot="R180"/>
 </instance>
 <instance part="GND67" gate="1" x="165.1" y="203.2"/>
-<instance part="L1" gate="G$1" x="81.28" y="228.6" smashed="yes" rot="R90">
+<instance part="L3" gate="G$1" x="81.28" y="228.6" smashed="yes" rot="R90">
 <attribute name="NAME" x="83.82" y="234.95" size="1.778" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="71.755" y="232.41" size="1.4224" layer="96"/>
 </instance>
 <instance part="USB_OTG" gate="G1" x="24.13" y="224.79" smashed="yes" rot="MR0">
 <attribute name="VALUE" x="21.59" y="216.535" size="1.778" layer="96" rot="MR180"/>
 </instance>
-<instance part="R1" gate="G$1" x="200.66" y="236.22" smashed="yes" rot="MR0">
+<instance part="R20" gate="G$1" x="200.66" y="236.22" smashed="yes" rot="MR0">
 <attribute name="NAME" x="197.485" y="236.601" size="1.778" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="215.265" y="238.379" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="C4" gate="G$1" x="68.58" y="213.36" smashed="yes" rot="MR0">
+<instance part="C23" gate="G$1" x="68.58" y="213.36" smashed="yes" rot="MR0">
 <attribute name="NAME" x="67.945" y="213.36" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="69.215" y="213.36" size="1.778" layer="96" rot="MR90"/>
 </instance>
 <instance part="GND61" gate="1" x="68.58" y="203.2" smashed="yes">
 <attribute name="VALUE" x="66.04" y="200.66" size="1.778" layer="96"/>
 </instance>
-<instance part="R2" gate="G$1" x="200.66" y="228.6" smashed="yes" rot="MR180">
+<instance part="R21" gate="G$1" x="200.66" y="228.6" smashed="yes" rot="MR180">
 <attribute name="NAME" x="197.485" y="228.981" size="1.778" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="207.645" y="230.759" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="C64" gate="G$1" x="101.6" y="213.36" smashed="yes">
+<instance part="C27" gate="G$1" x="101.6" y="213.36" smashed="yes">
 <attribute name="NAME" x="100.965" y="213.36" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="102.235" y="213.36" size="1.778" layer="96" rot="MR90"/>
 </instance>
 <instance part="GND41" gate="1" x="101.6" y="203.2"/>
-<instance part="C63" gate="G$1" x="93.98" y="213.36" smashed="yes">
+<instance part="C25" gate="G$1" x="93.98" y="213.36" smashed="yes">
 <attribute name="NAME" x="93.345" y="213.36" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="94.615" y="213.36" size="1.778" layer="96" rot="MR90"/>
 </instance>
@@ -20408,32 +20436,32 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <attribute name="NAME" x="39.37" y="160.655" size="1.778" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="38.735" y="142.875" size="1.27" layer="96" rot="MR0"/>
 </instance>
-<instance part="L5" gate="G$1" x="81.28" y="157.48" smashed="yes" rot="MR90">
+<instance part="L4" gate="G$1" x="81.28" y="157.48" smashed="yes" rot="MR90">
 <attribute name="NAME" x="86.995" y="158.115" size="1.778" layer="95"/>
 <attribute name="VALUE" x="90.17" y="156.845" size="1.4224" layer="96" rot="R180"/>
 </instance>
-<instance part="C3" gate="G$1" x="68.58" y="142.24" smashed="yes">
+<instance part="C24" gate="G$1" x="68.58" y="142.24" smashed="yes">
 <attribute name="NAME" x="69.215" y="142.24" size="1.778" layer="95" rot="MR90"/>
 <attribute name="VALUE" x="67.945" y="142.24" size="1.778" layer="96" rot="R90"/>
 </instance>
 <instance part="GND10" gate="1" x="68.58" y="132.08"/>
-<instance part="C8" gate="G$1" x="93.98" y="142.24" smashed="yes" rot="MR0">
+<instance part="C26" gate="G$1" x="93.98" y="142.24" smashed="yes" rot="MR0">
 <attribute name="NAME" x="93.345" y="146.05" size="1.778" layer="95" rot="MR270"/>
 <attribute name="VALUE" x="94.615" y="156.845" size="1.778" layer="96" rot="R270"/>
 </instance>
 <instance part="GND20" gate="1" x="93.98" y="132.08"/>
-<instance part="C10" gate="G$1" x="101.6" y="142.24" smashed="yes">
+<instance part="C28" gate="G$1" x="101.6" y="142.24" smashed="yes">
 <attribute name="NAME" x="100.965" y="142.875" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="102.235" y="142.875" size="1.778" layer="96" rot="MR90"/>
 </instance>
 <instance part="GND22" gate="1" x="101.6" y="132.08"/>
 <instance part="GND25" gate="1" x="35.56" y="96.52" rot="MR0"/>
-<instance part="L6" gate="G$1" x="35.56" y="114.3" smashed="yes" rot="R180">
+<instance part="L2" gate="G$1" x="35.56" y="114.3" smashed="yes" rot="R180">
 <attribute name="NAME" x="31.115" y="113.411" size="1.778" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="33.655" y="107.315" size="1.016" layer="96" rot="R90"/>
 </instance>
 <instance part="GND28" gate="1" x="40.64" y="96.52" rot="MR0"/>
-<instance part="C2" gate="G$1" x="170.18" y="142.24" smashed="yes">
+<instance part="C30" gate="G$1" x="170.18" y="142.24" smashed="yes">
 <attribute name="NAME" x="170.815" y="142.24" size="1.778" layer="95"/>
 <attribute name="VALUE" x="170.815" y="139.7" size="1.778" layer="96" rot="MR180"/>
 </instance>
@@ -20441,30 +20469,30 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <instance part="P+1" gate="1" x="170.18" y="172.72" smashed="yes" rot="MR0">
 <attribute name="VALUE" x="172.72" y="173.355" size="1.778" layer="96" rot="MR0"/>
 </instance>
-<instance part="U3" gate="G$1" x="139.7" y="160.02" smashed="yes" rot="MR0">
+<instance part="U4" gate="G$1" x="139.7" y="160.02" smashed="yes" rot="MR0">
 <attribute name="NAME" x="148.59" y="160.655" size="1.778" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="140.335" y="160.655" size="1.778" layer="95" rot="MR0"/>
 </instance>
 <instance part="GND29" gate="1" x="139.7" y="132.08"/>
-<instance part="R19" gate="G$1" x="114.3" y="142.24" smashed="yes" rot="R90">
+<instance part="R16" gate="G$1" x="114.3" y="142.24" smashed="yes" rot="R90">
 <attribute name="NAME" x="115.57" y="142.875" size="1.778" layer="95"/>
 <attribute name="VALUE" x="115.57" y="140.335" size="1.778" layer="96"/>
 </instance>
 <instance part="GND30" gate="1" x="114.3" y="132.08" rot="MR0"/>
-<instance part="R21" gate="G$1" x="165.1" y="142.24" smashed="yes" rot="MR90">
+<instance part="R18" gate="G$1" x="165.1" y="142.24" smashed="yes" rot="MR90">
 <attribute name="NAME" x="163.195" y="142.875" size="1.778" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="163.195" y="141.605" size="1.778" layer="96" rot="R180"/>
 </instance>
 <instance part="GND31" gate="1" x="165.1" y="132.08"/>
-<instance part="R22" gate="G$1" x="200.66" y="165.1" smashed="yes" rot="MR0">
+<instance part="R23" gate="G$1" x="200.66" y="165.1" smashed="yes" rot="MR0">
 <attribute name="NAME" x="197.485" y="165.481" size="1.778" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="215.265" y="167.259" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="R23" gate="G$1" x="200.66" y="157.48" smashed="yes" rot="MR180">
+<instance part="R24" gate="G$1" x="200.66" y="157.48" smashed="yes" rot="MR180">
 <attribute name="NAME" x="197.485" y="157.861" size="1.778" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="207.645" y="159.639" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="R24" gate="G$1" x="190.5" y="111.76" smashed="yes" rot="R90">
+<instance part="R19" gate="G$1" x="190.5" y="111.76" smashed="yes" rot="R90">
 <attribute name="NAME" x="191.77" y="112.395" size="1.778" layer="95"/>
 <attribute name="VALUE" x="191.77" y="109.855" size="1.778" layer="96"/>
 </instance>
@@ -20474,11 +20502,11 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <instance part="P+9" gate="1" x="109.22" y="63.5" smashed="yes" rot="MR0">
 <attribute name="VALUE" x="111.76" y="64.135" size="1.778" layer="96" rot="MR0"/>
 </instance>
-<instance part="R34" gate="G$1" x="200.66" y="223.52" smashed="yes" rot="MR180">
+<instance part="R22" gate="G$1" x="200.66" y="223.52" smashed="yes" rot="MR180">
 <attribute name="NAME" x="197.485" y="223.901" size="1.778" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="207.645" y="225.679" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="R35" gate="G$1" x="200.66" y="152.4" smashed="yes" rot="MR180">
+<instance part="R25" gate="G$1" x="200.66" y="152.4" smashed="yes" rot="MR180">
 <attribute name="NAME" x="197.485" y="152.781" size="1.778" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="207.645" y="154.559" size="1.778" layer="96" rot="R180"/>
 </instance>
@@ -20494,62 +20522,62 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="50.8" y1="218.44" x2="29.21" y2="218.44" width="0.1524" layer="91"/>
 <junction x="50.8" y="208.28"/>
 <pinref part="GND129" gate="1" pin="GND"/>
-<pinref part="L3" gate="G$1" pin="1"/>
+<pinref part="L1" gate="G$1" pin="1"/>
 <pinref part="USB_OTG" gate="G1" pin="GND"/>
 </segment>
 <segment>
 <wire x1="170.18" y1="205.74" x2="170.18" y2="208.28" width="0.1524" layer="91"/>
-<pinref part="C6" gate="G$1" pin="2"/>
+<pinref part="C29" gate="G$1" pin="2"/>
 <pinref part="GND56" gate="1" pin="GND"/>
 </segment>
 <segment>
 <wire x1="139.7" y1="205.74" x2="139.7" y2="218.44" width="0.1524" layer="91"/>
-<pinref part="U1" gate="G$1" pin="GND"/>
+<pinref part="U3" gate="G$1" pin="GND"/>
 <pinref part="GND60" gate="1" pin="GND"/>
 </segment>
 <segment>
 <wire x1="114.3" y1="208.28" x2="114.3" y2="205.74" width="0.1524" layer="91"/>
-<pinref part="R3" gate="G$1" pin="1"/>
+<pinref part="R15" gate="G$1" pin="1"/>
 <pinref part="GND66" gate="1" pin="GND"/>
 </segment>
 <segment>
 <wire x1="165.1" y1="208.28" x2="165.1" y2="205.74" width="0.1524" layer="91"/>
-<pinref part="R4" gate="G$1" pin="1"/>
+<pinref part="R17" gate="G$1" pin="1"/>
 <pinref part="GND67" gate="1" pin="GND"/>
 </segment>
 <segment>
 <wire x1="68.58" y1="205.74" x2="68.58" y2="208.28" width="0.1524" layer="91"/>
-<pinref part="C4" gate="G$1" pin="2"/>
+<pinref part="C23" gate="G$1" pin="2"/>
 <pinref part="GND61" gate="1" pin="GND"/>
 </segment>
 <segment>
 <wire x1="101.6" y1="205.74" x2="101.6" y2="208.28" width="0.1524" layer="91"/>
-<pinref part="C64" gate="G$1" pin="2"/>
+<pinref part="C27" gate="G$1" pin="2"/>
 <pinref part="GND41" gate="1" pin="GND"/>
 </segment>
 <segment>
 <wire x1="93.98" y1="205.74" x2="93.98" y2="208.28" width="0.1524" layer="91"/>
-<pinref part="C63" gate="G$1" pin="2"/>
+<pinref part="C25" gate="G$1" pin="2"/>
 <pinref part="GND44" gate="1" pin="GND"/>
 </segment>
 <segment>
 <wire x1="68.58" y1="137.16" x2="68.58" y2="134.62" width="0.1524" layer="91"/>
-<pinref part="C3" gate="G$1" pin="2"/>
+<pinref part="C24" gate="G$1" pin="2"/>
 <pinref part="GND10" gate="1" pin="GND"/>
 </segment>
 <segment>
 <wire x1="93.98" y1="134.62" x2="93.98" y2="137.16" width="0.1524" layer="91"/>
-<pinref part="C8" gate="G$1" pin="2"/>
+<pinref part="C26" gate="G$1" pin="2"/>
 <pinref part="GND20" gate="1" pin="GND"/>
 </segment>
 <segment>
 <wire x1="101.6" y1="134.62" x2="101.6" y2="137.16" width="0.1524" layer="91"/>
-<pinref part="C10" gate="G$1" pin="2"/>
+<pinref part="C28" gate="G$1" pin="2"/>
 <pinref part="GND22" gate="1" pin="GND"/>
 </segment>
 <segment>
 <wire x1="35.56" y1="99.06" x2="35.56" y2="106.68" width="0.1524" layer="91"/>
-<pinref part="L6" gate="G$1" pin="1"/>
+<pinref part="L2" gate="G$1" pin="1"/>
 <pinref part="GND25" gate="1" pin="GND"/>
 </segment>
 <segment>
@@ -20561,26 +20589,26 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </segment>
 <segment>
 <wire x1="170.18" y1="134.62" x2="170.18" y2="137.16" width="0.1524" layer="91"/>
-<pinref part="C2" gate="G$1" pin="2"/>
+<pinref part="C30" gate="G$1" pin="2"/>
 <pinref part="GND13" gate="1" pin="GND"/>
 </segment>
 <segment>
 <wire x1="114.3" y1="137.16" x2="114.3" y2="134.62" width="0.1524" layer="91"/>
-<pinref part="R19" gate="G$1" pin="1"/>
+<pinref part="R16" gate="G$1" pin="1"/>
 <pinref part="GND30" gate="1" pin="GND"/>
 </segment>
 <segment>
 <wire x1="165.1" y1="137.16" x2="165.1" y2="134.62" width="0.1524" layer="91"/>
-<pinref part="R21" gate="G$1" pin="1"/>
+<pinref part="R18" gate="G$1" pin="1"/>
 <pinref part="GND31" gate="1" pin="GND"/>
 </segment>
 <segment>
 <pinref part="GND32" gate="1" pin="GND"/>
-<pinref part="R24" gate="G$1" pin="1"/>
+<pinref part="R19" gate="G$1" pin="1"/>
 <wire x1="190.5" y1="99.06" x2="190.5" y2="106.68" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="U3" gate="G$1" pin="GND"/>
+<pinref part="U4" gate="G$1" pin="GND"/>
 <pinref part="GND29" gate="1" pin="GND"/>
 <wire x1="139.7" y1="147.32" x2="139.7" y2="134.62" width="0.1524" layer="91"/>
 </segment>
@@ -20597,18 +20625,18 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="170.18" y1="228.6" x2="170.18" y2="215.9" width="0.1524" layer="91"/>
 <wire x1="152.4" y1="228.6" x2="170.18" y2="228.6" width="0.1524" layer="91"/>
 <junction x="170.18" y="228.6"/>
-<pinref part="C6" gate="G$1" pin="1"/>
+<pinref part="C29" gate="G$1" pin="1"/>
 <pinref part="P+18" gate="1" pin="+5V"/>
-<pinref part="U1" gate="G$1" pin="IN"/>
+<pinref part="U3" gate="G$1" pin="IN"/>
 </segment>
 <segment>
 <wire x1="170.18" y1="170.18" x2="170.18" y2="157.48" width="0.1524" layer="91"/>
 <wire x1="170.18" y1="157.48" x2="170.18" y2="144.78" width="0.1524" layer="91"/>
 <wire x1="152.4" y1="157.48" x2="170.18" y2="157.48" width="0.1524" layer="91"/>
 <junction x="170.18" y="157.48"/>
-<pinref part="C2" gate="G$1" pin="1"/>
+<pinref part="C30" gate="G$1" pin="1"/>
 <pinref part="P+1" gate="1" pin="+5V"/>
-<pinref part="U3" gate="G$1" pin="IN"/>
+<pinref part="U4" gate="G$1" pin="IN"/>
 </segment>
 <segment>
 <pinref part="OOBDPICAN" gate="B" pin="1"/>
@@ -20639,7 +20667,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </net>
 <net name="USB0_DRV" class="0">
 <segment>
-<pinref part="R34" gate="G$1" pin="2"/>
+<pinref part="R22" gate="G$1" pin="2"/>
 <wire x1="205.74" y1="223.52" x2="231.14" y2="223.52" width="0.1524" layer="91"/>
 <label x="231.14" y="223.52" size="1.27" layer="95" xref="yes"/>
 </segment>
@@ -20647,7 +20675,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <net name="USB0_VBUS" class="0">
 <segment>
 <wire x1="205.74" y1="236.22" x2="231.14" y2="236.22" width="0.1524" layer="91"/>
-<pinref part="R1" gate="G$1" pin="1"/>
+<pinref part="R20" gate="G$1" pin="1"/>
 <label x="231.14" y="236.22" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
@@ -20664,7 +20692,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <net name="USB0_CE" class="0">
 <segment>
 <wire x1="205.74" y1="228.6" x2="231.14" y2="228.6" width="0.1524" layer="91"/>
-<pinref part="R2" gate="G$1" pin="2"/>
+<pinref part="R21" gate="G$1" pin="2"/>
 <label x="231.14" y="228.6" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
@@ -20683,7 +20711,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <junction x="17.78" y="236.22"/>
 <junction x="20.32" y="208.28"/>
 <junction x="17.78" y="208.28"/>
-<pinref part="L3" gate="G$1" pin="2"/>
+<pinref part="L1" gate="G$1" pin="2"/>
 <pinref part="USB_OTG" gate="G1" pin="GND1"/>
 <pinref part="USB_OTG" gate="G1" pin="GND2"/>
 <pinref part="USB_OTG" gate="G1" pin="GND3"/>
@@ -20694,8 +20722,8 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <segment>
 <wire x1="127" y1="223.52" x2="114.3" y2="223.52" width="0.1524" layer="91"/>
 <wire x1="114.3" y1="223.52" x2="114.3" y2="218.44" width="0.1524" layer="91"/>
-<pinref part="U1" gate="G$1" pin="ISET"/>
-<pinref part="R3" gate="G$1" pin="2"/>
+<pinref part="U3" gate="G$1" pin="ISET"/>
+<pinref part="R15" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="N$100" class="0">
@@ -20711,11 +20739,11 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <junction x="114.3" y="228.6"/>
 <junction x="101.6" y="228.6"/>
 <junction x="93.98" y="228.6"/>
-<pinref part="U1" gate="G$1" pin="OUT"/>
-<pinref part="L1" gate="G$1" pin="2"/>
-<pinref part="R1" gate="G$1" pin="2"/>
-<pinref part="C64" gate="G$1" pin="1"/>
-<pinref part="C63" gate="G$1" pin="1"/>
+<pinref part="U3" gate="G$1" pin="OUT"/>
+<pinref part="L3" gate="G$1" pin="2"/>
+<pinref part="R20" gate="G$1" pin="2"/>
+<pinref part="C27" gate="G$1" pin="1"/>
+<pinref part="C25" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="+5V_OTG_PWR" class="0">
@@ -20726,9 +20754,9 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="68.58" y1="228.6" x2="73.66" y2="228.6" width="0.1524" layer="91"/>
 <junction x="68.58" y="228.6"/>
 <label x="30.48" y="228.981" size="1.778" layer="95" ratio="15"/>
-<pinref part="L1" gate="G$1" pin="1"/>
+<pinref part="L3" gate="G$1" pin="1"/>
 <pinref part="USB_OTG" gate="G1" pin="VBUS"/>
-<pinref part="C4" gate="G$1" pin="1"/>
+<pinref part="C23" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="N$28" class="0">
@@ -20738,8 +20766,8 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="68.58" y1="144.78" x2="68.58" y2="157.48" width="0.1524" layer="91"/>
 <junction x="68.58" y="157.48"/>
 <pinref part="USB_HOST" gate="G$1" pin="1"/>
-<pinref part="L5" gate="G$1" pin="2"/>
-<pinref part="C3" gate="G$1" pin="1"/>
+<pinref part="L4" gate="G$1" pin="2"/>
+<pinref part="C24" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="N$29" class="0">
@@ -20748,7 +20776,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <pinref part="USB_HOST" gate="G$1" pin="6"/>
 <wire x1="33.02" y1="147.32" x2="35.56" y2="147.32" width="0.1524" layer="91"/>
 <wire x1="35.56" y1="147.32" x2="35.56" y2="129.54" width="0.1524" layer="91"/>
-<pinref part="L6" gate="G$1" pin="2"/>
+<pinref part="L2" gate="G$1" pin="2"/>
 <wire x1="35.56" y1="121.92" x2="35.56" y2="129.54" width="0.1524" layer="91"/>
 <junction x="33.02" y="147.32"/>
 </segment>
@@ -20756,21 +20784,21 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <net name="USB1_DRV" class="0">
 <segment>
 <wire x1="205.74" y1="152.4" x2="231.14" y2="152.4" width="0.1524" layer="91"/>
-<pinref part="R35" gate="G$1" pin="2"/>
+<pinref part="R25" gate="G$1" pin="2"/>
 <label x="231.14" y="152.4" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="USB1_VBUS" class="0">
 <segment>
 <wire x1="205.74" y1="165.1" x2="231.14" y2="165.1" width="0.1524" layer="91"/>
-<pinref part="R22" gate="G$1" pin="1"/>
+<pinref part="R23" gate="G$1" pin="1"/>
 <label x="231.14" y="165.1" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="USB1_CE" class="0">
 <segment>
 <wire x1="205.74" y1="157.48" x2="231.14" y2="157.48" width="0.1524" layer="91"/>
-<pinref part="R23" gate="G$1" pin="2"/>
+<pinref part="R24" gate="G$1" pin="2"/>
 <label x="231.14" y="157.48" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
@@ -20778,25 +20806,25 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <segment>
 <wire x1="127" y1="152.4" x2="114.3" y2="152.4" width="0.1524" layer="91"/>
 <wire x1="114.3" y1="152.4" x2="114.3" y2="147.32" width="0.1524" layer="91"/>
-<pinref part="U3" gate="G$1" pin="ISET"/>
-<pinref part="R19" gate="G$1" pin="2"/>
+<pinref part="U4" gate="G$1" pin="ISET"/>
+<pinref part="R16" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="N$13" class="0">
 <segment>
-<pinref part="R22" gate="G$1" pin="2"/>
+<pinref part="R23" gate="G$1" pin="2"/>
 <wire x1="195.58" y1="165.1" x2="152.4" y2="165.1" width="0.1524" layer="91"/>
 <wire x1="152.4" y1="165.1" x2="114.3" y2="165.1" width="0.1524" layer="91"/>
 <wire x1="114.3" y1="165.1" x2="114.3" y2="157.48" width="0.1524" layer="91"/>
-<pinref part="U3" gate="G$1" pin="OUT"/>
+<pinref part="U4" gate="G$1" pin="OUT"/>
 <wire x1="114.3" y1="157.48" x2="127" y2="157.48" width="0.1524" layer="91"/>
-<pinref part="L5" gate="G$1" pin="1"/>
+<pinref part="L4" gate="G$1" pin="1"/>
 <wire x1="114.3" y1="157.48" x2="101.6" y2="157.48" width="0.1524" layer="91"/>
-<pinref part="C8" gate="G$1" pin="1"/>
+<pinref part="C26" gate="G$1" pin="1"/>
 <wire x1="101.6" y1="157.48" x2="93.98" y2="157.48" width="0.1524" layer="91"/>
 <wire x1="93.98" y1="157.48" x2="88.9" y2="157.48" width="0.1524" layer="91"/>
 <wire x1="93.98" y1="144.78" x2="93.98" y2="157.48" width="0.1524" layer="91"/>
-<pinref part="C10" gate="G$1" pin="1"/>
+<pinref part="C28" gate="G$1" pin="1"/>
 <wire x1="101.6" y1="144.78" x2="101.6" y2="157.48" width="0.1524" layer="91"/>
 <junction x="93.98" y="157.48"/>
 <junction x="101.6" y="157.48"/>
@@ -20833,7 +20861,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </net>
 <net name="USB1_ID" class="0">
 <segment>
-<pinref part="R24" gate="G$1" pin="2"/>
+<pinref part="R19" gate="G$1" pin="2"/>
 <wire x1="190.5" y1="116.84" x2="190.5" y2="121.92" width="0.1524" layer="91"/>
 <wire x1="190.5" y1="121.92" x2="231.14" y2="121.92" width="0.1524" layer="91"/>
 <label x="231.14" y="121.92" size="1.27" layer="95" xref="yes"/>
@@ -20848,10 +20876,10 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="190.5" y1="228.6" x2="190.5" y2="223.52" width="0.1524" layer="91"/>
 <junction x="165.1" y="223.52"/>
 <junction x="190.5" y="223.52"/>
-<pinref part="U1" gate="G$1" pin="EN"/>
-<pinref part="R4" gate="G$1" pin="2"/>
-<pinref part="R2" gate="G$1" pin="1"/>
-<pinref part="R34" gate="G$1" pin="1"/>
+<pinref part="U3" gate="G$1" pin="EN"/>
+<pinref part="R17" gate="G$1" pin="2"/>
+<pinref part="R21" gate="G$1" pin="1"/>
+<pinref part="R22" gate="G$1" pin="1"/>
 <wire x1="190.5" y1="223.52" x2="195.58" y2="223.52" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -20865,10 +20893,10 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="190.5" y1="157.48" x2="190.5" y2="152.4" width="0.1524" layer="91"/>
 <junction x="165.1" y="152.4"/>
 <junction x="190.5" y="152.4"/>
-<pinref part="U3" gate="G$1" pin="EN"/>
-<pinref part="R21" gate="G$1" pin="2"/>
-<pinref part="R23" gate="G$1" pin="1"/>
-<pinref part="R35" gate="G$1" pin="1"/>
+<pinref part="U4" gate="G$1" pin="EN"/>
+<pinref part="R18" gate="G$1" pin="2"/>
+<pinref part="R24" gate="G$1" pin="1"/>
+<pinref part="R25" gate="G$1" pin="1"/>
 </segment>
 </net>
 </nets>
@@ -20887,52 +20915,52 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </plain>
 <instances>
 <instance part="FRAME3" gate="G$1" x="0" y="0"/>
-<instance part="R8" gate="G$1" x="121.92" y="210.82" smashed="yes" rot="R90">
+<instance part="R26" gate="G$1" x="121.92" y="210.82" smashed="yes" rot="R90">
 <attribute name="MANEX" x="121.92" y="210.82" size="1.778" layer="96" rot="R90" display="off"/>
 <attribute name="NAME" x="121.285" y="215.6714" size="1.6764" layer="95" rot="R180"/>
 <attribute name="VALUE" x="121.92" y="207.772" size="1.6764" layer="96" rot="R180"/>
 </instance>
-<instance part="R9" gate="G$1" x="129.54" y="210.82" smashed="yes" rot="R90">
+<instance part="R27" gate="G$1" x="129.54" y="210.82" smashed="yes" rot="R90">
 <attribute name="MANEX" x="129.54" y="210.82" size="1.778" layer="96" rot="R90" display="off"/>
 <attribute name="NAME" x="133.35" y="215.6714" size="1.6764" layer="95" rot="R180"/>
 <attribute name="VALUE" x="135.255" y="207.772" size="1.6764" layer="96" rot="R180"/>
 </instance>
-<instance part="C5" gate="G$1" x="45.72" y="147.32" smashed="yes" rot="R180">
+<instance part="C32" gate="G$1" x="45.72" y="147.32" smashed="yes" rot="R180">
 <attribute name="MANEX" x="45.72" y="147.32" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="43.561" y="145.161" size="1.6764" layer="95" rot="R270"/>
 <attribute name="VALUE" x="43.561" y="154.686" size="1.6764" layer="96" rot="R270"/>
 </instance>
-<instance part="C7" gate="G$1" x="205.74" y="170.18" smashed="yes" rot="R180">
+<instance part="C39" gate="G$1" x="205.74" y="170.18" smashed="yes" rot="R180">
 <attribute name="MANEX" x="205.74" y="170.18" size="1.778" layer="96" rot="R180" display="off"/>
-<attribute name="NAME" x="202.184" y="170.561" size="1.6764" layer="95"/>
+<attribute name="NAME" x="199.644" y="170.561" size="1.6764" layer="95"/>
 <attribute name="VALUE" x="199.009" y="165.481" size="1.6764" layer="96"/>
 </instance>
-<instance part="C16" gate="G$1" x="248.92" y="185.42" smashed="yes">
+<instance part="C43" gate="G$1" x="248.92" y="185.42" smashed="yes">
 <attribute name="MANEX" x="248.92" y="185.42" size="1.778" layer="96" display="off"/>
 <attribute name="NAME" x="250.444" y="188.341" size="1.6764" layer="95"/>
 <attribute name="VALUE" x="250.444" y="183.261" size="1.6764" layer="96"/>
 </instance>
-<instance part="C17" gate="G$1" x="241.3" y="185.42" smashed="yes">
+<instance part="C41" gate="G$1" x="241.3" y="185.42" smashed="yes">
 <attribute name="MANEX" x="241.3" y="185.42" size="1.778" layer="96" display="off"/>
 <attribute name="NAME" x="235.204" y="188.341" size="1.6764" layer="95"/>
 <attribute name="VALUE" x="235.204" y="183.261" size="1.6764" layer="96"/>
 </instance>
-<instance part="C18" gate="G$1" x="304.8" y="121.92" smashed="yes" rot="R180">
+<instance part="C45" gate="G$1" x="304.8" y="121.92" smashed="yes" rot="R180">
 <attribute name="MANEX" x="304.8" y="121.92" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="303.276" y="124.079" size="1.6764" layer="95" rot="R180"/>
 <attribute name="VALUE" x="303.911" y="118.999" size="1.6764" layer="96" rot="R180"/>
 </instance>
-<instance part="C19" gate="G$1" x="312.42" y="121.92" smashed="yes" rot="R180">
+<instance part="C46" gate="G$1" x="312.42" y="121.92" smashed="yes" rot="R180">
 <attribute name="MANEX" x="312.42" y="121.92" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="318.516" y="124.079" size="1.6764" layer="95" rot="R180"/>
 <attribute name="VALUE" x="329.311" y="118.999" size="1.6764" layer="96" rot="R180"/>
 </instance>
-<instance part="TLV320AIC3107" gate="G$1" x="167.64" y="167.64"/>
-<instance part="R13" gate="G$1" x="279.4" y="132.08" smashed="yes">
+<instance part="TLV320AIC1" gate="G$1" x="167.64" y="167.64"/>
+<instance part="R29" gate="G$1" x="279.4" y="132.08" smashed="yes">
 <attribute name="NAME" x="275.59" y="133.5786" size="1.6764" layer="95"/>
 <attribute name="VALUE" x="275.59" y="128.778" size="1.6764" layer="96"/>
 </instance>
-<instance part="R14" gate="G$1" x="279.4" y="180.34" smashed="yes">
+<instance part="R28" gate="G$1" x="279.4" y="180.34" smashed="yes">
 <attribute name="NAME" x="275.59" y="181.8386" size="1.6764" layer="95"/>
 <attribute name="VALUE" x="275.59" y="177.038" size="1.6764" layer="96"/>
 </instance>
@@ -20965,17 +20993,17 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <attribute name="NAME" x="112.141" y="145.161" size="1.6764" layer="95" rot="R270"/>
 <attribute name="VALUE" x="112.141" y="154.686" size="1.6764" layer="96" rot="R270"/>
 </instance>
-<instance part="C39" gate="G$1" x="68.58" y="147.32" smashed="yes" rot="R180">
+<instance part="C34" gate="G$1" x="68.58" y="147.32" smashed="yes" rot="R180">
 <attribute name="MANEX" x="68.58" y="147.32" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="66.421" y="145.161" size="1.6764" layer="95" rot="R270"/>
 <attribute name="VALUE" x="66.421" y="154.686" size="1.6764" layer="96" rot="R270"/>
 </instance>
-<instance part="C40" gate="G$1" x="60.96" y="147.32" smashed="yes" rot="R180">
+<instance part="C33" gate="G$1" x="60.96" y="147.32" smashed="yes" rot="R180">
 <attribute name="MANEX" x="60.96" y="147.32" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="58.801" y="145.161" size="1.6764" layer="95" rot="R270"/>
 <attribute name="VALUE" x="58.801" y="154.051" size="1.6764" layer="96" rot="R270"/>
 </instance>
-<instance part="C41" gate="G$1" x="248.92" y="142.24" smashed="yes">
+<instance part="C44" gate="G$1" x="248.92" y="142.24" smashed="yes">
 <attribute name="MANEX" x="248.92" y="142.24" size="1.778" layer="96" display="off"/>
 <attribute name="NAME" x="254.381" y="146.939" size="1.6764" layer="95" rot="R180"/>
 <attribute name="VALUE" x="256.921" y="141.859" size="1.6764" layer="96" rot="R180"/>
@@ -20985,32 +21013,32 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <attribute name="NAME" x="236.474" y="145.161" size="1.6764" layer="95"/>
 <attribute name="VALUE" x="235.204" y="140.081" size="1.6764" layer="96"/>
 </instance>
-<instance part="C43" gate="G$1" x="38.1" y="147.32" smashed="yes" rot="R180">
+<instance part="C31" gate="G$1" x="38.1" y="147.32" smashed="yes" rot="R180">
 <attribute name="MANEX" x="38.1" y="147.32" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="35.941" y="145.161" size="1.6764" layer="95" rot="R270"/>
 <attribute name="VALUE" x="35.941" y="154.051" size="1.6764" layer="96" rot="R270"/>
 </instance>
-<instance part="C44" gate="G$1" x="106.68" y="147.32" smashed="yes" rot="R180">
+<instance part="C37" gate="G$1" x="106.68" y="147.32" smashed="yes" rot="R180">
 <attribute name="MANEX" x="106.68" y="147.32" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="104.521" y="145.161" size="1.6764" layer="95" rot="R270"/>
 <attribute name="VALUE" x="104.521" y="154.686" size="1.6764" layer="96" rot="R270"/>
 </instance>
-<instance part="C45" gate="G$1" x="91.44" y="147.32" smashed="yes" rot="R180">
+<instance part="C36" gate="G$1" x="91.44" y="147.32" smashed="yes" rot="R180">
 <attribute name="MANEX" x="91.44" y="147.32" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="89.281" y="145.161" size="1.6764" layer="95" rot="R270"/>
 <attribute name="VALUE" x="89.281" y="154.686" size="1.6764" layer="96" rot="R270"/>
 </instance>
-<instance part="C46" gate="G$1" x="83.82" y="147.32" smashed="yes" rot="R180">
+<instance part="C35" gate="G$1" x="83.82" y="147.32" smashed="yes" rot="R180">
 <attribute name="MANEX" x="83.82" y="147.32" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="81.661" y="145.161" size="1.6764" layer="95" rot="R270"/>
 <attribute name="VALUE" x="81.661" y="154.051" size="1.6764" layer="96" rot="R270"/>
 </instance>
-<instance part="C57" gate="G$1" x="213.36" y="170.18" smashed="yes" rot="R180">
+<instance part="C40" gate="G$1" x="213.36" y="170.18" smashed="yes" rot="R180">
 <attribute name="MANEX" x="213.36" y="170.18" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="214.884" y="170.561" size="1.6764" layer="95"/>
 <attribute name="VALUE" x="214.884" y="165.481" size="1.6764" layer="96"/>
 </instance>
-<instance part="L2" gate="G$1" x="213.36" y="114.3" smashed="yes" rot="MR90">
+<instance part="L5" gate="G$1" x="213.36" y="114.3" smashed="yes" rot="MR90">
 <attribute name="NAME" x="214.63" y="116.205" size="1.6764" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="222.885" y="112.395" size="0.8128" layer="96" rot="MR0"/>
 </instance>
@@ -21022,7 +21050,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </instance>
 <instance part="GND23" gate="1" x="241.3" y="170.18"/>
 <instance part="GND24" gate="1" x="241.3" y="106.68"/>
-<instance part="JP2" gate="B" x="287.02" y="162.56" rot="R270"/>
+<instance part="JP1" gate="B" x="287.02" y="162.56" rot="R270"/>
 <instance part="+3V15" gate="G$1" x="241.3" y="157.48" smashed="yes">
 <attribute name="VALUE" x="245.11" y="160.02" size="1.778" layer="96" rot="R180"/>
 </instance>
@@ -21041,13 +21069,13 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <segment>
 <wire x1="149.86" y1="185.42" x2="35.56" y2="185.42" width="0.1524" layer="91"/>
 <label x="35.56" y="185.42" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="TLV320AIC3107" gate="G$1" pin="MCLK"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="MCLK"/>
 </segment>
 </net>
 <net name="AUD_WCLK" class="0">
 <segment>
 <label x="35.56" y="182.88" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="TLV320AIC3107" gate="G$1" pin="WCLK"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="WCLK"/>
 <wire x1="149.86" y1="182.88" x2="35.56" y2="182.88" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -21055,14 +21083,14 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <segment>
 <wire x1="149.86" y1="180.34" x2="35.56" y2="180.34" width="0.1524" layer="91"/>
 <label x="35.56" y="180.34" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="TLV320AIC3107" gate="G$1" pin="BCLK"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="BCLK"/>
 </segment>
 </net>
 <net name="I2C0-SDA" class="0">
 <segment>
-<pinref part="TLV320AIC3107" gate="G$1" pin="SDA"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="SDA"/>
 <wire x1="149.86" y1="187.96" x2="129.54" y2="187.96" width="0.1524" layer="91"/>
-<pinref part="R9" gate="G$1" pin="1"/>
+<pinref part="R27" gate="G$1" pin="1"/>
 <wire x1="129.54" y1="187.96" x2="129.54" y2="205.74" width="0.1524" layer="91"/>
 <junction x="129.54" y="187.96"/>
 <label x="35.56" y="187.96" size="1.27" layer="95" rot="R180" xref="yes"/>
@@ -21072,71 +21100,71 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <net name="AGND" class="0">
 <segment>
 <pinref part="AGND2" gate="VR1" pin="AGND"/>
-<pinref part="C19" gate="G$1" pin="1"/>
+<pinref part="C46" gate="G$1" pin="1"/>
 <wire x1="304.8" y1="109.22" x2="304.8" y2="114.3" width="0.1524" layer="91"/>
 <wire x1="304.8" y1="114.3" x2="312.42" y2="114.3" width="0.1524" layer="91"/>
 <wire x1="312.42" y1="114.3" x2="312.42" y2="116.84" width="0.1524" layer="91"/>
-<pinref part="C18" gate="G$1" pin="1"/>
+<pinref part="C45" gate="G$1" pin="1"/>
 <wire x1="304.8" y1="114.3" x2="304.8" y2="116.84" width="0.1524" layer="91"/>
 <junction x="304.8" y="114.3"/>
 </segment>
 <segment>
 <pinref part="AGND3" gate="VR1" pin="AGND"/>
-<pinref part="TLV320AIC3107" gate="G$1" pin="AVSS_ADC"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="AVSS_ADC"/>
 <wire x1="198.12" y1="109.22" x2="198.12" y2="114.3" width="0.1524" layer="91"/>
 <wire x1="198.12" y1="114.3" x2="198.12" y2="152.4" width="0.1524" layer="91"/>
 <wire x1="198.12" y1="152.4" x2="185.42" y2="152.4" width="0.1524" layer="91"/>
-<pinref part="L2" gate="G$1" pin="2"/>
+<pinref part="L5" gate="G$1" pin="2"/>
 <wire x1="205.74" y1="114.3" x2="198.12" y2="114.3" width="0.1524" layer="91"/>
 <junction x="198.12" y="114.3"/>
 </segment>
 <segment>
-<pinref part="TLV320AIC3107" gate="G$1" pin="AVSS_DAC"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="AVSS_DAC"/>
 <pinref part="AGND4" gate="VR1" pin="AGND"/>
 <wire x1="149.86" y1="142.24" x2="139.7" y2="142.24" width="0.1524" layer="91"/>
 <wire x1="139.7" y1="142.24" x2="139.7" y2="109.22" width="0.1524" layer="91"/>
-<pinref part="TLV320AIC3107" gate="G$1" pin="SWINP"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="SWINP"/>
 <wire x1="149.86" y1="149.86" x2="139.7" y2="149.86" width="0.1524" layer="91"/>
 <wire x1="139.7" y1="149.86" x2="139.7" y2="142.24" width="0.1524" layer="91"/>
 <junction x="139.7" y="142.24"/>
 </segment>
 <segment>
-<pinref part="JP2" gate="B" pin="5"/>
+<pinref part="JP1" gate="B" pin="5"/>
 <pinref part="AGND1" gate="VR1" pin="AGND"/>
 <wire x1="279.4" y1="160.02" x2="274.32" y2="160.02" width="0.1524" layer="91"/>
 <wire x1="274.32" y1="160.02" x2="274.32" y2="157.48" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="TLV320AIC3107" gate="G$1" pin="SWINM"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="SWINM"/>
 <pinref part="AGND5" gate="VR1" pin="AGND"/>
 <wire x1="185.42" y1="190.5" x2="198.12" y2="190.5" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$15" class="0">
 <segment>
-<pinref part="R13" gate="G$1" pin="2"/>
+<pinref part="R29" gate="G$1" pin="2"/>
 <wire x1="284.48" y1="132.08" x2="304.8" y2="132.08" width="0.1524" layer="91"/>
 <wire x1="304.8" y1="132.08" x2="304.8" y2="162.56" width="0.1524" layer="91"/>
-<pinref part="C18" gate="G$1" pin="2"/>
+<pinref part="C45" gate="G$1" pin="2"/>
 <wire x1="304.8" y1="132.08" x2="304.8" y2="124.46" width="0.1524" layer="91"/>
 <junction x="304.8" y="132.08"/>
-<pinref part="JP2" gate="B" pin="4"/>
+<pinref part="JP1" gate="B" pin="4"/>
 <wire x1="304.8" y1="162.56" x2="294.64" y2="162.56" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$18" class="0">
 <segment>
-<pinref part="TLV320AIC3107" gate="G$1" pin="SPOM"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="SPOM"/>
 <wire x1="149.86" y1="139.7" x2="144.78" y2="139.7" width="0.1524" layer="91"/>
 <wire x1="144.78" y1="139.7" x2="144.78" y2="132.08" width="0.1524" layer="91"/>
 <wire x1="144.78" y1="132.08" x2="274.32" y2="132.08" width="0.1524" layer="91"/>
-<pinref part="R13" gate="G$1" pin="1"/>
+<pinref part="R29" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="SYS_RESETN" class="0">
 <segment>
 <label x="35.56" y="195.58" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="TLV320AIC3107" gate="G$1" pin="RESETN"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="RESETN"/>
 <wire x1="35.56" y1="195.58" x2="149.86" y2="195.58" width="0.1524" layer="91"/>
 </segment>
 </net>
@@ -21146,75 +21174,75 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="121.92" y1="215.9" x2="121.92" y2="220.98" width="0.1524" layer="91"/>
 <wire x1="121.92" y1="220.98" x2="129.54" y2="220.98" width="0.1524" layer="91"/>
 <wire x1="129.54" y1="220.98" x2="129.54" y2="215.9" width="0.1524" layer="91"/>
-<pinref part="R8" gate="G$1" pin="2"/>
-<pinref part="R9" gate="G$1" pin="2"/>
+<pinref part="R26" gate="G$1" pin="2"/>
+<pinref part="R27" gate="G$1" pin="2"/>
 <pinref part="+3V4" gate="G$1" pin="+3V3"/>
 <junction x="121.92" y="220.98"/>
 </segment>
 <segment>
 <wire x1="45.72" y1="154.94" x2="45.72" y2="167.64" width="0.1524" layer="91"/>
 <pinref part="+3V5" gate="G$1" pin="+3V3"/>
-<pinref part="C5" gate="G$1" pin="2"/>
+<pinref part="C32" gate="G$1" pin="2"/>
 <wire x1="45.72" y1="167.64" x2="45.72" y2="170.18" width="0.1524" layer="91"/>
 <wire x1="45.72" y1="154.94" x2="45.72" y2="149.86" width="0.1524" layer="91"/>
 <junction x="45.72" y="154.94"/>
-<pinref part="TLV320AIC3107" gate="G$1" pin="AVDD_DAC"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="AVDD_DAC"/>
 <junction x="45.72" y="167.64"/>
-<pinref part="C43" gate="G$1" pin="2"/>
+<pinref part="C31" gate="G$1" pin="2"/>
 <wire x1="45.72" y1="167.64" x2="149.86" y2="167.64" width="0.1524" layer="91"/>
 <wire x1="45.72" y1="154.94" x2="38.1" y2="154.94" width="0.1524" layer="91"/>
 <wire x1="38.1" y1="154.94" x2="38.1" y2="149.86" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="+3V6" gate="G$1" pin="+3V3"/>
-<pinref part="TLV320AIC3107" gate="G$1" pin="DRVDD_1"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="DRVDD_1"/>
 <wire x1="185.42" y1="193.04" x2="241.3" y2="193.04" width="0.1524" layer="91"/>
 <wire x1="241.3" y1="193.04" x2="241.3" y2="200.66" width="0.1524" layer="91"/>
-<pinref part="C16" gate="G$1" pin="1"/>
+<pinref part="C43" gate="G$1" pin="1"/>
 <wire x1="248.92" y1="190.5" x2="248.92" y2="193.04" width="0.1524" layer="91"/>
 <wire x1="248.92" y1="193.04" x2="241.3" y2="193.04" width="0.1524" layer="91"/>
-<pinref part="C17" gate="G$1" pin="1"/>
+<pinref part="C41" gate="G$1" pin="1"/>
 <wire x1="241.3" y1="190.5" x2="241.3" y2="193.04" width="0.1524" layer="91"/>
 <junction x="241.3" y="193.04"/>
 <junction x="241.3" y="193.04"/>
 </segment>
 <segment>
-<pinref part="TLV320AIC3107" gate="G$1" pin="DRVDD_0"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="DRVDD_0"/>
 <wire x1="149.86" y1="165.1" x2="68.58" y2="165.1" width="0.1524" layer="91"/>
-<pinref part="C39" gate="G$1" pin="2"/>
+<pinref part="C34" gate="G$1" pin="2"/>
 <wire x1="68.58" y1="165.1" x2="68.58" y2="154.94" width="0.1524" layer="91"/>
 <pinref part="+3V13" gate="G$1" pin="+3V3"/>
 <wire x1="68.58" y1="154.94" x2="68.58" y2="149.86" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="170.18" x2="68.58" y2="165.1" width="0.1524" layer="91"/>
 <junction x="68.58" y="165.1"/>
-<pinref part="C40" gate="G$1" pin="2"/>
+<pinref part="C33" gate="G$1" pin="2"/>
 <wire x1="60.96" y1="149.86" x2="60.96" y2="154.94" width="0.1524" layer="91"/>
 <wire x1="60.96" y1="154.94" x2="68.58" y2="154.94" width="0.1524" layer="91"/>
 <junction x="68.58" y="154.94"/>
 </segment>
 <segment>
-<pinref part="C45" gate="G$1" pin="2"/>
+<pinref part="C36" gate="G$1" pin="2"/>
 <wire x1="91.44" y1="149.86" x2="91.44" y2="154.94" width="0.1524" layer="91"/>
-<pinref part="TLV320AIC3107" gate="G$1" pin="IOVDD"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="IOVDD"/>
 <wire x1="91.44" y1="154.94" x2="91.44" y2="160.02" width="0.1524" layer="91"/>
 <wire x1="91.44" y1="160.02" x2="149.86" y2="160.02" width="0.1524" layer="91"/>
 <pinref part="+3V14" gate="G$1" pin="+3V3"/>
 <wire x1="91.44" y1="170.18" x2="91.44" y2="160.02" width="0.1524" layer="91"/>
 <junction x="91.44" y="160.02"/>
-<pinref part="C46" gate="G$1" pin="2"/>
+<pinref part="C35" gate="G$1" pin="2"/>
 <wire x1="83.82" y1="149.86" x2="83.82" y2="154.94" width="0.1524" layer="91"/>
 <wire x1="83.82" y1="154.94" x2="91.44" y2="154.94" width="0.1524" layer="91"/>
 <junction x="91.44" y="154.94"/>
 </segment>
 <segment>
-<pinref part="C41" gate="G$1" pin="1"/>
+<pinref part="C44" gate="G$1" pin="1"/>
 <wire x1="248.92" y1="147.32" x2="248.92" y2="149.86" width="0.1524" layer="91"/>
 <wire x1="248.92" y1="149.86" x2="241.3" y2="149.86" width="0.1524" layer="91"/>
 <pinref part="C42" gate="G$1" pin="1"/>
 <wire x1="241.3" y1="147.32" x2="241.3" y2="149.86" width="0.1524" layer="91"/>
 <junction x="241.3" y="149.86"/>
 <wire x1="241.3" y1="149.86" x2="185.42" y2="149.86" width="0.1524" layer="91"/>
-<pinref part="TLV320AIC3107" gate="G$1" pin="AVDD_ADC"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="AVDD_ADC"/>
 <pinref part="+3V15" gate="G$1" pin="+3V3"/>
 <wire x1="241.3" y1="149.86" x2="241.3" y2="154.94" width="0.1524" layer="91"/>
 </segment>
@@ -21223,34 +21251,34 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <segment>
 <wire x1="149.86" y1="190.5" x2="121.92" y2="190.5" width="0.1524" layer="91"/>
 <label x="35.56" y="190.5" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="R8" gate="G$1" pin="1"/>
+<pinref part="R26" gate="G$1" pin="1"/>
 <wire x1="121.92" y1="190.5" x2="121.92" y2="205.74" width="0.1524" layer="91"/>
 <junction x="121.92" y="190.5"/>
-<pinref part="TLV320AIC3107" gate="G$1" pin="SCL"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="SCL"/>
 <wire x1="121.92" y1="190.5" x2="35.56" y2="190.5" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="GND" class="1">
 <segment>
-<pinref part="C5" gate="G$1" pin="1"/>
+<pinref part="C32" gate="G$1" pin="1"/>
 <pinref part="GND59" gate="1" pin="GND"/>
 <wire x1="45.72" y1="142.24" x2="45.72" y2="137.16" width="0.1524" layer="91"/>
 <pinref part="C38" gate="G$1" pin="1"/>
 <wire x1="114.3" y1="137.16" x2="114.3" y2="109.22" width="0.1524" layer="91"/>
 <wire x1="114.3" y1="142.24" x2="114.3" y2="137.16" width="0.1524" layer="91"/>
 <junction x="114.3" y="137.16"/>
-<pinref part="C44" gate="G$1" pin="1"/>
+<pinref part="C37" gate="G$1" pin="1"/>
 <wire x1="106.68" y1="137.16" x2="114.3" y2="137.16" width="0.1524" layer="91"/>
 <wire x1="106.68" y1="142.24" x2="106.68" y2="137.16" width="0.1524" layer="91"/>
 <junction x="106.68" y="137.16"/>
-<pinref part="C43" gate="G$1" pin="1"/>
+<pinref part="C31" gate="G$1" pin="1"/>
 <wire x1="38.1" y1="142.24" x2="38.1" y2="137.16" width="0.1524" layer="91"/>
-<pinref part="C45" gate="G$1" pin="1"/>
+<pinref part="C36" gate="G$1" pin="1"/>
 <wire x1="83.82" y1="137.16" x2="114.3" y2="137.16" width="0.1524" layer="91"/>
 <wire x1="91.44" y1="142.24" x2="91.44" y2="137.16" width="0.1524" layer="91"/>
 <junction x="91.44" y="137.16"/>
 <wire x1="38.1" y1="137.16" x2="45.72" y2="137.16" width="0.1524" layer="91"/>
-<pinref part="C46" gate="G$1" pin="1"/>
+<pinref part="C35" gate="G$1" pin="1"/>
 <wire x1="45.72" y1="137.16" x2="60.96" y2="137.16" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="137.16" x2="60.96" y2="137.16" width="0.1524" layer="91"/>
 <wire x1="60.96" y1="137.16" x2="83.82" y2="137.16" width="0.1524" layer="91"/>
@@ -21262,31 +21290,31 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <junction x="68.58" y="137.16"/>
 <junction x="60.96" y="137.16"/>
 <junction x="83.82" y="137.16"/>
-<pinref part="C39" gate="G$1" pin="1"/>
-<pinref part="C40" gate="G$1" pin="1"/>
+<pinref part="C34" gate="G$1" pin="1"/>
+<pinref part="C33" gate="G$1" pin="1"/>
 </segment>
 <segment>
-<pinref part="TLV320AIC3107" gate="G$1" pin="DRVSS"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="DRVSS"/>
 <pinref part="GND62" gate="1" pin="GND"/>
 <wire x1="185.42" y1="147.32" x2="228.6" y2="147.32" width="0.1524" layer="91"/>
 <wire x1="228.6" y1="147.32" x2="228.6" y2="139.7" width="0.1524" layer="91"/>
-<pinref part="TLV320AIC3107" gate="G$1" pin="DVSS"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="DVSS"/>
 <wire x1="228.6" y1="139.7" x2="228.6" y2="114.3" width="0.1524" layer="91"/>
 <wire x1="228.6" y1="114.3" x2="228.6" y2="109.22" width="0.1524" layer="91"/>
 <wire x1="185.42" y1="139.7" x2="228.6" y2="139.7" width="0.1524" layer="91"/>
 <junction x="228.6" y="139.7"/>
-<pinref part="TLV320AIC3107" gate="G$1" pin="SPVSS"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="SPVSS"/>
 <wire x1="185.42" y1="154.94" x2="228.6" y2="154.94" width="0.1524" layer="91"/>
 <wire x1="228.6" y1="154.94" x2="228.6" y2="147.32" width="0.1524" layer="91"/>
 <junction x="228.6" y="147.32"/>
-<pinref part="L2" gate="G$1" pin="1"/>
+<pinref part="L5" gate="G$1" pin="1"/>
 <wire x1="228.6" y1="114.3" x2="220.98" y2="114.3" width="0.1524" layer="91"/>
 <junction x="228.6" y="114.3"/>
 </segment>
 <segment>
-<pinref part="C7" gate="G$1" pin="1"/>
+<pinref part="C39" gate="G$1" pin="1"/>
 <pinref part="GND63" gate="1" pin="GND"/>
-<pinref part="C57" gate="G$1" pin="1"/>
+<pinref part="C40" gate="G$1" pin="1"/>
 <wire x1="205.74" y1="162.56" x2="205.74" y2="165.1" width="0.1524" layer="91"/>
 <wire x1="213.36" y1="165.1" x2="213.36" y2="162.56" width="0.1524" layer="91"/>
 <wire x1="213.36" y1="162.56" x2="205.74" y2="162.56" width="0.1524" layer="91"/>
@@ -21294,9 +21322,9 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <junction x="205.74" y="162.56"/>
 </segment>
 <segment>
-<pinref part="C16" gate="G$1" pin="2"/>
+<pinref part="C43" gate="G$1" pin="2"/>
 <wire x1="248.92" y1="182.88" x2="248.92" y2="177.8" width="0.1524" layer="91"/>
-<pinref part="C17" gate="G$1" pin="2"/>
+<pinref part="C41" gate="G$1" pin="2"/>
 <wire x1="241.3" y1="177.8" x2="241.3" y2="182.88" width="0.1524" layer="91"/>
 <wire x1="241.3" y1="177.8" x2="248.92" y2="177.8" width="0.1524" layer="91"/>
 <wire x1="241.3" y1="177.8" x2="241.3" y2="172.72" width="0.1524" layer="91"/>
@@ -21305,7 +21333,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </segment>
 <segment>
 <pinref part="C42" gate="G$1" pin="2"/>
-<pinref part="C41" gate="G$1" pin="2"/>
+<pinref part="C44" gate="G$1" pin="2"/>
 <wire x1="248.92" y1="139.7" x2="248.92" y2="134.62" width="0.1524" layer="91"/>
 <wire x1="248.92" y1="134.62" x2="241.3" y2="134.62" width="0.1524" layer="91"/>
 <wire x1="241.3" y1="134.62" x2="241.3" y2="139.7" width="0.1524" layer="91"/>
@@ -21314,7 +21342,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <junction x="241.3" y="134.62"/>
 </segment>
 <segment>
-<pinref part="JP2" gate="B" pin="6"/>
+<pinref part="JP1" gate="B" pin="6"/>
 <pinref part="GND26" gate="1" pin="GND"/>
 <wire x1="294.64" y1="160.02" x2="299.72" y2="160.02" width="0.1524" layer="91"/>
 <wire x1="299.72" y1="160.02" x2="299.72" y2="157.48" width="0.1524" layer="91"/>
@@ -21322,7 +21350,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </net>
 <net name="DVDD" class="0">
 <segment>
-<pinref part="TLV320AIC3107" gate="G$1" pin="DVDD"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="DVDD"/>
 <wire x1="149.86" y1="157.48" x2="114.3" y2="157.48" width="0.1524" layer="91"/>
 <label x="35.56" y="157.48" size="1.778" layer="95" rot="R180" xref="yes"/>
 <pinref part="C38" gate="G$1" pin="2"/>
@@ -21330,18 +21358,18 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="106.68" y1="157.48" x2="35.56" y2="157.48" width="0.1524" layer="91"/>
 <wire x1="114.3" y1="149.86" x2="114.3" y2="157.48" width="0.1524" layer="91"/>
 <junction x="114.3" y="157.48"/>
-<pinref part="C44" gate="G$1" pin="2"/>
+<pinref part="C37" gate="G$1" pin="2"/>
 <wire x1="106.68" y1="149.86" x2="106.68" y2="157.48" width="0.1524" layer="91"/>
 <junction x="106.68" y="157.48"/>
 </segment>
 </net>
 <net name="N$16" class="0">
 <segment>
-<pinref part="R14" gate="G$1" pin="2"/>
+<pinref part="R28" gate="G$1" pin="2"/>
 <wire x1="284.48" y1="180.34" x2="312.42" y2="180.34" width="0.1524" layer="91"/>
-<pinref part="C19" gate="G$1" pin="2"/>
+<pinref part="C46" gate="G$1" pin="2"/>
 <wire x1="312.42" y1="124.46" x2="312.42" y2="165.1" width="0.1524" layer="91"/>
-<pinref part="JP2" gate="B" pin="2"/>
+<pinref part="JP1" gate="B" pin="2"/>
 <wire x1="312.42" y1="165.1" x2="312.42" y2="180.34" width="0.1524" layer="91"/>
 <wire x1="294.64" y1="165.1" x2="312.42" y2="165.1" width="0.1524" layer="91"/>
 <junction x="312.42" y="165.1"/>
@@ -21349,11 +21377,11 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </net>
 <net name="+5V" class="0">
 <segment>
-<pinref part="TLV320AIC3107" gate="G$1" pin="SPVDD"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="SPVDD"/>
 <wire x1="185.42" y1="175.26" x2="205.74" y2="175.26" width="0.1524" layer="91"/>
-<pinref part="C7" gate="G$1" pin="2"/>
+<pinref part="C39" gate="G$1" pin="2"/>
 <wire x1="205.74" y1="175.26" x2="205.74" y2="172.72" width="0.1524" layer="91"/>
-<pinref part="C57" gate="G$1" pin="2"/>
+<pinref part="C40" gate="G$1" pin="2"/>
 <wire x1="213.36" y1="172.72" x2="213.36" y2="175.26" width="0.1524" layer="91"/>
 <wire x1="213.36" y1="175.26" x2="205.74" y2="175.26" width="0.1524" layer="91"/>
 <junction x="205.74" y="175.26"/>
@@ -21364,41 +21392,41 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </net>
 <net name="N$17" class="1">
 <segment>
-<pinref part="R14" gate="G$1" pin="1"/>
-<pinref part="TLV320AIC3107" gate="G$1" pin="SPOP"/>
+<pinref part="R28" gate="G$1" pin="1"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="SPOP"/>
 <wire x1="185.42" y1="180.34" x2="274.32" y2="180.34" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="AUD_DOUT" class="0">
 <segment>
 <label x="35.56" y="177.8" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="TLV320AIC3107" gate="G$1" pin="DIN"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="DIN"/>
 <wire x1="149.86" y1="177.8" x2="35.56" y2="177.8" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="AUD_DIN" class="0">
 <segment>
 <label x="35.56" y="175.26" size="1.27" layer="95" rot="R180" xref="yes"/>
-<pinref part="TLV320AIC3107" gate="G$1" pin="DOUT"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="DOUT"/>
 <wire x1="149.86" y1="175.26" x2="35.56" y2="175.26" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$14" class="0">
 <segment>
-<pinref part="TLV320AIC3107" gate="G$1" pin="RIGHT_LOP"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="RIGHT_LOP"/>
 <wire x1="185.42" y1="182.88" x2="231.14" y2="182.88" width="0.1524" layer="91"/>
-<pinref part="JP2" gate="B" pin="1"/>
+<pinref part="JP1" gate="B" pin="1"/>
 <wire x1="231.14" y1="182.88" x2="231.14" y2="165.1" width="0.1524" layer="91"/>
 <wire x1="231.14" y1="165.1" x2="279.4" y2="165.1" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$19" class="0">
 <segment>
-<pinref part="TLV320AIC3107" gate="G$1" pin="LEFT_LOP"/>
+<pinref part="TLV320AIC1" gate="G$1" pin="LEFT_LOP"/>
 <wire x1="185.42" y1="177.8" x2="226.06" y2="177.8" width="0.1524" layer="91"/>
 <wire x1="226.06" y1="177.8" x2="226.06" y2="162.56" width="0.1524" layer="91"/>
 <wire x1="226.06" y1="162.56" x2="279.4" y2="162.56" width="0.1524" layer="91"/>
-<pinref part="JP2" gate="B" pin="3"/>
+<pinref part="JP1" gate="B" pin="3"/>
 </segment>
 </net>
 </nets>
@@ -21736,29 +21764,29 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <instances>
 <instance part="FRAME4" gate="G$1" x="0" y="0"/>
 <instance part="GND8" gate="1" x="48.26" y="187.96"/>
-<instance part="R55" gate="G$1" x="48.26" y="198.12" smashed="yes" rot="R270">
+<instance part="R31" gate="G$1" x="48.26" y="198.12" smashed="yes" rot="R270">
 <attribute name="NAME" x="49.53" y="198.755" size="1.6764" layer="95"/>
 <attribute name="VALUE" x="49.53" y="197.485" size="1.6764" layer="96" rot="MR180"/>
 </instance>
-<instance part="C48" gate="G$1" x="60.96" y="198.12" smashed="yes" rot="MR0">
+<instance part="C49" gate="G$1" x="60.96" y="198.12" smashed="yes" rot="MR0">
 <attribute name="NAME" x="61.595" y="198.12" size="1.6764" layer="95"/>
 <attribute name="VALUE" x="61.595" y="195.58" size="1.6764" layer="96" rot="MR180"/>
 </instance>
 <instance part="GND53" gate="1" x="60.96" y="187.96"/>
-<instance part="R47" gate="G$1" x="20.32" y="220.98" smashed="yes" rot="MR90">
+<instance part="R30" gate="G$1" x="20.32" y="220.98" smashed="yes" rot="MR90">
 <attribute name="NAME" x="22.225" y="221.361" size="1.6764" layer="95"/>
 <attribute name="VALUE" x="22.225" y="218.821" size="1.6764" layer="96"/>
 </instance>
-<instance part="LED3" gate="LEDDIODE" x="142.24" y="203.2" smashed="yes" rot="R90">
+<instance part="LED1" gate="LEDDIODE" x="142.24" y="203.2" smashed="yes" rot="R90">
 <attribute name="NAME" x="140.335" y="203.2" size="1.6764" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="140.335" y="198.755" size="1.6764" layer="96" rot="R180"/>
 </instance>
-<instance part="R48" gate="G$1" x="142.24" y="215.9" smashed="yes" rot="MR270">
+<instance part="R38" gate="G$1" x="142.24" y="215.9" smashed="yes" rot="MR270">
 <attribute name="NAME" x="140.97" y="216.535" size="1.6764" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="140.97" y="215.265" size="1.6764" layer="96" rot="R180"/>
 </instance>
 <instance part="GND87" gate="1" x="142.24" y="193.04"/>
-<instance part="R54" gate="G$1" x="73.66" y="205.74" smashed="yes" rot="MR0">
+<instance part="R34" gate="G$1" x="73.66" y="205.74" smashed="yes" rot="MR0">
 <attribute name="NAME" x="71.755" y="207.01" size="1.6764" layer="95"/>
 <attribute name="VALUE" x="71.755" y="204.47" size="1.6764" layer="96" rot="MR180"/>
 </instance>
@@ -21766,39 +21794,39 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <attribute name="NAME" x="178.435" y="203.2" size="1.6764" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="178.435" y="198.755" size="1.6764" layer="96" rot="R180"/>
 </instance>
-<instance part="R49" gate="G$1" x="180.34" y="215.9" smashed="yes" rot="MR270">
+<instance part="R40" gate="G$1" x="180.34" y="215.9" smashed="yes" rot="MR270">
 <attribute name="NAME" x="179.07" y="216.535" size="1.6764" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="179.07" y="215.265" size="1.6764" layer="96" rot="R180"/>
 </instance>
 <instance part="GND9" gate="1" x="180.34" y="193.04"/>
-<instance part="U10" gate="G$1" x="83.82" y="144.78" smashed="yes">
+<instance part="U5" gate="G$1" x="83.82" y="144.78" smashed="yes">
 <attribute name="NAME" x="76.2" y="150.114" size="1.778" layer="95"/>
 <attribute name="VALUE" x="76.2" y="134.62" size="1.778" layer="98"/>
 </instance>
-<instance part="C52" gate="G$1" x="60.96" y="119.38" smashed="yes">
+<instance part="C50" gate="G$1" x="60.96" y="119.38" smashed="yes">
 <attribute name="NAME" x="60.325" y="111.76" size="1.524" layer="95" rot="R90"/>
 <attribute name="VALUE" x="60.325" y="127.635" size="1.6764" layer="96" rot="MR270"/>
 </instance>
 <instance part="GND12" gate="1" x="60.96" y="96.52"/>
 <instance part="GND14" gate="1" x="66.04" y="96.52"/>
-<instance part="R69" gate="G$1" x="60.96" y="144.78" smashed="yes" rot="MR180">
+<instance part="R32" gate="G$1" x="60.96" y="144.78" smashed="yes" rot="MR180">
 <attribute name="NAME" x="57.785" y="145.415" size="1.6764" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="64.135" y="145.415" size="1.6764" layer="96"/>
 </instance>
-<instance part="C49" gate="G$1" x="104.14" y="147.32" smashed="yes" rot="MR270">
+<instance part="C51" gate="G$1" x="104.14" y="147.32" smashed="yes" rot="MR270">
 <attribute name="NAME" x="104.14" y="147.955" size="1.6764" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="106.68" y="147.955" size="1.6764" layer="96"/>
 </instance>
-<instance part="C50" gate="G$1" x="104.14" y="139.7" smashed="yes" rot="MR270">
+<instance part="C52" gate="G$1" x="104.14" y="139.7" smashed="yes" rot="MR270">
 <attribute name="NAME" x="104.14" y="140.081" size="1.6764" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="106.68" y="140.081" size="1.6764" layer="96"/>
 </instance>
-<instance part="R84" gate="G$1" x="114.3" y="116.84" smashed="yes" rot="MR270">
+<instance part="R35" gate="G$1" x="114.3" y="116.84" smashed="yes" rot="MR270">
 <attribute name="NAME" x="113.03" y="116.84" size="1.6764" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="113.03" y="116.205" size="1.6764" layer="96" rot="R180"/>
 </instance>
 <instance part="GND17" gate="1" x="114.3" y="96.52"/>
-<instance part="L11" gate="G$1" x="132.08" y="144.78" smashed="yes" rot="R90">
+<instance part="L6" gate="G$1" x="132.08" y="144.78" smashed="yes" rot="R90">
 <attribute name="NAME" x="127" y="149.86" size="1.6764" layer="95"/>
 <attribute name="VALUE" x="119.38" y="147.32" size="1.6764" layer="96"/>
 </instance>
@@ -21807,12 +21835,12 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <attribute name="VALUE" x="141.986" y="116.84" size="1.6764" layer="96" rot="MR270"/>
 </instance>
 <instance part="GND15" gate="1" x="142.24" y="96.52"/>
-<instance part="R85" gate="G$1" x="119.38" y="116.84" smashed="yes" rot="R270">
+<instance part="R36" gate="G$1" x="119.38" y="116.84" smashed="yes" rot="R270">
 <attribute name="NAME" x="120.65" y="116.84" size="1.6764" layer="95"/>
 <attribute name="VALUE" x="120.65" y="116.205" size="1.6764" layer="96" rot="MR180"/>
 </instance>
 <instance part="GND18" gate="1" x="119.38" y="96.52"/>
-<instance part="R70" gate="G$1" x="132.08" y="142.24" smashed="yes" rot="MR180">
+<instance part="R37" gate="G$1" x="132.08" y="142.24" smashed="yes" rot="MR180">
 <attribute name="NAME" x="129.54" y="140.589" size="1.6764" layer="95" rot="MR180"/>
 <attribute name="VALUE" x="137.16" y="138.049" size="1.6764" layer="96" rot="R180"/>
 </instance>
@@ -21821,7 +21849,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </instance>
 <instance part="GND19" gate="1" x="48.26" y="96.52"/>
 <instance part="GND21" gate="1" x="38.1" y="96.52"/>
-<instance part="C51" gate="G$1" x="48.26" y="119.38" smashed="yes" rot="MR0">
+<instance part="C48" gate="G$1" x="48.26" y="119.38" smashed="yes" rot="MR0">
 <attribute name="NAME" x="45.5676" y="112.268" size="1.6764" layer="95" rot="MR90"/>
 <attribute name="VALUE" x="47.1424" y="154.432" size="1.6764" layer="96" rot="MR270"/>
 </instance>
@@ -21833,12 +21861,12 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <attribute name="NAME" x="177.165" y="107.315" size="1.6764" layer="95" rot="MR0"/>
 <attribute name="VALUE" x="177.165" y="103.505" size="1.6764" layer="96" rot="R180"/>
 </instance>
-<instance part="R86" gate="G$1" x="177.8" y="116.84" smashed="yes" rot="MR270">
+<instance part="R39" gate="G$1" x="177.8" y="116.84" smashed="yes" rot="MR270">
 <attribute name="NAME" x="176.53" y="114.935" size="1.6764" layer="95" rot="R90"/>
 <attribute name="VALUE" x="179.07" y="114.3" size="1.6764" layer="96" rot="MR90"/>
 </instance>
 <instance part="GND35" gate="1" x="177.8" y="96.52"/>
-<instance part="D4" gate="G$1" x="38.1" y="119.38" smashed="yes" rot="R90">
+<instance part="D3" gate="G$1" x="38.1" y="119.38" smashed="yes" rot="R90">
 <attribute name="NAME" x="35.4584" y="116.4336" size="1.6764" layer="95" rot="R90"/>
 <attribute name="VALUE" x="42.5958" y="114.9096" size="1.6764" layer="96" rot="R90"/>
 </instance>
@@ -21855,14 +21883,14 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </instance>
 <instance part="GND7" gate="1" x="124.46" y="22.86"/>
 <instance part="GND33" gate="1" x="27.94" y="22.86"/>
-<instance part="C9" gate="G$1" x="27.94" y="33.02" rot="R180"/>
-<instance part="IC4" gate="G$1" x="83.82" y="38.1" smashed="yes">
+<instance part="C47" gate="G$1" x="27.94" y="33.02" rot="R180"/>
+<instance part="IC3" gate="G$1" x="83.82" y="38.1" smashed="yes">
 <attribute name="NAME" x="76.2" y="50.8" size="1.778" layer="95"/>
 <attribute name="VALUE" x="76.2" y="25.4" size="1.778" layer="96"/>
 </instance>
 <instance part="GND11" gate="1" x="104.14" y="22.86"/>
 <instance part="GND16" gate="1" x="60.96" y="22.86"/>
-<instance part="BAT2" gate="G$1" x="124.46" y="35.56" rot="R270"/>
+<instance part="BAT1" gate="G$1" x="124.46" y="35.56" rot="R270"/>
 <instance part="WAKE-UP" gate="A" x="33.02" y="208.28" smashed="yes">
 <attribute name="NAME" x="40.64" y="213.36" size="1.6764" layer="95" rot="R180"/>
 <attribute name="VALUE" x="37.592" y="204.724" size="1.6764" layer="96" rot="R180"/>
@@ -21873,7 +21901,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <instance part="+3V2" gate="G$1" x="68.58" y="60.96" smashed="yes">
 <attribute name="VALUE" x="71.12" y="63.5" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="R20" gate="G$1" x="60.96" y="50.8" rot="R90"/>
+<instance part="R33" gate="G$1" x="60.96" y="50.8" rot="R90"/>
 <instance part="+3V3" gate="G$1" x="60.96" y="60.96" smashed="yes">
 <attribute name="VALUE" x="63.5" y="63.5" size="1.778" layer="96" rot="R180"/>
 </instance>
@@ -21883,24 +21911,24 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <instance part="P+2" gate="1" x="320.04" y="231.14" smashed="yes">
 <attribute name="VALUE" x="322.58" y="236.22" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="U4" gate="G$1" x="297.18" y="147.32"/>
+<instance part="U6" gate="G$1" x="297.18" y="147.32"/>
 <instance part="+3V12" gate="G$1" x="246.38" y="160.02" smashed="yes">
 <attribute name="VALUE" x="248.92" y="162.56" size="1.778" layer="96" rot="R180"/>
 </instance>
 <instance part="GND64" gate="1" x="246.38" y="127"/>
 <instance part="GND65" gate="1" x="327.66" y="127"/>
-<instance part="C37" gate="G$1" x="317.5" y="137.16" smashed="yes" rot="R180">
+<instance part="C58" gate="G$1" x="317.5" y="137.16" smashed="yes" rot="R180">
 <attribute name="MANEX" x="317.5" y="137.16" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="316.611" y="139.319" size="1.6764" layer="95" rot="R180"/>
 <attribute name="VALUE" x="303.784" y="132.461" size="1.6764" layer="96"/>
 </instance>
 <instance part="GND68" gate="1" x="317.5" y="127"/>
-<instance part="C35" gate="G$1" x="246.38" y="147.32" smashed="yes" rot="R180">
+<instance part="C57" gate="G$1" x="246.38" y="147.32" smashed="yes" rot="R180">
 <attribute name="MANEX" x="246.38" y="147.32" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="245.491" y="149.479" size="1.6764" layer="95" rot="R180"/>
 <attribute name="VALUE" x="245.491" y="144.399" size="1.6764" layer="96" rot="R180"/>
 </instance>
-<instance part="C36" gate="G$1" x="327.66" y="137.16" smashed="yes" rot="R180">
+<instance part="C59" gate="G$1" x="327.66" y="137.16" smashed="yes" rot="R180">
 <attribute name="MANEX" x="327.66" y="137.16" size="1.778" layer="96" rot="R180" display="off"/>
 <attribute name="NAME" x="333.756" y="139.319" size="1.6764" layer="95" rot="R180"/>
 <attribute name="VALUE" x="335.661" y="134.239" size="1.6764" layer="96" rot="R180"/>
@@ -21912,17 +21940,17 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <net name="GND" class="1">
 <segment>
 <wire x1="60.96" y1="190.5" x2="60.96" y2="193.04" width="0.1524" layer="91"/>
-<pinref part="C48" gate="G$1" pin="2"/>
+<pinref part="C49" gate="G$1" pin="2"/>
 <pinref part="GND53" gate="1" pin="GND"/>
 </segment>
 <segment>
 <wire x1="142.24" y1="198.12" x2="142.24" y2="195.58" width="0.1524" layer="91"/>
-<pinref part="LED3" gate="LEDDIODE" pin="C"/>
+<pinref part="LED1" gate="LEDDIODE" pin="C"/>
 <pinref part="GND87" gate="1" pin="GND"/>
 </segment>
 <segment>
 <wire x1="48.26" y1="193.04" x2="48.26" y2="190.5" width="0.1524" layer="91"/>
-<pinref part="R55" gate="G$1" pin="2"/>
+<pinref part="R31" gate="G$1" pin="2"/>
 <pinref part="GND8" gate="1" pin="GND"/>
 </segment>
 <segment>
@@ -21932,18 +21960,18 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </segment>
 <segment>
 <wire x1="60.96" y1="99.06" x2="60.96" y2="114.3" width="0.1524" layer="91"/>
-<pinref part="C52" gate="G$1" pin="2"/>
+<pinref part="C50" gate="G$1" pin="2"/>
 <pinref part="GND12" gate="1" pin="GND"/>
 </segment>
 <segment>
 <wire x1="66.04" y1="99.06" x2="66.04" y2="139.7" width="0.1524" layer="91"/>
 <wire x1="66.04" y1="139.7" x2="71.12" y2="139.7" width="0.1524" layer="91"/>
-<pinref part="U10" gate="G$1" pin="GND"/>
+<pinref part="U5" gate="G$1" pin="GND"/>
 <pinref part="GND14" gate="1" pin="GND"/>
 </segment>
 <segment>
 <wire x1="114.3" y1="99.06" x2="114.3" y2="111.76" width="0.1524" layer="91"/>
-<pinref part="R84" gate="G$1" pin="2"/>
+<pinref part="R35" gate="G$1" pin="2"/>
 <pinref part="GND17" gate="1" pin="GND"/>
 </segment>
 <segment>
@@ -21966,18 +21994,18 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </segment>
 <segment>
 <wire x1="119.38" y1="99.06" x2="119.38" y2="111.76" width="0.1524" layer="91"/>
-<pinref part="R85" gate="G$1" pin="2"/>
+<pinref part="R36" gate="G$1" pin="2"/>
 <pinref part="GND18" gate="1" pin="GND"/>
 </segment>
 <segment>
 <wire x1="48.26" y1="99.06" x2="48.26" y2="114.3" width="0.1524" layer="91"/>
 <pinref part="GND19" gate="1" pin="GND"/>
-<pinref part="C51" gate="G$1" pin="-"/>
+<pinref part="C48" gate="G$1" pin="-"/>
 </segment>
 <segment>
 <wire x1="38.1" y1="99.06" x2="38.1" y2="116.84" width="0.1524" layer="91"/>
 <pinref part="GND21" gate="1" pin="GND"/>
-<pinref part="D4" gate="G$1" pin="A"/>
+<pinref part="D3" gate="G$1" pin="A"/>
 </segment>
 <segment>
 <wire x1="177.8" y1="99.06" x2="177.8" y2="101.6" width="0.1524" layer="91"/>
@@ -21986,51 +22014,51 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </segment>
 <segment>
 <pinref part="GND7" gate="1" pin="GND"/>
-<pinref part="BAT2" gate="G$1" pin="-"/>
+<pinref part="BAT1" gate="G$1" pin="-"/>
 <wire x1="124.46" y1="30.48" x2="124.46" y2="25.4" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <wire x1="27.94" y1="25.4" x2="27.94" y2="30.48" width="0.1524" layer="91"/>
 <pinref part="GND33" gate="1" pin="GND"/>
-<pinref part="C9" gate="G$1" pin="1"/>
+<pinref part="C47" gate="G$1" pin="1"/>
 </segment>
 <segment>
 <pinref part="GND16" gate="1" pin="GND"/>
-<pinref part="IC4" gate="G$1" pin="NC@1"/>
+<pinref part="IC3" gate="G$1" pin="NC@1"/>
 <wire x1="60.96" y1="38.1" x2="60.96" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="60.96" y1="35.56" x2="60.96" y2="33.02" width="0.1524" layer="91"/>
 <wire x1="60.96" y1="33.02" x2="60.96" y2="30.48" width="0.1524" layer="91"/>
 <wire x1="60.96" y1="30.48" x2="60.96" y2="25.4" width="0.1524" layer="91"/>
 <wire x1="71.12" y1="38.1" x2="60.96" y2="38.1" width="0.1524" layer="91"/>
-<pinref part="IC4" gate="G$1" pin="NC@2"/>
+<pinref part="IC3" gate="G$1" pin="NC@2"/>
 <wire x1="71.12" y1="35.56" x2="60.96" y2="35.56" width="0.1524" layer="91"/>
 <junction x="60.96" y="35.56"/>
-<pinref part="IC4" gate="G$1" pin="NC@3"/>
+<pinref part="IC3" gate="G$1" pin="NC@3"/>
 <wire x1="71.12" y1="33.02" x2="60.96" y2="33.02" width="0.1524" layer="91"/>
 <junction x="60.96" y="33.02"/>
-<pinref part="IC4" gate="G$1" pin="NC@4"/>
+<pinref part="IC3" gate="G$1" pin="NC@4"/>
 <wire x1="71.12" y1="30.48" x2="60.96" y2="30.48" width="0.1524" layer="91"/>
 <junction x="60.96" y="30.48"/>
 </segment>
 <segment>
-<pinref part="IC4" gate="G$1" pin="GND"/>
+<pinref part="IC3" gate="G$1" pin="GND"/>
 <pinref part="GND11" gate="1" pin="GND"/>
 <wire x1="99.06" y1="40.64" x2="104.14" y2="40.64" width="0.1524" layer="91"/>
 <wire x1="104.14" y1="40.64" x2="104.14" y2="38.1" width="0.1524" layer="91"/>
-<pinref part="IC4" gate="G$1" pin="NC@8"/>
+<pinref part="IC3" gate="G$1" pin="NC@8"/>
 <wire x1="104.14" y1="38.1" x2="104.14" y2="35.56" width="0.1524" layer="91"/>
 <wire x1="104.14" y1="35.56" x2="104.14" y2="33.02" width="0.1524" layer="91"/>
 <wire x1="104.14" y1="33.02" x2="104.14" y2="30.48" width="0.1524" layer="91"/>
 <wire x1="104.14" y1="30.48" x2="104.14" y2="25.4" width="0.1524" layer="91"/>
 <wire x1="99.06" y1="38.1" x2="104.14" y2="38.1" width="0.1524" layer="91"/>
 <junction x="104.14" y="38.1"/>
-<pinref part="IC4" gate="G$1" pin="NC@7"/>
+<pinref part="IC3" gate="G$1" pin="NC@7"/>
 <wire x1="99.06" y1="35.56" x2="104.14" y2="35.56" width="0.1524" layer="91"/>
 <junction x="104.14" y="35.56"/>
-<pinref part="IC4" gate="G$1" pin="NC@6"/>
+<pinref part="IC3" gate="G$1" pin="NC@6"/>
 <wire x1="99.06" y1="33.02" x2="104.14" y2="33.02" width="0.1524" layer="91"/>
 <junction x="104.14" y="33.02"/>
-<pinref part="IC4" gate="G$1" pin="NC@5"/>
+<pinref part="IC3" gate="G$1" pin="NC@5"/>
 <wire x1="99.06" y1="30.48" x2="104.14" y2="30.48" width="0.1524" layer="91"/>
 <junction x="104.14" y="30.48"/>
 </segment>
@@ -22046,18 +22074,18 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="246.38" y1="137.16" x2="246.38" y2="129.54" width="0.1524" layer="91"/>
 <wire x1="246.38" y1="137.16" x2="254" y2="137.16" width="0.1524" layer="91"/>
 <wire x1="254" y1="137.16" x2="254" y2="147.32" width="0.1524" layer="91"/>
-<pinref part="U4" gate="G$1" pin="GND"/>
+<pinref part="U6" gate="G$1" pin="GND"/>
 <wire x1="254" y1="147.32" x2="287.02" y2="147.32" width="0.1524" layer="91"/>
 <junction x="246.38" y="137.16"/>
-<pinref part="C35" gate="G$1" pin="1"/>
+<pinref part="C57" gate="G$1" pin="1"/>
 </segment>
 <segment>
 <pinref part="GND65" gate="1" pin="GND"/>
 <wire x1="327.66" y1="129.54" x2="327.66" y2="132.08" width="0.1524" layer="91"/>
-<pinref part="C36" gate="G$1" pin="1"/>
+<pinref part="C59" gate="G$1" pin="1"/>
 </segment>
 <segment>
-<pinref part="C37" gate="G$1" pin="1"/>
+<pinref part="C58" gate="G$1" pin="1"/>
 <pinref part="GND68" gate="1" pin="GND"/>
 <wire x1="317.5" y1="132.08" x2="317.5" y2="129.54" width="0.1524" layer="91"/>
 </segment>
@@ -22068,7 +22096,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="177.8" y1="121.92" x2="177.8" y2="144.78" width="0.1524" layer="91"/>
 <junction x="177.8" y="144.78"/>
 <pinref part="P+5" gate="1" pin="+5V"/>
-<pinref part="R86" gate="G$1" pin="1"/>
+<pinref part="R39" gate="G$1" pin="1"/>
 <wire x1="137.16" y1="144.78" x2="142.24" y2="144.78" width="0.1524" layer="91"/>
 <wire x1="147.32" y1="121.92" x2="147.32" y2="144.78" width="0.1524" layer="91"/>
 <wire x1="147.32" y1="144.78" x2="142.24" y2="144.78" width="0.1524" layer="91"/>
@@ -22086,9 +22114,9 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <junction x="152.4" y="144.78"/>
 <junction x="157.48" y="144.78"/>
 <pinref part="C53" gate="G$1" pin="1"/>
-<pinref part="L11" gate="G$1" pin="2"/>
+<pinref part="L6" gate="G$1" pin="2"/>
 <pinref part="C54" gate="G$1" pin="1"/>
-<pinref part="R70" gate="G$1" pin="2"/>
+<pinref part="R37" gate="G$1" pin="2"/>
 <pinref part="C55" gate="G$1" pin="1"/>
 <pinref part="C56" gate="G$1" pin="1"/>
 </segment>
@@ -22097,7 +22125,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <segment>
 <wire x1="180.34" y1="220.98" x2="180.34" y2="226.06" width="0.1524" layer="91"/>
 <wire x1="180.34" y1="226.06" x2="172.72" y2="226.06" width="0.1524" layer="91"/>
-<pinref part="R49" gate="G$1" pin="1"/>
+<pinref part="R40" gate="G$1" pin="1"/>
 <label x="172.72" y="226.06" size="1.778" layer="95" rot="MR0" xref="yes"/>
 </segment>
 </net>
@@ -22105,29 +22133,29 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <segment>
 <wire x1="142.24" y1="220.98" x2="142.24" y2="226.06" width="0.1524" layer="91"/>
 <wire x1="142.24" y1="226.06" x2="134.62" y2="226.06" width="0.1524" layer="91"/>
-<pinref part="R48" gate="G$1" pin="1"/>
+<pinref part="R38" gate="G$1" pin="1"/>
 <label x="134.62" y="226.06" size="1.778" layer="95" rot="MR0" xref="yes"/>
 </segment>
 </net>
 <net name="EXT_WAKEUP" class="0">
 <segment>
 <wire x1="78.74" y1="205.74" x2="86.36" y2="205.74" width="0.1524" layer="91"/>
-<pinref part="R54" gate="G$1" pin="1"/>
+<pinref part="R34" gate="G$1" pin="1"/>
 <label x="86.36" y="205.74" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
 <net name="N$231" class="0">
 <segment>
 <wire x1="142.24" y1="210.82" x2="142.24" y2="205.74" width="0.1524" layer="91"/>
-<pinref part="R48" gate="G$1" pin="2"/>
-<pinref part="LED3" gate="LEDDIODE" pin="A"/>
+<pinref part="R38" gate="G$1" pin="2"/>
+<pinref part="LED1" gate="LEDDIODE" pin="A"/>
 </segment>
 </net>
 <net name="N$43" class="0">
 <segment>
 <wire x1="33.02" y1="205.74" x2="20.32" y2="205.74" width="0.1524" layer="91"/>
 <wire x1="20.32" y1="205.74" x2="20.32" y2="215.9" width="0.1524" layer="91"/>
-<pinref part="R47" gate="G$1" pin="1"/>
+<pinref part="R30" gate="G$1" pin="1"/>
 <pinref part="WAKE-UP" gate="A" pin="1"/>
 </segment>
 </net>
@@ -22138,9 +22166,9 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="60.96" y1="205.74" x2="48.26" y2="205.74" width="0.1524" layer="91"/>
 <wire x1="60.96" y1="200.66" x2="60.96" y2="205.74" width="0.1524" layer="91"/>
 <junction x="60.96" y="205.74"/>
-<pinref part="R55" gate="G$1" pin="1"/>
-<pinref part="R54" gate="G$1" pin="2"/>
-<pinref part="C48" gate="G$1" pin="1"/>
+<pinref part="R31" gate="G$1" pin="1"/>
+<pinref part="R34" gate="G$1" pin="2"/>
+<pinref part="C49" gate="G$1" pin="1"/>
 <wire x1="48.26" y1="205.74" x2="35.56" y2="205.74" width="0.1524" layer="91"/>
 <pinref part="WAKE-UP" gate="A" pin="2"/>
 <junction x="48.26" y="205.74"/>
@@ -22149,7 +22177,7 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <net name="N$1" class="0">
 <segment>
 <wire x1="180.34" y1="210.82" x2="180.34" y2="205.74" width="0.1524" layer="91"/>
-<pinref part="R49" gate="G$1" pin="2"/>
+<pinref part="R40" gate="G$1" pin="2"/>
 <pinref part="LED2" gate="LEDDIODE" pin="A"/>
 </segment>
 </net>
@@ -22157,22 +22185,22 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <segment>
 <wire x1="60.96" y1="121.92" x2="60.96" y2="142.24" width="0.1524" layer="91"/>
 <wire x1="60.96" y1="142.24" x2="71.12" y2="142.24" width="0.1524" layer="91"/>
-<pinref part="U10" gate="G$1" pin="SS"/>
-<pinref part="C52" gate="G$1" pin="1"/>
+<pinref part="U5" gate="G$1" pin="SS"/>
+<pinref part="C50" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="N$6" class="0">
 <segment>
 <wire x1="66.04" y1="144.78" x2="71.12" y2="144.78" width="0.1524" layer="91"/>
-<pinref part="U10" gate="G$1" pin="EN"/>
-<pinref part="R69" gate="G$1" pin="2"/>
+<pinref part="U5" gate="G$1" pin="EN"/>
+<pinref part="R32" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="N$7" class="0">
 <segment>
 <wire x1="101.6" y1="147.32" x2="96.52" y2="147.32" width="0.1524" layer="91"/>
-<pinref part="U10" gate="G$1" pin="BS"/>
-<pinref part="C49" gate="G$1" pin="1"/>
+<pinref part="U5" gate="G$1" pin="BS"/>
+<pinref part="C51" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="N$8" class="0">
@@ -22182,24 +22210,24 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="114.3" y1="147.32" x2="109.22" y2="147.32" width="0.1524" layer="91"/>
 <wire x1="124.46" y1="144.78" x2="114.3" y2="144.78" width="0.1524" layer="91"/>
 <junction x="114.3" y="144.78"/>
-<pinref part="U10" gate="G$1" pin="SW"/>
-<pinref part="C49" gate="G$1" pin="2"/>
-<pinref part="L11" gate="G$1" pin="1"/>
+<pinref part="U5" gate="G$1" pin="SW"/>
+<pinref part="C51" gate="G$1" pin="2"/>
+<pinref part="L6" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="N$9" class="0">
 <segment>
 <wire x1="101.6" y1="139.7" x2="96.52" y2="139.7" width="0.1524" layer="91"/>
-<pinref part="U10" gate="G$1" pin="COMP"/>
-<pinref part="C50" gate="G$1" pin="1"/>
+<pinref part="U5" gate="G$1" pin="COMP"/>
+<pinref part="C52" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="N$11" class="0">
 <segment>
 <wire x1="114.3" y1="121.92" x2="114.3" y2="139.7" width="0.1524" layer="91"/>
 <wire x1="114.3" y1="139.7" x2="109.22" y2="139.7" width="0.1524" layer="91"/>
-<pinref part="C50" gate="G$1" pin="2"/>
-<pinref part="R84" gate="G$1" pin="1"/>
+<pinref part="C52" gate="G$1" pin="2"/>
+<pinref part="R35" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="N$62" class="0">
@@ -22208,15 +22236,15 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <wire x1="119.38" y1="142.24" x2="119.38" y2="121.92" width="0.1524" layer="91"/>
 <wire x1="96.52" y1="142.24" x2="119.38" y2="142.24" width="0.1524" layer="91"/>
 <junction x="119.38" y="142.24"/>
-<pinref part="R70" gate="G$1" pin="1"/>
-<pinref part="R85" gate="G$1" pin="1"/>
-<pinref part="U10" gate="G$1" pin="FB"/>
+<pinref part="R37" gate="G$1" pin="1"/>
+<pinref part="R36" gate="G$1" pin="1"/>
+<pinref part="U5" gate="G$1" pin="FB"/>
 </segment>
 </net>
 <net name="N$129" class="0">
 <segment>
 <wire x1="177.8" y1="109.22" x2="177.8" y2="111.76" width="0.1524" layer="91"/>
-<pinref part="R86" gate="G$1" pin="2"/>
+<pinref part="R39" gate="G$1" pin="2"/>
 <pinref part="PWR_LED" gate="LEDDIODE" pin="A"/>
 </segment>
 </net>
@@ -22232,10 +22260,10 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <junction x="48.26" y="147.32"/>
 <junction x="48.26" y="144.78"/>
 <junction x="38.1" y="147.32"/>
-<pinref part="U10" gate="G$1" pin="IN"/>
-<pinref part="R69" gate="G$1" pin="1"/>
-<pinref part="C51" gate="G$1" pin="+"/>
-<pinref part="D4" gate="G$1" pin="C"/>
+<pinref part="U5" gate="G$1" pin="IN"/>
+<pinref part="R32" gate="G$1" pin="1"/>
+<pinref part="C48" gate="G$1" pin="+"/>
+<pinref part="D3" gate="G$1" pin="C"/>
 <pinref part="P+4" gate="1" pin="+12V"/>
 <wire x1="17.78" y1="152.4" x2="17.78" y2="147.32" width="0.1524" layer="91"/>
 </segment>
@@ -22250,20 +22278,20 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <segment>
 <wire x1="109.22" y1="45.72" x2="99.06" y2="45.72" width="0.1524" layer="91"/>
 <label x="109.22" y="45.72" size="1.27" layer="95" xref="yes"/>
-<pinref part="IC4" gate="G$1" pin="SDA"/>
+<pinref part="IC3" gate="G$1" pin="SDA"/>
 </segment>
 </net>
 <net name="I2C0-SCL" class="0">
 <segment>
 <wire x1="109.22" y1="48.26" x2="99.06" y2="48.26" width="0.1524" layer="91"/>
 <label x="109.22" y="48.26" size="1.27" layer="95" xref="yes"/>
-<pinref part="IC4" gate="G$1" pin="SCL"/>
+<pinref part="IC3" gate="G$1" pin="SCL"/>
 </segment>
 </net>
 <net name="VBAT" class="0">
 <segment>
-<pinref part="IC4" gate="G$1" pin="VBAT"/>
-<pinref part="BAT2" gate="G$1" pin="+"/>
+<pinref part="IC3" gate="G$1" pin="VBAT"/>
+<pinref part="BAT1" gate="G$1" pin="+"/>
 <wire x1="99.06" y1="43.18" x2="124.46" y2="43.18" width="0.1524" layer="91"/>
 <wire x1="124.46" y1="43.18" x2="124.46" y2="40.64" width="0.1524" layer="91"/>
 </segment>
@@ -22271,51 +22299,51 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <net name="+3V3" class="0">
 <segment>
 <wire x1="27.94" y1="38.1" x2="27.94" y2="58.42" width="0.1524" layer="91"/>
-<pinref part="C9" gate="G$1" pin="2"/>
+<pinref part="C47" gate="G$1" pin="2"/>
 <pinref part="+3V1" gate="G$1" pin="+3V3"/>
 </segment>
 <segment>
-<pinref part="IC4" gate="G$1" pin="VCC"/>
+<pinref part="IC3" gate="G$1" pin="VCC"/>
 <wire x1="71.12" y1="45.72" x2="68.58" y2="45.72" width="0.1524" layer="91"/>
 <wire x1="68.58" y1="45.72" x2="68.58" y2="58.42" width="0.1524" layer="91"/>
 <pinref part="+3V2" gate="G$1" pin="+3V3"/>
 </segment>
 <segment>
 <pinref part="+3V3" gate="G$1" pin="+3V3"/>
-<pinref part="R20" gate="G$1" pin="2"/>
+<pinref part="R33" gate="G$1" pin="2"/>
 <wire x1="60.96" y1="58.42" x2="60.96" y2="55.88" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <wire x1="20.32" y1="226.06" x2="20.32" y2="231.14" width="0.1524" layer="91"/>
-<pinref part="R47" gate="G$1" pin="2"/>
+<pinref part="R30" gate="G$1" pin="2"/>
 <pinref part="+3V7" gate="G$1" pin="+3V3"/>
 </segment>
 <segment>
 <pinref part="+3V12" gate="G$1" pin="+3V3"/>
 <wire x1="246.38" y1="149.86" x2="246.38" y2="152.4" width="0.1524" layer="91"/>
-<pinref part="U4" gate="G$1" pin="IN"/>
+<pinref part="U6" gate="G$1" pin="IN"/>
 <wire x1="246.38" y1="152.4" x2="246.38" y2="157.48" width="0.1524" layer="91"/>
 <wire x1="246.38" y1="152.4" x2="284.48" y2="152.4" width="0.1524" layer="91"/>
 <wire x1="284.48" y1="152.4" x2="287.02" y2="152.4" width="0.1524" layer="91"/>
 <wire x1="284.48" y1="152.4" x2="284.48" y2="142.24" width="0.1524" layer="91"/>
-<pinref part="U4" gate="G$1" pin="EN"/>
+<pinref part="U6" gate="G$1" pin="EN"/>
 <wire x1="284.48" y1="142.24" x2="287.02" y2="142.24" width="0.1524" layer="91"/>
 <junction x="246.38" y="152.4"/>
 <junction x="284.48" y="152.4"/>
-<pinref part="C35" gate="G$1" pin="2"/>
+<pinref part="C57" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="N$27" class="0">
 <segment>
-<pinref part="R20" gate="G$1" pin="1"/>
-<pinref part="IC4" gate="G$1" pin="!INT"/>
+<pinref part="R33" gate="G$1" pin="1"/>
+<pinref part="IC3" gate="G$1" pin="!INT"/>
 <wire x1="60.96" y1="45.72" x2="60.96" y2="43.18" width="0.1524" layer="91"/>
 <wire x1="60.96" y1="43.18" x2="71.12" y2="43.18" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="SYS_RESETN" class="0">
 <segment>
-<pinref part="IC4" gate="G$1" pin="!RST"/>
+<pinref part="IC3" gate="G$1" pin="!RST"/>
 <wire x1="71.12" y1="40.64" x2="55.88" y2="40.64" width="0.1524" layer="91"/>
 <label x="55.88" y="40.64" size="1.27" layer="95" rot="MR0" xref="yes"/>
 </segment>
@@ -22354,19 +22382,19 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 </net>
 <net name="DVDD" class="0">
 <segment>
-<pinref part="U4" gate="G$1" pin="OUT"/>
+<pinref part="U6" gate="G$1" pin="OUT"/>
 <wire x1="304.8" y1="152.4" x2="327.66" y2="152.4" width="0.1524" layer="91"/>
 <wire x1="327.66" y1="152.4" x2="342.9" y2="152.4" width="0.1524" layer="91"/>
 <wire x1="327.66" y1="139.7" x2="327.66" y2="152.4" width="0.1524" layer="91"/>
 <junction x="327.66" y="152.4"/>
 <label x="342.9" y="152.4" size="1.778" layer="95" xref="yes"/>
-<pinref part="C36" gate="G$1" pin="2"/>
+<pinref part="C59" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="N$12" class="0">
 <segment>
-<pinref part="U4" gate="G$1" pin="BP"/>
-<pinref part="C37" gate="G$1" pin="2"/>
+<pinref part="U6" gate="G$1" pin="BP"/>
+<pinref part="C58" gate="G$1" pin="2"/>
 <wire x1="304.8" y1="142.24" x2="317.5" y2="142.24" width="0.1524" layer="91"/>
 <wire x1="317.5" y1="142.24" x2="317.5" y2="139.7" width="0.1524" layer="91"/>
 </segment>
@@ -22377,15 +22405,15 @@ Standard 150mA LDO voltage regulator in SOT-23 layout. Micrel part MIC5205. BP (
 <errors>
 <approved hash="102,5,48.26,213.36,VCC,3V3,,,,"/>
 <approved hash="102,5,48.26,147.32,VCC,3V3,,,,"/>
-<approved hash="104,3,152.4,228.6,U1,IN,+5V,,,"/>
+<approved hash="104,3,152.4,228.6,U3,IN,+5V,,,"/>
 <approved hash="104,3,29.21,228.6,USB_OTG,VBUS,+5V_OTG_PWR,,,"/>
-<approved hash="104,2,228.6,215.9,U6,VDD,+3V3,,,"/>
-<approved hash="104,2,228.6,218.44,U6,VSS,GND,,,"/>
-<approved hash="104,1,228.6,215.9,U2,VDD,+3V3,,,"/>
-<approved hash="104,1,228.6,218.44,U2,VSS,GND,,,"/>
-<approved hash="104,6,124.46,30.48,BAT2,-,GND,,,"/>
-<approved hash="104,6,124.46,40.64,BAT2,+,VBAT,,,"/>
-<approved hash="104,3,152.4,157.48,U3,IN,+5V,,,"/>
+<approved hash="104,2,228.6,215.9,U2,VDD,+3V3,,,"/>
+<approved hash="104,2,228.6,218.44,U2,VSS,GND,,,"/>
+<approved hash="104,1,228.6,215.9,U1,VDD,+3V3,,,"/>
+<approved hash="104,1,228.6,218.44,U1,VSS,GND,,,"/>
+<approved hash="104,6,124.46,30.48,BAT1,-,GND,,,"/>
+<approved hash="104,6,124.46,40.64,BAT1,+,VBAT,,,"/>
+<approved hash="104,3,152.4,157.48,U4,IN,+5V,,,"/>
 <approved hash="104,1,182.88,78.74,IC1,GND2,GNDA,,,"/>
 <approved hash="104,1,210.82,76.2,IC1,GND1,GND,,,"/>
 <approved hash="104,1,182.88,86.36,IC1,GND2,GNDA,,,"/>
