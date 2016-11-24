@@ -24,14 +24,14 @@ except ImportError:
 
 simu=load(open("carsimCAN.yaml"), Loader=Loader)
 
-print (dump(simu))
+#print (dump(simu))
 
 quit
       
 L1 = simu.keys()
-for x in L1: 
-	print (x)
-
+#for x in L1: 
+#	print (x)
+print ("Start")
 # CAN frame packing/unpacking (see `struct can_frame` in <linux/can.h>)
 can_frame_fmt = "=IB3x8s"
  

@@ -103,8 +103,8 @@ UBaseType_t bus_change_state_can(UBaseType_t onlyClose)
 	vSocketClose(iSocketCan);
 	iSocketCan = 0;
     }
-    can_do_stop(canChannel[iCanBusIndex]);
     if (onlyClose) {		// if onlyClose is set, then close only device and exit
+        can_do_stop(canChannel[iCanBusIndex]);
 	return pdPASS;
     }
 
@@ -182,7 +182,7 @@ UBaseType_t bus_change_state_can(UBaseType_t onlyClose)
 	       cm.flags);
     can_set_ctrlmode(canChannel[iCanBusIndex], &cm);
     can_do_restart(canChannel[iCanBusIndex]);
-    can_do_start(canChannel[iCanBusIndex]);
+    //can_do_start(canChannel[iCanBusIndex]);
 
     iSocketCan =
 	iSocketOpenCAN(canChannel[iCanBusIndex],
@@ -352,7 +352,7 @@ UBaseType_t bus_param_can_spec(param_data * args)
 	//! if can channel parameter given with that index, change to
 	if (canChannel[args->args[ARG_VALUE_1]]) {
 	    canConfig->bus = args->args[ARG_VALUE_1];	//store requested bus id
-	    bus_change_state_can(pdTRUE);
+	    bus_change_state_can(pdFALSE);
 	    iCanBusIndex = args->args[ARG_VALUE_1];
 	    CreateEventMsg(MSG_EVENT_BUS_MODE, MSG_EVENT_BUS_MODE_OFF);
 	    CreateEventMsg(MSG_EVENT_BUS_CHANNEL, args->args[ARG_VALUE_1]);

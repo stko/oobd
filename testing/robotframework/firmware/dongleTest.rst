@@ -30,6 +30,18 @@ Robot Framework test cases are created using a simple tabular syntax.
         send dongle command  p 0 0 0 
         answer should match    .*(OBD).*
 
+    set 125K 
+       send dongle command  p 8 3 $1
+       answer should match    .*(\\.\\+cr\\+>)
+    set mask to 0
+       send dongle command  p 8 11 1 0
+       answer should match    .*(\\.\\+cr\\+>)
+    set ID to 0
+       send dongle command  p 8 10 1 $0
+       answer should match    .*(\\.\\+cr\\+>)
+    activate bus 
+       send dongle command  p 8 2 3
+       answer should match    .*(\\.\\+cr\\+>)
     test normal response
        send dongle command  19018D
        answer should match    .*(\\.\\+cr\\+>)

@@ -20,6 +20,9 @@ class DongleCmdLine(object):
 		else:
 			self._flush()
 			
+	def read_stdin(self,txt):
+		self._answer=raw_input(txt)
+
 	def close_port(self):
 		sys.stderr.write("close port ")
 		global _ser
