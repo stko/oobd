@@ -38,6 +38,7 @@
 #include "od_config.h"
 #include "od_protocols.h"
 #include "odb_can.h"
+#include "mc_can.h"
 
 extern char *oobd_Error_Text_OS[];
 
@@ -163,6 +164,8 @@ void bus_param_can_generic_Print(UBaseType_t msgType, void *data,
 		printser_string(" ");
 		printser_int(bus_tx_error_can(), 10);
 		printser_string(" ");
+		printser_int(bus_rec_can(), 10);
+		printser_string(" ");
 		printser_int(bus_tec_can(), 10);
 		printser_string(" ");
 		printser_int(bus_busoff_error_can(), 10);
@@ -185,7 +188,7 @@ void bus_param_can_generic_Print(UBaseType_t msgType, void *data,
 	    break;
 
 	case VALUE_PARAM_INFO_Can11FilterID:
-	    for (FiltCntr = 0; FiltCntr < 10; FiltCntr++) {
+	    for (FiltCntr = 0; FiltCntr < MAXCANFILTER; FiltCntr++) {
 		printser_string("0x");
 		printser_int(CAN_GetFilterReg16(FiltCntr, 1, 0), 16);
 		printser_string(" 0x");
@@ -201,7 +204,7 @@ void bus_param_can_generic_Print(UBaseType_t msgType, void *data,
 	    break;
 
 	case VALUE_PARAM_INFO_Can29FilterID:
-	    for (FiltCntr = 0; FiltCntr < 10; FiltCntr++) {
+	    for (FiltCntr = 0; FiltCntr < MAXCANFILTER; FiltCntr++) {
 		printser_string("0x");
 		printser_int(CAN_GetFilterReg32(FiltCntr, 1), 16);
 		printser_string(" 0x");
