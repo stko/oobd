@@ -44,7 +44,7 @@
 #include <getopt.h>
 
 /* Flag set by ‘--verbose’. */
-static int verbose_flag = 1;
+static int verbose_flag = 0;
 
 // loop counters
 static int sleeps = 100, retries = 0, retriesCnt, loops = 0, loopsCnt;
