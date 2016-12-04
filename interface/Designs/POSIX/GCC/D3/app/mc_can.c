@@ -103,7 +103,7 @@ UBaseType_t bus_change_state_can(UBaseType_t onlyClose)
 	vSocketClose(iSocketCan);
 	iSocketCan = 0;
     }
-        can_do_stop(canChannel[iCanBusIndex]);
+    can_do_stop(canChannel[iCanBusIndex]);
     if (onlyClose) {		// if onlyClose is set, then close only device and exit
 	return pdPASS;
     }
@@ -160,20 +160,20 @@ UBaseType_t bus_change_state_can(UBaseType_t onlyClose)
 */
 
     switch (canConfig->mode) {
-    
-    /*
-    As just read in https://www.raspberrypi.org/forums/viewtopic.php?f=44&t=7027&start=425 
-    from by Zeta » Tue Feb 04, 2014 9:44 pm , the optimized  mcp2515 does not allow Loopback
-    and throws
-        RTNETLINK answers: Device or resource busy
-    which is also my error. So I took this original code and remove the Loopback
-    out of it -  But then tons of error frames appeared, so I changed it
-    back and left this comment in...
-    */
-    
-    
-    
-    
+
+	/*
+	   As just read in https://www.raspberrypi.org/forums/viewtopic.php?f=44&t=7027&start=425 
+	   from by Zeta » Tue Feb 04, 2014 9:44 pm , the optimized  mcp2515 does not allow Loopback
+	   and throws
+	   RTNETLINK answers: Device or resource busy
+	   which is also my error. So I took this original code and remove the Loopback
+	   out of it -  But then tons of error frames appeared, so I changed it
+	   back and left this comment in...
+	 */
+
+
+
+
     case VALUE_BUS_MODE_SILENT:
 	cm.mask = CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_LISTENONLY;
 	cm.flags = CAN_CTRLMODE_LISTENONLY;
@@ -196,10 +196,10 @@ UBaseType_t bus_change_state_can(UBaseType_t onlyClose)
 	       cm.flags);
     can_set_ctrlmode(canChannel[iCanBusIndex], &cm);
     //can_do_restart(canChannel[iCanBusIndex]);
-    if (mystate==CAN_STATE_STOPPED){
-        can_do_start(canChannel[iCanBusIndex]);
+    if (mystate == CAN_STATE_STOPPED) {
+	can_do_start(canChannel[iCanBusIndex]);
     }
-    can_set_restart_ms(canChannel[iCanBusIndex],100);
+    can_set_restart_ms(canChannel[iCanBusIndex], 100);
 
     iSocketCan =
 	iSocketOpenCAN(canChannel[iCanBusIndex],
@@ -571,7 +571,7 @@ UBaseType_t busControl(UBaseType_t cmd, void *param)
 UBaseType_t bus_rx_error_can()
 {
     struct can_berr_counter errCount;
-    can_get_berr_counter(canChannel[iCanBusIndex],&errCount);    
+    can_get_berr_counter(canChannel[iCanBusIndex], &errCount);
     return errCount.rxerr;
 }
 
@@ -580,7 +580,7 @@ UBaseType_t bus_rx_error_can()
 UBaseType_t bus_tx_error_can()
 {
     struct can_berr_counter errCount;
-    can_get_berr_counter(canChannel[iCanBusIndex],&errCount);    
+    can_get_berr_counter(canChannel[iCanBusIndex], &errCount);
     return errCount.txerr;
 }
 
@@ -629,7 +629,7 @@ BaseType_t bus_busoff_error_can()
 {
     /* check for Bus-off flag */
     struct can_device_stats devstats;
-    can_get_device_stats(canChannel[iCanBusIndex],&devstats);    
+    can_get_device_stats(canChannel[iCanBusIndex], &devstats);
     return devstats.bus_off;
 }
 
@@ -637,7 +637,7 @@ BaseType_t bus_passive_error_can()
 {
     /* check for Error passive flag */
     struct can_device_stats devstats;
-    can_get_device_stats(canChannel[iCanBusIndex],&devstats);    
+    can_get_device_stats(canChannel[iCanBusIndex], &devstats);
     return devstats.error_passive;
 }
 
@@ -645,7 +645,7 @@ BaseType_t bus_warning_error_can()
 {
     /* check for Error Warning flag */
     struct can_device_stats devstats;
-    can_get_device_stats(canChannel[iCanBusIndex],&devstats);    
+    can_get_device_stats(canChannel[iCanBusIndex], &devstats);
     return devstats.error_warning;
 }
 
@@ -653,7 +653,7 @@ BaseType_t bus_tec_can()
 {
     /* read Transmit Error Counter of CAN hardware */
     struct can_berr_counter errCount;
-    can_get_berr_counter(canChannel[iCanBusIndex],&errCount);    
+    can_get_berr_counter(canChannel[iCanBusIndex], &errCount);
     return errCount.txerr;
 }
 
@@ -661,6 +661,6 @@ BaseType_t bus_rec_can()
 {
     /* read Receive Error Counter of CAN hardware */
     struct can_berr_counter errCount;
-    can_get_berr_counter(canChannel[iCanBusIndex],&errCount);    
+    can_get_berr_counter(canChannel[iCanBusIndex], &errCount);
     return errCount.rxerr;
 }

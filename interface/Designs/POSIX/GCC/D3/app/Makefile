@@ -148,7 +148,7 @@ MSG_END = --------  end  --------
 
 # Rules definition. ***********************************************************
 
-all: begin gccversion $(OUTDIR)/$(PROJECT_NAME).bin end
+all: begin gccversion $(OUTDIR)/$(PROJECT_NAME).bin canlauncher end
 
 $(OUTDIR)/$(PROJECT_NAME).bin : $(OBJS)  Makefile
 	$(CC) $(OBJS)  $(LIBS) $(LINKER_FLAGS)
@@ -166,13 +166,17 @@ $(foreach src, $(SOURCE), $(eval $(call COMPILE_C_TEMPLATE, $(src))))
 
 
 clean :  format
-	-$(RM) $(OBJS)
+	-$(RM) $(OBJS) canlauncher
 
 
 # generate doxygen docs
 docs:
 	cd ../../../../.. ; doxygen
 #	$(shell cd .. ; doxygen)
+
+# generate the canlauncher
+canlauncher: canlauncher.c
+	gcc canlauncher.c -lsocketcan -o canlauncher
 
 
 # generate doxygen docs
