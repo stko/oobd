@@ -84,11 +84,11 @@ UBaseType_t bus_init_can()
     }
     canConfig->bus = VALUE_BUS_MODE_SILENT;	/* default */
     canConfig->busConfig = VALUE_BUS_CONFIG_11bit_500kbit;	/* default */
-
+    canConfig->mode = VALUE_BUS_MODE_SILENT;	/* default */
     // Set-up the Receive Queue and open the socket ready to receive. 
     xCANReceiveQueue = xQueueCreate(20, sizeof(struct can_frame));
     // close all can filters
-    memset(rfilter, -1, sizeof(rfilter));
+    memset(&rfilter, -1, sizeof(rfilter));
 
     bus_change_state_can(pdFALSE);
     return pdPASS;
@@ -109,7 +109,7 @@ UBaseType_t bus_change_state_can(UBaseType_t onlyClose)
     }
 
 
-    int mystate;
+    int mystate = 0;
     DEBUGPRINT("get CAN State for %s returns %ld\n",
 	       canChannel[iCanBusIndex],
 	       can_get_state(canChannel[iCanBusIndex], &mystate));
@@ -215,7 +215,6 @@ UBaseType_t bus_change_state_can(UBaseType_t onlyClose)
 	setsockopt(iSocketCan, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter,
 		   sizeof(rfilter));
     }
-
     return pdPASS;
 
 }
@@ -483,7 +482,7 @@ UBaseType_t bus_param_can_spec(param_data * args)
 	break;
 
     case PARAM_BUS_CanFilterReset:	/*  CAN filter mask ID reconfig */
-	memset(rfilter, -1, sizeof(rfilter));
+	memset(&rfilter, -1, sizeof(rfilter));
 	if (iSocketCan) {
 	    setsockopt(iSocketCan, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter,
 		       sizeof(rfilter));

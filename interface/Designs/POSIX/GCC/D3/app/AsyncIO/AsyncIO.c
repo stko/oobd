@@ -49,7 +49,7 @@ long lAsyncIORegisterCallback(int iFileDescriptor,
 	for (pxIterator = &xHead; pxIterator->pxNext != NULL;
 	     pxIterator = pxIterator->pxNext);
 	pxIterator->pxNext =
-	    (xAsyncIOCallback *) pvPortMalloc(sizeof(xAsyncIOCallback));
+	    (xAsyncIOCallback *) malloc(sizeof(xAsyncIOCallback));
 	pxIterator->pxNext->iFileHandle = iFileDescriptor;
 	pxIterator->pxNext->pvFunction = pvFunction;
 	pxIterator->pxNext->pvContext = pvContext;

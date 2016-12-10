@@ -96,6 +96,9 @@ void ilmTask(void *pvParameters)
 	for (i = 0; i < 3; i++) {
 	    Leds[i].actualOnStatus = pdFALSE;
 	    Leds[i].flickerTime = 0;
+	    Leds[i].backwardTickCounterSinceLastIncomingEvent = 0;
+	    Leds[i].lostConnectionFlag = pdFALSE;
+	    Leds[i].foundConnectionFlag = pdFALSE;
 	}
 	// test only
 	tone = sounds[0];
