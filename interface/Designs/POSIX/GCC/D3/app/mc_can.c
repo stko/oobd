@@ -109,7 +109,7 @@ UBaseType_t bus_change_state_can(UBaseType_t onlyClose)
     }
 
 
-    int mystate = 0;
+    int mystate = CAN_STATE_STOPPED;
     DEBUGPRINT("get CAN State for %s returns %ld\n",
 	       canChannel[iCanBusIndex],
 	       can_get_state(canChannel[iCanBusIndex], &mystate));
@@ -196,7 +196,10 @@ UBaseType_t bus_change_state_can(UBaseType_t onlyClose)
 	       cm.flags);
     can_set_ctrlmode(canChannel[iCanBusIndex], &cm);
     //can_do_restart(canChannel[iCanBusIndex]);
-    if (mystate == CAN_STATE_STOPPED) {
+    
+    // \TODO can_get_state returns 0(=CAN_STATE_ERROR_ACTIVE) on gs_usb devices, even if the device is down, so force the start here :-|
+    //if ( mystate == CAN_STATE_STOPPED ) { 
+    if ( 1 ) { 
 	can_do_start(canChannel[iCanBusIndex]);
     }
     can_set_restart_ms(canChannel[iCanBusIndex], 100);
