@@ -196,10 +196,10 @@ UBaseType_t bus_change_state_can(UBaseType_t onlyClose)
 	       cm.flags);
     can_set_ctrlmode(canChannel[iCanBusIndex], &cm);
     //can_do_restart(canChannel[iCanBusIndex]);
-    
+
     // \TODO can_get_state returns 0(=CAN_STATE_ERROR_ACTIVE) on gs_usb devices, even if the device is down, so force the start here :-|
     //if ( mystate == CAN_STATE_STOPPED ) { 
-    if ( 1 ) { 
+    if (1) {
 	can_do_start(canChannel[iCanBusIndex]);
     }
     can_set_restart_ms(canChannel[iCanBusIndex], 100);
@@ -246,6 +246,96 @@ uint32_t CAN_GetFilterReg32(uint8_t FilterID, uint8_t FilterReg)
     } else {
 	return 0;
     }
+}
+
+/*----------------------------------------------------------------------------*/
+
+void CAN_GetCanConfig(struct CanConfig *canConfig)
+{
+    int mystate = CAN_STATE_STOPPED;
+    int error = can_get_state(canChannel[iCanBusIndex], &mystate);
+    if (error) {
+	canConfig->state = STATE_REQUEST_CAN_UNKNOWN;
+    } else {
+	switch (mystate) {
+	case CAN_STATE_ERROR_ACTIVE:
+	    canConfig->state = STATE_REQUEST_CAN_ERROR_ACTIVE;
+	    break;
+	case CAN_STATE_ERROR_WARNING:
+	    canConfig->state = STATE_REQUEST_CAN_ERROR_WARNING;
+	    break;
+	  CAN_STATE_ERROR_PASSIVE:
+	    canConfig->state = STATE_REQUEST_CAN_ERROR_PASSIVE;
+	    break;
+	  CAN_STATE_BUS_OFF:
+	    canConfig->state = STATE_REQUEST_CAN_BUS_OFF;
+	    break;
+	  CAN_STATE_STOPPED:
+	    canConfig->state = STATE_REQUEST_CAN_STOPPED;
+	    break;
+	  CAN_STATE_SLEEPING:
+	    canConfig->state = STATE_REQUEST_CAN_SLEEPING;
+	    break;
+	default:
+	    canConfig->state = STATE_REQUEST_CAN_UNKNOWN;
+	    break;
+	}
+    }
+
+    struct can_ctrlmode cm;
+    error = can_get_ctrlmode(canChannel[iCanBusIndex], &cm);
+    if (error) {
+	canConfig->mode = VALUE_BUS_MODE_SILENT;
+    } else {
+	if (cm.mask == (CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_LISTENONLY)
+	    && cm.flags == CAN_CTRLMODE_LISTENONLY) {
+	    canConfig->mode = VALUE_BUS_MODE_SILENT;
+	} else {
+	    if (cm.mask ==
+		(CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_LISTENONLY)
+		&& cm.flags == CAN_CTRLMODE_LOOPBACK) {
+		canConfig->mode = VALUE_BUS_MODE_LOOP_BACK;
+	    } else {
+		if (cm.mask ==
+		    (CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_LISTENONLY)
+		    && cm.flags ==
+		    (CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_LISTENONLY)) {
+		    canConfig->mode = VALUE_BUS_MODE_LOOP_BACK_WITH_SILENT;
+		} else {
+		    if (cm.mask ==
+			(CAN_CTRLMODE_LOOPBACK | CAN_CTRLMODE_LISTENONLY)
+			&& cm.flags == 0) {
+			canConfig->mode = VALUE_BUS_MODE_NORMAL;
+		    }
+		}
+	    }
+	}
+    }
+
+    struct can_bittiming bt;
+    error = can_get_bittiming(canChannel[iCanBusIndex], &bt);
+    if (error) {
+	canConfig->busConfig = VALUE_BUS_CONFIG_11bit_500kbit;
+    } else {
+	switch (bt.bitrate) {
+	case 125000:
+	    canConfig->busConfig = VALUE_BUS_CONFIG_11bit_125kbit;
+	    break;
+	case 250000:
+	    canConfig->busConfig = VALUE_BUS_CONFIG_11bit_250kbit;
+	    break;
+	case 500000:
+	    canConfig->busConfig = VALUE_BUS_CONFIG_11bit_500kbit;
+	    break;
+	case 1000000:
+	    canConfig->busConfig = VALUE_BUS_CONFIG_11bit_1000kbit;
+	    break;
+	default:
+	    canConfig->busConfig = VALUE_BUS_CONFIG_11bit_500kbit;
+	    break;
+	}
+    }
+
 }
 
 /*----------------------------------------------------------------------------*/
@@ -368,8 +458,11 @@ UBaseType_t bus_param_can_spec(param_data * args)
 	rxCount = 0;
 	txCount = 0;
 	errCount = 0;
+	int i;
+	// a litte security check if the given index is inside the args array at all
+	for (i = 0; (i < args->args[ARG_VALUE_1]) && canChannel[1]; i++);
 	//! if can channel parameter given with that index, change to
-	if (canChannel[args->args[ARG_VALUE_1]]) {
+	if (i == args->args[ARG_VALUE_1]) {
 	    canConfig->bus = args->args[ARG_VALUE_1];	//store requested bus id
 	    canConfig->mode = VALUE_BUS_MODE_SILENT;
 	    bus_change_state_can(pdFALSE);

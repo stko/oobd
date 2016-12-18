@@ -58,6 +58,23 @@ uint16_t CAN_GetFilterReg16(uint8_t FilterID, uint8_t FilterReg,
 			    uint8_t FilterPos);
 uint32_t CAN_GetFilterReg32(uint8_t FilterID, uint8_t FilterReg);
 
+
+
+/* store all parameter in one single struct to maybe later store such param sets in EEPROM */
+struct CanConfig {
+    UBaseType_t recvID,		//!< Module ID
+     bus,			//!< id of actual used bus
+     mode,			//!< id of actual used Tranceiver mode
+     busConfig,			//!< nr of actual used bus configuration
+     state			//!< actual state of bus
+};
+
+/*! \brief fills the CanConfig struct with the actual bus values
+
+*/
+
+void CAN_GetCanConfig(struct CanConfig *canConfig);
+
 // Add obd_uds_init() to the list of protocols to be initialized
 
 #define LIST_OF_BUSSES_TO_INITIALIZE #LIST_OF_BUSSES_TO_INITIALIZE odb_can_init();
@@ -166,17 +183,15 @@ Default: 11bit 500kb
 #define VALUE_BUS_CONFIG_29bit_1000kbit 		( 8 )	//!< set CAN bus speed to 29bit with 1000kbit
 
 
+#define STATE_REQUEST_CAN_ERROR_ACTIVE			( 0 )	//!< Bus Active
+#define STATE_REQUEST_CAN_ERROR_WARNING			( 1 )	//!< Bus Active, a few errors
+#define STATE_REQUEST_CAN_ERROR_PASSIVE			( 2 )	//!< Bus Passive, many errors
+#define STATE_REQUEST_CAN_BUS_OFF			( 3 )	//!< Bus Off, too many errors
+#define STATE_REQUEST_CAN_STOPPED			( 4 )	//!< Bus offline
+#define STATE_REQUEST_CAN_SLEEPING			( 5 )	//!< Bus sleeping
+#define STATE_REQUEST_CAN_UNKNOWN			( 6 )	//!< no feedback from device
+
   /*! @} */
-
-
-/* store all parameter in one single struct to maybe later store such param sets in EEPROM */
-struct CanConfig {
-    UBaseType_t recvID,		//!< Module ID
-     bus,			//!< id of actual used bus
-     mode,			//!< id of actual used Tranceiver mode
-     busConfig			//!< nr of actual used bus configuration
-};
-
 
 
 

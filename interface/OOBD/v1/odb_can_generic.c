@@ -77,6 +77,7 @@ void bus_param_can_generic_Print(UBaseType_t msgType, void *data,
     DEBUGPRINT("can Parameter receiced %ld-%ld\n", args->args[ARG_RECV],
 	       args->args[ARG_CMD]);
     if (args->args[ARG_CMD] == PARAM_INFO) {
+	CAN_GetCanConfig(canConfig);
 	switch (args->args[ARG_VALUE_1]) {
 	case VALUE_PARAM_INFO_VERSION:
 	    printser_string("CAN Bus");
@@ -88,25 +89,53 @@ void bus_param_can_generic_Print(UBaseType_t msgType, void *data,
 	    case VALUE_BUS_MODE_SILENT:
 		printser_string("0 - CAN Transceiver in 'Silent Mode'");
 		printLF();
-		printEOT();
 		break;
 	    case VALUE_BUS_MODE_LOOP_BACK:
 		printser_string("1 - CAN Transceiver in 'Loop Back Mode'");
 		printLF();
-		printEOT();
 		break;
 	    case VALUE_BUS_MODE_LOOP_BACK_WITH_SILENT:
 		printser_string
 		    ("2 - CAN Transceiver in 'Loop Back combined with Silent Mode'");
 		printLF();
-		printEOT();
 		break;
 	    case VALUE_BUS_MODE_NORMAL:
 		printser_string("3 - CAN Transceiver in 'Normal Mode'");
 		printLF();
-		printEOT();
 		break;
 	    }
+
+	    switch (canConfig->state) {
+	    case STATE_REQUEST_CAN_ERROR_ACTIVE:
+		printser_string("0 - Bus Active");
+		printLF();
+		break;
+	    case STATE_REQUEST_CAN_ERROR_WARNING:
+		printser_string("1 - Bus Active, a few errors");
+		printLF();
+		break;
+	    case STATE_REQUEST_CAN_ERROR_PASSIVE:
+		printser_string("2 - Bus Passive, many errors");
+		printLF();
+		break;
+	    case STATE_REQUEST_CAN_BUS_OFF:
+		printser_string("3 - Bus Off, too many errors");
+		printLF();
+		break;
+	    case STATE_REQUEST_CAN_STOPPED:
+		printser_string("4 - Bus offline");
+		printLF();
+		break;
+	    case STATE_REQUEST_CAN_SLEEPING:
+		printser_string("5 - Bus sleeping");
+		printLF();
+		break;
+	    case STATE_REQUEST_CAN_UNKNOWN:
+		printser_string("6 - no feedback from device");
+		printLF();
+		break;
+	    }
+	    printEOT();
 	    break;
 	case VALUE_PARAM_INFO_BUS_CONFIG:
 	    switch (canConfig->busConfig) {
