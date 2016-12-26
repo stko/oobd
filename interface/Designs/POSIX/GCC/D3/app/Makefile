@@ -115,7 +115,7 @@ FREERTOS_SOURCE= $(RTOS_SOURCE_DIR)/list.c \
 		$(RTOS_SOURCE_DIR)/queue.c \
 		$(RTOS_SOURCE_DIR)/tasks.c \
 		$(RTOS_PORT_DIR)/port.c \
-		$(RTOS_SOURCE_DIR)/portable/MemMang/heap_3.c
+		./heap_raspi.c
 
 PORT_INCLUDE_SOURCE= $(PORT_INCLUDE_DIR)/AsyncIO.c \
 		$(PORT_INCLUDE_DIR)/AsyncIOSerial.c \

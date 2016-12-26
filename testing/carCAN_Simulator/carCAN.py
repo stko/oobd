@@ -127,7 +127,7 @@ def generateFrame(bytesSended,typeID, service):
 		elif tClass == 6:
 			length = 256
 		else:
-			length = 4095
+			length = 4095-3
 		dlc=length+3
 		print ("length, dlc: ", length,dlc)
 		if bytesSended == 0: # initial  frame
@@ -182,7 +182,7 @@ def generateFrame(bytesSended,typeID, service):
 				telegram["d"].append( 0 )
 				start +=  1
 
-	print ("generic send")
+	print ("generic send, type=",tType)
 	pp.pprint(telegram)
 	if tType != 3 : # no answer
 		sendTele(telegram)
@@ -202,6 +202,7 @@ while True:
 			s.bind((sys.argv[1],))
 			notConnected=False
 		except:
+			print ("wait..")
 			time.sleep(0.5)
 	
 
@@ -213,11 +214,15 @@ while True:
 		try:
 			cf, addr = s.recvfrom( 16 ) # buffer size is 1024 bytes
 		except:
+			print ("wait..")
+			time.sleep(0.5)
 			canDeviceIsAvailable=False;
 			break
-		print('Received: can_id=%x, can_dlc=%x, data=%s' % dissect_can_frame(cf))
 		can_id, can_dlc, data=dissect_can_frame(cf)
-		msg+=data
+		if can_id & 0x700 !=0x700: 
+			print ("No diagnostic frame: CAN ID 0x%02X discarded" % ( can_id) )
+			continue
+		msg+=data # if it's no diagnotic frame, don't handle it
 		print ("received: 0x%02X %d %02X %02X %02X %02X %02X %02X %02X %02X" % ( can_id, can_dlc, msg[0] , msg[1] , msg[2] , msg[3] , msg[4] , msg[5] , msg[6] , msg[7] ) )
 		if can_id == 0x7D0:
 			can_id=0x7E8 # changing functional address to answer address of ECU
@@ -280,7 +285,7 @@ while True:
 			#und hier kommt jetzt die generische Datenerzeugung..
 			print ("len",len(pid), "slice",  pid[4:6])
 			if len(pid)==6 and pid[2:3]=="F": # generic test case generation
-				print ("generic frame")
+				print ("generic frame, bytesSended=",bytesSended)
 				if nextStep == 1: #Single Frame or end of Consecutive Frame series -> send the PID answer
 					bytesSended=generateFrame(bytesSended,pid[4:6],pid[:2])
 				if nextStep == 2: # send remaining consecute frames
