@@ -52,7 +52,7 @@ class DongleCmdLine(object):
 		if _ser is None:
 			raise AssertionError("serial line is not open!")
 		else:
-			_ser.write(line)      # write a string
+			_ser.write(line.encode())      # write a string
 			maxDelay=50
 			while maxDelay>0:
 				nrOfBytes=_ser.inWaiting();

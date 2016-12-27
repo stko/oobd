@@ -630,8 +630,7 @@ void vCANReceiveAndDeliverCallbackOOBD(int iSocket, void *pvContext)
 	/* Data received. Process it. */
 	dp.recv = frame.can_id;	// add the HByte again
 	dp.len = frame.can_dlc;
-	dp.err = (frame.can_id & 20000000) == 0;
-	DEBUGPRINT("mc_can err value_ %d\n", dp.err);
+	dp.err = ( frame.can_id & 20000000 ) == 0;
 	if (dp.err) {
 	    errCount++;
 	    if (errCount > 100000) {
@@ -642,8 +641,8 @@ void vCANReceiveAndDeliverCallbackOOBD(int iSocket, void *pvContext)
 	}
 	dp.data = &frame.data[0];	// data starts here
 	// supress all socketcan internal status messages
-	if (!dp.err) {
-	    if (reportReceivedData)
+	if (!dp.err){
+		if (reportReceivedData)
 		reportReceivedData(&dp, pdTRUE);
 	}
     }
