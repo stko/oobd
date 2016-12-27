@@ -54,8 +54,9 @@ void vAsyncSerialIODataAvailableISR(int iFileDescriptor, void *pContext)
     unsigned char ucRx;
 
     /* This handler only processes a single byte/character at a time. */
-    iReadResult = read(iFileDescriptor, &ucRx, 1);
-    if (1 == iReadResult) {
+//    iReadResult = read(iFileDescriptor, &ucRx, 1);
+//    if (1 == iReadResult) {
+    while ((iReadResult = read(iFileDescriptor, &ucRx, 1)) == 1) {
 	if (NULL != pContext) {
 	    /* Send the received byte to the queue. */
 	    if (pdTRUE !=
@@ -65,6 +66,9 @@ void vAsyncSerialIODataAvailableISR(int iFileDescriptor, void *pContext)
 	    }
 	}
     }
+    if (iReadResult == 0)
+	closeTelnetSocket();
+
     portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
 }
 

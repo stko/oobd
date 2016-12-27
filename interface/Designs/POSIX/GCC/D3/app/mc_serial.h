@@ -38,7 +38,7 @@
 #define INC_MC_SERIAL_H
 
 #include "mc_serial_generic.h"
-
+void closeTelnetSocket();
 #include "AsyncIO/AsyncIOSerial.h"
 
 #endif				/* INC_MC_SERIAL_H */
