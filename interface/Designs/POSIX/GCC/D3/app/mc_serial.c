@@ -109,12 +109,12 @@ void *portControlThread(void *pvParameters)
 	 */
 	int optval = 1;
 	setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR,
-//		   (const void *) &optval, sizeof(int));
+//                 (const void *) &optval, sizeof(int));
 		   (const void *) &optval, sizeof(optval));
 
 	bzero((char *) &serv_addr, sizeof(serv_addr));
 	portno = 3001;		//atoi(*pcDevice);
-//	fcntl(sockfd, F_SETFL, O_NONBLOCK);
+//      fcntl(sockfd, F_SETFL, O_NONBLOCK);
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	serv_addr.sin_port = htons((unsigned short) portno);
@@ -132,8 +132,9 @@ void *portControlThread(void *pvParameters)
 			   sockfd);
 
 		oobdIOHandle =
-//		    accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
-              oobdIOHandle =              accept(sockfd, (struct sockaddr *) NULL, NULL);
+//                  accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
+		    oobdIOHandle =
+		    accept(sockfd, (struct sockaddr *) NULL, NULL);
 		if (oobdIOHandle > -1) {
 		    DEBUGPRINT("Got connected \n", 'a');
 	(void) lAsyncIORegisterCallback(oobdIOHandle,
@@ -149,7 +150,7 @@ void *portControlThread(void *pvParameters)
 		    vAsyncIOUnregisterCallback(oobdIOHandle);
 		    close(oobdIOHandle);
 		} else {
-	    printf("accept: Failed: %d\n", errno);
+		    printf("accept: Failed: %d\n", errno);
 		    DEBUGPRINT("Invalid socket?? \n", 'a');
 		    exit(1);
 

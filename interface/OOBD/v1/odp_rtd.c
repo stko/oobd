@@ -857,8 +857,8 @@ RTDElement *findID(RTDElement * rtdBuffer, UBaseType_t id)
   \return the other buffernumber: if buffer is 1, it return 0, and if buffer is 0, it returns 1
 */
 
-UBaseType_t otherBuffer(UBaseType_t bufferindex);
-inline UBaseType_t otherBuffer(UBaseType_t bufferindex)
+
+extern inline UBaseType_t otherBuffer(UBaseType_t bufferindex)
 {
     return (bufferindex & 1) ? 0 : 1;
 }
