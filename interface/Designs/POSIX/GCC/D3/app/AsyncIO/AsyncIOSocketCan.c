@@ -42,7 +42,7 @@ int iSocketOpenCAN(void (*vSocketCallback) (int, void *), void *pvContext,
     taskENTER_CRITICAL();
     {
 	/* Open a new socket. */
-//	iSocket = socket(PF_CAN, SOCK_RAW, CAN_RAW);
+//      iSocket = socket(PF_CAN, SOCK_RAW, CAN_RAW);
 	if (0 != iSocket) {
 	    /* Have we been passed a call back function that will deal with received messages? */
 	    struct ifreq ifr;
