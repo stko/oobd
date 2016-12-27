@@ -61,6 +61,7 @@ void endProgram(const char *msg)
 
 /* file handle to communicate with the oobd side. */
 int oobdIOHandle = -1;
+int SocketConnected = 1;
 
 pthread_t pTcpControlThread;
 
@@ -71,25 +72,25 @@ void writeChar(char a)
     /* Echo it back to the sender. */
     //! \bug Echo off is not supported yet
     if (oobdIOHandle > -1) {
-    (void) write(oobdIOHandle, &a, 1);
-	DEBUGPRINT("%c", a);
+	(void) write(oobdIOHandle, &a, 1);
+	//DEBUGPRINT("%c", a);
     }
 }
 
-void *portControlThread(void *pvParameters)
+void portControlThread(void *pvParameters)
+//void *portControlThread(void *pvParameters)
 {
-
     extern printChar_cbf printChar;
     extern QueueHandle_t internalSerialRxQueue;
     printChar = writeChar;
+    int keeprunning = 1;
 
     DEBUGPRINT("PortControl Task started\n", 'a');
     struct timespec xTimeToSleep, xTimeSlept;
     /* Makes the process more agreeable when using the Posix simulator. */
     xTimeToSleep.tv_sec = 0;
-    xTimeToSleep.tv_nsec = 5000;
+    xTimeToSleep.tv_nsec = 5000000;
 
-    int keeprunning = 1;
 
     int sockfd, portno;
     int error = 0;
@@ -117,7 +118,8 @@ void *portControlThread(void *pvParameters)
 //      fcntl(sockfd, F_SETFL, O_NONBLOCK);
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	serv_addr.sin_port = htons((unsigned short) portno);
+//      serv_addr.sin_port = htons((unsigned short) portno);
+	serv_addr.sin_port = htons(portno);
 	if (bind(sockfd, (struct sockaddr *) &serv_addr,
 		 sizeof(serv_addr)) < 0) {
 	    endProgram("ERROR on binding");
@@ -127,34 +129,67 @@ void *portControlThread(void *pvParameters)
 	    if (listen(sockfd, 5) < 0) {	/* allow 5 requests to queue up */
 		endProgram("ERROR on listen");
 	    }
-	    for (; keeprunning;) {
-		DEBUGPRINT("Waiting for connect sockethandle: %d\n",
-			   sockfd);
-
+	    while (keeprunning) {
 		oobdIOHandle =
-//                  accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
-		    oobdIOHandle =
-		    accept(sockfd, (struct sockaddr *) NULL, NULL);
-		if (oobdIOHandle > -1) {
-		    DEBUGPRINT("Got connected \n", 'a');
-	(void) lAsyncIORegisterCallback(oobdIOHandle,
-					vAsyncSerialIODataAvailableISR,
-					internalSerialRxQueue);
-		    while (getsockopt
-			   (oobdIOHandle, SOL_SOCKET, SO_ERROR, &error,
-			    &len) == 0) {
-			nanosleep(&xTimeToSleep, &xTimeSlept);
-
-    }
-
-		    vAsyncIOUnregisterCallback(oobdIOHandle);
-		    close(oobdIOHandle);
-		} else {
-		    printf("accept: Failed: %d\n", errno);
-		    DEBUGPRINT("Invalid socket?? \n", 'a');
+		    accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
+//                  oobdIOHandle =
+//                  accept(sockfd, (struct sockaddr *) NULL, NULL);
+		if (oobdIOHandle < 0) {
+		    // error
+		    if ((errno == ENETDOWN || errno == EPROTO
+			 || errno == ENOPROTOOPT || errno == EHOSTDOWN
+			 || errno == ENONET || errno == EHOSTUNREACH
+			 || errno == EOPNOTSUPP || errno == EINTR
+			 || errno == EWOULDBLOCK || errno == EAGAIN
+			 || errno == ENETUNREACH)) {
+			vTaskDelay(500);
+			continue;
+		    }
+		    perror("telnet connect failed");
 		    exit(1);
+		}
+		    DEBUGPRINT("Got connected \n", 'a');
+		    (void) lAsyncIORegisterCallback(oobdIOHandle,
+						    vAsyncSerialIODataAvailableISR,
+						    internalSerialRxQueue);
+
+
+/*		
+		BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+		ssize_t iReadResult = -1;
+		unsigned char ucRx;
+		// This handler only processes a single byte/character at a time.
+		//    iReadResult = read(iFileDescriptor, &ucRx, 1);
+		//    if (1 == iReadResult) {
+		while ((iReadResult = read(oobdIOHandle, &ucRx, 1))>0){
+			printf("TCP char received:\n","a");
+			// Send the received byte to the queue.
+			if (pdTRUE !=
+			xQueueSendFromISR((QueueHandle_t) internalSerialRxQueue, &ucRx,
+			&xHigherPriorityTaskWoken)) {
+				// the queue is full.
+		    }
+		}
+		portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
+
+*/
+
+
+
+//              while (getsockopt
+//                      (oobdIOHandle, SOL_SOCKET, SO_ERROR, &error,
+//                      &len) == 0) {
+		SocketConnected = 1;
+		while (SocketConnected) {
+		    //DEBUGPRINT("telnet Idle \n", 'a');
+		    vTaskDelay(500);
+		    //nanosleep(&xTimeToSleep, &xTimeSlept);
 
 		}
+		    vAsyncIOUnregisterCallback(oobdIOHandle);
+
+		DEBUGPRINT("Lost connection \n", 'a');
+		    close(oobdIOHandle);
 	    }
 	    close(sockfd);
 	}
@@ -168,6 +203,11 @@ void *portControlThread(void *pvParameters)
 
 /*-----------------------------------------------------------*/
 
+void closeTelnetSocket()
+{
+    DEBUGPRINT("call of closeTelnetSocket\n", 'a');
+    SocketConnected = 0;
+}
 
 
 UBaseType_t serial_init_mc()
@@ -181,6 +221,19 @@ UBaseType_t serial_init_mc()
     }
 
     /* Create a Task which controls the tcp Socket. */
+
+    if (pdPASS ==
+	xTaskCreate(portControlThread, (const signed portCHAR *) "Telnet",
+		    configMINIMAL_STACK_SIZE, (void *) NULL, TASK_PRIO_LOW,
+		    (TaskHandle_t *) NULL)) {
+	DEBUGPRINT("*** 'Telnet' Task created ***\n", 'a');
+	return pdTRUE;
+    } else {
+	DEBUGPRINT("*** 'Telnet' Task NOT created ***\n", 'a');
+	return pdFALSE;
+    }
+
+/*    
     //portControlThread(NULL);
     int err =
 	pthread_create(&pTcpControlThread, NULL, &portControlThread, NULL);
@@ -191,6 +244,6 @@ UBaseType_t serial_init_mc()
 	printf("\n Thread created successfully\n");
 	return pdTRUE;
     }
-
+*/
 
 }

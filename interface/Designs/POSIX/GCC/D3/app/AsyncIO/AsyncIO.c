@@ -57,6 +57,9 @@ long lAsyncIORegisterCallback(int iFileDescriptor,
 
 	/* Set the socket as requiring a signal when messages are received. */
 	prvRegisterSignalHandler(iFileDescriptor);
+	printf("lAsyncIORegisterCallback w. filedescriptor %d\n",
+	       iFileDescriptor);
+
     }
     return (NULL != pvFunction);
 }
@@ -88,7 +91,7 @@ void vAsyncIOUnregisterCallback(int iFileDescriptor)
 
 void prvSignalHandler(int signal, siginfo_t * data, void *pvParam)
 {
-    int iSocket = 0, iReturn;
+    int iSocket = -1, iReturn;
     xAsyncIOCallback *pxIterator;
     struct pollfd xFileDescriptorPollEvents;
     if (SIG_MSG_RX == signal) {	/* Are we in the correct signal handler. */
@@ -102,18 +105,18 @@ void prvSignalHandler(int signal, siginfo_t * data, void *pvParam)
 	    if (pxIterator->iFileHandle == iSocket) {
 		(pxIterator->pvFunction) (iSocket, pxIterator->pvContext);
 	    } else {
-		printf("No socket owner.\n");
+		printf("Error: No socket owner.\n");
 	    }
 	} else {
 	    /* We don't know which socket cause the signal. Use poll to find the socket. */
+
 	    for (pxIterator = &xHead; pxIterator != NULL;
 		 pxIterator = pxIterator->pxNext) {
 		xFileDescriptorPollEvents.fd = pxIterator->iFileHandle;
 		xFileDescriptorPollEvents.events = POLLIN;
 		xFileDescriptorPollEvents.revents = 0;
-		if (xFileDescriptorPollEvents.fd != 0) {
+		if (xFileDescriptorPollEvents.fd != -1) {
 		    iReturn = poll(&xFileDescriptorPollEvents, 1, 0);	/* Need to kick off the signal handling. */
-
 		    if ((1 == iReturn)
 			&& (POLLIN == xFileDescriptorPollEvents.revents)) {
 			if (pxIterator->pvFunction != NULL) {
