@@ -148,10 +148,10 @@ void portControlThread(void *pvParameters)
 		    perror("telnet connect failed");
 		    exit(1);
 		}
-		    DEBUGPRINT("Got connected \n", 'a');
-		    (void) lAsyncIORegisterCallback(oobdIOHandle,
-						    vAsyncSerialIODataAvailableISR,
-						    internalSerialRxQueue);
+		DEBUGPRINT("Got connected \n", 'a');
+		(void) lAsyncIORegisterCallback(oobdIOHandle,
+						vAsyncSerialIODataAvailableISR,
+						internalSerialRxQueue);
 
 
 /*		
@@ -186,10 +186,10 @@ void portControlThread(void *pvParameters)
 		    //nanosleep(&xTimeToSleep, &xTimeSlept);
 
 		}
-		    vAsyncIOUnregisterCallback(oobdIOHandle);
+		vAsyncIOUnregisterCallback(oobdIOHandle);
 
 		DEBUGPRINT("Lost connection \n", 'a');
-		    close(oobdIOHandle);
+		close(oobdIOHandle);
 	    }
 	    close(sockfd);
 	}
