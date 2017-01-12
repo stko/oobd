@@ -41,6 +41,7 @@
 
 // posix specific argument handling
 #include <getopt.h>
+#include <signal.h>
 
 /* Flag set by ‘--verbose’. */
 static int verbose_flag;
@@ -50,6 +51,14 @@ char *canChannel[MAXCANCHANNEL];
 
 
 extern char *oobd_Error_Text_OS[];
+
+//Signal handler for closed telnet connection
+void sigPIPEfunc(int sig)
+{
+    printf("Broken Pipe\n");
+    closeTelnetSocket();
+}
+
 
 
 void mc_init_sys_boot_specific()
@@ -146,9 +155,10 @@ void mc_init_sys_boot_specific()
 	    printf("%s ", argv[optind++]);
 	putchar('\n');
     }
-
+    // to avoid a program stop in case of an unexpected received signal when the TCP Telnet port is unexpected closed (SIGPIPE),
+    // we install an signal handler
+    signal(SIGPIPE, sigPIPEfunc);
 }
-
 
 void mc_init_sys_tasks_specific()
 {

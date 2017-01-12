@@ -73,7 +73,11 @@ void writeChar(char a)
     //! \bug Echo off is not supported yet
     if (oobdIOHandle > -1) {
 	(void) write(oobdIOHandle, &a, 1);
-	//DEBUGPRINT("%c", a);
+	if (a == 13)
+	    a = 10;
+	DEBUGPRINT("%c", a);
+    } else {
+	DEBUGPRINT("socket closed ?!? %c\n", a);
     }
 }
 
@@ -126,7 +130,7 @@ void portControlThread(void *pvParameters)
 	    keeprunning = 0;
 	} else {
 	    clilen = sizeof(cli_addr);
-	    if (listen(sockfd, 5) < 0) {	/* allow 5 requests to queue up */
+	    if (listen(sockfd, 1) < 0) {	/* allow 5 requests to queue up */
 		endProgram("ERROR on listen");
 	    }
 	    while (keeprunning) {
@@ -175,10 +179,6 @@ void portControlThread(void *pvParameters)
 */
 
 
-
-//              while (getsockopt
-//                      (oobdIOHandle, SOL_SOCKET, SO_ERROR, &error,
-//                      &len) == 0) {
 		SocketConnected = 1;
 		while (SocketConnected) {
 		    //DEBUGPRINT("telnet Idle \n", 'a');
@@ -190,6 +190,7 @@ void portControlThread(void *pvParameters)
 
 		DEBUGPRINT("Lost connection \n", 'a');
 		close(oobdIOHandle);
+		oobdIOHandle = -1;
 	    }
 	    close(sockfd);
 	}
