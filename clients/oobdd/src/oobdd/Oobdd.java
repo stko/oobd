@@ -53,7 +53,7 @@ public class Oobdd implements IFsystem, OOBDConstants, Daemon, Runnable, DaemonU
     public static void main(String[] args) {
        try {
         
-            //loadOptions(args);
+            loadOptions(args);
  
           core = new Core(new Oobdd(), "Core");
             // TODO code application logic here
@@ -145,10 +145,10 @@ public class Oobdd implements IFsystem, OOBDConstants, Daemon, Runnable, DaemonU
      */
     static boolean loadOptions(String[] args) {
        parser = new OptionParser();
-/*         parser.accepts("settings").withRequiredArg();;
+         parser.accepts("settings").withRequiredArg();;
 
         options = parser.parse(args);
-*/        return true;
+        return true;
     }
 
     protected void finalize() {
