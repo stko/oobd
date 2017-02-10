@@ -7,6 +7,8 @@ OobdWsPort="8443"
 OobdTelnetHost="steffen-Desktop64.fritz.box"
 
 OobdTelnetPort="8081"
+FirmwareHost="localhost"
+FirmwarePort=3001
 
 wsSocketTimeout = 30 
 

@@ -46,11 +46,13 @@
 //#include <linux/can.h>
 //#include <linux/can/raw.h>
 #include <string.h>
-
+#define MAXCANCHANNEL 10
+#define MAXCANFILTER 4
 /**
  * call back function which simply delivers the received packet 
  * @param iSocket A socket desicriptor to receive the packet from.
  */
 void vCANReceiveAndDeliverCallbackOOBD(int iSocket, void *pvContext);
+UBaseType_t bus_change_state_can();
 
 #endif				/* INC_MC_CAN_H */

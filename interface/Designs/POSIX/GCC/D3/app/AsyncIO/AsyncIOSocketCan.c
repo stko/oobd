@@ -35,8 +35,8 @@
 
 /*---------------------------------------------------------------------------*/
 
-int iSocketOpenCAN(void (*vSocketCallback) (int, void *), void *pvContext,
-		   struct sockaddr_can *pxBindAddress)
+int iSocketOpenCAN(char *name, void (*vSocketCallback) (int, void *),
+		   void *pvContext, struct sockaddr_can *pxBindAddress)
 {
     int iSocket = 0;
 
@@ -44,30 +44,35 @@ int iSocketOpenCAN(void (*vSocketCallback) (int, void *), void *pvContext,
     {
 	/* Open a new socket. */
 	iSocket = socket(PF_CAN, SOCK_RAW, CAN_RAW);
-	if (0 != iSocket) {
-	    /* Have we been passed a call back function that will deal with received messages? */
-	    struct ifreq ifr;
-	    strcpy(ifr.ifr_name, canChannel);
-	    ioctl(iSocket, SIOCGIFINDEX, &ifr);	/* ifr.ifr_ifindex gets filled 
-						 * with that device's index */
-	    if (pdTRUE ==
-		lAsyncIORegisterCallback(iSocket, vSocketCallback,
-					 pvContext)) {
-		/* This is CAN so bind it passed listen address. */
-		if (NULL != pxBindAddress) {
-		    pxBindAddress->can_family = AF_CAN;
-		    pxBindAddress->can_ifindex = ifr.ifr_ifindex;
-		    if (0 !=
-			bind(iSocket, (struct sockaddr *) pxBindAddress,
-			     sizeof(struct sockaddr_can))) {
-			printf("Bind error: %d\n", errno);
-		    }
+	if (iSocket < 0) {
+	    printf("Failed to open socket: %d.\n", errno);
+	    return 0;
+	}
+	/* Have we been passed a call back function that will deal with received messages? */
+	struct ifreq ifr;
+	strcpy(ifr.ifr_name, name);
+	/* ifr.ifr_ifindex gets filled 
+	 * with that device's index */
+	if (ioctl(iSocket, SIOCGIFINDEX, &ifr)) {
+	    printf("ioctl\n");
+	    return 0;
+	}
+
+	if (pdTRUE ==
+	    lAsyncIORegisterCallback(iSocket, vSocketCallback,
+				     pvContext)) {
+	    /* This is CAN so bind it passed listen address. */
+	    if (NULL != pxBindAddress) {
+		pxBindAddress->can_family = AF_CAN;
+		pxBindAddress->can_ifindex = ifr.ifr_ifindex;
+		if (0 !=
+		    bind(iSocket, (struct sockaddr *) pxBindAddress,
+			 sizeof(struct sockaddr_can))) {
+		    printf("Bind error: %d\n", errno);
 		}
-	    } else {
-		/* Socket is being used as polled IO or for sending data. */
 	    }
 	} else {
-	    printf("Failed to open socket: %d.\n", errno);
+	    /* Socket is being used as polled IO or for sending data. */
 	}
     }
     taskEXIT_CRITICAL();

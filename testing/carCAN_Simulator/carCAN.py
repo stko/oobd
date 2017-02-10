@@ -24,14 +24,14 @@ except ImportError:
 
 simu=load(open("carsimCAN.yaml"), Loader=Loader)
 
-print (dump(simu))
+#print (dump(simu))
 
 quit
       
 L1 = simu.keys()
-for x in L1: 
-	print (x)
-
+#for x in L1: 
+#	print (x)
+print ("Start")
 # CAN frame packing/unpacking (see `struct can_frame` in <linux/can.h>)
 can_frame_fmt = "=IB3x8s"
  
@@ -47,11 +47,6 @@ def dissect_can_frame(frame):
 if len(sys.argv) != 2:
 	print('Provide CAN device name (can0, slcan0 etc.)')
 	sys.exit(0)
- 
-# create a raw socket and bind it to the given CAN interface
-s = socket.socket(socket.AF_CAN, socket.SOCK_RAW, socket.CAN_RAW)
-s.bind((sys.argv[1],))
- 
 
 
 def sendTele(data):
@@ -132,7 +127,7 @@ def generateFrame(bytesSended,typeID, service):
 		elif tClass == 6:
 			length = 256
 		else:
-			length = 4095
+			length = 4095-3
 		dlc=length+3
 		print ("length, dlc: ", length,dlc)
 		if bytesSended == 0: # initial  frame
@@ -187,7 +182,7 @@ def generateFrame(bytesSended,typeID, service):
 				telegram["d"].append( 0 )
 				start +=  1
 
-	print ("generic send")
+	print ("generic send, type=",tType)
 	pp.pprint(telegram)
 	if tType != 3 : # no answer
 		sendTele(telegram)
@@ -197,98 +192,119 @@ def generateFrame(bytesSended,typeID, service):
 	return bytesSended
       
       
- 
-
-
+  
 while True:
-	nextStep=0
-	msg =bytearray()
-	cf, addr = s.recvfrom( 16 ) # buffer size is 1024 bytes
-	print('Received: can_id=%x, can_dlc=%x, data=%s' % dissect_can_frame(cf))
-	can_id, can_dlc, data=dissect_can_frame(cf)
-	msg+=data
-	print ("received: 0x%02X %d %02X %02X %02X %02X %02X %02X %02X %02X" % ( can_id, can_dlc, msg[0] , msg[1] , msg[2] , msg[3] , msg[4] , msg[5] , msg[6] , msg[7] ) )
-	if can_id == 0x7D0:
-		can_id=0x7E8 # changing functional address to answer address of ECU
-	else:
-		can_id=can_id | 8 # changing the physical address from ECU to tester
-	frameType = (msg[0] & 0xF0 ) / 16
-	teleLength = msg[0] & 0x0F 
-	print (frameType)
-
-	##############  Single Frame ###############
-	if frameType == 0: 
-		i = 1
-		if teleLength < 3 : 
-			pid= "%02X%02X" % ( msg[i+0] , msg[i+1] )
-		else:
-			pid=""
-			for count in range(teleLength):
-				pid+= "%02X" % ( msg[i+count]) 
-		print ("Single Frame")
-		nextStep=1 # send the answer
-		bytesSended=0
-
-	############ First Frame  #################
-	if frameType == 1: 
-		i = 1
-		nrOfBytes = (msg[0] & 0x0f ) *256 + msg[1]
-		print ("First Frame, expecting ",nrOfBytes, " Bytes")
-		nrOfBytes = nrOfBytes -6 # 6 bytes aready received
-		if teleLength < 3 : 
-			pid= "%02X%02X" % ( msg[i+0] , msg[i+1] )
-		else:
-			pid= "%02X%02X%02X" % ( msg[i+0] , msg[i+1] , msg[i+2])
-		nextStep=0 # send FlowControl, wait for consecutive frames
-		sendTele({'d':[0x30,0x30,0x0F,0x00],'t':2,'e':0})
-
-	################# Consecutive Frame #############
-	if frameType == 2: # consecutive frame
-		nextStep=0 # do nothing, just wait
-		nrOfBytes = nrOfBytes - 7 # just count the number of received bytes
-		print ("Consecutive Frame, bytes remaining: ", nrOfBytes)
-		if nrOfBytes <=0:
-			print ("last Consecutive frame received, sending answer")
-			nextStep=1 # send the answer   
-
-	######### Flow Control #############
-	if frameType == 3: # 
-		nextStep=2 # send remaining Consecutive frames
-
-	print ("pid:",pid)
-	if len(simu)>0:
+	# create a raw socket and bind it to the given CAN interface
+	s = socket.socket(socket.AF_CAN, socket.SOCK_RAW, socket.CAN_RAW)
+	notConnected=True
+	while notConnected:
 		try:
-			dArray = simu["pid_"+pid]
+			s.bind((sys.argv[1],))
+			notConnected=False
 		except:
-			dArray=simu["pid_default"]
-			print (pid, "not found, send default")
-		# print dump(dArray[0])
-		print ("next step: ", nextStep)
-		
-		
-		#und hier kommt jetzt die generische Datenerzeugung..
-		print ("len",len(pid), "slice",  pid[4:6])
-		if len(pid)==6 and pid[2:3]=="F": # generic test case generation
-			print ("generic frame")
-			if nextStep == 1: #Single Frame or end of Consecutive Frame series -> send the PID answer
-				bytesSended=generateFrame(bytesSended,pid[4:6],pid[:2])
-			if nextStep == 2: # send remaining consecute frames
-				while bytesSended>-1:
-					bytesSended=generateFrame(bytesSended,pid[4:6],pid[:2])
-		else:
-			if nextStep == 1: #Single Frame or end of Consecutive Frame series -> send the PID answer
-				sendTele(dArray[0]) 
-			if nextStep == 2: # send remaining consecute frames
-				print ("Array Len: ", len(dArray))
-				for i in range(len(dArray)):
-					print ("i: ", i)
-					if i > 0 :
-						sendTele(dArray[i])
-	else:
-		print (pid, "nothing configured, just reply msg")
+			print ("wait..")
+			time.sleep(0.5)
+	
+
+
+	canDeviceIsAvailable=True;
+	while canDeviceIsAvailable:
+		nextStep=0
+		msg =bytearray()
 		try:
-			s.send(cf)
-		except socket.error:
-			print('Error sending CAN frame')
+			cf, addr = s.recvfrom( 16 ) # buffer size is 1024 bytes
+		except:
+			print ("wait..")
+			time.sleep(0.5)
+			canDeviceIsAvailable=False;
+			break
+		can_id, can_dlc, data=dissect_can_frame(cf)
+		if can_id & 0x700 !=0x700: 
+			print ("No diagnostic frame: CAN ID 0x%02X discarded" % ( can_id) )
+			continue
+		msg+=data # if it's no diagnotic frame, don't handle it
+		print ("received: 0x%02X %d %02X %02X %02X %02X %02X %02X %02X %02X" % ( can_id, can_dlc, msg[0] , msg[1] , msg[2] , msg[3] , msg[4] , msg[5] , msg[6] , msg[7] ) )
+		if can_id == 0x7D0:
+			can_id=0x7E8 # changing functional address to answer address of ECU
+		else:
+			can_id=can_id | 8 # changing the physical address from ECU to tester
+		frameType = (msg[0] & 0xF0 ) / 16
+		teleLength = msg[0] & 0x0F 
+		print (frameType)
+
+		##############  Single Frame ###############
+		if frameType == 0: 
+			i = 1
+			if teleLength < 3 : 
+				pid= "%02X%02X" % ( msg[i+0] , msg[i+1] )
+			else:
+				pid=""
+				for count in range(teleLength):
+					pid+= "%02X" % ( msg[i+count]) 
+			print ("Single Frame")
+			nextStep=1 # send the answer
+			bytesSended=0
+
+		############ First Frame  #################
+		if frameType == 1: 
+			i = 1
+			nrOfBytes = (msg[0] & 0x0f ) *256 + msg[1]
+			print ("First Frame, expecting ",nrOfBytes, " Bytes")
+			nrOfBytes = nrOfBytes -6 # 6 bytes aready received
+			if teleLength < 3 : 
+				pid= "%02X%02X" % ( msg[i+0] , msg[i+1] )
+			else:
+				pid= "%02X%02X%02X" % ( msg[i+0] , msg[i+1] , msg[i+2])
+			nextStep=0 # send FlowControl, wait for consecutive frames
+			sendTele({'d':[0x30,0x30,0x0F,0x00],'t':2,'e':0})
+
+		################# Consecutive Frame #############
+		if frameType == 2: # consecutive frame
+			nextStep=0 # do nothing, just wait
+			nrOfBytes = nrOfBytes - 7 # just count the number of received bytes
+			print ("Consecutive Frame, bytes remaining: ", nrOfBytes)
+			if nrOfBytes <=0:
+				print ("last Consecutive frame received, sending answer")
+				nextStep=1 # send the answer   
+
+		######### Flow Control #############
+		if frameType == 3: # 
+			nextStep=2 # send remaining Consecutive frames
+
+		print ("pid:",pid)
+		if len(simu)>0:
+			try:
+				dArray = simu["pid_"+pid]
+			except:
+				dArray=simu["pid_default"]
+				print (pid, "not found, send default")
+			# print dump(dArray[0])
+			print ("next step: ", nextStep)
+			
+			
+			#und hier kommt jetzt die generische Datenerzeugung..
+			print ("len",len(pid), "slice",  pid[4:6])
+			if len(pid)==6 and pid[2:3]=="F": # generic test case generation
+				print ("generic frame, bytesSended=",bytesSended)
+				if nextStep == 1: #Single Frame or end of Consecutive Frame series -> send the PID answer
+					bytesSended=generateFrame(bytesSended,pid[4:6],pid[:2])
+				if nextStep == 2: # send remaining consecute frames
+					while bytesSended>-1:
+						bytesSended=generateFrame(bytesSended,pid[4:6],pid[:2])
+			else:
+				if nextStep == 1: #Single Frame or end of Consecutive Frame series -> send the PID answer
+					sendTele(dArray[0]) 
+				if nextStep == 2: # send remaining consecute frames
+					print ("Array Len: ", len(dArray))
+					for i in range(len(dArray)):
+						print ("i: ", i)
+						if i > 0 :
+							sendTele(dArray[i])
+		else:
+			print (pid, "nothing configured, just reply msg")
+			try:
+				s.send(cf)
+			except socket.error:
+				print('Error sending CAN frame')
 
 

@@ -40,6 +40,7 @@ typedef struct CAN_PACKET {
 
 /**
  * Opens a socket and registers the signal handler for received messages.
+ * @param name Name of the can device to open.
  * @param vSocketCallback A function pointer of a function that will be called back
  * when the socket has just received a packet. This call back is called from within
  * the signal handler so must use ISR safe routines.
@@ -49,8 +50,8 @@ typedef struct CAN_PACKET {
  * to accept packets from.
  * @return The newly opened socket.
  */
-int iSocketOpenCAN(void (*vSocketCallback) (int, void *), void *pvContext,
-		   struct sockaddr_can *pxBindAddress);
+int iSocketOpenCAN(char *name, void (*vSocketCallback) (int, void *),
+		   void *pvContext, struct sockaddr_can *pxBindAddress);
 
 /**
  * Closes the socket and removes the call back function.

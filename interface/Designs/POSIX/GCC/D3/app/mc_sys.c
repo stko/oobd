@@ -37,18 +37,28 @@
 #include "od_config.h"
 #include "od_base.h"
 #include "mc_sys_generic.h"
+#include "mc_can.h";
 
 // posix specific argument handling
 #include <getopt.h>
+#include <signal.h>
 
 /* Flag set by ‘--verbose’. */
 static int verbose_flag;
 char *serialPort;
 char *tcpPort;
-char *canChannel;
+char *canChannel[MAXCANCHANNEL];
 
 
 extern char *oobd_Error_Text_OS[];
+
+//Signal handler for closed telnet connection
+void sigPIPEfunc(int sig)
+{
+    printf("Broken Pipe\n");
+    closeTelnetSocket();
+}
+
 
 
 void mc_init_sys_boot_specific()
@@ -57,9 +67,11 @@ void mc_init_sys_boot_specific()
 // setting defaults first, to then let them override by otopns, in case they are given
     serialPort = "/tmp/OOBD";
     tcpPort = "1234";
-    canChannel = "oobdcan0";
+    memset(&canChannel[0], 0, sizeof(canChannel));
+    canChannel[0] = "oobdcan0";
 
     int c;
+    int channelCount = 0;
 
     static struct option long_options[] = {
 	/* These options set a flag. */
@@ -115,8 +127,10 @@ void mc_init_sys_boot_specific()
 	    break;
 
 	case 'c':
-	    printf("option -c: Set Can Channel to `%s'\n", optarg);
-	    canChannel = optarg;
+	    if (channelCount < MAXCANCHANNEL) {
+		printf("option -c: Set Can Channel to `%s'\n", optarg);
+		canChannel[channelCount++] = optarg;
+	    }
 	    break;
 
 	case '?':
@@ -141,9 +155,10 @@ void mc_init_sys_boot_specific()
 	    printf("%s ", argv[optind++]);
 	putchar('\n');
     }
-
+    // to avoid a program stop in case of an unexpected received signal when the TCP Telnet port is unexpected closed (SIGPIPE),
+    // we install an signal handler
+    signal(SIGPIPE, sigPIPEfunc);
 }
-
 
 void mc_init_sys_tasks_specific()
 {
@@ -296,8 +311,8 @@ void mc_sys_idlehook()
 #ifdef __GCC_POSIX__
     struct timespec xTimeToSleep, xTimeSlept;
     /* Makes the process more agreeable when using the Posix simulator. */
-    xTimeToSleep.tv_sec = 1;
-    xTimeToSleep.tv_nsec = 0;
+    xTimeToSleep.tv_sec = 0;
+    xTimeToSleep.tv_nsec = 5000;
     nanosleep(&xTimeToSleep, &xTimeSlept);
     //DEBUGPRINT("Idle..\n",'a');
 #endif

@@ -36,6 +36,7 @@
 
 #ifndef INC_MC_CAN_H
 #define INC_MC_CAN_H
+#define MAXCANFILTER 10
 
 
 

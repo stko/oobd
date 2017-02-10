@@ -38,6 +38,7 @@
 #include "od_config.h"
 #include "od_protocols.h"
 #include "odb_can.h"
+#include "mc_can.h"
 
 extern char *oobd_Error_Text_OS[];
 
@@ -76,6 +77,7 @@ void bus_param_can_generic_Print(UBaseType_t msgType, void *data,
     DEBUGPRINT("can Parameter receiced %ld-%ld\n", args->args[ARG_RECV],
 	       args->args[ARG_CMD]);
     if (args->args[ARG_CMD] == PARAM_INFO) {
+	CAN_GetCanConfig(canConfig);
 	switch (args->args[ARG_VALUE_1]) {
 	case VALUE_PARAM_INFO_VERSION:
 	    printser_string("CAN Bus");
@@ -87,25 +89,53 @@ void bus_param_can_generic_Print(UBaseType_t msgType, void *data,
 	    case VALUE_BUS_MODE_SILENT:
 		printser_string("0 - CAN Transceiver in 'Silent Mode'");
 		printLF();
-		printEOT();
 		break;
 	    case VALUE_BUS_MODE_LOOP_BACK:
 		printser_string("1 - CAN Transceiver in 'Loop Back Mode'");
 		printLF();
-		printEOT();
 		break;
 	    case VALUE_BUS_MODE_LOOP_BACK_WITH_SILENT:
 		printser_string
 		    ("2 - CAN Transceiver in 'Loop Back combined with Silent Mode'");
 		printLF();
-		printEOT();
 		break;
 	    case VALUE_BUS_MODE_NORMAL:
 		printser_string("3 - CAN Transceiver in 'Normal Mode'");
 		printLF();
-		printEOT();
 		break;
 	    }
+
+	    switch (canConfig->state) {
+	    case STATE_REQUEST_CAN_ERROR_ACTIVE:
+		printser_string("0 - Bus Active");
+		printLF();
+		break;
+	    case STATE_REQUEST_CAN_ERROR_WARNING:
+		printser_string("1 - Bus Active, a few errors");
+		printLF();
+		break;
+	    case STATE_REQUEST_CAN_ERROR_PASSIVE:
+		printser_string("2 - Bus Passive, many errors");
+		printLF();
+		break;
+	    case STATE_REQUEST_CAN_BUS_OFF:
+		printser_string("3 - Bus Off, too many errors");
+		printLF();
+		break;
+	    case STATE_REQUEST_CAN_STOPPED:
+		printser_string("4 - Bus offline");
+		printLF();
+		break;
+	    case STATE_REQUEST_CAN_SLEEPING:
+		printser_string("5 - Bus sleeping");
+		printLF();
+		break;
+	    case STATE_REQUEST_CAN_UNKNOWN:
+		printser_string("6 - no feedback from device");
+		printLF();
+		break;
+	    }
+	    printEOT();
 	    break;
 	case VALUE_PARAM_INFO_BUS_CONFIG:
 	    switch (canConfig->busConfig) {
@@ -163,6 +193,8 @@ void bus_param_can_generic_Print(UBaseType_t msgType, void *data,
 		printser_string(" ");
 		printser_int(bus_tx_error_can(), 10);
 		printser_string(" ");
+		printser_int(bus_rec_can(), 10);
+		printser_string(" ");
 		printser_int(bus_tec_can(), 10);
 		printser_string(" ");
 		printser_int(bus_busoff_error_can(), 10);
@@ -185,7 +217,7 @@ void bus_param_can_generic_Print(UBaseType_t msgType, void *data,
 	    break;
 
 	case VALUE_PARAM_INFO_Can11FilterID:
-	    for (FiltCntr = 0; FiltCntr < 10; FiltCntr++) {
+	    for (FiltCntr = 0; FiltCntr < MAXCANFILTER; FiltCntr++) {
 		printser_string("0x");
 		printser_int(CAN_GetFilterReg16(FiltCntr, 1, 0), 16);
 		printser_string(" 0x");
@@ -201,7 +233,7 @@ void bus_param_can_generic_Print(UBaseType_t msgType, void *data,
 	    break;
 
 	case VALUE_PARAM_INFO_Can29FilterID:
-	    for (FiltCntr = 0; FiltCntr < 10; FiltCntr++) {
+	    for (FiltCntr = 0; FiltCntr < MAXCANFILTER; FiltCntr++) {
 		printser_string("0x");
 		printser_int(CAN_GetFilterReg32(FiltCntr, 1), 16);
 		printser_string(" 0x");

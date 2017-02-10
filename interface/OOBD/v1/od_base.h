@@ -259,7 +259,7 @@ extern int argc;
 extern char **argv;
 extern char *serialPort;
 extern char *tcpPort;
-extern char *canChannel;
+extern char *canChannel[];
 
 #include "od_protocols.h"
 

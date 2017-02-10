@@ -96,6 +96,9 @@ void ilmTask(void *pvParameters)
 	for (i = 0; i < 3; i++) {
 	    Leds[i].actualOnStatus = pdFALSE;
 	    Leds[i].flickerTime = 0;
+	    Leds[i].backwardTickCounterSinceLastIncomingEvent = 0;
+	    Leds[i].lostConnectionFlag = pdFALSE;
+	    Leds[i].foundConnectionFlag = pdFALSE;
 	}
 	// test only
 	tone = sounds[0];
@@ -111,7 +114,8 @@ void ilmTask(void *pvParameters)
 		    ledTick++;
 		    for (i = 0; i < 3; i++) {
 			if (Leds[i].backwardTickCounterSinceLastIncomingEvent > 0) {	// reduce the tick counter since the last event
-			    Leds[i].backwardTickCounterSinceLastIncomingEvent--;
+			    Leds[i].
+				backwardTickCounterSinceLastIncomingEvent--;
 			    if (Leds[i].backwardTickCounterSinceLastIncomingEvent == 0 && Leds[i].mode == LED_ON) {	// timeout reached to switch back from permanent Light to flashing
 				Leds[i].mode = LED_FLASH;
 				Leds[i].lostConnectionFlag = pdTRUE;
@@ -173,9 +177,7 @@ void ilmTask(void *pvParameters)
 		    Leds[activeBus].mode = LED_ON;
 		    Leds[activeBus].actualOnStatus = pdTRUE;
 		    Leds[activeBus].flickerTime = LEDFLASHTIMESHORT;
-		    Leds[activeBus].
-			backwardTickCounterSinceLastIncomingEvent =
-			LED_SERIAL_TIMEOUT;
+		    Leds[activeBus].backwardTickCounterSinceLastIncomingEvent = LED_SERIAL_TIMEOUT;
 		    break;
 		case MSG_EVENT_BUS_MODE:
 		    DEBUGPRINT
@@ -198,9 +200,7 @@ void ilmTask(void *pvParameters)
 		    Leds[IO_LED_WHITE].mode = LED_ON;
 		    Leds[IO_LED_WHITE].actualOnStatus = pdTRUE;
 		    Leds[IO_LED_WHITE].flickerTime = LEDFLASHTIMESHORT;
-		    Leds[IO_LED_WHITE].
-			backwardTickCounterSinceLastIncomingEvent =
-			LED_SERIAL_TIMEOUT;
+		    Leds[IO_LED_WHITE].backwardTickCounterSinceLastIncomingEvent = LED_SERIAL_TIMEOUT;
 		    break;
 		default:
 		    {

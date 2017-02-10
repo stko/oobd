@@ -87,8 +87,10 @@ CFLAGS=-I . \
 		-Wall \
 		-c \
 		-fmessage-length=0 \
+		-finline-functions \
 		-pthread \
 		-lrt \
+		-lsocketcan \
 		-Wno-pointer-sign \
 		-MMD \
 		-MP \
@@ -113,14 +115,12 @@ FREERTOS_SOURCE= $(RTOS_SOURCE_DIR)/list.c \
 		$(RTOS_SOURCE_DIR)/queue.c \
 		$(RTOS_SOURCE_DIR)/tasks.c \
 		$(RTOS_PORT_DIR)/port.c \
-		$(RTOS_SOURCE_DIR)/portable/MemMang/heap_3.c
+		./heap_raspi.c
 
 PORT_INCLUDE_SOURCE= $(PORT_INCLUDE_DIR)/AsyncIO.c \
 		$(PORT_INCLUDE_DIR)/AsyncIOSerial.c \
 		$(PORT_INCLUDE_DIR)/AsyncIOSocketCan.c \
-		$(PORT_INCLUDE_DIR)/PosixMessageQueueIPC.c \
-		libsocketcan.c
-
+		$(PORT_INCLUDE_DIR)/PosixMessageQueueIPC.c
 
 SOURCE+=$(OOBD_COMMON_SOURCE)
 SOURCE+=$(FREERTOS_SOURCE)
@@ -138,7 +138,7 @@ LIBS=
 OBJS = $(addprefix $(OUTDIR)/, $(addsuffix .o, $(ALLSRCBASE)))
 
 # should use --gc-sections but the debugger does not seem to be able to cope with the option.
-LINKER_FLAGS= -pthread -lrt -o"$(PROJECT_NAME).bin" 
+LINKER_FLAGS= -pthread -lrt -lsocketcan -o"$(PROJECT_NAME).bin" 
 
 # Define Messages.
 # English
@@ -148,7 +148,7 @@ MSG_END = --------  end  --------
 
 # Rules definition. ***********************************************************
 
-all: begin gccversion $(OUTDIR)/$(PROJECT_NAME).bin end
+all: begin gccversion $(OUTDIR)/$(PROJECT_NAME).bin canlauncher end
 
 $(OUTDIR)/$(PROJECT_NAME).bin : $(OBJS)  Makefile
 	$(CC) $(OBJS)  $(LIBS) $(LINKER_FLAGS)
@@ -166,13 +166,17 @@ $(foreach src, $(SOURCE), $(eval $(call COMPILE_C_TEMPLATE, $(src))))
 
 
 clean :  format
-	-$(RM) $(OBJS)
+	-$(RM) $(OBJS) canlauncher
 
 
 # generate doxygen docs
 docs:
 	cd ../../../../.. ; doxygen
 #	$(shell cd .. ; doxygen)
+
+# generate the canlauncher
+canlauncher: canlauncher.c
+	gcc canlauncher.c -lsocketcan -o canlauncher
 
 
 # generate doxygen docs

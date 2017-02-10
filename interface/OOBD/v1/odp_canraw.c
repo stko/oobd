@@ -594,7 +594,7 @@ int sendMoreFrames(ODPBuffer *
 		}
 	    } else {
 		if (*timeout_ptr == 0) {	//do not send immediadly to allow the OS to handle incoming messages, delay instead
-		*timeout_ptr = 2;	//restarts the process agaim 
+		    *timeout_ptr = 2;	//restarts the process agaim 
 		    return 0;
 		} else {
 		    return 0;	// break the send loop and wait
