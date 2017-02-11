@@ -361,7 +361,7 @@ if (typeof Oobd == "undefined") {
 		},
 		_timerTick: function() {
 			if (Oobd.timerFlag > -1) {
-				var waitForNext=100; // in case we find nothing to update, we'll wait short before try the next
+				var waitForNext=10; // in case we find nothing to update, we'll wait short before try the next
 				if (Oobd.timerObject != null){
 					window.clearTimeout(Oobd.timerObject);
 					Oobd.timerObject=null;

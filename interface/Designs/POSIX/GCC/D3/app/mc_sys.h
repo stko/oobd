@@ -50,9 +50,9 @@
 #ifdef OOBD_PLATFORM_POSIX	// switch debug messages on or off
 #define WHERESTR  "[file %s, line %d]: "
 #define WHEREARG  __FILE__, __LINE__
-#define DEBUGPRINT2(...)       fprintf(stderr, __VA_ARGS__)
+#define DEBUGPRINTSHORTSTDERR(...)       fprintf(stderr, __VA_ARGS__)
 #define DEBUGPRINT3(...)       printf(__VA_ARGS__)
-#define DEBUGPRINT(_fmt, ...)  DEBUGPRINT2(WHERESTR _fmt, WHEREARG, __VA_ARGS__)
+#define DEBUGPRINT(_fmt, ...)  DEBUGPRINTSHORTSTDERR(WHERESTR _fmt, WHEREARG, __VA_ARGS__)
 #define DEBUGUARTPRINT(...)
 #else
 #define DEBUGPRINT(_fmt, ...)

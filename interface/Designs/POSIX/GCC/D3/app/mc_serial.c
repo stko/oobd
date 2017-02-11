@@ -75,7 +75,7 @@ void writeChar(char a)
 	(void) write(oobdIOHandle, &a, 1);
 	if (a == 13)
 	    a = 10;
-	DEBUGPRINT("%c", a);
+	DEBUGPRINTSHORTSTDERR("%c", a);
     } else {
 	DEBUGPRINT("socket closed ?!? %c\n", a);
     }
@@ -118,7 +118,7 @@ void portControlThread(void *pvParameters)
 		   (const void *) &optval, sizeof(optval));
 
 	bzero((char *) &serv_addr, sizeof(serv_addr));
-	portno = 3001;		//atoi(*pcDevice);
+	portno = atoi(tcpPort);
 //      fcntl(sockfd, F_SETFL, O_NONBLOCK);
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
