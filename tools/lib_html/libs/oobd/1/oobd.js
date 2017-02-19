@@ -17,6 +17,7 @@ if (typeof Oobd == "undefined") {
 		 * Initializes this object.
 		 */
 		wsURL: "ws://"+window.location.hostname+":8443",
+		alreadyInitialized: false,
 		session: null,
 		connection: "",
 		scriptID: "",
@@ -99,6 +100,10 @@ if (typeof Oobd == "undefined") {
 		},
 
 		init: function(uri) {
+			if (Oobd.alreadyInitialized){
+				return;
+			}
+			Oobd.alreadyInitialized=true;
 			// preparing utility funktion parse xmlDoc
 			if (window.DOMParser) {
 				this.parseXml = function(xmlStr) {

@@ -220,7 +220,7 @@ while True:
 			break
 		can_id, can_dlc, data=dissect_can_frame(cf)
 		if can_id & 0x700 !=0x700: 
-			print ("No diagnostic frame: CAN ID 0x%02X discarded" % ( can_id) )
+			#print ("No diagnostic frame: CAN ID 0x%02X discarded" % ( can_id) )
 			continue
 		msg+=data # if it's no diagnotic frame, don't handle it
 		print ("received: 0x%02X %d %02X %02X %02X %02X %02X %02X %02X %02X" % ( can_id, can_dlc, msg[0] , msg[1] , msg[2] , msg[3] , msg[4] , msg[5] , msg[6] , msg[7] ) )
