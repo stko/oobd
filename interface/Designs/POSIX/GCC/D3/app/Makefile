@@ -82,6 +82,7 @@ CFLAGS=-I . \
 		-D$(OOBD_PLATFORM) \
 		-DUSE_STDIO=1 \
 		-O0 \
+		-std=gnu11 \
 		-g \
 		-rdynamic \
 		-Wall \
