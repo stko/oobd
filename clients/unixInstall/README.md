@@ -8,7 +8,7 @@ This (short) document descrip how to make OOBD run on hopefully any embedded lin
 
 - Take a virgin (raspian) image
 - boot the raspi (or BeagleBone or ...) with it
-- download the premilary oobdd zip file from the [Google Drive](https://drive.google.com/open?id=0B795A63vSunRa29qbGVxTllkRGM])
+- download the premilary oobdd zip file from the [Google Drive](https://drive.google.com/open?id=0B795A63vSunRa29qbGVxTllkRGM)
 - place it in your raspi home directory (e.g. /home/pi)
 - in the raspi terminal, run 
 
