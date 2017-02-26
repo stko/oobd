@@ -16,7 +16,9 @@ STORE=store/oobdd.jar
 PROGUARD=store/oobdd_branded.jar
 WINSTALL=oobdd_Setup.exe
 ZIPNAME=oobdd.zip
-HTMLLIBPARENTDIR=/home/steffen/Desktop/workcopies/oobd/tools/
+OOBDROOT=/home/steffen/Desktop/workcopies/oobd
+DAPPSTORE=$(OOBDROOT)/lua-scripts
+HTMLLIBPARENTDIR=$(OOBDROOT)/tools/
 
 clean:
 	@echo "clean it all..."
@@ -127,9 +129,13 @@ zip:
 	echo "java -jar oobdd.jar --settings localsettings.json" >oobdd.bat
 	chmod a+x oobdd.sh oobdd.bat
 	zip $(ZIPNAME) localsettings.json oobdd.sh  oobdd.bat
+	mkdir scripts
+	cp $(DAPPSTORE)/*.epa scripts
+	zip -r $(ZIPNAME) scripts
+	rm -r scripts
 	## Not writing the whole commands in one single line means wasting f##cking hours in fault finding ##*§$!
 	FULLZIPPATH=$$(readlink -f $(ZIPNAME)) ; \
 	(cd store ;  zip $$FULLZIPPATH oobdd.jar  ) ; \
-	echo 1 ; pwd ; echo 2 ; echo $(HTMLLIBPARENTDIR) ; echo 3 ; cd $(HTMLLIBPARENTDIR) ; pwd ;  echo 4 ; echo $$FULLZIPPATH ; echo 5 ; zip -r $$FULLZIPPATH  lib_html
+	cd $(HTMLLIBPARENTDIR)  ; zip -r $$FULLZIPPATH  lib_html
 	rm oobdd.sh oobdd.bat localsettings.json
 
