@@ -24,11 +24,14 @@ libsocketcan2 \
 libsocketcan-dev \
 openjdk-8-jre-headless \
 joe \
+libttspico-utils \
+aplay \
+can-utils \
 tofrodos \
 indent \
 bc
 
-
+sudo pip install python-jsonrpc
 
 if [ ! -f development.zip ]; then
 	wget  https://github.com/stko/oobd/archive/development.zip -O development.zip && unzip development.zip
@@ -97,7 +100,7 @@ cat << 'SETTING' > localsettings.json
 }
 SETTING
 cat << 'SCRIPT' >oobdd.sh
-sudo ../fw/OOBD_POSIX.bin -c can0 -p 3001 &
+sudo ../fw/OOBD_POSIX.bin -c can0 -t 3001 &
 fwpid=$!
 java -jar ./oobdd.jar --settings localsettings.json
 sudo kill $fwpid

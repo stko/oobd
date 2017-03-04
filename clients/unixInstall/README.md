@@ -27,3 +27,14 @@ On Android [Zentri](https://play.google.com/store/apps/details?id=discovery.ack.
 
 Awaiting your comments on [Google Groups](https://groups.google.com/forum/#!forum/oobd-diagnostics) :-)
 
+
+P.S.: For all Raspi-MCP CAN device users here are a sample add-on to `/boot/config.txt` 
+
+    dtparam=spi=on
+    
+    # Additional overlays and parameters are documented /boot/overlays/README
+    # its a 12Mhz Quarz, so it needs to be 12000000 instead of 16000000
+    dtoverlay=mcp2515-can0,oscillator=12000000,interrupt=22
+    dtoverlay=mcp2515-can1,oscillator=12000000,interrupt=25
+    dtoverlay=spi-bcm2835-overlay
+    dtoverlay=spi-dma-overlay
