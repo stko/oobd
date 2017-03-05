@@ -12,6 +12,12 @@ FirmwarePort=3001
 
 wsSocketTimeout = 30 
 
+# !! when giving the moduleID at the commandline, put the value in single quotes, otherways the bash
+# will expand the $7.. to something wrong..
+#     --variable 'moduleID:$740'
+moduleID = "$741"
+
+
 donglePort = "/tmp/DXM"
 
 # how to get a slack mesage url, see https://api.slack.com/incoming-webhooks

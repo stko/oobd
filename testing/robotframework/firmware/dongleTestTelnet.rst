@@ -11,7 +11,7 @@
     open the can filters
         send dongle command  p 8 3 1 
         answer should match    .*(\\.\\+cr\\+>)
-        send dongle command  p 6 5 $741 
+        send dongle command  p 6 5 ${moduleID}
         answer should match   .*(\\.\\+cr\\+>)
         send dongle command  p 8 10 1 $700 
         answer should match    .*(\\.\\+cr\\+>)
