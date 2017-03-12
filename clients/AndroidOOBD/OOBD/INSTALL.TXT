@@ -1,5 +1,0 @@
-To install OOBD on your Android Phone, please follow the instructions on
-
-http://oobd.org/doku.php?id=doc:android
-
-OOBD requires Android 2.1 or higher and a SD-Card

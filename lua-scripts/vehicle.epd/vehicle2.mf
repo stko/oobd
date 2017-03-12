@@ -1,0 +1,4 @@
+{
+  "script": "vehicle2.lbc" ,
+  "startpage": "vehicle.html"
+}
