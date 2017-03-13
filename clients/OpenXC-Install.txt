@@ -1,0 +1,24 @@
+How to link openXC into the OOBD build process:
+
+follow the instructions on http://openxcplatform.com/android/library-installation.html
+means:
+download the zip-archive containing the source
+extract the openxc-android-xxx source folder 
+create a symbolic link to that openxc-android-xxx folder
+   > ln -s openxc-android-5.3.2 openxc-android
+
+continue with the installation instruction
+
+in eclipse
+
+in Project:
+(RMB)Properties /Android:
+under library: Add the openxc-project
+
+under "Java Build Path" un-select "Android Private Libraries"
+
+
+		OOBDVehicleDataSource openXCLink= new OOBDVehicleDataSource(null,this.getBaseContext());
+
+
+Line 60: return Environment.getExternalStorageDirectory().getPath()+ "/OOBD/" + fileName;

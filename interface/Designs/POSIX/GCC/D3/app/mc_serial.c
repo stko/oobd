@@ -72,7 +72,7 @@ void writeChar(char a)
     /* Echo it back to the sender. */
     //! \bug Echo off is not supported yet
     if (oobdIOHandle > -1) {
-	(void) write(oobdIOHandle, &a, 1);
+    (void) write(oobdIOHandle, &a, 1);
 	if (a == 13)
 	    a = 10;
 	DEBUGPRINTSHORTSTDERR("%c", a);
@@ -153,9 +153,9 @@ void portControlThread(void *pvParameters)
 		    exit(1);
 		}
 		DEBUGPRINT("Got connected \n", 'a');
-		(void) lAsyncIORegisterCallback(oobdIOHandle,
-						vAsyncSerialIODataAvailableISR,
-						internalSerialRxQueue);
+	(void) lAsyncIORegisterCallback(oobdIOHandle,
+					vAsyncSerialIODataAvailableISR,
+					internalSerialRxQueue);
 
 
 /*		
@@ -172,7 +172,7 @@ void portControlThread(void *pvParameters)
 			xQueueSendFromISR((QueueHandle_t) internalSerialRxQueue, &ucRx,
 			&xHigherPriorityTaskWoken)) {
 				// the queue is full.
-		    }
+    }
 		}
 		portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
 
