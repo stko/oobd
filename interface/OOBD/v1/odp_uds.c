@@ -54,6 +54,10 @@
 #define SM_UDS_SEND_CF			( 6 )
 #define SM_UDS_SEND_SINGLE_CF		( 7 )
 #define SM_UDS_SLEEP_UNTIL_SINGLE_CF	( 8 )
+#define SM_UDS_WAIT_FOR_PINGS		( 9 )
+#define PING_OFF			( 0 )
+#define PING_ONESHOT			( 1 )
+#define PING_ON				( 2 )
 
 
 #define UDSSIZE ( 4095 )
@@ -461,6 +465,7 @@ void obp_uds(void *pvParameters)
 	protocolConfig->separationTime = 0;
 	protocolConfig->tpFreq = 250;
 	protocolConfig->tpType = 0x80;
+	protocolConfig->pingFlag = PING_OFF;
     }
 //>>>> oobdtemple protocol mainloop_start  >>>>    
     for (; keeprunning;) {
@@ -718,6 +723,72 @@ void obp_uds(void *pvParameters)
 				}
 			    }
 			}
+			if (stateMachine_state == SM_UDS_WAIT_FOR_PINGS) {
+			    unsigned char firstByte = dp->data[0] & 0xF0;
+			    int alreadyReceived = 0;
+			    if (firstByte == 0x00 ||	// Single Frame 
+				firstByte == 0x10 ||	// FirstFrame 
+				firstByte == 0x30	// Flow Control Frame 
+				) {
+				for (int loopIndex = 0;
+				     loopIndex + 12 <= protocolBuffer->len
+				     && !alreadyReceived;
+				     loopIndex += 12) {
+				    UBaseType_t storedID =
+					(((UBaseType_t)
+					  protocolBuffer->data[loopIndex])
+					 << 24) +
+					(((UBaseType_t)
+					  protocolBuffer->data[loopIndex +
+							       1]) << 16) +
+					(((UBaseType_t)
+					  protocolBuffer->data[loopIndex +
+							       2]) << 8) +
+					(((UBaseType_t)
+					  protocolBuffer->data[loopIndex +
+							       3]));
+				    DEBUGPRINT
+					("Search with buffer len %ld for CAN ID %lX at index %ld with stored CAN ID %lX\n",
+					 protocolBuffer->len, dp->recv,
+					 loopIndex, storedID);
+				    if (storedID == dp->recv) {
+					alreadyReceived = 1;
+				    }
+				}
+
+				if (protocolBuffer->len + 12 < UDSSIZE
+				    && !alreadyReceived) {
+				    DEBUGPRINT
+					("Save Frame in buffer at pos. %ld\n",
+					 protocolBuffer->len);
+				    // store the CAN-ID with MSB first
+				    protocolBuffer->
+					data[protocolBuffer->len++] =
+					(unsigned
+					 char) ((dp->recv & 0xFF000000) >>
+						24);
+				    protocolBuffer->
+					data[protocolBuffer->len++] =
+					(unsigned
+					 char) ((dp->recv & 0x00FF0000) >>
+						16);
+				    protocolBuffer->
+					data[protocolBuffer->len++] =
+					(unsigned
+					 char) ((dp->recv & 0x0000FF00) >>
+						8);
+				    protocolBuffer->
+					data[protocolBuffer->len++] =
+					(unsigned
+					 char) ((dp->recv & 0x000000FF));
+				    udp_uds_CAN2data(protocolBuffer,
+						     &(dp->data[0]),
+						     protocolBuffer->len,
+						     8);
+				    protocolBuffer->len += 8;	// increase for the 8 Bytes of CAN frame)
+				}
+			    }
+			}
 		    }
 		}
 //>>>> oobdtemple protocol MSG_SERIAL_DATA  >>>>    
@@ -837,6 +908,11 @@ void obp_uds(void *pvParameters)
 			createCommandResultMsg(FBID_PROTOCOL_SPEC,
 					       ERR_CODE_NO_ERR, 0, NULL);
 			break;
+		    case PARAM_START_PINGMODE:
+			protocolConfig->pingFlag = args->args[ARG_VALUE_1];
+			createCommandResultMsg(FBID_PROTOCOL_SPEC,
+					       ERR_CODE_NO_ERR, 0, NULL);
+			break;
 		    case PARAM_TP_FREQ:
 			protocolConfig->tpFreq = args->args[ARG_VALUE_1];
 			createCommandResultMsg(FBID_PROTOCOL_SPEC,
@@ -904,7 +980,11 @@ void obp_uds(void *pvParameters)
 					      printdata_CAN);
 			}
 			actBus_send(&actDataPacket);
-			stateMachine_state = SM_UDS_WAIT_FOR_ANSWER;
+			if (protocolConfig->pingFlag) {
+			    stateMachine_state = SM_UDS_WAIT_FOR_PINGS;
+			} else {
+			    stateMachine_state = SM_UDS_WAIT_FOR_ANSWER;
+			}
 			timeout = protocolConfig->timeout;
 		    } else {	/* we have to send multiframes */
 			odp_uds_data2CAN(&protocolBuffer->data[0],
@@ -920,7 +1000,11 @@ void obp_uds(void *pvParameters)
 					      printdata_CAN);
 			}
 			actBus_send(&actDataPacket);
-			stateMachine_state = SM_UDS_WAIT_FOR_FC;
+			if (protocolConfig->pingFlag) {
+			    stateMachine_state = SM_UDS_WAIT_FOR_PINGS;
+			} else {
+			    stateMachine_state = SM_UDS_WAIT_FOR_FC;
+			}
 			timeout = protocolConfig->timeout;
 		    }
 //>>>> oobdtemple protocol MSG_SEND_BUFFER_2 >>>>    
@@ -943,19 +1027,43 @@ void obp_uds(void *pvParameters)
 //<<<< oobdtemple protocol MSG_TICK <<<<
 		if (timeout > 0) {	/* we just waiting for an answer */
 		    if (timeout == 1) {	/* time's gone... */
-			protocolBuffer->len = 0;
-			DEBUGPRINT("Timeout!\n", 'a');
-			createCommandResultMsg(FBID_PROTOCOL_GENERIC,
-					       ERR_CODE_UDS_TIMEOUT, 0,
-					       ERR_CODE_UDS_TIMEOUT_TEXT);
-			stateMachine_state = SM_UDS_STANDBY;
-			if (pdPASS !=
-			    sendMsg(MSG_SERIAL_RELEASE, inputQueue,
-				    NULL)) {
-			    DEBUGPRINT
-				("FATAL ERROR: input queue is full!\n",
-				 'a');
+			if (stateMachine_state == SM_UDS_WAIT_FOR_PINGS && protocolBuffer->len > 0) {	//we are in Ping Mode and had received something
+			    if (protocolConfig->pingFlag == PING_ONESHOT) {
+				protocolConfig->pingFlag = PING_OFF;
+			    }
+			    DEBUGPRINT("Ping Timeout reached!\n", 'a');
+			    /* to dump the  buffer, we send the address of the udsbuffer to the print routine */
+			    ownMsg =
+				createMsg(&protocolBuffer,
+					  sizeof(protocolBuffer));
+			    /* add correct print routine; */
+			    ownMsg->print = odp_uds_printdata_Buffer;
+			    // send event information to the ILM task
+			    CreateEventMsg(MSG_EVENT_PROTOCOL_RECEIVED, 0);
+			    /* forward data to the output task */
+			    if (pdPASS !=
+				sendMsg(MSG_DUMP_BUFFER,
+					outputQueue, ownMsg)) {
+				DEBUGPRINT
+				    ("FATAL ERROR: output queue is full!\n",
+				     'a');
+
+			    }
+			} else {
+			    DEBUGPRINT("Timeout!\n", 'a');
+			    createCommandResultMsg(FBID_PROTOCOL_GENERIC,
+						   ERR_CODE_UDS_TIMEOUT, 0,
+						   ERR_CODE_UDS_TIMEOUT_TEXT);
+			    if (pdPASS !=
+				sendMsg(MSG_SERIAL_RELEASE, inputQueue,
+					NULL)) {
+				DEBUGPRINT
+				    ("FATAL ERROR: input queue is full!\n",
+				     'a');
+			    }
+			    protocolBuffer->len = 0;
 			}
+			stateMachine_state = SM_UDS_STANDBY;
 		    }
 		    timeout--;
 		}

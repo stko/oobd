@@ -79,6 +79,7 @@ void obd_uds_init();
 #define PARAM_TP_FREQ               ( 8 )
 #define PARAM_SENDID  		    ( 9 )
 #define PARAM_TP_TYPE               ( 10 )
+#define PARAM_START_PINGMODE        ( 11 )
 /*! 
 
 
@@ -93,8 +94,9 @@ struct UdsConfig {
      timeoutPending,		//!< timeout for response pending delays in system ticks
      blockSize,			//!< max. number of frames to send, overwrites the values received from Module, if > 0.
      separationTime,		//!< delay between two frames,overwrites the values received from Module, if > 0
-     tpFreq;			//!< time between two tester presents in systemticks
-    unsigned char tpType;	//!< tester present type, default öö
+     tpFreq,			//!< time between two tester presents in systemticks
+     pingFlag;			//!< set, if actual pingMode is requested by PARAM_START_PINGMODE
+    unsigned char tpType;	//!< tester present type, default 0x80
 
 };
 
