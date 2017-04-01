@@ -543,6 +543,7 @@ if (typeof Oobd == "undefined") {
 			{
 				parser=new DOMParser();
 				xmlDoc=parser.parseFromString(xmlText,"text/xml");
+				return xmlDoc;
 			}
 			else // Internet Explorer
 			{

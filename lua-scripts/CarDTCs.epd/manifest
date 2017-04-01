@@ -1,0 +1,13 @@
+{
+  "startpage": "cardtcs.html",
+  "title": "Car DTCs",
+  "description": "Demonstrates quick query of all module DTcs with the special firmware ping command",
+  "version": "1.0",
+  "copyright": "GPLV2",
+  "security": "public",
+  "author" : "The OOBD Team",
+  "url": "oobd.org",
+  "email": "info@oobd.org",
+  "screenshot" : "cardtcs.png",  
+  "script": "cardtcs.lbc"
+}

@@ -22,6 +22,7 @@ clean:
 
 base: $(BASE)
 $(BASE):
+	ant -f ../Base -Dnb.internal.action.name=package-for-store jar 
 	ikvmc -target:library ../Base/store/Base.jar
 
 exe: $(EXE)

@@ -1,0 +1,207 @@
+<!--doctype html-->
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>OOBD Fehlerspeicher auslesen</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="./themes/warnings.min.css" />
+	<link rel="stylesheet" href="./themes/jquery.mobile.icons.min.css" />
+
+
+	<link rel="stylesheet" href="../libs/jquery.mobile/1.4.5/jquery.mobile.structure-1.4.5.min.css" />
+	<link rel="stylesheet" href="../libs/jquery.mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+	<script src="../libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="../libs/jquery.mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+
+	<script>
+/*
+	The array "carmakers" contains the different known module names.
+	As these information from the different car manufactures are mostly not public, this array here is quite empty.. - but
+	in this package you'll also find the file README_vehicle.js.txt
+	When you rename that file to cardts.js and place your personal vehicle settings into it, then that file will be
+	loaded at start and its content will override 	the default settings 
+*/
+var carmakers = [
+	{
+		name:     "Standard",
+		modules : {
+		"7E0" : "PCM - Powertrain Control Module",
+		}
+	} 
+];
+	</script>
+	<script src="cardtcs.js"></script>
+
+	<script src="../libs/oobd/1/oobd.js"></script>
+
+
+
+
+	<script>
+		$(function() {
+			var icons = {
+				header: "ui-icon-circle-arrow-e",
+				activeHeader: "ui-icon-circle-arrow-s"
+			};
+
+			$("#mycollapse").collapsibleset({
+				icons: icons
+			});
+
+			$("#carmakers").selectmenu();
+			var options = $("#carmakers");
+			carmakers.forEach(function(entry) {
+				options.append("<option>" + entry.name + "</option>");
+			});
+			options.selectmenu("refresh");
+			$("#start")
+				.button()
+				.click(function(event) {
+					event.preventDefault();
+					var option = $("#carmakers").find('option:selected').val();
+					var busID = $("#buslayout").find('option:selected').val();
+					Oobd.clearVisualiers();
+					createModules(option,busID);
+				});
+			Oobd.createXsltTransformer('dtc.xsl', function(prozessor) {
+				self.xsltProcessor = prozessor;
+			});
+			Oobd.start();
+
+		});
+
+		function requestClearDTC(id){
+			Oobd.sendUpdateReq("DeleteModuleDTC:" , id , "" , 0 );
+			Oobd.sendUpdateReq("dtcStatusXML:"+id , id , "" , 1) ;
+		}
+
+		function createModules(carline,busID) {
+			for (var i = 0; i < carmakers.length; i++) {
+				if (carmakers[i].name == carline) {
+					$("#mycollapse").empty();
+					var modules = carmakers[i].modules;
+					var anchors = $("#mycollapse");
+					// add the eventhandler
+					var oobdElement = anchors[0];
+					oobdElement.setAttribute("oobd:fc","Scanbus:0");
+					oobdElement.oodbupdate = function(input) {
+						console.log("scanbus received");
+						var dataSet=input.dataset;
+						var element = null;
+						for (var k in dataSet) {
+							if (dataSet.hasOwnProperty(k)) {
+								console.log(k,dataSet[k]);
+								element=$( "[modID='"+k+"']" ).first();
+								if (element!=null){
+									var color;
+									if (dataSet[k]==0){
+										color={
+											theme: 'c',
+											refresh: true
+										};
+									}else{
+										color={
+											theme: 'd',
+											refresh: true
+										};
+									}
+									element.parent().prev().parent().collapsible(color);
+								}
+							}
+						}
+						if (element!=null){
+							element.parent().parent().parent().collapsibleset("refresh");
+						}
+					}
+					Oobd.addObject(oobdElement, "");
+					for (var key in modules) {
+						if (modules.hasOwnProperty(key)) {
+							var newdiv = $("<div></div>");
+							oobdElement = newdiv[0];
+							var newhead = $('<h3>' + modules[key] + '</h3>');
+							var topdiv = $('<div data-role="collapsible" data-collapsed="true"></div>');
+							anchors.append(topdiv);
+							topdiv.append(newhead);
+							topdiv.click(function(){ Oobd.sendUpdateReq("dtcStatusXML:"+key , key , "" , 1) ; });
+							newhead.click(function(){ Oobd.sendUpdateReq("dtcStatusXML:"+key , key , "" , 1) ; });
+							newhead.after(newdiv);
+							oobdElement.setAttribute("oobd:fc","dtcStatusXML:"+ key);
+							oobdElement.setAttribute("modID", key);
+							//oobdElement.setAttribute("oobd:updevents",Oobd.FLAG_UPDATE);
+
+							oobdElement.oodbupdate = function(input) {
+								var xml = Oobd.parseXml(input.value);
+								resultDocument = self.xsltProcessor.transformToFragment(xml, document);
+								if (typeof xml.getElementsByTagName("dtc")[0] != "undefined") {
+									$(this).html(resultDocument);
+									$(this).parent().prev().parent().collapsible({
+										theme: 'd',
+										refresh: true
+									});
+									$(this).append(' <a onclick="requestClearDTC(&quot;' + this.oobd.optid + '&quot;)" data-role="button" data-theme="a"> Fehlerspeicher l&ouml;schen</a>').trigger("create");
+								} else if (typeof xml.getElementsByTagName("error")[0] != "undefined") {
+									$(this).html(resultDocument);
+									$(this).parent().prev().parent().collapsible({
+										theme: 'b',
+										refresh: true
+									});
+								} else {
+									$(this).html("");
+									$(this).parent().prev().parent().collapsible({
+										theme: 'c',
+										refresh: true
+									});
+								}
+
+								$(this).parent().parent().parent().collapsibleset("refresh");
+
+							};
+							Oobd.addObject(oobdElement, "");
+
+						}
+					}
+					anchors.collapsibleset("refresh");
+					//Oobd.update();
+					Oobd.sendUpdateReq("Scanbus:0" , "", carline+"_"+busID  , 1);
+				}
+			}
+		}
+
+	</script>
+</head>
+
+<body>
+
+
+	<div id="home" data-role="page" data-theme="a">
+		<div role="main" class="ui-content">
+			<div class="ui-field-contain">
+				<label for="carmakers">Gewünschten Hersteller auswählen</label>
+				<select id="carmakers">
+				</select>
+				<label for="buslayout">Bus-Architektur des Fahrzeugs auswählen</label>
+				<select id="buslayout">
+					<option value="bush">Ein normaler Bus</option>
+					<option value="bushm">Ein normaler und ein langsamer Bus</option>
+					<option value="bushh">Zwei normale Busse</option>
+				</select>
+			</div>
+			<a class="ui-btn" id="start">Fehlerspeicher auslesen</a>
+			<div data-role="collapsible-set" id="mycollapse">
+				<div data-role="collapsible">
+					<h3>Reklame :-)</h3>
+					<div>
+						Dieser Fehlerausleser ist ein Beispiel für die vielf&auml;ltigen M&ouml;glichkeiten von OOBD, der kostenlosen und frei programmierbaren Diagnosesoftware
+						<br /> Mehr interessante Details gibts auf <a href="http://oobd.org/doku.php?id=web:features">OOBD.org</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+
+</html>
