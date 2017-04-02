@@ -124,42 +124,48 @@ var carmakers = [
 							var topdiv = $('<div data-role="collapsible" data-collapsed="true"></div>');
 							anchors.append(topdiv);
 							topdiv.append(newhead);
-							topdiv.click(function(){ Oobd.sendUpdateReq("dtcStatusXML:"+key , key , "" , 1) ; });
-							newhead.click(function(){ Oobd.sendUpdateReq("dtcStatusXML:"+key , key , "" , 1) ; });
 							newhead.after(newdiv);
+							//newhead.attr("modSubID", key);
+							topdiv.attr("modSubID", key);
+							//newhead.click(function(){
+							topdiv.on( "collapsibleexpand", function(){
+								Oobd.sendUpdateReq("dtcStatusXML:"+$(this).attr("modSubID") , $(this).attr("modSubID") , "" , 1) ; 
+							});
 							oobdElement.setAttribute("oobd:fc","dtcStatusXML:"+ key);
+//							oobdElement.setAttribute("oobd:click","yes");
 							oobdElement.setAttribute("modID", key);
 							//oobdElement.setAttribute("oobd:updevents",Oobd.FLAG_UPDATE);
 
 							oobdElement.oodbupdate = function(input) {
-								var xml = Oobd.parseXml(input.value);
-								resultDocument = self.xsltProcessor.transformToFragment(xml, document);
-								if (typeof xml.getElementsByTagName("dtc")[0] != "undefined") {
-									$(this).html(resultDocument);
-									$(this).parent().prev().parent().collapsible({
-										theme: 'd',
-										refresh: true
-									});
-									$(this).append(' <a onclick="requestClearDTC(&quot;' + this.oobd.optid + '&quot;)" data-role="button" data-theme="a"> Fehlerspeicher l&ouml;schen</a>').trigger("create");
-								} else if (typeof xml.getElementsByTagName("error")[0] != "undefined") {
-									$(this).html(resultDocument);
-									$(this).parent().prev().parent().collapsible({
-										theme: 'b',
-										refresh: true
-									});
-								} else {
-									$(this).html("");
-									$(this).parent().prev().parent().collapsible({
-										theme: 'c',
-										refresh: true
-									});
-								}
+								if (input.value!=""){
+									var xml = Oobd.parseXml(input.value);
+									resultDocument = self.xsltProcessor.transformToFragment(xml, document);
+									if (typeof xml.getElementsByTagName("dtc")[0] != "undefined") {
+										$(this).html(resultDocument);
+										$(this).parent().prev().parent().collapsible({
+											theme: 'd',
+											refresh: true
+										});
+										$(this).append(' <a onclick="requestClearDTC(&quot;' + this.oobd.optid + '&quot;)" data-role="button" data-theme="a"> Fehlerspeicher l&ouml;schen</a>').trigger("create");
+									} else if (typeof xml.getElementsByTagName("error")[0] != "undefined") {
+										$(this).html(resultDocument);
+										$(this).parent().prev().parent().collapsible({
+											theme: 'b',
+											refresh: true
+										});
+									} else {
+										$(this).html("");
+										$(this).parent().prev().parent().collapsible({
+											theme: 'c',
+											refresh: true
+										});
+									}
 
-								$(this).parent().parent().parent().collapsibleset("refresh");
+									$(this).parent().parent().parent().collapsibleset("refresh");
+								}
 
 							};
 							Oobd.addObject(oobdElement, "");
-
 						}
 					}
 					anchors.collapsibleset("refresh");

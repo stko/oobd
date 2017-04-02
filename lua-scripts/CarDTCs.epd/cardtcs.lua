@@ -6,7 +6,7 @@ dofile("../../tools/lib_lua/serial_dxm.lua")
 dofile("../../tools/lib_lua/lua_uds.lua")
 
 
-
+moduleBusTable={}
 
 
 ---------------------- dtcStatus --------------------------------------
@@ -53,16 +53,18 @@ end
 
 function dtcStatusXML(oldvalue,id,updType)
 	if updType==1  or true then
-		params=Split(id,"_")
-		moduleName= params[2]  -- that variable is needed by the dtc printout subroutine
-		-- force re-set of the bus
-		lastSwitchedBus=""
-		setBus(params[1])
-		activateBus()
-		setModuleID(params[2])				-- set ECU request CAN-ID
---		echoWrite("p 6 1 100\r")
-		setCANFilter(1,params[2],"7F0")	-- set CAN-Filter of ECU request/response CAN-ID range
-		return getXmlDtc()
+		bus=moduleBusTable[id]
+		if bus ~= none then
+			moduleName= id  -- that variable is needed by the dtc printout subroutine
+			-- force re-set of the bus
+			-- warum?? lastSwitchedBus=""
+			setBus(bus)
+			activateBus()
+			setModuleID(id)				-- set ECU request CAN-ID
+	--		echoWrite("p 6 1 100\r")
+			setCANFilter(1,id,"700")	-- set CAN-Filter of ECU request/response CAN-ID range
+			return getXmlDtc()
+		end
 	end
 end
 
@@ -70,37 +72,55 @@ end
 -- returns an XML string with the error details
 
 function DeleteModuleDTC(oldvalue,id,updType)
-	if updType==0  then
-		params=Split(id,"_")
-		moduleName= params[2]  -- that variable is needed by the dtc printout subroutine
-		setBus(params[1])
-		activateBus()
-		setModuleID(params[2])				-- set ECU request CAN-ID
-		setCANFilter(1,params[2],"7F0")	-- set CAN-Filter of ECU request/response CAN-ID range
-		return deleteDTC()
+	if updType==1  or true then
+		bus=moduleBusTable[id]
+		if bus ~= none then
+			moduleName= id  -- that variable is needed by the dtc printout subroutine
+			-- force re-set of the bus
+			-- warum?? lastSwitchedBus=""
+			setBus(bus)
+			activateBus()
+			setModuleID(id)				-- set ECU request CAN-ID
+	--		echoWrite("p 6 1 100\r")
+			setCANFilter(1,id,"700")	-- set CAN-Filter of ECU request/response CAN-ID range
+			return deleteDTC()
+		end
 	end
 end
 
 function pingSingleBus(bus, result)
 	setBus(bus)
 	activateBus()
-	setModuleID("7E0")				-- set ECU request CAN-ID
-	setCANFilter(1,"7F0","7F0")	-- set CAN-Filter of ECU request/response CAN-ID range
-	echoWrite("190102\r")
-	print ("pingbus", bus)
-	--echoWrite("19018D\r")
---[[
-	udsLen=receive()
-	if udsLen>0 then
-		if udsBuffer[1]==0x59 and udsLen> 5 then
-		end
-	end	
---]]
-	if bus=="500b11p1" then
-		result["720"] = 2
-	end
-	if bus=="125b11p2" then
-		result["7E0"] = 0
+	setModuleID("7DF")				-- set broadcast  ECU request CAN-ID
+	setCANFilter(1,"700","700")	-- set CAN-Filter of ECU request/response CAN-ID range
+	getCmdSuccess({6,1,10,0})	-- timeout 100ms
+	if getCmdSuccess({6,11,1,0}) then
+	--if true then
+		echoWrite("190102\r")
+		print ("pingbus", bus)
+		--echoWrite("19018D\r")
+		udsLen=receive()
+		if udsLen>0 and udsLen % 12 == 0 then
+			local i=0
+			while i < udsLen do
+				local i2
+				local id =0
+				for i2 = 0 , 3 do
+					id=id * 256 + udsBuffer[i+i2+1] --remember: a lua array starts with 1..
+				end
+				local errCnt =0
+				for i2 = 0 , 2 do
+					errCnt=errCnt * 256 + udsBuffer[i+i2+9] --remember: a lua array starts with 1..
+				end
+				local modulID=string.format("%02X",id-8) -- -8 to get the original module address back
+				result[modulID ] = errCnt
+				moduleBusTable[modulID]=bus
+				i=i+12
+			end
+			--if udsBuffer[1]==0x59 and udsLen> 5 then
+			--end
+			print ("pingbus received", udsLen)
+		end	
 	end
 	return result
 end
