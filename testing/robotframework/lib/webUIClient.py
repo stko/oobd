@@ -10,13 +10,18 @@ from pprint import pprint
 _wsSocket = None
 
 class webUIClient(object):
+	_quiet    = False
 
 	def __init__(self):
 		self._answer = ''
 
+	def quiet(self,quiet):
+		self._quiet = quiet
+
 	def open_webUI(self, wsURL, timeout):
 		global _wsSocket
-		sys.stderr.write("open "+wsURL+"\n")
+		if not self._quiet:
+			sys.stderr.write("open "+wsURL+"\n")
 		_wsSocket = websocket.WebSocket()
 		if _wsSocket is None:
 			raise AssertionError("could not open webUI- Websocket!")
@@ -26,7 +31,8 @@ class webUIClient(object):
 	def close_webUI(self):
 		global _wsSocket
 		if not _wsSocket is None:
-			sys.stderr.write("close webUI\n")
+			if not self._quiet:
+				sys.stderr.write("close webUI\n")
 			_wsSocket.close()
 
 	def send_webUI_command(self,cmd):
@@ -49,10 +55,10 @@ class webUIClient(object):
 		except:
 			raise AssertionError("expected answer is not a valid JSON string!: "+expected_answer+"\n")
 		try: # do a sanity check first, if the received string is really a well formed JSON string
-			answer = loads(self._answer)
+			self.jsonAnswer = loads(self._answer)
 		except:
 			raise AssertionError("RECEIVED answer is not a valid JSON string!: "+self._answer+"\n")
-		if not self.compareDicts(pattern, answer):
+		if not self.compareDicts(pattern, self.jsonAnswer):
 			raise AssertionError("Expected answer to be '%s' but was '%s'."
 		  		% (expected_answer, self._answer))
 		return 'SUCCESS'
@@ -85,15 +91,18 @@ class webUIClient(object):
 					if regCompareFlag:
 						matchObj = re.match( value , inputValue, re.M|re.I)
 						if not matchObj:
-							sys.stderr.write (" REGEX string compare for " + str(value) + "against " + str(inputValue) + " failed\n" )
+							if not self._quiet:
+								sys.stderr.write (" REGEX string compare for " + str(value) + "against " + str(inputValue) + " failed\n" )
 							return False
 					elif value != inputValue:
 						# sys.stderr.write("normal string test")
-						sys.stderr.write (" normal string compare for " + str(value) + " against " + str(inputValue) + " failed\n" )
+						if not self._quiet:
+							sys.stderr.write (" normal string compare for " + str(value) + " against " + str(inputValue) + " failed\n" )
 						return False
 
 				elif  value != inputDict[attr]:
-					sys.stderr.write ("other type, direct compare for " + str(value) + "against " +str(inputDict[attr]) + " failed\n" )
+					if not self._quiet:
+						sys.stderr.write ("other type, direct compare for " + str(value) + "against " +str(inputDict[attr]) + " failed\n" )
 					return False
 		return True
 			
