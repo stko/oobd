@@ -6,6 +6,13 @@ As this feature is brand new, please consider the software as being in beta stat
 
 This (short) document descrip how to make OOBD run on hopefully any embedded linux system, here a raspi with raspian 
 
+Note: Since Nov 16 ssh is [disabled by default in raspian](https://www.raspberrypi.org/documentation/remote-access/ssh/ ), so you can't do the initial setup straight over ssh, you need to boot at least once on a physical terminal to activate ssh with rasphi-config, or create an empty file called ssh in the root dir of the SD-Image before boot the raspi from it
+
+    cd /boot
+    touch ssh
+
+Note 2: The install script mentions to edit /etc/fstab, but does not open the editor automatically. This needs to be done manually after the install script went through
+
 - Take a virgin (raspian) image
 - boot the raspi (or BeagleBone or ...) with it
 - download the premilary oobdd zip file from the [Google Drive](https://drive.google.com/open?id=0B795A63vSunRa29qbGVxTllkRGM)
@@ -13,7 +20,7 @@ This (short) document descrip how to make OOBD run on hopefully any embedded lin
 - in the raspi terminal, run 
 
 
-    cd
+    cd  
     bash <(curl -s https://github.com/stko/oobd/raw/development/clients/unixInstall/install.sh)
 
 

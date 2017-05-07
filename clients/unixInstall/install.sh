@@ -25,12 +25,21 @@ libsocketcan-dev \
 openjdk-8-jre-headless \
 joe \
 libttspico-utils \
-aplay \
 can-utils \
 tofrodos \
 indent \
-bc
+bc \
+usbmount
 
+#separate optional packages which might fail
+sudo apt-get install --assume-yes \
+aplay
+
+# Read-Only Image instructions thankfully copied from https://kofler.info/raspbian-lite-fuer-den-read-only-betrieb/
+
+# remove packs which do need writable partitions
+sudo apt-get remove --purge --assume-yes cron logrotate triggerhappy dphys-swapfile fake-hwclock samba-common
+sudo apt-get autoremove --purge --assume-yes
 sudo pip install python-jsonrpc
 
 if [ ! -f development.zip ]; then
@@ -73,9 +82,9 @@ cat << 'SETTING' > localsettings.json
   "UIHandler_lock": true,
   "Password_lock": true,
   "ConnectType": "Telnet",
-  "LibraryDir": "lib_html",
+  "LibraryDir": "/home/pi/bin/oobd/oobdd/lib_html",
   "LibraryDir_lock": true,
-  "ScriptDir": "scripts",
+  "ScriptDir": "/home/pi/bin/oobd/oobdd/scripts",
   "Kadaver": {
     "ServerProxyPort": 0,
     "SerialPort": "",
@@ -105,7 +114,87 @@ fwpid=$!
 java -jar ./oobdd.jar --settings localsettings.json
 sudo kill $fwpid
 SCRIPT
-chmod a+x oobdd.sh 
+chmod a+x oobdd.sh
+# automatically connect to a OOBD hotspot, if around
+sudo cat << 'WIFI' | sudo tee --append /etc/network/interfaces
+auto wlan0
+iface wlan0 inet dhcp
+  wpa-ssid "OOBD"
+  wpa-psk  "oobd"
+WIFI
+
+
+# start to make the system readonly
+sudo rm -rf /var/lib/dhcp/ /var/spool /var/lock
+sudo ln -s /tmp /var/lib/dhcp
+sudo ln -s /tmp /var/spool
+sudo ln -s /tmp /var/lock
+if [ -f /etc/resolv.conf ]; then
+	sudo mv /etc/resolv.conf /tmp/resolv.conf
+fi
+sudo ln -s /tmp/resolv.conf /etc/resolv.conf
+
+# add the temporary directories to the mountlist
+cat << 'MOUNT' | sudo tee --append /etc/fstab
+tmpfs	/var/log	tmpfs	nodev,nosuid	0	0
+tmpfs	/var/tmp	tmpfs	nodev,nosuid	0	0
+tmpfs	/tmp	tmpfs	nodev,nosuid	0	0
+MOUNT
+
+#add boot options
+echo -n " fastboot noswap" | sudo tee --append /boot/cmdline
+cat << 'INFO'
+The users task: 
+Change the mountpoints for / and /boot to readonly by adding "ro" to
+the mointpoint options like shown here:
+proc            /proc           proc    defaults              0 0
+/dev/mmcblk0p1  /boot           vfat    ro,defaults           0 2
+/dev/mmcblk0p2  /               ext4    ro,defaults,noatime   0 1
+tmpfs           /var/log        tmpfs   nodev,nosuid          0 0
+tmpfs           /var/tmp        tmpfs   nodev,nosuid          0 0
+tmpfs           /tmp            tmpfs   nodev,nosuid          0 0
+
+A editor will open after pressing RETURN, save your changes with
+CTRL+O and leave the editor with CTRL+X
+INFO
+read
+sudo nano /etc/fstab
+
+
+# setting up the systemd services
+# very helpful source : http://patrakov.blogspot.de/2011/01/writing-systemd-service-files.html
+
+# firmware as service
+cat << 'FWSERVICE' | sudo tee --append /etc/systemd/system/oobdfw.service
+[Unit]
+Description=OOBD CanSocket Firmware
+After=syslog.target
+
+[Service]
+ExecStart=/home/pi/bin/oobd/fw/OOBD_POSIX.bin -c can0 -t 3001
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
+FWSERVICE
+
+# oobdd as service
+cat << 'OOBDDSERVICE' | sudo tee --append /etc/systemd/system/oobdd.service
+[Unit]
+Description=OOBD CanSocket Firmware
+After=oobdfw.target
+
+[Service]
+ExecStart=/usr/bin/java -jar /home/pi/bin/oobd/oobdd/oobdd.jar --settings /home/pi/bin/oobd/oobdd/localsettings.json
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
+OOBDDSERVICE
+
+
+sudo systemctl enable oobdfw 
+sudo systemctl enable oobdd
 
 echo "Installation finished"
 echo "to run oobd, goto $(pwd) and start oobdd.sh"
