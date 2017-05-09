@@ -168,7 +168,8 @@ sudo nano /etc/fstab
 cat << 'FWSERVICE' | sudo tee --append /etc/systemd/system/oobdfw.service
 [Unit]
 Description=OOBD CanSocket Firmware
-After=syslog.target
+Wants=network.target
+After=network.target
 
 [Service]
 ExecStart=/home/pi/bin/oobd/fw/OOBD_POSIX.bin -c can0 -t 3001
@@ -181,7 +182,8 @@ FWSERVICE
 # oobdd as service
 cat << 'OOBDDSERVICE' | sudo tee --append /etc/systemd/system/oobdd.service
 [Unit]
-Description=OOBD CanSocket Firmware
+Description=OOBD Webserver
+Wants=oobdfw.target
 After=oobdfw.target
 
 [Service]
