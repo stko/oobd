@@ -58,9 +58,9 @@
 			<location>/home/steffen/Desktop/workcopies/oobd/clients/skds/externals/NanoHttpd/core/src/main/java</location>
 		</link>
 		<link>
-			<name>base_src</name>
+			<name>org</name>
 			<type>2</type>
-			<locationURI>PARENT-1-PROJECT_LOC/skds/base_src</locationURI>
+			<location>/home/steffen/Desktop/workcopies/oobd/clients/Base/src</location>
 		</link>
 	</linkedResources>
 </projectDescription>

@@ -14,19 +14,19 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.json.JSONException;
-import org.oobd.base.Base64Coder;
-import org.oobd.base.Core;
-import org.oobd.base.IFui;
-import org.oobd.base.OOBDConstants;
-import org.oobd.base.support.Onion;
-import org.oobd.base.uihandler.OobdUIHandler;
-import org.oobd.base.visualizer.IFvisualizer;
-import org.oobd.base.visualizer.Visualizer;
+import org.oobd.core.Base64Coder;
+import org.oobd.core.Core;
+import org.oobd.core.IFui;
+import org.oobd.core.OOBDConstants;
+import org.oobd.core.support.Onion;
+import org.oobd.core.uihandler.OobdUIHandler;
+import org.oobd.core.visualizer.IFvisualizer;
+import org.oobd.core.visualizer.Visualizer;
 import org.oobd.ui.android.application.OOBDApp;
-import org.oobd.base.archive.Archive;
-import org.oobd.base.archive.Factory;
-import org.oobd.base.port.OOBDPort;
-import org.oobd.base.port.PortInfo;
+import org.oobd.core.archive.Archive;
+import org.oobd.core.archive.Factory;
+import org.oobd.core.port.OOBDPort;
+import org.oobd.core.port.PortInfo;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -73,7 +73,7 @@ import com.openxc.remote.VehicleService;
  *         launched.
  */
 public class MainActivity extends FragmentActivity implements
-		ModalDialog.NoticeDialogListener, IFui, org.oobd.base.OOBDConstants {
+		ModalDialog.NoticeDialogListener, IFui, org.oobd.core.OOBDConstants {
 
 	public Core core;
 	public Map<String, String> scriptEngineMap = new HashMap<String, String>();
@@ -314,7 +314,7 @@ public class MainActivity extends FragmentActivity implements
 	 * and put this canvas // inside the pane which belongs to that particular
 	 * scriptengine // and now, after initialisation of the UI, let the games
 	 * begin... OOBDApp.getInstance() .getCore() .setAssign(seID,
-	 * org.oobd.base.CL_PANE, new Object()); // store the related
+	 * org.oobd.core.CL_PANE, new Object()); // store the related
 	 * drawing pane, the // TabPane for that scriptengine // stop the Progress
 	 * Dialog BEFORE the script starts //
 	 * Diagnose.getInstance().stopProgressDialog();
