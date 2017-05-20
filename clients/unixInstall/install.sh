@@ -16,6 +16,7 @@ if [ ! -f oobdd.zip ]; then
 	exit 1 
 fi
 mkdir -p insttemp bin/oobd/oobdd bin/oobd/fw
+sudo mkdir /oobd
 cd insttemp
 sudo apt-get update --assume-yes
 sudo apt-get install --assume-yes \
@@ -24,6 +25,7 @@ libsocketcan2 \
 libsocketcan-dev \
 openjdk-8-jre-headless \
 joe \
+python-pip \
 libttspico-utils \
 can-utils \
 tofrodos \
@@ -139,6 +141,7 @@ cat << 'MOUNT' | sudo tee --append /etc/fstab
 tmpfs	/var/log	tmpfs	nodev,nosuid	0	0
 tmpfs	/var/tmp	tmpfs	nodev,nosuid	0	0
 tmpfs	/tmp	tmpfs	nodev,nosuid	0	0
+tmpfs	/oobd	tmpfs	nodev,nosuid	0	0
 MOUNT
 
 #add boot options
@@ -168,10 +171,10 @@ sudo nano /etc/fstab
 cat << 'FWSERVICE' | sudo tee --append /etc/systemd/system/oobdfw.service
 [Unit]
 Description=OOBD CanSocket Firmware
-Wants=network.target
-After=network.target
+After=local-fs.target
 
 [Service]
+ExecStartPre=/usr/bin/sudo /bin/ln -sf /home/pi/oobd /oobd/oobd
 ExecStart=/home/pi/bin/oobd/fw/OOBD_POSIX.bin -c can0 -t 3001
 Restart=on-abort
 
@@ -182,17 +185,53 @@ FWSERVICE
 # oobdd as service
 cat << 'OOBDDSERVICE' | sudo tee --append /etc/systemd/system/oobdd.service
 [Unit]
-Description=OOBD Webserver
-Wants=oobdfw.target
-After=oobdfw.target
-
+Description=OOBD Main Server
+After=oobdfw.target local-fs.target
 [Service]
-ExecStart=/usr/bin/java -jar /home/pi/bin/oobd/oobdd/oobdd.jar --settings /home/pi/bin/oobd/oobdd/localsettings.json
+ExecStart=/usr/bin/java -jar /home/pi/bin/oobd/oobdd/oobdd.jar --settings /oobd/oobd/oobdd/localsettings.json
 Restart=on-abort
 
 [Install]
 WantedBy=multi-user.target
 OOBDDSERVICE
+
+# usb monitoring
+cat << 'USBSERVICE' | sudo tee --append /etc/systemd/system/triggerusb0.service
+[Unit]
+Description=Starts on usb0 existance
+
+[Service]
+ExecStart=/home/pi/setoobdpath.sh usb
+USBSERVICE
+
+cat << 'USBPATH' | sudo tee --append /etc/systemd/system/triggerusb0.path
+[Unit]
+Description=Monitor existance of any data in usb0
+
+[Path]
+DirectoryNotEmpty=/media/usb0
+
+[Install]
+WantedBy=multi-user.target
+USBPATH
+
+# tmp monitoring
+cat << 'TMPSERVICE' | sudo tee --append /etc/systemd/system/triggertmpmount.service
+[Unit]
+Description=Triggers oobdd library path relocation at boot
+Requires=local-fs.target
+After=local-fs.target
+
+[Service]
+ExecStart=/usr/bin/sudo /bin/ln -sf /media/usb0/oobd /oobd/oobd
+
+[Install]
+WantedBy=oobdd.service
+TMPSERVICE
+
+
+
+
 
 
 sudo systemctl enable oobdfw 
