@@ -1317,20 +1317,21 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             @Override
            public void run() {
                 try {
-                    jmdns = JmDNS.create();
+                    jmdns = JmDNS.create(getExternalSystemIP()); //see http://stackoverflow.com/a/16669855
                     // ServiceInfo service_info =  ServiceInfo.create("_http._tcp.local.", "foo._http._tcp.local.", 1234, 0, 0, "path=index.html")
                     //  ServiceInfo service_info = ServiceInfo.create("_http._tcp.", "OOBDesk", 8080, "path=/")
                     // ServiceInfo service_info =   ServiceInfo.create("_http._tcp.", "OOBDesk", 8080, 0,0,values)
-                    String service_type = "_http._tcp.";
+                    //String service_type = "_http._tcp.";
+                    String service_type = "_http._tcp.local.";
                     //       String service_name = "http://www.mycompany.com/xyz.html";
                     //String service_name = "OOBD-" + jmdns.getHostName();
                     //String service_name = Core.getSingleInstance().getSystemIF().getOobdURL();
                     String service_name = "OOBD DaaS (" + getMACAddress() + ")";
                     int service_port = (int) Settings.readDataPool(DP_HTTP_PORT, 8080);
-                    ServiceInfo service_info = ServiceInfo.create(service_type, service_name, service_port, "");
+                    ServiceInfo service_info = ServiceInfo.create(service_type, service_name, service_port, "OBD Diagnostics through any web browser");
                     jmdns.registerService(service_info);
                     
-                    
+ /*                   
                   jmdns.addServiceListener(service_type, listener = new ServiceListener() {
                 public void serviceResolved(ServiceEvent ev) {
                     System.out.println("Service resolved: "
@@ -1349,7 +1350,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
                 }
             });
              
-                    
+*/                    
                     
                     System.out.println("jmDNSDiscovery started");
                 } catch (IOException ex) {
