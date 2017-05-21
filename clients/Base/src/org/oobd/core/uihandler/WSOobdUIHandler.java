@@ -118,7 +118,7 @@ import org.oobd.core.port.OOBDPort;
 
         WebSocketImpl.DEBUG = false;
         try {
-            wsServer = new ChatServer(core.getSystemIP(), (int) Settings.readDataPool(DP_WSOCKET_PORT, 8443));
+            wsServer = new ChatServer(core.getBindingIP(), (int) Settings.readDataPool(DP_WSOCKET_PORT, 8443));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -733,10 +733,10 @@ class OOBDHttpServer extends NanoHTTPD {
     public OOBDHttpServer() throws IOException {
         // super(8080);
         // uploader = new NanoFileUpload(new DiskFileItemFactory());
-        super(((InetAddress) Settings.readDataPool(
-                OOBDConstants.DP_HTTP_HOST,
-                Core.getSingleInstance().getSystemIP()))
-                .getHostAddress(), (int) Settings.readDataPool(
+/*
+        super(Core.getSingleInstance().getBindingIP(), (int) Settings.readDataPool(
+                        OOBDConstants.DP_HTTP_PORT, 8080));
+*/        super("::", (int) Settings.readDataPool(
                         OOBDConstants.DP_HTTP_PORT, 8080));
 
         this.MIME_TYPES = new HashMap<String, String>() {

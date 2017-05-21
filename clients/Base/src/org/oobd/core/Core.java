@@ -1126,7 +1126,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
     public String getOobdURL() {
         InetAddress ip;
         String hostname;
-        ip = getSystemIP();
+        ip = getExternalSystemIP();
         hostname = ip.getHostName();
         System.out.println("Your current Hostname : " + hostname);
         return "http://" + hostname + ":" + ((Integer) Settings.readDataPool(DP_HTTP_PORT, 8080)).toString();
@@ -1139,7 +1139,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      */
     public String getMACAddress() {
         if (oobdMacAddress.equals("-")) {//not initialized? Then do it first
-            getSystemIP();
+            getExternalSystemIP();
         }
         return oobdMacAddress;
     }
@@ -1149,7 +1149,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      *
      * @return the local side ip address of the device OOBD runs on
      */
-    public InetAddress getSystemIP() {
+    public InetAddress getExternalSystemIP() {
         if (oobdIPAddress != null) {
             return oobdIPAddress;
         }
@@ -1188,6 +1188,19 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
             oobdIPAddress = null;
             Logger.getLogger(Core.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return null;
+    }
+
+    /**
+     * \brief for binding services, returns the ip address to Interface ANY
+     *
+     * while in previous Java version the any adress was represented by 0.0.0.0, in java 1.8 the any interface
+     * is represented as a null value of the InetAdress (found on https://docs.oracle.com/javase/8/docs/api/java/net/Socket.html)
+     *
+     * @return ip address to Interface ANY 
+     */
+    public InetAddress getBindingIP() {
+        // older: return InetAddress.getInaddrAny() ;
         return null;
     }
 

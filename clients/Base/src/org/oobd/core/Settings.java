@@ -110,7 +110,7 @@ public class Settings {
         writeDataPool(OOBDConstants.DP_WWW_LIB_DIR, Settings.getString(OOBDConstants.PropName_LibraryDir, "."));
         ArrayList<Archive> files = Factory.getDirContent(actualScriptDir);
         writeDataPool(OOBDConstants.DP_LIST_OF_SCRIPTS, files);
-        writeDataPool(OOBDConstants.DP_HTTP_HOST, Core.getSingleInstance().getSystemIP());
+        writeDataPool(OOBDConstants.DP_HTTP_HOST, Core.getSingleInstance().getExternalSystemIP());
         writeDataPool(OOBDConstants.DP_HTTP_PORT, 8080);
         writeDataPool(OOBDConstants.DP_WSOCKET_PORT, 8443);
     }
