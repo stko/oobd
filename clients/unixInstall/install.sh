@@ -142,6 +142,7 @@ tmpfs	/var/log	tmpfs	nodev,nosuid	0	0
 tmpfs	/var/tmp	tmpfs	nodev,nosuid	0	0
 tmpfs	/tmp	tmpfs	nodev,nosuid	0	0
 tmpfs	/oobd	tmpfs	nodev,nosuid	0	0
+/dev/sda1	/media/usb0	vfat	ro,defaults,nofail,x-systemd.device-timeout=1	0	0
 MOUNT
 
 #add boot options
@@ -156,6 +157,7 @@ proc            /proc           proc    defaults              0 0
 tmpfs           /var/log        tmpfs   nodev,nosuid          0 0
 tmpfs           /var/tmp        tmpfs   nodev,nosuid          0 0
 tmpfs           /tmp            tmpfs   nodev,nosuid          0 0
+/dev/sda1	/media/usb0	vfat	ro,defaults,nofail,x-systemd.device-timeout=1	0	0
 
 A editor will open after pressing RETURN, save your changes with
 CTRL+O and leave the editor with CTRL+X
@@ -167,44 +169,19 @@ sudo nano /etc/fstab
 # setting up the systemd services
 # very helpful source : http://patrakov.blogspot.de/2011/01/writing-systemd-service-files.html
 
-# firmware as service
-cat << 'FWSERVICE' | sudo tee --append /etc/systemd/system/oobdfw.service
+cat << 'EOF' | sudo tee --append /etc/systemd/system/triggeroobd.service
 [Unit]
-Description=OOBD CanSocket Firmware
-After=local-fs.target
+Description=Triggers oobd startup when having basic system set up
+Wants=basic.target
 
 [Service]
-ExecStartPre=/usr/bin/sudo /bin/ln -sf /home/pi/oobd /oobd/oobd
-ExecStart=/home/pi/bin/oobd/fw/OOBD_POSIX.bin -c can0 -t 3001
-Restart=on-abort
+ExecStart=/home/pi/initoobd.sh basic
 
 [Install]
-WantedBy=multi-user.target
-FWSERVICE
+WantedBy=default.target
+EOF
 
-# oobdd as service
-cat << 'OOBDDSERVICE' | sudo tee --append /etc/systemd/system/oobdd.service
-[Unit]
-Description=OOBD Main Server
-After=oobdfw.target local-fs.target
-[Service]
-ExecStart=/usr/bin/java -jar /home/pi/bin/oobd/oobdd/oobdd.jar --settings /oobd/oobd/oobdd/localsettings.json
-Restart=on-abort
-
-[Install]
-WantedBy=multi-user.target
-OOBDDSERVICE
-
-# usb monitoring
-cat << 'USBSERVICE' | sudo tee --append /etc/systemd/system/triggerusb0.service
-[Unit]
-Description=Starts on usb0 existance
-
-[Service]
-ExecStart=/home/pi/setoobdpath.sh usb
-USBSERVICE
-
-cat << 'USBPATH' | sudo tee --append /etc/systemd/system/triggerusb0.path
+cat << 'EOF' | sudo tee --append /etc/systemd/system/triggerusb0.path
 [Unit]
 Description=Monitor existance of any data in usb0
 
@@ -212,30 +189,81 @@ Description=Monitor existance of any data in usb0
 DirectoryNotEmpty=/media/usb0
 
 [Install]
-WantedBy=multi-user.target
-USBPATH
+WantedBy=default.target
+EOF
 
-# tmp monitoring
-cat << 'TMPSERVICE' | sudo tee --append /etc/systemd/system/triggertmpmount.service
+cat << 'EOF' | sudo tee --append /etc/systemd/system/triggerusb0.service
 [Unit]
-Description=Triggers oobdd library path relocation at boot
-Requires=local-fs.target
-After=local-fs.target
+Description=Starts on usb0 existance
 
 [Service]
-ExecStart=/usr/bin/sudo /bin/ln -sf /media/usb0/oobd /oobd/oobd
+ExecStart=/home/pi/initoobd.sh usbdata
 
 [Install]
-WantedBy=oobdd.service
-TMPSERVICE
+WantedBy=default.target
+EOF
+
+cat << 'EOF' | sudo tee --append /etc/systemd/system/triggerusbmount.service
+[Unit]
+Description=Informs oobd about mounted usb memory
+Wants=triggeroobd.service media-usb0.mount
+
+[Service]
+ExecStart=/home/pi/initoobd.sh usbmount
+EOF
+
+cat << 'EOF' | sudo tee --append /etc/systemd/system/oobdd.service
+[Unit]
+Description=OOBD Main Server
+Wants=oobdfw.service
+
+[Service]
+ExecStart=/usr/bin/java -jar /home/pi/bin/oobd/oobdd/oobdd.jar --settings /oobd/localsettings.json
+Restart=on-abort
+
+[Install]
+
+EOF
+
+cat << 'EOF' | sudo tee --append /etc/systemd/system/oobdfw.service
+[Unit]
+Description=OOBD CanSocket Firmware
+Wants=network.target
+Before=oobdd.service
+
+[Service]
+ExecStart=/home/pi/bin/oobd/fw/OOBD_POSIX.bin -c can0 -t 3001
+Restart=on-abort
+
+[Install]
+
+EOF
+
+cat << 'EOF' | tee --append /home/pi/initoobd.sh
+#!/bin/bash
+AUTORUN=/media/usb/oobd/autorun.sh
+LOG=/oobd/log
+/bin/echo $1 >> $LOG
+/bin/ls /media/usb >> $LOG
+if [ "$1" == "basic" ]; then
+	if [[ -x "$AUTORUN" ]]
+	then
+		$AUTORUN
+	else
+    		/usr/bin/sudo /bin/ln -sf /home/pi/bin/oobd/oobdd/localsettings.json /oobd/localsettings.json 
+		service  oobdd start
+	fi
+fi
+
+EOF
+chmod a+x /home/pi/initoobd.sh
 
 
 
+sudo systemctl enable triggeroobd 
+sudo systemctl enable triggerusb0
+sudo systemctl enable triggerusbmount
 
-
-
-sudo systemctl enable oobdfw 
-sudo systemctl enable oobdd
 
 echo "Installation finished"
 echo "to run oobd, goto $(pwd) and start oobdd.sh"
