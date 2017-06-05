@@ -21,6 +21,7 @@ cd insttemp
 sudo apt-get update --assume-yes
 sudo apt-get install --assume-yes \
 build-essential \
+clang \
 libsocketcan2 \
 libsocketcan-dev \
 openjdk-8-jre-headless \
@@ -56,19 +57,54 @@ cd oobd-development/interface/Designs/POSIX/GCC/D3/app/ \
 
 
 ############### raspbian kernel sources #############
-### this part is not working yet, so it's commented out
-# sudo wget https://raw.githubusercontent.com/notro/rpi-source/master/rpi-source  -O /usr/bin/rpi-source && sudo chmod +x /usr/bin/rpi-source && /usr/bin/rpi-source -q --tag-update
-# rpi-source --skip-gcc
+sudo wget https://raw.githubusercontent.com/notro/rpi-source/master/rpi-source  -O /usr/bin/rpi-source && sudo chmod +x /usr/bin/rpi-source && /usr/bin/rpi-source -q --tag-update
+sudo rpi-source 
 
 
 ############### gs_usb driver #############
-# wget  https://github.com/HubertD/socketcan_gs_usb/archive/master.zip -O tmpfile \
-# && unzip tmpfile \
-# && cd socketcan_gs_usb-master\
-# && make \
-# && cp gs_usb.ko ~/bin/oobd/fw
-#   modprobe can_dev can
-#   insmod gs_usb.ko
+wget  https://github.com/HubertD/socketcan_gs_usb/archive/master.zip -O tmpfile \
+&& unzip tmpfile \
+&& cd socketcan_gs_usb-master
+# we overwrite the crappy makefile with a corrected one
+cat << 'MAKEFILE' > Makefile
+obj-m += gs_usb.o
+gs_usb-m := can_change_mtu.o
+ccflags-m := -include /home/pi/insttemp/socketcan_gs_usb-master/can_change_mtu.h
+
+all:
+	make -C /lib/modules/$(shell uname -r)/build M=/home/pi/insttemp/socketcan_gs_usb-master modules
+
+clean:
+	make -C /lib/modules/$(shell uname -r)/build M=/home/pi/insttemp/socketcan_gs_usb-master clean
+
+modules_install:
+	make -C /lib/modules/$(shell uname -r)/build M=/home/pi/insttemp/socketcan_gs_usb-master modules_install
+MAKEFILE
+
+
+sudo make \
+&& sudo make modules_install
+
+cd ~/insttemp 
+############### can-isotp #############
+wget  https://github.com/hartkopp/can-isotp/archive/master.zip -O tmpfile \
+&& unzip tmpfile \
+&& cd can-isotp-master \
+&& sudo make \
+&& sudo make modules_install
+
+# update module dependencies
+sudo depmod -a
+
+
+################# pysotp python isotp bindings ###################
+
+cd ~/insttemp 
+############### pysotp #############
+wget  https://github.com/stko/pysotp/archive/master.zip -O tmpfile \
+&& unzip tmpfile \
+&& cd pysotp* \
+&& sudo python setup.py install
 
 cd ~/bin/oobd/oobdd && unzip ~/oobdd.zip
 cat << 'SETTING' > localsettings.json
@@ -142,28 +178,13 @@ tmpfs	/var/log	tmpfs	nodev,nosuid	0	0
 tmpfs	/var/tmp	tmpfs	nodev,nosuid	0	0
 tmpfs	/tmp	tmpfs	nodev,nosuid	0	0
 tmpfs	/oobd	tmpfs	nodev,nosuid	0	0
-/dev/sda1	/media/usb0	vfat	ro,defaults,nofail,x-systemd.device-timeout=1	0	0
+/dev/sda1       /media/usb0     vfat    ro,defaults,nofail,x-systemd.device-timeout=1   0       0
+
 MOUNT
 
 #add boot options
 echo -n " fastboot noswap" | sudo tee --append /boot/cmdline
-cat << 'INFO'
-The users task: 
-Change the mountpoints for / and /boot to readonly by adding "ro" to
-the mointpoint options like shown here:
-proc            /proc           proc    defaults              0 0
-/dev/mmcblk0p1  /boot           vfat    ro,defaults           0 2
-/dev/mmcblk0p2  /               ext4    ro,defaults,noatime   0 1
-tmpfs           /var/log        tmpfs   nodev,nosuid          0 0
-tmpfs           /var/tmp        tmpfs   nodev,nosuid          0 0
-tmpfs           /tmp            tmpfs   nodev,nosuid          0 0
-/dev/sda1	/media/usb0	vfat	ro,defaults,nofail,x-systemd.device-timeout=1	0	0
 
-A editor will open after pressing RETURN, save your changes with
-CTRL+O and leave the editor with CTRL+X
-INFO
-read
-sudo nano /etc/fstab
 
 
 # setting up the systemd services
@@ -188,8 +209,6 @@ Description=Monitor existance of any data in usb0
 [Path]
 DirectoryNotEmpty=/media/usb0
 
-[Install]
-WantedBy=default.target
 EOF
 
 cat << 'EOF' | sudo tee --append /etc/systemd/system/triggerusb0.service
@@ -199,8 +218,6 @@ Description=Starts on usb0 existance
 [Service]
 ExecStart=/home/pi/initoobd.sh usbdata
 
-[Install]
-WantedBy=default.target
 EOF
 
 cat << 'EOF' | sudo tee --append /etc/systemd/system/triggerusbmount.service
@@ -221,8 +238,6 @@ Wants=oobdfw.service
 ExecStart=/usr/bin/java -jar /home/pi/bin/oobd/oobdd/oobdd.jar --settings /oobd/localsettings.json
 Restart=on-abort
 
-[Install]
-
 EOF
 
 cat << 'EOF' | sudo tee --append /etc/systemd/system/oobdfw.service
@@ -235,13 +250,12 @@ Before=oobdd.service
 ExecStart=/home/pi/bin/oobd/fw/OOBD_POSIX.bin -c can0 -t 3001
 Restart=on-abort
 
-[Install]
-
 EOF
 
 cat << 'EOF' | tee --append /home/pi/initoobd.sh
 #!/bin/bash
 AUTORUN=/media/usb/oobd/autorun.sh
+AUTOPYTHON=/media/usb/oobd/autorun.py
 LOG=/oobd/log
 /bin/echo $1 >> $LOG
 /bin/ls /media/usb >> $LOG
@@ -249,6 +263,10 @@ if [ "$1" == "basic" ]; then
 	if [[ -x "$AUTORUN" ]]
 	then
 		$AUTORUN
+	elif [[ -x "$AUTOPYTHON" ]]
+	then
+		cd /media/usb/oobd/
+		python "$AUTOPYTHON"
 	else
     		/usr/bin/sudo /bin/ln -sf /home/pi/bin/oobd/oobdd/localsettings.json /oobd/localsettings.json 
 		service  oobdd start
@@ -261,8 +279,8 @@ chmod a+x /home/pi/initoobd.sh
 
 
 sudo systemctl enable triggeroobd 
-sudo systemctl enable triggerusb0
-sudo systemctl enable triggerusbmount
+#sudo systemctl enable triggerusb0
+#sudo systemctl enable triggerusbmount
 
 
 echo "Installation finished"
