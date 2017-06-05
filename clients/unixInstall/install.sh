@@ -173,12 +173,17 @@ fi
 sudo ln -s /tmp/resolv.conf /etc/resolv.conf
 
 # add the temporary directories to the mountlist
-cat << 'MOUNT' | sudo tee --append /etc/fstab
+cat << 'MOUNT' | sudo tee /etc/fstab
+proc            /proc           proc    defaults          0       0
+/dev/mmcblk0p1  /boot           vfat    ro,defaults          0       2
+/dev/mmcblk0p2  /               ext4    ro,defaults,noatime  0       1
+# a swapfile is not a swap partition, no line here
+#   use  dphys-swapfile swap[on|off]  for that
 tmpfs	/var/log	tmpfs	nodev,nosuid	0	0
 tmpfs	/var/tmp	tmpfs	nodev,nosuid	0	0
 tmpfs	/tmp	tmpfs	nodev,nosuid	0	0
 tmpfs	/oobd	tmpfs	nodev,nosuid	0	0
-#/dev/sda1       /media/usb0     vfat    ro,defaults,nofail,x-systemd.device-timeout=1   0       0
+/dev/sda1       /media/usb0     vfat    ro,defaults,nofail,x-systemd.device-timeout=1   0       0
 
 MOUNT
 
