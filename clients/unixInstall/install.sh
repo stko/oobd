@@ -178,7 +178,7 @@ tmpfs	/var/log	tmpfs	nodev,nosuid	0	0
 tmpfs	/var/tmp	tmpfs	nodev,nosuid	0	0
 tmpfs	/tmp	tmpfs	nodev,nosuid	0	0
 tmpfs	/oobd	tmpfs	nodev,nosuid	0	0
-/dev/sda1       /media/usb0     vfat    ro,defaults,nofail,x-systemd.device-timeout=1   0       0
+#/dev/sda1       /media/usb0     vfat    ro,defaults,nofail,x-systemd.device-timeout=1   0       0
 
 MOUNT
 
@@ -202,32 +202,32 @@ ExecStart=/home/pi/initoobd.sh basic
 WantedBy=default.target
 EOF
 
-cat << 'EOF' | sudo tee --append /etc/systemd/system/triggerusb0.path
-[Unit]
-Description=Monitor existance of any data in usb0
-
-[Path]
-DirectoryNotEmpty=/media/usb0
-
-EOF
-
-cat << 'EOF' | sudo tee --append /etc/systemd/system/triggerusb0.service
-[Unit]
-Description=Starts on usb0 existance
-
-[Service]
-ExecStart=/home/pi/initoobd.sh usbdata
-
-EOF
-
-cat << 'EOF' | sudo tee --append /etc/systemd/system/triggerusbmount.service
-[Unit]
-Description=Informs oobd about mounted usb memory
-Wants=triggeroobd.service media-usb0.mount
-
-[Service]
-ExecStart=/home/pi/initoobd.sh usbmount
-EOF
+# cat << 'EOF' | sudo tee --append /etc/systemd/system/triggerusb0.path
+# [Unit]
+# Description=Monitor existance of any data in usb0
+# 
+# [Path]
+# DirectoryNotEmpty=/media/usb0
+# 
+# EOF
+# 
+# cat << 'EOF' | sudo tee --append /etc/systemd/system/triggerusb0.service
+# [Unit]
+# Description=Starts on usb0 existance
+# 
+# [Service]
+# ExecStart=/home/pi/initoobd.sh usbdata
+# 
+# EOF
+# 
+# cat << 'EOF' | sudo tee --append /etc/systemd/system/triggerusbmount.service
+# [Unit]
+# Description=Informs oobd about mounted usb memory
+# Wants=triggeroobd.service media-usb0.mount
+# 
+# [Service]
+# ExecStart=/home/pi/initoobd.sh usbmount
+# EOF
 
 cat << 'EOF' | sudo tee --append /etc/systemd/system/oobdd.service
 [Unit]
