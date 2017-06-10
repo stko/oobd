@@ -32,7 +32,142 @@ can-utils \
 tofrodos \
 indent \
 bc \
-usbmount
+usbmount 
+
+## begin bluetooth audio stuff (https://github.com/davidedg/NAS-mod-config/blob/master/bt-sound/bt-sound-Bluez5_PulseAudio5.txt)
+
+
+#################################################################
+# INSTALL PACKAGES
+#################################################################
+	
+
+# Install BlueZ-5  and PulseAudio-5 with Bluetooth support:
+sudo apt-get --no-install-recommends  --assume-yes install pulseaudio pulseaudio-module-bluetooth bluez
+
+# If your dongle is a based on a BCM203x chipset, install the firmware
+sudo apt-get  --assume-yes bluez-firmware
+
+# Install MPlayer, along with some codecs, to later test audio output
+sudo apt-get  --assume-yes install mplayer
+
+
+
+
+#################################################################
+# BLUETOOTH/DBUS/PULSE PERMISSIONS
+#################################################################
+
+
+## Authorize users (each user that will be using PA must belong to group pulse-access)
+# Examples:
+sudo adduser root pulse-access
+sudo adduser pi pulse-access
+
+
+# Authorize PulseAudio - which will run as user pulse - to use BlueZ D-BUS interface:
+############################################################################
+cat << 'EOF' | sudo tee /etc/dbus-1/system.d/pulseaudio-bluetooth.conf
+<busconfig>
+
+  <policy user="pulse">
+    <allow send_destination="org.bluez"/>
+  </policy>
+
+</busconfig>
+EOF
+############################################################################
+
+
+
+
+#################################################################
+# CONFIGURE PULSEAUDIO
+#################################################################
+
+
+# Not strictly required, but you may need:
+# In /etc/pulse/daemon.conf  change "resample-method" to either:
+# trivial: lowest cpu, low quality
+# src-sinc-fastest: more cpu, good resampling
+# speex-fixed-N: N from 1 to 7, lower to higher CPU/quality
+
+
+# Load  Bluetooth discover module in SYSTEM MODE:
+############################################################################
+cat << 'EOF' | sudo tee --append /etc/pulse/system.pa
+#
+### Bluetooth Support
+.ifexists module-bluetooth-discover.so
+load-module module-bluetooth-discover
+.endif
+EOF
+############################################################################
+
+
+
+# Create a systemd service for running pulseaudio in System Mode as user "pulse".
+############################################################################
+cat << 'EOF' | sudo tee  /etc/systemd/system/pulseaudio.service
+[Unit]
+Description=Pulse Audio
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/pulseaudio --system --disallow-exit --disable-shm --exit-idle-time=-1
+
+[Install]
+WantedBy=multi-user.target
+EOF
+############################################################################
+
+sudo systemctl daemon-reload
+sudo systemctl enable pulseaudio.service
+
+## end bluetooth audio stuff
+
+
+
+## begin unisonfs overlay file system (http://blog.pi3g.com/2014/04/make-raspbian-system-read-only/)
+
+### Do we need to disable swap?? actual not..
+
+# dphys-swapfile swapoff
+# dphys-swapfile uninstall
+# update-rc.d dphys-swapfile disable
+
+
+# Install MPlayer, along with some codecs, to later test audio output
+sudo apt-get  --assume-yes install unionfs-fuse
+
+
+# Create mount script
+
+cat << 'EOF' | sudo tee /usr/local/bin/mount_unionfs
+#!/bin/sh
+DIR=$1
+ROOT_MOUNT=$(awk '$2=="/" {print substr($4,1,2)}' < /etc/fstab)
+if [ $ROOT_MOUNT = "rw" ]
+then
+	/bin/mount --bind ${DIR}_org ${DIR}
+else
+	/bin/mount -t tmpfs ramdisk ${DIR}_rw
+	/usr/bin/unionfs-fuse -o cow,allow_other,suid,dev,nonempty ${DIR}_rw=RW:${DIR}_org=RO ${DIR}
+fi
+EOF
+
+# make it executable:
+
+sudo chmod +x /usr/local/bin/mount_unionfs
+ ## see the directory renaming at the end of this installation script
+
+
+
+
+## end unisonfs overlay file system
+
+
+
 
 #separate optional packages which might fail
 sudo apt-get install --assume-yes \
@@ -163,14 +298,14 @@ WIFI
 
 
 # start to make the system readonly
-sudo rm -rf /var/lib/dhcp/ /var/spool /var/lock
-sudo ln -s /tmp /var/lib/dhcp
-sudo ln -s /tmp /var/spool
-sudo ln -s /tmp /var/lock
-if [ -f /etc/resolv.conf ]; then
-	sudo mv /etc/resolv.conf /tmp/resolv.conf
-fi
-sudo ln -s /tmp/resolv.conf /etc/resolv.conf
+#sudo rm -rf /var/lib/dhcp/ /var/spool /var/lock
+#sudo ln -s /tmp /var/lib/dhcp
+#sudo ln -s /tmp /var/spool
+#sudo ln -s /tmp /var/lock
+#if [ -f /etc/resolv.conf ]; then
+#	sudo mv /etc/resolv.conf /tmp/resolv.conf
+#fi
+#sudo ln -s /tmp/resolv.conf /etc/resolv.conf
 
 # add the temporary directories to the mountlist
 cat << 'MOUNT' | sudo tee /etc/fstab
@@ -179,11 +314,16 @@ proc            /proc           proc    defaults          0       0
 /dev/mmcblk0p2  /               ext4    ro,defaults,noatime  0       1
 # a swapfile is not a swap partition, no line here
 #   use  dphys-swapfile swap[on|off]  for that
-tmpfs	/var/log	tmpfs	nodev,nosuid	0	0
-tmpfs	/var/tmp	tmpfs	nodev,nosuid	0	0
+##tmpfs	/var/log	tmpfs	nodev,nosuid	0	0
+##tmpfs	/var/tmp	tmpfs	nodev,nosuid	0	0
 tmpfs	/tmp	tmpfs	nodev,nosuid	0	0
 tmpfs	/oobd	tmpfs	nodev,nosuid	0	0
 /dev/sda1       /media/usb0     vfat    ro,defaults,nofail,x-systemd.device-timeout=1   0       0
+
+
+mount_unionfs   /etc            fuse    defaults          0       0
+mount_unionfs   /var            fuse    defaults          0       0
+
 
 MOUNT
 
@@ -287,6 +427,12 @@ sudo systemctl enable triggeroobd
 #sudo systemctl enable triggerusb0
 #sudo systemctl enable triggerusbmount
 
+
+#Prepare unisonfs  directories
+sudo cp -al /etc /etc_org
+sudo mv /var /var_org
+sudo mkdir /etc_rw
+sudo mkdir /var /var_rw
 
 echo "Installation finished"
 echo "to run oobd, goto $(pwd) and start oobdd.sh"
