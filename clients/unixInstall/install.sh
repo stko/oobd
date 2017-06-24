@@ -289,12 +289,7 @@ sudo kill $fwpid
 SCRIPT
 chmod a+x oobdd.sh
 # automatically connect to a OOBD hotspot, if around
-sudo cat << 'WIFI' | sudo tee --append /etc/network/interfaces
-auto wlan0
-iface wlan0 inet dhcp
-  wpa-ssid "OOBD"
-  wpa-psk  "oobd"
-WIFI
+wpa_passphrase "OOBD" "oobdoobd" | sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf > /dev/null
 
 
 # start to make the system readonly
@@ -397,17 +392,41 @@ Restart=on-abort
 
 EOF
 
+
+cat << 'EOF' | sudo tee --append /etc/systemd/system/triggerwifi.service
+[Unit]
+Description=Triggers oobd startup before wifi gets started
+Wants=network.target 
+Before= network.target 
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/home/pi/initoobd.sh wifi
+
+[Install]
+WantedBy=default.target
+
+
+EOF
+
+
+
+
 cat << 'EOF' | tee --append /home/pi/initoobd.sh
 #!/bin/bash
 AUTORUN=/media/usb/oobd/autorun.sh
 AUTOPYTHON=/media/usb/oobd/autorun.py
 LOG=/oobd/log
-/bin/echo $1 >> $LOG
-/bin/ls /media/usb >> $LOG
+/bin/echo "initscript $1" >> $LOG
+if [[ -x "$AUTORUN" ]]
+then
+        $AUTORUN "$1"
+fi
 if [ "$1" == "basic" ]; then
 	if [[ -x "$AUTORUN" ]]
 	then
-		$AUTORUN
+		$AUTORUN final
 	elif [[ -x "$AUTOPYTHON" ]]
 	then
 		cd /media/usb/oobd/
@@ -426,6 +445,7 @@ chmod a+x /home/pi/initoobd.sh
 sudo systemctl enable triggeroobd 
 #sudo systemctl enable triggerusb0
 #sudo systemctl enable triggerusbmount
+sudo systemctl enable triggerwifi
 
 
 #Prepare unisonfs  directories
