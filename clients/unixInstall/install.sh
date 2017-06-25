@@ -32,7 +32,9 @@ can-utils \
 tofrodos \
 indent \
 bc \
-usbmount 
+usbmount \
+hostapd \
+isc-dhcp-server
 
 ## begin bluetooth audio stuff (https://github.com/davidedg/NAS-mod-config/blob/master/bt-sound/bt-sound-Bluez5_PulseAudio5.txt)
 
@@ -186,8 +188,11 @@ fi
 
 cd oobd-development/interface/Designs/POSIX/GCC/D3/app/ \
 && make \
-&& cp OOBD_POSIX.bin ~/bin/oobd/fw \
-&& cd ~/insttemp \
+&& cp OOBD_POSIX.bin ~/bin/oobd/fw
+
+cp -r oobd-development/clients/unixInstall/tools/* ~/bin
+
+cd ~/insttemp \
 && rm -r oobd-development
 
 

@@ -109,6 +109,59 @@ esac
 
 ````
 
+and here another one, which provide an Access Point. The "wifi" section empty, instead the hotspot is created with the `createAP.sh` call:
+
+````
+#!/bin/bash
+echo "call level $1" >> /oobd/log
+case "$1" in
+        bluetooth)
+        mkdir -p /var/lib/bluetooth/B8:27:EB:1E:90:30/FC:58:FA:C1:A0:AE/
+cat << EOF | sudo tee /var/lib/bluetooth/B8:27:EB:1E:90:30/FC:58:FA:C1:A0:AE/info__
+[General]
+Name=TCM BT Speaker
+SupportedTechnologies=BR/EDR;
+Trusted=false
+Blocked=false
+Services=00001101-0000-1000-8000-00805f9b34fb;00001108-0000-1000-8000-00805f9b34fb;0000110b-0000-1000-80
+00-00805f9b34fb;0000110c-0000-1000-8000-00805f9b34fb;0000110e-0000-1000-8000-00805f9b34fb;0000111e-0000-
+1000-8000-00805f9b34fb;
+
+[LinkKey]
+Key=539FDD52357D2344968BBF5EF367534F
+Type=4
+PINLength=0
+
+EOF
+        echo "Connect bluetooth"  >> /oobd/log
+        echo -e "connect FC:58:FA:C1:A0:AE" | bluetoothctl >> /oobd/log  2>&1 
+        sleep 2
+        ;;
+        wifi)
+        ;;
+        pulseaudio)
+                pactl set-default-sink 1 >> /oobd/log  2>&1 
+                pactl set-sink-volume 1 60% >> /oobd/log  2>&1 
+        ;;
+        final)
+               /home/pi/bin/createAP.sh &>> /oobd/log
+                echo "setup Hotspot"  >> /oobd/log
+                pico2wave --lang=de-DE  --wave=/tmp/test.wav "Moin"
+                aplay /tmp/test.wav
+                echo "init CAN interface"  >> /oobd/log
+                cd /media/usb0/oobd
+                /bin/echo usbautorun >> /tmp/mounttrigger
+                /sbin/ip link set can0 type can bitrate 125000 triple-sampling on  >> /oobd/log
+                /sbin/ifconfig can0 up >> /oobd/log
+                echo "run CAN python demo"  >> /oobd/log
+
+                /usr/bin/python example.py >> /tmp/mounttrigger 
+                /usr/bin/python example.py >> /oobd/log
+        ;;
+esac
+
+````
+
  
 
 As the IP address of an embedded device is not easy to identify, OOBD broadcasts it's web presence via ZeroConfig (aka Bonjour) into the local subnet, which can be monitored and used by several programs to open the Browser.
