@@ -10,7 +10,7 @@ library to wrap the blockly function calls to the existing lua libraries
 
 dofile("serial_dxm.lua")
 dofile("lua_utils.lua")
-dofile("lib_uds.lua")
+dofile("lua_uds.lua")
 
 
 
@@ -66,9 +66,14 @@ function evalResult(valService, valParams, valType , valStartBit , valBitLen , v
 sd_00 = { by = math.floor(valStartBit / 8) , bi = math.floor(valBitLen / 8), lt = bitvalue[1], ht = bitvalue[2]}}}
     result=readBMPPid("",'tempParamTable_NOP_'..valParams.."_sd_00")
   end
-  if valType == "numeric" then
+  if valType == "numeric" or valType == "unsigned" then
     tempParamTable['tempParamTable_NOP_'..valParams]={ sev_r = valService,  t="dummy title", call = "readNumPid", sd = {
     sd_00 = {bitPos = valStartBit , bitLen =  valBitLen , bytePos = math.floor(valStartBit / 8), byteLen =math.floor(valBitLen / 8),  mult = valMult , offset = valOffset, unit = valUnit,  dtype = "UNSIGNED", t="dummy subtitle"}}}
+    result=readNumPid("",'tempParamTable_NOP_'..valParams.."_sd_00")
+  end
+  if valType == "signed" then
+    tempParamTable['tempParamTable_NOP_'..valParams]={ sev_r = valService,  t="dummy title", call = "readNumPid", sd = {
+    sd_00 = {bitPos = valStartBit , bitLen =  valBitLen , bytePos = math.floor(valStartBit / 8), byteLen =math.floor(valBitLen / 8),  mult = valMult , offset = valOffset, unit = valUnit,  dtype = "SIGNED", t="dummy subtitle"}}}
     result=readNumPid("",'tempParamTable_NOP_'..valParams.."_sd_00")
   end
   return result

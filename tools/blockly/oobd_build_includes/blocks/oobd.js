@@ -114,7 +114,7 @@ Blockly.Blocks['oobd_setdongle'] = {
         .appendField(new Blockly.FieldDropdown([["Off", "0"], ["Listen", "2"], ["Active", "3"]]), "busMode");
     this.appendDummyInput()
         .appendField("Channel")
-        .appendField(new Blockly.FieldDropdown([["HS-CAN", "HS-CAN"], ["MS-CAN", "MS-CAN"]]), "bus");
+        .appendField(new Blockly.FieldDropdown([["HS-CAN", "HS-CAN"], ["MS-CAN", "MS-CAN"], ["500b11" , "500b11"], ["250b11" , "250b11"], ["125b11" , "125b11"], ["500b29" , "500b29"], ["250b29" , "250b29"], ["125b29" , "125b29"], ["500b11p2" , "500b11p2"], ["250b11p2" , "250b11p2"], ["125b11p2" , "125b11p2"], ["500b29p2" , "500b29p2"], ["250b29p2" , "250b29p2"], ["125b29p2" , "125b29p2"]]), "bus");
     this.appendDummyInput()
         .appendField("Protocol")
         .appendField(new Blockly.FieldDropdown([["UDS", "1"], ["Real Time Data", "3"]]), "protocol");
@@ -180,7 +180,7 @@ Blockly.Blocks['oobd_evalresult'] = {
         .appendField("Parameters (hex)");
     this.appendDummyInput()
         .appendField("Type")
-        .appendField(new Blockly.FieldDropdown([["ASCII", "ascii"], ["Bit", "bit"], ["numeric", "numeric"]]), "type");
+        .appendField(new Blockly.FieldDropdown([["ASCII", "ascii"], ["Bit", "bit"], ["Unsigned", "unsigned"], ["Signed", "Signed"]]), "type");
     this.appendValueInput("startbit")
         .setCheck("Number")
         .appendField("Startbit");
