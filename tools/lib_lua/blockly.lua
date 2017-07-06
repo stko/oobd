@@ -7,9 +7,8 @@ library to wrap the blockly function calls to the existing lua libraries
 
 --]]
 
-
-dofile("serial_dxm.lua")
 dofile("lua_utils.lua")
+dofile("serial_dxm.lua")
 dofile("lua_uds.lua")
 
 
@@ -56,25 +55,25 @@ function evalResult(valService, valParams, valType , valStartBit , valBitLen , v
   
   result="unknown call.."
   if valType == "ascii" then
-    tempParamTable['tempParamTable_NOP_'..valParams]={ sev_r = valService,  t="dummy title", call = "readAscPid", sd = {
+    tempParamTable['tempParamTable_NOP_'..valParams]={ sev_r = valService,  t="dummy title", call = "readAscDiD", sd = {
     sd_00 = {bitPos = valStartBit , bitLen =  valBitLen , mult = valMult , offset = valOffset, unit = valUnit,  dtype = "UNSIGNED", t="dummy subtitle"}}}
-    result=readAscPid("",'tempParamTable_NOP_'..valParams)
+    result=readAscDiD("",'tempParamTable_NOP_'..valParams)
   end
   if valType == "bit" then
     bitvalue=Split(valUnit, "|")
-    tempParamTable['tempParamTable_NOP_'..valParams]={ sev_r = valService, cmd = "id0x" .. valParams , t="dummy title", call = "readBMPPid",  sd = {
+    tempParamTable['tempParamTable_NOP_'..valParams]={ sev_r = valService, cmd = "id0x" .. valParams , t="dummy title", call = "readBMPDiD",  sd = {
 sd_00 = { by = math.floor(valStartBit / 8) , bi = math.floor(valBitLen / 8), lt = bitvalue[1], ht = bitvalue[2]}}}
-    result=readBMPPid("",'tempParamTable_NOP_'..valParams.."_sd_00")
+    result=readBMPDiD("",'tempParamTable_NOP_'..valParams.."_sd_00")
   end
   if valType == "numeric" or valType == "unsigned" then
-    tempParamTable['tempParamTable_NOP_'..valParams]={ sev_r = valService,  t="dummy title", call = "readNumPid", sd = {
+    tempParamTable['tempParamTable_NOP_'..valParams]={ sev_r = valService,  t="dummy title", call = "readNumDiD", sd = {
     sd_00 = {bitPos = valStartBit , bitLen =  valBitLen , bytePos = math.floor(valStartBit / 8), byteLen =math.floor(valBitLen / 8),  mult = valMult , offset = valOffset, unit = valUnit,  dtype = "UNSIGNED", t="dummy subtitle"}}}
-    result=readNumPid("",'tempParamTable_NOP_'..valParams.."_sd_00")
+    result=readNumDiD("",'tempParamTable_NOP_'..valParams.."_sd_00")
   end
   if valType == "signed" then
-    tempParamTable['tempParamTable_NOP_'..valParams]={ sev_r = valService,  t="dummy title", call = "readNumPid", sd = {
+    tempParamTable['tempParamTable_NOP_'..valParams]={ sev_r = valService,  t="dummy title", call = "readNumDiD", sd = {
     sd_00 = {bitPos = valStartBit , bitLen =  valBitLen , bytePos = math.floor(valStartBit / 8), byteLen =math.floor(valBitLen / 8),  mult = valMult , offset = valOffset, unit = valUnit,  dtype = "SIGNED", t="dummy subtitle"}}}
-    result=readNumPid("",'tempParamTable_NOP_'..valParams.."_sd_00")
+    result=readNumDiD("",'tempParamTable_NOP_'..valParams.."_sd_00")
   end
   return result
 end

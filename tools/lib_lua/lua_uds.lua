@@ -1,3 +1,7 @@
+dofile("luabit/bit.lua")
+
+
+
 local actBusId
 local actModulId
 local stdTimeout = 1000
@@ -211,7 +215,7 @@ end
 function sCalcNumDiD( bitLen, bitPos, byteNr , nrOfBytes, multiplier, offset, unit, endianess)
 	DEBUGPRINT("nexulm", 1, "lua_uds.lua - sCalcNumDiD,%02d: %s", "00", "enter function sCalcNumDiD")
 	local value = 0
-	value = CalcNumDiD_any( bitLen, bitPos, byteNr , multiplier, offset, endianess) -- calculate the "positive" value
+	value = CalcNumDiD_any( bitLen, bitPos, byteNr , 1, 0, endianess) -- calculate the "positive" value
 	-- first see on RAW value if signed value is negative
 	if value >= 128 and value <= 255 and nrOfBytes == 1 then
 		value = value - 256
@@ -321,11 +325,11 @@ function readNumDiD(oldvalue,id)
 			end
 			
 		elseif (content.dtype == "SIGNED") then
-			res=  sCalcNumDiD( bytepos , math.floor(content.bitLen/8) , content.mult , content.offset, content.unit) 
+			res=  sCalcNumDiD(  content.bitLen, content.bitPos, bytepos , math.floor(content.bitLen/8) , content.mult , content.offset, content.unit,1) 
 			
 		-- string.format for decimal transformation
 		elseif (content.dtype == "BCD") then
-			res=  CalcNumDiD( bytepos , math.floor(content.bitLen/8) , content.mult , content.offset, content.unit) 
+			res=  CalcNumDiD(  content.bitLen, content.bitPos, bytepos , math.floor(content.bitLen/8) , content.mult , content.offset, content.unit,1) 
 			
 		-- string.format for HEX transformation
 		elseif (content.dtype == "ENUM") then
