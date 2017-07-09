@@ -62,17 +62,17 @@ function evalResult(valService, valParams, valType , valStartBit , valBitLen , v
   if valType == "bit" then
     bitvalue=Split(valUnit, "|")
     tempParamTable['tempParamTable_NOP_'..valParams]={ sev_r = valService, cmd = "id0x" .. valParams , t="dummy title", call = "readBMPDiD",  sd = {
-sd_00 = { by = math.floor(valStartBit / 8) , bi = math.floor(valBitLen / 8), lt = bitvalue[1], ht = bitvalue[2]}}}
+sd_00 = { by = math.floor(valStartBit / 8) +#(valService..valParams)+1 , bi = math.floor(valBitLen / 8), lt = bitvalue[1], ht = bitvalue[2]}}}
     result=readBMPDiD("",'tempParamTable_NOP_'..valParams.."_sd_00")
   end
   if valType == "numeric" or valType == "unsigned" then
     tempParamTable['tempParamTable_NOP_'..valParams]={ sev_r = valService,  t="dummy title", call = "readNumDiD", sd = {
-    sd_00 = {bitPos = valStartBit , bitLen =  valBitLen , bytePos = math.floor(valStartBit / 8), byteLen =math.floor(valBitLen / 8),  mult = valMult , offset = valOffset, unit = valUnit,  dtype = "UNSIGNED", t="dummy subtitle"}}}
+    sd_00 = {bitPos = valStartBit , bitLen =  valBitLen , bytePos = math.floor(valStartBit / 8)+#(valService..valParams)+1, byteLen =math.floor(valBitLen / 8),  mult = valMult , offset = valOffset, unit = valUnit,  dtype = "UNSIGNED", t="dummy subtitle"}}}
     result=readNumDiD("",'tempParamTable_NOP_'..valParams.."_sd_00")
   end
   if valType == "signed" then
     tempParamTable['tempParamTable_NOP_'..valParams]={ sev_r = valService,  t="dummy title", call = "readNumDiD", sd = {
-    sd_00 = {bitPos = valStartBit , bitLen =  valBitLen , bytePos = math.floor(valStartBit / 8), byteLen =math.floor(valBitLen / 8),  mult = valMult , offset = valOffset, unit = valUnit,  dtype = "SIGNED", t="dummy subtitle"}}}
+    sd_00 = {bitPos = valStartBit , bitLen =  valBitLen , bytePos = math.floor(valStartBit / 8)+#(valService..valParams)+1, byteLen =math.floor(valBitLen / 8),  mult = valMult , offset = valOffset, unit = valUnit,  dtype = "SIGNED", t="dummy subtitle"}}}
     result=readNumDiD("",'tempParamTable_NOP_'..valParams.."_sd_00")
   end
   return result
