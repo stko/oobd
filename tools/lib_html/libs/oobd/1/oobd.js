@@ -446,6 +446,7 @@ if (typeof Oobd == "undefined") {
 											Oobd.writeString(new Date().toLocaleTimeString()+"\t"+Oobd.visualizers[i].tooltip + "\t"+Oobd.visualizers[i].object.oobd.value + "\t"+obj.value+"\n","");
 										}
 									}
+									Oobd.visualizers[i].value = obj.value;
 									Oobd.visualizers[i].object.oobd.value = obj.value;
 									Oobd.visualizers[i].object.oodbupdate(obj);
 								}
