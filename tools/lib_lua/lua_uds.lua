@@ -240,18 +240,16 @@ function CalcNumDiD_any( bitLen, bitPos, byteNr , multiplier, offset, endianess)
 		local value1=0
 		local length_1=8-bitPos
 		value=bit.band (bit.brshift (udsBuffer[byteNr], bitPos), (2^length_1)-1)--first byte (partial or not)
-
 		local B_full=0
 		B_full=math.floor((bitLen-length_1)/8)--number of full bytes (there can be none)
 		for i = 0 , B_full-1, 1 do
 			value1 = value1 * 256 + udsBuffer[ byteNr + (1 + i)*endianess]
 		end
-		value=value+value1*(2^length_1)
-
+		value=value*(2^length_1)+value1
 		local length_2=bitLen-(B_full*8)-length_1
 		if (length_2~=0) then
 			local value2=bit.band (bit.brshift (udsBuffer[byteNr+(B_full+1)*endianess], 0), (2^length_2)-1)--last byte (partial or not)
-			value=value+value2*(2^(B_full*8+length_1))
+			value=value*(2^(B_full*8+length_1))+value2
 		end
 	end
 
