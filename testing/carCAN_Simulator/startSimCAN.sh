@@ -47,7 +47,7 @@ select opt in "${options[@]}"
 			"(re)start bus")
 				echo "you chose (re)start bus"
 				if [ "$BUS" == "oobdcan0"  ] ; then
-					if [ ip link show oobdcan0 -ne 0   ] ; then
+					if ! ip link show oobdcan0  ; then
 						sudo modprobe can
 						sudo modprobe can_raw
 						sudo modprobe can_bcm
