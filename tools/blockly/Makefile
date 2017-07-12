@@ -24,9 +24,13 @@ default:
 
 download:
 	-rm -r new_blockly blockly_lua_repository blockly_original_repository closure-library
-	svn export https://github.com/google/blockly.git/trunk blockly_original_repository
-	svn export https://github.com/espertus/blockly-lua.git/trunk blockly_lua_repository
-	svn export https://github.com/google/closure-library.git/trunk closure-library
+	# this was the original as the correct libraries where online
+	# svn export https://github.com/google/blockly.git/trunk blockly_original_repository
+	# svn export https://github.com/espertus/blockly-lua.git/trunk blockly_lua_repository
+	# svn export https://github.com/google/closure-library.git/trunk closure-library
+	# but as the originals are gone, we'll use the saved backup instead
+	unzip blockly_frozen_libraries.zip
+
 
 build:
 	-rm -r new_blockly 
@@ -52,5 +56,6 @@ lualib:
 	echo "$(SVNREVLUALIB)" > $(LUASVNFILE)
 	echo "$(SVNREVLUASCRIPT)" >> $(LUASVNFILE)
 	$(OLP) ../lib_lua/blockly.lua  > lua.tmp
-	$(CC) $(CFLAGS) -o lua_compile/lua-5.1.5/src/lualib.lbc lua.tmp
+#	$(CC) $(CFLAGS) -o lua_compile/lua-5.1.5/src/lualib.lbc lua.tmp
+	cp lua.tmp lua_compile/lua-5.1.5/src/lualib.lbc 
 	(cd lua_compile/lua-5.1.5/src/ ; emcc -o luac.html  luac.o print.o liblua.a --embed-file ./lualib.lbc@lualib.lbc )
