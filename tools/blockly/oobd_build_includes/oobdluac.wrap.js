@@ -76,7 +76,7 @@
 	}
 
       var Module = {
-      	arguments: ['lualib.lbc', 'dummy.lua'],
+      	arguments: ['lualib.lua', 'dummy.lua'],
       	postRun: function() {
       		var fileResult = FS.readFile('luac.out');
       		// zwei Arrays zusammentackern: a.push.apply(a, b);

@@ -17,10 +17,14 @@ SVNREVLUALIB=$(shell (cd ../../tools/lib_lua/ ; ./echoLuaRev.sh SVNREVLUALIB) )
 
 
 default:
-	echo make download : svn exports all the needed external libraries
-	echo make build : builds the webdirectory and compress the javascript files
-	echo make lualib : compiles the lua library
+	@echo make download : svn exports all the needed external libraries
+	@echo make build : builds the webdirectory and compress the javascript files
+	@echo make lualib : compiles the lua library
 
+
+clean:
+	-rm -r new_blockly blockly_lua_repository blockly_original_repository closure-library
+	(cd lua_compile/lua-5.1.5/ ; make clean )
 
 download:
 	-rm -r new_blockly blockly_lua_repository blockly_original_repository closure-library
@@ -53,9 +57,14 @@ build:
 
 lualib:
 	echo Do not forget to run the "source  emsdk_set_env.sh" command to set the path to emcc
+	(cd lua_compile/lua-5.1.5/ ; make emcc )
 	echo "$(SVNREVLUALIB)" > $(LUASVNFILE)
 	echo "$(SVNREVLUASCRIPT)" >> $(LUASVNFILE)
-	$(OLP) ../lib_lua/blockly.lua  > lua.tmp
-#	$(CC) $(CFLAGS) -o lua_compile/lua-5.1.5/src/lualib.lbc lua.tmp
-	cp lua.tmp lua_compile/lua-5.1.5/src/lualib.lbc 
-	(cd lua_compile/lua-5.1.5/src/ ; emcc -o luac.html  luac.o print.o liblua.a --embed-file ./lualib.lbc@lualib.lbc )
+	# Do not forget to let m4 remove all the DEBUG directives...!
+	$(OLP) ../lib_lua/blockly.lua  > m4.tmp
+	m4 -P m4.tmp > lua.tmp
+	$(OLP) ../lib_lua/blockly.lua  > lua_compile/lua-5.1.5/src/lualib.lua
+	cp lua.tmp lua_compile/lua-5.1.5/src/lualib.lua
+	(cd lua_compile/lua-5.1.5/src/ ; emcc -o luac.html  luac.o print.o liblua.a --embed-file ./lualib.lua@lualib.lua )
+
+all: download lualib build

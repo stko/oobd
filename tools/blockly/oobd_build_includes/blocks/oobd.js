@@ -180,7 +180,7 @@ Blockly.Blocks['oobd_evalresult'] = {
         .appendField("Parameters (hex)");
     this.appendDummyInput()
         .appendField("Type")
-        .appendField(new Blockly.FieldDropdown([["ASCII", "ascii"], ["Bit", "bit"], ["Unsigned", "unsigned"], ["Signed", "Signed"]]), "type");
+        .appendField(new Blockly.FieldDropdown([["ASCII", "ascii"], ["Bit", "bit"], ["Unsigned", "unsigned"], ["Signed", "signed"]]), "type");
     this.appendValueInput("startbit")
         .setCheck("Number")
         .appendField("Startbit");

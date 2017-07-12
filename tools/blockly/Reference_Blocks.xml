@@ -1,0 +1,80 @@
+<xml xmlns="http://www.w3.org/1999/xhtml">
+	<block type="oobd_menu" id="1" inline="true" x="738" y="115">
+		<value name="menuTitle">
+			<block type="text" id="2">
+				<field name="TEXT"></field>
+			</block>
+		</value>
+		<statement name="inner">
+			<block type="oobd_item" id="3" inline="true">
+				<field name="content">Description of this Value</field>
+				<field name="Flags">0x00</field>
+				<value name="mcaller">
+					<block type="text" id="4">
+						<field name="TEXT"></field>
+					</block>
+				</value>
+			</block>
+		</statement>
+	</block>
+	<block type="oobd_mcall" id="5" x="737" y="248">
+		<field name="CallName">CallName</field>
+		<statement name="NAME">
+			<block type="oobd_setdongle" id="6">
+				<field name="busMode">off</field>
+				<field name="bus">HS-CAN</field>
+				<field name="protocol">1</field>
+				<next>
+					<block type="oobd_setmodule" id="7">
+						<field name="moduleID">7E0</field>
+						<field name="moduleTimeout">50</field>
+						<next>
+							<block type="oobd_requestservice" id="8" inline="false">
+								<value name="serviceID">
+									<block type="text" id="9">
+										<field name="TEXT"></field>
+									</block>
+								</value>
+								<value name="NAME">
+									<block type="text" id="10">
+										<field name="TEXT"></field>
+									</block>
+								</value>
+								<statement name="inner">
+									<block type="oobd_evalresult" id="27" inline="false">
+										<field name="type">ascii</field>
+										<value name="startbit">
+											<block type="text" id="28">
+												<field name="TEXT"></field>
+											</block>
+										</value>
+										<value name="length">
+											<block type="text" id="29">
+												<field name="TEXT"></field>
+											</block>
+										</value>
+										<value name="offset">
+											<block type="text" id="30">
+												<field name="TEXT"></field>
+											</block>
+										</value>
+										<value name="mult">
+											<block type="text" id="31">
+												<field name="TEXT"></field>
+											</block>
+										</value>
+										<value name="Unit">
+											<block type="text" id="32">
+												<field name="TEXT"></field>
+											</block>
+										</value>
+									</block>
+								</statement>
+							</block>
+						</next>
+					</block>
+				</next>
+			</block>
+		</statement>
+	</block>
+</xml>
