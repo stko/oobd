@@ -40,5 +40,7 @@
 #include "mc_serial_generic.h"
 void closeTelnetSocket();
 #include "AsyncIO/AsyncIOSerial.h"
+#define WRITEBUFFERSIZE 4096
+
 
 #endif				/* INC_MC_SERIAL_H */

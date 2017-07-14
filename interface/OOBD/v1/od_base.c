@@ -204,7 +204,7 @@ void evalResult(UBaseType_t source, UBaseType_t errType,
     }
     printLF();
     printser_string(">");
-
+    flushSerial();
 }
 
 void printEOT()

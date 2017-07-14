@@ -67,6 +67,10 @@ UBaseType_t serial_init_mc() {
 
 }
 
+
+void flushSerial(){} // needed only on block oriented output streams like tcpip (telnet)
+
+
 /*---------------------------------------------------------------------------*/
 void uart1_puts(char const *str) {
 

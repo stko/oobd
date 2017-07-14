@@ -734,10 +734,10 @@ void obp_uds(void *pvParameters)
 				     loopIndex + 12 <= protocolBuffer->len
 				     && !alreadyReceived;
 				     loopIndex += 12) {
-				    UBaseType_t storedID =
-					(((UBaseType_t)
-					  protocolBuffer->data[loopIndex])
-					 << 24) +
+				    UBaseType_t storedID = (((UBaseType_t)
+							     protocolBuffer->data
+							     [loopIndex])
+							    << 24) +
 					(((UBaseType_t)
 					  protocolBuffer->data[loopIndex +
 							       1]) << 16) +

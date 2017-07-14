@@ -93,6 +93,8 @@ UBaseType_t serial_init();
 
 void initOutput();
 
+void flushSerial();
+
 
 
 #endif				/* INC_MC_SERIAL_GENERIC_H */

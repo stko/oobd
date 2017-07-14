@@ -63,6 +63,8 @@ void endProgram(const char *msg)
 int oobdIOHandle = -1;
 int SocketConnected = 1;
 
+char outputBuffer[WRITEBUFFERSIZE];
+int outputCounter = 0;
 pthread_t pTcpControlThread;
 
 //callback routine to write a char to the output
@@ -71,14 +73,27 @@ void writeChar(char a)
 {
     /* Echo it back to the sender. */
     //! \bug Echo off is not supported yet
-    if (oobdIOHandle > -1) {
-	(void) write(oobdIOHandle, &a, 1);
-	if (a == 13)
-	    a = 10;
-	DEBUGPRINTSHORTSTDERR("%c", a);
-    } else {
-	DEBUGPRINT("socket closed ?!? %c\n", a);
+    outputBuffer[outputCounter++] = a;
+    if (outputCounter >= WRITEBUFFERSIZE) {
+	flushSerial();
     }
+
+    if (a == 13)
+	a = 10;
+    DEBUGPRINTSHORTSTDERR("%c", a);
+}
+
+
+void flushSerial()
+{
+
+    if (oobdIOHandle > -1 && outputCounter > 0) {
+	(void) write(oobdIOHandle, &outputBuffer, outputCounter);
+    } else {
+	DEBUGPRINT("socket closed ?!? \n","a");
+    }
+    outputCounter = 0;
+
 }
 
 void portControlThread(void *pvParameters)
