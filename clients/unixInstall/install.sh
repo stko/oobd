@@ -24,7 +24,7 @@ build-essential \
 clang \
 libsocketcan2 \
 libsocketcan-dev \
-openjdk-8-jre-headless \
+oracle-java8-jdk \
 joe \
 python-pip \
 libttspico-utils \
@@ -34,7 +34,9 @@ indent \
 bc \
 usbmount \
 hostapd \
-isc-dhcp-server
+isc-dhcp-server \
+autoconf \
+libconfig-dev
 
 ## begin bluetooth audio stuff (https://github.com/davidedg/NAS-mod-config/blob/master/bt-sound/bt-sound-Bluez5_PulseAudio5.txt)
 
@@ -186,11 +188,12 @@ if [ ! -f development.zip ]; then
 	wget  https://github.com/stko/oobd/archive/development.zip -O development.zip && unzip development.zip
 fi
 
+cp -r oobd-development/clients/unixInstall/tools/* ~/bin
+
+
 cd oobd-development/interface/Designs/POSIX/GCC/D3/app/ \
 && make \
 && cp OOBD_POSIX.bin ~/bin/oobd/fw
-
-cp -r oobd-development/clients/unixInstall/tools/* ~/bin
 
 cd ~/insttemp \
 && rm -r oobd-development
@@ -232,6 +235,33 @@ wget  https://github.com/hartkopp/can-isotp/archive/master.zip -O tmpfile \
 && cd can-isotp-master \
 && sudo make \
 && sudo make modules_install
+
+cd ~/insttemp 
+############### socketcand #############
+wget  https://github.com/dschanoeh/socketcand/archive/master.zip -O tmpfile \
+&& unzip tmpfile \
+&& cd socketcand-master \
+&& autoconf \
+&& ./configure --disable-init-script \
+&& make \
+&& sudo make install
+
+
+# don't foget to fix the socketcand parameters like here: https://superuser.com/a/728962
+
+
+
+cat << 'EOF' | sudo tee --append /etc/systemd/system/socketcand.service
+[Unit]
+Description=SocketCan Daemon 
+Wants=network.target
+
+[Service]
+ExecStart=/usr/local/bin/socketcand --interfaces can0 -d
+Restart=on-abort
+
+EOF
+
 
 # update module dependencies
 sudo depmod -a
@@ -446,6 +476,30 @@ EOF
 chmod a+x /home/pi/initoobd.sh
 
 
+cat << 'EOF' | tee --append /home/pi/startcan.sh
+#!/bin/bash
+# nicely descripted on https://developer.ridgerun.com/wiki/index.php/How_to_configure_and_use_CAN_bus
+
+if [ -z "$1" ]
+then
+	BUS=can0
+else
+	BUS="$1"
+fi
+if [ -z "$2" ]
+then
+	RATE=500000
+else
+	RATE="$2"
+fi
+
+sudo ifconfig $BUS down
+sudo ip link set $BUS type can bitrate $RATE triple-sampling on
+sudo ifconfig $BUS up
+EOF
+chmod a+x /home/pi/startcan.sh
+
+
 
 sudo systemctl enable triggeroobd 
 #sudo systemctl enable triggerusb0
@@ -459,7 +513,24 @@ sudo mv /var /var_org
 sudo mkdir /etc_rw
 sudo mkdir /var /var_rw
 
-echo "Installation finished"
-echo "to run oobd, goto $(pwd) and start oobdd.sh"
+cat << 'EOF'
+Installation finished
+
+SSH is enabled and the default password for the 'pi' user has not been changed.
+This is a security risk - please login as the 'pi' user and type 'passwd' to set a new password."
+
+Also this is the best chance now if you want to do some own modifications,
+as with the next reboot the image will be write protected
+
+if done, end this session with
+ 
+     sudo halt
+
+and your OOBD all-in-one is ready to use
+
+have fun :-)
+
+the OOBD team
+EOF
 
 
