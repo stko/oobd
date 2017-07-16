@@ -63,7 +63,7 @@ void endProgram(const char *msg)
 int oobdIOHandle = -1;
 int SocketConnected = 1;
 
-char outputBuffer[WRITEBUFFERSIZE];
+char socketBuffer[WRITEBUFFERSIZE];
 int outputCounter = 0;
 pthread_t pTcpControlThread;
 
@@ -73,7 +73,7 @@ void writeChar(char a)
 {
     /* Echo it back to the sender. */
     //! \bug Echo off is not supported yet
-    outputBuffer[outputCounter++] = a;
+    socketBuffer[outputCounter++] = a;
     if (outputCounter >= WRITEBUFFERSIZE) {
 	flushSerial();
     }
@@ -87,10 +87,12 @@ void writeChar(char a)
 void flushSerial()
 {
 
-    if (oobdIOHandle > -1 && outputCounter > 0) {
-	(void) write(oobdIOHandle, &outputBuffer, outputCounter);
+    if (oobdIOHandle > -1) {
+	if (outputCounter > 0) {
+	    (void) write(oobdIOHandle, &socketBuffer, outputCounter);
+	}
     } else {
-	DEBUGPRINT("socket closed ?!? \n","a");
+	DEBUGPRINT("socket closed ?!? \n", "a");
     }
     outputCounter = 0;
 

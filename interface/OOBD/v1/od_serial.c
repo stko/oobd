@@ -73,6 +73,8 @@ void inputRedirectTask(void *pvParameters)
 				 portMAX_DELAY)) {
 		//! \todo Warum wird hier unabhängig vom Echo-Status das Zeichen ausgegeben
 		printChar(ucRx);
+		if (ucRx == 13 || ucRx == 10)
+		    flushSerial();
 		if (ucRx != '\n') {	// suppress \n, as this char is not wanted
 		    msg = createMsg(&ucRx, 1);
 		    if (pdPASS != sendMsg(MSG_SERIAL_IN, inputQueue, msg)) {
