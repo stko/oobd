@@ -4,18 +4,20 @@ import sys, getopt , thread
 import re
 import ssl
 import time
-import serial
+import socket
+from uuid import getnode as get_mac
+import select
 from json import loads, dumps
 from base64 import encodestring,decodestring, b64decode, b64encode
 from pprint import pprint
 
 class kadaverSim(object):
 
-	def __init__(self,wsURL,connectID,serialPort):
-		self._wsURL=wsURL
-		self._connectID=connectID
-		self._serialPort=serialPort
-		sys.stderr.write("open "+wsURL+"\n")
+
+	def __init__(self,wsURL,connectID, host, port):
+
+
+
 
 		def on_error(ws, error):
 			print (error)
@@ -36,7 +38,7 @@ class kadaverSim(object):
 			try:
 				thisMsg=loads(message)
 				if "msg" in thisMsg:
-					self._serPortSocket.write(decodestring(thisMsg["msg"]).encode('utf-8'))
+					self._serPortSocket.send(decodestring(thisMsg["msg"]).encode('utf-8'))
 				if "echo" in thisMsg and "msg" in thisMsg:
 					thisMsg["echo"]="client"
 					thisMsg["reply"]=""
@@ -45,25 +47,77 @@ class kadaverSim(object):
 			except Exception as n:
 				print "Exception: " , n
 
-		self._wsSocket = websocket.WebSocketApp(wsURL,
-                              on_message = on_message,
-                              on_error = on_error,
-                              on_close = on_close)
-		if self._wsSocket is None:
-			raise AssertionError("could not open kadaver- Websocket!")
-		self._serPortSocket = serial.Serial(serialPort, 38400, timeout=10)
 
 		def serialThread(*args):
+			print ('serial:')
 			while True:
-				# from pySerial 3.0 onwards: nrOfChars=self._serPortSocket.in_waiting
-				nrOfChars=self._serPortSocket.inWaiting()
-				if nrOfChars>0:
-					_input = self._serPortSocket.read(nrOfChars)
-					if len(_input) > 0:
-						print ('Got:', _input)
-						self.send_kadaver_message(_input)
-				else:
-					time.sleep(0.01)
+				socket_list = [sys.stdin, self._serPortSocket]
+					
+				# Get the list sockets which are readable
+				read_sockets, write_sockets, error_sockets = select.select(socket_list , [], [])
+				print ('select:')
+					
+				for sock in read_sockets:
+					#incoming message from remote server
+					print ('Got-1:')
+					if sock == self._serPortSocket:
+						print ('Got-2:')
+						data = sock.recv(4096)
+						if data : # otherways the socket would be closed
+							sys.stdout.write(data)
+							print ('Got:', data)
+							self.send_kadaver_message(data)
+					else :
+						#msg = sys.stdin.readline()
+						#_serPortSocket.send(msg)
+						pass
+
+
+		def close_kadaver(self):
+			if not self._wsSocket is None:
+				sys.stderr.write("close kadaver\n")
+				self._wsSocket.close()
+
+
+
+		def _doLine(self):
+			if self._wsSocket is None:
+				raise AssertionError("_doLine: Websocket is not open!")
+			else:
+				try:
+					s = self._wsSocket.recv()          # read buffer
+					self._answer +=s
+				except Exception as e:
+					raise AssertionError("something went wrong :-("+repr(e)+"\n")
+			
+		### start the init- code itself	
+		self._wsURL=wsURL
+		self._connectID=connectID
+		sys.stderr.write("open "+wsURL+"\n")
+		self._wsSocket = websocket.WebSocketApp(wsURL,
+			on_message = on_message,
+			on_error = on_error,
+			on_close = on_close)
+		if self._wsSocket is None:
+			raise AssertionError("could not open kadaver- Websocket!")
+		
+		self._serPortSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		self._serPortSocket.settimeout(2)
+     
+		# connect to remote host
+		try :
+			self._serPortSocket.connect((host, port))
+		except :
+			raise AssertionError("could not open telnet port!")
+		
+
+		
+		
+		self._flush()
+
+
+
+
 
 		thread.start_new_thread(serialThread, ())
 		self._wsSocket.on_open = on_open
@@ -71,11 +125,7 @@ class kadaverSim(object):
 		# maybe I should just read the original documentaion more often first before googeling around ;-)
 		self._wsSocket.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
 
-	def close_kadaver(self):
-		if not self._wsSocket is None:
-			sys.stderr.write("close kadaver\n")
-			self._wsSocket.close()
-
+	
 	def send_kadaver_message(self,message):
 		thisMsg=loads('{ "reply" : "" , "channel" : "" }')
 		thisMsg["reply"]=b64encode(message)
@@ -86,59 +136,6 @@ class kadaverSim(object):
 			raise AssertionError("send_kadaver_message: Websocket is not open!")
 		self._wsSocket.send(dumps(thisMsg))      # write a string
 		sys.stderr.write("send msg:"+dumps(thisMsg))
-
-	def answer_should_match(self, expected_answer):
-		self._answer = ""
-		self._doLine()
-		try: # do a sanity check first, if the given string is really a well formed JSON string
-			pattern = loads(expected_answer)
-		except:
-			raise AssertionError("expected answer is not a valid JSON string!: "+expected_answer+"\n")
-		try: # do a sanity check first, if the received string is really a well formed JSON string
-			answer = loads(self._answer)
-		except:
-			raise AssertionError("RECEIVED answer is not a valid JSON string!: "+self._answer+"\n")
-		if not self.compareDicts(pattern, answer):
-			raise AssertionError("Expected answer to be '%s' but was '%s'."
-		  		% (expected_answer, self._answer))
-		return 'SUCCESS'
-
-
-	def compareDicts(self,patternDict, inputDict):
-		for attr, value in patternDict.items():
-			if not attr in inputDict:
-				return False
-			elif type(value) != type(inputDict[attr]):
-				return False
-			elif isinstance (value, dict) and not self.compareDicts(value,inputDict[attr]):
-				return False
-			else:
-				if isinstance( value, str) or isinstance( value, unicode) :
-					inputValue = inputDict[attr]
-					regCompareFlag=False
-					if value[:1]=="%":
-						regCompareFlag = True
-						value=value[1:]
-					if value[:1]=="#":
-						value=value[1:]
-						try:
-							inputValue=b64decode(inputValue).decode('utf-8')
-						except:
-							raise AssertionError("RECEIVED jason element " + attr + "is not a valid BASE64 string!: "+inputDict[attr]+"\n")
-							return False
-					if regCompareFlag:
-						matchObj = re.match( value , inputValue, re.M|re.I)
-						if not matchObj:
-							sys.stderr.write (" REGEX string compare for " + str(value) + "against " + str(inputValue) + " failed\n" )
-							return False
-					elif value != inputValue:
-						sys.stderr.write (" normal string compare for " + str(value) + " against " + str(inputValue) + " failed\n" )
-						return False
-
-				elif  value != inputDict[attr]:
-					sys.stderr.write ("other type, direct compare for " + str(value) + "against " +str(inputDict[attr]) + " failed\n" )
-					return False
-		return True
 			
 	def _flush(self):
 		if self._wsSocket is None:
@@ -153,38 +150,34 @@ class kadaverSim(object):
 					pass
 					#raise AssertionError("flush error :-("+repr(e)+"\n")
 
-	def _doLine(self):
-		if self._wsSocket is None:
-			raise AssertionError("_doLine: Websocket is not open!")
-		else:
-			try:
-				s = self._wsSocket.recv()          # read buffer
-				self._answer +=s
-			except Exception as e:
-				raise AssertionError("something went wrong :-("+repr(e)+"\n")
-			
+		
+		
 			
 def main(argv):
 	wsHost = 'wss://oobd.luxen.de/websockssl/'
-	connectID = '1234'
-	serialPort = '/tmp/DXM'
+	connectID = hex(get_mac())
+	telnetHost = 'localhost'
+	telnetPort = 1234
 	try:
-		opts, args = getopt.getopt(argv,"h:c:s:",["host=","connect-id=","serial-port="])
+		opts, args = getopt.getopt(argv,"h:c:d:p:",["host=","connect-id=","dongle-host=","dongle-port="])
 	except getopt.GetoptError:
-		print ("kadaverSim.py -h <ServerURL> -c <connectID>")
-		print ("kadaverSim.py --host=<ServerURL> --connect-id=<connectID>")
+		print ("kadaverSim.py -h <ServerURL> -c <connectID> -d <dongleHost> -p <donglePort>")
+		print ("kadaverSim.py --host=<ServerURL> --connect-id=<connectID> --dongle-host<dongleHost> --dongle-port<donglePort>")
 		sys.exit(2)
 	for opt, arg in opts:
-		if opt == '-h':
+		if opt in ("-h", "--host"):
 			wsHost = arg
 		elif opt in ("-c", "--connect-id"):
 			connectID = arg
-		elif opt in ("-s", "--serial-port"):
-			serialPort = arg
+		elif opt in ("-d", "--dongle-host"):
+			telnetHost = arg
+		elif opt in ("-s", "--dongle-port"):
+			telnetPort = int(arg)
 	print('connectID  is "', connectID ,'"')
 	print('wsHost is "', wsHost ,'"')
-	print('serial Port is "', serialPort ,'"')
-	mySocket= kadaverSim( wsHost, connectID , serialPort)
+	print('telnet host is "', telnetHost ,'"')
+	print('telnet Port is "', telnetPort ,'"')
+	mySocket= kadaverSim( wsHost, connectID , telnetHost, telnetPort)
 
 
 if __name__ == "__main__":
