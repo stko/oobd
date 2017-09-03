@@ -19,6 +19,7 @@ mkdir -p insttemp bin/oobd/oobdd bin/oobd/fw
 sudo mkdir /oobd
 cd insttemp
 sudo apt-get update --assume-yes
+sudo apt-get upgrade --assume-yes
 sudo apt-get install --assume-yes \
 build-essential \
 clang \
@@ -27,7 +28,6 @@ libsocketcan-dev \
 oracle-java8-jdk \
 joe \
 python-pip \
-libttspico-utils \
 can-utils \
 tofrodos \
 indent \
@@ -38,98 +38,17 @@ isc-dhcp-server \
 autoconf \
 libconfig-dev
 
-## begin bluetooth audio stuff (https://github.com/davidedg/NAS-mod-config/blob/master/bt-sound/bt-sound-Bluez5_PulseAudio5.txt)
+#not in raspian stretch anymore
+# libttspico-utils \
+# so we need to download and install it manually, until the package availabilty is fixed..
+wget http://ftp.de.debian.org/debian/pool/non-free/s/svox/libttspico-utils_1.0+git20130326-5_armhf.deb
+wget http://ftp.de.debian.org/debian/pool/non-free/s/svox/libttspico0_1.0+git20130326-5_armhf.deb
+sudo apt-get install  --assume-yes libttspico-data
+sudo apt install ./libttspico0_1.0+git20130326-5_armhf.deb   ./libttspico-utils_1.0+git20130326-5_armhf.deb
 
 
-#################################################################
-# INSTALL PACKAGES
-#################################################################
-	
-
-# Install BlueZ-5  and PulseAudio-5 with Bluetooth support:
-sudo apt-get --no-install-recommends  --assume-yes install pulseaudio pulseaudio-module-bluetooth bluez
-
-# If your dongle is a based on a BCM203x chipset, install the firmware
-sudo apt-get  --assume-yes bluez-firmware
-
-# Install MPlayer, along with some codecs, to later test audio output
-sudo apt-get  --assume-yes install mplayer
-
-
-
-
-#################################################################
-# BLUETOOTH/DBUS/PULSE PERMISSIONS
-#################################################################
-
-
-## Authorize users (each user that will be using PA must belong to group pulse-access)
-# Examples:
-sudo adduser root pulse-access
-sudo adduser pi pulse-access
-
-
-# Authorize PulseAudio - which will run as user pulse - to use BlueZ D-BUS interface:
-############################################################################
-cat << 'EOF' | sudo tee /etc/dbus-1/system.d/pulseaudio-bluetooth.conf
-<busconfig>
-
-  <policy user="pulse">
-    <allow send_destination="org.bluez"/>
-  </policy>
-
-</busconfig>
-EOF
-############################################################################
-
-
-
-
-#################################################################
-# CONFIGURE PULSEAUDIO
-#################################################################
-
-
-# Not strictly required, but you may need:
-# In /etc/pulse/daemon.conf  change "resample-method" to either:
-# trivial: lowest cpu, low quality
-# src-sinc-fastest: more cpu, good resampling
-# speex-fixed-N: N from 1 to 7, lower to higher CPU/quality
-
-
-# Load  Bluetooth discover module in SYSTEM MODE:
-############################################################################
-cat << 'EOF' | sudo tee --append /etc/pulse/system.pa
-#
-### Bluetooth Support
-.ifexists module-bluetooth-discover.so
-load-module module-bluetooth-discover
-.endif
-EOF
-############################################################################
-
-
-
-# Create a systemd service for running pulseaudio in System Mode as user "pulse".
-############################################################################
-cat << 'EOF' | sudo tee  /etc/systemd/system/pulseaudio.service
-[Unit]
-Description=Pulse Audio
-
-[Service]
-Type=simple
-ExecStart=/usr/bin/pulseaudio --system --disallow-exit --disable-shm --exit-idle-time=-1
-
-[Install]
-WantedBy=multi-user.target
-EOF
-############################################################################
-
-sudo systemctl daemon-reload
-sudo systemctl enable pulseaudio.service
-
-## end bluetooth audio stuff
-
+# Install stretch new alsa- Bluetooth bridge for BT  audio output to support the needed a2dp-sink profile
+sudo apt-get  --assume-yes install bluealsa
 
 
 ## begin unisonfs overlay file system (http://blog.pi3g.com/2014/04/make-raspbian-system-read-only/)
@@ -201,7 +120,8 @@ cd ~/insttemp \
 
 ############### raspbian kernel sources #############
 sudo wget https://raw.githubusercontent.com/notro/rpi-source/master/rpi-source  -O /usr/bin/rpi-source && sudo chmod +x /usr/bin/rpi-source && /usr/bin/rpi-source -q --tag-update
-sudo rpi-source 
+sudo rpi-source --skip-gcc
+
 
 
 ############### gs_usb driver #############
