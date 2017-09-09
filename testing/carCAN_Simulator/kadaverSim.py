@@ -16,9 +16,6 @@ class kadaverSim(object):
 
 	def __init__(self,wsURL,connectID, host, port):
 
-
-
-
 		def on_error(ws, error):
 			print (error)
 
@@ -38,12 +35,28 @@ class kadaverSim(object):
 			try:
 				thisMsg=loads(message)
 				if "msg" in thisMsg:
+					try:
+						self._serPortSocket
+					except:
+						self._serPortSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+						self._serPortSocket.settimeout(2)
+				
+						# connect to firmware telnet
+						try :
+							self._serPortSocket.connect((host, port))
+						except :
+							raise AssertionError("could not open telnet port!")
+		
 					self._serPortSocket.send(decodestring(thisMsg["msg"]).encode('utf-8'))
 				if "echo" in thisMsg and "msg" in thisMsg:
 					thisMsg["echo"]="client"
 					thisMsg["reply"]=""
 					thisMsg.pop("msg", None)
 					self._wsSocket.send(dumps(thisMsg))
+				if "status" in thisMsg:
+					print ("disconnect from client")
+					if thisMsg["status"]=="disconnect":
+						self.close_serial()
 			except Exception as n:
 				print "Exception: " , n
 
@@ -51,26 +64,30 @@ class kadaverSim(object):
 		def serialThread(*args):
 			print ('serial:')
 			while True:
-				socket_list = [sys.stdin, self._serPortSocket]
-					
-				# Get the list sockets which are readable
-				read_sockets, write_sockets, error_sockets = select.select(socket_list , [], [])
-				print ('select:')
-					
-				for sock in read_sockets:
-					#incoming message from remote server
-					print ('Got-1:')
-					if sock == self._serPortSocket:
-						print ('Got-2:')
-						data = sock.recv(4096)
-						if data : # otherways the socket would be closed
-							sys.stdout.write(data)
-							print ('Got:', data)
-							self.send_kadaver_message(data)
-					else :
-						#msg = sys.stdin.readline()
-						#_serPortSocket.send(msg)
-						pass
+				try:
+					self._serPortSocket
+					socket_list = [sys.stdin, self._serPortSocket]
+						
+					# Get the list sockets which are readable
+					read_sockets, write_sockets, error_sockets = select.select(socket_list , [], [])
+					print ('select:')
+						
+					for sock in read_sockets:
+						#incoming message from remote server
+						print ('Got-1:')
+						if sock == self._serPortSocket:
+							print ('Got-2:')
+							data = sock.recv(4096)
+							if data : # otherways the socket would be closed
+								sys.stdout.write(data)
+								print ('Got:', data)
+								self.send_kadaver_message(data)
+						else :
+							#msg = sys.stdin.readline()
+							#_serPortSocket.send(msg)
+							pass
+				except:
+					time.sleep(0.1)
 
 
 		def close_kadaver(self):
@@ -101,18 +118,6 @@ class kadaverSim(object):
 		if self._wsSocket is None:
 			raise AssertionError("could not open kadaver- Websocket!")
 		
-		self._serPortSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		self._serPortSocket.settimeout(2)
-     
-		# connect to remote host
-		try :
-			self._serPortSocket.connect((host, port))
-		except :
-			raise AssertionError("could not open telnet port!")
-		
-
-		
-		
 		self._flush()
 
 
@@ -124,6 +129,17 @@ class kadaverSim(object):
 		# disable SSL cert check finally found on https://pypi.python.org/pypi/websocket-client/
 		# maybe I should just read the original documentaion more often first before googeling around ;-)
 		self._wsSocket.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE})
+
+	def close_serial(self):
+		try:
+			self._serPortSocket
+			self._serPortSocket.close()
+			print ("close dongle telnet")
+			del(self._serPortSocket)
+		except:
+			print("Can't close serial socket")
+			pass
+
 
 	
 	def send_kadaver_message(self,message):

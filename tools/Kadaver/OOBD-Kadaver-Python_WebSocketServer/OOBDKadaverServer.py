@@ -1,4 +1,6 @@
 '''
+https://github.com/dpallot/simple-websocket-server
+
 The MIT License (MIT)
 
 Copyright (c) 2013 Dave P.
@@ -39,47 +41,71 @@ class SimpleEcho(WebSocket):
 
 class SimpleChat(WebSocket):
 
-   def handleMessage(self):
-      if self.data is not None:
-	try:
-		thisMsg=loads(str(self.data))
-		print 'message: '+str(self.data)
-		try:
-			thisMsg['reply'] # checks if variable exists
-			thiscmd=decodestring(thisMsg['reply'])
-			thiscmd.replace("\r","\n")
-			print decodestring(thisMsg['channel'])+"<"+thiscmd+"\n"
-			self.channel='r'+thisMsg['channel']
-			prefix="s"
-		except Exception as n:
-			thiscmd=decodestring(thisMsg['msg'])
-			thiscmd.replace("\r","\n")
-			print decodestring(thisMsg['channel'])+">"+thiscmd+"\n"
-			self.channel='s'+thisMsg['channel']
-			prefix="r"
-		for client in self.server.connections.itervalues():
-#			print 'actual client: '+ client.channel
+	def handleMessage(self):
+		if self.data is not None:
 			try:
-				if client != self and client.channel == prefix+thisMsg['channel'] :
-					client.sendMessage(str(self.data))
+				thisMsg=loads(str(self.data))
+				print 'message: '+str(self.data)
+				try:
+					thisMsg['reply'] # checks if variable exists
+					thiscmd=decodestring(thisMsg['reply'])
+					thiscmd.replace("\r","\n")
+					print decodestring(thisMsg['channel'])+"<"+thiscmd+"\n"
+					self.channel='r'+thisMsg['channel']
+					prefix="s"
+				except Exception as n:
+					thiscmd=decodestring(thisMsg['msg'])
+					thiscmd.replace("\r","\n")
+					print decodestring(thisMsg['channel'])+">"+thiscmd+"\n"
+					self.channel='s'+thisMsg['channel']
+					prefix="r"
+				for client in self.server.connections.itervalues():
+			#			print 'actual client: '+ client.channel
+					try:
+						if client != self and client.channel == prefix+thisMsg['channel'] :
+							client.sendMessage(str(self.data))
+					except Exception as n:
+						print "Send Exception: " ,n
 			except Exception as n:
-				print "Send Exception: " ,n
-	except Exception as n:
-		print "Exception: " , n
+				print "Exception: " , n
 
 
 
-   def handleConnected(self):
-      print self.address, 'connected'
- 
-   def handleClose(self):
-      print self.address, 'closed'
+	def handleConnected(self):
+		print self.address, 'connected'
+		# we can't sent a connect message, as in the moment of connection the client didn't sent his channel yet,
+		# so we don't know to where the connect message should go to
+		
+	def handleClose(self):
+		print self.address, 'closed'
+		channel=""
+		for client in self.server.connections.itervalues():
+			if client.address==self.address:
+				channel=client.channel[1:]
+				print channel , 'channel closed'
+		userCount=0
+		for client in self.server.connections.itervalues():
+			if client != self and client.channel == 's'+channel :
+				userCount+=1
+		print userCount , 'usercount'
+		if userCount<1:
+			for client in self.server.connections.itervalues():
+	#			print 'actual client: '+ client.channel
+				try:
+					if client != self and client.channel == 'r'+channel :
+						thisMsg={}
+						thisMsg['status']='disconnect'
+						client.sendMessage(dumps(thisMsg))
+						print channel , 'send close message'
+				except Exception as n:
+					print "Send Exception: " ,n
+	
  
 
 if __name__ == "__main__":
 
    parser = OptionParser(usage="usage: %prog [options]", version="%prog 1.0")
-   parser.add_option("--host", default='', type='string', action="store", dest="host", help="hostname (localhost)")
+   parser.add_option("--host", default='localhost', type='string', action="store", dest="host", help="hostname (localhost)")
    parser.add_option("--port", default=9000, type='int', action="store", dest="port", help="port (9000)")
    parser.add_option("--example", default='chat', type='string', action="store", dest="example", help="echo, chat")
    parser.add_option("--ssl", default=0, type='int', action="store", dest="ssl", help="ssl (1: on, 0: off (default))")
