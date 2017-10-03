@@ -16,12 +16,15 @@ if [ ! -f oobdd.zip ]; then
 	exit 1 
 fi
 mkdir -p insttemp bin/oobd/oobdd bin/oobd/fw
-sudo mkdir /oobd
+sudo mkdir /oobd /media/usb0 /media/usb1 /media/usb2 /media/usb3 
+
 cd insttemp
 sudo apt-get update --assume-yes
 sudo apt-get upgrade --assume-yes
 sudo apt-get install --assume-yes \
 build-essential \
+libtool \
+autotools-dev \
 clang \
 libsocketcan2 \
 libsocketcan-dev \
@@ -46,7 +49,6 @@ wget http://ftp.de.debian.org/debian/pool/non-free/s/svox/libttspico0_1.0+git201
 sudo apt-get install  --assume-yes libttspico-data
 sudo apt install ./libttspico0_1.0+git20130326-5_armhf.deb   ./libttspico-utils_1.0+git20130326-5_armhf.deb
 
-
 # Install stretch new alsa- Bluetooth bridge for BT  audio output to support the needed a2dp-sink profile
 sudo apt-get  --assume-yes install bluealsa
 
@@ -60,7 +62,6 @@ sudo apt-get  --assume-yes install bluealsa
 # update-rc.d dphys-swapfile disable
 
 
-# Install MPlayer, along with some codecs, to later test audio output
 sudo apt-get  --assume-yes install unionfs-fuse
 
 
@@ -117,10 +118,27 @@ cd oobd-development/interface/Designs/POSIX/GCC/D3/app/ \
 cd ~/insttemp \
 && rm -r oobd-development
 
+################# backport of the older bluez packages part 1/2 ################
+########## do we need these addititioal source packs for the manual bluez build or not? - Better install before the rpi-source call..
+sudo apt-get install -y libusb-dev libdbus-1-dev libglib2.0-dev libudev-dev libical-dev libreadline-dev
+
+
+
 
 ############### raspbian kernel sources #############
 sudo wget https://raw.githubusercontent.com/notro/rpi-source/master/rpi-source  -O /usr/bin/rpi-source && sudo chmod +x /usr/bin/rpi-source && /usr/bin/rpi-source -q --tag-update
 sudo rpi-source --skip-gcc
+
+
+################# backport of the older bluez packages part 2/2 ################
+######## manual overwrite the installed bluetooth with an older version
+wget https://git.kernel.org/pub/scm/bluetooth/bluez.git/snapshot/bluez-5.23.tar.gz
+tar -xvf bluez-5.23.tar.gz
+cd bluez-5.23
+./bootstrap
+./configure --prefix=/usr --mandir=/usr/share/man --sysconfdir=/etc --localstatedir=/var
+make
+sudo make install
 
 
 
