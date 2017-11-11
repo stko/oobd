@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="100" unitdist="mil" unit="mil" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="50" unitdist="mil" unit="mil" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="12" fill="1" visible="no" active="no"/>
@@ -28273,13 +28273,13 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <part name="GND38" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="+3V10" library="supply1" deviceset="+3V3" device=""/>
 <part name="GPIO" library="pizero" deviceset="PIZERO_THROUGH_HOLE" device=""/>
-<part name="U3" library="microbuilder" deviceset="AUDIOAMP_MAX98357" device=""/>
+<part name="U3" library="microbuilder" deviceset="AUDIOAMP_MAX98357" device="" value="MAX98357"/>
 <part name="U$3" library="micro-stm_v3" deviceset="STM32F042C*T" device=""/>
 <part name="P+1" library="supply1" deviceset="+5V" device=""/>
 <part name="GND10" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="C1" library="rcl" deviceset="C-EU" device="C0603K" value="100nF"/>
 <part name="C4" library="rcl" deviceset="C-EU" device="C0805K" value="10uF"/>
-<part name="JP1" library="jumper" deviceset="JP1Q" device=""/>
+<part name="JP1" library="jumper" deviceset="JP1Q" device="" value="Audio-Out"/>
 <part name="GND13" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="+3V1" library="supply1" deviceset="+3V3" device=""/>
 <part name="GND1" library="supply1" deviceset="GND" device="" value=""/>
@@ -28305,7 +28305,7 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <part name="+3V4" library="supply1" deviceset="+3V3" device=""/>
 <part name="C9" library="resistor" deviceset="C-EU" device="C0603" value="100nF"/>
 <part name="R15" library="rcl" deviceset="R-EU_" device="R0603" value="330R"/>
-<part name="JP2" library="jumper" deviceset="JP4E" device=""/>
+<part name="JP2" library="jumper" deviceset="JP4E" device="" value="Prog0_IO"/>
 <part name="+3V5" library="supply1" deviceset="+3V3" device=""/>
 <part name="GND24" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="U$2" library="micro-stm_v3" deviceset="STM32F042C*T" device=""/>
@@ -28413,7 +28413,7 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <part name="GND68" library="supply1" deviceset="GND" device="" value=""/>
 <part name="GND69" library="supply1" deviceset="GND" device="" value=""/>
 <part name="GND70" library="supply1" deviceset="GND" device="" value=""/>
-<part name="JP4" library="jumper" deviceset="JP2E" device=""/>
+<part name="JP4" library="jumper" deviceset="JP2E" device="" value="UART"/>
 <part name="R44" library="rcl" deviceset="R-EU_" device="R0603" value="NI"/>
 <part name="+3V14" library="supply1" deviceset="+3V3" device=""/>
 <part name="R30" library="resistor" deviceset="R-EU_" device="R0603" value="NI(0R)"/>
@@ -28429,7 +28429,7 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <part name="C32" library="rcl" deviceset="C-EU" device="C0603" value="10uF/6.3V"/>
 <part name="PP22" library="testpad" deviceset="PTR1" device="PAD1-11" value="PTR1PAD1-11"/>
 <part name="PP23" library="testpad" deviceset="PTR1" device="PAD1-11" value="PTR1PAD1-11"/>
-<part name="JP5" library="jumper" deviceset="JP1E" device=""/>
+<part name="JP5" library="jumper" deviceset="JP1E" device="" value="Prog2_IO"/>
 <part name="OOBD2-CONNECTOR1" library="pinhead" deviceset="PINHD-2X5" device="/90" value="In-Car Diagnostic"/>
 <part name="GND28" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="P+11" library="supply1" deviceset="+12V" device=""/>
@@ -29360,13 +29360,13 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <wire x1="7.62" y1="253.492" x2="249.428" y2="253.492" width="0.4064" layer="94" style="longdash"/>
 <wire x1="7.62" y1="175.768" x2="7.62" y2="253.492" width="0.4064" layer="94" style="longdash"/>
 <wire x1="249.428" y1="175.768" x2="249.428" y2="253.492" width="0.4064" layer="94" style="longdash"/>
-<text x="10.16" y="246.38" size="5.08" layer="94">USB2-HOST (extern)</text>
+<text x="10.16" y="246.38" size="5.08" layer="94">USB-HOST</text>
 <text x="121.92" y="226.06" size="1.778" layer="91">1000mA</text>
 <wire x1="7.62" y1="94.488" x2="249.428" y2="94.488" width="0.4064" layer="94" style="longdash"/>
 <wire x1="7.62" y1="172.212" x2="249.428" y2="172.212" width="0.4064" layer="94" style="longdash"/>
 <wire x1="7.62" y1="94.488" x2="7.62" y2="172.212" width="0.4064" layer="94" style="longdash"/>
 <wire x1="249.428" y1="94.488" x2="249.428" y2="172.212" width="0.4064" layer="94" style="longdash"/>
-<text x="10.16" y="165.1" size="5.08" layer="94">USB3-HOST (intern)</text>
+<text x="10.16" y="165.1" size="5.08" layer="94">USB-OTG</text>
 <wire x1="7.62" y1="91.44" x2="248.92" y2="91.44" width="0.4064" layer="94" style="longdash"/>
 <wire x1="7.62" y1="7.62" x2="248.92" y2="7.62" width="0.4064" layer="94" style="longdash"/>
 <wire x1="7.62" y1="7.62" x2="7.62" y2="91.44" width="0.4064" layer="94" style="longdash"/>
@@ -29905,34 +29905,6 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <label x="228.6" y="200.66" size="1.27" layer="95" xref="yes"/>
 </segment>
 </net>
-<net name="USB3_DM" class="0">
-<segment>
-<pinref part="U$5" gate="G$1" pin="DM4"/>
-<wire x1="88.9" y1="38.1" x2="114.3" y2="38.1" width="0.1524" layer="91"/>
-<label x="88.9" y="38.1" size="1.27" layer="95" rot="R180" xref="yes"/>
-</segment>
-<segment>
-<pinref part="USB_HOST2" gate="G$1" pin="2"/>
-<wire x1="30.48" y1="149.86" x2="60.96" y2="149.86" width="0.1524" layer="91"/>
-<wire x1="60.96" y1="149.86" x2="60.96" y2="121.92" width="0.1524" layer="91"/>
-<pinref part="R30" gate="G$1" pin="1"/>
-<wire x1="114.3" y1="121.92" x2="60.96" y2="121.92" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="USB3_DP" class="0">
-<segment>
-<pinref part="U$5" gate="G$1" pin="DP4"/>
-<wire x1="114.3" y1="35.56" x2="88.9" y2="35.56" width="0.1524" layer="91"/>
-<label x="88.9" y="35.56" size="1.27" layer="95" rot="R180" xref="yes"/>
-</segment>
-<segment>
-<pinref part="USB_HOST2" gate="G$1" pin="3"/>
-<wire x1="30.48" y1="147.32" x2="58.42" y2="147.32" width="0.1524" layer="91"/>
-<wire x1="58.42" y1="147.32" x2="58.42" y2="116.84" width="0.1524" layer="91"/>
-<pinref part="R31" gate="G$1" pin="1"/>
-<wire x1="114.3" y1="116.84" x2="58.42" y2="116.84" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="PP23" class="0">
 <segment>
 <pinref part="U$5" gate="G$1" pin="DM0"/>
@@ -30148,6 +30120,24 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <wire x1="287.02" y1="208.28" x2="287.02" y2="198.12" width="0.1524" layer="91"/>
 <wire x1="287.02" y1="198.12" x2="353.06" y2="198.12" width="0.1524" layer="91"/>
 <label x="353.06" y="198.12" size="1.778" layer="95" xref="yes"/>
+</segment>
+</net>
+<net name="N$38" class="0">
+<segment>
+<pinref part="R30" gate="G$1" pin="1"/>
+<wire x1="114.3" y1="121.92" x2="52.07" y2="121.92" width="0.1524" layer="91"/>
+<wire x1="52.07" y1="121.92" x2="52.07" y2="149.86" width="0.1524" layer="91"/>
+<pinref part="USB_HOST2" gate="G$1" pin="2"/>
+<wire x1="52.07" y1="149.86" x2="30.48" y2="149.86" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$43" class="0">
+<segment>
+<pinref part="R31" gate="G$1" pin="1"/>
+<wire x1="114.3" y1="116.84" x2="49.53" y2="116.84" width="0.1524" layer="91"/>
+<wire x1="49.53" y1="116.84" x2="49.53" y2="147.32" width="0.1524" layer="91"/>
+<pinref part="USB_HOST2" gate="G$1" pin="3"/>
+<wire x1="49.53" y1="147.32" x2="30.48" y2="147.32" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
@@ -31071,6 +31061,35 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 </nets>
 </sheet>
 </sheets>
+<errors>
+<approved hash="104,1,139.7,96.52,U2,VDD,+3V3,,,"/>
+<approved hash="104,1,139.7,99.06,U2,VSS,GND,,,"/>
+<approved hash="104,1,139.7,210.82,U1,VDD,+3V3,,,"/>
+<approved hash="104,1,139.7,213.36,U1,VSS,GND,,,"/>
+<approved hash="104,3,121.92,27.94,BAT1,-,GND,,,"/>
+<approved hash="104,3,121.92,38.1,BAT1,+,VBAT,,,"/>
+<approved hash="104,3,76.2,205.74,U3,VDD,+5V,,,"/>
+<approved hash="104,1,248.92,213.36,U$3,VDD1,+3V3,,,"/>
+<approved hash="104,1,248.92,210.82,U$3,VDD2,+3V3,,,"/>
+<approved hash="104,1,248.92,205.74,U$3,VDDA,+3V3,,,"/>
+<approved hash="104,1,248.92,200.66,U$3,VDDIO2,+3V3,,,"/>
+<approved hash="104,1,248.92,195.58,U$3,VBAT,+3V3,,,"/>
+<approved hash="104,1,264.16,228.6,U$3,VSS1,GND,,,"/>
+<approved hash="104,1,266.7,228.6,U$3,VSS2,GND,,,"/>
+<approved hash="104,1,269.24,228.6,U$3,VSS3,GND,,,"/>
+<approved hash="104,1,271.78,228.6,U$3,VSSA,GND,,,"/>
+<approved hash="104,1,248.92,99.06,U$2,VDD1,+3V3,,,"/>
+<approved hash="104,1,248.92,96.52,U$2,VDD2,+3V3,,,"/>
+<approved hash="104,1,248.92,91.44,U$2,VDDA,+3V3,,,"/>
+<approved hash="104,1,248.92,86.36,U$2,VDDIO2,+3V3,,,"/>
+<approved hash="104,1,248.92,81.28,U$2,VBAT,+3V3,,,"/>
+<approved hash="104,1,264.16,114.3,U$2,VSS1,GND,,,"/>
+<approved hash="104,1,266.7,114.3,U$2,VSS2,GND,,,"/>
+<approved hash="104,1,269.24,114.3,U$2,VSS3,GND,,,"/>
+<approved hash="104,1,271.78,114.3,U$2,VSSA,GND,,,"/>
+<approved hash="104,3,256.54,200.66,IC11,VCC,+5V,,,"/>
+<approved hash="104,2,157.48,233.68,U4,IN,+5V,,,"/>
+</errors>
 </schematic>
 </drawing>
 <compatibility>
