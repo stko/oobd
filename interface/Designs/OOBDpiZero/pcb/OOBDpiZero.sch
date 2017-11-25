@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="7.2.0">
+<eagle version="7.6.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="50" unitdist="mil" unit="mil" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
 <layer number="2" name="Route2" color="12" fill="1" visible="no" active="no"/>
@@ -29867,16 +29867,6 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <pinref part="C25" gate="G$1" pin="1"/>
 </segment>
 </net>
-<net name="N$49" class="0">
-<segment>
-<pinref part="USB_HOST2" gate="G$1" pin="5"/>
-<pinref part="USB_HOST2" gate="G$1" pin="5"/>
-<wire x1="30.48" y1="142.24" x2="33.02" y2="142.24" width="0.1524" layer="91"/>
-<wire x1="33.02" y1="142.24" x2="33.02" y2="124.46" width="0.1524" layer="91"/>
-<pinref part="L7" gate="G$1" pin="2"/>
-<junction x="30.48" y="142.24"/>
-</segment>
-</net>
 <net name="USB2_DM" class="0">
 <segment>
 <pinref part="U$5" gate="G$1" pin="DM3"/>
@@ -30138,6 +30128,15 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <wire x1="49.53" y1="116.84" x2="49.53" y2="147.32" width="0.1524" layer="91"/>
 <pinref part="USB_HOST2" gate="G$1" pin="3"/>
 <wire x1="49.53" y1="147.32" x2="30.48" y2="147.32" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$44" class="0">
+<segment>
+<pinref part="USB_HOST2" gate="G$1" pin="5"/>
+<pinref part="USB_HOST2" gate="G$1" pin="5"/>
+<pinref part="L7" gate="G$1" pin="2"/>
+<wire x1="30.48" y1="142.24" x2="33.02" y2="142.24" width="0.1524" layer="91"/>
+<wire x1="33.02" y1="142.24" x2="33.02" y2="124.46" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
