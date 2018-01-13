@@ -237,7 +237,7 @@
 <pin name="SS" x="-12.7" y="-2.54" length="middle"/>
 <pin name="SW" x="12.7" y="0" length="middle" rot="R180"/>
 <text x="-7.62" y="5.334" size="1.778" layer="95">&gt;NAME</text>
-<text x="-7.62" y="-10.16" size="1.778" layer="98">&gt;VALUE</text>
+<text x="-7.62" y="-10.16" size="1.778" layer="96">&gt;VALUE</text>
 </symbol>
 <symbol name="SY6280">
 <wire x1="-10.16" y1="0" x2="-10.16" y2="-10.16" width="0.254" layer="94"/>
@@ -254,7 +254,7 @@
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="MP1482" prefix="U">
+<deviceset name="MP1482" prefix="U" uservalue="yes">
 <gates>
 <gate name="G$1" symbol="MP1482" x="0" y="0"/>
 </gates>
@@ -24185,26 +24185,14 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <library name="pizero">
 <packages>
 <package name="PIZERO_THOUGH_HOLE">
-<wire x1="0" y1="3" x2="3" y2="0" width="0" layer="20" curve="90"/>
-<wire x1="3" y1="0" x2="62" y2="0" width="0" layer="20"/>
-<wire x1="62" y1="0" x2="65" y2="3" width="0" layer="20" curve="90"/>
-<wire x1="65" y1="3" x2="65" y2="27" width="0" layer="20"/>
-<wire x1="65" y1="27" x2="62" y2="30" width="0" layer="20" curve="90"/>
-<wire x1="62" y1="30" x2="3" y2="30" width="0" layer="20"/>
-<wire x1="3" y1="30" x2="0" y2="27" width="0" layer="20" curve="90"/>
-<hole x="3.5" y="3.5" drill="2.8"/>
-<hole x="3.5" y="26.5" drill="2.8"/>
-<hole x="61.5" y="26.5" drill="2.8"/>
-<hole x="61.5" y="3.5" drill="2.8"/>
-<circle x="3.5" y="26.5" radius="1.55" width="3.1" layer="41"/>
-<circle x="61.5" y="26.5" radius="1.55" width="3.1" layer="41"/>
-<circle x="61.5" y="3.5" radius="1.55" width="3.1" layer="41"/>
-<circle x="3.5" y="3.5" radius="1.55" width="3.1" layer="41"/>
-<circle x="3.5" y="3.5" radius="1.55" width="3.1" layer="42"/>
-<circle x="3.5" y="26.5" radius="1.55" width="3.1" layer="42"/>
-<circle x="61.5" y="3.5" radius="1.55" width="3.1" layer="42"/>
-<circle x="61.5" y="26.5" radius="1.55" width="3.1" layer="42"/>
-<wire x1="0" y1="27" x2="0" y2="3" width="0" layer="20"/>
+<wire x1="0" y1="3" x2="3" y2="0" width="0" layer="21" curve="90"/>
+<wire x1="3" y1="0" x2="62" y2="0" width="0" layer="21"/>
+<wire x1="62" y1="0" x2="65" y2="3" width="0" layer="21" curve="90"/>
+<wire x1="65" y1="3" x2="65" y2="27" width="0" layer="21"/>
+<wire x1="65" y1="27" x2="62" y2="30" width="0" layer="21" curve="90"/>
+<wire x1="62" y1="30" x2="3" y2="30" width="0" layer="21"/>
+<wire x1="3" y1="30" x2="0" y2="27" width="0" layer="21" curve="90"/>
+<wire x1="0" y1="27" x2="0" y2="3" width="0" layer="21"/>
 <wire x1="7.705" y1="28.96" x2="8.975" y2="28.96" width="0.1524" layer="21"/>
 <wire x1="8.975" y1="28.96" x2="9.61" y2="28.325" width="0.1524" layer="21"/>
 <wire x1="9.61" y1="28.325" x2="10.245" y2="28.96" width="0.1524" layer="21"/>
@@ -24410,6 +24398,10 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 <text x="7.832" y="22.229" size="1.27" layer="21" ratio="10">1</text>
 <text x="37.55" y="22.229" size="1.27" layer="27" ratio="10">&gt;VALUE</text>
 <text x="19.77" y="22.229" size="1.27" layer="25" ratio="10">&gt;NAME</text>
+<circle x="3.4925" y="26.51125" radius="1.41323125" width="0.127" layer="21"/>
+<circle x="3.4925" y="3.4925" radius="1.41323125" width="0.127" layer="21"/>
+<circle x="61.515625" y="3.4925" radius="1.41323125" width="0.127" layer="21"/>
+<circle x="61.515625" y="26.51125" radius="1.41323125" width="0.127" layer="21"/>
 </package>
 </packages>
 <symbols>
@@ -24503,7 +24495,7 @@ Source: http://www.mouser.com/ds/2/392/products_18-2245.pdf</description>
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="PIZERO_THROUGH_HOLE">
+<deviceset name="PIZERO_THROUGH_HOLE" prefix="JP" uservalue="yes">
 <gates>
 <gate name="1" symbol="RPI" x="0" y="0"/>
 </gates>
@@ -28268,7 +28260,7 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <part name="GND37" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="GND38" library="supply1" deviceset="GND" device="" value="GND"/>
 <part name="+3V10" library="supply1" deviceset="+3V3" device=""/>
-<part name="GPIO" library="pizero" deviceset="PIZERO_THROUGH_HOLE" device=""/>
+<part name="GPIO" library="pizero" deviceset="PIZERO_THROUGH_HOLE" device="" value="OOBDpiZero"/>
 <part name="U1" library="microbuilder" deviceset="AUDIOAMP_MAX98357" device="" value="MAX98357"/>
 <part name="U$100" library="micro-stm_v3" deviceset="STM32F042C*T" device=""/>
 <part name="P+1" library="supply1" deviceset="+5V" device=""/>
@@ -31019,20 +31011,6 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <junction x="116.84" y="203.2"/>
 </segment>
 </net>
-<net name="HS-CAN_RS" class="0">
-<segment>
-<pinref part="GPIO" gate="1" pin="35"/>
-<wire x1="233.68" y1="104.14" x2="215.9" y2="104.14" width="0.1524" layer="91"/>
-<label x="215.9" y="104.14" size="1.27" layer="95" rot="R180" xref="yes"/>
-</segment>
-</net>
-<net name="MS-CAN_RS" class="0">
-<segment>
-<pinref part="GPIO" gate="1" pin="36"/>
-<wire x1="248.92" y1="104.14" x2="266.7" y2="104.14" width="0.1524" layer="91"/>
-<label x="266.7" y="104.14" size="1.27" layer="95" xref="yes"/>
-</segment>
-</net>
 <net name="N$50" class="0">
 <segment>
 <pinref part="IC100" gate="G$1" pin="OUT1"/>
@@ -31053,33 +31031,34 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 </sheet>
 </sheets>
 <errors>
-<approved hash="104,1,139.7,96.52,U2,VDD,+3V3,,,"/>
-<approved hash="104,1,139.7,99.06,U2,VSS,GND,,,"/>
-<approved hash="104,1,139.7,210.82,U1,VDD,+3V3,,,"/>
-<approved hash="104,1,139.7,213.36,U1,VSS,GND,,,"/>
-<approved hash="104,3,121.92,27.94,BAT1,-,GND,,,"/>
-<approved hash="104,3,121.92,38.1,BAT1,+,VBAT,,,"/>
-<approved hash="104,3,76.2,205.74,U3,VDD,+5V,,,"/>
-<approved hash="104,1,248.92,213.36,U$3,VDD1,+3V3,,,"/>
-<approved hash="104,1,248.92,210.82,U$3,VDD2,+3V3,,,"/>
-<approved hash="104,1,248.92,205.74,U$3,VDDA,+3V3,,,"/>
-<approved hash="104,1,248.92,200.66,U$3,VDDIO2,+3V3,,,"/>
-<approved hash="104,1,248.92,195.58,U$3,VBAT,+3V3,,,"/>
-<approved hash="104,1,264.16,228.6,U$3,VSS1,GND,,,"/>
-<approved hash="104,1,266.7,228.6,U$3,VSS2,GND,,,"/>
-<approved hash="104,1,269.24,228.6,U$3,VSS3,GND,,,"/>
-<approved hash="104,1,271.78,228.6,U$3,VSSA,GND,,,"/>
-<approved hash="104,1,248.92,99.06,U$2,VDD1,+3V3,,,"/>
-<approved hash="104,1,248.92,96.52,U$2,VDD2,+3V3,,,"/>
-<approved hash="104,1,248.92,91.44,U$2,VDDA,+3V3,,,"/>
-<approved hash="104,1,248.92,86.36,U$2,VDDIO2,+3V3,,,"/>
-<approved hash="104,1,248.92,81.28,U$2,VBAT,+3V3,,,"/>
-<approved hash="104,1,264.16,114.3,U$2,VSS1,GND,,,"/>
-<approved hash="104,1,266.7,114.3,U$2,VSS2,GND,,,"/>
-<approved hash="104,1,269.24,114.3,U$2,VSS3,GND,,,"/>
-<approved hash="104,1,271.78,114.3,U$2,VSSA,GND,,,"/>
-<approved hash="104,3,256.54,200.66,IC11,VCC,+5V,,,"/>
-<approved hash="104,2,157.48,233.68,U4,IN,+5V,,,"/>
+<approved hash="104,1,139.7,96.52,U101,VDD,+3V3,,,"/>
+<approved hash="104,1,139.7,99.06,U101,VSS,GND,,,"/>
+<approved hash="104,1,139.7,210.82,U102,VDD,+3V3,,,"/>
+<approved hash="104,1,139.7,213.36,U102,VSS,GND,,,"/>
+<approved hash="104,3,121.92,27.94,BAT100,-,GND,,,"/>
+<approved hash="104,3,121.92,38.1,BAT100,+,VBAT,,,"/>
+<approved hash="104,3,76.2,205.74,U1,VDD,+5V,,,"/>
+<approved hash="104,1,248.92,213.36,U$100,VDD1,+3V3,,,"/>
+<approved hash="104,1,248.92,210.82,U$100,VDD2,+3V3,,,"/>
+<approved hash="104,1,248.92,205.74,U$100,VDDA,+3V3,,,"/>
+<approved hash="104,1,248.92,200.66,U$100,VDDIO2,+3V3,,,"/>
+<approved hash="104,1,248.92,195.58,U$100,VBAT,+3V3,,,"/>
+<approved hash="104,1,264.16,228.6,U$100,VSS1,GND,,,"/>
+<approved hash="104,1,266.7,228.6,U$100,VSS2,GND,,,"/>
+<approved hash="104,1,269.24,228.6,U$100,VSS3,GND,,,"/>
+<approved hash="104,1,271.78,228.6,U$100,VSSA,GND,,,"/>
+<approved hash="104,1,248.92,99.06,U$102,VDD1,+3V3,,,"/>
+<approved hash="104,1,248.92,96.52,U$102,VDD2,+3V3,,,"/>
+<approved hash="104,1,248.92,91.44,U$102,VDDA,+3V3,,,"/>
+<approved hash="104,1,248.92,86.36,U$102,VDDIO2,+3V3,,,"/>
+<approved hash="104,1,248.92,81.28,U$102,VBAT,+3V3,,,"/>
+<approved hash="104,1,264.16,114.3,U$102,VSS1,GND,,,"/>
+<approved hash="104,1,266.7,114.3,U$102,VSS2,GND,,,"/>
+<approved hash="104,1,269.24,114.3,U$102,VSS3,GND,,,"/>
+<approved hash="104,1,271.78,114.3,U$102,VSSA,GND,,,"/>
+<approved hash="104,3,256.54,200.66,IC1,VCC,+5V,,,"/>
+<approved hash="104,2,157.48,233.68,U100,IN,+5V,,,"/>
+<approved hash="108,2,30.48,142.24,N$44,,,,,"/>
 </errors>
 </schematic>
 </drawing>
