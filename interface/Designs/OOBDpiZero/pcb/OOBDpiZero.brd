@@ -4103,6 +4103,16 @@ Covered vias can be set in Masks (Limit).
 <wire x1="45.56125" y1="20.2803125" x2="45.56125" y2="20.24234375" width="0.3048" layer="16"/>
 <wire x1="45.56125" y1="20.24234375" x2="45.55826875" y2="20.2393625" width="0.3048" layer="16"/>
 <wire x1="21.747359375" y1="39.8437" x2="20.3187" y2="39.8437" width="0.3048" layer="16"/>
+<polygon width="0.254" layer="16">
+<vertex x="0.15875" y="40.401875"/>
+<vertex x="55.88" y="40.401875"/>
+<vertex x="55.88" y="33.81375"/>
+<vertex x="66.1590625" y="33.81375"/>
+<vertex x="66.1590625" y="6.1515625"/>
+<vertex x="55.88" y="6.1515625"/>
+<vertex x="55.88" y="-0.5159375"/>
+<vertex x="0.15875" y="-0.5159375"/>
+</polygon>
 </signal>
 <signal name="+5V">
 <contactref element="R12" pad="1"/>
@@ -4353,6 +4363,13 @@ Covered vias can be set in Masks (Limit).
 <via x="44.0134375" y="17.1053125" extent="1-16" drill="0.254" shape="octagon"/>
 <wire x1="44.0134375" y1="17.1053125" x2="44.631875" y2="17.72375" width="0.3048" layer="1"/>
 <wire x1="44.631875" y1="17.72375" x2="44.631875" y2="18.018125" width="0.3048" layer="1"/>
+<polygon width="0.254" layer="1">
+<vertex x="0.5159375" y="40.401875"/>
+<vertex x="29.0909375" y="40.401875"/>
+<vertex x="29.0115625" y="-0.3571875"/>
+<vertex x="0.15875" y="-0.3571875"/>
+<vertex x="0.15875" y="40.3225"/>
+</polygon>
 </signal>
 <signal name="HS-CAN_RXD">
 <contactref element="U102" pad="4"/>
@@ -5262,6 +5279,17 @@ Covered vias can be set in Masks (Limit).
 <wire x1="52.06666875" y1="13.532571875" x2="51.1175" y2="14.52375" width="0.1524" layer="16"/>
 <wire x1="31.668596875" y1="9.64344375" x2="31.668596875" y2="10.15935" width="0.1524" layer="16"/>
 <wire x1="31.668596875" y1="10.15935" x2="31.668596875" y2="10.199034375" width="0.1524" layer="16"/>
+<polygon width="0.254" layer="1">
+<vertex x="29.8053125" y="40.560625"/>
+<vertex x="55.88" y="40.560625"/>
+<vertex x="55.88" y="33.81375"/>
+<vertex x="66.0796875" y="33.81375"/>
+<vertex x="66.0796875" y="6.3896875"/>
+<vertex x="56.0784375" y="6.3896875"/>
+<vertex x="56.0784375" y="-0.6746875"/>
+<vertex x="29.5275" y="-0.6746875"/>
+<vertex x="29.5275" y="40.401875"/>
+</polygon>
 </signal>
 <signal name="HS-CAN_H">
 <contactref element="D101" pad="2"/>
@@ -7374,34 +7402,6 @@ Covered vias can be set in Masks (Limit).
 <wire x1="8.4132125" y1="35.24024375" x2="8.4132125" y2="36.351421875" width="0.1524" layer="1"/>
 <wire x1="8.4132125" y1="36.351421875" x2="9.525" y2="37.465" width="0.1524" layer="1"/>
 </signal>
-<signal name="N$49">
-<polygon width="0" layer="16">
-<vertex x="0.5953125" y="40.401875"/>
-<vertex x="55.88" y="40.401875"/>
-<vertex x="55.88" y="33.81375"/>
-<vertex x="66.1590625" y="33.81375"/>
-<vertex x="66.1590625" y="6.1515625"/>
-<vertex x="55.88" y="6.1515625"/>
-<vertex x="55.88" y="-0.5159375"/>
-<vertex x="0.15875" y="-0.5159375"/>
-<vertex x="0.15875" y="40.401875"/>
-<vertex x="0.873125" y="40.401875"/>
-</polygon>
-</signal>
-<signal name="N$51">
-<polygon width="0" layer="1">
-<vertex x="0.5953125" y="40.48125"/>
-<vertex x="55.88" y="40.48125"/>
-<vertex x="55.88" y="33.893125"/>
-<vertex x="65.8415625" y="33.893125"/>
-<vertex x="65.8415625" y="6.1515625"/>
-<vertex x="55.88" y="6.1515625"/>
-<vertex x="55.88" y="-0.3571875"/>
-<vertex x="0.238125" y="-0.3571875"/>
-<vertex x="0.238125" y="40.401875"/>
-<vertex x="1.190625" y="40.401875"/>
-</polygon>
-</signal>
 </signals>
 <errors>
 <approved hash="1,20,2cbc3808398f2d3b"/>
@@ -8486,6 +8486,8 @@ Covered vias can be set in Masks (Limit).
 <approved hash="19,1,f20da881a8c1f24d"/>
 <approved hash="19,1,5c9ee8c07112a14a"/>
 <approved hash="19,1,9ea283223be4b62b"/>
+<approved hash="5,1,297efcdf556a67f4"/>
+<approved hash="5,1,5a3a38119657c07a"/>
 <approved hash="4,1,e47271506eadf781"/>
 <approved hash="19,1,cbe7f5ff50a43035"/>
 <approved hash="19,1,481c2eaf014d99f1"/>
@@ -8497,8 +8499,6 @@ Covered vias can be set in Masks (Limit).
 <approved hash="4,16,e47271506eadf781"/>
 <approved hash="19,16,eb17bc445f255d88"/>
 <approved hash="19,16,8ecdf26015b13ce2"/>
-<approved hash="5,1,297efcdf556a67f4"/>
-<approved hash="5,1,5a3a38119657c07a"/>
 <approved hash="19,1,eceaad40d08045b3"/>
 <approved hash="19,1,2d3d47870db69303"/>
 <approved hash="19,1,017ceee94bc281e8"/>
