@@ -66,6 +66,7 @@ class kadaverSim(object):
 
 		def serialThread(*args):
 			print ('serial:')
+			serialPortSeemsClosed=False
 			while True:
 				try:
 					self._serPortSocket
@@ -73,9 +74,9 @@ class kadaverSim(object):
 					socket_list = [ self._serPortSocket]
 						
 					# Get the list sockets which are readable
-					read_sockets, write_sockets, error_sockets = select.select(socket_list , [], [])
+					read_sockets, write_sockets, error_sockets = select.select(socket_list , [], socket_list)
 					print ('select:')
-						
+					serialPortSeemsClosed=False
 					for sock in read_sockets:
 						#incoming message from remote server
 						print ('Got-1:')
@@ -98,8 +99,14 @@ class kadaverSim(object):
 							#msg = sys.stdin.readline()
 							#_serPortSocket.send(msg)
 							pass
+					for sock in error_sockets:
+						print ('error socket thrown, close it')
+						close_serial(self)
+
 				except:
-					print "is serial socket closed?"
+					if serialPortSeemsClosed==False:
+						serialPortSeemsClosed=True
+						print "is serial socket closed?"
 					time.sleep(0.5)
 
 

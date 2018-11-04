@@ -47,7 +47,7 @@ class SimpleChat(WebSocket):
 				thisMsg=loads(str(self.data))
 				print 'message: '+str(self.data)
 				try:
-					thisMsg['reply'] # checks if variable exists
+					thisMsg['reply'] # checks if variable exists. Identifies the sender as an dongle client
 					thiscmd=decodestring(thisMsg['reply'])
 					thiscmd.replace("\r","\n")
 					print decodestring(thisMsg['channel'])+"<"+thiscmd+"\n"
@@ -59,6 +59,14 @@ class SimpleChat(WebSocket):
 					print decodestring(thisMsg['channel'])+">"+thiscmd+"\n"
 					self.channel='s'+thisMsg['channel']
 					prefix="r"
+					# handle a runtime measuring echo request
+					try:
+						thisMsg["echo"] # checks if variable exists
+						thisMsg["echo"]="server"
+						print "Send echo answer: "+str(thisMsg)
+						self.sendMessage(dumps(thisMsg))
+					except:
+						pass
 				for client in self.server.connections.itervalues():
 			#			print 'actual client: '+ client.channel
 					try:
@@ -66,6 +74,7 @@ class SimpleChat(WebSocket):
 							client.sendMessage(str(self.data))
 					except Exception as n:
 						print "Send Exception: " ,n
+					
 			except Exception as n:
 				print "Exception: " , n
 

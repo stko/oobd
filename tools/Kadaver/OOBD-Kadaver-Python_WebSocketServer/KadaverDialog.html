@@ -7,7 +7,7 @@
 <title>OOBD Kadaver Web Terminal</title>
 
 <script language="javascript" type="text/javascript">
-
+var lastEchoTime=0;
 
   function init()
   {
@@ -63,11 +63,15 @@
 
 	try {
 		obj = JSON.parse(evt.data);
+		arrivingTime=Date.now();
 		if (obj.reply){
 			writeToScreen(atob(obj.reply));
 		}
 		if (obj.msg){
 			writeToScreen(atob(obj.msg));
+		}
+		if (obj.echo){
+			writeToScreen(obj.echo+":"+(arrivingTime-lastEchoTime)+" ms");
 		}
 	}
 	catch(err){
@@ -122,6 +126,7 @@
 		}else{
 			var msg=JSON.stringify({echo: "", msg: "", channel: btoa(document.myform.keytext.value)}); 
 		}
+		lastEchoTime=Date.now();
 		doSend(msg  );
    }
 
@@ -176,7 +181,10 @@ Act as Dongle- Side: <input type="checkbox" id="slaveFlag">
 <!--
 <textarea name="inputtext" cols="50"></textarea>
 -->
+<!--
 Firmware command: <input name="inputtext" type="text" size="30" maxlength="30" onkeyup="if (event.keyCode == 13) { sendText(); document.myform.inputtext.value=''; return false; }">
+-->
+Firmware command: <input name="inputtext" type="text" size="30" maxlength="30" onkeyup="if (event.keyCode == 13) { sendText(); return false; }">
 </p>
 
 </form>
