@@ -707,14 +707,14 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 	    errCount /= 2;
 	}
 
+    dp.ide = RxMessage.IDE;				/* set IDE bit to internal data packet */
+
 	/* Data received. Process it. */
 	if (RxMessage.IDE == CAN_ID_STD) {
 	    dp.recv = RxMessage.StdId;		/* Standard CAN frame 11bit received */
-		dp.recv &= ~0x80000000;			/* set Bit 31=0 for Extended CAN identifier 29 bit */
 	}
 	else {
 	    dp.recv = RxMessage.ExtId;		/* Extended CAN frame 29bit received */
-		dp.recv |= 0x80000000;			/* set Bit 31=1 for Extended CAN identifier 29 bit */
 	}
 	/* CAN-Frame values which are independent on standard or extended identifiers */
 	dp.len = RxMessage.DLC;

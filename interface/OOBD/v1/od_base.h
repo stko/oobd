@@ -65,6 +65,7 @@ typedef struct data_packet {
     UBaseType_t recv;		//!< id of the receiver
     UBaseType_t len;		//!< data length
     UBaseType_t err;		//!< only when receiving data: contains ODB_ERR- Codes
+    UBaseType_t ide;		//!< indication for 11bit (0x00) or 29bit (0x01) CAN-ID
     unsigned char *data;	//!< pointer to the data bytes
 } DATA_PACKET;
 
