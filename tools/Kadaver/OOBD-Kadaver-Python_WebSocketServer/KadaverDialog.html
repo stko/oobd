@@ -35,7 +35,7 @@ var lastEchoTime=0;
 	}else{
 		doSend(JSON.stringify({msg: "", channel: btoa(document.myform.keytext.value)})  );
 	}
-	writeToScreen("connected\n");
+    writeToScreen("connected\n");
 	document.myform.url.disabled = true;
 	document.myform.keytext.disabled = true;
 	document.myform.connectButton.disabled = true;
@@ -54,7 +54,7 @@ var lastEchoTime=0;
 	document.myform.disconnectButton.disabled = true;
 	document.myform.echoButton.disabled = true;
  	document.myform.inputtext.disabled = true;
-   }
+  }
 
   function onMessage(evt)
   {

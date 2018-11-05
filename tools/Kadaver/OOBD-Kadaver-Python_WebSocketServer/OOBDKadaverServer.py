@@ -10,6 +10,9 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Adapted as OOBD server by Steffen Koehler for the OOBD TEam 2015
+
 '''
 
 import signal, sys, ssl, logging
@@ -41,24 +44,24 @@ class SimpleEcho(WebSocket):
 
 class SimpleChat(WebSocket):
 
-	def handleMessage(self):
-		if self.data is not None:
-			try:
-				thisMsg=loads(str(self.data))
-				print 'message: '+str(self.data)
-				try:
+   def handleMessage(self):
+      if self.data is not None:
+	try:
+		thisMsg=loads(str(self.data))
+		print 'message: '+str(self.data)
+		try:
 					thisMsg['reply'] # checks if variable exists. Identifies the sender as an dongle client
-					thiscmd=decodestring(thisMsg['reply'])
-					thiscmd.replace("\r","\n")
-					print decodestring(thisMsg['channel'])+"<"+thiscmd+"\n"
-					self.channel='r'+thisMsg['channel']
-					prefix="s"
-				except Exception as n:
-					thiscmd=decodestring(thisMsg['msg'])
-					thiscmd.replace("\r","\n")
-					print decodestring(thisMsg['channel'])+">"+thiscmd+"\n"
-					self.channel='s'+thisMsg['channel']
-					prefix="r"
+			thiscmd=decodestring(thisMsg['reply'])
+			thiscmd.replace("\r","\n")
+			print decodestring(thisMsg['channel'])+"<"+thiscmd+"\n"
+			self.channel='r'+thisMsg['channel']
+			prefix="s"
+		except Exception as n:
+			thiscmd=decodestring(thisMsg['msg'])
+			thiscmd.replace("\r","\n")
+			print decodestring(thisMsg['channel'])+">"+thiscmd+"\n"
+			self.channel='s'+thisMsg['channel']
+			prefix="r"
 					# handle a runtime measuring echo request
 					try:
 						thisMsg["echo"] # checks if variable exists
@@ -67,26 +70,26 @@ class SimpleChat(WebSocket):
 						self.sendMessage(dumps(thisMsg))
 					except:
 						pass
-				for client in self.server.connections.itervalues():
-			#			print 'actual client: '+ client.channel
-					try:
-						if client != self and client.channel == prefix+thisMsg['channel'] :
-							client.sendMessage(str(self.data))
-					except Exception as n:
-						print "Send Exception: " ,n
-					
+		for client in self.server.connections.itervalues():
+#			print 'actual client: '+ client.channel
+			try:
+				if client != self and client.channel == prefix+thisMsg['channel'] :
+					client.sendMessage(str(self.data))
 			except Exception as n:
-				print "Exception: " , n
+				print "Send Exception: " ,n
+					
+	except Exception as n:
+		print "Exception: " , n
 
 
 
-	def handleConnected(self):
-		print self.address, 'connected'
+   def handleConnected(self):
+      print self.address, 'connected'
 		# we can't sent a connect message, as in the moment of connection the client didn't sent his channel yet,
 		# so we don't know to where the connect message should go to
-		
-	def handleClose(self):
-		print self.address, 'closed'
+ 
+   def handleClose(self):
+      print self.address, 'closed'
 		channel=""
 		for client in self.server.connections.itervalues():
 			if client.address==self.address:
