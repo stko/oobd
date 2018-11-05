@@ -55,6 +55,7 @@ import java.util.Hashtable;
 import javax.jmdns.*;
 
 import org.json.JSONException;
+import org.oobd.OOBD;
 import static org.oobd.core.OOBDConstants.UDP_PORT;
 import org.oobd.core.archive.Archive;
 import org.oobd.core.support.Onion;
@@ -169,7 +170,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      * @throws org.oobd.base.Settings.IllegalSettingsException
      *
      */
-    public Core(IFsystem mySystemInterface, String name) throws Settings.IllegalSettingsException {
+    public Core(IFsystem mySystemInterface, String name) throws OOBD.IllegalSettingsException {
         super(name);
         System.out.println("Java Runtime Version:" + System.getProperty("java.version"));
         if (thisInstance != null) {
@@ -357,7 +358,7 @@ public class Core extends OobdPlugin implements OOBDConstants, CoreTickListener 
      *
      * @return Thread
      */
-    public void  setPrefs(String jsonPrefs, boolean force) throws Settings.IllegalSettingsException {
+    public void  setPrefs(String jsonPrefs, boolean force) throws OOBD.IllegalSettingsException {
         Settings.transferSettings(jsonPrefs, force);
     }
 

@@ -9,11 +9,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
-import org.oobd.core.Core;
+import org.oobd.OOBD;
+import org.oobd.OOBD.IllegalSettingsException;
 import org.oobd.core.IFsystem;
-import org.oobd.core.OOBDConstants;
-import org.oobd.core.Settings;
 import org.oobd.core.port.ComPort_Win;
 import org.oobd.core.support.Onion;
 
@@ -21,13 +19,8 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
 import java.io.*;
-import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Vector;
 import org.apache.commons.daemon.Daemon;
 import org.apache.commons.daemon.DaemonController;
 import org.apache.commons.daemon.DaemonContext;
@@ -37,13 +30,13 @@ import org.apache.commons.daemon.DaemonUserSignal;
  *
  * @author steffen
  */
-public class Oobdd implements IFsystem, OOBDConstants, Daemon, Runnable, DaemonUserSignal {
+public class Oobdd implements IFsystem,  Daemon, Runnable, DaemonUserSignal {
 
     private Thread thread = null;
     private DaemonController controller = null;
     private volatile boolean stopping = false;
     private boolean softReloadSignalled;
-    private static Core core;
+    private static OOBD oobd;
     private static OptionSet options;
     private static OptionParser parser=null;
 
@@ -55,9 +48,9 @@ public class Oobdd implements IFsystem, OOBDConstants, Daemon, Runnable, DaemonU
         
             loadOptions(args);
  
-          core = new Core(new Oobdd(), "Core");
+          oobd = new OOBD(new Oobdd());
             // TODO code application logic here
-         } catch (Settings.IllegalSettingsException ex) {
+         } catch (OOBD.IllegalSettingsException ex) {
             Logger.getLogger(Oobdd.class.getName()).log(Level.SEVERE, "Illegal preferences", ex);
         }
     }
@@ -71,7 +64,7 @@ public class Oobdd implements IFsystem, OOBDConstants, Daemon, Runnable, DaemonU
             if (myFile.exists()) {
                 return myFile.getAbsolutePath();
             } else {
-                myFile = new File(Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + fileName);
+                myFile = new File(oobd.getScriptDir() + "/" + fileName);
                 if (myFile.exists()) {
                     return myFile.getAbsolutePath();
                 }
@@ -151,6 +144,7 @@ public class Oobdd implements IFsystem, OOBDConstants, Daemon, Runnable, DaemonU
         return true;
     }
 
+    @Override
     protected void finalize() {
         System.err.println("oobdd: instance " + this.hashCode()
                 + " garbage collected");
@@ -158,7 +152,10 @@ public class Oobdd implements IFsystem, OOBDConstants, Daemon, Runnable, DaemonU
 
     /**
      * init and destroy were added in jakarta-tomcat-daemon.
+     * @param context
+     * @throws java.lang.Exception
      */
+    @Override
     public void init(DaemonContext context)
             throws Exception {
         System.err.println("oobdd: instance " + this.hashCode()
@@ -177,6 +174,7 @@ public class Oobdd implements IFsystem, OOBDConstants, Daemon, Runnable, DaemonU
         this.thread = new Thread(this);
     }
 
+    @Override
     public void start() {
         /* Dump a message */
         System.err.println("oobdd: starting");
@@ -185,6 +183,7 @@ public class Oobdd implements IFsystem, OOBDConstants, Daemon, Runnable, DaemonU
         this.thread.start();
     }
 
+    @Override
     public void stop()
             throws IOException, InterruptedException {
         /* Dump a message */
@@ -198,22 +197,23 @@ public class Oobdd implements IFsystem, OOBDConstants, Daemon, Runnable, DaemonU
         System.err.println("oobdd: stopped");
     }
 
+    @Override
     public void destroy() {
         System.err.println("oobdd: instance " + this.hashCode()
                 + " destroy");
     }
 
+    @Override
     public void run() {
-        int number = 0;
-
+ 
         System.err.println("oobdd: started acceptor loop");
         while (!this.stopping) {
             checkForReload();
             Thread thisCoreThread;
             try {
-                core = new Core(this, "Core");
+                oobd = new OOBD(this);
 
-                thisCoreThread = core.getThread();
+                thisCoreThread = oobd.getCoreThread();
                 while (thisCoreThread.isAlive()) {
                     try {
                         thisCoreThread.join();
@@ -221,7 +221,7 @@ public class Oobdd implements IFsystem, OOBDConstants, Daemon, Runnable, DaemonU
                         Logger.getLogger(Oobdd.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            } catch (Settings.IllegalSettingsException ex) {
+            } catch (IllegalSettingsException ex) {
                 Logger.getLogger(Oobdd.class.getName()).log(Level.SEVERE, null, ex);
             }
             /*
@@ -274,12 +274,16 @@ public class Oobdd implements IFsystem, OOBDConstants, Daemon, Runnable, DaemonU
         System.err.println("oobdd: exiting acceptor loop");
     }
 
+    /**
+     *
+     */
+    @Override
     public void signal() {
         /* In this example we are using soft reload on
          * custom signal.
          */
         this.softReloadSignalled = true;
-        core.close();
+        oobd.close();
     }
 
     private void checkForReload() {

@@ -9,15 +9,14 @@ import java.net.URISyntaxException;
 import java.util.prefs.Preferences;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.oobd.core.Core;
-import org.oobd.core.OOBDConstants;
+
 import org.oobd.core.port.ComPort_Win;
 
 //import java.io.FileInputStream;
 import java.io.*;
 import java.net.URI;
+import org.oobd.OOBD;
 import org.oobd.core.IFsystem;
-import org.oobd.core.Settings;
 import org.oobd.core.support.Onion;
 
 /**
@@ -26,7 +25,7 @@ import org.oobd.core.support.Onion;
  *
  * @author steffen
  */
-public class SwingSystem implements IFsystem, OOBDConstants {
+public class SwingSystem implements IFsystem {
 
      static SwingSystem thisInstance = null;
     Preferences myPrefs = null;
@@ -49,7 +48,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
     public void openBrowser() {
         if (Desktop.isDesktopSupported()) {
             try {
-                Desktop.getDesktop().browse(new URI(Core.getSingleInstance().getOobdURL()));
+                Desktop.getDesktop().browse(new URI(OOBD.getOobdURL()));
             } catch (IOException | URISyntaxException ex) {
             }
         }
@@ -64,7 +63,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             if (myFile.exists()) {
                 return myFile.getAbsolutePath();
             } else {
-                myFile = new File(Settings.getString(OOBDConstants.PropName_ScriptDir, "") + "/" + fileName);
+                myFile = new File(OOBD.getScriptDir() + "/" + fileName);
                 if (myFile.exists()) {
                     return myFile.getAbsolutePath();
                 }
@@ -99,14 +98,14 @@ public class SwingSystem implements IFsystem, OOBDConstants {
         try {
             prefsRoot = Preferences.userRoot();
             prefsRoot.sync();
-            myPrefs = prefsRoot.node("com.oobd.preference." + OOBDConstants.AppPrefsFileName);
+            myPrefs = prefsRoot.node("OOBDesk");
             String sysKeys[];
             if (myPrefs.keys().length == 0) { //no settings found? Then try to read system prefs
                 Preferences sysPrefsRoot;
                 Preferences mySysPrefs = null;
                 sysPrefsRoot = Preferences.systemRoot();
                 sysPrefsRoot.sync();
-                mySysPrefs = sysPrefsRoot.node("com.oobd.preference." + OOBDConstants.AppPrefsFileName);
+                mySysPrefs = sysPrefsRoot.node("OOBDesk");
                 sysKeys = mySysPrefs.keys();
                 for (int i = 0; i < sysKeys.length; i++) { //copy system settings, if any exist
                     myPrefs.put(sysKeys[i], mySysPrefs.get(sysKeys[i], ""));
@@ -126,7 +125,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             System.out.println(prefs);
 
         } catch (Exception e) {
-            Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "could not load property id " + OOBDConstants.AppPrefsFileName, e);
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.CONFIG, "could not load preferenves for OOBDesk", e);
         }
 
         return prefs.toString();
@@ -141,7 +140,7 @@ public class SwingSystem implements IFsystem, OOBDConstants {
             return true;
 
         } catch (Exception e) {
-            Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "could not load property id " + OOBDConstants.AppPrefsFileName, e);
+            Logger.getLogger(SwingSystem.class.getName()).log(Level.WARNING, "could not save preferenves for OOBDesk", e);
 
             return false;
         }

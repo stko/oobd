@@ -7,8 +7,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
-import org.oobd.core.Core;
-import org.oobd.core.Settings;
+import org.oobd.OOBD;
+
 
 /**
  * The main class of the application.
@@ -23,8 +23,8 @@ public class swing extends SingleFrameApplication {
         swingView thisUserInterface = new swingView(this);
         show(thisUserInterface);
         try {
-            new Core(new SwingSystem(), "Core");
-        } catch (Settings.IllegalSettingsException ex) {
+            new OOBD(new SwingSystem());
+        } catch (OOBD.IllegalSettingsException ex) {
             Logger.getLogger(swing.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
