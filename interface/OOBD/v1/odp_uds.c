@@ -726,11 +726,12 @@ void obp_uds(void *pvParameters)
 			if (stateMachine_state == SM_UDS_WAIT_FOR_PINGS) {
 			    unsigned char firstByte = dp->data[0] & 0xF0;
 			    int alreadyReceived = 0;
+			    int loopIndex = 0;
 			    if (firstByte == 0x00 ||	// Single Frame 
 				firstByte == 0x10 ||	// FirstFrame 
 				firstByte == 0x30	// Flow Control Frame 
 				) {
-				for (int loopIndex = 0;
+				for (loopIndex = 0;
 				     loopIndex + 12 <= protocolBuffer->len
 				     && !alreadyReceived;
 				     loopIndex += 12) {

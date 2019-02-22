@@ -36,7 +36,7 @@
 									<listOptionValue builtIn="false" value="&quot;../inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../../OOBD/v1&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV8.x.x/Source/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV8.x.x/Source/portable/GCC/ARM_CM3&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;./../../../../../OS/FreeRTOSV8.x.x/Source/portable/GCC/ARM_CM3&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV8.x.x/Demo/Common/drivers/ST/STM32F10xFWLib/CMSIS/Core/CM3&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../../../../../../OS/FreeRTOSV8.x.x/Demo/Common/drivers/ST/STM32F10xFWLib/STM32F10x_StdPeriph_Driver/inc&quot;"/>
 								</option>
