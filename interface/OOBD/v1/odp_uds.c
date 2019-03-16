@@ -724,6 +724,8 @@ void obp_uds(void *pvParameters)
 			    }
 			}
 			if (stateMachine_state == SM_UDS_WAIT_FOR_PINGS) {
+			    // PINGSIZE = 4 Byte CanID + 8 Bytes Message
+				#define PINGSIZE 12
 			    unsigned char firstByte = dp->data[0] & 0xF0;
 			    int alreadyReceived = 0;
 			    if (firstByte == 0x00 ||	// Single Frame 
@@ -731,9 +733,10 @@ void obp_uds(void *pvParameters)
 				firstByte == 0x30	// Flow Control Frame 
 				) {
 				for (int loopIndex = 0;
-				     loopIndex + 12 <= protocolBuffer->len
+				     loopIndex + PINGSIZE <=
+				     protocolBuffer->len
 				     && !alreadyReceived;
-				     loopIndex += 12) {
+				     loopIndex += PINGSIZE) {
 				    UBaseType_t storedID = (((UBaseType_t)
 							     protocolBuffer->data
 							     [loopIndex])
@@ -756,8 +759,8 @@ void obp_uds(void *pvParameters)
 				    }
 				}
 
-				if (protocolBuffer->len + 12 < UDSSIZE
-				    && !alreadyReceived) {
+				if (protocolBuffer->len + PINGSIZE <
+				    UDSSIZE && !alreadyReceived) {
 				    DEBUGPRINT
 					("Save Frame in buffer at pos. %ld\n",
 					 protocolBuffer->len);
