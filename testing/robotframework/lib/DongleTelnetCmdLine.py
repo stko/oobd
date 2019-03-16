@@ -54,6 +54,14 @@ class DongleTelnetCmdLine(object):
 		  		% (expected_answer, self._answer))
 
 
+	def answer_should_be_equal(self, expected_answer):
+		if self._answer==expected_answer:
+			pass
+		else:
+			raise AssertionError("Expected answer to be '%s' but was '%s'."
+		  		% (expected_answer, self._answer))
+
+
 
 	def _doLine(self,line):
 		global _ser
