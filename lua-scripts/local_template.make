@@ -5,31 +5,29 @@
 ## to allow a make process from different directories,
 ## point to the OOBD root directory here, where OOBD is located
 
-OOBDROOT=~/Desktop/workcopies/skdsscripts/oobd2/OEMs/Ford/trunk
+OOBDROOT=../..
 
 #  your lua- compiler (luac)
 # for Windows
 #CC="<drive>:<directory_to_Lua>/luac"
 # for Linux
-CC=luac
+CC=luac-5.1
 
 # the OOBD Lua preprocessor
 # for Cygwin
-#OLP=$(OOBDROOT)/tools/bin/olp.exe
+OLP=$(OOBDROOT)/tools/bin/olp.exe
 # for Linux
-OLP=mono $(OOBDROOT)/tools/bin/olp.exe
+#OLP=mono $(OOBDROOT)/tools/bin/olp.exe
 
 # Temporary output for Windows
-# PACKDIR="C:\\temp\\diagoutput\\"
+PACKDIR="D:\\temp\\diagoutput\\"
 # Temporary output for linux
-PACKDIR="/media/ram/diagoutput/"
-
-
+# PACKDIR="/tmp/"
 
 # for Cygwin
-#ODXT="$(OOBDROOT)/tools/bin/OpenDiagXCL.exe" 
+ODXT="$(OOBDROOT)/tools/bin/OpenDiagXCL.exe" 
 # for Linux
-ODXT=mono $(OOBDROOT)/tools/bin/OpenDiagXCL.exe 
+#ODXT=mono $(OOBDROOT)/tools/bin/OpenDiagXCL.exe 
 
 # relative path to the MDX pool
 MDXPOOL=../../mdx_pool/
@@ -48,7 +46,14 @@ MDXPOOL=../../mdx_pool/
 # directory list is part of the local user configuration
 
 DIRS=examples \
-obdII-standard
+3dfiesta.epd \
+ARDemo.epd \
+CarDTCs.epd \
+imagetest.epd \
+jqxtest.epd \
+OOBD.epd \
+UICreation.epd \
+vehicle.epd
 
 # Do NEVER remove this warning!!!
 warning:
