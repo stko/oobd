@@ -567,7 +567,7 @@ void obp_uds(void *pvParameters)
 						      printdata_CAN);
 				}
 				actBus_send(&actDataPacket);
-			    }
+				}
 			    stateMachine_state = SM_UDS_WAIT_FOR_ANSWER;
 			    timeout = protocolConfig->timeout;
 			}
@@ -669,8 +669,8 @@ void obp_uds(void *pvParameters)
 				    (dp->data[0] & 0xF) * 256 +
 				    dp->data[1];
 				actBufferPos = 6;
-				DEBUGPRINT("First Frame with %ld Bytes\n",
-					   remainingBytes);
+				DEBUGPRINT("First Frame with %ld Bytes from adress: %x and tester adress %x\n",
+					   remainingBytes,dp->recv,protocolConfig->recvID);
 				protocolBuffer->len = remainingBytes;	/* set the buffer size alredy inhope, that all goes well ;-) */
 				remainingBytes -= 6;	/* the first 6 bytes are already in the FF */
 				udp_uds_CAN2data(protocolBuffer,
@@ -689,7 +689,17 @@ void obp_uds(void *pvParameters)
 				    odp_uds_dumpFrame(&actDataPacket,
 						      printdata_CAN);
 				}
-				actBus_send(&actDataPacket);
+				if ( protocolConfig->recvID == 0x7DF){
+					DEBUGPRINT("answer CF on pysical adress: %x\n",
+						dp->recv-8);
+
+					UBaseType_t storeOldFunctionalMultiFrameId=actDataPacket.recv;
+					actDataPacket.recv=dp->recv-8;
+					actBus_send(&actDataPacket);
+					actDataPacket.recv=storeOldFunctionalMultiFrameId;
+				}else{
+					actBus_send(&actDataPacket);
+			    }
 			    } else {
 				if ((dp->data[0] & 0xF0) == 0x00) {	/*Single Frame */
 				    DEBUGPRINT
