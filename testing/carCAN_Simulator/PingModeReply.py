@@ -25,6 +25,8 @@ if len(sys.argv) != 2:
 
 def sendTele(can_id, hex_data):
 	global s
+	# gives a little bit delay
+	time.sleep(0.01)
 	msg =bytearray.fromhex(hex_data)
 	try:
 		s.send(build_can_frame(can_id, msg))
@@ -44,7 +46,7 @@ while True:
 			notConnected=False
 		except:
 			print ("wait for can device to come up..")
-			time.sleep(0.5)
+			time.sleep(0.005)
 	canDeviceIsAvailable=True;
 	while canDeviceIsAvailable:
 		msg =bytearray()
@@ -52,7 +54,7 @@ while True:
 			cf, addr = s.recvfrom( 16 ) # buffer size is 1024 bytes
 		except:
 			print ("wait..")
-			time.sleep(0.5)
+			time.sleep(0.005)
 			canDeviceIsAvailable=False;
 			break
 		print("(Re-)Connected to CAN")
