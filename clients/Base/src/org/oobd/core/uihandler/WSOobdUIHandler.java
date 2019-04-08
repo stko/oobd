@@ -378,27 +378,43 @@ import org.oobd.core.port.OOBDPort;
                 if (fileMessage.equalsIgnoreCase("json")) {
                     myFileName = filePath;
                     URL url = new URL(filePath);
-                    HttpURLConnection conn = (HttpURLConnection) url
-                            .openConnection();
-                    conn.setReadTimeout(10000 /* milliseconds */);
-                    conn.setConnectTimeout(15000 /* milliseconds */);
-                    conn.setDoOutput(true);
-                    conn.setDoInput(true);
-                    conn.setRequestProperty("Content-Type",
-                            "application/json; charset=utf8");
-                    conn.setRequestProperty("Accept", "application/json");
-                    conn.setRequestMethod("POST");
-                    conn.connect();
-                    OutputStream os = conn.getOutputStream();
-                    os.write(fileExtension.getBytes("UTF-8"));
-                    os.close();
-                    int HttpResult = conn.getResponseCode();
+                    String protocol = url.getProtocol().toLowerCase();
+                    if ("file".equals(protocol)){
+                        myFileName = filePath.substring(7);
+                        if (myFileName != null) {
+                            try {
+                                myFileName = getCore().getSystemIF()
+                                        .getSystemDefaultDirectory(false, myFileName);
+                                myInputStream = new FileReader(myFileName);
+                            } catch (FileNotFoundException ex) {
+                                Logger.getLogger(WSOobdUIHandler.class.getName())
+                                        .log(Level.SEVERE, null, ex);
+                            }
+                        }
 
-                    if (HttpResult == HttpURLConnection.HTTP_OK) {
-                        myInputStream = new InputStreamReader(
-                                conn.getInputStream(), "utf-8");
-                    } else {
-                        System.err.println(conn.getResponseMessage());
+                    }else{
+                        HttpURLConnection conn = (HttpURLConnection) url
+                                .openConnection();
+                        conn.setReadTimeout(10000 /* milliseconds */);
+                        conn.setConnectTimeout(15000 /* milliseconds */);
+                        conn.setDoOutput(true);
+                        conn.setDoInput(true);
+                        conn.setRequestProperty("Content-Type",
+                                "application/json; charset=utf8");
+                        conn.setRequestProperty("Accept", "application/json");
+                        conn.setRequestMethod("POST");
+                        conn.connect();
+                        OutputStream os = conn.getOutputStream();
+                        os.write(fileExtension.getBytes("UTF-8"));
+                        os.close();
+                        int HttpResult = conn.getResponseCode();
+
+                        if (HttpResult == HttpURLConnection.HTTP_OK) {
+                            myInputStream = new InputStreamReader(
+                                    conn.getInputStream(), "utf-8");
+                        } else {
+                            System.err.println(conn.getResponseMessage());
+                        }
                     }
                 } else {
                     if ("direct".equalsIgnoreCase(fileMessage)) {
