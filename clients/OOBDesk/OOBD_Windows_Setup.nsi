@@ -23,20 +23,38 @@ function .onInit
 	StrCpy $INSTDIR  "$PROGRAMFILES\OOBD"
 	StrCpy $menutype  "OOBDesk"
 	SetShellVarContext all
+	Goto Done
+	 
+	Continue:
+	StrCpy $INSTDIR  "$APPDATA\OOBD"
+	StrCpy $menutype  "OOBDesk(local)"
+	 
+	Done:
+FunctionEnd
+
+
+function writeReg
+	ClearErrors
+	UserInfo::GetName
+	IfErrors Continue
+	Pop $R1
+	UserInfo::GetAccountType
+	Pop $R2
+	StrCmp $R2 "Admin" 0 Continue
 	WriteRegStr HKLM "SOFTWARE\OOBD\OOBDesk" "InstDir" $INSTDIR\OOBDesk
 	WriteRegStr HKLM "Software\JavaSoft\Prefs\com.oobd.preference.app.props" "/Script/Dir" "$DOCUMENTS\OOBD-Scripts"
 	WriteRegStr HKLM "Software\JavaSoft\Prefs\com.oobd.preference.app.props" "/Library/Dir" "$DOCUMENTS\OOBD-Library"
 	Goto Done
 	 
 	Continue:
-	StrCpy $INSTDIR  "$APPDATA\OOBD"
-	StrCpy $menutype  "OOBDesk(local)"
 	WriteRegStr HKCU "SOFTWARE\OOBD\OOBDesk" "InstDir" $INSTDIR\OOBDesk
 	WriteRegStr HKCU "Software\JavaSoft\Prefs\com.oobd.preference.app.props" "/Script/Dir" "$DOCUMENTS\OOBD-Scripts"
 	WriteRegStr HKCU "Software\JavaSoft\Prefs\com.oobd.preference.app.props" "/Library/Dir" "$DOCUMENTS\OOBD-Library"
 	 
 	Done:
+
 FunctionEnd
+
 
  ; GetParent
  ; input, top of stack  (e.g. C:\Program Files\Poop)
@@ -105,7 +123,11 @@ FunctionEnd
 
 #!include "ZipDLL.nsh"
 Page license
-#Page directory
+Page directory
+
+Section "Init"
+call writeReg
+SectionEnd
 
 Page instfiles
 UninstPage uninstConfirm
