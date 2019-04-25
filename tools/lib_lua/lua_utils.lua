@@ -311,9 +311,6 @@ function bitor(x, y)
 end
 
 
-
-
-
 -- taken from  http://stackoverflow.com/questions/1426954/split-string-in-lua
 function Split(pString, pPattern)
    DEBUGPRINT("nexulm", 1, "lua_utils.lua - Split,%02d: %s", "00", "enter function Split")
@@ -362,6 +359,7 @@ function getSubTable(id, level,wholeTable)
 		end
 		levCount = levCount +1
 	end
+	DEBUGPRINT("nexulm", 1, "lua_utils.lua - getSubTable,%02d: %s", "05", "exit function getSubTable")
 	return data
 end
 
@@ -573,7 +571,7 @@ function selectModuleID(oldvalue,id)
 			setSendID("7E8") 						-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
 		elseif index == 2 then
 			setModuleID("7E1")						-- set legislated OBD/WWH-OBD physical request 11bit CAN-ID for TCM
-			setSendID("7E9") 						-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
+			setSendID("7E9") 						-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - TCM, Transmission Control Module)
 		else	-- index == 0
 			setModuleID("7DF")						-- set legislated OBD/WWH-OBD functional request 11bit CAN-ID
 			setSendID("7E8") 						-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
@@ -586,10 +584,13 @@ function selectModuleID(oldvalue,id)
 		activateBus()
 		if index == 10 then
 			setModuleID("18DA10F1")					-- set legislated OBD/WWH-OBD physical request 29bit CAN-ID for ECM#1		
+			setSendID("18DAF110")					-- set legislated OBD/WWH-OBD physical response 29bit CAN-ID for ECM#1
 		elseif index == 11 then
-			setModuleID("18DA18F1")					-- set legislated OBD/WWH-OBD physical request 29bit CAN-ID	for TCM#1
+			setModuleID("18DA1EF1")					-- set legislated OBD/WWH-OBD physical request 29bit CAN-ID	for TCM#1
+			setSendID("18DAF11E")					-- set legislated OBD/WWH-OBD physical response 29bit CAN-ID for ECM#1
 		else 	-- index == 9
 			setModuleID("18DB33F1")					-- set legislated OBD/WWH-OBD functional request 29bit CAN-ID
+			setSendID("18DAF133")					-- set legislated OBD/WWH-OBD fucntional response 29bit CAN-ID
 		end
 		setSendID("18DAF110")					-- set default to legislated OBD/WWH-OBD physical response ID (ECU #1 - ECM, Engince Control Module)
 		setCANFilter(1,"18DAF100","1FFFFF00")	-- set CAN-Filter of ECU response 29bit CAN-ID range only
@@ -743,4 +744,104 @@ function primitiveXML2Table(s)
 	return stack[1]
 end
 
+local codetable =
+{
+--  ['Å'] = "\197\160", -- Š
+  ['Å½'] = "\197\189", -- Ž
+  ['Å¡'] = "\197\161", -- š
+  ['Å“'] = "\197\147", -- œ
+  ['Å¾'] = "\197\190", -- ž
+  ['Å¸'] = "\197\184", -- Ÿ
+  ['Â§'] = "\194\167", -- §
+  ['Âµ'] = "\194\181", -- µ
+  ['Ã€'] = "\195\128", -- À
+  ['Ã'] = "\195\129", -- Á
+	['Ã‚'] = "\195\130", -- Â
+	['Ãƒ'] = "\195\131", -- Ã
+  ['Ã„'] = "\195\132", -- Ä
+  ['Ã…'] = "\195\133", -- Å
+  ['Ã†'] = "\195\134", -- Æ
+  ['Ã‡'] = "\195\135", -- Ç
+  ['Ãˆ'] = "\195\136", -- È
+  ['Ã‰'] = "\195\137", -- É
+  ['ÃŠ'] = "\195\138", -- Ê
+  ['Ã‹'] = "\195\139", -- Ë
+  ['ÃŒ'] = "\195\140", -- Ì
+--  ['Ã'] = "\195\141", -- Í
+  ['ÃŽ'] = "\195\142", -- Î
+--  ['Ã'] = "\195\143", -- Ï
+--  ['Ã'] = "\195\144", -- Ð
+  ['Ã‘'] = "\195\145", -- Ñ
+  ['Ã’'] = "\195\146", -- Ò
+--  ['Ã“'] = "\195\147", -- Ó
+  ['Ã”'] = "\195\148", -- Ô
+  ['Ã•'] = "\195\149", -- Õ
+  ['Ã–'] = "\195\150", -- Ö
+  ['Ã—'] = "\195\151", -- ×
+  ['Ã˜'] = "\195\152", -- Ø
+  ['Ã™'] = "\195\153", -- Ù
+  ['Ãš'] = "\195\154", -- Ú
+  ['Ã›'] = "\195\155", -- Û
+  ['Ãœ'] = "\195\156", -- Ü
+--  ['Ã'] = "\195\157", -- Ý
+  ['Ãž'] = "\195\158", -- Þ
+  ['ÃŸ'] = "\195\159", -- ß
+--  ['Ã'] = "\195\160", -- à
+  ['Ã¡'] = "\195\161", -- á
+  ['Ã¢'] = "\195\162", -- â
+  ['Ã£'] = "\195\163", -- ã
+  ['Ã¤'] = "\195\164", -- ä
+  ['Ã¥'] = "\195\165", -- å
+  ['Ã¦'] = "\195\166", -- æ
+  ['Ã§'] = "\195\167", -- ç
+  ['Ã¨'] = "\195\168", -- è
+  ['Ã©'] = "\195\169", -- é
+  ['Ãª'] = "\195\170", -- ê
+  ['Ã«'] = "\195\171", -- ë
+  ['Ã¬'] = "\195\172", -- ì
+  ['Ã­'] = "\195\173", -- í
+  ['Ã®'] = "\195\174", -- î
+  ['Ã¯'] = "\195\175", -- ï
+  ['Ã°'] = "\195\176", -- ð
+  ['Ã±'] = "\195\177", -- ñ
+  ['Ã²'] = "\195\178", -- ò
+  ['Ã³'] = "\195\179", -- ó
+  ['Ã´'] = "\195\180", -- ô
+  ['Ãµ'] = "\195\181", -- õ
+  ['Ã¶'] = "\195\182", -- ö
+  ['Ã·'] = "\195\183", -- ÷
+  ['Ã¸'] = "\195\184", -- ø
+  ['Ã¹'] = "\195\185", -- ù
+  ['Ãº'] = "\195\186", -- ú
+  ['Ã»'] = "\195\187", -- û
+  ['Ã¼'] = "\195\188", -- ü
+  ['Ã½'] = "\195\189", -- ý
+  ['Ã¾'] = "\195\190", -- þ
+  ['Ã¿'] = "\195\191", -- ÿ
+}
 
+--[[
+  encode UTF8(strUTF8) usable for ioRead, ioWrite, ioInput, ... library if file with e.g. german characters like ä,ü,ö,... must be converted via:
+	----- snip -----
+	ioInput(myfile,".txt", "direct")
+	
+	while true do
+		res = ioRead("*line")
+			...
+	end
+	----- snap -----
+]]--
+function encodeUTF8(strUTF8)
+	DEBUGPRINT("nexulm", 1, "lua_utils.lua - encodeUTF8,%02d: %s", "00", "enter function encodeUTF8")
+	if strUTF8 == nil or type(strUTF8) ~= "string" then
+		return ''
+	end
+
+	local newstr = strUTF8
+	-- Encode known UTF8 characters
+	for character, entity in pairs(codetable) do
+		newstr = string.gsub(newstr, character, entity)
+	end
+	DEBUGPRINT("nexulm", 1, "lua_utils.lua - encodeUTF8,%02d: newstr: %s", "05", newstr)
+	return newstr
+end
