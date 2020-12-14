@@ -13,5 +13,5 @@ As the feature list became to long for the main page, we moved it to the separat
 
 # Hardware
 
-Although the build plans are available in the OOBD repository, we do recommend to better buy a finished CAN invader device at our partner [JATRA](http://caninvader.de/). It was found that there's a lot of experience and time needed to collect all parts and to solder the dongle by yourself. Especially for commercial applications it's more effective to directly order the complete units.
+Although the build plans are available in the OOBD repository, we do recommend to better buy a finished CAN invader device at our partner [JATRA](http://caninvader.com/). It was found that there's a lot of experience and time needed to collect all parts and to solder the dongle by yourself. Especially for commercial applications it's more effective to directly order the complete units.
 
