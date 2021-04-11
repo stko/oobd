@@ -8,7 +8,9 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "connect": "^3.7.0",
     "core-js": "^3.6.5",
+    "hiredis": "^0.5.0",
     "register-service-worker": "^1.7.2",
     "vue": "^2.6.11",
     "vue-router": "^3.5.1",

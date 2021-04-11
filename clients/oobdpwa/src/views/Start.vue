@@ -16,7 +16,12 @@
 		v-model="WebSocketURL"
 		v-if="connection=='websocket'">
 		</v-text-field>
-		<v-file-input label="Select your Lua Script" v-model="luaFileName" required>
+		<v-file-input
+			label="Select your Lua Script"
+			accept=".json"
+			v-model="luaFileName" 
+			required
+		>
 		</v-file-input>
 		<v-btn block @click="start" :disabled="luaFileName.length == 0">
 			Start
@@ -24,8 +29,17 @@
 	</v-container>
 </template>
 <script>
+
+import oobdpwa from "@/oobdpwa";
+import router from "@/router";
+
+
 export default {
 	name: "Start",
+	inject:[
+		'text_dialog',
+		'show_text_dialog'
+	],
 	data() {
 		return {
 			connection: "serial",
@@ -39,10 +53,24 @@ export default {
 		};
 	},
 	methods: {
-		start() {
+		async start() {
 			console.log("start");
 			console.log(this.luaFileName);
+			var diag =await this.show_text_dialog('Titel in','nix')
+			if (diag){
+				console.log(diag)
+			}else{
+				console.log('diag canceled')
+			}
+			oobdpwa.readSingleFile(this.luaFileName)
+			//this.nav2Main()
 		},
+		nav2Main() {
+			router.push({ name: "Main" }); // always goes 'back enough' to Main
+		},
+		fileselect(ev){
+			oobdpwa.readSingleFile(ev)
+		}
 	},
 	mounted() {
 		if (localStorage.connection) {
